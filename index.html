@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MTG Layer Inspector - CR 613</title>
+  <link rel="icon" type="image/png" href="assets/layer-inspector-tab.png">
+  <link rel="apple-touch-icon" href="assets/layer-inspector-tab.png">
+  <link rel="stylesheet" href="styles.css?v=104">
+</head>
+<body>
+
+  <!-- [KEY: HEADER] -->
+  <header class="app-header">
+    <h1>Layer Inspector</h1>
+    <span class="subtitle">CR 613 Continuous Effects Evaluator</span>
+    <div class="header-controls">
+      <a class="header-icon-button" href="#" aria-label="Inspector" title="Inspector">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M5 7.6 12 3l7 4.6-7 4.6-7-4.6Z"></path>
+          <path d="m5 12 7 4.6 7-4.6"></path>
+          <path d="m5 16.4 7 4.6 7-4.6"></path>
+        </svg>
+      </a>
+      <a class="header-icon-button" href="#tutorial" aria-label="How to use the evaluator" title="How to use the evaluator">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M9.6 9a2.6 2.6 0 1 1 4.5 1.8c-.9.7-1.8 1.3-1.8 2.7"></path>
+          <path d="M12 17h.01"></path>
+        </svg>
+      </a>
+      <a class="header-icon-button" href="#about" aria-label="About" title="About">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M12 11v6"></path>
+          <path d="M12 7h.01"></path>
+        </svg>
+      </a>
+      <a class="header-icon-button" href="#contact" aria-label="Report a card interaction" title="Report a card interaction">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="3.5" y="5.5" width="17" height="13" rx="2"></rect>
+          <path d="m4.5 7 7.5 6 7.5-6"></path>
+        </svg>
+      </a>
+      <a class="header-icon-button" href="https://ko-fi.com/mulliman" target="_blank" rel="noopener noreferrer" aria-label="Support this tool on Ko-fi" title="Support this tool on Ko-fi">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 8h11v6.2A4.8 4.8 0 0 1 12.2 19h-1.4A4.8 4.8 0 0 1 6 14.2V8Z"></path>
+          <path d="M17 10h1.4a2.6 2.6 0 0 1 0 5.2H17"></path>
+          <path d="M11.5 10.5v6.2"></path>
+          <path d="M13.2 11.4c-.6-.7-2.9-.8-3.1.5-.2 1 .8 1.4 1.8 1.7 1.1.4 1.8.8 1.6 1.8-.3 1.3-2.8 1.3-3.5.4"></path>
+        </svg>
+      </a>
+    </div>
+  </header>
+  <!-- [END: HEADER] -->
+
+  <main id="utility-page-shell" class="utility-page-shell" hidden></main>
+
+  <!-- [KEY: LANDING] -->
+  <div id="landing-page" class="landing-page" hidden>
+    <div class="landing-inner">
+      <h2 class="landing-title">Inspect the <span class="landing-title-accent">layers</span> behind any Magic interaction.</h2>
+
+      <div class="landing-search-wrap">
+        <span class="landing-search-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M5 7.6 12 3l7 4.6-7 4.6-7-4.6Z"></path>
+            <path d="m5 12 7 4.6 7-4.6"></path>
+            <path d="m5 16.4 7 4.6 7-4.6"></path>
+          </svg>
+        </span>
+        <input type="text" id="landing-search-input" class="landing-search-input" placeholder="Search for cards by name or Scryfall syntax" autocomplete="off">
+        <div id="landing-search-results" class="landing-search-results"></div>
+      </div>
+
+      <div class="landing-pills">
+        <button id="landing-examine-btn" class="landing-pill landing-pill-primary" onclick="examineFinalState()">Examine</button>
+        <button id="landing-continue-btn" class="landing-pill" onclick="examineFinalState(true)" hidden>Continue saved board</button>
+        <a class="landing-pill" href="#tutorial">How to use</a>
+        <a class="landing-pill" href="https://scryfall.com/docs/syntax" target="_blank" rel="noopener noreferrer">Search syntax</a>
+        <label class="landing-pill landing-pill-toggle"><input type="checkbox" id="landing-token-toggle"> Search tokens</label>
+      </div>
+
+      <p class="landing-note">Search by card name, or use <a href="https://scryfall.com/docs/syntax" target="_blank" rel="noopener noreferrer">Scryfall's search syntax</a> — try <code>t:goblin</code> or <code>o:trample</code>. Add the cards in your interaction, drag to set timestamp order, then click Examine to see the state of the cards layer by layer.</p>
+
+      <div id="landing-stage" class="landing-stage" hidden>
+        <div class="landing-stage-header">
+          <span>Cards to examine</span>
+          <span class="landing-stage-hint">Drag to set timestamp order — earliest at the top</span>
+        </div>
+        <div id="landing-stage-list" class="landing-stage-list"></div>
+      </div>
+    </div>
+  </div>
+  <!-- [END: LANDING] -->
+
+  <!-- [KEY: APP-LAYOUT] -->
+  <div class="app-layout">
+
+    <!-- LEFT PANEL: Search + Timestamps -->
+    <div class="panel left-panel">
+      <!-- Card Search -->
+      <div class="search-section accordion-section">
+        <div class="panel-title accordion-header" onclick="toggleLeftSection(this)">
+          <span>Card Search</span>
+          <span class="accordion-chevron">&#x25BC;</span>
+        </div>
+        <div class="search-bar" style="margin-top:8px;">
+          <input type="text" id="card-search-input" placeholder="Search card name…" autocomplete="off">
+        </div>
+        <div class="search-toggle-row">
+          <label><input type="checkbox" id="search-token-toggle"> Search Tokens</label>
+        </div>
+        <div id="search-results"></div>
+      </div>
+
+      <!-- Timestamp Order -->
+      <div class="timestamp-section" id="timestamp-section">
+        <div class="panel-title ts-panel-header" onclick="toggleTimestampExpand()">
+          <span>Timestamp Order</span>
+          <span class="ts-expand-toggle" id="ts-expand-icon">&#x25BC;</span>
+        </div>
+        <div class="panel-body" id="timestamp-list"></div>
+      </div>
+
+      <!-- Resize handle for timestamp section -->
+      <div class="section-v-resize" data-resize-above=".timestamp-section"></div>
+
+      <!-- Command Zone -->
+      <div class="commander-section accordion-section collapsed" id="commander-section">
+        <div class="panel-title accordion-header" onclick="toggleLeftSection(this)">
+          <span>Command Zone</span>
+          <span class="accordion-chevron">&#x25BC;</span>
+        </div>
+        <div class="panel-body" id="commander-panel"></div>
+      </div>
+
+      <!-- Emblems -->
+      <div class="emblem-section accordion-section collapsed" id="emblem-section">
+        <div class="panel-title accordion-header" onclick="toggleLeftSection(this)">
+          <span>Emblems</span>
+          <span class="accordion-chevron">&#x25BC;</span>
+        </div>
+        <div class="panel-body" id="emblem-panel"></div>
+      </div>
+
+      <!-- Graveyard -->
+      <div class="graveyard-section accordion-section collapsed" id="graveyard-section">
+        <div class="panel-title accordion-header" onclick="toggleLeftSection(this)">
+          <span>Graveyard</span>
+          <span class="accordion-chevron">&#x25BC;</span>
+        </div>
+        <div class="panel-body" id="graveyard-panel"></div>
+      </div>
+
+      <!-- Exile -->
+      <div class="exile-section accordion-section collapsed" id="exile-section">
+        <div class="panel-title accordion-header" onclick="toggleLeftSection(this)">
+          <span>Exile</span>
+          <span class="accordion-chevron">&#x25BC;</span>
+        </div>
+        <div class="panel-body" id="exile-panel"></div>
+      </div>
+
+      <!-- Game State Tracking -->
+      <div class="game-state-section accordion-section collapsed">
+        <div class="panel-title accordion-header" onclick="toggleLeftSection(this)">
+          <span>Game State</span>
+          <span class="accordion-chevron">&#x25BC;</span>
+        </div>
+        <div class="panel-body" id="game-state-panel"></div>
+      </div>
+
+      <!-- Counters -->
+      <div id="counter-section" class="counter-section accordion-section collapsed" style="display:none;">
+        <div class="panel-title accordion-header" onclick="toggleLeftSection(this)">
+          <span>Counters</span>
+          <span class="accordion-chevron">&#x25BC;</span>
+        </div>
+        <div class="panel-body" id="counter-panel"></div>
+      </div>
+    </div>
+
+    <!-- Resize handle -->
+    <div class="panel-resize-handle" id="left-resize-handle"></div>
+
+    <!-- CENTER PANEL: Battlefield -->
+    <div class="panel center-panel">
+      <div class="battlefield-section">
+        <div class="panel-title bf-title-bar">
+          <span class="bf-title-main">
+            <span>Battlefield</span>
+            <button class="btn btn-clear btn-sm bf-title-clear" onclick="confirmAction('Clear all permanents from the battlefield?', () => { Battlefield.clear(); renderAll(); })">Clear All</button>
+          </span>
+          <span class="bf-title-actions">
+            <button id="hide-abilities-btn" class="bf-title-toggle" onclick="toggleHideAbilityPerms()">Hide abilities</button>
+            <button class="header-icon-button bf-title-icon-button" type="button" onclick="exportBoard()" aria-label="Export board to file" title="Export board to file">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 3v12"></path>
+                <path d="m7 10 5 5 5-5"></path>
+                <path d="M5 19h14"></path>
+              </svg>
+            </button>
+            <button class="header-icon-button bf-title-icon-button" type="button" onclick="importBoard()" aria-label="Import board from file" title="Import board from file">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 16V4"></path>
+                <path d="m7 9 5-5 5 5"></path>
+                <path d="M5 19h14"></path>
+              </svg>
+            </button>
+            <button class="header-icon-button bf-title-icon-button" type="button" onclick="shareBoard()" aria-label="Share board as link" title="Share board as link">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M9.5 12.5a3 3 0 0 0 4.5.4l3-3a3 3 0 0 0-4.2-4.2l-1.7 1.7"></path>
+                <path d="M14.5 11.5a3 3 0 0 0-4.5-.4l-3 3a3 3 0 0 0 4.2 4.2l1.7-1.7"></path>
+              </svg>
+            </button>
+          </span>
+        </div>
+        <div class="player-tabs" id="player-tabs"></div>
+        <div id="battlefield"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL: Layer Inspector -->
+    <div class="panel">
+      <div class="panel-title">Layer Inspector</div>
+      <div class="panel-body" id="inspector"></div>
+    </div>
+
+  </div>
+  <!-- [END: APP-LAYOUT] -->
+
+  <footer class="site-legal-notice">
+    <div class="site-legal-notice-inner">
+      MTG Layer Inspector is an independent fan project and is not produced by, endorsed by, supported by, or affiliated with Scryfall, Wizards of the Coast, Hasbro, or Magic: The Gathering. Magic: The Gathering is a trademark of Wizards of the Coast LLC. All card names, images, and related content are property of their respective owners. Use of third-party trademarks and content is for identification purposes only and does not imply sponsorship or endorsement.
+    </div>
+  </footer>
+
+  <!-- Scripts in dependency order -->
+  <script src="data.js?v=25"></script>
+
+  <!-- engine -->
+  <script src="engine-state.js?v=1"></script>
+  <script src="engine-helpers.js?v=11"></script>
+  <script src="engine-protection.js?v=2"></script>
+  <script src="engine-compute.js?v=7"></script>
+  <script src="engine-bestow-mutate.js?v=2"></script>
+  <script src="engine-apply.js?v=40"></script>
+  <script src="engine-deps.js?v=34"></script>
+  <script src="engine-layer.js?v=17"></script>
+
+  <!-- cards (data + parsing) -->
+  <script src="cards-helpers.js?v=3"></script>
+  <script src="cards-scryfall.js?v=3"></script>
+  <script src="cards-permanent.js?v=7"></script>
+  <script src="cards-text-utils.js?v=16"></script>
+  <script src="cards-parser.js?v=84"></script>
+  <script src="cards-parser-post.js?v=5"></script>
+  <script src="cards-battlefield.js?v=57"></script>
+
+  <!-- ui -->
+  <script src="ui-helpers.js?v=11"></script>
+  <script src="ui-dom-builders.js?v=1"></script>
+  <script src="ui-core.js?v=31"></script>
+  <script src="ui-pages.js?v=12"></script>
+  <script src="ui-battlefield.js?v=24"></script>
+  <script src="ui-timestamp.js?v=8"></script>
+  <script src="ui-zones.js?v=17"></script>
+  <script src="ui-abilities.js?v=11"></script>
+  <script src="ui-targeting.js?v=17"></script>
+  <script src="ui-effect-inputs.js?v=9"></script>
+  <script src="ui-state-panels.js?v=8"></script>
+  <script src="ui-inspector.js?v=35"></script>
+  <script src="ui-modals.js?v=14"></script>
+  <script src="ui-modal-copy.js?v=5"></script>
+  <script src="ui-modal-text-change.js?v=5"></script>
+  <script src="ui-modal-mutate.js?v=1"></script>
+  <script src="ui-modal-bestow.js?v=1"></script>
+  <script src="ui-modal-equip.js?v=2"></script>
+  <script src="ui-modal-snapshot.js?v=3"></script>
+  <script src="ui-modal-analyze.js?v=10"></script>
+
+  <!-- landing page + first-visit tour -->
+  <script src="ui-landing.js?v=2"></script>
+  <script src="ui-tour.js?v=1"></script>
+
+</body>
+</html>
