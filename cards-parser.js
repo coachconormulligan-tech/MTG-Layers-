@@ -1534,6 +1534,20 @@ function parseCardEffects(permanent, card, opts = {}) {
       const PERMANENT_CARD_TYPES = ['Creature', 'Land', 'Artifact', 'Enchantment', 'Planeswalker', 'Battle'];
       restriction = (p) => (p.types || []).some(t => PERMANENT_CARD_TYPES.includes(t));
     }
+    // "target creature with a counter on it" (Volrath, the Shapestealer) / "with a +1/+1
+    // counter on it" — restrict to permanents currently carrying a (or a specific) counter.
+    // Empty group1 means any counter type qualifies.
+    const counterOnItMatch = targetDesc.match(/\bwith\s+(?:(?:a|an)\s+)?([\w+/]*)\s*counters?\s+on\s+(?:it|them)\b/i);
+    if (counterOnItMatch) {
+      const requiredCounterType = counterOnItMatch[1] ? counterOnItMatch[1].trim() : null;
+      const baseRestriction = restriction;
+      restriction = (p) => {
+        if (baseRestriction && !baseRestriction(p)) return false;
+        const counters = p.counters || {};
+        if (requiredCounterType) return (counters[requiredCounterType] || 0) > 0;
+        return Object.values(counters).some(v => v > 0);
+      };
+    }
     // Parse "except" clause for copy modifications
     const copyParams = { copySource: null, restriction, maxManaValue: maxManaValueParam };
     if (copyTargetZone) { copyParams.copyTargetZone = copyTargetZone; copyParams.copyTargetZoneOwner = copyTargetZoneOwner; }
@@ -1631,6 +1645,16 @@ function parseCardEffects(permanent, card, opts = {}) {
           abilities.push(kmatch[0].toLowerCase().replace(/\b\w/g, c => c.toUpperCase()));
         }
         if (abilities.length) copyParams.addAbilities = abilities;
+      }
+      // "except it has this ability" (Volrath, the Shapestealer) — self-reference to the
+      // activated/triggered ability currently resolving. Not a named keyword, so KEYWORD_RE
+      // above never catches it; without this the copy would silently lose the very ability
+      // that turned it into a copy. _addAbilityPseudo's "it"->"target X" pronoun conversion
+      // (cards-battlefield.js) may have rewritten the subject, so accept any of them.
+      // permanent.abilityFullText carries the original "{cost}: ..." text (parsedEffectText/
+      // exceptClause only has the post-colon body, which can't reconstruct the cost).
+      if (/\b(?:it|target\s+\w+|this card|this permanent)\s+(?:has|gains?)\s+this ability\b/i.test(exceptClause) && permanent.abilityFullText) {
+        (copyParams.addAbilities ||= []).push(permanent.abilityFullText);
       }
       // "except ... it has '<quoted ability>'" — Sakashima the Impostor grants the copy a full
       // quoted activated ability ("{2}{U}{U}: Return this card to its owner's hand ..."). copyRegex

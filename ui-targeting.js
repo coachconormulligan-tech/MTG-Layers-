@@ -54,8 +54,8 @@ function renderCopyTargetSelect(sourceId) {
     ${targets.map(t => {
       const fs = lookupState(t.id);
       const tState = fs
-        ? { types: fs.types || [], supertypes: fs.supertypes || [], subtypes: fs.subtypes || [], colors: fs.colors || [], isAllCreatureTypes: fs.isAllCreatureTypes, isToken: t.isToken }
-        : { types: t.printedTypes || [], supertypes: t.printedSupertypes || [], subtypes: t.printedSubtypes || [], colors: t.printedColors || [], isAllCreatureTypes: false, isToken: t.isToken };
+        ? { types: fs.types || [], supertypes: fs.supertypes || [], subtypes: fs.subtypes || [], colors: fs.colors || [], isAllCreatureTypes: fs.isAllCreatureTypes, isToken: t.isToken, counters: fs.counters || {} }
+        : { types: t.printedTypes || [], supertypes: t.printedSupertypes || [], subtypes: t.printedSubtypes || [], colors: t.printedColors || [], isAllCreatureTypes: false, isToken: t.isToken, counters: t.counters || {} };
       const mvValid = spentToCast === null || (t.manaValue || 0) <= spentToCast;
       const valid = mvValid && (!restriction || restriction(tState));
       const tCopyName = (fs ? fs.name : t.name) + (fs?.copySource ? ' (copy)' : '');

@@ -539,7 +539,7 @@ const COUNTER_ICON_SET = new Set(["acorn","aegis","age","aim","arrow","arrowhead
 
 // Bump when the SVGs/ icon set is regenerated, to bust the browser image cache
 // (filenames stay the same, so the query string is what forces a reload).
-const ICON_VER = 14;
+const ICON_VER = 22;
 
 // Build a P/T counter medallion inline so any +N/+M or -N/-M value renders, matching
 // the SVGs/ minted-medallion style: PURE black & white only (no gray) — outer ring +

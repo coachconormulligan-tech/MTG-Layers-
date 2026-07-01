@@ -41,6 +41,29 @@ def poly_pts(cx, cy, R, n, rot=-90):
     return [(cx+R*math.cos(rad(rot+i*360.0/n)), cy+R*math.sin(rad(rot+i*360.0/n))) for i in range(n)]
 def circ_d(cx, cy, r):
     return f"M{cx-r:.1f} {cy:.1f} a{r:.1f} {r:.1f} 0 1 0 {2*r:.1f} 0 a{r:.1f} {r:.1f} 0 1 0 {-2*r:.1f} 0 Z"
+def hook_claw(attach, dir_deg, r=10, sweep=140, curl=1, w0=4.6, w1=0.7, n=14):
+    """A tapered, curved raptor talon: attached at `attach`, extending in direction
+    `dir_deg` (screen angle, 0=straight up, clockwise positive), then hooking through
+    `sweep` degrees around a pivot placed `r` ahead of the attach point — this is what
+    makes it curl back on itself like a real claw instead of a straight taper. `curl`
+    flips which way it hooks (+1/-1). Width tapers from w0 (at the attach) to w1 (tip)."""
+    ax, ay = attach
+    dirx, diry = math.sin(rad(dir_deg)), -math.cos(rad(dir_deg))
+    px, py = ax + r*dirx, ay + r*diry
+    a_start = dir_deg + 90
+    a_end = a_start + curl*sweep
+    outer, inner = [], []
+    for i in range(n+1):
+        t = i/n
+        a = a_start + (a_end-a_start)*t
+        w = w0 + (w1-w0)*t
+        outer.append(onc(px, py, r + w/2, a))
+        inner.append(onc(px, py, r - w/2, a))
+    d = f'M{outer[0][0]:.1f} {outer[0][1]:.1f} '
+    d += ' '.join(f'L{x:.1f} {y:.1f}' for x, y in outer[1:])
+    d += ' ' + ' '.join(f'L{x:.1f} {y:.1f}' for x, y in reversed(inner))
+    return d + ' Z'
+
 def wedge(cx, cy, r0, r1, a0, a1):
     a0r, a1r = rad(a0), rad(a1)
     x0o, y0o = cx+r1*math.cos(a0r), cy+r1*math.sin(a0r)
@@ -366,8 +389,31 @@ I["spore"] = (f'<circle cx="50" cy="52" r="15" {FL}/>'
               # black satellite spores drifting off
               + "".join(f'<circle cx="{onc(50,52,23,a)[0]:.1f}" cy="{onc(50,52,23,a)[1]:.1f}" r="3.2" {FL}/>' for a in range(22, 360, 45)))
 
-I["story"] = (scroll(2) + f'<polygon points="56,28 70,28 70,48 63,42 56,48" {FL}/>'
-              f'<polygon points="63,42 70,48 70,28" {SH}/>')
+def _page_petal(angle_deg, length, width, base=(50, 65)):
+    # a soft, round-tipped page fanning up from the spine at `angle_deg` off vertical —
+    # a uniform-width curved stroke (rounded caps) reads as a bent paper page, not a
+    # pointed leaf. A thin dark crease line rides on top to suggest the page's fold.
+    # Wide angles (near 90) go nearly flat, as if the outer pages have fallen open and
+    # are resting on the cover, rather than fanning up at the same angle as the rest.
+    a = math.radians(angle_deg)
+    dirx, diry = math.sin(a), -math.cos(a)
+    perpx, perpy = math.cos(a), math.sin(a)
+    tip = (base[0] + dirx*length, base[1] + diry*length)
+    bow = 4 * math.sin(a) * math.cos(a)  # peaks at mid-angles, ~0 for the flat outer pages
+    ctrl = (base[0] + dirx*length*0.5 + perpx*bow, base[1] + diry*length*0.5 + perpy*bow)
+    d = f'M{base[0]:.1f} {base[1]:.1f} Q{ctrl[0]:.1f} {ctrl[1]:.1f} {tip[0]:.1f} {tip[1]:.1f}'
+    return (f'<path d="{d}" fill="none" stroke="currentColor" stroke-width="{width}" stroke-linecap="round"/>'
+            f'<path d="{d}" {LWt}/>')
+
+I["story"] = (  # traced from the reference: a spray of pages fanning up like petals from
+                # a spine hinge, the outer two lying flat as if resting on the cover
+                "".join(_page_petal(ang, 30, 5.5) for ang in (-80, -47, -15, 15, 47, 80))
+                # back cover: a flat capsule, not a curved boat/oval
+                + f'<rect x="17" y="65" width="66" height="10" rx="5" {FL}/>'
+                # seam where the pages meet the cover
+                + f'<line x1="19" y1="65" x2="81" y2="65" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>'
+                # spine hinge — a small ring where the pages are bound to the cover
+                + f'<circle cx="50" cy="70" r="4.2" fill="none" stroke="#fff" stroke-width="2.2"/>')
 
 I["treasure"] = (  # a bulging drawstring TREASURE BAG with a sparkle
                  f'<path d="M30 50 C23 62 25 79 50 81 C75 79 77 62 70 50 C66 41 58 41 50 41 C42 41 34 41 30 50 Z" {FL}/>'
@@ -409,11 +455,17 @@ I["ember"] = (f'<path d="M36 60 a14 14 0 1 0 28 0 C60 49 55 49 50 42 C45 49 40 4
               f'<line x1="68" y1="42" x2="74" y2="34"/><line x1="32" y1="42" x2="26" y2="34"/></g>'
               f'<circle cx="50" cy="60" r="3" {GL}/>')
 
-I["fury"] = (f'<circle cx="50" cy="50" r="27" {FL}/><circle cx="50" cy="50" r="27" {SH2}/>'
-             f'<g {ST}><line x1="33" y1="39" x2="46" y2="45"/><line x1="67" y1="39" x2="54" y2="45"/></g>'
-             f'<circle cx="41" cy="52" r="3.4" {CUT}/><circle cx="59" cy="52" r="3.4" {CUT}/>'
-             f'<path d="M38 66 q12 -9 24 0 q-12 5 -24 0 Z" {CUT}/>'
-             f'<polygon points="40,66 44,71 48,66" {FL}/><polygon points="52,66 56,71 60,66" {FL}/>')
+I["fury"] = (f'<circle cx="50" cy="50" r="27" {FL}/>'
+             # deep furrowed brows meeting low over the nose — cut dark into the white head
+             f'<path d="M28 36 L45 47" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"/>'
+             f'<path d="M72 36 L55 47" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"/>'
+             f'<line x1="49" y1="45" x2="51" y2="53" stroke="#fff" stroke-width="2.8" stroke-linecap="round"/>'
+             # glaring narrowed eyes tucked under the brows
+             f'<ellipse cx="40" cy="55" rx="4.6" ry="2.1" transform="rotate(16 40 55)" {CUT}/>'
+             f'<ellipse cx="60" cy="55" rx="4.6" ry="2.1" transform="rotate(-16 60 55)" {CUT}/>'
+             # snarling open mouth baring fangs
+             f'<path d="M36 68 q14 -10 28 0 q-14 6 -28 0 Z" {CUT}/>'
+             f'<polygon points="39,68 43,74 47,68" {FL}/><polygon points="53,68 57,74 61,68" {FL}/>')
 
 I["burden"] = (f'<path d="M40 35 a10 10 0 0 1 20 0" {ST}/>'
                f'<path d="M33 37 H67 L73 75 H27 Z" {FL}/>'
@@ -510,10 +562,13 @@ I["eyestalk"] = (f'<path d="M50 82 C42 70 42 58 50 50" stroke="currentColor" str
                  f'<circle cx="50" cy="38" r="7" {CUT}/><circle cx="50" cy="38" r="4" {FL}/>'
                  f'<circle cx="52" cy="36" r="1.5" {GL}/>')
 
-I["fade"] = (star(46, 48, 23, 9, 5, -90, FL) + star(46, 48, 14, 5, 5, -90, SH2)
-             + f'<circle cx="70" cy="36" r="3" {FL}/><circle cx="74" cy="50" r="2.3" {SH}/>'
-             f'<circle cx="66" cy="60" r="2" {FL}/><circle cx="75" cy="64" r="1.6" {SH}/>'
-             f'<circle cx="71" cy="44" r="1.4" {SH}/>')
+I["fade"] = (  # a standing figure silhouette dissolving into trailing particles
+             f'<circle cx="40" cy="34" r="8" {FL}/>'
+             f'<path d="M27 78 V60 C27 47 32 40 40 40 C48 40 53 47 53 60 V78 Z" {FL}/>'
+             f'<circle cx="46" cy="32" r="2.2" {CUT}/><circle cx="51" cy="52" r="2.6" {CUT}/>'  # dissolving bites
+             f'<circle cx="60" cy="42" r="4.4" {FL}/><circle cx="67" cy="38" r="3.4" {FL}/>'
+             f'<circle cx="73" cy="35" r="2.5" {FL}/><circle cx="78" cy="33" r="1.7" {FL}/>'
+             f'<circle cx="82" cy="32" r="1.0" {FL}/>')
 
 I["fate"] = (f'<g {STt}><path d="M20 26 C44 40 56 46 68 50"/><path d="M20 74 C44 60 56 54 68 50"/></g>'
              f'<circle cx="72" cy="40" r="7" fill="none" stroke="currentColor" stroke-width="3.2"/>'
@@ -1050,8 +1105,7 @@ _angel_wing = (  # one big stylized angel wing right of center: 3 feather rows, 
                f'<path d="M54 48 C64 44 75 39 85 33"/>'
                f'<path d="M56 43 C66 38 77 33 87 27"/></g>')
 I["flying"] = (_angel_wing
-               + f'<g transform="translate(100,0) scale(-1,1)">{_angel_wing}</g>'
-               + f'<ellipse cx="50" cy="21" rx="8.5" ry="3.4" fill="none" stroke="currentColor" stroke-width="3"/>')  # halo
+               + f'<g transform="translate(100,0) scale(-1,1)">{_angel_wing}</g>')
 
 I["first-strike"] = _bsw + f'<path d="M62 30 q6 4 6 12" {STt}/>'                          # one blade + speed swoosh
 I["double-strike"] = (f'<g transform="translate(-10,0)">{_bsw}</g>'                        # two parallel blades
@@ -1064,15 +1118,24 @@ I["vigilance"] = (f'<path d="M31 75 V35 H69 V75 Z" {FL}/>'
                   f'<path d="M50 42 L58 50 L50 58 L42 50 Z" {CUT}/><circle cx="50" cy="50" r="3" {FL}/>'
                   f'<path d="M22 42 L34 48 M78 42 L66 48 M50 18 V27" {STh} opacity="0.65"/>')
 
-I["reach"] = (  # a HAND reaching/grasping upward — palm + three fingers + thumb
-              f'<path d="M36 80 V62 C34 52 40 48 46 52 C50 48 58 50 60 58 L62 80 Z" {FL}/>'
-              f'<g fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">'
-              f'<path d="M41 58 C40 46 40 36 43 27"/>'      # index
-              f'<path d="M50 56 C49 42 49 32 51 23"/>'      # middle (tallest)
-              f'<path d="M58 58 C58 46 59 38 60 30"/>'      # ring
-              f'<path d="M37 62 C30 58 26 54 25 47"/>'      # thumb
-              f'</g>'
-              f'<g {LWt}><path d="M40 43 h6 M48 39 h6 M57 45 h5"/></g>')   # knuckle creases
+I["reach"] = (  # a literal bird's foot/talon reaching straight up to the sky — leg, 3 fanned toes w/ joints, back toe, hooked claws
+              f'<path d="M43 82 C41 74 42 68 45 62 L55 62 C58 68 59 74 57 82 Z" {FL}/>'                # leg / shank
+              f'<path d="M44 70 C44 73 56 73 56 70" {LWt}/><path d="M45 78 C45 81 55 81 55 78" {LWt}/>'  # scale bands on the leg
+              # back toe (hallux) — short, tucked close behind the ankle
+              f'<path d="M45 65 C41 67 38 70 37 74 L40 76 C43 72 46 69 48 66 Z" {FL}/>'
+              f'<path d="{hook_claw((38.5,75), 229, r=4, sweep=100, curl=1, w0=3.4, w1=0.7)}" {FL}/>'      # hallux claw (hooked)
+              # left forward toe
+              f'<path d="M46 61 C41 53 37 44 34 34 L37 33 C41 42 45 51 49 60 Z" {FL}/>'
+              f'<path d="M44.5 51 C43.5 53.5 40 53.5 39 51" {LWt}/><path d="M40.5 42 C39.5 44.5 36.5 44.5 35.5 42" {LWt}/>'
+              f'<path d="{hook_claw((35.5,33.5), -32, r=10, sweep=140, curl=1, w0=4, w1=0.7)}" {FL}/>'    # left claw (hooked)
+              # center forward toe (tallest, straight up)
+              f'<path d="M47 61 C46 51 46 40 48 29 L52 29 C54 40 54 51 53 61 Z" {FL}/>'
+              f'<path d="M46.5 51 C46.5 53.5 53.5 53.5 53.5 51" {LWt}/><path d="M47 41 C47 43.5 53 43.5 53 41" {LWt}/>'
+              f'<path d="{hook_claw((50,29), 0, r=10, sweep=140, curl=1, w0=4.6, w1=0.7)}" {FL}/>'        # center claw (hooked)
+              # right forward toe (mirror of left)
+              f'<path d="M54 61 C59 53 63 44 66 34 L63 33 C59 42 55 51 51 60 Z" {FL}/>'
+              f'<path d="M55.5 51 C56.5 53.5 60 53.5 61 51" {LWt}/><path d="M59.5 42 C60.5 44.5 63.5 44.5 64.5 42" {LWt}/>'
+              f'<path d="{hook_claw((64.5,33.5), 32, r=10, sweep=140, curl=-1, w0=4, w1=0.7)}" {FL}/>')   # right claw (hooked)
 
 I["menace"] = (  # a snarling horned demon face — far more intimidating
                f'<path d="M24 32 L33 39 C38 28 62 28 67 39 L76 32 '
@@ -1396,7 +1459,11 @@ I["foreshadow"] = (  # a crystal ball on a stand (seeing what's to come) — dis
                    f'<path d="M38 38 q-4 8 0 16" {LWt}/>'
                    + star(57, 40, 4.5, 1.8, 4, -90, CUT)
                    + f'<path d="M34 64 H66 L60 73 H40 Z" {FL}/>')
-I["fuse"] = (f'<path d="M28 70 C42 42 58 58 72 28" {STm}/>' + star(73, 27, 10, 3, 8, -90, FL))
+I["fuse"] = (f'<circle cx="44" cy="60" r="18" {FL}/>'                                   # round bomb body
+             f'<path d="M33 53 a12 12 0 0 1 9 -10" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>'  # shine
+             f'<rect x="39" y="41" width="10" height="8" rx="2" {FL}/>'                  # fuse socket/cap
+             f'<path d="M44 41 C50 30 40 26 54 20" {STm}/>'                              # lit fuse cord
+             + star(55, 17, 9, 3.2, 5, -90, FL))                                        # spark at the tip
 I["hack"] = (  # a terminal screen showing < > code + cursor — distinct from the `matrix` grid
              f'<rect x="26" y="30" width="48" height="36" rx="3" {FL}/>'
              f'<rect x="30" y="34" width="40" height="28" rx="1.5" {CUT}/>'
