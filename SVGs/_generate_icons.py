@@ -227,7 +227,10 @@ I["arrowhead"] = (f'<polygon points="50,22 72,76 50,62 28,76" {FL}/>'
                   f'<polygon points="50,22 50,62 28,76" {SH}/>'
                   f'<polyline points="50,22 50,62" {STh} opacity="0.4"/>')
 
-I["blood"] = droplet(50, 53, 42, 60)
+I["blood"] = (  # a blood drop with a splash crown of satellite droplets
+              f'<path d="M50 22 C50 22 33 47 33 60 a17 17 0 0 0 34 0 C67 47 50 22 50 22 Z" {FL}/>'
+              f'<path d="M42 52 q-4 6 0 14" {LWt}/>'
+              f'<circle cx="30" cy="74" r="2.6" {FL}/><circle cx="70" cy="72" r="2.2" {FL}/><circle cx="50" cy="82" r="2.4" {FL}/>')
 
 I["book"] = (  # an open book: two black pages meeting at a spine
              f'<path d="M50 32 C40 28 30 28 22 30 L22 66 C30 64 40 66 50 70 '
@@ -239,7 +242,13 @@ I["book"] = (  # an open book: two black pages meeting at a spine
              f'<line x1="56" y1="39" x2="72" y2="40"/><line x1="56" y1="46" x2="72" y2="47"/><line x1="60" y1="53" x2="72" y2="54"/>'
              f'</g>')
 
-I["coin"] = coin(50, 50, 23, 'coin')
+I["coin"] = (  # a minted coin: milled edge + inner ring + laurel wreath + central star
+             f'<circle cx="50" cy="50" r="26" {FL}/>'
+             + "".join(f'<line x1="{onc(50,50,23,a)[0]:.1f}" y1="{onc(50,50,23,a)[1]:.1f}" '
+                       f'x2="{onc(50,50,26,a)[0]:.1f}" y2="{onc(50,50,26,a)[1]:.1f}" {LWt}/>' for a in range(0, 360, 18))
+             + f'<circle cx="50" cy="50" r="19" fill="none" stroke="#fff" stroke-width="1.6"/>'
+             f'<path d="M39 64 C31 57 31 45 39 39 M61 64 C69 57 69 45 61 39" {LWt}/>'   # laurel
+             + f'<text x="50" y="58" font-family="Georgia,serif" font-size="22" font-weight="bold" text-anchor="middle" {GL}>$</text>')
 
 I["crystal"] = (f'<polygon points="50,20 64,40 56,82 44,82 36,40" {FL}/>'
                 # white facet edges so the gem reads as cut, not a flat shard
@@ -265,9 +274,25 @@ I["flood"] = ('<g ' + ST + '>'
               f'<path d="M24 62 q8 -9 16.5 0 t16.5 0 t16.5 0"/></g>'
               + f'<circle cx="40" cy="33" r="2" {FL}/><circle cx="64" cy="30" r="1.6" {FL}/>')
 
-I["gem"] = gem_facets() + star(64, 30, 4.5, 1.8, 4, -90, GL)
+# a deep-cut RUBY: rounded cushion-cut stone with a broad octagonal table,
+# radiating crown facets, and a bright sparkle (distinct from the pointed `gem`/`crystal`)
+I["gem"] = (f'<path d="M50 22 C66 22 78 33 78 49 C78 65 66 78 50 78 C34 78 22 65 22 49 C22 33 34 22 50 22 Z" {FL}/>'
+            f'<g {LWt}>'
+            f'<polygon points="42,38 58,38 66,49 58,60 42,60 34,49"/>'      # table
+            f'<path d="M42 38 L34 30 M58 38 L66 30 M34 49 L24 49 M66 49 L76 49 '
+            f'M42 60 L36 70 M58 60 L64 70 M50 60 V72"/>'                     # crown facets
+            f'</g>'
+            + star(63, 32, 4.5, 1.7, 4, -90, GL))
 
-I["gold"] = coin(50, 50, 23, 'star') + f'<circle cx="40" cy="40" r="3" {GL}/>'
+# stacked GOLD BARS (ingots) in a small pyramid + a shine particle
+I["gold"] = (f'<polygon points="22,72 46,72 44,62 24,62" {FL}/>'          # bottom-left bar
+             f'<polygon points="54,72 78,72 76,62 56,62" {FL}/>'          # bottom-right bar
+             f'<polygon points="38,58 62,58 60,48 40,48" {FL}/>'          # top bar front
+             f'<polygon points="40,48 60,48 64,44 44,44" {FL}/>'          # top bar 3D face
+             f'<g {LWt}><path d="M24 62 H44 M56 62 H76 M40 48 H60"/>'     # top edges
+             f'<path d="M40 48 L44 44 H64"/></g>'                          # top-bar bevel
+             + star(52, 53, 4.6, 1.6, 4, -90, GL)                          # shine particle
+             + f'<circle cx="33" cy="66" r="1.5" {GL}/>')
 
 I["hourglass"] = (f'<g {STm}><line x1="32" y1="24" x2="68" y2="24"/><line x1="32" y1="76" x2="68" y2="76"/>'
                   f'<path d="M37 24 C37 40 50 46 50 50 C50 54 37 60 37 76"/>'
@@ -276,7 +301,7 @@ I["hourglass"] = (f'<g {STm}><line x1="32" y1="24" x2="68" y2="24"/><line x1="32
                   f'<path d="M50 57 L44 70 H56 Z" {SH}/>'
                   f'<line x1="50" y1="50" x2="50" y2="62" {STh} opacity="0.6"/>')
 
-I["ice"] = snowflake()
+I["ice"] = snowflake()   # user prefers the snowflake read
 
 I["javelin"] = (f'<g transform="rotate(0 50 50)"><line x1="26" y1="74" x2="60" y2="40" {ST}/>'
                 f'<polygon points="56,30 74,26 64,44" {FL}/>'
@@ -298,11 +323,11 @@ I["ore"] = (f'<polygon points="32,42 48,28 70,36 75,58 58,76 33,72 24,52" {FL}/>
             f'<polygon points="58,44 61,40 64,44 61,48" {GL}/>'
             f'<polygon points="53,63 56,59 59,63 56,67" {GL}/>')
 
-I["page"] = (f'<path d="M34 22 H58 L68 32 V78 H34 Z" {FL}/>'
-             # white dog-eared fold + ruled lines → reads as a sheet of paper
-             f'<polyline points="58,22 58,32 68,32" {LWt}/>'
-             f'<g {LWt}><line x1="40" y1="44" x2="62" y2="44"/><line x1="40" y1="52" x2="62" y2="52"/>'
-             f'<line x1="40" y1="60" x2="62" y2="60"/><line x1="40" y1="68" x2="54" y2="68"/></g>')
+I["page"] = (  # a plain sheet of paper — NO folded corner — with ruled lines
+             f'<rect x="33" y="22" width="34" height="56" rx="2.5" {FL}/>'
+             f'<g {LWt}><line x1="40" y1="34" x2="60" y2="34"/><line x1="40" y1="42" x2="60" y2="42"/>'
+             f'<line x1="40" y1="50" x2="60" y2="50"/><line x1="40" y1="58" x2="60" y2="58"/>'
+             f'<line x1="40" y1="66" x2="54" y2="66"/></g>')
 
 I["petal"] = (f'<path d="M52 19 C72 33 70 59 47 82 C34 65 29 43 52 19 Z" {FL}/>'
               # white midrib + side veins → reads as a leaf/petal
@@ -319,7 +344,11 @@ I["quest"] = (f'<line x1="33" y1="20" x2="33" y2="82" {ST}/>'
               f'<path d="M33 24 H50 L50 48 H33 Z" {SH2}/>'
               + star(46, 36, 5, 2, 5, -90, GL))
 
-I["shield"] = shield_line(star(50, 50, 7, 3, 4, -90, FL))
+I["shield"] = (  # a heraldic crest shield: per-pale divide, fess line, chevron, rivets
+             f'<path d="M50 22 L74 30 V50 C74 68 62 78 50 80 C38 78 26 68 26 50 V30 Z" {FL}/>'
+             f'<g {LWt}><path d="M50 22 V80"/><path d="M26 44 H74"/></g>'
+             f'<path d="M37 31 L50 41 L63 31" {LW}/>'                                    # chevron
+             f'<g fill="#fff"><circle cx="33" cy="33" r="1.6"/><circle cx="67" cy="33" r="1.6"/></g>')
 
 I["shell"] = (f'<path d="M50 73 C26 73 21 43 50 30 C79 43 74 73 50 73 Z" {FL}/>'
               # white radiating ribs → reads as a scallop shell
@@ -340,23 +369,25 @@ I["spore"] = (f'<circle cx="50" cy="52" r="15" {FL}/>'
 I["story"] = (scroll(2) + f'<polygon points="56,28 70,28 70,48 63,42 56,48" {FL}/>'
               f'<polygon points="63,42 70,48 70,28" {SH}/>')
 
-I["treasure"] = (  # coins spilling above a chest — black bodies, white detail
-                 f'<circle cx="40" cy="40" r="5" {FL}/><circle cx="40" cy="40" r="3.2" fill="none" stroke="#fff" stroke-width="1.2"/>'
-                 f'<circle cx="51" cy="36" r="5.5" {FL}/><circle cx="51" cy="36" r="3.6" fill="none" stroke="#fff" stroke-width="1.2"/>'
-                 f'<circle cx="61" cy="40" r="5" {FL}/><circle cx="61" cy="40" r="3.2" fill="none" stroke="#fff" stroke-width="1.2"/>'
-                 f'<path d="M27 47 Q50 33 73 47 V51 H27 Z" {FL}/>'
-                 f'<path d="M28 51 H72 V70 Q72 74 68 74 H32 Q28 74 28 70 Z" {FL}/>'
-                 f'<path d="M27 51 H73" {LW}/>'
-                 f'<g {LWt}><path d="M38 51 V74"/><path d="M62 51 V74"/></g>'
-                 f'<rect x="46" y="56" width="8" height="11" rx="1.5" {CUT}/>'
-                 f'<rect x="49" y="60" width="2" height="4" rx="1" {FL}/>')
+I["treasure"] = (  # a bulging drawstring TREASURE BAG with a sparkle
+                 f'<path d="M30 50 C23 62 25 79 50 81 C75 79 77 62 70 50 C66 41 58 41 50 41 C42 41 34 41 30 50 Z" {FL}/>'
+                 f'<path d="M41 43 C40 37 43 33 50 33 C57 33 60 37 59 43 Z" {FL}/>'      # gathered neck
+                 f'<path d="M37 45 q13 -7 26 0" {LW}/>'                                   # drawstring band
+                 f'<path d="M41 43 q-4 3 -8 2 M59 43 q4 3 8 2" {LWt}/>'                   # string ends
+                 f'<g {LWt}><path d="M45 40 V34 M50 39 V33 M55 40 V34"/></g>'            # cinch pleats
+                 + star(50, 62, 7, 2.6, 4, -90, GL)                                       # treasure shine
+                 + f'<circle cx="42" cy="69" r="2" {GL}/><circle cx="60" cy="67" r="1.6" {GL}/>')
 
 I["wish"] = (star(50, 49, 27, 11, 5, -90, FL) + star(50, 49, 16, 6, 5, -90, SH2)
              + f'<circle cx="70" cy="30" r="2.6" {FL}/><circle cx="31" cy="34" r="2" {FL}/>'
              f'<circle cx="72" cy="52" r="1.6" {FL}/>')
 
 # ---------------- REDESIGNS (enriched) -----------------------------------
-I["crank"] = cog()
+I["crank"] = (  # a hand-crank handle on an axle, with a turning arc
+              f'<path d="M42 58 L42 40 L62 40" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>'
+              f'<circle cx="42" cy="58" r="6" {FL}/><circle cx="42" cy="58" r="2.4" {CUT}/>'
+              f'<circle cx="64" cy="40" r="6" {FL}/><circle cx="64" cy="40" r="2.4" {CUT}/>'
+              f'<path d="M30 42 a18 18 0 0 1 9 -15" {STt}/><polygon points="26,40 30,44 33,38" {FL}/>')
 
 I["eruption"] = (f'<polygon points="22,78 39,43 61,43 78,78" {FL}/>'
                  f'<polygon points="22,78 39,43 50,62" {SH}/>'
@@ -410,7 +441,11 @@ I["cage"] = (f'<path d="M30 30 H70 L66 70 H34 Z" {SH2}/>'
              f'<path d="M40 30 q10 -10 20 0" {STm}/><circle cx="50" cy="21" r="3.6" {FL}/>'
              f'<ellipse cx="50" cy="58" rx="4" ry="5" {FL}/>')
 
-I["charge"] = bolt()
+I["charge"] = (  # a battery charging, lightning bolt in the window
+              f'<rect x="30" y="30" width="40" height="44" rx="4" {FL}/>'
+              f'<rect x="42" y="23" width="16" height="8" rx="2" {FL}/>'
+              f'<rect x="35" y="35" width="30" height="34" rx="2" {CUT}/>'
+              f'<polygon points="53,38 42,55 50,55 47,66 60,47 52,47" {FL}/>')
 
 I["corruption"] = (f'<path d="M30 44 q4 -12 20 -12 q16 0 20 12 q8 2 6 12 q8 8 0 16 q-6 6 -14 2 '
                    f'q-4 6 -12 4 q-8 4 -14 -4 q-10 -2 -8 -14 q-6 -8 2 -16 Z" {FL}/>'
@@ -438,10 +473,10 @@ I["discovery"] = (f'<circle cx="44" cy="44" r="18" {SH2}/>'
                   f'<path d="M38 39 a8 8 0 0 1 6 -4" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" opacity="0.8"/>'
                   f'<line x1="57" y1="57" x2="76" y2="76" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>')
 
-I["dream"] = (f'<path d="M64 60 A22 22 0 1 1 50 26 A17 17 0 1 0 64 60 Z" {FL}/>'
-              f'<path d="M64 60 A22 22 0 0 1 36 30 A17 17 0 0 0 64 60 Z" {SH2}/>'
-              + star(70, 32, 6, 2.6, 4, -90, FL) + star(57, 22, 4, 1.6, 4, -90, FL)
-              + f'<circle cx="74" cy="50" r="2.2" {FL}/>')
+I["dream"] = (  # a daydream thought-cloud with a star and trailing bubbles (moon now belongs to `night`)
+              f'<path d="M32 58 C24 58 22 48 28 44 C26 34 40 30 46 36 C52 28 66 32 66 42 C74 42 76 54 68 57 C60 62 40 62 32 58 Z" {FL}/>'
+              + star(47, 47, 7, 2.8, 5, -90, CUT)
+              + f'<circle cx="61" cy="66" r="3.5" {FL}/><circle cx="67" cy="73" r="2.2" {FL}/>')
 
 I["echo"] = (f'<circle cx="36" cy="50" r="5" {FL}/>'
              f'<g fill="none" stroke="currentColor" stroke-linecap="round">'
@@ -499,13 +534,19 @@ I["fellowship"] = (f'<path d="M22 49 C30 39 38 36 44 42 L51 49 L45 56 L37 49 C33
                    f'<path d="M42 54 L49 61 M50 49 L58 57 M31 57 L39 67 M69 57 L61 67" {STh} opacity="0.65"/>'
                    f'<circle cx="50" cy="50" r="3.2" {GL}/>')
 
-I["fetch"] = (f'<path d="M40 80 V52 a4 4 0 0 1 8 0 V40 a4 4 0 0 1 8 0 V42 a4 4 0 0 1 8 0 V46 a4 4 0 0 1 8 0 V58 '
-              f'C72 73 64 82 54 82 Z" {FL}/>'
-              f'<path d="M40 80 V52 a4 4 0 0 1 8 0 V82 Z" {SH2}/>'
-              f'<line x1="40" y1="56" x2="29" y2="43" {ST}/>'
-              f'<g {STh} opacity="0.5"><path d="M48 52 V64 M56 56 V64 M64 58 V64"/></g>')
+I["fetch"] = (  # a FRISBEE (flying disc) tilted in flight, with motion streaks
+              f'<g transform="rotate(-16 55 47)">'
+              f'<ellipse cx="55" cy="47" rx="27" ry="11" {FL}/>'
+              f'<line x1="29" y1="47" x2="81" y2="47" {LW}/>'                # rim/dome seam
+              f'<ellipse cx="55" cy="44" rx="16" ry="5.4" fill="none" stroke="#fff" stroke-width="1.8"/>'
+              f'<ellipse cx="55" cy="44" rx="7" ry="2.4" fill="none" stroke="#fff" stroke-width="1.8"/>'
+              f'</g>'
+              f'<g {STm}><path d="M14 62 H30"/><path d="M12 70 H28"/><path d="M20 77 H34"/></g>'
+              f'<circle cx="20" cy="55" r="1.8" {FL}/>')
 
-I["filibuster"] = scroll(3)
+I["filibuster"] = (  # a long unfurling speech scroll with a curled bottom + lots of text
+                   f'<path d="M32 26 H62 a4 4 0 0 1 4 4 V72 a6 6 0 0 1 -12 0 V68 H30 a4 4 0 0 1 -4 -4 V30 a4 4 0 0 0 8 0 Z" {FL}/>'
+                   f'<g {LWt}>' + "".join(f'<line x1="34" y1="{y}" x2="58" y2="{y}"/>' for y in (34, 40, 46, 52, 58, 64)) + '</g>')
 
 I["finality"] = (f'<path d="M30 80 V44 a20 20 0 0 1 40 0 V80 Z" {FL}/>'
                  f'<path d="M30 80 V44 a20 20 0 0 1 20 -20 V80 Z" {SH2}/>'
@@ -558,7 +599,13 @@ I["hunger"] = (f'<path d="M25 36 Q50 28 75 36 Q70 72 50 80 Q30 72 25 36 Z" {FL}/
                f'<polygon points="59,40 63,51 67,40" {CUT}/>'
                f'<polygon points="40,64 44,55 48,64" {CUT}/><polygon points="52,64 56,55 60,64" {CUT}/>')
 
-I["immunity"] = shield_line(star(50, 50, 11, 4.5, 4, -90, FL) + f'<circle cx="44" cy="40" r="2" {GL}/>')
+I["immunity"] = (  # a protective ward bubble with a health plus + radiant sparks
+                 f'<circle cx="50" cy="50" r="24" {FL}/>'
+                 f'<circle cx="50" cy="50" r="24" fill="none" stroke="#fff" stroke-width="2"/>'
+                 f'<path d="M40 38 q-8 6 -8 18" {LWt}/>'
+                 f'<path d="M50 40 V60 M40 50 H60" {LW}/>'
+                 + "".join(f'<line x1="{onc(50,50,27,a)[0]:.1f}" y1="{onc(50,50,27,a)[1]:.1f}" '
+                           f'x2="{onc(50,50,32,a)[0]:.1f}" y2="{onc(50,50,32,a)[1]:.1f}" {STt}/>' for a in range(0, 360, 45)))
 
 I["incarnation"] = (f'<path d="M50 22 C40 22 33 30 33 42 C33 50 37 54 37 62 C29 66 27 80 27 80 '
                     f'C40 75 46 77 50 82 C54 77 60 75 73 80 C73 80 71 66 63 62 C63 54 67 50 67 42 '
@@ -586,17 +633,17 @@ I["influence"] = (f'<line x1="24" y1="26" x2="76" y2="26" {ST}/>'
                   f'<circle cx="50" cy="48" r="7" {FL}/><circle cx="50" cy="48" r="7" {SH2}/>'
                   f'<path d="M40 50 L36 72 M60 50 L64 72 M50 56 L50 76" {STt} opacity="0.8"/>')
 
-I["invitation"] = (f'<rect x="25" y="33" width="50" height="34" rx="3" {FL}/>'
-                   f'<rect x="25" y="33" width="50" height="34" rx="3" {SH2}/>'
-                   f'<rect x="25" y="33" width="50" height="34" rx="3" {STt}/>'
-                   f'<polyline points="25,35 50,55 75,35" {STt}/>'
-                   f'<polyline points="25,65 42,50 M75,65 58,50" {STh} opacity="0.5"/>'
-                   + star(50, 50, 5, 2, 5, -90, GL))
+I["invitation"] = (  # a CLOSED, wax-sealed envelope (flap folded down to a center seal)
+                   f'<rect x="23" y="31" width="54" height="38" rx="3.5" {FL}/>'
+                   f'<path d="M23 34 L50 54 L77 34" {LW}/>'          # folded flap edges meeting at center
+                   f'<circle cx="50" cy="55" r="6" {GL}/>'           # wax seal
+                   f'<path d="M47 53 l3 3 l3 -3 M47 57 h6" {STt}/>')  # monogram on the seal
 
-I["isolation"] = (f'<circle cx="50" cy="50" r="29" fill="none" stroke="currentColor" stroke-width="3.5"/>'
-                  f'<circle cx="50" cy="50" r="29" {SH2}/>'
-                  f'<circle cx="50" cy="42" r="7.5" {FL}/>'
-                  f'<path d="M37 68 Q50 50 63 68 Z" {FL}/>')
+I["isolation"] = (  # a lone figure hunched in the corner of a box/room
+                  f'<rect x="24" y="24" width="52" height="52" rx="2.5" fill="none" stroke="currentColor" stroke-width="3.5"/>'
+                  f'<circle cx="40" cy="55" r="6.5" {FL}/>'                              # bowed head
+                  f'<path d="M30 73 C30 63 34 59 41 60 C49 61 53 67 53 73 Z" {FL}/>'      # curled body/knees
+                  f'<path d="M33 66 q8 -3 15 2" {LWt}/>')                                 # arms hugging knees
 
 I["judgment"] = (f'<line x1="50" y1="24" x2="50" y2="72" {STm}/><line x1="28" y1="33" x2="72" y2="33" {STm}/>'
                  f'<circle cx="50" cy="24" r="4" {FL}/>'
@@ -621,9 +668,10 @@ I["level"] = (f'<polygon points="26,74 26,62 42,62 42,50 58,50 58,38 74,38 74,26
               # white tread/riser edges → reads as ascending steps
               f'<polyline points="26,62 42,62 42,50 58,50 58,38 74,38 74,26" {LW}/>')
 
-I["luck"] = ("".join(f'<path d="{heart_d(50,40.5,23)}" transform="rotate({a} 50 48)" {FL}/>' for a in (0, 90, 180, 270))
-             + "".join(f'<path d="{heart_d(50,40.5,16)}" transform="rotate({a} 50 48)" {SH2}/>' for a in (0, 90, 180, 270))
-             + f'<path d="M50 48 Q53 67 59 80" {STt}/>')
+I["luck"] = (  # a FOUR-LEAF CLOVER: four heart leaves meeting at center, veined, with a stem
+             "".join(f'<path d="{heart_d(50,42.5,22)}" transform="rotate({a} 50 50)" {FL}/>' for a in (0, 90, 180, 270))
+             + "".join(f'<path d="M50 50 V29" transform="rotate({a} 50 50)" {LWt}/>' for a in (0, 90, 180, 270))
+             + f'<path d="M50 50 C53 64 56 73 62 81" {STm}/>')
 
 I["lure"] = (f'<line x1="48" y1="22" x2="48" y2="58" {STm}/>'
              f'<path d="M48 58 a12 12 0 1 0 24 0 V52" {STm}/>'
@@ -789,7 +837,14 @@ I["shred"] = (f'<path d="M32 22 H68 V72 L62 66 L56 74 L50 66 L44 74 L38 66 L32 7
               f'<g fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"><line x1="40" y1="34" x2="60" y2="34"/>'
               f'<line x1="40" y1="44" x2="60" y2="44"/><line x1="40" y1="54" x2="56" y2="54"/></g>')
 
-I["silver"] = coin(50, 50, 23, 'shine')
+I["silver"] = (  # a stack of two silver pieces (coins) seen at an angle, with shine
+               f'<ellipse cx="50" cy="59" rx="22" ry="9" {FL}/>'
+               f'<rect x="28" y="49" width="44" height="10" {FL}/>'
+               f'<ellipse cx="50" cy="49" rx="22" ry="9" {FL}/>'
+               f'<ellipse cx="50" cy="49" rx="22" ry="9" fill="none" stroke="#fff" stroke-width="1.6"/>'
+               f'<ellipse cx="50" cy="49" rx="12" ry="4.6" fill="none" stroke="#fff" stroke-width="1.4"/>'
+               + star(50, 49, 4.5, 1.8, 4, -90, GL)
+               + f'<circle cx="35" cy="47" r="1.8" {GL}/>')
 
 I["sleep"] = (f'<circle cx="50" cy="50" r="27" {SH2}/>'
               f'<circle cx="50" cy="50" r="27" fill="none" stroke="currentColor" stroke-width="3"/>'
@@ -860,12 +915,14 @@ I["takeover"] = (f'<line x1="34" y1="18" x2="34" y2="78" {ST}/>'
                  f'<path d="M20 78 Q34 72 50 76 Q66 80 80 76" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" fill="none"/>'
                  f'<ellipse cx="50" cy="80" rx="30" ry="3" {SH2}/>')
 
-I["task"] = (f'<rect x="30" y="26" width="40" height="50" rx="3" {FL}/>'
-             f'<rect x="30" y="26" width="40" height="50" rx="3" {SH2}/>'
-             f'<rect x="30" y="26" width="40" height="50" rx="3" {STt}/>'
-             f'<rect x="42" y="21" width="16" height="9" rx="2" {FL}/>'
-             f'<polyline points="38,50 45,58 60,40" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>'
-             f'<g {STh} opacity="0.5"><line x1="38" y1="64" x2="62" y2="64"/></g>')
+I["task"] = (  # a clipboard with a BULLETED checklist
+             f'<rect x="28" y="26" width="44" height="52" rx="4" {FL}/>'
+             f'<rect x="42" y="20" width="16" height="10" rx="2.5" {FL}/>'       # clip
+             f'<rect x="45" y="22" width="10" height="4.5" rx="2" {CUT}/>'        # clip hole
+             f'<g fill="#fff"><circle cx="38" cy="40" r="2.4"/><circle cx="38" cy="52" r="2.4"/>'
+             f'<circle cx="38" cy="64" r="2.4"/></g>'                             # bullets
+             f'<g {LW}><line x1="45" y1="40" x2="62" y2="40"/><line x1="45" y1="52" x2="62" y2="52"/>'
+             f'<line x1="45" y1="64" x2="58" y2="64"/></g>')                      # list items
 
 I["theft"] = (f'<circle cx="58" cy="32" r="9" fill="none" stroke="currentColor" stroke-width="4"/>'
               f'<text x="58" y="37" font-family="Georgia,serif" font-size="11" font-weight="bold" text-anchor="middle" {FL}>$</text>'
@@ -873,11 +930,13 @@ I["theft"] = (f'<circle cx="58" cy="32" r="9" fill="none" stroke="currentColor" 
               f'C56 76 48 82 38 82 Z" {FL}/>'
               f'<path d="M24 80 V58 a4 4 0 0 1 8 0 V82 Z" {SH2}/>')
 
-I["tide"] = (f'<path d="M22 64 C30 50 38 50 46 58 C54 66 64 64 70 52 C74 44 72 36 66 34 '
-             f'C72 32 78 38 78 48 C78 64 64 74 50 74 C38 74 28 70 22 64 Z" {FL}/>'
-             f'<path d="M70 52 C74 44 72 36 66 34 C72 32 78 38 78 48 C78 56 74 62 68 66 Z" {SH2}/>'
-             f'<path d="M26 70 q10 4 22 2 M40 76 q10 2 20 -1" stroke="currentColor" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.6"/>'
-             f'<circle cx="58" cy="44" r="3" {GL}/>')
+I["tide"] = (  # waves rolling onto a SHORE: water + foamy waterline + wet-sand ripples + sun
+             f'<circle cx="64" cy="31" r="6" {FL}/>'                                 # low sun
+             f'<g {STm}><path d="M22 40 q7 -6 14 0 t14 0 t14 0"/>'
+             f'<path d="M24 49 q7 -6 14 0 t14 0 t12 0"/></g>'                        # open water
+             f'<path d="M20 61 C32 55 40 65 52 61 C62 58 70 65 80 61" {LWg}/>'       # foamy shoreline
+             f'<g {STt}><path d="M26 71 C36 68 44 74 54 71 C62 69 70 73 76 71"/>'
+             f'<path d="M30 79 C40 76 48 81 58 78"/></g>')                           # wet-sand ripples
 
 I["time"] = (f'<circle cx="50" cy="50" r="27" {SH2}/>'
              f'<circle cx="50" cy="50" r="27" fill="none" stroke="currentColor" stroke-width="5"/>'
@@ -901,7 +960,15 @@ I["training"] = (f'<g stroke="currentColor" stroke-linecap="round">'
                  f'<line x1="80" y1="43" x2="80" y2="57" stroke-width="7"/></g>'
                  f'<circle cx="50" cy="50" r="3" {GL}/>')
 
-I["training-swords"] = sword(32) + sword(-32)
+# a detailed upright blade centered at x=50 (shared by the "strike" family only)
+_bsw = (f'<polygon points="50,22 54,31 52,58 48,58 46,31" {FL}/>'
+        f'<path d="M50 27 V56" {LWt}/>'
+        f'<rect x="40" y="58" width="20" height="4.5" rx="2" {FL}/>'
+        f'<rect x="46.5" y="62.5" width="7" height="12" rx="2" {FL}/>'
+        f'<path d="M47.5 66 h5 M47.5 70 h5" {LWt}/>'
+        f'<circle cx="50" cy="77" r="3" {FL}/>')
+I["training-swords"] = (f'<g transform="rotate(28 50 52)">{_bsw}</g>'   # crossed practice blades
+                        f'<g transform="rotate(-28 50 52)">{_bsw}</g>')
 
 def _trap_teeth(r_out, r_in):
     s = ""
@@ -937,10 +1004,16 @@ I["void"] = (f'<circle cx="50" cy="50" r="32" fill="none" stroke="currentColor" 
              f'<circle cx="50" cy="50" r="9" {SH2}/>'
              f'<path d="M30 38 A40 40 0 0 1 72 28 M70 72 A40 40 0 0 1 28 64" fill="none" stroke="currentColor" stroke-width="1.6" opacity="0.35"/>')
 
-I["vortex"] = (f'<path d="M50 50 c0 -8 12 -8 12 2 c0 14 -20 16 -24 0 c-4 -22 26 -26 36 -4 '
-               f'c8 22 -22 38 -44 24" fill="none" stroke="currentColor" stroke-width="5.5" stroke-linecap="round"/>'
-               f'<path d="M50 50 c0 -8 12 -8 12 2 c0 14 -20 16 -24 0" fill="none" stroke="currentColor" stroke-width="2" opacity="0.4" stroke-linecap="round"/>'
-               f'<circle cx="50" cy="50" r="3" {FL}/>')
+I["vortex"] = (  # a churning maelstrom: three spiral arms + inner swirls + eye + flung debris
+               f'<g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="5">'
+               + "".join(f'<path transform="rotate({a} 50 50)" d="M50 22 C66 24 76 38 72 52 C69 62 60 66 52 62"/>' for a in (0, 120, 240))
+               + '</g>'
+               f'<g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="3">'
+               + "".join(f'<path transform="rotate({a} 50 50)" d="M50 38 C58 39 62 46 58 52"/>' for a in (60, 180, 300))
+               + '</g>'
+               f'<circle cx="50" cy="50" r="4.5" {FL}/>'
+               f'<circle cx="50" cy="17" r="2.4" {FL}/><circle cx="81" cy="56" r="2" {FL}/>'
+               f'<circle cx="23" cy="58" r="1.8" {FL}/>')
 
 I["vow"] = (f'<circle cx="50" cy="57" r="18" fill="none" stroke="currentColor" stroke-width="6.5"/>'
             f'<circle cx="50" cy="57" r="14.5" {LWt}/>'  # white inner rim of the band
@@ -969,13 +1042,20 @@ I["wind"] = (f'<g {ST}><path d="M24 38 H58 a7 7 0 1 0 -7 -7"/>'
              f'<g {STh} opacity="0.4"><path d="M24 45 H50"/><path d="M24 59 H56"/></g>')
 
 # ---------------- KEYWORD COUNTERS ---------------------------------------
-I["flying"] = (f'<path d="M20 56 C36 40 56 36 80 38 C72 44 72 44 78 48 C68 50 68 50 72 56 '
-               f'C60 56 60 56 62 62 C46 60 30 60 20 56 Z" {FL}/>'
-               f'<path d="M20 56 C36 40 56 36 80 38 C60 46 40 52 20 56 Z" {SH2}/>'
-               f'<path d="M34 50 H62 M30 54 H58" {STh} opacity="0.4"/>')
+_angel_wing = (  # one big stylized angel wing right of center: 3 feather rows, scalloped tips
+               f'<path d="M50 33 C61 26 74 24 87 25 '
+               f'C79 31 81 33 71 36 C78 40 68 43 60 44 '
+               f'C69 48 58 50 52 51 C60 55 53 58 50 58 Z" {FL}/>'
+               f'<g {LWt}><path d="M52 53 C62 49 73 46 82 41"/>'
+               f'<path d="M54 48 C64 44 75 39 85 33"/>'
+               f'<path d="M56 43 C66 38 77 33 87 27"/></g>')
+I["flying"] = (_angel_wing
+               + f'<g transform="translate(100,0) scale(-1,1)">{_angel_wing}</g>'
+               + f'<ellipse cx="50" cy="21" rx="8.5" ry="3.4" fill="none" stroke="currentColor" stroke-width="3"/>')  # halo
 
-I["first-strike"] = sword()
-I["double-strike"] = sword(30) + sword(-30)
+I["first-strike"] = _bsw + f'<path d="M62 30 q6 4 6 12" {STt}/>'                          # one blade + speed swoosh
+I["double-strike"] = (f'<g transform="translate(-10,0)">{_bsw}</g>'                        # two parallel blades
+                      f'<g transform="translate(10,0)">{_bsw}</g>')
 
 I["vigilance"] = (f'<path d="M31 75 V35 H69 V75 Z" {FL}/>'
                   f'<path d="M31 75 V35 H50 V75 Z" {SH2}/>'
@@ -984,28 +1064,51 @@ I["vigilance"] = (f'<path d="M31 75 V35 H69 V75 Z" {FL}/>'
                   f'<path d="M50 42 L58 50 L50 58 L42 50 Z" {CUT}/><circle cx="50" cy="50" r="3" {FL}/>'
                   f'<path d="M22 42 L34 48 M78 42 L66 48 M50 18 V27" {STh} opacity="0.65"/>')
 
-I["reach"] = (f'<path d="M38 80 V52 a4 4 0 0 1 8 0 V34 a4 4 0 0 1 8 0 V52 a4 4 0 0 1 8 0 V44 '
-              f'a4 4 0 0 1 8 0 a4 4 0 0 1 8 0 V62 C70 75 62 82 52 82 Z" {FL}/>'
-              f'<path d="M38 80 V52 a4 4 0 0 1 8 0 V82 Z" {SH2}/>')
+I["reach"] = (  # a HAND reaching/grasping upward — palm + three fingers + thumb
+              f'<path d="M36 80 V62 C34 52 40 48 46 52 C50 48 58 50 60 58 L62 80 Z" {FL}/>'
+              f'<g fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">'
+              f'<path d="M41 58 C40 46 40 36 43 27"/>'      # index
+              f'<path d="M50 56 C49 42 49 32 51 23"/>'      # middle (tallest)
+              f'<path d="M58 58 C58 46 59 38 60 30"/>'      # ring
+              f'<path d="M37 62 C30 58 26 54 25 47"/>'      # thumb
+              f'</g>'
+              f'<g {LWt}><path d="M40 43 h6 M48 39 h6 M57 45 h5"/></g>')   # knuckle creases
 
-I["menace"] = (f'<path d="M28 36 C28 30 36 30 38 36 C44 30 56 30 62 36 C64 30 72 30 72 36 '
-               f'C72 52 62 68 50 74 C38 68 28 52 28 36 Z" {FL}/>'
-               f'<path d="M28 36 C28 30 36 30 38 36 C44 30 50 30 50 36 V74 C38 68 28 52 28 36 Z" {SH2}/>'
-               f'<polygon points="40,46 46,46 43,54" {CUT}/><polygon points="54,46 60,46 57,54" {CUT}/>'
-               f'<path d="M44 62 q6 5 12 0" stroke="#fff" stroke-width="2.6" stroke-linecap="round" fill="none" opacity="0.85"/>')
+I["menace"] = (  # a snarling horned demon face — far more intimidating
+               f'<path d="M24 32 L33 39 C38 28 62 28 67 39 L76 32 '
+               f'C73 45 75 51 70 60 C64 72 56 78 50 80 C44 78 36 72 30 60 C25 51 27 45 24 32 Z" {FL}/>'
+               f'<polygon points="36,48 48,52 36,57" {CUT}/>'                          # angry left eye
+               f'<polygon points="64,48 52,52 64,57" {CUT}/>'                          # angry right eye
+               f'<circle cx="41" cy="52.5" r="1.8" {FL}/><circle cx="59" cy="52.5" r="1.8" {FL}/>'  # pupils
+               f'<path d="M34 45 L48 49 M66 45 L52 49" {LW}/>'                         # furrowed brow
+               f'<path d="M38 64 L44 64 L46 70 L50 64 L54 70 L56 64 L62 64 '
+               f'L58 73 L50 77 L42 73 Z" {CUT}/>')                                     # bared fangs
 
-I["lifelink"] = heart(50, 52, 48)
+I["lifelink"] = (  # a heart crossed by an EKG heartbeat pulse — life linked
+                 f'<path d="{heart_d(50,55,44)}" {FL}/>'
+                 f'<path d="M28 53 H40 L44 44 L50 62 L55 49 L58 53 H72" '
+                 f'fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>')
 I["death"] = (f'<path d="M32 78 V47 a18 18 0 0 1 36 0 V78 Z" {FL}/>'
               f'<path d="M32 78 V47 a18 18 0 0 1 18 -18 V78 Z" {SH2}/>'
               f'<path d="M42 50 H58 M50 40 V65" stroke="#fff" stroke-width="3.2" stroke-linecap="round" opacity="0.8"/>'
               f'<line x1="26" y1="80" x2="74" y2="80" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>'
               f'<path d="M29 30 C37 18 55 17 67 26" {STt}/>')
-I["deathtouch"] = (f'<path d="M38 23 C45 43 44 62 34 78 C54 67 64 48 62 25 C56 34 48 34 38 23 Z" {FL}/>'
-                   f'<path d="M38 23 C45 43 44 62 34 78 C44 64 49 44 46 29 Z" {SH2}/>'
-                   f'<path d="M62 25 C60 48 66 63 76 77 C60 69 53 50 54 33 C58 33 60 31 62 25 Z" {FL}/>'
-                   f'<path d="M48 70 q2 8 -2 13 M61 68 q3 8 -1 14" {STt} opacity="0.85"/>'
-                   f'<circle cx="48" cy="84" r="2.6" {FL}/><circle cx="61" cy="83" r="2.4" {FL}/>')
-I["indestructible"] = shield_solid()
+I["deathtouch"] = (  # a clawed beast paw with venom dripping off the talons
+                   f'<path d="M28 32 C34 22 66 22 72 32 C66 38 58 36 50 36 C42 36 34 38 28 32 Z" {FL}/>'   # knuckle pad
+                   f'<path d="M31 30 C28 45 31 56 37 66 C42 56 44 44 43 29 C39 34 35 34 31 30 Z" {FL}/>'   # talon L
+                   f'<path d="M44 28 C42 46 46 60 50 71 C54 60 58 46 56 28 C52 33 48 33 44 28 Z" {FL}/>'   # talon C
+                   f'<path d="M57 29 C56 44 58 56 63 66 C69 56 72 45 69 30 C65 34 61 34 57 29 Z" {FL}/>'   # talon R
+                   f'<g {LWt}><path d="M36 34 C34 46 36 55 39 62"/><path d="M50 33 C49 47 50 58 51 67"/>'
+                   f'<path d="M64 34 C66 46 64 55 61 62"/><path d="M34 31 C42 35 58 35 66 31"/></g>'        # edge highlights
+                   f'<path d="M37 66 q-1 7 1 10 M50 71 q0 5 0 9 M63 66 q1 6 -1 9" {STt}/>'                  # venom strands
+                   f'<path d="M38 77 C38 77 35 81 35 83 a3 3 0 0 0 6 0 C41 81 38 77 38 77 Z" {FL}/>'        # drip
+                   f'<path d="M50 80 C50 80 47.5 83.5 47.5 85 a2.6 2.6 0 0 0 5.2 0 C52.7 83.5 50 80 50 80 Z" {FL}/>'
+                   f'<path d="M62 76 C62 76 59.5 79.5 59.5 81 a2.6 2.6 0 0 0 5.2 0 C64.7 79.5 62 76 62 76 Z" {FL}/>'
+                   f'<circle cx="37" cy="81" r="0.9" {GL}/><circle cx="49" cy="83.5" r="0.8" {GL}/>')
+I["indestructible"] = (  # a heavy iron anvil — unbreakable
+                       f'<path d="M26 40 H58 C58 46 64 48 72 46 C68 52 60 54 58 52 V56 H64 V62 H36 V56 H42 V44 H26 Z" {FL}/>'
+                       f'<path d="M40 62 H60 L64 72 H36 Z" {FL}/>'
+                       f'<path d="M29 42 H54" {LWt}/>')
 
 def hexproof(pip=None, letter=None):
     # black-and-white only: a black mana pip with a white W/U/B/R/G letter keeps the
@@ -1032,12 +1135,22 @@ I["trample"] = (f'<path d="M34 26 C30 26 28 32 30 40 L34 60 C36 72 44 80 50 80 C
                 f'<path d="M34 26 C30 26 28 32 30 40 L34 60 C36 72 44 80 50 80 V30 C48 36 44 36 42 30 C40 34 36 32 34 26 Z" {SH2}/>'
                 f'<path d="M50 44 V72 M40 48 L40 64 M60 48 L60 64" stroke="#fff" stroke-width="2.6" stroke-linecap="round" opacity="0.8"/>')
 
-I["haste"] = (f'<path d="M36 25 H55 L59 49 L72 56 C78 59 77 70 68 72 H34 C27 72 24 67 29 61 L40 48 Z" {FL}/>'
-              f'<path d="M36 25 H48 L45 50 L31 68 C28 65 29 61 33 57 L40 48 Z" {SH2}/>'
-              f'<path d="M54 49 L70 57 H51 Z" {SH}/>'
-              f'<path d="M23 39 H37 M17 51 H34 M23 63 H29" {STm}/>'
-              f'<circle cx="76" cy="39" r="2.2" {FL}/><circle cx="82" cy="51" r="1.8" {SH}/>')
-I["flash"] = star(50, 50, 31, 7, 4, -90, FL) + star(50, 50, 16, 4, 4, -90, SH) + f'<circle cx="50" cy="50" r="3.4" {GL}/>'
+I["haste"] = (  # a detailed winged speed-boot: laced shaft, sole, heel + a small wing & streaks
+              f'<path d="M36 24 H52 C54 24 55 25 55 28 V47 H70 C76 47 81 52 81 60 V63 '
+              f'C81 66 79 68 75 68 H35 C32 68 30 66 30 63 V28 C30 25 32 24 36 24 Z" {FL}/>'
+              f'<path d="M30 63 H81" {LW}/>'                                   # sole
+              f'<path d="M30 30 H55" {LWt}/>'                                  # cuff fold
+              f'<g {LWt}><path d="M37 34 L52 38 M37 40 L52 44 M37 46 L52 50"/></g>'   # laces
+              f'<g fill="#fff"><circle cx="38" cy="34" r="1.3"/><circle cx="38" cy="40" r="1.3"/>'
+              f'<circle cx="38" cy="46" r="1.3"/></g>'                          # eyelets
+              f'<path d="M70 63 H81 L78 68 H72 Z" {CUT}/>'                      # toe sole highlight
+              f'<path d="M32 48 C22 47 15 51 12 60 C19 57 19 57 24 60 C25 54 28 50 33 52 Z" {FL}/>'  # heel wing
+              f'<g {LWt}><path d="M30 52 C24 52 19 54 16 58"/><path d="M30 56 C26 56 22 57 19 60"/></g>'
+              f'<g {STm}><path d="M14 35 H28"/><path d="M16 43 H26"/></g>')     # motion streaks
+I["flash"] = (  # a radiant burst of light — eight tapering rays from a bright core
+              "".join(f'<polygon points="50,50 {onc(50,50,30,a-4)[0]:.1f},{onc(50,50,30,a-4)[1]:.1f} '
+                      f'{onc(50,50,30,a+4)[0]:.1f},{onc(50,50,30,a+4)[1]:.1f}" {FL}/>' for a in range(0, 360, 45))
+              + f'<circle cx="50" cy="50" r="7" {FL}/><circle cx="50" cy="50" r="3.6" {GL}/>')
 I["ward"] = (f'<path d="{shield_d()}" {ST}/><path d="{shield_d(50,30,30,42)}" {STh} opacity="0.4"/>'
              + star(50, 49, 13, 4.5, 4, -90, FL) + f'<circle cx="50" cy="49" r="3" {GL}/>')
 
@@ -1095,80 +1208,265 @@ def ticket_shape():
             f'<path d="M50 40 V62" {STh} opacity="0.7"/>'
             + star(63, 51, 6, 2.4, 5, -90, CUT))
 
-I["aegis"] = shield_solid() + star(50, 51, 8, 3, 4, -90, CUT)
-I["age"] = I["hourglass"]
-I["aim"] = I["point"]
+I["aegis"] = (  # a tower shield bearing a radiant sun emblem
+              f'<path d="M30 24 H70 V52 C70 69 60 78 50 81 C40 78 30 69 30 52 Z" {FL}/>'
+              f'<path d="M30 32 H70" {LWt}/>'
+              f'<circle cx="50" cy="49" r="7" {CUT}/>'
+              + "".join(f'<line x1="{onc(50,49,9,a)[0]:.1f}" y1="{onc(50,49,9,a)[1]:.1f}" '
+                        f'x2="{onc(50,49,13,a)[0]:.1f}" y2="{onc(50,49,13,a)[1]:.1f}" {LWt}/>' for a in range(0, 360, 45)))
+I["age"] = (  # a candle burned low with wax drips — cumulative wear/upkeep mounting each turn
+            f'<path d="M50 20 C55 27 58 30 58 36 a8 8 0 0 1 -16 0 C42 31 46 30 48 25 C49 31 52 31 50 27 Z" {FL}/>'
+            f'<line x1="50" y1="38" x2="50" y2="45" {STt}/>'
+            f'<path d="M38 46 C42 44 46 45 50 45 C54 45 58 44 62 46 V73 C62 76 60 77 56 77 H44 C40 77 38 76 38 73 Z" {FL}/>'
+            f'<ellipse cx="50" cy="79" rx="20" ry="4.5" {FL}/>'
+            f'<path d="M38 58 q-3 7 -1 14 a3 3 0 0 0 4 0 q1 -8 -3 -14 Z" {FL}/>'   # wax drip
+            f'<path d="M41 48 q9 4 18 0" {LWt}/>'
+            f'<g {LWt}><path d="M45 53 V73"/><path d="M55 53 V73"/></g>')
+I["aim"] = (  # a drawn bow firing an arrow into a bullseye target (aiming)
+            f'<path d="M24 24 C40 34 40 56 24 66" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"/>'
+            f'<path d="M24 24 L17 45 L24 66" {STt}/>'
+            f'<line x1="17" y1="45" x2="49" y2="45" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>'
+            f'<polygon points="17,45 24,42 24,48" {FL}/>'
+            f'<polygon points="55,45 47,41 49,45 47,49" {FL}/>'
+            f'<circle cx="66" cy="45" r="14" fill="none" stroke="currentColor" stroke-width="3.5"/>'
+            f'<circle cx="66" cy="45" r="6.5" fill="none" stroke="currentColor" stroke-width="2.5"/>'
+            f'<circle cx="66" cy="45" r="2.4" {FL}/>'
+            f'<g stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="66" y1="27" x2="66" y2="33"/>'
+            f'<line x1="66" y1="57" x2="66" y2="63"/><line x1="82" y1="45" x2="86" y2="45"/></g>')
 I["awakening"] = sun(50, 48, 12)
-I["bait"] = I["lure"]
-I["blessing"] = heart(50, 58, 32) + sun(50, 32, 7)
+I["bait"] = (  # a fishhook with a wriggling worm threaded on it (the `lure` hook + bait)
+             f'<line x1="48" y1="22" x2="48" y2="56" {STm}/>'
+             f'<path d="M48 56 a12 12 0 1 0 24 0 V50" {STm}/>'
+             f'<circle cx="48" cy="22" r="5" fill="none" stroke="currentColor" stroke-width="3.4"/>'
+             f'<polygon points="72,40 67,50 77,50" {FL}/>'
+             f'<path d="M36 70 q7 -9 14 -4 q8 5 16 -3" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>'
+             f'<g {LWt}><path d="M44 66 v3 M52 66 v3 M60 65 v3"/></g>'
+             f'<circle cx="67" cy="62" r="1.6" {CUT}/>')
+I["blessing"] = (  # a winged heart with a sparkle above — a blessing
+                 f'<path d="{heart_d(50,57,32)}" {FL}/>'
+                 f'<path d="M33 49 C23 45 17 49 17 57 C23 54 25 55 29 57 C29 52 31 50 35 52 Z" {FL}/>'
+                 f'<path d="M67 49 C77 45 83 49 83 57 C77 54 75 55 71 57 C71 52 69 50 65 52 Z" {FL}/>'
+                 f'<g {LWt}><path d="M30 53 C26 52 22 53 19 56"/><path d="M70 53 C74 52 78 53 81 56"/></g>'
+                 + star(50, 31, 5, 2, 4, -90, FL))
 I["blight"] = (f'<path d="M52 20 C70 36 67 62 48 80 C35 63 31 42 52 20 Z" {FL}/>'
                f'<path d="M34 36 L65 67 M62 36 L37 62" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" opacity="0.75"/>')
-I["bloodline"] = (droplet(50, 35, 18, 26)
-                  +
-                  f'<path d="M50 47 V61 M50 61 L35 74 M50 61 L65 74" {STt}/>'
-                  f'<circle cx="35" cy="74" r="5" {FL}/><circle cx="65" cy="74" r="5" {FL}/>')
-I["bloodstain"] = (droplet(50, 54, 34, 46)
-                   +
-                   f'<circle cx="32" cy="42" r="4" {FL}/><circle cx="68" cy="45" r="5" {FL}/><circle cx="61" cy="77" r="3" {FL}/>')
-I["bounty"] = coin(50, 50, 22, 'star') + f'<circle cx="50" cy="50" r="31" fill="none" stroke="currentColor" stroke-width="3"/>'
-I["bribery"] = I["theft"] + f'<circle cx="68" cy="70" r="7" {FL}/><circle cx="68" cy="70" r="4" {CUT}/>'
-I["carrion"] = skull(50, 45, 0.62, teeth=False, detail=False) + f'<path d="M30 73 Q50 62 70 73" {STm}/>'
-I["cell"] = (f'<polygon points="{P(poly_pts(50,50,29,6,-90))}" {FL}/>'
-             # white inner membrane + nucleus → reads as a cell, not a flat hexagon
-             f'<polygon points="{P(poly_pts(50,50,18,6,-90))}" {LWt}/>'
-             f'<circle cx="50" cy="50" r="5" {CUT}/>')
-I["collection"] = I["stash"] + star(64, 42, 5, 2, 4, -90, GL)
-I["component"] = cog(6) + f'<rect x="44" y="44" width="12" height="12" rx="2" {CUT}/>'
+I["bloodline"] = (  # a blood drop branching down into descendant drops (a lineage)
+                  f'<path d="M50 18 C50 18 42 30 42 36 a8 8 0 0 0 16 0 C58 30 50 18 50 18 Z" {FL}/>'
+                  f'<path d="M50 44 V52 M50 52 C50 52 36 56 36 63 M50 52 C50 52 64 56 64 63" {STm}/>'
+                  f'<path d="M36 59 C36 59 31 67 31 70 a5 5 0 0 0 10 0 C41 67 36 59 36 59 Z" {FL}/>'
+                  f'<path d="M64 59 C64 59 59 67 59 70 a5 5 0 0 0 10 0 C69 67 64 59 64 59 Z" {FL}/>')
+I["bloodstain"] = (  # an irregular splatter stain with flung droplets
+                   f'<path d="M38 32 C50 26 58 34 60 40 C70 38 75 48 68 54 C75 61 70 71 60 70 '
+                   f'C58 78 46 79 42 70 C32 73 25 62 32 56 C23 50 28 38 38 32 Z" {FL}/>'
+                   f'<ellipse cx="46" cy="44" rx="3.5" ry="5.5" fill="none" stroke="#fff" stroke-width="1.6"/>'
+                   f'<circle cx="74" cy="31" r="3" {FL}/><circle cx="27" cy="74" r="2.4" {FL}/>'
+                   f'<circle cx="79" cy="62" r="2" {FL}/><circle cx="34" cy="25" r="1.8" {FL}/>')
+I["bounty"] = (  # a "WANTED" reward poster with a star and a tack
+               f'<path d="M28 26 L72 24 L74 76 L26 74 Z" {FL}/>'
+               f'<g {LWt}><line x1="34" y1="34" x2="66" y2="33"/>'
+               f'<line x1="36" y1="64" x2="64" y2="64"/><line x1="40" y1="70" x2="60" y2="70"/></g>'
+               + star(50, 49, 11, 4.5, 5, -90, GL)
+               + f'<circle cx="50" cy="22" r="2.6" {FL}/>')
+I["bribery"] = (  # a cupped palm receiving coins from above (a payoff) — distinct from `theft`
+                f'<path d="M26 56 C30 54 34 56 40 60 H58 C64 60 64 68 58 68 H40 C32 68 26 64 26 56 Z" {FL}/>'
+                f'<g {LWt}><path d="M44 62 V68 M50 62 V68 M56 62 V68"/></g>'
+                f'<circle cx="44" cy="40" r="6" {FL}/><circle cx="44" cy="40" r="3.6" {CUT}/>'
+                f'<circle cx="58" cy="46" r="5" {FL}/><circle cx="58" cy="46" r="3" {CUT}/>'
+                f'<text x="44" y="43.5" font-family="Georgia,serif" font-size="8" font-weight="bold" text-anchor="middle" {FL}>$</text>')
+I["carrion"] = (  # a picked-clean ribcage carcass with a couple of flies
+                f'<path d="M50 22 V76" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>'
+                + "".join(f'<circle cx="50" cy="{y}" r="2.6" {FL}/>' for y in (28, 40, 52, 64))
+                + f'<g fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round">'
+                + "".join(f'<path d="M50 {y} q-18 2 -16 18"/><path d="M50 {y} q18 2 16 18"/>' for y in (32, 44, 56))
+                + '</g>'
+                f'<circle cx="26" cy="30" r="2" {FL}/><circle cx="75" cy="34" r="1.8" {FL}/>')
+I["cell"] = (  # a JAIL cell: vertical bars behind top & bottom rails
+             f'<g {FL}>' + "".join(f'<rect x="{x}" y="24" width="5" height="52" rx="2"/>' for x in (28, 40, 52, 64)) + '</g>'
+             f'<rect x="24" y="30" width="52" height="5" rx="2.5" {FL}/>'
+             f'<rect x="24" y="65" width="52" height="5" rx="2.5" {FL}/>')
+I["collection"] = (  # a 2x2 display case of varied collected items — distinct from the `stash` chest
+                   f'<rect x="28" y="28" width="44" height="44" rx="3" {FL}/>'
+                   f'<g fill="#fff"><rect x="33" y="33" width="14" height="14" rx="1.5"/><rect x="53" y="33" width="14" height="14" rx="1.5"/>'
+                   f'<rect x="33" y="53" width="14" height="14" rx="1.5"/><rect x="53" y="53" width="14" height="14" rx="1.5"/></g>'
+                   + star(40, 40, 5, 2, 5, -90, FL)
+                   + f'<circle cx="60" cy="40" r="5" {FL}/>'
+                   + f'<polygon points="40,55 45,64 35,64" {FL}/>'
+                   + f'<path d="{heart_d(60,61,11)}" {FL}/>')
+I["component"] = (  # a microchip / IC with pins and a die
+                  f'<rect x="34" y="34" width="32" height="32" rx="2" {FL}/>'
+                  f'<rect x="40" y="40" width="20" height="20" rx="1.5" {CUT}/>'
+                  f'<circle cx="50" cy="50" r="3.5" {FL}/>'
+                  f'<g fill="#fff">'
+                  + "".join(f'<rect x="{x}" y="28" width="3" height="6"/><rect x="{x}" y="66" width="3" height="6"/>' for x in (38, 48.5, 59))
+                  + "".join(f'<rect x="28" y="{y}" width="6" height="3"/><rect x="66" y="{y}" width="6" height="3"/>' for y in (38, 48.5, 59))
+                  + '</g>')
 I["contested"] = (f'<path d="M36 22 V78 M64 22 V78" {STm}/><path d="M36 26 H63 L55 36 L63 46 H36 Z" {FL}/>'
                   f'<path d="M64 54 H37 L45 64 L37 74 H64 Z" {FL}/>')
-I["credit"] = coin(50, 50, 23, 'coin') + f'<path d="M64 33 h9 M68.5 28.5 v9" {STh} opacity="0.75"/>'
+I["credit"] = (  # a chip credit card with EMV chip + embossed number rows
+               f'<rect x="22" y="34" width="56" height="34" rx="4" {FL}/>'
+               f'<rect x="28" y="43" width="12" height="9" rx="1.5" {CUT}/>'              # chip
+               f'<path d="M31 43 V52 M37 43 V52 M28 47.5 H40" {STt}/>'                    # chip contacts
+               f'<g fill="#fff"><rect x="28" y="58" width="20" height="3" rx="1.5"/>'
+               f'<rect x="52" y="58" width="14" height="3" rx="1.5"/></g>'                # number groups
+               f'<line x1="48" y1="47" x2="70" y2="47" {LWt}/>')                          # embossed line
 I["croak"] = (f'<path d="M28 55 C28 35 72 35 72 55 C72 70 62 78 50 78 C38 78 28 70 28 55 Z" {FL}/>'
               f'<circle cx="39" cy="39" r="8" {FL}/><circle cx="61" cy="39" r="8" {FL}/>'
               f'<circle cx="39" cy="39" r="3" {CUT}/><circle cx="61" cy="39" r="3" {CUT}/><path d="M39 60 q11 8 22 0" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/>')
-I["currency"] = coin(50, 50, 23, 'coin')
-I["defense"] = shield_solid()
-I["delay"] = I["hourglass"] + f'<rect x="62" y="24" width="10" height="22" rx="2" {FL}/>'
+I["currency"] = (  # a paper banknote with a portrait window + corner marks
+                 f'<rect x="22" y="34" width="56" height="32" rx="2.5" {FL}/>'
+                 f'<rect x="26" y="38" width="48" height="24" rx="1.5" fill="none" stroke="#fff" stroke-width="1.6"/>'
+                 f'<ellipse cx="50" cy="50" rx="8.5" ry="10.5" {CUT}/>'
+                 f'<circle cx="50" cy="47" r="3" {FL}/><path d="M44 58 q6 -6 12 0" {STt}/>'
+                 f'<g fill="#fff"><circle cx="31" cy="43" r="2"/><circle cx="69" cy="57" r="2"/></g>')
+I["defense"] = (  # a round buckler shield with a central boss + ring of rivets
+                f'<circle cx="50" cy="50" r="27" {FL}/>'
+                f'<circle cx="50" cy="50" r="27" fill="none" stroke="#fff" stroke-width="1.8"/>'
+                f'<circle cx="50" cy="50" r="18" fill="none" stroke="#fff" stroke-width="1.6"/>'
+                f'<circle cx="50" cy="50" r="6" {CUT}/>'
+                + "".join(f'<circle cx="{onc(50,50,22.5,a)[0]:.1f}" cy="{onc(50,50,22.5,a)[1]:.1f}" r="1.8" fill="#fff"/>' for a in range(0, 360, 45)))
+I["delay"] = (  # a snail (slowness / postponement) — distinct from any clock/hourglass
+              f'<circle cx="56" cy="50" r="16" {FL}/>'
+              f'<path d="M56 50 a6 6 0 1 0 6 -6" fill="none" stroke="#fff" stroke-width="2.4"/>'
+              f'<path d="M40 66 C28 66 24 58 30 54 L42 52 C46 60 44 66 40 66 Z" {FL}/>'
+              f'<circle cx="27" cy="58" r="5.5" {FL}/>'
+              f'<path d="M24 54 V45 M31 54 V46" {STt}/>'
+              f'<circle cx="24" cy="44" r="1.7" {FL}/><circle cx="31" cy="45" r="1.7" {FL}/>')
 I["depletion"] = (f'<rect x="26" y="38" width="42" height="24" rx="3" {STm}/><rect x="68" y="45" width="6" height="10" rx="2" {FL}/>'
                   f'<line x1="34" y1="69" x2="66" y2="31" {STm}/>')
 I["descent"] = (f'<line x1="50" y1="22" x2="50" y2="72" {ST}/><polyline points="34,56 50,74 66,56" {ST}/>'
                 f'<path d="M30 28 q20 8 40 0" {STh} opacity="0.45"/>')
-I["despair"] = (f'<path d="{heart_d(50,54,44)}" {FL}/><path d="M36 42 L64 70 M64 42 L36 70" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/>')
-I["devotion"] = heart(50, 54, 38) + f'<path d="M50 26 V45 M40 34 L60 34" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" opacity="0.75"/>'
+I["despair"] = (  # a broken heart, split by a jagged crack
+                f'<path d="{heart_d(50,54,44)}" {FL}/>'
+                f'<path d="M50 32 L44 45 L54 53 L46 63 L52 71" '
+                f'fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>')
+I["devotion"] = (  # a sacred flaming heart
+                 f'<path d="{heart_d(50,60,32)}" {FL}/>'
+                 f'<path d="M50 34 C54 40 56 43 56 47 a6 6 0 0 1 -12 0 C44 43 47 41 48 38 C49 42 51 42 51 40 C52 38 51 36 50 34 Z" {FL}/>'
+                 f'<path d="M40 54 q10 6 20 0" {LWt}/>'
+                 f'<path d="M50 28 V34" {STt}/>')
 I["divinity"] = (f'<ellipse cx="50" cy="29" rx="19" ry="7" fill="none" stroke="currentColor" stroke-width="4"/>'
                  f'<path d="M50 39 L62 72 H38 Z" {FL}/>' + star(50, 55, 7, 2.8, 4, -90, CUT))
-I["doom"] = I["death"] + f'<path d="M70 25 L76 16" {STt}/>'
-I["duty"] = I["task"]
-I["elixir"] = vial()
-I["enlightened"] = I["knowledge"] + sun(66, 28, 5)
-I["eon"] = I["time"] + f'<path d="M30 30 C50 16 70 30 70 50 C70 70 50 84 30 70" {STh} opacity="0.5"/>'
-I["exposure"] = I["eyeball"] + f'<path d="M22 28 L16 20 M78 28 L84 20 M50 22 V12" {STh}/>'
+I["doom"] = (  # a coffin marked with a cross — distinct from the hooded `death` reaper
+             f'<polygon points="42,22 58,22 68,42 63,76 50,80 37,76 32,42" {FL}/>'
+             f'<g {LWt}><path d="M50 30 V66 M41 44 H59"/></g>')
+I["duty"] = (  # a watch/summons bell (the call to duty) — distinct from the `task` clipboard
+             f'<path d="M50 24 a4 4 0 0 1 4 4 C63 31 66 48 66 64 H34 C34 48 37 31 46 28 a4 4 0 0 1 4 -4 Z" {FL}/>'
+             f'<rect x="30" y="64" width="40" height="6" rx="2" {FL}/>'
+             f'<circle cx="50" cy="75" r="4" {FL}/>'
+             f'<path d="M44 36 q-4 14 -1 26" {LWt}/>')
+I["elixir"] = (  # a round-bottom potion flask with liquid + rising bubbles
+               f'<circle cx="50" cy="58" r="17" {FL}/>'
+               f'<rect x="45" y="30" width="10" height="16" {FL}/>'
+               f'<rect x="44" y="23" width="12" height="8" rx="2" {FL}/>'
+               f'<path d="M35 56 q15 -7 30 0" {LWt}/>'
+               f'<g fill="#fff"><circle cx="45" cy="63" r="2.2"/><circle cx="56" cy="66" r="1.6"/><circle cx="50" cy="60" r="1.4"/></g>')
+I["enlightened"] = (  # a radiant lotus blossom (enlightenment) — distinct from the `knowledge` book
+                    f'<path d="M50 28 C45 42 45 54 50 64 C55 54 55 42 50 28 Z" {FL}/>'
+                    f'<path d="M50 64 C42 54 32 50 24 52 C28 62 38 68 50 68 Z" {FL}/>'
+                    f'<path d="M50 64 C58 54 68 50 76 52 C72 62 62 68 50 68 Z" {FL}/>'
+                    f'<path d="M50 65 C46 51 38 43 30 41 C30 55 40 67 50 67 Z" {FL}/>'
+                    f'<path d="M50 65 C54 51 62 43 70 41 C70 55 60 67 50 67 Z" {FL}/>'
+                    f'<g {STt}><line x1="50" y1="24" x2="50" y2="16"/><line x1="34" y1="28" x2="29" y2="22"/><line x1="66" y1="28" x2="71" y2="22"/></g>')
+I["eon"] = (  # an infinity symbol with a star (endless time) — distinct from the `time` clock
+            f'<path d="M50 50 C44 38 28 38 28 50 C28 62 44 62 50 50 C56 38 72 38 72 50 C72 62 56 62 50 50 Z" '
+            f'fill="none" stroke="currentColor" stroke-width="6.5" stroke-linecap="round"/>'
+            + star(50, 50, 4, 1.6, 4, -90, FL))
+I["exposure"] = (  # a radiation dosimeter METER: gauge + needle in the red, trefoil on the body
+                 f'<path d="M22 60 A28 28 0 0 0 78 60" fill="none" stroke="currentColor" stroke-width="4"/>'
+                 + "".join(f'<line x1="{onc(50,60,24,a)[0]:.1f}" y1="{onc(50,60,24,a)[1]:.1f}" '
+                           f'x2="{onc(50,60,28,a)[0]:.1f}" y2="{onc(50,60,28,a)[1]:.1f}" stroke="currentColor" stroke-width="2.2"/>' for a in range(180, 361, 20))
+                 + f'<line x1="50" y1="60" x2="68" y2="45" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>'
+                 f'<circle cx="50" cy="60" r="4.5" {FL}/>'
+                 f'<rect x="33" y="63" width="34" height="14" rx="2.5" {FL}/>'
+                 + "".join(f'<path d="{wedge(50,70,1.8,5.5,a,a+46)}" {CUT}/>' for a in (67, 187, 307))
+                 + f'<circle cx="50" cy="70" r="1.9" {CUT}/>')
 I["film"] = (f'<rect x="27" y="25" width="46" height="50" rx="3" {FL}/>'
              f'<rect x="34" y="34" width="32" height="32" {CUT}/>'
              # white sprocket perforations down both margins → reads as a film frame
              f'<g fill="#fff">'
              + "".join(f'<rect x="28.5" y="{y}" width="4" height="5" rx="1"/><rect x="67.5" y="{y}" width="4" height="5" rx="1"/>' for y in (30, 41, 52, 63))
              + '</g>')
-I["fire"] = I["flame"]
-I["foreshadow"] = I["omen"] + f'<path d="M27 76 q23 -10 46 0" {STh} opacity="0.5"/>'
+I["fire"] = (  # a campfire: crossed logs under flames (distinct from the single `flame`)
+             f'<g fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round">'
+             f'<line x1="30" y1="73" x2="62" y2="65"/><line x1="38" y1="73" x2="70" y2="65"/></g>'
+             f'<path d="M50 26 C58 38 66 42 66 54 a16 16 0 0 1 -32 0 C34 44 42 42 46 34 C47 44 52 44 54 40 C56 36 53 31 50 26 Z" {FL}/>'
+             f'<path d="M50 40 C54 47 58 49 58 55 a8 8 0 0 1 -16 0 C42 50 46 49 48 45 C49 51 52 50 50 47 Z" {CUT}/>')
+I["foreshadow"] = (  # a crystal ball on a stand (seeing what's to come) — distinct from the `omen` comet
+                   f'<circle cx="50" cy="46" r="20" {FL}/>'
+                   f'<path d="M38 38 q-4 8 0 16" {LWt}/>'
+                   + star(57, 40, 4.5, 1.8, 4, -90, CUT)
+                   + f'<path d="M34 64 H66 L60 73 H40 Z" {FL}/>')
 I["fuse"] = (f'<path d="M28 70 C42 42 58 58 72 28" {STm}/>' + star(73, 27, 10, 3, 8, -90, FL))
-I["hack"] = I["matrix"] + f'<path d="M39 62 L47 42 L53 58 L61 38" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/>'
-I["hatchling"] = I["hatching"]
+I["hack"] = (  # a terminal screen showing < > code + cursor — distinct from the `matrix` grid
+             f'<rect x="26" y="30" width="48" height="36" rx="3" {FL}/>'
+             f'<rect x="30" y="34" width="40" height="28" rx="1.5" {CUT}/>'
+             f'<g stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none">'
+             f'<path d="M41 42 L36 47 L41 52"/><path d="M57 42 L62 47 L57 52"/></g>'
+             f'<line x1="44" y1="57" x2="54" y2="57" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>'
+             f'<rect x="44" y="66" width="12" height="6" {FL}/><rect x="36" y="72" width="28" height="4" rx="2" {FL}/>')
+I["hatchling"] = (  # a baby chick poking out of cracked shell halves (distinct from the cracking `hatching`)
+                  f'<path d="M30 60 Q50 70 70 60 L66 52 L60 58 L54 50 L48 58 L42 50 L36 58 L34 54 Z" {FL}/>'
+                  f'<circle cx="50" cy="46" r="13" {FL}/>'
+                  f'<circle cx="45" cy="44" r="2" {CUT}/><circle cx="55" cy="44" r="2" {CUT}/>'
+                  f'<polygon points="48,48 52,48 50,52" {CUT}/>'
+                  f'<path d="M40 36 L44 30 L48 36 L52 30 L56 36 Q50 32 40 36 Z" {FL}/>'
+                  f'<path d="M50 33 V27" {STt}/>')
 I["hope"] = sun(50, 45, 11) + f'<path d="{heart_d(50,67,20)}" {FL}/>'
 I["hone"] = (f'<polygon points="31,72 66,26 75,35 40,81" {FL}/><polygon points="31,72 49,49 58,58 40,81" {SH2}/>'
              f'<path d="M26 32 L43 49 M57 63 L74 80" {STh} opacity="0.55"/>')
 I["hoofprint"] = (f'<path d="M34 35 C28 52 34 72 50 78 C66 72 72 52 66 35 L57 39 C62 54 57 64 50 68 C43 64 38 54 43 39 Z" {FL}/>'
                   f'<path d="M50 40 V68" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" opacity="0.75"/>')
-I["hour"] = I["time"]
+I["hour"] = (  # a pocket watch with crown + ring (distinct from the wall-clock `time`)
+             f'<circle cx="50" cy="55" r="22" {FL}/>'
+             f'<circle cx="50" cy="55" r="22" fill="none" stroke="#fff" stroke-width="1.8"/>'
+             f'<rect x="44" y="25" width="12" height="7" rx="2" {FL}/>'
+             f'<rect x="45.5" y="18" width="9" height="6" rx="3" fill="none" stroke="currentColor" stroke-width="3"/>'
+             f'<g {LWt}><line x1="50" y1="55" x2="50" y2="41"/><line x1="50" y1="55" x2="60" y2="59"/></g>'
+             f'<circle cx="50" cy="55" r="2" {CUT}/>')
 I["impostor"] = (f'<path d="M25 43 C38 32 62 32 75 43 C72 63 62 73 50 73 C38 73 28 63 25 43 Z" {FL}/>'
                  f'<circle cx="40" cy="50" r="5" {CUT}/><circle cx="60" cy="50" r="5" {CUT}/><path d="M42 65 q8 -5 16 0" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>')
-I["ingenuity"] = cog(7) + star(67, 28, 6, 2, 4, -90, GL)
-I["intel"] = I["discovery"] + f'<rect x="25" y="57" width="24" height="20" rx="2" {FL}/>'
-I["intervention"] = shield_solid() + f'<path d="M25 62 H75" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" opacity="0.75"/>'
+I["ingenuity"] = (  # a glowing idea lightbulb with rays + filament
+                  f'<path d="M37 41 a13 13 0 1 1 26 0 C61 48 57 51 57 57 H43 C43 51 39 48 37 41 Z" {FL}/>'
+                  f'<rect x="43" y="57" width="14" height="4" {FL}/><rect x="44" y="61" width="12" height="4" {FL}/>'
+                  f'<path d="M46 65 h8" {STm}/>'
+                  f'<path d="M44 56 V45 a6 6 0 0 1 12 0 V56 M50 41 q-3 5 0 13" {LWt}/>'
+                  f'<g {STt}><line x1="50" y1="22" x2="50" y2="16"/><line x1="30" y1="30" x2="25" y2="25"/><line x1="70" y1="30" x2="75" y2="25"/></g>')
+I["intel"] = (  # a dossier folder with a ruled document peeking out — distinct from the `discovery` magnifier
+              f'<rect x="34" y="30" width="32" height="34" rx="1.5" {CUT}/>'
+              f'<g stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="40" y1="38" x2="60" y2="38"/>'
+              f'<line x1="40" y1="44" x2="60" y2="44"/><line x1="40" y1="50" x2="54" y2="50"/></g>'
+              f'<path d="M22 48 H40 L44 44 H78 V74 H22 Z" {FL}/>'
+              f'<path d="M22 54 H78" {LWt}/>')
+I["intervention"] = (  # a beam of divine light breaking through clouds, from a radiant star
+                     f'<polygon points="45,24 55,24 72,70 28,70" {FL}/>'
+                     f'<g {LWt}><line x1="50" y1="28" x2="50" y2="68"/>'
+                     f'<line x1="46" y1="34" x2="40" y2="66"/><line x1="54" y1="34" x2="60" y2="66"/></g>'
+                     + star(50, 24, 8, 3, 8, -90, FL)
+                     + f'<path d="M24 70 q8 -8 16 0 q8 -8 16 0 q8 -8 16 0 V78 H24 Z" {FL}/>')
 I["keyword"] = key_shape()
-I["ki"] = I["energy"]
-I["kick"] = I["haste"]
+I["ki"] = (  # an open martial-arts palm inside an energy enso ring (chi)
+           f'<path d="M71 33 A28 28 0 1 1 64 26" fill="none" stroke="currentColor" stroke-width="6.5" stroke-linecap="round"/>'
+           f'<path d="M40 66 C40 54 42 50 50 50 C58 50 60 54 60 66 C60 68 58 69 56 69 H44 C42 69 40 68 40 66 Z" {FL}/>'
+           f'<g fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round">'
+           f'<line x1="43" y1="54" x2="42" y2="37"/><line x1="49" y1="54" x2="49" y2="34"/>'
+           f'<line x1="55" y1="54" x2="56" y2="37"/><line x1="61" y1="56" x2="63" y2="43"/></g>'
+           f'<path d="M40 58 C34 56 31 60 33 65" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>'
+           f'<path d="M42 56 q9 -3 18 0" {LWt}/>')
+I["kick"] = (  # a bent leg kicking with an impact burst — distinct from the standing `haste` boot
+             f'<path d="M26 32 L44 50 L68 46" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>'
+             f'<path d="M68 46 L80 42 L78 54 Z" {FL}/>'
+             + star(80, 48, 9, 3, 8, -90, FL)
+             + f'<g {STt}><line x1="58" y1="34" x2="64" y2="29"/><line x1="60" y1="60" x2="66" y2="64"/></g>')
 I["knickknack"] = (f'<rect x="32" y="35" width="36" height="36" rx="6" {FL}/>' + star(50, 53, 13, 5, 6, -90, CUT))
-I["loot"] = I["treasure"]
+I["loot"] = (  # an open treasure chest spilling coins — distinct from the `treasure` drawstring bag
+             f'<path d="M26 52 H74 V70 Q74 74 70 74 H30 Q26 74 26 70 Z" {FL}/>'
+             f'<path d="M26 52 Q26 36 50 34 Q74 36 74 52 Z" {FL}/>'
+             f'<path d="M26 52 H74" {LW}/>'
+             f'<g {LWt}><path d="M40 52 V74 M60 52 V74"/></g>'
+             f'<rect x="46" y="54" width="8" height="9" rx="1.5" {CUT}/>'
+             f'<circle cx="36" cy="47" r="4" {FL}/><circle cx="36" cy="47" r="2.4" {CUT}/>'
+             f'<circle cx="50" cy="44" r="4.5" {FL}/><circle cx="50" cy="44" r="2.8" {CUT}/>'
+             f'<circle cx="64" cy="47" r="4" {FL}/><circle cx="64" cy="47" r="2.4" {CUT}/>')
 I["loyalty"] = (f'<polygon points="28,70 34,37 47,55 50,31 53,55 66,37 72,70" {FL}/>'
                 f'<rect x="30" y="70" width="40" height="7" rx="2" {FL}/>' + star(50, 58, 6, 2.4, 5, -90, CUT))
 I["magnet"] = (f'<path d="M30 31 V56 a20 20 0 0 0 40 0 V31 H58 V56 a8 8 0 0 1 -16 0 V31 Z" {FL}/>'
@@ -1177,20 +1475,51 @@ I["manabond"] = (f'<circle cx="36" cy="50" r="12" {FL}/><circle cx="64" cy="50" 
                  + star(36, 50, 5, 2, 5, -90, CUT) + star(64, 50, 5, 2, 5, -90, CUT))
 I["mannequin"] = (f'<circle cx="50" cy="31" r="8" {FL}/><path d="M50 39 V65 M34 49 H66 M50 65 L38 80 M50 65 L62 80" {STm}/>'
                   f'<path d="M28 20 C38 26 62 26 72 20" {STh} opacity="0.5"/>')
-I["mask"] = I["impostor"]
+I["mask"] = (  # a masquerade eye-mask on a stick (distinct from the full-face `impostor`)
+             f'<path d="M24 42 C24 36 32 34 38 36 C44 33 56 33 62 36 C68 34 76 36 76 42 '
+             f'C76 54 66 60 58 56 C54 60 46 60 42 56 C34 60 24 54 24 42 Z" {FL}/>'
+             f'<ellipse cx="38" cy="46" rx="6" ry="4.5" {CUT}/><ellipse cx="62" cy="46" rx="6" ry="4.5" {CUT}/>'
+             f'<path d="M30 40 q4 -3 8 -1 M70 40 q-4 -3 -8 -1" {LWt}/>'
+             f'<line x1="62" y1="57" x2="72" y2="74" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>')
 I["midway"] = (f'<path d="M28 74 H72 L58 29 H42 Z" {FL}/><path d="M50 29 V74" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" opacity="0.75"/>'
                f'<path d="M39 51 H61" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" opacity="0.75"/>')
-I["necrodermis"] = I["corpse"] + f'<path d="M28 70 q22 11 44 0" {STh} opacity="0.5"/>'
-I["night"] = I["dream"]
-I["oil"] = droplet(50, 54, 36, 50) + f'<ellipse cx="50" cy="73" rx="11" ry="4" {SH2}/>'
+I["necrodermis"] = (  # a metallic visored skull (living metal) — distinct from the `corpse` skeleton
+                    f'<path d="M50 24 C36 24 28 34 28 48 C28 58 34 64 40 67 V74 H60 V67 C66 64 72 58 72 48 C72 34 64 24 50 24 Z" {FL}/>'
+                    f'<path d="M34 44 H66 V50 H56 L52 60 H48 L44 50 H34 Z" {CUT}/>'
+                    f'<g {LWt}><path d="M50 24 V40 M38 30 H62 M40 68 V74 M50 67 V74 M60 68 V74"/></g>')
+I["night"] = (  # a crescent moon with stars and a wisp of cloud (distinct from `dream`)
+              f'<path d="M60 58 A21 21 0 1 1 47 26 A16 16 0 1 0 60 58 Z" {FL}/>'
+              + star(70, 30, 5, 2, 5, -90, FL) + star(32, 64, 4, 1.6, 5, -90, FL) + star(64, 71, 3, 1.2, 5, -90, FL)
+              + f'<path d="M28 46 q9 -3 17 0 q6 -2 11 1" {STt}/>')
+I["oil"] = (  # an oil drop falling into a rippling puddle
+            f'<path d="M50 22 C50 22 38 42 38 52 a12 12 0 0 0 24 0 C62 42 50 22 50 22 Z" {FL}/>'
+            f'<path d="M44 44 q-3 5 0 10" {LWt}/>'
+            f'<ellipse cx="50" cy="71" rx="23" ry="6.5" {FL}/>'
+            f'<ellipse cx="50" cy="71" rx="14" ry="3.6" fill="none" stroke="#fff" stroke-width="1.6"/>'
+            f'<ellipse cx="50" cy="71" rx="6.5" ry="1.6" fill="none" stroke="#fff" stroke-width="1.4"/>')
 I["palliation"] = (f'<rect x="25" y="42" width="50" height="16" rx="8" {FL}/><rect x="42" y="25" width="16" height="50" rx="8" {FL}/>'
                    f'<circle cx="50" cy="50" r="5" {CUT}/>')
-I["poison"] = vial() + skull(50, 66, 0.25, teeth=False, detail=False)
+I["poison"] = (  # a poison bottle with a skull-and-label
+               f'<rect x="44" y="22" width="12" height="8" rx="2" {FL}/>'
+               f'<path d="M42 30 H58 V40 C64 44 66 52 66 60 C66 72 58 78 50 78 C42 78 34 72 34 60 C34 52 36 44 42 40 Z" {FL}/>'
+               f'<rect x="40" y="50" width="20" height="20" rx="2" {CUT}/>'
+               + skull(50, 60, 0.22, teeth=False, detail=False))
 I["possession"] = (f'<circle cx="58" cy="43" r="15" {SH2}/><path d="M28 78 V58 a4 4 0 0 1 8 0 V48 a4 4 0 0 1 8 0 V50 a4 4 0 0 1 8 0 V55 a4 4 0 0 1 8 0 V64 C60 76 52 82 42 82 Z" {FL}/>')
-I["prey"] = I["aim"] + f'<path d="M50 34 L55 47 L68 50 L55 53 L50 66 L45 53 L32 50 L45 47 Z" {FL}/>'
-I["rally"] = I["muster"]
+I["prey"] = (  # an animal paw-print track (hunting prey) — its own icon, no longer aim+star
+             f'<path d="M37 58 C37 50 43 47 50 47 C57 47 63 50 63 58 C63 67 56 71 50 71 C44 71 37 67 37 58 Z" {FL}/>'
+             f'<g {FL}><ellipse cx="39" cy="42" rx="4.5" ry="6"/><ellipse cx="50" cy="38" rx="4.5" ry="6"/>'
+             f'<ellipse cx="61" cy="42" rx="4.5" ry="6"/><ellipse cx="69" cy="53" rx="4" ry="5"/></g>')
+I["rally"] = (  # a raised clenched fist (rallying) — distinct from the `muster` banner
+              f'<rect x="40" y="60" width="20" height="22" rx="2" {FL}/>'
+              f'<path d="M36 50 C36 44 40 40 46 40 H58 C62 40 66 44 66 50 V62 H36 Z" {FL}/>'
+              f'<path d="M36 53 C30 53 27 59 31 64" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>'
+              f'<g {LWt}><path d="M44 47 V61 M52 46 V61 M60 47 V61"/><path d="M37 55 H65"/></g>')
 I["rejection"] = (f'<circle cx="50" cy="50" r="28" fill="none" stroke="currentColor" stroke-width="6"/><line x1="31" y1="69" x2="69" y2="31" {ST}/>')
-I["reprieve"] = I["hourglass"] + f'<path d="{shield_d(68,48,20,28)}" {FL}/>'
+I["reprieve"] = (  # a dove with an olive branch (mercy / a stay) — distinct from hourglass/shield
+                 f'<path d="M28 56 C36 46 48 44 60 48 C66 40 72 40 76 38 C74 46 72 50 66 52 C70 56 64 62 54 62 L40 64 C34 64 30 60 28 56 Z" {FL}/>'
+                 f'<path d="M44 52 C50 45 58 45 64 49 C58 53 51 54 44 52 Z" {LWt}/>'
+                 f'<circle cx="70" cy="44" r="1.7" {CUT}/>'
+                 f'<path d="M26 60 q-7 1 -12 6" {STt}/><circle cx="15" cy="64" r="1.9" {FL}/><circle cx="20" cy="62" r="1.7" {FL}/>')
 I["rev"] = (f'<path d="M25 64 a25 25 0 0 1 50 0" {STm}/><line x1="50" y1="64" x2="66" y2="45" {ST}/>'
             f'<circle cx="50" cy="64" r="4" {FL}/><path d="M31 64 H69" {STh} opacity="0.5"/>')
 I["ritual"] = (f'<rect x="35" y="42" width="8" height="31" rx="2" {FL}/><rect x="57" y="42" width="8" height="31" rx="2" {FL}/>'
@@ -1198,19 +1527,51 @@ I["ritual"] = (f'<rect x="35" y="42" width="8" height="31" rx="2" {FL}/><rect x=
 I["rope"] = (f'<path d="M31 55 a19 19 0 1 1 38 0 a14 14 0 1 1 -28 0 a9 9 0 1 1 18 0" {STm}/>')
 I["scream"] = (f'<path d="M50 22 C36 22 30 36 30 52 C30 70 40 80 50 80 C60 80 70 70 70 52 C70 36 64 22 50 22 Z" {FL}/>'
                f'<circle cx="42" cy="45" r="4" {CUT}/><circle cx="58" cy="45" r="4" {CUT}/><ellipse cx="50" cy="63" rx="7" ry="11" {CUT}/>')
-I["scroll"] = scroll(4)
+I["scroll"] = (  # a horizontal rolled scroll: two rollers + parchment with text
+               f'<rect x="30" y="34" width="40" height="32" {FL}/>'
+               f'<g {LWt}><line x1="37" y1="42" x2="63" y2="42"/><line x1="37" y1="50" x2="63" y2="50"/>'
+               f'<line x1="37" y1="58" x2="57" y2="58"/></g>'
+               f'<rect x="24" y="30" width="10" height="40" rx="5" {FL}/>'
+               f'<rect x="66" y="30" width="10" height="40" rx="5" {FL}/>'
+               f'<g {LWt}><line x1="29" y1="34" x2="29" y2="66"/><line x1="71" y1="34" x2="71" y2="66"/></g>')
 I["sleight"] = (f'<rect x="31" y="31" width="28" height="40" rx="3" transform="rotate(-12 45 51)" {FL}/>'
                 f'<rect x="43" y="28" width="28" height="40" rx="3" transform="rotate(12 57 48)" {FL}/>' + star(55, 48, 5, 2, 4, -90, CUT))
-I["slumber"] = I["sleep"]
-I["spark"] = star(50, 50, 30, 7, 8, -90, FL) + star(50, 50, 14, 4, 8, -90, CUT)
-I["spooky"] = I["ghostform"]
-I["strife"] = sword(45) + sword(-45)
+I["slumber"] = (  # a pillow on a bed with rising Zzz — distinct from the closed-eyes `sleep` face
+                f'<path d="M22 58 C22 50 30 47 50 47 C70 47 78 50 78 58 V64 C78 68 74 70 68 70 H32 C26 70 22 68 22 64 Z" {FL}/>'
+                f'<path d="M30 54 q20 -5 40 0" {LWt}/>'
+                f'<rect x="20" y="70" width="60" height="6" rx="2" {FL}/>'
+                f'<text x="56" y="38" font-family="Georgia,serif" font-size="16" font-weight="bold" {FL}>Z</text>'
+                f'<text x="67" y="30" font-family="Georgia,serif" font-size="11" font-weight="bold" {FL}>z</text>')
+I["spark"] = (  # a bright 4-point sparkle with drifting particles
+              f'<polygon points="50,20 55,44 80,50 55,56 50,80 45,56 20,50 45,44" {FL}/>'
+              f'<polygon points="50,38 53,47 62,50 53,53 50,62 47,53 38,50 47,47" {CUT}/>'
+              f'<circle cx="71" cy="29" r="2.4" {FL}/><circle cx="29" cy="69" r="2" {FL}/>')
+I["spooky"] = (  # a carved jack-o'-lantern — distinct from the `ghostform` ghost
+               f'<path d="M48 34 C46 30 44 28 40 28" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>'
+               f'<path d="M50 36 C42 30 30 34 28 50 C26 64 36 74 50 74 C64 74 74 64 72 50 C70 34 58 30 50 36 Z" {FL}/>'
+               f'<g {LWt}><path d="M42 40 q-5 14 0 30 M58 40 q5 14 0 30"/></g>'
+               f'<polygon points="38,50 46,46 44,54" {CUT}/><polygon points="62,50 54,46 56,54" {CUT}/>'
+               f'<polygon points="47,56 53,56 50,61" {CUT}/>'
+               f'<path d="M38 64 L43 62 L46 66 L50 62 L54 66 L57 62 L62 64 L57 70 L43 70 Z" {CUT}/>')
+I["strife"] = (  # two opposing forces clashing at a central burst
+              f'<path d="M22 36 L40 50 L22 64" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>'
+              f'<path d="M78 36 L60 50 L78 64" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>'
+              + star(50, 50, 14, 5, 8, -90, FL) + f'<circle cx="50" cy="50" r="4" {GL}/>')
 I["ticket"] = ticket_shape()
 I["unity"] = (f'<circle cx="39" cy="50" r="15" fill="none" stroke="currentColor" stroke-width="6"/><circle cx="61" cy="50" r="15" fill="none" stroke="currentColor" stroke-width="6"/>'
               f'<circle cx="50" cy="50" r="5" {FL}/>')
 I["unlock"] = lock_shape(opened=True)
-I["valor"] = shield_solid() + sword(0)
-I["volatile"] = vial(fill_drop=False) + star(64, 35, 12, 4, 8, -90, FL)
+I["valor"] = (  # an award medal on a ribbon with a star
+              f'<path d="M40 24 L50 46 L42 50 L34 28 Z" {FL}/>'
+              f'<path d="M60 24 L50 46 L58 50 L66 28 Z" {FL}/>'
+              f'<circle cx="50" cy="60" r="17" {FL}/>'
+              f'<circle cx="50" cy="60" r="17" fill="none" stroke="#fff" stroke-width="1.6"/>'
+              + star(50, 60, 9, 3.6, 5, -90, CUT))
+I["volatile"] = (  # an Erlenmeyer flask fizzing over with an explosive burst
+                 f'<path d="M45 24 H55 V38 L67 68 a4 4 0 0 1 -4 6 H37 a4 4 0 0 1 -4 -6 L45 38 Z" {FL}/>'
+                 f'<path d="M40 56 H60" {LWt}/>'
+                 + star(50, 19, 9, 3, 8, -90, FL)
+                 + f'<circle cx="41" cy="15" r="2.4" {FL}/><circle cx="61" cy="13" r="2" {FL}/>')
 I["voyage"] = (f'<path d="M24 63 Q50 76 76 63 Q70 78 50 80 Q30 78 24 63 Z" {FL}/><path d="M50 24 V64" {STm}/>'
                f'<path d="M50 28 L70 58 H50 Z" {FL}/><path d="M50 35 L33 58 H50 Z" {SH2}/>')
 I["wreck"] = (f'<path d="M25 67 Q50 80 75 67 Q66 78 50 80 Q34 78 25 67 Z" {FL}/>'
@@ -1243,20 +1604,100 @@ FRAME = (  # pure black-and-white minted rim: outer ring + denticle beads + inne
     + bead_ring()
     + '<circle cx="50" cy="50" r="37" fill="none" stroke="currentColor" stroke-width="1.4"/>')
 
+BG = '#17171c'   # dark disc background (real MTG counters: dark disc, white symbol)
+
 def wrap(inner):
     body = f'  {FRAME}\n  {inner}\n'
     # HARD GUARANTEE of pure black & white: strip every opacity attribute so no shape
-    # can render as a translucent (gray) tone. Every fill/stroke is now solid black
-    # (currentColor) or solid white (#fff).
+    # can render as a translucent (gray) tone.
     body = re.sub(r'\s+opacity="[^"]*"', '', body)
     body = re.sub(r"\s+opacity='[^']*'", '', body)
+    # INVERT the palette to the real-MTG-counter look: a dark disc with a WHITE frame +
+    # symbol and DARK cut-out detail. Icons are authored black-body (currentColor) + white
+    # detail (#fff); here we flip both. Order matters — retire #fff first so the currentColor
+    # -> #fff step below doesn't get re-flipped.
+    body = body.replace('#fff', BG)              # white cut/glint/detail -> dark cut-out
+    body = body.replace('currentColor', '#fff')  # black bodies / frame / line-art -> white
+    bg = f'  <circle cx="50" cy="50" r="50" fill="{BG}"/>\n'
     return ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">\n'
-            + body + '</svg>\n')
+            + bg + body + '</svg>\n')
+
+# =========================================================================
+# DECORATIVE SURROUND FLOURISHES (framing flair, like the ki enso ring).
+# Authored in the black-body convention (currentColor/#fff) so wrap() inverts them to
+# white. They live in the annulus (r ~32-37) between the subject and the inner frame ring.
+def sur_dots(n=20, r=35, rr=1.15, a0=0):
+    return "".join(f'<circle cx="{onc(50,50,r,a0+i*360/n)[0]:.1f}" cy="{onc(50,50,r,a0+i*360/n)[1]:.1f}" r="{rr}" {FL}/>' for i in range(n))
+def sur_ticks(n=24, r0=32.5, r1=36.5, w=1.7):
+    return (f'<g stroke="currentColor" stroke-width="{w}" stroke-linecap="round">'
+            + "".join(f'<line x1="{onc(50,50,r0,i*360/n)[0]:.1f}" y1="{onc(50,50,r0,i*360/n)[1]:.1f}" x2="{onc(50,50,r1,i*360/n)[0]:.1f}" y2="{onc(50,50,r1,i*360/n)[1]:.1f}"/>' for i in range(n)) + '</g>')
+def sur_spikes(n=20, r0=32.5, r1=37, frac=0.5):
+    hw = 180.0/n*frac
+    out = ''
+    for i in range(n):
+        a = i*360.0/n
+        tip = onc(50, 50, r1, a); b1 = onc(50, 50, r0, a-hw); b2 = onc(50, 50, r0, a+hw)
+        out += f'<polygon points="{tip[0]:.1f},{tip[1]:.1f} {b1[0]:.1f},{b1[1]:.1f} {b2[0]:.1f},{b2[1]:.1f}" {FL}/>'
+    return out
+def sur_enso(r=31, w=3.4, a0=-52, a1=232):
+    x0, y0 = onc(50, 50, r, a0); x1, y1 = onc(50, 50, r, a1)
+    large = 1 if (a1-a0) % 360 > 180 else 0
+    return f'<path d="M{x0:.1f} {y0:.1f} A{r} {r} 0 {large} 1 {x1:.1f} {y1:.1f}" fill="none" stroke="currentColor" stroke-width="{w}" stroke-linecap="round"/>'
+def sur_rays(n=12, r0=33.5, r1=37, w=2.0):
+    return (f'<g stroke="currentColor" stroke-width="{w}" stroke-linecap="round">'
+            + "".join(f'<line x1="{onc(50,50,r0,i*360/n)[0]:.1f}" y1="{onc(50,50,r0,i*360/n)[1]:.1f}" x2="{onc(50,50,r1,i*360/n)[0]:.1f}" y2="{onc(50,50,r1,i*360/n)[1]:.1f}"/>' for i in range(n)) + '</g>')
+def sur_sparkles(pts=None):
+    pts = pts or [(27, 27), (73, 27), (27, 73), (73, 73)]
+    return "".join(star(x, y, 3.6, 1.35, 4, -90, FL) for x, y in pts)
+def sur_arcs():  # a swoosh above and below (brushstroke frame)
+    return (f'<path d="M28 30 A32 32 0 0 1 72 30" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>'
+            f'<path d="M28 70 A32 32 0 0 0 72 70" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>')
+
+# Per-icon flair assignment. Each icon gets a thematic surround (deathtouch & menace
+# excluded per user; P/T counters excluded so they match the inline renderer).
+_R = sur_rays(12, 33.5, 37, 2.0)     # radiant — holy / light / valuable / vision
+_S = sur_spikes(20, 32.5, 37, 0.5)   # jagged spikes — aggressive / fire / decay (sharp texture)
+_D = sur_dots(20, 35.5, 1.1)         # orbit dots — organic / neutral / time / water
+_T = sur_ticks(24, 32.5, 36.5, 1.7)  # radial ticks — mechanical / measured / tool
+_K = sur_sparkles()                  # corner sparkles — treasure / magic / luck
+_E = sur_enso()                      # brush ring — energy / spirit / flow
+_FX = {
+    _R: ["aegis","awakening","blessing","crystal","defense","devotion","divinity","exalted","experience",
+         "flash","flying","foreshadow","gem","healing","hexproof","hexproof-black","hexproof-blue",
+         "hexproof-green","hexproof-red","hexproof-white","hope","ice","immunity","incarnation","ingenuity",
+         "intervention","lifelink","lore","loyalty","muster","palliation","phylactery","quest","rally",
+         "reprieve","revival","shield","soul","story","study","unity","valor","verse","vitality","vow","ward"],
+    _S: ["arrow","arrowhead","blaze","blight","burden","carrion","charge","corruption","death","decayed",
+         "descent","despair","double-strike","ember","finality","fire","first-strike","flame","fury","hit",
+         "hone","hunger","infection","javelin","kick","mine","mining","necrodermis","ore","pain",
+         "paralyzation","petrification","phyresis","plague","pressure","rad","rejection","rev","ritual",
+         "rust","scream","shred","skull","spite","spooky","strife","stun","takeover","training",
+         "training-swords","trample","velocity","void","volatile","wreck"],
+    _D: ["acorn","age","aim","bait","blood","bloodline","bloodstain","book","brain","brick","cage","cell",
+         "collection","contested","corpse","credit","croak","cube","currency","defender","delay","depletion",
+         "dream","echo","egg","enlightened","eon","eruption","exposure","eyeball","eyestalk","fade","fate",
+         "feather","feeding","fellowship","fetch","film","flood","fungus","ghostform","growth","hack","haste",
+         "hatching","hatchling","hoofprint","hour","hourglass","impostor","incubation","indestructible","intel",
+         "invitation","isolation","judgment","knowledge","level","loot","lure","manifestation","mannequin",
+         "mask","matrix","memory","midway","mire","music","nest","net","night","oil","page","pause","petal",
+         "poison","polyp","possession","prey","pupa","reach","ribbon","rope","scroll","shadow","shell","sleep",
+         "slime","slumber","soot","spore","suspect","task","tide","time","tower","vigilance","voyage","wind"],
+    _T: ["bounty","bribery","component","crank","duty","glyph","keyword","magnet","pin","plot","point",
+         "stash","storage","supply","theft","ticket","unlock","winch"],
+    _K: ["coin","elixir","everything","fuse","gold","knickknack","luck","manabond","omen","silver","sleight",
+         "spark","treasure","wage","wish"],
+    _E: ["energy","harmony","influence","ki"],
+}
+SURROUND_FX = {}
+for _motif, _names in _FX.items():
+    for _n in _names:
+        SURROUND_FX[_n] = _motif
 
 count = 0
 for name, inner in I.items():
+    fx = SURROUND_FX.get(name, '') if name not in ('deathtouch', 'menace') else ''
     with open(os.path.join(OUT, name + ".svg"), "w", encoding="utf-8") as f:
-        f.write(wrap(inner))
+        f.write(wrap(inner + fx))
     count += 1
 names = sorted(I)
 cards = "\n".join(

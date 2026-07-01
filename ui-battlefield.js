@@ -539,24 +539,26 @@ const COUNTER_ICON_SET = new Set(["acorn","aegis","age","aim","arrow","arrowhead
 
 // Bump when the SVGs/ icon set is regenerated, to bust the browser image cache
 // (filenames stay the same, so the query string is what forces a reload).
-const ICON_VER = 7;
+const ICON_VER = 14;
 
 // Build a P/T counter medallion inline so any +N/+M or -N/-M value renders, matching
 // the SVGs/ minted-medallion style: PURE black & white only (no gray) — outer ring +
 // denticle bead ring + inner ring + stacked numbers.
 function _ptTokenSvg(sign, top, bot) {
+  // Inverted to match the SVG icon set: dark disc background, white beaded frame + numbers.
   let beads = '';
   for (let i = 0; i < 40; i++) {
     const a = i * 360 / 40 * Math.PI / 180;
     const x = 50 + 41 * Math.cos(a), y = 50 + 41 * Math.sin(a);
-    beads += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="1.15" fill="currentColor"/>`;
+    beads += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="1.15" fill="#fff"/>`;
   }
   return `<svg class="bf-counter-tok-img" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">`
-    + `<circle cx="50" cy="50" r="47" fill="none" stroke="currentColor" stroke-width="2.6"/>${beads}`
-    + `<circle cx="50" cy="50" r="37" fill="none" stroke="currentColor" stroke-width="1.4"/>`
-    + `<text x="50" y="44" font-family="Georgia,serif" font-weight="700" font-size="24" text-anchor="middle" fill="currentColor">${sign}${top}</text>`
-    + `<line x1="33" y1="50" x2="67" y2="50" stroke="currentColor" stroke-width="2.4"/>`
-    + `<text x="50" y="77" font-family="Georgia,serif" font-weight="700" font-size="24" text-anchor="middle" fill="currentColor">${sign}${bot}</text>`
+    + `<circle cx="50" cy="50" r="50" fill="#17171c"/>`
+    + `<circle cx="50" cy="50" r="47" fill="none" stroke="#fff" stroke-width="2.6"/>${beads}`
+    + `<circle cx="50" cy="50" r="37" fill="none" stroke="#fff" stroke-width="1.4"/>`
+    + `<text x="50" y="44" font-family="Georgia,serif" font-weight="700" font-size="24" text-anchor="middle" fill="#fff">${sign}${top}</text>`
+    + `<line x1="33" y1="50" x2="67" y2="50" stroke="#fff" stroke-width="2.4"/>`
+    + `<text x="50" y="77" font-family="Georgia,serif" font-weight="700" font-size="24" text-anchor="middle" fill="#fff">${sign}${bot}</text>`
     + `</svg>`;
 }
 

@@ -1507,21 +1507,25 @@ function parseCardEffects(permanent, card, opts = {}) {
       copyTargetZoneOwner = /^your$/i.test((_copyZoneMatch[1] || '').trim()) ? 'you' : 'any';
     }
     const isNonlegendaryRestriction = /\bnonlegendary\b/.test(targetDesc);
+    const isNonAuraRestriction = /non-?aura/i.test(targetDesc);
     let restriction = null;
-    if (/creature/.test(targetDesc) && /artifact/.test(targetDesc)) {
-      restriction = (p) => p.types.includes('Creature') || p.types.includes('Artifact');
-    } else if (/creature/.test(targetDesc) && /planeswalker/.test(targetDesc)) {
-      restriction = (p) => p.types.includes('Creature') || p.types.includes('Planeswalker');
-    } else if (/creature/.test(targetDesc) && /\bland\b/.test(targetDesc)) {
-      restriction = (p) => p.types.includes('Creature') || p.types.includes('Land');
-    } else if (/creature/.test(targetDesc)) {
-      restriction = isNonlegendaryRestriction
-        ? (p) => p.types.includes('Creature') && !p.supertypes.includes('Legendary')
-        : (p) => p.types.includes('Creature');
-    } else if (/artifact/.test(targetDesc)) {
-      restriction = (p) => p.types.includes('Artifact');
-    } else if (/enchantment/.test(targetDesc)) {
-      restriction = (p) => p.types.includes('Enchantment');
+    // Collect every major card type named in the copy-target description. A card like
+    // Absorbing Man can copy "artifact, non-Aura enchantment, or land" — accept any of the
+    // listed types rather than only the first one matched by an if/else chain.
+    const _copyTypeList = [];
+    if (/creature/.test(targetDesc)) _copyTypeList.push('Creature');
+    if (/artifact/.test(targetDesc)) _copyTypeList.push('Artifact');
+    if (/enchantment/.test(targetDesc)) _copyTypeList.push('Enchantment');
+    if (/planeswalker/.test(targetDesc)) _copyTypeList.push('Planeswalker');
+    if (/\bland\b/.test(targetDesc)) _copyTypeList.push('Land');
+    if (_copyTypeList.length) {
+      restriction = (p) => {
+        if (!_copyTypeList.some(t => p.types.includes(t))) return false;
+        // "non-Aura enchantment" — reject an Aura.
+        if (isNonAuraRestriction && (p.subtypes || []).includes('Aura')) return false;
+        if (isNonlegendaryRestriction && p.supertypes.includes('Legendary')) return false;
+        return true;
+      };
     } else if (/nonland/.test(targetDesc)) {
       restriction = (p) => !p.types.includes('Land');
     } else if (/permanent/.test(targetDesc)) {
@@ -1543,12 +1547,42 @@ function parseCardEffects(permanent, card, opts = {}) {
       copyParams.copyFromExiledCard = true;
     }
     if (exceptClause) {
+      // "except he's a legendary 4/4 Human Villain creature in addition to his other types"
+      // (Absorbing Man) — a compound copy modification mixing a supertype, an embedded P/T,
+      // a card type, and subtypes, all added on top of the copied characteristics. Gendered
+      // pronouns ("he's"/"he has") are normalized to "this card is/has" earlier in parseCardEffects,
+      // so the subject here is it/this card/permanent/creature/token; the body can also contain a
+      // P/T whose "/" breaks the simpler [\w\s]+ capture used by alsoMatch below.
+      let inAdditionHandled = false;
+      const addnMatch = exceptClause.match(/(?:it|this (?:card|permanent|creature|token))(?:'s| is| are)\s+(?:an?\s+)?(.+?)\s+in addition to (?:its|his|her|their) other types/i);
+      if (addnMatch) {
+        inAdditionHandled = true;
+        let body = addnMatch[1].trim();
+        const ptm = body.match(/\b(\d+)\/(\d+)\b/);
+        if (ptm) {
+          copyParams.setPT = { power: parseInt(ptm[1]), toughness: parseInt(ptm[2]) };
+          body = (body.slice(0, ptm.index) + body.slice(ptm.index + ptm[0].length)).replace(/\s+/g, ' ').trim();
+        }
+        const SUPERTYPE_WORDS = { legendary: 'Legendary', basic: 'Basic', snow: 'Snow', world: 'World' };
+        const TYPE_WORDS = { artifact: 'Artifact', creature: 'Creature', enchantment: 'Enchantment', land: 'Land', planeswalker: 'Planeswalker', battle: 'Battle' };
+        for (const w of body.split(/[\s,]+/)) {
+          const lw = w.toLowerCase();
+          if (!lw) continue;
+          if (SUPERTYPE_WORDS[lw]) {
+            (copyParams.addSupertypes ||= []).push(SUPERTYPE_WORDS[lw]);
+          } else if (TYPE_WORDS[lw]) {
+            (copyParams.addTypes ||= []).push(TYPE_WORDS[lw]);
+          } else {
+            (copyParams.addSubtypes ||= []).push(w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+          }
+        }
+      }
       // "except it's also an artifact" / "except it's an artifact in addition to its other types" -> addTypes/addSubtypes
       // Multi-word capture handles "vehicle artifact" (Mindlink Mech) — split words and bin
       // each into types vs subtypes.
       const CARD_TYPES = ['Artifact', 'Creature', 'Enchantment', 'Land', 'Planeswalker', 'Battle'];
       const alsoMatch = exceptClause.match(/it(?:'s| is) also an? ([\w\s]+?)(?:\.|,|$)/i)
-        || exceptClause.match(/it(?:'s| is) an? ([\w\s]+?) in addition to/i);
+        || (!inAdditionHandled && exceptClause.match(/it(?:'s| is) an? ([\w\s]+?) in addition to/i));
       if (alsoMatch) {
         const words = alsoMatch[1].trim().split(/\s+/);
         for (const w of words) {
@@ -1565,8 +1599,9 @@ function parseCardEffects(permanent, card, opts = {}) {
       if (itPTMatch) {
         copyParams.setPT = { power: parseInt(itPTMatch[1]), toughness: parseInt(itPTMatch[2]) };
       }
-      // "except its name is still [X]" -> keepName
-      if (/its name is still/i.test(exceptClause) || /its name is/i.test(exceptClause)) {
+      // "except its name is still [X]" / "his name is [X]" -> keepName.
+      // Pronoun may be its/his/her/their (Marvel cards use gendered pronouns).
+      if (/(?:its|his|her|their) name is/i.test(exceptClause)) {
         copyParams.keepName = true;
       }
       // "except it's [color]" -> setColors
