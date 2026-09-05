@@ -1409,15 +1409,25 @@ function parseCardEffects(permanent, card, opts = {}) {
   }
 
   // Helper: get "as long as" condition for a regex match position in oracle
+  // Many generic regexes include the delimiter that ends the previous sentence in
+  // their match (for example, `(?:^|[.;])\s*`). When that delimiter is followed by
+  // a newline, the raw match index still points at the previous ability's line.
+  // Normalize it to the first character of the matched content before doing any
+  // line-based trigger/activation/condition checks.
+  function _getMatchContentPos(matchIndex) {
+    let contentPos = matchIndex;
+    while (contentPos < oracle.length && /[.\s;]/.test(oracle[contentPos])) {
+      contentPos++;
+    }
+    return contentPos;
+  }
+
   function _getConditionForPos(pos) {
     // Advance past any sentence-ending punctuation and whitespace to find the
     // actual content line. Regex anchors like (?:^|\.|;)\s* can match the "."
     // from the end of the PREVIOUS line, then consume a newline — the content
     // is on the next line, but pos points to the "." on the previous line.
-    let adjustedPos = pos;
-    while (adjustedPos < oracle.length && /[.\s;]/.test(oracle[adjustedPos])) {
-      adjustedPos++;
-    }
+    const adjustedPos = _getMatchContentPos(pos);
     const textBefore = oracle.substring(0, adjustedPos);
     const lineNum = textBefore.split('\n').length - 1;
     const condIdx = _lineConditionMap.has(lineNum) ? _lineConditionMap.get(lineNum) : -1;
@@ -1431,6 +1441,7 @@ function parseCardEffects(permanent, card, opts = {}) {
   // effect text of an activated ability as a static continuous effect.
   // Boundary is the start of the enclosing line (activated abilities are single-line).
   function _isInActivatedEffect(matchIndex) {
+    matchIndex = _getMatchContentPos(matchIndex);
     const lineStart = oracle.lastIndexOf('\n', matchIndex - 1) + 1;
     const prefix = oracle.substring(lineStart, matchIndex);
     // Any ":" in the prefix (inside the same line) means we're past a cost:effect separator.
@@ -1453,6 +1464,7 @@ function parseCardEffects(permanent, card, opts = {}) {
   }
 
   function _isInTriggeredSentence(matchIndex) {
+    matchIndex = _getMatchContentPos(matchIndex);
     // A triggered ability occupies its whole line ("When/Whenever/At …, <effects>").
     // Every clause on that line — including later sentences such as Princess Yue's
     // "She's a land named Moon. She gains …" — is part of the one-shot triggered
