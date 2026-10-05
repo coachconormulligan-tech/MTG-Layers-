@@ -220,7 +220,7 @@ function effectAppliesToPerm(effect, permState, permanent, permId, allStates, ab
       // protection ONLY for non-attachment effects. Auras/equipment attaching always count.
       const isAttachment = !!effect.auraRestriction || !!effect.requiresCreatureTarget;
       const isNonTargeting = sourcePerm && sourcePerm._nonTargetingSelection && !isAttachment;
-      if (!isNonTargeting && _isProtectedFromSource(permState, sourceState, sourcePerm, permanent)) {
+      if (!isNonTargeting && _isProtectedFromSource(permState, sourceState, sourcePerm, permanent, allStates)) {
         return false;
       }
     }

@@ -1,0 +1,16 @@
+{
+  "name": "Eight-and-a-Half-Tails — an ability that grants protection is not protection",
+  "notes": "_parseProtectionAbility matched \"protection from ...\" anywhere in a line, so \"{1}{W}: Target permanent you control gains protection from white until end of turn\" made Eight-and-a-Half-Tails itself protected from white without the ability being fired, and a white Aura (Holy Strength) was rejected. Only a protection keyword line or keyword-list item counts. Sword of Fire and Ice's static grant line likewise must not protect the Sword, while the equipped Bears still gets the granted bare \"Protection from red\" / \"Protection from blue\" lines.",
+  "steps": [
+    { "add": "Eight-and-a-Half-Tails", "as": "tails" },
+    { "add": "Holy Strength", "as": "hs" },
+    { "call": ["setTarget", "@hs", "@tails"] },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Sword of Fire and Ice", "as": "sword" },
+    { "call": ["setTarget", "@sword", "@bears"] }
+  ],
+  "asserts": [
+    { "perm": "Eight-and-a-Half-Tails", "final": { "power": 3, "toughness": 4 } },
+    { "perm": "Grizzly Bears", "final": { "power": 4, "toughness": 4, "abilities": { "$includes": ["Protection from red", "Protection from blue"] } } }
+  ]
+}
