@@ -1,0 +1,16 @@
+{
+  "name": "Death Wind — a spell's X is supplied, and changing it keeps the target",
+  "notes": "Found by tests/sweep.py (largest remaining cluster: 'target creature gets -X/-X until end of turn', about 75 spells). addSpell never asked for X the way addPermanent does, so the literal X reached the parser and produced no effect. addSpell now takes an X value (prompt, or opts.xValue on restore), marks the spell hasXValue so the X input shows, and substitutes it via setXValue. setXValue also carries chosen targets over when the re-parse yields the same effects. Cast with X=1 at the Bears, then X is changed to 3: the Bears stay targeted and are 2/2 -3/-3.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Gray Ogre", "as": "ogre" },
+    { "add": "Death Wind", "as": "wind", "spell": true, "x": 1 },
+    { "call": ["setTarget", "@wind", "@bears"] },
+    { "call": ["setXValue", "@wind", 3] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": -1, "toughness": -1 } },
+    { "perm": "Gray Ogre", "final": { "power": 2, "toughness": 2 } },
+    { "effect": { "source": "Death Wind", "layer": "7c", "type": "modify_pt", "scope": "targeted" } }
+  ]
+}

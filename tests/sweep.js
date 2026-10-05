@@ -29,6 +29,10 @@ const DUMMY = {
   mana_cost: '{1}{G}', cmc: 2, power: '2', toughness: '2', colors: ['G'], color_identity: ['G'], keywords: [],
 };
 
+const X_VALUE = 2;
+// The permanent's abilities have X already substituted; oracle lines still say X.
+const withX = (s) => s.replace(/\bX\b/g, String(X_VALUE));
+
 /* ─── Sentence splitting ─── */
 // Splits on newlines and on sentence-ending periods outside double quotes.
 // Returns [{ start, end, line, text }] with offsets into the input.
@@ -166,7 +170,8 @@ function withOracle(card, faceIndex, text) {
 // Adds the card the way ui-core's _doAddCardToBattlefield does. Returns the permanent.
 function addCard(card, faceIndex, isSpell) {
   resetBoard();
-  const opts = { suppressPrompt: true, controller: 'player_0', owner: 'player_0' };
+  // X is given a value, as the site's prompt would; unsubstituted X text parses to nothing.
+  const opts = { suppressPrompt: true, controller: 'player_0', owner: 'player_0', xValue: X_VALUE };
   if (card.card_faces && card.card_faces.length >= 2) opts.faceIndex = faceIndex;
   if (isSpell) return Battlefield.addSpell(card, opts);
   opts.isToken = card.layout === 'token' || card.layout === 'double_faced_token';
@@ -260,7 +265,8 @@ function sweepFace(card, faceIndex) {
     // the parser must understand, so fire those straight from the oracle lines too.
     const have = new Set(abilities.map(a => String(a).trim().toLowerCase()));
     for (const l of W.split('\n').map(norm)) {
-      if (l.trim() && !have.has(l.trim().toLowerCase())) abilities.push(l);
+      const k = l.trim().toLowerCase();
+      if (k && !have.has(k) && !have.has(withX(l.trim()).toLowerCase())) abilities.push(l);
     }
     const jobs = [
       ...Battlefield.extractTriggeredAbilities(abilities).map(a => ['trigger', a]),
@@ -315,7 +321,8 @@ function sweepFace(card, faceIndex) {
       // The fired copy of this sentence has its cost / trigger condition cut off the front.
       const lc = text.toLowerCase();
       fired.forEach((f, i) => {
-        if (lc.endsWith(f.text.toLowerCase())) { usedFired.add(i); ctx = f.kind; covered = covered || f.covered; }
+        const ft = f.text.toLowerCase();
+        if (lc.endsWith(ft) || withX(text).toLowerCase().endsWith(ft)) { usedFired.add(i); ctx = f.kind; covered = covered || f.covered; }
       });
     }
     rec.sentences.push({ ctx, text, line: norm(lines[s.line] || ''), covered });
