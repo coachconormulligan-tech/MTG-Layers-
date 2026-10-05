@@ -1,6 +1,6 @@
 /* [KEY: INIT] */
 document.addEventListener('DOMContentLoaded', () => {
-  TypeCatalog.init();
+  _loadTypeCatalog();
   _initDataTooltip();
   bindSearchUI();
   bindLandingUI();
@@ -170,6 +170,62 @@ function renderAll() {
       _hideProcessingBar();
     });
   });
+}
+
+/* ─── Scryfall type-catalog warning ───
+   TypeCatalog.init() (data.js) reports whether the type catalogs arrived. Without them
+   the parser cannot recognise subtypes and silently mis-parses cards, so a failure is
+   surfaced in a dismissible banner with a Retry control. */
+function _loadTypeCatalog() {
+  return TypeCatalog.init().then(ok => {
+    if (!ok) { _showCatalogWarning(); return false; }
+    _hideCatalogWarning();
+    _reparseBoardAfterCatalogLoad();
+    return true;
+  });
+}
+
+/* Cards already on the board were parsed without the catalog. Round-trip the board
+   through serialize/restore so every permanent, zone and fired ability is re-parsed
+   through the normal add pipeline. No-op on an empty board or mid-restore. */
+function _reparseBoardAfterCatalogLoad() {
+  if (_restoreInProgress || _urlRestoreInFlight) return;
+  const data = Battlefield.serialize();
+  if (!_boardHasContent(data)) return;
+  _restoreFromData(data);
+  renderAll();
+}
+
+function _showCatalogWarning() {
+  let el = document.getElementById('catalog-warning');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'catalog-warning';
+    el.className = 'catalog-warning';
+    el.setAttribute('role', 'alert');
+    el.innerHTML =
+      '<span class="catalog-warning-text"><strong>Could not connect to Scryfall.</strong> ' +
+      'Card types could not be loaded, so some cards may be evaluated incorrectly.</span>' +
+      '<button type="button" class="btn catalog-warning-retry">Retry</button>' +
+      '<button type="button" class="btn btn-ghost catalog-warning-dismiss">Dismiss</button>';
+    el.querySelector('.catalog-warning-retry').addEventListener('click', _retryTypeCatalog);
+    el.querySelector('.catalog-warning-dismiss').addEventListener('click', _hideCatalogWarning);
+    document.body.appendChild(el);
+  }
+  const btn = el.querySelector('.catalog-warning-retry');
+  btn.disabled = false;
+  btn.textContent = 'Retry';
+}
+
+function _hideCatalogWarning() {
+  const el = document.getElementById('catalog-warning');
+  if (el) el.remove();
+}
+
+function _retryTypeCatalog() {
+  const btn = document.querySelector('#catalog-warning .catalog-warning-retry');
+  if (btn) { btn.disabled = true; btn.textContent = 'Retrying'; }
+  _loadTypeCatalog();
 }
 
 /* ─── Board persistence ─── */

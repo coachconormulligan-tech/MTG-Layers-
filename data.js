@@ -27,29 +27,35 @@ const TypeCatalog = {
   battleTypes: new Set(),
   loaded: false,
 
+  /* Fetches every catalog from Scryfall. Resolves true only when all of them arrived
+     and populated; false when the network is unreachable, a response was not OK / not
+     JSON, or a catalog came back empty. DOM-free — the caller (ui-core.js) surfaces a
+     failure to the player. `loaded` tracks the creature types the parser gates on. */
   async init() {
-    try {
-      const endpoints = [
-        ['landTypes',        'https://api.scryfall.com/catalog/land-types'],
-        ['creatureTypes',    'https://api.scryfall.com/catalog/creature-types'],
-        ['artifactTypes',    'https://api.scryfall.com/catalog/artifact-types'],
-        ['enchantmentTypes', 'https://api.scryfall.com/catalog/enchantment-types'],
-        ['planeswalkerTypes','https://api.scryfall.com/catalog/planeswalker-types'],
-        ['spellTypes',       'https://api.scryfall.com/catalog/spell-types'],
-        ['battleTypes',      'https://api.scryfall.com/catalog/battle-types'],
-      ];
-      const responses = await Promise.all(endpoints.map(([, url]) => fetch(url)));
-      for (let i = 0; i < endpoints.length; i++) {
-        const [key] = endpoints[i];
-        if (responses[i].ok) {
-          const data = await responses[i].json();
-          this[key] = new Set(data.data || []);
-        }
+    const endpoints = [
+      ['landTypes',        'https://api.scryfall.com/catalog/land-types'],
+      ['creatureTypes',    'https://api.scryfall.com/catalog/creature-types'],
+      ['artifactTypes',    'https://api.scryfall.com/catalog/artifact-types'],
+      ['enchantmentTypes', 'https://api.scryfall.com/catalog/enchantment-types'],
+      ['planeswalkerTypes','https://api.scryfall.com/catalog/planeswalker-types'],
+      ['spellTypes',       'https://api.scryfall.com/catalog/spell-types'],
+      ['battleTypes',      'https://api.scryfall.com/catalog/battle-types'],
+    ];
+    let complete = true;
+    await Promise.all(endpoints.map(async ([key, url]) => {
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        if (!data || !Array.isArray(data.data)) throw new Error('Malformed catalog');
+        this[key] = new Set(data.data);
+      } catch (e) {
+        complete = false;
+        console.warn('TypeCatalog: Scryfall fetch failed for ' + key + ', using fallback data.', e);
       }
-      this.loaded = true;
-    } catch (e) {
-      console.warn('TypeCatalog: Scryfall fetch failed, using fallback data.', e);
-    }
+    }));
+    this.loaded = this.creatureTypes.size > 0;
+    return complete && this.loaded;
   },
 
   // Map from card type name to the subtype category key
