@@ -1,0 +1,14 @@
+{
+  "name": "Mind Bend — Forest text changed to Island keeps its mana ability",
+  "notes": "Memory: project_mind_bend_land_type_textchange_2026-05-22. A basic land carries its land type as a subtype (its oracle text is empty), and its mana ability is intrinsic. Replacing Forest with Island must change the subtype to Island and swap the mana ability to {T}: Add {U}. instead of wiping it. The other Forest is the control.",
+  "steps": [
+    { "add": "Forest", "as": "changed" },
+    { "add": "Forest", "as": "plain" },
+    { "add": "Mind Bend", "as": "bend", "spell": true },
+    { "call": ["setTextChangeConfig", "@bend", "@changed", [{ "from": "Forest", "to": "Island" }]] }
+  ],
+  "asserts": [
+    { "perm": "Forest A", "final": { "subtypes": ["Island"], "abilities": ["{T}: Add {U}."] } },
+    { "perm": "Forest B", "final": { "subtypes": ["Forest"], "abilities": ["{T}: Add {G}."] } }
+  ]
+}

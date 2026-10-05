@@ -1,0 +1,13 @@
+{
+  "name": "Werewolf Pack Leader — base 5/3, gains trample and isn't a Human",
+  "notes": "Memory: project_werewolf_pack_leader_fix_2026-04-26. The activated ability '{3}{G}: Until end of turn, this creature has base power and toughness 5/3, gains trample, and isn't a Human.' lost the trample grant to filter pollution and never parsed 'isn't a Human'. With the ability fired the Pack Leader must be 5/3 with Trample, Werewolf only. A plain Bears is the control.",
+  "steps": [
+    { "add": "Werewolf Pack Leader", "as": "wpl" },
+    { "add": "Grizzly Bears" },
+    { "call": ["addActivatedAbility", "@wpl", 1, "Until end of turn, this creature has base power and toughness 5/3, gains trample, and isn't a Human.", "{3}{G}: Until end of turn, this creature has base power and toughness 5/3, gains trample, and isn't a Human."] }
+  ],
+  "asserts": [
+    { "perm": "Werewolf Pack Leader", "final": { "power": 5, "toughness": 3, "subtypes": ["Werewolf"], "abilities": { "$includes": ["Trample"] } } },
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2, "abilities": { "$excludes": ["Trample"] } } }
+  ]
+}

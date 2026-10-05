@@ -315,6 +315,10 @@ const CONDITION_PARSERS = [
     if (!m) return null;
     const abText = m[1].toLowerCase().trim();
     if (/counter|card/.test(abText)) return null;
+    // Perfect tense, not possession: "an opponent has cast a blue or black spell this turn"
+    // (Veil of Summer), "has attacked", "has been dealt damage". These are game-history
+    // conditions the engine can't evaluate, not "has [ability]".
+    if (/^(?:cast|been|attacked|blocked|dealt|entered|left|died|gained|lost|drawn|played|taken|put|had)\b/.test(abText)) return null;
     return (s) => s.abilities.some(a => a.toLowerCase().includes(abText));
   },
 
@@ -1863,7 +1867,9 @@ function parseCardEffects(permanent, card, opts = {}) {
     pushEff('4', EFFECT_TYPE.ADD_TYPE, { gainsAllCreatureTypes: true },
       { appliesTo: null, scope: 'targeted', selfTarget: true },
       'Changeling — this permanent is every creature type.',
-      { id: `${permanent.id}_eff_changeling` });
+      // Printed Changeling is a characteristic-defining ability (CR 702.73a): it applies
+      // before the other effects in its layer regardless of timestamp (CR 613.3).
+      { id: `${permanent.id}_eff_changeling`, isCDA: true });
   }
 
   if (/loses? all creature types/i.test(oracle) && !_isLosesInActivatedAbility && !_losesCTInBasePTClause && !effects.some(e => e.params.losesAllCreatureTypes || e.params.losesAllCreatureTypesOnly)) {
@@ -2805,6 +2811,21 @@ function parseCardEffects(permanent, card, opts = {}) {
     const acAddFilterText = addColorMatch[1].trim();
     const acAddColor = addColorMatch[2].toLowerCase();
     const acAddColors = [COLOR_NAMES[acAddColor]];
+    // Compound subject (Painter's Servant: "All cards that aren't on the battlefield, spells,
+    // and permanents are the chosen color in addition to their other colors"). Same shape as
+    // the Mycosynth Lattice branch of colorSetRegex above, but additive.
+    const acAddNamesPermanents = /\bpermanents?\b/i.test(acAddFilterText);
+    const acAddNamesSpells = /\bspells?\b/i.test(acAddFilterText);
+    const acAddNamesNonBfCards = /\bcards?\b[^.]*\b(?:aren'?t|are not|isn'?t|is not)\b[^.]*\bon the battlefield\b/i.test(acAddFilterText);
+    if (acAddNamesPermanents && (acAddNamesSpells || acAddNamesNonBfCards)) {
+      const acAddZoneNote = acAddNamesNonBfCards ? ', and cards outside the battlefield (exile, graveyard, command zone)' : '';
+      pushEff('5', EFFECT_TYPE.ADD_COLOR, { colors: acAddColors },
+        { appliesTo: () => true, scope: 'global', selfTarget: false, affectsSelf: true },
+        `${acAddFilterText} are ${acAddColor} in addition to their other colors. Applies to: all permanents${acAddNamesSpells ? ', spells' : ''}${acAddZoneNote}`,
+        { appliesToSpells: acAddNamesSpells, appliesToPermanents: true,
+          appliesToNonBattlefieldZones: acAddNamesNonBfCards });
+      continue;
+    }
     // Spell path
     if (!filterReferencesPermanents(acAddFilterText) && filterReferencesSpells(acAddFilterText)) {
       let acAddSpellFilter = acAddFilterText;
@@ -3101,7 +3122,7 @@ function parseCardEffects(permanent, card, opts = {}) {
     // confuse the comma/and split (same reason as the protection extraction above).
     remaining = remaining.replace(
       /hexproof\s+from\s+((?:all|each)\s+\w+|\w+(?:\s+and\s+from\s+\w+)*)/gi,
-      (m, qual) => { keywords.push(`Hexproof from ${qual.charAt(0).toUpperCase() + qual.slice(1)}`); return '\x02'; }
+      (m, qual) => { keywords.push(`Hexproof from ${qual}`); return '\x02'; }
     );
     // Split on commas and "and"; consume trailing "and" after a comma so
     // "flying, haste, and indestructible" doesn't leave "and indestructible" unmatched.
@@ -4964,6 +4985,22 @@ function parseCardEffects(permanent, card, opts = {}) {
         { power: 0, toughness: 0, fromExiledCardPT: true },
         { appliesTo: null, scope: 'targeted', selfTarget: isSelf || undefined, affectsSelf: isSelf || false },
         `Gets +X/+Y, where X is the exiled card's power and Y is its toughness.`);
+    }
+  }
+
+  // --- Imprint "<subject> ... gets +X/+X, where X is the exiled card's mana value" ---
+  // Covers Idris, Soul of the TARDIS. Emits MODIFY_PT with a fromExiledCardMV flag that the
+  // engine resolves at apply time from the most-recent exile entry tagged with this source.
+  {
+    const exiledMVRegex = /^(.+?)\s+(?:has|have|gets?)\b[^.\n]*?\bgets?\s+\+X\/\+X,?\s+where\s+X\s+is\s+the\s+(?:exiled|imprinted)\s+card['’]?s?\s+mana\s+value|^(.+?)\s+gets?\s+\+X\/\+X,?\s+where\s+X\s+is\s+the\s+(?:exiled|imprinted)\s+card['’]?s?\s+mana\s+value/im;
+    const exiledMVMatch = exiledMVRegex.exec(oracleRaw);
+    if (exiledMVMatch) {
+      const subjectRaw = (exiledMVMatch[1] || exiledMVMatch[2]).trim().toLowerCase();
+      const isSelf = subjectRaw === 'this card' || subjectRaw === 'this creature' || subjectRaw === 'this permanent';
+      pushEff('7c', EFFECT_TYPE.MODIFY_PT,
+        { power: 0, toughness: 0, fromExiledCardMV: true },
+        { appliesTo: null, scope: 'targeted', selfTarget: isSelf || undefined, affectsSelf: isSelf || false },
+        `Gets +X/+X, where X is the exiled card's mana value.`);
     }
   }
 

@@ -1,0 +1,17 @@
+{
+  "name": "Winter Soldier — +2/+0 for each Equipment attached to him",
+  "notes": "Memory: project_winter_soldier_attached_pronoun_2026-06-04. The count regex missed the pronoun 'him' so the self-boost never applied. Two Bonesplitters are attached (the third is not): each gives +2/+0 itself and counts once for the Soldier, so power is 2 + 2*2 (count) + 2*2 (Bonesplitters) = 10 and toughness stays 2. Grizzly Bears with the unattached Bonesplitter stays 2/2.",
+  "steps": [
+    { "add": "Winter Soldier, Icy Assassin", "as": "ws" },
+    { "add": "Bonesplitter", "as": "b1" },
+    { "add": "Bonesplitter", "as": "b2" },
+    { "add": "Bonesplitter", "as": "b3" },
+    { "add": "Grizzly Bears" },
+    { "call": ["setTarget", "@b1", "@ws"] },
+    { "call": ["setTarget", "@b2", "@ws"] }
+  ],
+  "asserts": [
+    { "perm": "Winter Soldier, Icy Assassin", "final": { "power": 10, "toughness": 2 } },
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2 } }
+  ]
+}

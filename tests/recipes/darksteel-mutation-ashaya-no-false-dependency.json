@@ -1,0 +1,14 @@
+{
+  "name": "Darksteel Mutation + Ashaya — no false dependency",
+  "notes": "Memory: project_darksteel_ashaya_dep_fix_2026-04-08. Darksteel Mutation's full type replacement was wrongly reported as depending on Ashaya's 'creatures are Forest lands'. With no dependency, layer 4 applies in timestamp order: Ashaya, then Darksteel Mutation, so the enchanted creature ends as an Artifact Creature — Insect and is no longer a land.",
+  "steps": [
+    { "add": "Ashaya, Soul of the Wild", "as": "ashaya" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Darksteel Mutation", "as": "dm" },
+    { "call": ["setTarget", "@dm", "@bears"] }
+  ],
+  "asserts": [
+    { "order": { "4": ["Ashaya, Soul of the Wild", "Darksteel Mutation"] } },
+    { "perm": "Grizzly Bears", "final": { "types": ["Artifact", "Creature"], "subtypes": ["Insect"], "power": 0, "toughness": 1, "abilities": { "$includes": ["Indestructible"] } } }
+  ]
+}

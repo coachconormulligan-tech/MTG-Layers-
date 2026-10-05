@@ -1,0 +1,15 @@
+{
+  "name": "Blood Moon vs Urborg — Urborg loses its ability before it applies",
+  "notes": "CR 613.8 dependency: Urborg's type-adding ability depends on Blood Moon, which turns Urborg into a Mountain and removes that ability (CR 305.7). Regardless of timestamps, nothing becomes a Swamp. Urborg is added AFTER Blood Moon here so plain timestamp order would give the wrong answer.",
+  "steps": [
+    { "add": "Blood Moon" },
+    { "add": "Urborg, Tomb of Yawgmoth", "as": "urborg" },
+    { "add": "Stomping Ground", "as": "sg" },
+    { "add": "Maze of Ith", "as": "maze" }
+  ],
+  "asserts": [
+    { "perm": "Urborg, Tomb of Yawgmoth", "final": { "subtypes": ["Mountain"], "abilities": ["{T}: Add {R}."] } },
+    { "perm": "Maze of Ith", "final": { "subtypes": ["Mountain"], "abilities": ["{T}: Add {R}."] } },
+    { "perm": "Stomping Ground", "final": { "subtypes": { "$excludes": ["Swamp"] } } }
+  ]
+}

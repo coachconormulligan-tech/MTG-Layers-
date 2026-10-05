@@ -1,0 +1,15 @@
+{
+  "name": "Amoeboid Changeling — every creature type is real subtypes",
+  "notes": "Memory: project_all_creature_types_except_2026-04-28 and project_changeling_layer4_effect_2026-04-26. Changeling must be a Layer 4 ADD_TYPE effect that materialises every creature type, so Elvish Archdruid's 'Other Elf creatures you control' lord applies to it. A Bear-only Grizzly Bears is not an Elf.",
+  "steps": [
+    { "add": "Elvish Archdruid" },
+    { "add": "Amoeboid Changeling" },
+    { "add": "Grizzly Bears" }
+  ],
+  "asserts": [
+    { "effect": { "source": "Amoeboid Changeling", "layer": "4", "type": "add_type" } },
+    { "perm": "Amoeboid Changeling", "final": { "power": 2, "toughness": 2, "subtypes": { "$includes": ["Elf", "Human", "Shapeshifter", "Bear"] } } },
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2 } },
+    { "perm": "Elvish Archdruid", "final": { "power": 2, "toughness": 2 } }
+  ]
+}

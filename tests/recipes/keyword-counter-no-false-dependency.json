@@ -1,0 +1,14 @@
+{
+  "name": "Keyword counter — no false dependency with other ability effects",
+  "notes": "Memory: project_keyword_counter_false_dependency_fix_2026-04-24. KEYWORD_COUNTER was missing from the static-additive list, so ability counters reported spurious dependencies against other effects. Here Grizzly Bears has a flying counter and is equipped with Lizard Blades (double strike); both abilities must be present and layer 6 stays in timestamp order.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Lizard Blades", "as": "blades" },
+    { "call": ["addCounter", "@bears", "Flying", 1] },
+    { "call": ["setTarget", "@blades", "@bears"] }
+  ],
+  "asserts": [
+    { "order": { "6": ["Grizzly Bears", "Lizard Blades"] } },
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$includes": ["Flying", "Double strike"] } } }
+  ]
+}

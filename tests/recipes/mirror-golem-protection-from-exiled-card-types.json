@@ -1,0 +1,13 @@
+{
+  "name": "Mirror Golem — protection from each card type of the exiled card",
+  "notes": "Memory: project_imprint_implementation_2026-05-25. Myr Welder is an artifact creature card, so Mirror Golem gets protection from artifacts and from creatures; subtypes (Myr) give none. A non-tagged card in exile (Lightning Bolt) must not add protection from instants. NOTE: exile ids are literal; build in its own process.",
+  "steps": [
+    { "add": "Mirror Golem", "as": "golem" },
+    { "call": ["addToExile", "card:Myr Welder"] },
+    { "call": ["setExileTag", "exile_1", "@golem"] },
+    { "call": ["addToExile", "card:Lightning Bolt"] }
+  ],
+  "asserts": [
+    { "perm": "Mirror Golem", "final": { "power": 3, "toughness": 4, "abilities": { "$includes": ["Protection from Artifact", "Protection from Creature"] } } }
+  ]
+}

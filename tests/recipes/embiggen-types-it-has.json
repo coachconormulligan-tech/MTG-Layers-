@@ -1,0 +1,14 @@
+{
+  "name": "Embiggen — +1/+1 for each supertype, card type, and subtype it has",
+  "notes": "Memory: project_embiggen_type_count_fix_2026-04-26. The count is over the target's own type line. Isamaru, Hound of Konda (Legendary Creature - Dog) has 3 (Legendary, Creature, Dog), so 2/2 becomes 5/5. Grizzly Bears (Creature - Bear) would get only 2, and is the untargeted control.",
+  "steps": [
+    { "add": "Isamaru, Hound of Konda" },
+    { "add": "Grizzly Bears" },
+    { "add": "Embiggen", "as": "embiggen", "spell": true },
+    { "call": ["setTarget", "@embiggen", "@Isamaru, Hound of Konda"] }
+  ],
+  "asserts": [
+    { "perm": "Isamaru, Hound of Konda", "final": { "power": 5, "toughness": 5 } },
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2 } }
+  ]
+}

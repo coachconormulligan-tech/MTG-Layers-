@@ -1,0 +1,12 @@
+{
+  "name": "Changeling — losing Creature type loses all creature types",
+  "notes": "Memory: project_changeling_layer4_effect_2026-04-26. When Song of the Dryads (newer) makes the Changeling a colorless Forest land, it is no longer a creature, so its all-creature-types status must not linger: only the Forest subtype remains.",
+  "steps": [
+    { "add": "Amoeboid Changeling" },
+    { "add": "Song of the Dryads", "as": "song" },
+    { "call": ["setTarget", "@song", "@Amoeboid Changeling"] }
+  ],
+  "asserts": [
+    { "perm": "Amoeboid Changeling", "final": { "types": ["Land"], "subtypes": ["Forest"], "colors": [] } }
+  ]
+}

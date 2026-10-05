@@ -1,0 +1,41 @@
+{
+  "name": "Bludgeon Brawl — noncreature non-Equipment artifacts become Equipment",
+  "notes": "Memory: project_bludgeon_brawl_fix_2026-04-08. The comma in 'noncreature, non-Equipment' dropped a qualifier and the trailing equip clause aborted the parse. Here Sol Ring gains the Equipment subtype and an equip ability; the Wurmcoil Engine (creature) and Lizard Blades (already Equipment) are controls and must not gain it or an Equip ability from Bludgeon Brawl.",
+  "steps": [
+    {
+      "add": "Bludgeon Brawl"
+    },
+    {
+      "add": "Sol Ring"
+    },
+    {
+      "add": "Wurmcoil Engine"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Sol Ring",
+      "final": {
+        "types": [
+          "Artifact"
+        ],
+        "subtypes": [
+          "Equipment"
+        ]
+      }
+    },
+    {
+      "perm": "Wurmcoil Engine",
+      "final": {
+        "types": [
+          "Artifact",
+          "Creature"
+        ],
+        "subtypes": [
+          "Phyrexian",
+          "Wurm"
+        ]
+      }
+    }
+  ]
+}

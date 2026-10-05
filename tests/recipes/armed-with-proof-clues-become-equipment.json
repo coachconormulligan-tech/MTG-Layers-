@@ -1,0 +1,55 @@
+{
+  "name": "Armed with Proof — Clues become Equipment",
+  "notes": "Memory: project_armed_with_proof_artifact_subtype_filter_2026-05-03. The artifact-subtype subject 'Clues you control' was not recognised so no effects were emitted. Clues must gain the Equipment subtype and 'Equipped creature gets +2/+0', and attached to a creature give +2/+0; non-Clue artifacts (Sol Ring) must be unaffected.",
+  "steps": [
+    {
+      "add": "Clue",
+      "as": "clue"
+    },
+    {
+      "add": "Sol Ring"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Armed with Proof"
+    },
+    {
+      "call": [
+        "applyEquipAttachment",
+        "@clue",
+        1,
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Clue // Clue",
+      "final": {
+        "types": [
+          "Artifact"
+        ],
+        "subtypes": [
+          "Clue",
+          "Equipment"
+        ]
+      }
+    },
+    {
+      "perm": "Sol Ring",
+      "final": {
+        "subtypes": []
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 4,
+        "toughness": 2
+      }
+    }
+  ]
+}

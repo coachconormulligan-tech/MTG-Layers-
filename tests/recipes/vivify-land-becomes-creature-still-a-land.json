@@ -1,0 +1,14 @@
+{
+  "name": "Vivify — land becomes a 3/3 creature and is still a land",
+  "notes": "Memory: project_vivify_becomes_fix_2026-04-23 and project_vivify_instant_fix_2026-04-23. 'Target land becomes a 3/3 creature until end of turn. It's still a land.' once left fake subtypes (Until, End, Turn), skipped the contraction, or turned the land into a plain creature. Ancient Den must end as an Artifact Creature Land 3/3 with no subtypes; the untargeted Forest is unaffected.",
+  "steps": [
+    { "add": "Ancient Den" },
+    { "add": "Forest" },
+    { "add": "Vivify", "as": "vivify", "spell": true },
+    { "call": ["setTarget", "@vivify", "@Ancient Den"] }
+  ],
+  "asserts": [
+    { "perm": "Ancient Den", "final": { "power": 3, "toughness": 3, "types": ["Artifact", "Land", "Creature"], "subtypes": [] } },
+    { "perm": "Forest", "final": { "types": ["Land"], "subtypes": ["Forest"] } }
+  ]
+}

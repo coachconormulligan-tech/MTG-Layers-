@@ -1,0 +1,59 @@
+{
+  "name": "Spark Double — copying a plain Sakashima keeps its printed text",
+  "notes": "Memory: project_copy_enter_as_copy_ability_stripped_2026-06-22, revised 2026-10-05 at the owner's request to follow CR 707.2. A Sakashima that is not copying anything has its printed 'enter as a copy' line as part of its copiable values, so Spark Double's copy has that text (it does nothing on the battlefield). The copy is not legendary, and no second COPY or Layer 4 effect is built from the copied line.",
+  "steps": [
+    {
+      "add": "Sakashima the Impostor"
+    },
+    {
+      "add": "Spark Double"
+    },
+    {
+      "call": [
+        "setCopySource",
+        "@Spark Double",
+        "card:Sakashima the Impostor"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Spark Double",
+      "final": {
+        "name": "Sakashima the Impostor",
+        "supertypes": [],
+        "types": [
+          "Creature"
+        ],
+        "subtypes": [
+          "Human",
+          "Rogue"
+        ],
+        "abilities": [
+          "You may have this card enter as a copy of any creature on the battlefield, except its name is this card, it's legendary in addition to its other types, and it has \"{2}{U}{U}: Return this card to its owner's hand at the beginning of the next end step.\""
+        ]
+      }
+    },
+    {
+      "perm": "Sakashima the Impostor",
+      "final": {
+        "supertypes": [
+          "Legendary"
+        ]
+      }
+    },
+    {
+      "effect": {
+        "source": "Spark Double",
+        "layer": "1",
+        "type": "copy"
+      }
+    },
+    {
+      "noEffect": {
+        "source": "Spark Double",
+        "layer": "4"
+      }
+    }
+  ]
+}

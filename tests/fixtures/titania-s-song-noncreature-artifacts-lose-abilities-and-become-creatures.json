@@ -1,0 +1,941 @@
+{
+ "name": "Titania's Song — noncreature artifacts lose abilities and become creatures",
+ "notes": "Memory: project_titania_song_fix_2026-04-09. The lazy type regex captured 'noncreature artifact loses all abilities and' as the filter, so the effect applied to nothing. Here Sol Ring (MV 1) and Mind Stone (MV 2) become artifact creatures with P/T equal to MV and no abilities; Wurmcoil Engine (already a creature) is the control and keeps 6/6 and its abilities.",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Titania's Song"
+   },
+   {
+    "add": "Sol Ring"
+   },
+   {
+    "add": "Mind Stone"
+   },
+   {
+    "add": "Wurmcoil Engine"
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Sol Ring",
+   "final": {
+    "types": [
+     "Artifact",
+     "Creature"
+    ],
+    "power": 1,
+    "toughness": 1,
+    "abilities": []
+   }
+  },
+  {
+   "perm": "Mind Stone",
+   "final": {
+    "types": [
+     "Artifact",
+     "Creature"
+    ],
+    "power": 2,
+    "toughness": 2,
+    "abilities": []
+   }
+  },
+  {
+   "perm": "Wurmcoil Engine",
+   "final": {
+    "power": 6,
+    "toughness": 6,
+    "abilities": {
+     "$includes": [
+      "Deathtouch, lifelink"
+     ]
+    }
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "4bb135e7-f9e3-4abc-8374-180316498fc3",
+     "oracle_id": "30ac0f06-3dd3-4827-8136-4cf8adbf9b12",
+     "multiverse_ids": [
+      202570
+     ],
+     "mtgo_id": 38764,
+     "mtgo_foil_id": 38765,
+     "name": "Titania's Song",
+     "lang": "en",
+     "released_at": "2011-01-10",
+     "uri": "https://api.scryfall.com/cards/4bb135e7-f9e3-4abc-8374-180316498fc3",
+     "scryfall_uri": "https://scryfall.com/card/me4/170/titanias-song?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:17:02Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/b/4bb135e7-f9e3-4abc-8374-180316498fc3.jpg?1783941422",
+      "normal": "https://cards.scryfall.io/normal/front/4/b/4bb135e7-f9e3-4abc-8374-180316498fc3.jpg?1783941422",
+      "large": "https://cards.scryfall.io/large/front/4/b/4bb135e7-f9e3-4abc-8374-180316498fc3.jpg?1783941422",
+      "png": "https://cards.scryfall.io/png/front/4/b/4bb135e7-f9e3-4abc-8374-180316498fc3.png?1783941422",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/b/4bb135e7-f9e3-4abc-8374-180316498fc3.jpg?1783941422",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/b/4bb135e7-f9e3-4abc-8374-180316498fc3.jpg?1783941422",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/b/4bb135e7-f9e3-4abc-8374-180316498fc3.webp?1783941422",
+      "grid": "https://cards.scryfall.io/grid/front/4/b/4bb135e7-f9e3-4abc-8374-180316498fc3.webp?1783941422",
+      "display": "https://cards.scryfall.io/display/front/4/b/4bb135e7-f9e3-4abc-8374-180316498fc3.webp?1783941422",
+      "art": "https://cards.scryfall.io/art/front/4/b/4bb135e7-f9e3-4abc-8374-180316498fc3.webp?1783941422",
+      "crop": "https://cards.scryfall.io/crop/front/4/b/4bb135e7-f9e3-4abc-8374-180316498fc3.webp?1783941422"
+     },
+     "mana_cost": "{3}{G}",
+     "cmc": 4,
+     "type_line": "Enchantment",
+     "oracle_text": "Each noncreature artifact loses all abilities and becomes an artifact creature with power and toughness each equal to its mana value. If this enchantment leaves the battlefield, this effect continues until end of turn.",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "d38a13b7-6615-4c89-be7d-3b4eaacf1875",
+     "set": "me4",
+     "set_name": "Masters Edition IV",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/d38a13b7-6615-4c89-be7d-3b4eaacf1875",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Ame4&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/me4?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/4bb135e7-f9e3-4abc-8374-180316498fc3/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A30ac0f06-3dd3-4827-8136-4cf8adbf9b12&unique=prints",
+     "collector_number": "170",
+     "digital": true,
+     "rarity": "rare",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Kerstin Kaman",
+     "artist_ids": [
+      "41c51967-2bf2-462f-bb10-9d97ff2b2101"
+     ],
+     "illustration_id": "5255ef55-58bd-469b-ab50-512fa178c0f4",
+     "border_color": "black",
+     "frame": "1997",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 16579,
+     "penny_rank": 5513,
+     "prices": {
+      "usd": null,
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": null,
+      "tix": "0.18"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=202570&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DTitania%2527s%2BSong",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DTitania%2527s%2BSong",
+      "edhrec": "https://edhrec.com/route/?cc=Titania%27s+Song"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fmagic%2Fproduct%3FproductLineName%3Dmagic%26q%3DTitania%2527s%2BSong%26view%3Dgrid",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products/Search?referrer=scryfall&searchString=Titania%27s+Song&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/38764?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "8ee443cc-e17a-493b-9c93-1f9e141a30e4",
+     "oracle_id": "6ad8011d-3471-4369-9d68-b264cc027487",
+     "multiverse_ids": [],
+     "resource_id": "B12151C9CD0511F86702A215428AAE1A3170DF60AA4DE769D4FA59EDC207CA20",
+     "mtgo_id": 156438,
+     "tcgplayer_id": 717788,
+     "cardmarket_id": 909814,
+     "name": "Sol Ring",
+     "lang": "en",
+     "released_at": "2026-10-02",
+     "uri": "https://api.scryfall.com/cards/8ee443cc-e17a-493b-9c93-1f9e141a30e4",
+     "scryfall_uri": "https://scryfall.com/card/frc/21/sol-ring?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-09-17T11:27:26Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.jpg?1789644446",
+      "normal": "https://cards.scryfall.io/normal/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.jpg?1789644446",
+      "large": "https://cards.scryfall.io/large/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.jpg?1789644446",
+      "png": "https://cards.scryfall.io/png/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.png?1789644446",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.jpg?1789644446",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.jpg?1789644446",
+      "thumb": "https://cards.scryfall.io/thumb/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.webp?1789644446",
+      "grid": "https://cards.scryfall.io/grid/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.webp?1789644446",
+      "display": "https://cards.scryfall.io/display/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.webp?1789644446",
+      "art": "https://cards.scryfall.io/art/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.webp?1789644446",
+      "crop": "https://cards.scryfall.io/crop/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.webp?1789644446"
+     },
+     "mana_cost": "{1}",
+     "cmc": 1,
+     "type_line": "Artifact",
+     "oracle_text": "{T}: Add {C}{C}.",
+     "colors": [],
+     "color_identity": [],
+     "keywords": [],
+     "produced_mana": [
+      "C"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "banned",
+      "pauper": "not_legal",
+      "vintage": "restricted",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "banned",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "banned",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "banned"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "cfd10490-7397-4143-bda7-d388b877636f",
+     "set": "frc",
+     "set_name": "Reality Fracture Commander",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/cfd10490-7397-4143-bda7-d388b877636f",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Afrc&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/frc?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/8ee443cc-e17a-493b-9c93-1f9e141a30e4/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A6ad8011d-3471-4369-9d68-b264cc027487&unique=prints",
+     "collector_number": "21",
+     "digital": false,
+     "rarity": "uncommon",
+     "flavor_text": "Jace could see the sunlight in his Multiverse, but somewhere along the way, he lost the feel of its warmth.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Titus Lunter",
+     "artist_ids": [
+      "b11e6b3a-f4ca-4cf1-8fd7-475696de5f5c"
+     ],
+     "illustration_id": "f142ba5f-999f-42f6-b56e-26164a3b6b87",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 1,
+     "preview": {
+      "source": "Wizards of the Coast",
+      "source_uri": "https://youtu.be/mvTyHbTbfBo",
+      "previewed_at": "2026-09-16"
+     },
+     "prices": {
+      "usd": "1.13",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "1.13",
+      "eur_foil": null,
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DSol%2BRing",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DSol%2BRing",
+      "edhrec": "https://edhrec.com/route/?cc=Sol+Ring"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F717788%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=909814&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/156438?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "b30a8f92-ce42-4b27-a893-bcf97fde228d",
+     "oracle_id": "c97361b5-af16-4a7b-af85-a429dbaf4ad2",
+     "multiverse_ids": [],
+     "tcgplayer_id": 709824,
+     "name": "Mind Stone",
+     "lang": "en",
+     "released_at": "2026-11-09",
+     "uri": "https://api.scryfall.com/cards/b30a8f92-ce42-4b27-a893-bcf97fde228d",
+     "scryfall_uri": "https://scryfall.com/card/mbc/76/mind-stone?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-08-03T12:16:15Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/b/3/b30a8f92-ce42-4b27-a893-bcf97fde228d.jpg?1785759375",
+      "normal": "https://cards.scryfall.io/normal/front/b/3/b30a8f92-ce42-4b27-a893-bcf97fde228d.jpg?1785759375",
+      "large": "https://cards.scryfall.io/large/front/b/3/b30a8f92-ce42-4b27-a893-bcf97fde228d.jpg?1785759375",
+      "png": "https://cards.scryfall.io/png/front/b/3/b30a8f92-ce42-4b27-a893-bcf97fde228d.png?1785759375",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/b/3/b30a8f92-ce42-4b27-a893-bcf97fde228d.jpg?1785759375",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/b/3/b30a8f92-ce42-4b27-a893-bcf97fde228d.jpg?1785759375",
+      "thumb": "https://cards.scryfall.io/thumb/front/b/3/b30a8f92-ce42-4b27-a893-bcf97fde228d.webp?1785759375",
+      "grid": "https://cards.scryfall.io/grid/front/b/3/b30a8f92-ce42-4b27-a893-bcf97fde228d.webp?1785759375",
+      "display": "https://cards.scryfall.io/display/front/b/3/b30a8f92-ce42-4b27-a893-bcf97fde228d.webp?1785759375",
+      "art": "https://cards.scryfall.io/art/front/b/3/b30a8f92-ce42-4b27-a893-bcf97fde228d.webp?1785759375",
+      "crop": "https://cards.scryfall.io/crop/front/b/3/b30a8f92-ce42-4b27-a893-bcf97fde228d.webp?1785759375"
+     },
+     "mana_cost": "{2}",
+     "cmc": 2,
+     "type_line": "Artifact",
+     "oracle_text": "{T}: Add {C}.\n{1}, {T}, Sacrifice this artifact: Draw a card.",
+     "colors": [],
+     "color_identity": [],
+     "keywords": [],
+     "produced_mana": [
+      "C"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a4135564-9f37-4aaf-963a-90666f843e0d",
+     "set": "mbc",
+     "set_name": "Mystery Booster Commander Edition",
+     "set_type": "draft_innovation",
+     "set_uri": "https://api.scryfall.com/sets/a4135564-9f37-4aaf-963a-90666f843e0d",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Ambc&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/mbc?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/b30a8f92-ce42-4b27-a893-bcf97fde228d/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ac97361b5-af16-4a7b-af85-a429dbaf4ad2&unique=prints",
+     "collector_number": "76",
+     "digital": false,
+     "rarity": "uncommon",
+     "flavor_text": "\"What is mana but possibility, an idea not yet given form?\"\n—Jhoira, master artificer",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Adam Rex",
+     "artist_ids": [
+      "445bd2fb-4a70-4599-87a4-83cf5979fc56"
+     ],
+     "illustration_id": "12a6cfae-ed70-4406-97d3-9366fc138254",
+     "border_color": "black",
+     "frame": "future",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 32,
+     "prices": {
+      "usd": null,
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DMind%2BStone",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DMind%2BStone",
+      "edhrec": "https://edhrec.com/route/?cc=Mind+Stone"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F709824%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products/Search?referrer=scryfall&searchString=Mind+Stone&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Mind+Stone&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "5d275f04-cc60-4e3f-95cc-3d02bc916b82",
+     "oracle_id": "d1a60f44-7696-49ee-91fb-cab5b3102962",
+     "multiverse_ids": [
+      489981
+     ],
+     "mtgo_id": 82650,
+     "tcgplayer_id": 218392,
+     "cardmarket_id": 482669,
+     "name": "Wurmcoil Engine",
+     "lang": "en",
+     "released_at": "2020-08-07",
+     "uri": "https://api.scryfall.com/cards/5d275f04-cc60-4e3f-95cc-3d02bc916b82",
+     "scryfall_uri": "https://scryfall.com/card/2xm/308/wurmcoil-engine?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T08:08:08Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/5/d/5d275f04-cc60-4e3f-95cc-3d02bc916b82.jpg?1783930088",
+      "normal": "https://cards.scryfall.io/normal/front/5/d/5d275f04-cc60-4e3f-95cc-3d02bc916b82.jpg?1783930088",
+      "large": "https://cards.scryfall.io/large/front/5/d/5d275f04-cc60-4e3f-95cc-3d02bc916b82.jpg?1783930088",
+      "png": "https://cards.scryfall.io/png/front/5/d/5d275f04-cc60-4e3f-95cc-3d02bc916b82.png?1783930088",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/5/d/5d275f04-cc60-4e3f-95cc-3d02bc916b82.jpg?1783930088",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/5/d/5d275f04-cc60-4e3f-95cc-3d02bc916b82.jpg?1783930088",
+      "thumb": "https://cards.scryfall.io/thumb/front/5/d/5d275f04-cc60-4e3f-95cc-3d02bc916b82.webp?1783930088",
+      "grid": "https://cards.scryfall.io/grid/front/5/d/5d275f04-cc60-4e3f-95cc-3d02bc916b82.webp?1783930088",
+      "display": "https://cards.scryfall.io/display/front/5/d/5d275f04-cc60-4e3f-95cc-3d02bc916b82.webp?1783930088",
+      "art": "https://cards.scryfall.io/art/front/5/d/5d275f04-cc60-4e3f-95cc-3d02bc916b82.webp?1783930088",
+      "crop": "https://cards.scryfall.io/crop/front/5/d/5d275f04-cc60-4e3f-95cc-3d02bc916b82.webp?1783930088"
+     },
+     "mana_cost": "{6}",
+     "cmc": 6,
+     "type_line": "Artifact Creature — Phyrexian Wurm",
+     "oracle_text": "Deathtouch, lifelink\nWhen this creature dies, create a 3/3 colorless Phyrexian Wurm artifact creature token with deathtouch and a 3/3 colorless Phyrexian Wurm artifact creature token with lifelink.",
+     "power": "6",
+     "toughness": "6",
+     "colors": [],
+     "color_identity": [],
+     "keywords": [
+      "Lifelink",
+      "Deathtouch"
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "a6ee0db9-ac89-4ab6-ac2e-8a7527d9ecbd",
+       "component": "token",
+       "name": "Wurm",
+       "type_line": "Token Artifact Creature — Wurm",
+       "uri": "https://api.scryfall.com/cards/a6ee0db9-ac89-4ab6-ac2e-8a7527d9ecbd"
+      },
+      {
+       "object": "related_card",
+       "id": "b68e816f-f9ac-435b-ad0b-ceedbe72447a",
+       "component": "token",
+       "name": "Wurm",
+       "type_line": "Token Artifact Creature — Wurm",
+       "uri": "https://api.scryfall.com/cards/b68e816f-f9ac-435b-ad0b-ceedbe72447a"
+      },
+      {
+       "object": "related_card",
+       "id": "f097accb-28ad-4b22-b615-103c74e07708",
+       "component": "combo_piece",
+       "name": "Wurmcoil Engine",
+       "type_line": "Artifact Creature — Phyrexian Wurm",
+       "uri": "https://api.scryfall.com/cards/f097accb-28ad-4b22-b615-103c74e07708"
+      }
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "372dafe8-b5d1-4b81-998f-3ae96b59498a",
+     "set": "2xm",
+     "set_name": "Double Masters",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/372dafe8-b5d1-4b81-998f-3ae96b59498a",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A2xm&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/2xm?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/5d275f04-cc60-4e3f-95cc-3d02bc916b82/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ad1a60f44-7696-49ee-91fb-cab5b3102962&unique=prints",
+     "collector_number": "308",
+     "digital": false,
+     "rarity": "mythic",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Raymond Swanland",
+     "artist_ids": [
+      "e956bacc-077d-4c12-b6bc-ba798b718af9"
+     ],
+     "illustration_id": "53d9b54e-edd4-495c-b0ea-6a748ca36a66",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 1067,
+     "preview": {
+      "source": "Maxildan",
+      "source_uri": "https://twitter.com/Maxildan/status/1285241053692538880",
+      "previewed_at": "2020-07-20"
+     },
+     "prices": {
+      "usd": "11.01",
+      "usd_foil": "11.29",
+      "usd_etched": null,
+      "eur": "8.68",
+      "eur_foil": "10.74",
+      "tix": "0.25"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=489981&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DWurmcoil%2BEngine",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DWurmcoil%2BEngine",
+      "edhrec": "https://edhrec.com/route/?cc=Wurmcoil+Engine"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F218392%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=482669&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/82650?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 4,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Titania's Song",
+    "final": {
+     "name": "Titania's Song",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Enchantment"
+     ],
+     "subtypes": [],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "Each noncreature artifact loses all abilities and becomes an artifact creature with power and toughness each equal to its mana value. If this enchantment leaves the battlefield, this effect continues until end of turn."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Sol Ring",
+    "final": {
+     "name": "Sol Ring",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Artifact",
+      "Creature"
+     ],
+     "subtypes": [],
+     "power": 1,
+     "toughness": 1,
+     "colors": [],
+     "abilities": [],
+     "allAbilitiesRemoved": true
+    },
+    "changedBy": {
+     "4": [
+      "Titania's Song"
+     ],
+     "6": [
+      "Titania's Song"
+     ],
+     "7b": [
+      "Titania's Song"
+     ]
+    }
+   },
+   {
+    "perm": "Mind Stone",
+    "final": {
+     "name": "Mind Stone",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Artifact",
+      "Creature"
+     ],
+     "subtypes": [],
+     "power": 2,
+     "toughness": 2,
+     "colors": [],
+     "abilities": [],
+     "allAbilitiesRemoved": true
+    },
+    "changedBy": {
+     "4": [
+      "Titania's Song"
+     ],
+     "6": [
+      "Titania's Song"
+     ],
+     "7b": [
+      "Titania's Song"
+     ]
+    }
+   },
+   {
+    "perm": "Wurmcoil Engine",
+    "final": {
+     "name": "Wurmcoil Engine",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Artifact",
+      "Creature"
+     ],
+     "subtypes": [
+      "Phyrexian",
+      "Wurm"
+     ],
+     "power": 6,
+     "toughness": 6,
+     "colors": [],
+     "abilities": [
+      "Deathtouch, lifelink",
+      "When this creature dies, create a 3/3 colorless Phyrexian Wurm artifact creature token with deathtouch and a 3/3 colorless Phyrexian Wurm artifact creature token with lifelink."
+     ]
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "4": [
+    "Titania's Song"
+   ],
+   "6": [
+    "Titania's Song"
+   ],
+   "7b": [
+    "Titania's Song"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Titania's Song",
+    "layer": "4",
+    "type": "add_type",
+    "scope": "global",
+    "params": {
+     "subtypes": [],
+     "types": [
+      "Creature"
+     ]
+    }
+   },
+   {
+    "source": "Titania's Song",
+    "layer": "6",
+    "type": "remove_abilities",
+    "scope": "global",
+    "params": {}
+   },
+   {
+    "source": "Titania's Song",
+    "layer": "7b",
+    "type": "set_pt",
+    "scope": "global",
+    "params": {
+     "useMV": true
+    }
+   }
+  ]
+ }
+}

@@ -1,0 +1,1122 @@
+{
+ "name": "Armed with Proof — dynamically gained Equipment boost applies",
+ "notes": "Memory: project_equipped_creature_carrier_condition_2026-05-28. 'Equipped creature gets +2/+0' granted to Clues was gated on an Equipment-carrier check that fails when the Equipment subtype is gained dynamically, so the boost silently never applied. Here Armed with Proof makes a Clue an Equipment; attached to Grizzly Bears it must give +2/+0 (4/2). Grizzly Bears B is the unequipped control and stays 2/2. The Clue is attached with applyEquipAttachment (index 1 is its granted Equip ability), the same path the Equip popup uses for Equipment that is not printed as Equipment. Bears B has nothing attached and must not get the boost.",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Armed with Proof"
+   },
+   {
+    "add": "Clue",
+    "as": "clue"
+   },
+   {
+    "add": "Grizzly Bears",
+    "as": "bearsA"
+   },
+   {
+    "add": "Grizzly Bears",
+    "as": "bearsB"
+   },
+   {
+    "call": [
+     "applyEquipAttachment",
+     "@clue",
+     1,
+     "@bearsA"
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Clue // Clue",
+   "final": {
+    "subtypes": {
+     "$includes": [
+      "Equipment",
+      "Clue"
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Grizzly Bears A",
+   "final": {
+    "power": 4,
+    "toughness": 2
+   }
+  },
+  {
+   "perm": "Grizzly Bears B",
+   "final": {
+    "power": 2,
+    "toughness": 2
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "6e75470f-fe57-4b6e-a76b-5daf9d9caf0b",
+     "oracle_id": "b401a490-d25f-4029-bb91-8999e140c6a1",
+     "multiverse_ids": [
+      649947
+     ],
+     "mtgo_id": 122772,
+     "tcgplayer_id": 535655,
+     "cardmarket_id": 753244,
+     "name": "Armed with Proof",
+     "lang": "en",
+     "released_at": "2024-02-09",
+     "uri": "https://api.scryfall.com/cards/6e75470f-fe57-4b6e-a76b-5daf9d9caf0b",
+     "scryfall_uri": "https://scryfall.com/card/mkc/9/armed-with-proof?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T03:24:12Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/6/e/6e75470f-fe57-4b6e-a76b-5daf9d9caf0b.jpg?1783913052",
+      "normal": "https://cards.scryfall.io/normal/front/6/e/6e75470f-fe57-4b6e-a76b-5daf9d9caf0b.jpg?1783913052",
+      "large": "https://cards.scryfall.io/large/front/6/e/6e75470f-fe57-4b6e-a76b-5daf9d9caf0b.jpg?1783913052",
+      "png": "https://cards.scryfall.io/png/front/6/e/6e75470f-fe57-4b6e-a76b-5daf9d9caf0b.png?1783913052",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/6/e/6e75470f-fe57-4b6e-a76b-5daf9d9caf0b.jpg?1783913052",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/6/e/6e75470f-fe57-4b6e-a76b-5daf9d9caf0b.jpg?1783913052",
+      "thumb": "https://cards.scryfall.io/thumb/front/6/e/6e75470f-fe57-4b6e-a76b-5daf9d9caf0b.webp?1783913052",
+      "grid": "https://cards.scryfall.io/grid/front/6/e/6e75470f-fe57-4b6e-a76b-5daf9d9caf0b.webp?1783913052",
+      "display": "https://cards.scryfall.io/display/front/6/e/6e75470f-fe57-4b6e-a76b-5daf9d9caf0b.webp?1783913052",
+      "art": "https://cards.scryfall.io/art/front/6/e/6e75470f-fe57-4b6e-a76b-5daf9d9caf0b.webp?1783913052",
+      "crop": "https://cards.scryfall.io/crop/front/6/e/6e75470f-fe57-4b6e-a76b-5daf9d9caf0b.webp?1783913052"
+     },
+     "mana_cost": "{2}{W}",
+     "cmc": 3,
+     "type_line": "Enchantment",
+     "oracle_text": "When this enchantment enters, investigate twice. (To investigate, create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")\nClues you control are Equipment in addition to their other types and have \"Equipped creature gets +2/+0\" and equip {2}.",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [
+      "Investigate"
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "ef607895-d6d2-44ab-a6b4-84af55fce593",
+       "component": "token",
+       "name": "Clue",
+       "type_line": "Token Artifact — Clue",
+       "uri": "https://api.scryfall.com/cards/ef607895-d6d2-44ab-a6b4-84af55fce593"
+      },
+      {
+       "object": "related_card",
+       "id": "9daf962d-f48d-4c93-98d1-ec32d3c758a1",
+       "component": "combo_piece",
+       "name": "Armed with Proof",
+       "type_line": "Enchantment",
+       "uri": "https://api.scryfall.com/cards/9daf962d-f48d-4c93-98d1-ec32d3c758a1"
+      }
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "286c37ca-ba65-4d3e-8c5d-d1878d88fd95",
+     "set": "mkc",
+     "set_name": "Murders at Karlov Manor Commander",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/286c37ca-ba65-4d3e-8c5d-d1878d88fd95",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Amkc&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/mkc?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/6e75470f-fe57-4b6e-a76b-5daf9d9caf0b/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ab401a490-d25f-4029-bb91-8999e140c6a1&unique=prints",
+     "collector_number": "9",
+     "digital": false,
+     "rarity": "rare",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Serena Malyon",
+     "artist_ids": [
+      "d9fee7a6-7c5e-48a5-8639-bba25abc8a06"
+     ],
+     "illustration_id": "664624a0-2ec2-4528-a950-cd7f6276cfe2",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 12085,
+     "prices": {
+      "usd": "0.32",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.13",
+      "eur_foil": null,
+      "tix": "0.38"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=649947&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DArmed%2Bwith%2BProof",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DArmed%2Bwith%2BProof",
+      "edhrec": "https://edhrec.com/route/?cc=Armed+with+Proof"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F535655%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=753244&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/122772?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "9b111525-0600-4bae-94a3-df8f9472388f",
+     "oracle_id": "422255ab-969d-485f-8c8b-cb7efe33c9fe",
+     "multiverse_ids": [],
+     "tcgplayer_id": 152597,
+     "cardmarket_id": 313706,
+     "name": "Clue // Clue",
+     "lang": "en",
+     "released_at": "2017-12-08",
+     "uri": "https://api.scryfall.com/cards/9b111525-0600-4bae-94a3-df8f9472388f",
+     "scryfall_uri": "https://scryfall.com/card/tust/18/clue-clue?utm_source=api",
+     "layout": "double_faced_token",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T09:35:55Z",
+     "cmc": 0,
+     "type_line": "Token Artifact — Clue // Token",
+     "color_identity": [],
+     "keywords": [],
+     "card_faces": [
+      {
+       "object": "card_face",
+       "name": "Clue",
+       "mana_cost": "",
+       "type_line": "Token Artifact — Clue",
+       "oracle_text": "{2}, Sacrifice this artifact: Draw a card.",
+       "colors": [],
+       "flavor_text": "\"Their chanting grows louder as the tide rises.\" —Tamiyo's journal",
+       "artist": "John Avon",
+       "artist_id": "798f3932-30e0-4420-aa3f-db4d613f89ca",
+       "illustration_id": "3b985758-1bbd-43b1-88b2-659003891d27",
+       "image_uris": {
+        "small": "https://cards.scryfall.io/small/front/9/b/9b111525-0600-4bae-94a3-df8f9472388f.jpg?1783935355",
+        "normal": "https://cards.scryfall.io/normal/front/9/b/9b111525-0600-4bae-94a3-df8f9472388f.jpg?1783935355",
+        "large": "https://cards.scryfall.io/large/front/9/b/9b111525-0600-4bae-94a3-df8f9472388f.jpg?1783935355",
+        "png": "https://cards.scryfall.io/png/front/9/b/9b111525-0600-4bae-94a3-df8f9472388f.png?1783935355",
+        "art_crop": "https://cards.scryfall.io/art_crop/front/9/b/9b111525-0600-4bae-94a3-df8f9472388f.jpg?1783935355",
+        "border_crop": "https://cards.scryfall.io/border_crop/front/9/b/9b111525-0600-4bae-94a3-df8f9472388f.jpg?1783935355",
+        "thumb": "https://cards.scryfall.io/thumb/front/9/b/9b111525-0600-4bae-94a3-df8f9472388f.webp?1783935355",
+        "grid": "https://cards.scryfall.io/grid/front/9/b/9b111525-0600-4bae-94a3-df8f9472388f.webp?1783935355",
+        "display": "https://cards.scryfall.io/display/front/9/b/9b111525-0600-4bae-94a3-df8f9472388f.webp?1783935355",
+        "art": "https://cards.scryfall.io/art/front/9/b/9b111525-0600-4bae-94a3-df8f9472388f.webp?1783935355",
+        "crop": "https://cards.scryfall.io/crop/front/9/b/9b111525-0600-4bae-94a3-df8f9472388f.webp?1783935355"
+       }
+      },
+      {
+       "object": "card_face",
+       "name": "Clue",
+       "mana_cost": "",
+       "type_line": "Token",
+       "oracle_text": "",
+       "colors": [],
+       "artist": "John Avon",
+       "artist_id": "798f3932-30e0-4420-aa3f-db4d613f89ca",
+       "illustration_id": "3b985758-1bbd-43b1-88b2-659003891d27",
+       "image_uris": {
+        "small": "https://cards.scryfall.io/small/back/9/b/9b111525-0600-4bae-94a3-df8f9472388f.jpg?1783935355",
+        "normal": "https://cards.scryfall.io/normal/back/9/b/9b111525-0600-4bae-94a3-df8f9472388f.jpg?1783935355",
+        "large": "https://cards.scryfall.io/large/back/9/b/9b111525-0600-4bae-94a3-df8f9472388f.jpg?1783935355",
+        "png": "https://cards.scryfall.io/png/back/9/b/9b111525-0600-4bae-94a3-df8f9472388f.png?1783935355",
+        "art_crop": "https://cards.scryfall.io/art_crop/back/9/b/9b111525-0600-4bae-94a3-df8f9472388f.jpg?1783935355",
+        "border_crop": "https://cards.scryfall.io/border_crop/back/9/b/9b111525-0600-4bae-94a3-df8f9472388f.jpg?1783935355",
+        "thumb": "https://cards.scryfall.io/thumb/back/9/b/9b111525-0600-4bae-94a3-df8f9472388f.webp?1783935355",
+        "grid": "https://cards.scryfall.io/grid/back/9/b/9b111525-0600-4bae-94a3-df8f9472388f.webp?1783935355",
+        "display": "https://cards.scryfall.io/display/back/9/b/9b111525-0600-4bae-94a3-df8f9472388f.webp?1783935355",
+        "art": "https://cards.scryfall.io/art/back/9/b/9b111525-0600-4bae-94a3-df8f9472388f.webp?1783935355",
+        "crop": "https://cards.scryfall.io/crop/back/9/b/9b111525-0600-4bae-94a3-df8f9472388f.webp?1783935355"
+       }
+      }
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "not_legal",
+      "pauper": "not_legal",
+      "vintage": "not_legal",
+      "penny": "not_legal",
+      "commander": "not_legal",
+      "oathbreaker": "not_legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "not_legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": false,
+     "finishes": [
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "f494ec08-2e39-4228-bddb-200967e2b109",
+     "set": "tust",
+     "set_name": "Unstable Tokens",
+     "set_type": "token",
+     "set_uri": "https://api.scryfall.com/sets/f494ec08-2e39-4228-bddb-200967e2b109",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Atust&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/tust?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/9b111525-0600-4bae-94a3-df8f9472388f/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A422255ab-969d-485f-8c8b-cb7efe33c9fe&unique=prints",
+     "collector_number": "18",
+     "digital": false,
+     "rarity": "common",
+     "artist": "John Avon",
+     "artist_ids": [
+      "798f3932-30e0-4420-aa3f-db4d613f89ca"
+     ],
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "prices": {
+      "usd": null,
+      "usd_foil": "0.45",
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": "0.23",
+      "tix": null
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DClue%2B%252F%252F%2BClue",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DClue%2B%252F%252F%2BClue",
+      "edhrec": "https://edhrec.com/route/?cc=Clue+%2F%2F+Clue"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F152597%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=313706&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Clue+%2F%2F+Clue&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": true,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": "perm_3",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 2,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+     "multiverse_ids": [
+      129586
+     ],
+     "mtgo_id": 27400,
+     "mtgo_foil_id": 27401,
+     "tcgplayer_id": 15153,
+     "cardmarket_id": 16432,
+     "name": "Grizzly Bears",
+     "lang": "en",
+     "released_at": "2007-07-13",
+     "uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "scryfall_uri": "https://scryfall.com/card/10e/268/grizzly-bears?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:43:21Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "normal": "https://cards.scryfall.io/normal/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "large": "https://cards.scryfall.io/large/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "png": "https://cards.scryfall.io/png/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.png?1783943001",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "grid": "https://cards.scryfall.io/grid/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "display": "https://cards.scryfall.io/display/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "art": "https://cards.scryfall.io/art/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "crop": "https://cards.scryfall.io/crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001"
+     },
+     "mana_cost": "{1}{G}",
+     "cmc": 2,
+     "type_line": "Creature — Bear",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set": "10e",
+     "set_name": "Tenth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A14c8f55d-d177-4c25-a931-ebeb9e6062a0&unique=prints",
+     "collector_number": "268",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"We cannot forget that among all of Dominaria's wonders, a system of life exists, with prey and predators that will never fight wars nor vie for ancient power.\"\n—Jolrael, empress of beasts",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "D. J. Cleland-Hura",
+     "artist_ids": [
+      "87d21070-2432-4167-8aab-5968af1c14f3"
+     ],
+     "illustration_id": "066bfe81-0f53-43da-a074-b2ecc5dcda72",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 8114,
+     "penny_rank": 10982,
+     "prices": {
+      "usd": "0.22",
+      "usd_foil": "3.29",
+      "usd_etched": null,
+      "eur": "0.11",
+      "eur_foil": "1.97",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129586&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "edhrec": "https://edhrec.com/route/?cc=Grizzly+Bears"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15153%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16432&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27400?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+     "multiverse_ids": [
+      129586
+     ],
+     "mtgo_id": 27400,
+     "mtgo_foil_id": 27401,
+     "tcgplayer_id": 15153,
+     "cardmarket_id": 16432,
+     "name": "Grizzly Bears",
+     "lang": "en",
+     "released_at": "2007-07-13",
+     "uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "scryfall_uri": "https://scryfall.com/card/10e/268/grizzly-bears?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:43:21Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "normal": "https://cards.scryfall.io/normal/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "large": "https://cards.scryfall.io/large/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "png": "https://cards.scryfall.io/png/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.png?1783943001",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "grid": "https://cards.scryfall.io/grid/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "display": "https://cards.scryfall.io/display/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "art": "https://cards.scryfall.io/art/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "crop": "https://cards.scryfall.io/crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001"
+     },
+     "mana_cost": "{1}{G}",
+     "cmc": 2,
+     "type_line": "Creature — Bear",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set": "10e",
+     "set_name": "Tenth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A14c8f55d-d177-4c25-a931-ebeb9e6062a0&unique=prints",
+     "collector_number": "268",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"We cannot forget that among all of Dominaria's wonders, a system of life exists, with prey and predators that will never fight wars nor vie for ancient power.\"\n—Jolrael, empress of beasts",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "D. J. Cleland-Hura",
+     "artist_ids": [
+      "87d21070-2432-4167-8aab-5968af1c14f3"
+     ],
+     "illustration_id": "066bfe81-0f53-43da-a074-b2ecc5dcda72",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 8114,
+     "penny_rank": 10982,
+     "prices": {
+      "usd": "0.22",
+      "usd_foil": "3.29",
+      "usd_etched": null,
+      "eur": "0.11",
+      "eur_foil": "1.97",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129586&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "edhrec": "https://edhrec.com/route/?cc=Grizzly+Bears"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15153%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16432&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27400?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 4,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [
+   {
+    "id": "act_perm_2_1_6",
+    "kind": "activated",
+    "pseudoKind": "equip",
+    "sourceId": "perm_2",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 1,
+    "timestamp": 6,
+    "effectText": "",
+    "fullText": "Equip {2}",
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": "perm_3",
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "firedAtStates": null,
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Armed with Proof",
+       "imageUri": "https://cards.scryfall.io/small/front/6/e/6e75470f-fe57-4b6e-a76b-5daf9d9caf0b.jpg?1783913052",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Enchantment"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Clue // Clue",
+       "imageUri": "https://cards.scryfall.io/small/front/9/b/9b111525-0600-4bae-94a3-df8f9472388f.jpg?1783935355",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": true,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Artifact"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Clue"
+       ],
+       "printedPower": null,
+       "printedToughness": null,
+       "isTransformable": false,
+       "isChooseableFace": false,
+       "isRoom": false,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": "A",
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": "B",
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 4
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    },
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null
+   }
+  ],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Armed with Proof",
+    "final": {
+     "name": "Armed with Proof",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Enchantment"
+     ],
+     "subtypes": [],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "W"
+     ],
+     "abilities": [
+      "When this enchantment enters, investigate twice.",
+      "Clues you control are Equipment in addition to their other types and have \"Equipped creature gets +2/+0\" and equip {2}."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Clue // Clue",
+    "final": {
+     "name": "Clue // Clue",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Artifact"
+     ],
+     "subtypes": [
+      "Clue",
+      "Equipment"
+     ],
+     "power": null,
+     "toughness": null,
+     "colors": [],
+     "abilities": [
+      "{2}, Sacrifice this artifact: Draw a card.",
+      "Equip {2}",
+      "Equipped creature gets +2/+0"
+     ]
+    },
+    "changedBy": {
+     "4": [
+      "Armed with Proof"
+     ],
+     "6": [
+      "Armed with Proof",
+      "Armed with Proof"
+     ]
+    }
+   },
+   {
+    "perm": "Grizzly Bears A",
+    "final": {
+     "name": "Grizzly Bears",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Bear"
+     ],
+     "power": 4,
+     "toughness": 2,
+     "colors": [
+      "G"
+     ],
+     "abilities": [],
+     "traits": [
+      "Equipped"
+     ]
+    },
+    "changedBy": {
+     "7c": [
+      "Clue // Clue"
+     ]
+    }
+   },
+   {
+    "perm": "Grizzly Bears B",
+    "final": {
+     "name": "Grizzly Bears",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Bear"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "G"
+     ],
+     "abilities": []
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "4": [
+    "Armed with Proof"
+   ],
+   "6": [
+    "Armed with Proof",
+    "Armed with Proof"
+   ],
+   "7c": [
+    "Armed with Proof",
+    "Clue // Clue"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Armed with Proof",
+    "layer": "4",
+    "type": "add_type",
+    "scope": "global",
+    "params": {
+     "subtypes": [
+      "Equipment"
+     ],
+     "supertypes": [],
+     "types": []
+    }
+   },
+   {
+    "source": "Armed with Proof",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "global",
+    "params": {
+     "ability": "Equip {2}"
+    }
+   },
+   {
+    "source": "Armed with Proof",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "global",
+    "params": {
+     "ability": "Equipped creature gets +2/+0"
+    }
+   },
+   {
+    "source": "Armed with Proof",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "global",
+    "params": {
+     "power": 2,
+     "toughness": 0
+    }
+   },
+   {
+    "source": "Clue // Clue",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "target": "Grizzly Bears A",
+    "params": {
+     "power": 0,
+     "toughness": 0
+    }
+   }
+  ]
+ }
+}

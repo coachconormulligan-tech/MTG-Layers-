@@ -1,0 +1,15 @@
+{
+  "name": "Experiment Kraj — gains activated abilities of other creatures with +1/+1 counters",
+  "notes": "Memory: project_experiment_kraj_counter_qualified_gain_activated_2026-06-23. Kraj's clause ended in 'with a +1/+1 counter on it' and produced zero effects. Llanowar Elves carries a +1/+1 counter so Kraj must gain '{T}: Add {G}.'; Birds of Paradise has no counter so its abilities must not be gained.",
+  "steps": [
+    { "add": "Experiment Kraj", "as": "kraj" },
+    { "add": "Llanowar Elves", "as": "elves" },
+    { "add": "Birds of Paradise", "as": "birds" },
+    { "call": ["addCounter", "@elves", "+1/+1", 1] }
+  ],
+  "asserts": [
+    { "perm": "Experiment Kraj", "final": { "power": 4, "toughness": 6, "abilities": { "$includes": ["{T}: Add {G}.", "{T}: Put a +1/+1 counter on target creature."], "$excludes": ["{T}: Add one mana of any color."] } } },
+    { "perm": "Llanowar Elves", "final": { "power": 2, "toughness": 2 } },
+    { "perm": "Birds of Paradise", "final": { "abilities": { "$excludes": ["{T}: Put a +1/+1 counter on target creature."] } } }
+  ]
+}

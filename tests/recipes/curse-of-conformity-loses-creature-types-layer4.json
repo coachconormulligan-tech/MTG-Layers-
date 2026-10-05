@@ -1,0 +1,76 @@
+{
+  "name": "Curse of Conformity \u2014 loses all creature types is Layer 4",
+  "notes": "Memory: project_loses_all_creature_types_layer_fix_2026-04-28. A standalone 'lose all creature types' was emitted as a Layer 6 REMOVE_ABILITIES. It must be a Layer 4 type effect (parsed as set_types with creature subtypes cleared) and no Layer 6 effect; the opponent's nonlegendary Grizzly Bears becomes a 3/3 with no subtypes, a legendary creature is unaffected, and the Changeling's all types are stripped too.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Amoeboid Changeling",
+      "controller": "p2"
+    },
+    {
+      "add": "Curse of Conformity",
+      "as": "curse"
+    },
+    {
+      "add": "Grizzly Bears",
+      "controller": "p2"
+    },
+    {
+      "add": "Blex, Vexing Pest",
+      "controller": "p2"
+    },
+    {
+      "call": [
+        "setEnchantedPlayer",
+        "@curse",
+        "p2"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "effect": {
+        "source": "Curse of Conformity",
+        "layer": "4",
+        "type": "set_types"
+      }
+    },
+    {
+      "noEffect": {
+        "source": "Curse of Conformity",
+        "layer": "6"
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "subtypes": [],
+        "power": 3,
+        "toughness": 3
+      }
+    },
+    {
+      "perm": "Amoeboid Changeling",
+      "final": {
+        "subtypes": [],
+        "power": 3,
+        "toughness": 3
+      }
+    },
+    {
+      "perm": "Blex, Vexing Pest",
+      "final": {
+        "subtypes": [
+          "Pest"
+        ],
+        "power": 3,
+        "toughness": 2
+      }
+    }
+  ]
+}

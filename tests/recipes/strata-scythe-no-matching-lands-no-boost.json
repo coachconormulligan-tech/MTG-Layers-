@@ -1,0 +1,15 @@
+{
+  "name": "Strata Scythe — no land matching the exiled card gives no boost",
+  "notes": "Memory: project_imprint_followup_fixes_2026-05-25 (section 3 and 5). With an Island exiled and only Forests on the battlefield the count is 0, so the equipped Bears stay 2/2. The old synthetic equip tracker read the literal '+1/+1' in the oracle text and gave +1/+1 anyway. NOTE: exile ids are literal; build in its own process.",
+  "steps": [
+    { "add": "Strata Scythe", "as": "scythe" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Forest" },
+    { "call": ["addToExile", "card:Island"] },
+    { "call": ["setExileTag", "exile_1", "@scythe"] },
+    { "call": ["applyEquipAttachment", "@scythe", 0, "@bears"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2, "traits": ["Equipped"] } }
+  ]
+}

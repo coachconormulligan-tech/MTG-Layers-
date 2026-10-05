@@ -1,0 +1,13 @@
+{
+  "name": "Purphoros — devotion counts only its controller's permanents",
+  "notes": "Memory: project_devotion_per_controller_fix_2026-04-21. Devotion was summed over all players. The opponent controls two Goblin Chainwhirlers (6 red symbols), so global red devotion is 7 or more. Purphoros (p1) has devotion 1 and must not be a creature.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Purphoros, God of the Forge", "as": "purph" },
+    { "add": "Goblin Chainwhirler", "as": "cw1", "controller": "p2" },
+    { "add": "Goblin Chainwhirler", "as": "cw2", "controller": "p2" }
+  ],
+  "asserts": [
+    { "perm": "Purphoros, God of the Forge", "final": { "types": ["Enchantment"] } }
+  ]
+}

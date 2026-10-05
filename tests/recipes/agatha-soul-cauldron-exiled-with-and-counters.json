@@ -1,0 +1,17 @@
+{
+  "name": "Agatha's Soul Cauldron — creatures with +1/+1 counters gain abilities of creature cards exiled with it",
+  "notes": "Memory: project_exile_zone_implementation (Agatha's 'exiled with this card' form, no 'you own'). exile_1 Elves is tagged to the Cauldron; exile_2 Birds is in exile but not tagged. Only creatures with a +1/+1 counter gain the Elves ability, so the countered Bear gets it, the plain Runeclaw Bear does not, and nobody gets Birds' ability. NOTE: exile ids are literal; build in its own process.",
+  "steps": [
+    { "add": "Agatha's Soul Cauldron", "as": "cauldron" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Runeclaw Bear", "as": "runeclaw" },
+    { "call": ["addCounter", "@bears", "+1/+1", 1] },
+    { "call": ["addToExile", "card:Llanowar Elves"] },
+    { "call": ["addToExile", "card:Birds of Paradise"] },
+    { "call": ["setExileTag", "exile_1", "@cauldron"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": 3, "toughness": 3, "abilities": { "$includes": ["{T}: Add {G}."], "$excludes": ["{T}: Add one mana of any color."] } } },
+    { "perm": "Runeclaw Bear", "final": { "power": 2, "toughness": 2, "abilities": { "$excludes": ["{T}: Add {G}.", "{T}: Add one mana of any color."] } } }
+  ]
+}

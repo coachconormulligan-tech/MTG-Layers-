@@ -1,0 +1,70 @@
+{
+  "name": "Control Magic — enchanting a mutated creature moves the whole mutate stack",
+  "notes": "Memory: project_mutate_control_fixes_2026-05-11. A mutate stack is one permanent; CONTROL used to update only the matched member so the under card kept its old controller. Gemrazer is mutated onto Grizzly Bears (both p1), then opponent's Control Magic enchants Gemrazer: both stack members must be controlled by player_1. Control: separate Runeclaw Bear stays with p1.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Gemrazer",
+      "as": "gemrazer"
+    },
+    {
+      "add": "Runeclaw Bear"
+    },
+    {
+      "call": [
+        "applyMutate",
+        "@gemrazer",
+        "@bears",
+        "top"
+      ]
+    },
+    {
+      "add": "Control Magic",
+      "controller": "p2",
+      "as": "cm"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@cm",
+        "@gemrazer"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "effect": {
+        "source": "Control Magic",
+        "layer": "2",
+        "type": "control"
+      }
+    },
+    {
+      "perm": "Gemrazer",
+      "final": {
+        "controller": "player_1"
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "controller": "player_1"
+      }
+    },
+    {
+      "perm": "Runeclaw Bear",
+      "final": {
+        "controller": "player_0"
+      }
+    }
+  ]
+}

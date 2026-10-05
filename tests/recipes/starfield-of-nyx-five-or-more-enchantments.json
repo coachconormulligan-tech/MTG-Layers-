@@ -1,0 +1,20 @@
+{
+  "name": "Starfield of Nyx — gated on 'you control five or more enchantments'",
+  "notes": "Memory: project_youcontrol_count_condition_2026-04-08. The threshold condition was unparsed, so Starfield animated enchantments unconditionally. Here the controller has only 4 enchantments (Starfield, Rhystic Study, Sylvan Library, Phyrexian Arena) while the opponent controls 2 more (6 globally), so the condition is unmet and nothing may become a creature.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Starfield of Nyx" },
+    { "add": "Rhystic Study" },
+    { "add": "Sylvan Library" },
+    { "add": "Phyrexian Arena" },
+    { "add": "Propaganda", "controller": "p2" },
+    { "add": "Ghostly Prison", "controller": "p2" }
+  ],
+  "asserts": [
+    { "perm": "Sylvan Library", "final": { "types": ["Enchantment"] } },
+    { "perm": "Phyrexian Arena", "final": { "types": ["Enchantment"] } },
+    { "perm": "Propaganda", "final": { "types": ["Enchantment"] } },
+    { "perm": "Ghostly Prison", "final": { "types": ["Enchantment"] } },
+    { "perm": "Rhystic Study", "final": { "types": ["Enchantment"] } }
+  ]
+}

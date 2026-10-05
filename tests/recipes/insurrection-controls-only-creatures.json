@@ -1,0 +1,19 @@
+{
+  "name": "Insurrection — gain control of all creatures only",
+  "notes": "Memory: project_insurrection_necrogen_fixes_2026-04-14 (Fix 1). The 'gain control of all creatures' CONTROL effect had appliesTo null and matched every permanent. The opponent's creatures move to player_0; the opponent's Forest and Sol Ring must stay with player_1.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears", "controller": "p2" },
+    { "add": "Vampire Nighthawk", "controller": "p2" },
+    { "add": "Forest", "controller": "p2" },
+    { "add": "Sol Ring", "controller": "p2" },
+    { "add": "Insurrection", "spell": true }
+  ],
+  "asserts": [
+    { "effect": { "source": "Insurrection", "layer": "2", "type": "control" } },
+    { "perm": "Grizzly Bears", "final": { "controller": "player_0" } },
+    { "perm": "Vampire Nighthawk", "final": { "controller": "player_0" } },
+    { "perm": "Forest", "final": { "controller": "player_1" } },
+    { "perm": "Sol Ring", "final": { "controller": "player_1" } }
+  ]
+}

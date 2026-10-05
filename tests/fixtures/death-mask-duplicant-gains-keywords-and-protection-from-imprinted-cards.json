@@ -1,0 +1,733 @@
+{
+ "name": "Death-Mask Duplicant — gains keywords and protection from imprinted cards",
+ "notes": "Memory: project_odric_duplicant_same_is_true_2026-05-25 and project_duplicant_protection_from_imprinted_2026-05-25. With Akroma (flying, first strike, vigilance, trample, haste, protection from black and from red) and Phyrexian Crusader (first strike, protection from red and from white, infect) imprinted, Duplicant gains only keywords in its own list: Flying, First strike, Haste, Trample, plus Protection from black, red (deduplicated) and white. Vigilance and Infect are not in its list, Fear and Double strike are not on any imprinted card.",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Death-Mask Duplicant",
+    "as": "duplicant"
+   },
+   {
+    "call": [
+     "addToExile",
+     "card:Akroma, Angel of Wrath"
+    ]
+   },
+   {
+    "call": [
+     "setExileTag",
+     "exile_1",
+     "@duplicant"
+    ]
+   },
+   {
+    "call": [
+     "addToExile",
+     "card:Phyrexian Crusader"
+    ]
+   },
+   {
+    "call": [
+     "setExileTag",
+     "exile_2",
+     "@duplicant"
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Death-Mask Duplicant",
+   "final": {
+    "power": 5,
+    "toughness": 5,
+    "abilities": {
+     "$includes": [
+      "Flying",
+      "First strike",
+      "Haste",
+      "Trample",
+      "Protection from black",
+      "Protection from red",
+      "Protection from white"
+     ],
+     "$excludes": [
+      "Fear",
+      "Double strike",
+      "Vigilance",
+      "Infect"
+     ]
+    }
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "01e8d67d-3b49-4158-b2bf-8dd0607de51f",
+     "oracle_id": "8bdaa661-861b-4f91-83ea-467e34e11cc3",
+     "multiverse_ids": [
+      46023
+     ],
+     "mtgo_id": 20501,
+     "mtgo_foil_id": 20502,
+     "tcgplayer_id": 11629,
+     "cardmarket_id": 331,
+     "name": "Death-Mask Duplicant",
+     "lang": "en",
+     "released_at": "2004-02-06",
+     "uri": "https://api.scryfall.com/cards/01e8d67d-3b49-4158-b2bf-8dd0607de51f",
+     "scryfall_uri": "https://scryfall.com/card/dst/115/death-mask-duplicant?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T12:07:06Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/0/1/01e8d67d-3b49-4158-b2bf-8dd0607de51f.jpg?1783944426",
+      "normal": "https://cards.scryfall.io/normal/front/0/1/01e8d67d-3b49-4158-b2bf-8dd0607de51f.jpg?1783944426",
+      "large": "https://cards.scryfall.io/large/front/0/1/01e8d67d-3b49-4158-b2bf-8dd0607de51f.jpg?1783944426",
+      "png": "https://cards.scryfall.io/png/front/0/1/01e8d67d-3b49-4158-b2bf-8dd0607de51f.png?1783944426",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/0/1/01e8d67d-3b49-4158-b2bf-8dd0607de51f.jpg?1783944426",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/0/1/01e8d67d-3b49-4158-b2bf-8dd0607de51f.jpg?1783944426",
+      "thumb": "https://cards.scryfall.io/thumb/front/0/1/01e8d67d-3b49-4158-b2bf-8dd0607de51f.webp?1783944426",
+      "grid": "https://cards.scryfall.io/grid/front/0/1/01e8d67d-3b49-4158-b2bf-8dd0607de51f.webp?1783944426",
+      "display": "https://cards.scryfall.io/display/front/0/1/01e8d67d-3b49-4158-b2bf-8dd0607de51f.webp?1783944426",
+      "art": "https://cards.scryfall.io/art/front/0/1/01e8d67d-3b49-4158-b2bf-8dd0607de51f.webp?1783944426",
+      "crop": "https://cards.scryfall.io/crop/front/0/1/01e8d67d-3b49-4158-b2bf-8dd0607de51f.webp?1783944426"
+     },
+     "mana_cost": "{7}",
+     "cmc": 7,
+     "type_line": "Artifact Creature — Shapeshifter",
+     "oracle_text": "Imprint — {1}: Exile target creature card from your graveyard.\nAs long as a card exiled with this creature has flying, this creature has flying. The same is true for fear, first strike, double strike, haste, landwalk, protection, and trample.",
+     "power": "5",
+     "toughness": "5",
+     "colors": [],
+     "color_identity": [],
+     "keywords": [
+      "Imprint"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "e29cb2dd-1345-4032-abfe-e52e8c8ce074",
+     "set": "dst",
+     "set_name": "Darksteel",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/e29cb2dd-1345-4032-abfe-e52e8c8ce074",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Adst&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/dst?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/01e8d67d-3b49-4158-b2bf-8dd0607de51f/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A8bdaa661-861b-4f91-83ea-467e34e11cc3&unique=prints",
+     "collector_number": "115",
+     "digital": false,
+     "rarity": "uncommon",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Thomas M. Baxa",
+     "artist_ids": [
+      "ff346569-557d-4043-ae44-97c2c7cabd7d"
+     ],
+     "illustration_id": "aeaed2bf-5cd2-4525-afef-4733eae709cb",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 28739,
+     "penny_rank": 14679,
+     "prices": {
+      "usd": "0.18",
+      "usd_foil": "0.72",
+      "usd_etched": null,
+      "eur": "0.14",
+      "eur_foil": "0.48",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=46023&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DDeath-Mask%2BDuplicant",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DDeath-Mask%2BDuplicant",
+      "edhrec": "https://edhrec.com/route/?cc=Death-Mask+Duplicant"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F11629%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=331&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/20501?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "emblems": []
+   }
+  ],
+  "exile": [
+   {
+    "card": {
+     "object": "card",
+     "id": "bf1ef8ec-d915-41f2-b087-3d6d82e3db85",
+     "oracle_id": "107f204c-9fd3-490d-8887-be63d14fc6a4",
+     "multiverse_ids": [
+      482701
+     ],
+     "tcgplayer_id": 212324,
+     "cardmarket_id": 453558,
+     "name": "Akroma, Angel of Wrath",
+     "lang": "en",
+     "released_at": "2020-04-17",
+     "uri": "https://api.scryfall.com/cards/bf1ef8ec-d915-41f2-b087-3d6d82e3db85",
+     "scryfall_uri": "https://scryfall.com/card/c20/73/akroma-angel-of-wrath?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T08:26:46Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/b/f/bf1ef8ec-d915-41f2-b087-3d6d82e3db85.jpg?1783931206",
+      "normal": "https://cards.scryfall.io/normal/front/b/f/bf1ef8ec-d915-41f2-b087-3d6d82e3db85.jpg?1783931206",
+      "large": "https://cards.scryfall.io/large/front/b/f/bf1ef8ec-d915-41f2-b087-3d6d82e3db85.jpg?1783931206",
+      "png": "https://cards.scryfall.io/png/front/b/f/bf1ef8ec-d915-41f2-b087-3d6d82e3db85.png?1783931206",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/b/f/bf1ef8ec-d915-41f2-b087-3d6d82e3db85.jpg?1783931206",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/b/f/bf1ef8ec-d915-41f2-b087-3d6d82e3db85.jpg?1783931206",
+      "thumb": "https://cards.scryfall.io/thumb/front/b/f/bf1ef8ec-d915-41f2-b087-3d6d82e3db85.webp?1783931206",
+      "grid": "https://cards.scryfall.io/grid/front/b/f/bf1ef8ec-d915-41f2-b087-3d6d82e3db85.webp?1783931206",
+      "display": "https://cards.scryfall.io/display/front/b/f/bf1ef8ec-d915-41f2-b087-3d6d82e3db85.webp?1783931206",
+      "art": "https://cards.scryfall.io/art/front/b/f/bf1ef8ec-d915-41f2-b087-3d6d82e3db85.webp?1783931206",
+      "crop": "https://cards.scryfall.io/crop/front/b/f/bf1ef8ec-d915-41f2-b087-3d6d82e3db85.webp?1783931206"
+     },
+     "mana_cost": "{5}{W}{W}{W}",
+     "cmc": 8,
+     "type_line": "Legendary Creature — Angel",
+     "oracle_text": "Flying, first strike, vigilance, trample, haste, protection from black and from red",
+     "power": "6",
+     "toughness": "6",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [
+      "Flying",
+      "Vigilance",
+      "First strike",
+      "Protection",
+      "Haste",
+      "Trample"
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "bf1ef8ec-d915-41f2-b087-3d6d82e3db85",
+       "component": "combo_piece",
+       "name": "Akroma, Angel of Wrath",
+       "type_line": "Legendary Creature — Angel",
+       "uri": "https://api.scryfall.com/cards/bf1ef8ec-d915-41f2-b087-3d6d82e3db85"
+      },
+      {
+       "object": "related_card",
+       "id": "9a845742-a20d-4332-aaa8-d6cd2d5f482b",
+       "component": "combo_piece",
+       "name": "Nivea, Beloved Battlemage",
+       "type_line": "Legendary Creature — Human Wizard Warrior",
+       "uri": "https://api.scryfall.com/cards/9a845742-a20d-4332-aaa8-d6cd2d5f482b"
+      }
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "f60ec786-1f8d-42f7-9abc-0d880fe243f6",
+     "set": "c20",
+     "set_name": "Commander 2020",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/f60ec786-1f8d-42f7-9abc-0d880fe243f6",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Ac20&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/c20?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/bf1ef8ec-d915-41f2-b087-3d6d82e3db85/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A107f204c-9fd3-490d-8887-be63d14fc6a4&unique=prints",
+     "collector_number": "73",
+     "digital": false,
+     "rarity": "mythic",
+     "flavor_text": "\"Wrath is no vice when inflicted upon the deserving.\"",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Terese Nielsen",
+     "artist_ids": [
+      "eb55171c-2342-45f4-a503-2d5a75baf752"
+     ],
+     "illustration_id": "81e65bd6-af15-4880-9c99-409a543b5f6d",
+     "border_color": "black",
+     "frame": "2015",
+     "frame_effects": [
+      "legendary"
+     ],
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 4477,
+     "penny_rank": 5391,
+     "prices": {
+      "usd": "3.37",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "4.40",
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=482701&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DAkroma%252C%2BAngel%2Bof%2BWrath",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DAkroma%252C%2BAngel%2Bof%2BWrath",
+      "edhrec": "https://edhrec.com/route/?cc=Akroma%2C+Angel+of+Wrath"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F212324%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=453558&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Akroma%2C+Angel+of+Wrath&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "owner": "player_0",
+    "exiledWithId": "perm_1",
+    "counters": {},
+    "isFaceDown": false
+   },
+   {
+    "card": {
+     "object": "card",
+     "id": "32aaa8b9-987b-4809-8a54-aa29bdc18805",
+     "oracle_id": "91760bdf-a82a-4f3d-b925-3bc81ffbd41f",
+     "multiverse_ids": [
+      213724
+     ],
+     "mtgo_id": 39319,
+     "mtgo_foil_id": 39320,
+     "tcgplayer_id": 39034,
+     "cardmarket_id": 245263,
+     "name": "Phyrexian Crusader",
+     "lang": "en",
+     "released_at": "2011-02-04",
+     "uri": "https://api.scryfall.com/cards/32aaa8b9-987b-4809-8a54-aa29bdc18805",
+     "scryfall_uri": "https://scryfall.com/card/mbs/50/phyrexian-crusader?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:16:22Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/3/2/32aaa8b9-987b-4809-8a54-aa29bdc18805.jpg?1783941382",
+      "normal": "https://cards.scryfall.io/normal/front/3/2/32aaa8b9-987b-4809-8a54-aa29bdc18805.jpg?1783941382",
+      "large": "https://cards.scryfall.io/large/front/3/2/32aaa8b9-987b-4809-8a54-aa29bdc18805.jpg?1783941382",
+      "png": "https://cards.scryfall.io/png/front/3/2/32aaa8b9-987b-4809-8a54-aa29bdc18805.png?1783941382",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/3/2/32aaa8b9-987b-4809-8a54-aa29bdc18805.jpg?1783941382",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/3/2/32aaa8b9-987b-4809-8a54-aa29bdc18805.jpg?1783941382",
+      "thumb": "https://cards.scryfall.io/thumb/front/3/2/32aaa8b9-987b-4809-8a54-aa29bdc18805.webp?1783941382",
+      "grid": "https://cards.scryfall.io/grid/front/3/2/32aaa8b9-987b-4809-8a54-aa29bdc18805.webp?1783941382",
+      "display": "https://cards.scryfall.io/display/front/3/2/32aaa8b9-987b-4809-8a54-aa29bdc18805.webp?1783941382",
+      "art": "https://cards.scryfall.io/art/front/3/2/32aaa8b9-987b-4809-8a54-aa29bdc18805.webp?1783941382",
+      "crop": "https://cards.scryfall.io/crop/front/3/2/32aaa8b9-987b-4809-8a54-aa29bdc18805.webp?1783941382"
+     },
+     "mana_cost": "{1}{B}{B}",
+     "cmc": 3,
+     "type_line": "Creature — Phyrexian Zombie Knight",
+     "oracle_text": "First strike, protection from red and from white\nInfect (This creature deals damage to creatures in the form of -1/-1 counters and to players in the form of poison counters.)",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "B"
+     ],
+     "color_identity": [
+      "B"
+     ],
+     "keywords": [
+      "First strike",
+      "Protection",
+      "Infect"
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "470618f6-f67f-44c6-a086-285632508915",
+       "component": "combo_piece",
+       "name": "Poison Counter",
+       "type_line": "Card",
+       "uri": "https://api.scryfall.com/cards/470618f6-f67f-44c6-a086-285632508915"
+      },
+      {
+       "object": "related_card",
+       "id": "32aaa8b9-987b-4809-8a54-aa29bdc18805",
+       "component": "combo_piece",
+       "name": "Phyrexian Crusader",
+       "type_line": "Creature — Phyrexian Zombie Knight",
+       "uri": "https://api.scryfall.com/cards/32aaa8b9-987b-4809-8a54-aa29bdc18805"
+      }
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "f46c57e3-9301-4006-a6ca-06f3f65961fb",
+     "set": "mbs",
+     "set_name": "Mirrodin Besieged",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/f46c57e3-9301-4006-a6ca-06f3f65961fb",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Ambs&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/mbs?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/32aaa8b9-987b-4809-8a54-aa29bdc18805/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A91760bdf-a82a-4f3d-b925-3bc81ffbd41f&unique=prints",
+     "collector_number": "50",
+     "digital": false,
+     "rarity": "rare",
+     "watermark": "phyrexian",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Eric Deschamps",
+     "artist_ids": [
+      "37970e22-9cee-44c1-af44-5ee27cf26b76"
+     ],
+     "illustration_id": "a80359da-6aef-42f3-9ce9-a6f0ac6d118f",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 8001,
+     "penny_rank": 2594,
+     "prices": {
+      "usd": "6.15",
+      "usd_foil": "15.84",
+      "usd_etched": null,
+      "eur": "3.66",
+      "eur_foil": "9.86",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=213724&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DPhyrexian%2BCrusader",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DPhyrexian%2BCrusader",
+      "edhrec": "https://edhrec.com/route/?cc=Phyrexian+Crusader"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F39034%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=245263&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/39319?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "owner": "player_0",
+    "exiledWithId": "perm_1",
+    "counters": {},
+    "isFaceDown": false
+   }
+  ],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Death-Mask Duplicant",
+    "final": {
+     "name": "Death-Mask Duplicant",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Artifact",
+      "Creature"
+     ],
+     "subtypes": [
+      "Shapeshifter"
+     ],
+     "power": 5,
+     "toughness": 5,
+     "colors": [],
+     "abilities": [
+      "Imprint — {1}: Exile target creature card from your graveyard.",
+      "Protection from black",
+      "Protection from red",
+      "Protection from white",
+      "Flying",
+      "First strike",
+      "Haste",
+      "Trample"
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "Death-Mask Duplicant",
+      "Death-Mask Duplicant",
+      "Death-Mask Duplicant",
+      "Death-Mask Duplicant",
+      "Death-Mask Duplicant"
+     ]
+    }
+   }
+  ],
+  "order": {
+   "6": [
+    "Death-Mask Duplicant",
+    "Death-Mask Duplicant",
+    "Death-Mask Duplicant",
+    "Death-Mask Duplicant",
+    "Death-Mask Duplicant",
+    "Death-Mask Duplicant",
+    "Death-Mask Duplicant",
+    "Death-Mask Duplicant"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Death-Mask Duplicant",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "protectionFromImprinted": true
+    }
+   },
+   {
+    "source": "Death-Mask Duplicant",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "ability": "Flying"
+    }
+   },
+   {
+    "source": "Death-Mask Duplicant",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "ability": "Fear"
+    }
+   },
+   {
+    "source": "Death-Mask Duplicant",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "ability": "First strike"
+    }
+   },
+   {
+    "source": "Death-Mask Duplicant",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "ability": "Double strike"
+    }
+   },
+   {
+    "source": "Death-Mask Duplicant",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "ability": "Haste"
+    }
+   },
+   {
+    "source": "Death-Mask Duplicant",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "ability": "Landwalk"
+    }
+   },
+   {
+    "source": "Death-Mask Duplicant",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "ability": "Trample"
+    }
+   }
+  ]
+ }
+}

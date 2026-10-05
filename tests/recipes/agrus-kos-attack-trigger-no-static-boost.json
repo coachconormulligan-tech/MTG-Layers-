@@ -1,0 +1,13 @@
+{
+  "name": "Agrus Kos — attack-trigger boosts are not static effects",
+  "notes": "Memory: project_agrus_kos_boost_triggered_fix_2026-04-08. boostRegex matched the compound 'attacking red creatures get +2/+0 and attacking white creatures get +0/+2' inside the triggered sentence and emitted the second clause as a permanent static effect. With the trigger unfired, no modify_pt effect may come from Agrus Kos and the white Savannah Lions stays 2/1 (and Agrus 3/3).",
+  "steps": [
+    { "add": "Agrus Kos, Wojek Veteran" },
+    { "add": "Savannah Lions" }
+  ],
+  "asserts": [
+    { "noEffect": { "source": "Agrus Kos, Wojek Veteran", "type": "modify_pt" } },
+    { "perm": "Savannah Lions", "final": { "power": 2, "toughness": 1 } },
+    { "perm": "Agrus Kos, Wojek Veteran", "final": { "power": 3, "toughness": 3 } }
+  ]
+}

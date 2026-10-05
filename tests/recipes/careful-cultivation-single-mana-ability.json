@@ -1,0 +1,12 @@
+{
+  "name": "Careful Cultivation — grants the quoted mana ability exactly once",
+  "notes": "Memory: project_three_bug_fixes_2026-04-23. Two parsers produced the same quoted ability (one with a trailing period, one without) so enchanted creatures got '{T}: Add {G}{G}' twice. Enchanted Bears must be 3/5 with Reach and exactly one copy of the ability (exact abilities list).",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Careful Cultivation", "as": "cc" },
+    { "call": ["setTarget", "@cc", "@bears"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": 3, "toughness": 5, "abilities": ["Reach", "{T}: Add {G}{G}"] } }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "name": "Grist, the Hunger Tide — only a creature off the battlefield",
+  "notes": "Memory: project_grist_hunger_tide_offbf_creature_2026-06-02. 'As long as Grist isn't on the battlefield, it's a 1/1 Insect creature' was parsed as unconditional, making the battlefield planeswalker a 1/1 creature. On the battlefield Grist must be a plain Legendary Planeswalker with no P/T.",
+  "steps": [
+    {
+      "add": "Grist, the Hunger Tide"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grist, the Hunger Tide",
+      "final": {
+        "supertypes": [
+          "Legendary"
+        ],
+        "types": [
+          "Planeswalker"
+        ],
+        "subtypes": [
+          "Grist"
+        ],
+        "power": null,
+        "toughness": null
+      }
+    },
+    {
+      "effect": {
+        "source": "Grist, the Hunger Tide",
+        "layer": "4",
+        "type": "add_type"
+      }
+    },
+    {
+      "effect": {
+        "source": "Grist, the Hunger Tide",
+        "layer": "7b",
+        "type": "set_pt"
+      }
+    }
+  ]
+}
