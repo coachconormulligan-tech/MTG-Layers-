@@ -1,0 +1,13 @@
+{
+  "name": "Wren's Run Packmaster — \"Wolves you control have deathtouch\"",
+  "notes": "Found by tests/sweep.py. Same cause as the Elvish Clancaller recipe, on the ability-granting path: 'Wolves' was not recognised as a plural creature type, so the static grant produced no effect.",
+  "steps": [
+    { "add": "Wren's Run Packmaster", "as": "pm" },
+    { "add": "Young Wolf", "as": "wolf" },
+    { "add": "Grizzly Bears", "as": "bears" }
+  ],
+  "asserts": [
+    { "perm": "Young Wolf", "final": { "abilities": { "$includes": ["Deathtouch"] } } },
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$excludes": ["Deathtouch"] } } }
+  ]
+}

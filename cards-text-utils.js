@@ -47,6 +47,10 @@ function filterReferencesPermanents(filterText) {
   // A filter that explicitly names "spell/spells" targets stack objects, not permanents —
   // even if it also contains type words like "instant" or "sorcery".
   if (/\bspells?\b/.test(f)) return false;
+  // "Attacking tokens you control", "outlaws you control" — groups of permanents that are
+  // not named by a type word. Only as the bare subject: "those tokens" / "the tokens" are
+  // objects an effect just made, and "outlaw" also appears inside trigger conditions.
+  if (/^(?:(?:attacking|blocking|tapped|untapped|other)\s+)*(?:tokens|outlaws)(?:\s+your opponents control)?$/.test(f)) return true;
   // Direct card type words — check at start, end, or as a standalone word within
   for (const w of Object.keys(CARD_TYPE_WORDS)) {
     if (f === w || f.endsWith(' ' + w) || f.startsWith(w + ' ') || f.includes(' ' + w + ' ')) return true;
@@ -62,6 +66,8 @@ function filterReferencesPermanents(filterText) {
       const cap = w.charAt(0).toUpperCase() + w.slice(1).replace(/s$/, '');
       if (TypeCatalog.creatureTypes.has(cap)) return true;
       if (TypeCatalog.creatureTypes.has(w.charAt(0).toUpperCase() + w.slice(1))) return true;
+      // Irregular plurals: "Elves", "Dwarves", "Wolves", "Mice", "Allies", "Oxen", "Heroes"
+      if (w.length > 2 && TypeCatalog.creatureTypes.has(singularizeCreatureType(w))) return true;
     }
   }
   // Known artifact subtypes (from TypeCatalog) — e.g. "Clues", "Treasures", "Food"
@@ -174,6 +180,10 @@ function buildSpellAppliesToFromText(filterText) {
   };
 }
 
+/* "Outlaw" is a batch, not a creature type: Assassins, Mercenaries, Pirates, Rogues and
+   Warlocks are outlaws (CR 700.12). */
+const OUTLAW_CREATURE_TYPES = ['Assassin', 'Mercenary', 'Pirate', 'Rogue', 'Warlock'];
+
 /* Singularize creature type words. Handles irregular MTG plurals.
    Input: lowercase word (e.g. "elves", "humans", "wolves")
    Output: Title-cased singular (e.g. "Elf", "Human", "Wolf") */
@@ -197,6 +207,14 @@ function singularizeCreatureType(word) {
   const cap = low.charAt(0).toUpperCase() + low.slice(1);
   // Check TypeCatalog before stripping trailing s -- some types end in s (e.g. "Fungus")
   if (typeof TypeCatalog !== 'undefined' && TypeCatalog.creatureTypes.has(cap)) return cap;
+  // "-ies" / "-es" plurals of a known type ("Armies" -> "Army", "Heroes" -> "Hero")
+  if (typeof TypeCatalog !== 'undefined' && TypeCatalog.creatureTypes.size > 0) {
+    for (const stem of [low.endsWith('ies') ? low.slice(0, -3) + 'y' : null, low.endsWith('es') ? low.slice(0, -2) : null]) {
+      if (!stem) continue;
+      const stemCap = stem.charAt(0).toUpperCase() + stem.slice(1);
+      if (TypeCatalog.creatureTypes.has(stemCap)) return stemCap;
+    }
+  }
   // Remove trailing 's' for standard plurals (e.g. "Goblins" -> "Goblin")
   if (low.endsWith('s') && low.length > 2) {
     const withoutS = low.slice(0, -1);
@@ -774,6 +792,7 @@ function _buildAppliesToFromTextInner(filterText) {
   let requireNontoken = false;
   let requireToken = false;
   let requireCommander = false;
+  let requireOutlaw = false;
   let requireTapped = false;
   let requireUntapped = false;
   let baseTypeWord = null;
@@ -818,6 +837,8 @@ function _buildAppliesToFromTextInner(filterText) {
       requireNontoken = true;
     } else if (word === 'token' || singular === 'token') {
       requireToken = true;
+    } else if (singular === 'outlaw') {
+      requireOutlaw = true;
     } else if (word === 'commander' || word === 'commanders') {
       requireCommander = true;
     } else if (['basic', 'legendary', 'snow', 'world'].includes(singular)) {
@@ -953,6 +974,10 @@ function _buildAppliesToFromTextInner(filterText) {
       checks.push((p) => p.isCommander);
       descParts.push('commander');
     }
+    if (requireOutlaw) {
+      checks.push((p) => OUTLAW_CREATURE_TYPES.some(t => p.subtypes.includes(t)));
+      descParts.push('outlaw');
+    }
     if (requireTapped) {
       checks.push((p) => p.tapped === true);
       descParts.push('tapped');
@@ -1020,6 +1045,16 @@ function _buildAppliesToFromTextInner(filterText) {
         fn: (p) => p.subtypes.includes(maybeLand),
         desc: `Applies to: ${maybeLand}s (land subtype)`,
       };
+    }
+    // Batches and token-ness are not subtypes: "outlaws you control", "tokens you control"
+    if (f === 'outlaws' || f === 'outlaw') {
+      return {
+        fn: (p) => OUTLAW_CREATURE_TYPES.some(t => p.subtypes.includes(t)),
+        desc: 'Applies to: outlaws',
+      };
+    }
+    if (f === 'tokens') {
+      return { fn: (p) => !!p.isToken, desc: 'Applies to: tokens' };
     }
     const subtype = singularizeCreatureType(f);
     return {

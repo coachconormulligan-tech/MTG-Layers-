@@ -1,0 +1,15 @@
+{
+  "name": "Elvish Clancaller — \"Other Elves you control\" is a subtype lord",
+  "notes": "Found by tests/sweep.py (about 45 cards across the 'SUBTYPE you control get/have' clusters). filterReferencesPermanents recognised a plural creature type only by stripping a trailing 's', so 'Elves', 'Dwarves', 'Wolves', 'Werewolves', 'Mice', 'Allies', 'Oxen' and 'Heroes' were judged not to refer to permanents and every lord using them produced no effect. It now also asks singularizeCreatureType, which itself learned '-ies' / '-es' plurals of catalog types (Armies, Heroes). The Elf gets +1/+1; the Bear and the Clancaller itself do not.",
+  "steps": [
+    { "add": "Elvish Clancaller", "as": "lord" },
+    { "add": "Llanowar Elves", "as": "elves" },
+    { "add": "Grizzly Bears", "as": "bears" }
+  ],
+  "asserts": [
+    { "perm": "Llanowar Elves", "final": { "power": 2, "toughness": 2 } },
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2 } },
+    { "perm": "Elvish Clancaller", "final": { "power": 1, "toughness": 1 } },
+    { "effect": { "source": "Elvish Clancaller", "layer": "7c", "type": "modify_pt", "scope": "global" } }
+  ]
+}

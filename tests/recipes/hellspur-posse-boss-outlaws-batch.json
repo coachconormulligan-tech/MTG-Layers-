@@ -1,0 +1,13 @@
+{
+  "name": "Hellspur Posse Boss — \"Other outlaws you control\" means Assassins, Mercenaries, Pirates, Rogues and Warlocks",
+  "notes": "Found by tests/sweep.py. 'Outlaw' is a batch of five creature types, not a type itself, so the filter tokenizer treated it as an unknown subtype and filterReferencesPermanents rejected the sentence. The tokenizer now has an outlaw check (OUTLAW_CREATURE_TYPES in cards-text-utils.js). The Rogue gains haste; the Bear does not.",
+  "steps": [
+    { "add": "Hellspur Posse Boss", "as": "boss" },
+    { "add": "Oona's Blackguard", "as": "rogue" },
+    { "add": "Grizzly Bears", "as": "bears" }
+  ],
+  "asserts": [
+    { "perm": "Oona's Blackguard", "final": { "abilities": { "$includes": ["Haste"] } } },
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$excludes": ["Haste"] } } }
+  ]
+}

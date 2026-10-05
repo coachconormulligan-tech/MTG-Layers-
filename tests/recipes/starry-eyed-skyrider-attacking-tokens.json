@@ -1,0 +1,17 @@
+{
+  "name": "Starry-Eyed Skyrider — \"Attacking tokens you control have flying\"",
+  "notes": "Found by tests/sweep.py. 'tokens' is not a type word, so filterReferencesPermanents rejected the subject and the static grant produced no effect. It is now accepted as a bare subject ('[attacking] tokens [you control]'), deliberately NOT for 'those tokens' / 'the tokens', which mean objects an effect just created. The attacking token gains flying; the attacking nontoken creature and the token that stayed home do not.",
+  "steps": [
+    { "add": "Starry-Eyed Skyrider", "as": "rider" },
+    { "add": "Grizzly Bears", "as": "token", "opts": { "isToken": true } },
+    { "add": "Runeclaw Bear", "as": "home", "opts": { "isToken": true } },
+    { "add": "Gray Ogre", "as": "ogre" },
+    { "call": ["toggleAttacking", "@token"] },
+    { "call": ["toggleAttacking", "@ogre"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$includes": ["Flying"] } } },
+    { "perm": "Runeclaw Bear", "final": { "abilities": { "$excludes": ["Flying"] } } },
+    { "perm": "Gray Ogre", "final": { "abilities": { "$excludes": ["Flying"] } } }
+  ]
+}

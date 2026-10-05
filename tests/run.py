@@ -192,11 +192,12 @@ def cmd_catalog():
 
     The site fills TypeCatalog from Scryfall's catalog endpoints at startup and the parser
     behaves differently until it has. The harness loads this file instead. Subtypes are
-    taken from type lines that name exactly one subtype-bearing card type, so each lands
-    in an unambiguous category."""
+    taken first from type lines that name exactly one subtype-bearing card type, so each
+    lands in an unambiguous category; what is left on mixed creature lines is a creature type."""
     if not os.path.exists(CARD_CACHE):
         sys.exit('No card data at %s' % CARD_CACHE)
     cat = {v: set() for v in _CATEGORY.values()}
+    mixed = []   # subtype words from type lines naming several card types ("Artifact Creature — Golem")
     with gzip.open(CARD_CACHE, 'rt', encoding='utf-8') as f:
         for line in f:
             if not line.strip():
@@ -214,6 +215,13 @@ def cmd_catalog():
                 cats = {_CATEGORY[w] for w in words if w in _CATEGORY}
                 if len(cats) == 1:
                     cat[cats.pop()].update(right.split())
+                elif 'creatureTypes' in cats:
+                    mixed.append(right.split())
+    # A subtype that only ever appears beside Creature plus another type (Golem, Thopter,
+    # Dalek) is a creature type unless a single-type line already placed it elsewhere.
+    placed = set().union(*cat.values())
+    for words in mixed:
+        cat['creatureTypes'].update(w for w in words if w not in placed)
     with open(CATALOG_FILE, 'w', encoding='utf-8') as f:
         json.dump({k: sorted(v) for k, v in sorted(cat.items())}, f, ensure_ascii=False, indent=0)
         f.write('\n')
