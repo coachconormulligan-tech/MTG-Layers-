@@ -1,0 +1,70 @@
+{
+  "name": "Spark Double — copying a Sakashima that is copying Grizzly Bears",
+  "notes": "Owner request 2026-10-05. Copy of a copy (CR 707.2): Sakashima copying Grizzly Bears has the Bears' copiable values plus Sakashima's exceptions (its name, Legendary, the return-to-hand ability). Spark Double copying that Sakashima gets those values, is not legendary, and does NOT get Sakashima's 'enter as a copy' line, because that line is no longer part of Sakashima's copiable values.",
+  "steps": [
+    {
+      "add": "Grizzly Bears"
+    },
+    {
+      "add": "Sakashima the Impostor"
+    },
+    {
+      "copy": [
+        "@Sakashima the Impostor",
+        "@Grizzly Bears"
+      ]
+    },
+    {
+      "add": "Spark Double"
+    },
+    {
+      "copy": [
+        "@Spark Double",
+        "@Sakashima the Impostor"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Sakashima the Impostor",
+      "final": {
+        "name": "Sakashima the Impostor",
+        "supertypes": [
+          "Legendary"
+        ],
+        "subtypes": [
+          "Bear"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "colors": [
+          "G"
+        ],
+        "abilities": [
+          "{2}{U}{U}: Return this card to its owner's hand at the beginning of the next end step."
+        ]
+      }
+    },
+    {
+      "perm": "Spark Double",
+      "final": {
+        "name": "Sakashima the Impostor",
+        "supertypes": [],
+        "types": [
+          "Creature"
+        ],
+        "subtypes": [
+          "Bear"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "colors": [
+          "G"
+        ],
+        "abilities": [
+          "{2}{U}{U}: Return this card to its owner's hand at the beginning of the next end step."
+        ]
+      }
+    }
+  ]
+}

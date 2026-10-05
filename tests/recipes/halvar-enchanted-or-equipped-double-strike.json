@@ -1,0 +1,24 @@
+{
+  "name": "Halvar — creatures you control that are enchanted or equipped have double strike",
+  "notes": "Memory: project_halvar_sword_equip_fixes_2026-05-19. The tokenizer read 'enchanted' and 'equipped' as creature subtypes so the filter matched nothing. Pacifism'd Grizzly Bears and Bonesplitter'd Runeclaw Bear (both mine) must gain double strike; plain Vampire Nighthawk must not; the opponent's enchanted Giant Spider must not ('you control'). The Sword equip-cost half of the memory needs the activated-ability list and is not expressible here.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Halvar, God of Battle" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Runeclaw Bear", "as": "rune" },
+    { "add": "Vampire Nighthawk" },
+    { "add": "Giant Spider", "controller": "p2" },
+    { "add": "Pacifism", "as": "pac1" },
+    { "add": "Pacifism", "as": "pac2" },
+    { "add": "Bonesplitter", "as": "bone" },
+    { "call": ["setTarget", "@pac1", "@bears"] },
+    { "call": ["setTarget", "@pac2", "@Giant Spider"] },
+    { "call": ["setTarget", "@bone", "@rune"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$includes": ["Double strike"] } } },
+    { "perm": "Runeclaw Bear", "final": { "power": 4, "toughness": 2, "abilities": { "$includes": ["Double strike"] } } },
+    { "perm": "Vampire Nighthawk", "final": { "abilities": { "$excludes": ["Double strike"] } } },
+    { "perm": "Giant Spider", "final": { "abilities": { "$excludes": ["Double strike"] } } }
+  ]
+}

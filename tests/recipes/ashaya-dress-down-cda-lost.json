@@ -1,0 +1,14 @@
+{
+  "name": "Ashaya + Dress Down — CDA is lost with all abilities",
+  "notes": "Memory: project_cda_pt_ability_loss_fix_2026-04-08. A CDA kept applying after REMOVE_ABILITIES because of the CR 613.7a 'already applied' exemption. Dress Down only removes abilities (it sets no base P/T that would mask the bug), so Ashaya must fall to 0/0 even though lands are on the battlefield; Grizzly Bears is unaffected.",
+  "steps": [
+    { "add": "Ashaya, Soul of the Wild" },
+    { "add": "Forest" },
+    { "add": "Grizzly Bears" },
+    { "add": "Dress Down" }
+  ],
+  "asserts": [
+    { "perm": "Ashaya, Soul of the Wild", "final": { "power": 0, "toughness": 0, "abilities": [] } },
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2 } }
+  ]
+}

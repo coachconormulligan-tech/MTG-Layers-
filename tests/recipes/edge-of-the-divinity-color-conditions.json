@@ -1,0 +1,20 @@
+{
+  "name": "Edge of the Divinity — boosts depend on the enchanted creature's color",
+  "notes": "Memory: project_edge_of_divinity_color_condition_2026-05-17. 'enchanted creature is white' was read as the Enchanted trait, so both boosts applied to every enchanted creature. Savannah Lions (white 2/1) must get +1/+2 = 3/3, Vampire Nighthawk (black 2/3) +2/+1 = 4/4, Grizzly Bears (green) nothing = 2/2. (White Knight is unusable: Edge is black and the Knight has protection from black.)",
+  "steps": [
+    { "add": "Savannah Lions", "as": "lions" },
+    { "add": "Vampire Nighthawk", "as": "hawk" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Edge of the Divinity", "as": "edge_lions" },
+    { "call": ["setTarget", "@edge_lions", "@lions"] },
+    { "add": "Edge of the Divinity", "as": "edge_hawk" },
+    { "call": ["setTarget", "@edge_hawk", "@hawk"] },
+    { "add": "Edge of the Divinity", "as": "edge_bears" },
+    { "call": ["setTarget", "@edge_bears", "@bears"] }
+  ],
+  "asserts": [
+    { "perm": "Savannah Lions", "final": { "power": 3, "toughness": 3 } },
+    { "perm": "Vampire Nighthawk", "final": { "power": 4, "toughness": 4 } },
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2 } }
+  ]
+}

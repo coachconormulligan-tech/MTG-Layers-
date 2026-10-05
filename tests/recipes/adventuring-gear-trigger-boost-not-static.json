@@ -1,0 +1,12 @@
+{
+  "name": "Adventuring Gear — landfall boost is not a static bonus",
+  "notes": "Memory: project_adventuring_gear_equip_trigger_2026-05-28 (Bug 1). The runtime-gained-Equipment scanner matched the 'Landfall — Whenever a land you control enters, equipped creature gets +2/+2 until end of turn' line as a static boost, so an equipped creature was permanently 4/4. Grizzly Bears equipped with Adventuring Gear must stay 2/2 until the trigger is fired.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Adventuring Gear", "as": "gear" },
+    { "call": ["applyEquipAttachment", "@gear", 0, "@bears"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2, "traits": ["Equipped"] } }
+  ]
+}

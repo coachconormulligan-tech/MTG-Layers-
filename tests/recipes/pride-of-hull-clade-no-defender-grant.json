@@ -1,0 +1,13 @@
+{
+  "name": "The Pride of Hull Clade — 'didn't have defender' is not a Defender grant",
+  "notes": "Memory: project_pride_of_hull_clade_negated_have_and_gains_quoted_2026-06-05. haveAbilityRegex backtracked onto the negated 'have' in 'can attack as though it didn't have defender' and emitted ADD_ABILITY Defender, while the quoted 'gains \"Whenever this creature deals combat damage...\"' grant was lost. After firing the activated ability, there must be no add_ability effect for Defender and one for the quoted triggered ability.",
+  "steps": [
+    { "add": "The Pride of Hull Clade", "as": "pride" },
+    { "add": "Grizzly Bears" },
+    { "call": ["addActivatedAbility", "@pride", 0, "Until end of turn, target creature you control gets +1/+0, gains \"Whenever this creature deals combat damage to a player, draw cards equal to its toughness,\" and can attack as though it didn't have defender.", "{2}{U}{U}: Until end of turn, target creature you control gets +1/+0, gains \"Whenever this creature deals combat damage to a player, draw cards equal to its toughness,\" and can attack as though it didn't have defender."] }
+  ],
+  "asserts": [
+    { "noEffect": { "type": "add_ability", "params": { "ability": "Defender" } } },
+    { "effect": { "layer": "6", "type": "add_ability", "params": { "ability": "Whenever this creature deals combat damage to a player, draw cards equal to its toughness" } } }
+  ]
+}

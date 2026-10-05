@@ -1,0 +1,548 @@
+{
+ "name": "Changeling after Curse of Conformity — still loses all creature types",
+ "notes": "Found by the first conversion batch, confirmed by the owner 2026-10-05 after checking the rules. Changeling is a characteristic-defining ability, so it applies first in layer 4 regardless of timestamp (CR 613.3); Curse of Conformity then removes every creature type. The Changeling is added AFTER the Curse here, so plain timestamp order would wrongly leave it with every creature type.",
+ "recipe": {
+  "steps": [
+   {
+    "call": [
+     "addPlayer",
+     "Opponent"
+    ]
+   },
+   {
+    "add": "Curse of Conformity",
+    "as": "curse"
+   },
+   {
+    "call": [
+     "setEnchantedPlayer",
+     "@curse",
+     "p2"
+    ]
+   },
+   {
+    "add": "Amoeboid Changeling",
+    "controller": "p2"
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "order": {
+    "4": [
+     "Amoeboid Changeling",
+     "Curse of Conformity"
+    ]
+   }
+  },
+  {
+   "perm": "Amoeboid Changeling",
+   "final": {
+    "subtypes": [],
+    "power": 3,
+    "toughness": 3
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "0a88083d-726a-4239-b849-2a4431ef1cd7",
+     "oracle_id": "71de5f9a-73e4-4a93-b199-b280687f71eb",
+     "multiverse_ids": [
+      540449
+     ],
+     "tcgplayer_id": 248583,
+     "cardmarket_id": 575352,
+     "name": "Curse of Conformity",
+     "lang": "en",
+     "released_at": "2021-09-24",
+     "uri": "https://api.scryfall.com/cards/0a88083d-726a-4239-b849-2a4431ef1cd7",
+     "scryfall_uri": "https://scryfall.com/card/mic/6/curse-of-conformity?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T06:49:42Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/0/a/0a88083d-726a-4239-b849-2a4431ef1cd7.jpg?1783925382",
+      "normal": "https://cards.scryfall.io/normal/front/0/a/0a88083d-726a-4239-b849-2a4431ef1cd7.jpg?1783925382",
+      "large": "https://cards.scryfall.io/large/front/0/a/0a88083d-726a-4239-b849-2a4431ef1cd7.jpg?1783925382",
+      "png": "https://cards.scryfall.io/png/front/0/a/0a88083d-726a-4239-b849-2a4431ef1cd7.png?1783925382",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/0/a/0a88083d-726a-4239-b849-2a4431ef1cd7.jpg?1783925382",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/0/a/0a88083d-726a-4239-b849-2a4431ef1cd7.jpg?1783925382",
+      "thumb": "https://cards.scryfall.io/thumb/front/0/a/0a88083d-726a-4239-b849-2a4431ef1cd7.webp?1783925382",
+      "grid": "https://cards.scryfall.io/grid/front/0/a/0a88083d-726a-4239-b849-2a4431ef1cd7.webp?1783925382",
+      "display": "https://cards.scryfall.io/display/front/0/a/0a88083d-726a-4239-b849-2a4431ef1cd7.webp?1783925382",
+      "art": "https://cards.scryfall.io/art/front/0/a/0a88083d-726a-4239-b849-2a4431ef1cd7.webp?1783925382",
+      "crop": "https://cards.scryfall.io/crop/front/0/a/0a88083d-726a-4239-b849-2a4431ef1cd7.webp?1783925382"
+     },
+     "mana_cost": "{4}{W}",
+     "cmc": 5,
+     "type_line": "Enchantment — Aura Curse",
+     "oracle_text": "Enchant player\nNonlegendary creatures enchanted player controls have base power and toughness 3/3 and lose all creature types.",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [
+      "Enchant"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "7f9a4deb-715e-47d2-afac-3843ef92f39b",
+     "set": "mic",
+     "set_name": "Midnight Hunt Commander",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/7f9a4deb-715e-47d2-afac-3843ef92f39b",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Amic&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/mic?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/0a88083d-726a-4239-b849-2a4431ef1cd7/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A71de5f9a-73e4-4a93-b199-b280687f71eb&unique=prints",
+     "collector_number": "6",
+     "digital": false,
+     "rarity": "rare",
+     "flavor_text": "Whether you'll fit in isn't up to you at all.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Chris Cold",
+     "artist_ids": [
+      "2622d22b-3fd8-4831-9b2b-adc5fac01b85"
+     ],
+     "illustration_id": "01c777d1-6620-4f52-95af-ab587648785e",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 16547,
+     "prices": {
+      "usd": "0.59",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.16",
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=540449&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DCurse%2Bof%2BConformity",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DCurse%2Bof%2BConformity",
+      "edhrec": "https://edhrec.com/route/?cc=Curse+of+Conformity"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F248583%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=575352&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Curse+of+Conformity&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": "player_1",
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "068518d2-f061-4061-b208-158e991156b6",
+     "oracle_id": "68865793-daeb-4c55-80cb-12853f9f96c4",
+     "multiverse_ids": [
+      140339
+     ],
+     "mtgo_id": 28485,
+     "mtgo_foil_id": 28486,
+     "tcgplayer_id": 15409,
+     "cardmarket_id": 17792,
+     "name": "Amoeboid Changeling",
+     "lang": "en",
+     "released_at": "2007-10-12",
+     "uri": "https://api.scryfall.com/cards/068518d2-f061-4061-b208-158e991156b6",
+     "scryfall_uri": "https://scryfall.com/card/lrw/51/amoeboid-changeling?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:41:46Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/0/6/068518d2-f061-4061-b208-158e991156b6.jpg?1783942906",
+      "normal": "https://cards.scryfall.io/normal/front/0/6/068518d2-f061-4061-b208-158e991156b6.jpg?1783942906",
+      "large": "https://cards.scryfall.io/large/front/0/6/068518d2-f061-4061-b208-158e991156b6.jpg?1783942906",
+      "png": "https://cards.scryfall.io/png/front/0/6/068518d2-f061-4061-b208-158e991156b6.png?1783942906",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/0/6/068518d2-f061-4061-b208-158e991156b6.jpg?1783942906",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/0/6/068518d2-f061-4061-b208-158e991156b6.jpg?1783942906",
+      "thumb": "https://cards.scryfall.io/thumb/front/0/6/068518d2-f061-4061-b208-158e991156b6.webp?1783942906",
+      "grid": "https://cards.scryfall.io/grid/front/0/6/068518d2-f061-4061-b208-158e991156b6.webp?1783942906",
+      "display": "https://cards.scryfall.io/display/front/0/6/068518d2-f061-4061-b208-158e991156b6.webp?1783942906",
+      "art": "https://cards.scryfall.io/art/front/0/6/068518d2-f061-4061-b208-158e991156b6.webp?1783942906",
+      "crop": "https://cards.scryfall.io/crop/front/0/6/068518d2-f061-4061-b208-158e991156b6.webp?1783942906"
+     },
+     "mana_cost": "{1}{U}",
+     "cmc": 2,
+     "type_line": "Creature — Shapeshifter",
+     "oracle_text": "Changeling (This card is every creature type.)\n{T}: Target creature gains all creature types until end of turn.\n{T}: Target creature loses all creature types until end of turn.",
+     "power": "1",
+     "toughness": "1",
+     "colors": [
+      "U"
+     ],
+     "color_identity": [
+      "U"
+     ],
+     "keywords": [
+      "Changeling"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "30ec97cb-dca9-4bf4-a98b-310f9d8ceaff",
+     "set": "lrw",
+     "set_name": "Lorwyn",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/30ec97cb-dca9-4bf4-a98b-310f9d8ceaff",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Alrw&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/lrw?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/068518d2-f061-4061-b208-158e991156b6/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A68865793-daeb-4c55-80cb-12853f9f96c4&unique=prints",
+     "collector_number": "51",
+     "digital": false,
+     "rarity": "common",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Nils Hamm",
+     "artist_ids": [
+      "c540d1fc-1500-457f-93cf-d6069ee66546"
+     ],
+     "illustration_id": "3d63d2d1-27ee-4d0e-b52f-6a885115e465",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 4910,
+     "penny_rank": 10912,
+     "prices": {
+      "usd": "0.91",
+      "usd_foil": "15.82",
+      "usd_etched": null,
+      "eur": "0.34",
+      "eur_foil": "3.84",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=140339&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DAmoeboid%2BChangeling",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DAmoeboid%2BChangeling",
+      "edhrec": "https://edhrec.com/route/?cc=Amoeboid+Changeling"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15409%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=17792&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/28485?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_1",
+    "controller": "player_1",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "emblems": []
+   },
+   {
+    "id": "player_1",
+    "name": "Opponent",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": false,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 2,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Curse of Conformity",
+    "final": {
+     "name": "Curse of Conformity",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Enchantment"
+     ],
+     "subtypes": [
+      "Aura",
+      "Curse"
+     ],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "W"
+     ],
+     "abilities": [
+      "Enchant player",
+      "Nonlegendary creatures enchanted player controls have base power and toughness 3/3 and lose all creature types."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Amoeboid Changeling",
+    "final": {
+     "name": "Amoeboid Changeling",
+     "controller": "player_1",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [],
+     "power": 3,
+     "toughness": 3,
+     "colors": [
+      "U"
+     ],
+     "abilities": [
+      "Changeling",
+      "{T}: Target creature gains all creature types until end of turn.",
+      "{T}: Target creature loses all creature types until end of turn."
+     ]
+    },
+    "changedBy": {
+     "4": [
+      "Amoeboid Changeling",
+      "Curse of Conformity"
+     ],
+     "7b": [
+      "Curse of Conformity"
+     ]
+    }
+   }
+  ],
+  "order": {
+   "4": [
+    "Amoeboid Changeling",
+    "Curse of Conformity"
+   ],
+   "7b": [
+    "Curse of Conformity"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Curse of Conformity",
+    "layer": "7b",
+    "type": "set_pt",
+    "scope": "global",
+    "params": {
+     "power": 3,
+     "toughness": 3
+    }
+   },
+   {
+    "source": "Curse of Conformity",
+    "layer": "4",
+    "type": "set_types",
+    "scope": "global",
+    "params": {
+     "keepSupertypes": true,
+     "keepTypes": true,
+     "replaceSubtypeCategory": "creature",
+     "subtypes": []
+    }
+   },
+   {
+    "source": "Amoeboid Changeling",
+    "layer": "4",
+    "type": "add_type",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "gainsAllCreatureTypes": true
+    }
+   }
+  ]
+ }
+}

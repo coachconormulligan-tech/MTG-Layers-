@@ -1,0 +1,632 @@
+{
+ "name": "Necrotic Ooze — Grist in graveyard counts as a creature card",
+ "notes": "Memory: project_grist_hunger_tide_offbf_creature_2026-06-02 (follow-up 2). Grist is a 1/1 Insect creature in the graveyard (CR 604.3), so Necrotic Ooze gains its activated loyalty abilities. Control: Lightning Bolt in the graveyard is not a creature card and contributes nothing.",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Necrotic Ooze"
+   },
+   {
+    "call": [
+     "addToGraveyard",
+     "p1",
+     "card:Grist, the Hunger Tide"
+    ]
+   },
+   {
+    "call": [
+     "addToGraveyard",
+     "p1",
+     "card:Lightning Bolt"
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Necrotic Ooze",
+   "final": {
+    "types": [
+     "Creature"
+    ],
+    "power": 4,
+    "toughness": 3,
+    "abilities": {
+     "$includes": [
+      "−2: You may sacrifice a creature. When you do, destroy target creature or planeswalker.",
+      "−5: Each opponent loses life equal to the number of creature cards in your graveyard."
+     ]
+    }
+   }
+  },
+  {
+   "effect": {
+    "source": "Necrotic Ooze",
+    "layer": "6",
+    "type": "gain_activated_from_graveyards"
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "acc3557d-49c6-49cd-a540-1b24897f4e86",
+     "oracle_id": "2fdeb920-2e48-4308-9517-743eec219c04",
+     "multiverse_ids": [
+      571416
+     ],
+     "mtgo_id": 101650,
+     "tcgplayer_id": 276572,
+     "cardmarket_id": 664604,
+     "name": "Necrotic Ooze",
+     "lang": "en",
+     "released_at": "2022-07-08",
+     "uri": "https://api.scryfall.com/cards/acc3557d-49c6-49cd-a540-1b24897f4e86",
+     "scryfall_uri": "https://scryfall.com/card/2x2/83/necrotic-ooze?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T05:51:41Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/a/c/acc3557d-49c6-49cd-a540-1b24897f4e86.jpg?1783921901",
+      "normal": "https://cards.scryfall.io/normal/front/a/c/acc3557d-49c6-49cd-a540-1b24897f4e86.jpg?1783921901",
+      "large": "https://cards.scryfall.io/large/front/a/c/acc3557d-49c6-49cd-a540-1b24897f4e86.jpg?1783921901",
+      "png": "https://cards.scryfall.io/png/front/a/c/acc3557d-49c6-49cd-a540-1b24897f4e86.png?1783921901",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/a/c/acc3557d-49c6-49cd-a540-1b24897f4e86.jpg?1783921901",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/a/c/acc3557d-49c6-49cd-a540-1b24897f4e86.jpg?1783921901",
+      "thumb": "https://cards.scryfall.io/thumb/front/a/c/acc3557d-49c6-49cd-a540-1b24897f4e86.webp?1783921901",
+      "grid": "https://cards.scryfall.io/grid/front/a/c/acc3557d-49c6-49cd-a540-1b24897f4e86.webp?1783921901",
+      "display": "https://cards.scryfall.io/display/front/a/c/acc3557d-49c6-49cd-a540-1b24897f4e86.webp?1783921901",
+      "art": "https://cards.scryfall.io/art/front/a/c/acc3557d-49c6-49cd-a540-1b24897f4e86.webp?1783921901",
+      "crop": "https://cards.scryfall.io/crop/front/a/c/acc3557d-49c6-49cd-a540-1b24897f4e86.webp?1783921901"
+     },
+     "mana_cost": "{2}{B}{B}",
+     "cmc": 4,
+     "type_line": "Creature — Ooze",
+     "oracle_text": "As long as this creature is on the battlefield, it has all activated abilities of all creature cards in all graveyards.",
+     "power": "4",
+     "toughness": "3",
+     "colors": [
+      "B"
+     ],
+     "color_identity": [
+      "B"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "5a645837-b050-449f-ac90-1e7ccbf45031",
+     "set": "2x2",
+     "set_name": "Double Masters 2022",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/5a645837-b050-449f-ac90-1e7ccbf45031",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A2x2&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/2x2?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/acc3557d-49c6-49cd-a540-1b24897f4e86/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A2fdeb920-2e48-4308-9517-743eec219c04&unique=prints",
+     "collector_number": "83",
+     "digital": false,
+     "rarity": "rare",
+     "flavor_text": "\"To death all must go, and so in death lies ultimate power.\"\n—Geth, Lord of the Vault",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "James Ryman",
+     "artist_ids": [
+      "3852bbc9-11c0-4fe3-8722-a06ad7e2bcc5"
+     ],
+     "illustration_id": "3c429f23-3aa1-45a5-bcce-88a0ee0ee873",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 4586,
+     "penny_rank": 1911,
+     "preview": {
+      "source": "Wizards of the Coast",
+      "source_uri": "https://www.instagram.com/p/CfCU75SOj_N",
+      "previewed_at": "2022-06-20"
+     },
+     "prices": {
+      "usd": "4.16",
+      "usd_foil": "2.57",
+      "usd_etched": null,
+      "eur": "1.13",
+      "eur_foil": "3.08",
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=571416&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DNecrotic%2BOoze",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DNecrotic%2BOoze",
+      "edhrec": "https://edhrec.com/route/?cc=Necrotic+Ooze"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F276572%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=664604&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/101650?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 2,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [
+     {
+      "object": "card",
+      "id": "1925dc45-4dee-4772-aa16-3b4ca54be6c7",
+      "oracle_id": "0efb0d7e-dea0-4817-a243-15066e9ef333",
+      "multiverse_ids": [
+       676093
+      ],
+      "mtgo_id": 131065,
+      "tcgplayer_id": 579037,
+      "cardmarket_id": 788959,
+      "name": "Grist, the Hunger Tide",
+      "lang": "en",
+      "released_at": "2024-09-27",
+      "uri": "https://api.scryfall.com/cards/1925dc45-4dee-4772-aa16-3b4ca54be6c7",
+      "scryfall_uri": "https://scryfall.com/card/dsc/220/grist-the-hunger-tide?utm_source=api",
+      "layout": "normal",
+      "highres_image": true,
+      "image_status": "highres_scan",
+      "image_updated_at": "2026-07-13T02:26:33Z",
+      "image_uris": {
+       "small": "https://cards.scryfall.io/small/front/1/9/1925dc45-4dee-4772-aa16-3b4ca54be6c7.jpg?1783909593",
+       "normal": "https://cards.scryfall.io/normal/front/1/9/1925dc45-4dee-4772-aa16-3b4ca54be6c7.jpg?1783909593",
+       "large": "https://cards.scryfall.io/large/front/1/9/1925dc45-4dee-4772-aa16-3b4ca54be6c7.jpg?1783909593",
+       "png": "https://cards.scryfall.io/png/front/1/9/1925dc45-4dee-4772-aa16-3b4ca54be6c7.png?1783909593",
+       "art_crop": "https://cards.scryfall.io/art_crop/front/1/9/1925dc45-4dee-4772-aa16-3b4ca54be6c7.jpg?1783909593",
+       "border_crop": "https://cards.scryfall.io/border_crop/front/1/9/1925dc45-4dee-4772-aa16-3b4ca54be6c7.jpg?1783909593",
+       "thumb": "https://cards.scryfall.io/thumb/front/1/9/1925dc45-4dee-4772-aa16-3b4ca54be6c7.webp?1783909593",
+       "grid": "https://cards.scryfall.io/grid/front/1/9/1925dc45-4dee-4772-aa16-3b4ca54be6c7.webp?1783909593",
+       "display": "https://cards.scryfall.io/display/front/1/9/1925dc45-4dee-4772-aa16-3b4ca54be6c7.webp?1783909593",
+       "art": "https://cards.scryfall.io/art/front/1/9/1925dc45-4dee-4772-aa16-3b4ca54be6c7.webp?1783909593",
+       "crop": "https://cards.scryfall.io/crop/front/1/9/1925dc45-4dee-4772-aa16-3b4ca54be6c7.webp?1783909593"
+      },
+      "mana_cost": "{1}{B}{G}",
+      "cmc": 3,
+      "type_line": "Legendary Planeswalker — Grist",
+      "oracle_text": "As long as Grist isn't on the battlefield, it's a 1/1 Insect creature in addition to its other types.\n+1: Create a 1/1 black and green Insect creature token, then mill a card. If an Insect card was milled this way, put a loyalty counter on Grist and repeat this process.\n−2: You may sacrifice a creature. When you do, destroy target creature or planeswalker.\n−5: Each opponent loses life equal to the number of creature cards in your graveyard.",
+      "loyalty": "3",
+      "colors": [
+       "B",
+       "G"
+      ],
+      "color_identity": [
+       "B",
+       "G"
+      ],
+      "keywords": [
+       "Mill"
+      ],
+      "all_parts": [
+       {
+        "object": "related_card",
+        "id": "1925dc45-4dee-4772-aa16-3b4ca54be6c7",
+        "component": "combo_piece",
+        "name": "Grist, the Hunger Tide",
+        "type_line": "Legendary Planeswalker — Grist",
+        "uri": "https://api.scryfall.com/cards/1925dc45-4dee-4772-aa16-3b4ca54be6c7"
+       },
+       {
+        "object": "related_card",
+        "id": "f120bca2-9ecf-429a-bc01-ba29729e19c9",
+        "component": "token",
+        "name": "Insect",
+        "type_line": "Token Creature — Insect",
+        "uri": "https://api.scryfall.com/cards/f120bca2-9ecf-429a-bc01-ba29729e19c9"
+       }
+      ],
+      "legalities": {
+       "standard": "not_legal",
+       "future": "not_legal",
+       "historic": "legal",
+       "timeless": "legal",
+       "gladiator": "legal",
+       "pioneer": "not_legal",
+       "modern": "legal",
+       "legacy": "legal",
+       "pauper": "not_legal",
+       "vintage": "legal",
+       "penny": "not_legal",
+       "commander": "legal",
+       "oathbreaker": "legal",
+       "standardbrawl": "not_legal",
+       "brawl": "legal",
+       "competitivebrawl": "legal",
+       "alchemy": "not_legal",
+       "paupercommander": "not_legal",
+       "duel": "legal",
+       "oldschool": "not_legal",
+       "premodern": "not_legal",
+       "predh": "not_legal",
+       "tlr": "legal"
+      },
+      "games": [
+       "paper",
+       "mtgo"
+      ],
+      "reserved": false,
+      "game_changer": false,
+      "foil": false,
+      "nonfoil": true,
+      "finishes": [
+       "nonfoil"
+      ],
+      "oversized": false,
+      "promo": false,
+      "reprint": true,
+      "variation": false,
+      "set_id": "4c822528-83c3-42c7-8708-dd1d37166819",
+      "set": "dsc",
+      "set_name": "Duskmourn: House of Horror Commander",
+      "set_type": "commander",
+      "set_uri": "https://api.scryfall.com/sets/4c822528-83c3-42c7-8708-dd1d37166819",
+      "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Adsc&unique=prints",
+      "scryfall_set_uri": "https://scryfall.com/sets/dsc?utm_source=api",
+      "rulings_uri": "https://api.scryfall.com/cards/1925dc45-4dee-4772-aa16-3b4ca54be6c7/rulings",
+      "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A0efb0d7e-dea0-4817-a243-15066e9ef333&unique=prints",
+      "collector_number": "220",
+      "digital": false,
+      "rarity": "mythic",
+      "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+      "artist": "Yongjae Choi",
+      "artist_ids": [
+       "5ab91c3b-a6da-4751-a56e-81d0f61a67ab"
+      ],
+      "illustration_id": "ab202a8c-39bf-4f40-9cd9-862b957ebc75",
+      "border_color": "black",
+      "frame": "2015",
+      "security_stamp": "oval",
+      "full_art": false,
+      "textless": false,
+      "booster": false,
+      "story_spotlight": false,
+      "edhrec_rank": 2019,
+      "prices": {
+       "usd": "0.47",
+       "usd_foil": null,
+       "usd_etched": null,
+       "eur": "0.60",
+       "eur_foil": null,
+       "tix": "2.28"
+      },
+      "related_uris": {
+       "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=676093&printed=false",
+       "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGrist%252C%2Bthe%2BHunger%2BTide",
+       "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGrist%252C%2Bthe%2BHunger%2BTide",
+       "edhrec": "https://edhrec.com/route/?cc=Grist%2C+the+Hunger+Tide"
+      },
+      "purchase_uris": {
+       "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F579037%3Fpage%3D1",
+       "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=788959&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+       "cardhoarder": "https://www.cardhoarder.com/cards/131065?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+      }
+     },
+     {
+      "object": "card",
+      "id": "7673784e-db4b-43a1-8d55-1bb9fc1e284f",
+      "oracle_id": "4457ed35-7c10-48c8-9776-456485fdf070",
+      "multiverse_ids": [],
+      "resource_id": "A59396A4D646C69A1DD41F9906BE9A9CDECE83F18DC5C53501DD7BAE50511DBB",
+      "mtgo_id": 152037,
+      "arena_id": 105816,
+      "tcgplayer_id": 697344,
+      "cardmarket_id": 892161,
+      "name": "Lightning Bolt",
+      "lang": "en",
+      "released_at": "2026-06-26",
+      "uri": "https://api.scryfall.com/cards/7673784e-db4b-43a1-8d55-1bb9fc1e284f",
+      "scryfall_uri": "https://scryfall.com/card/msc/806/lightning-bolt?utm_source=api",
+      "layout": "normal",
+      "highres_image": true,
+      "image_status": "highres_scan",
+      "image_updated_at": "2026-07-13T00:36:48Z",
+      "image_uris": {
+       "small": "https://cards.scryfall.io/small/front/7/6/7673784e-db4b-43a1-8d55-1bb9fc1e284f.jpg?1783903008",
+       "normal": "https://cards.scryfall.io/normal/front/7/6/7673784e-db4b-43a1-8d55-1bb9fc1e284f.jpg?1783903008",
+       "large": "https://cards.scryfall.io/large/front/7/6/7673784e-db4b-43a1-8d55-1bb9fc1e284f.jpg?1783903008",
+       "png": "https://cards.scryfall.io/png/front/7/6/7673784e-db4b-43a1-8d55-1bb9fc1e284f.png?1783903008",
+       "art_crop": "https://cards.scryfall.io/art_crop/front/7/6/7673784e-db4b-43a1-8d55-1bb9fc1e284f.jpg?1783903008",
+       "border_crop": "https://cards.scryfall.io/border_crop/front/7/6/7673784e-db4b-43a1-8d55-1bb9fc1e284f.jpg?1783903008",
+       "thumb": "https://cards.scryfall.io/thumb/front/7/6/7673784e-db4b-43a1-8d55-1bb9fc1e284f.webp?1783903008",
+       "grid": "https://cards.scryfall.io/grid/front/7/6/7673784e-db4b-43a1-8d55-1bb9fc1e284f.webp?1783903008",
+       "display": "https://cards.scryfall.io/display/front/7/6/7673784e-db4b-43a1-8d55-1bb9fc1e284f.webp?1783903008",
+       "art": "https://cards.scryfall.io/art/front/7/6/7673784e-db4b-43a1-8d55-1bb9fc1e284f.webp?1783903008",
+       "crop": "https://cards.scryfall.io/crop/front/7/6/7673784e-db4b-43a1-8d55-1bb9fc1e284f.webp?1783903008"
+      },
+      "mana_cost": "{R}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "oracle_text": "Lightning Bolt deals 3 damage to any target.",
+      "colors": [
+       "R"
+      ],
+      "color_identity": [
+       "R"
+      ],
+      "keywords": [],
+      "all_parts": [
+       {
+        "object": "related_card",
+        "id": "7673784e-db4b-43a1-8d55-1bb9fc1e284f",
+        "component": "combo_piece",
+        "name": "Lightning Bolt",
+        "type_line": "Instant",
+        "uri": "https://api.scryfall.com/cards/7673784e-db4b-43a1-8d55-1bb9fc1e284f"
+       },
+       {
+        "object": "related_card",
+        "id": "4f095067-cf24-4061-8626-dc68a66a0b36",
+        "component": "combo_piece",
+        "name": "Toralf's Disciple",
+        "type_line": "Creature — Human Warrior",
+        "uri": "https://api.scryfall.com/cards/4f095067-cf24-4061-8626-dc68a66a0b36"
+       },
+       {
+        "object": "related_card",
+        "id": "69b51576-532b-450e-a8bf-0482cac04618",
+        "component": "combo_piece",
+        "name": "Thayan Evokers",
+        "type_line": "Creature — Human Wizard",
+        "uri": "https://api.scryfall.com/cards/69b51576-532b-450e-a8bf-0482cac04618"
+       },
+       {
+        "object": "related_card",
+        "id": "618806ea-7ea8-4cfb-a8c1-c3defa34e7dd",
+        "component": "combo_piece",
+        "name": "Indris, the Hydrostatic Surge",
+        "type_line": "Legendary Creature — Otter Incarnation",
+        "uri": "https://api.scryfall.com/cards/618806ea-7ea8-4cfb-a8c1-c3defa34e7dd"
+       }
+      ],
+      "legalities": {
+       "standard": "not_legal",
+       "future": "not_legal",
+       "historic": "banned",
+       "timeless": "legal",
+       "gladiator": "legal",
+       "pioneer": "not_legal",
+       "modern": "legal",
+       "legacy": "legal",
+       "pauper": "legal",
+       "vintage": "legal",
+       "penny": "not_legal",
+       "commander": "legal",
+       "oathbreaker": "legal",
+       "standardbrawl": "not_legal",
+       "brawl": "legal",
+       "competitivebrawl": "legal",
+       "alchemy": "not_legal",
+       "paupercommander": "legal",
+       "duel": "legal",
+       "oldschool": "not_legal",
+       "premodern": "legal",
+       "predh": "legal",
+       "tlr": "legal"
+      },
+      "games": [
+       "paper",
+       "mtgo",
+       "arena"
+      ],
+      "reserved": false,
+      "game_changer": false,
+      "foil": true,
+      "nonfoil": true,
+      "finishes": [
+       "nonfoil",
+       "foil"
+      ],
+      "oversized": false,
+      "promo": false,
+      "reprint": true,
+      "variation": false,
+      "set_id": "9d739461-c5ac-43a1-af41-3d5a585b5c8d",
+      "set": "msc",
+      "set_name": "Marvel Super Heroes Commander",
+      "set_type": "commander",
+      "set_uri": "https://api.scryfall.com/sets/9d739461-c5ac-43a1-af41-3d5a585b5c8d",
+      "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Amsc&unique=prints",
+      "scryfall_set_uri": "https://scryfall.com/sets/msc?utm_source=api",
+      "rulings_uri": "https://api.scryfall.com/cards/7673784e-db4b-43a1-8d55-1bb9fc1e284f/rulings",
+      "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A4457ed35-7c10-48c8-9776-456485fdf070&unique=prints",
+      "collector_number": "806",
+      "digital": false,
+      "rarity": "uncommon",
+      "flavor_text": "\"I am the god of thunder, the lord of the savage lightning, and the very skies must tremble when speaks The Mighty Thor!\"",
+      "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+      "artist": "Milivoj Ćeran",
+      "artist_ids": [
+       "1eced451-4da5-42bc-b49d-70c41246581f"
+      ],
+      "illustration_id": "58884d99-ed2d-4efd-b192-b1eb6f87c39f",
+      "border_color": "black",
+      "frame": "2015",
+      "full_art": false,
+      "textless": false,
+      "booster": false,
+      "story_spotlight": false,
+      "promo_types": [
+       "universesbeyond"
+      ],
+      "edhrec_rank": 157,
+      "prices": {
+       "usd": "0.83",
+       "usd_foil": "3.02",
+       "usd_etched": null,
+       "eur": "1.98",
+       "eur_foil": "2.02",
+       "tix": "0.02"
+      },
+      "related_uris": {
+       "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DLightning%2BBolt",
+       "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DLightning%2BBolt",
+       "edhrec": "https://edhrec.com/route/?cc=Lightning+Bolt"
+      },
+      "purchase_uris": {
+       "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F697344%3Fpage%3D1",
+       "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=892161&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+       "cardhoarder": "https://www.cardhoarder.com/cards/152037?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+      }
+     }
+    ],
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Necrotic Ooze",
+    "final": {
+     "name": "Necrotic Ooze",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Ooze"
+     ],
+     "power": 4,
+     "toughness": 3,
+     "colors": [
+      "B"
+     ],
+     "abilities": [
+      "As long as this creature is on the battlefield, it has all activated abilities of all creature cards in all graveyards.",
+      "+1: Create a 1/1 black and green Insect creature token, then mill a card. If an Insect card was milled this way, put a loyalty counter on this card and repeat this process.",
+      "−2: You may sacrifice a creature. When you do, destroy target creature or planeswalker.",
+      "−5: Each opponent loses life equal to the number of creature cards in your graveyard."
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "Necrotic Ooze"
+     ]
+    }
+   }
+  ],
+  "order": {
+   "6": [
+    "Necrotic Ooze"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Necrotic Ooze",
+    "layer": "6",
+    "type": "gain_activated_from_graveyards",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {}
+   }
+  ]
+ }
+}

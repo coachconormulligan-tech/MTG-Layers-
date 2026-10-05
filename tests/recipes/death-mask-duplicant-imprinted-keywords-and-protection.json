@@ -1,0 +1,14 @@
+{
+  "name": "Death-Mask Duplicant — gains keywords and protection from imprinted cards",
+  "notes": "Memory: project_odric_duplicant_same_is_true_2026-05-25 and project_duplicant_protection_from_imprinted_2026-05-25. With Akroma (flying, first strike, vigilance, trample, haste, protection from black and from red) and Phyrexian Crusader (first strike, protection from red and from white, infect) imprinted, Duplicant gains only keywords in its own list: Flying, First strike, Haste, Trample, plus Protection from black, red (deduplicated) and white. Vigilance and Infect are not in its list, Fear and Double strike are not on any imprinted card.",
+  "steps": [
+    { "add": "Death-Mask Duplicant", "as": "duplicant" },
+    { "call": ["addToExile", "card:Akroma, Angel of Wrath"] },
+    { "call": ["setExileTag", "exile_1", "@duplicant"] },
+    { "call": ["addToExile", "card:Phyrexian Crusader"] },
+    { "call": ["setExileTag", "exile_2", "@duplicant"] }
+  ],
+  "asserts": [
+    { "perm": "Death-Mask Duplicant", "final": { "power": 5, "toughness": 5, "abilities": { "$includes": ["Flying", "First strike", "Haste", "Trample", "Protection from black", "Protection from red", "Protection from white"], "$excludes": ["Fear", "Double strike", "Vigilance", "Infect"] } } }
+  ]
+}

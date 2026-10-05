@@ -356,6 +356,9 @@ function extractTargetInfo(filterText) {
 /* [END: TARGET-EXTRACT] */
 
 function buildAppliesToFromText(filterText) {
+  // "You and permanents you control gain hexproof" (Veil of Summer, Heroic Intervention-style):
+  // the player half is not a layer effect, so only the permanent half is filtered on.
+  filterText = filterText.replace(/^\s*you\s+and\s+(?=\S)/i, '');
   // Extract target/choose metadata first
   const _tinfo = extractTargetInfo(filterText);
   const _result = _buildAppliesToFromTextInner(_tinfo.cleaned);
@@ -529,6 +532,9 @@ function _buildAppliesToFromTextInner(filterText) {
         // Treat as creature subtype if it singularizes to something non-empty and isn't a generic stopword
         const stopwords = ['and', 'or', 'the', 'a', 'an', 'each', 'every', 'all', 'other', 'another', 'it', 'them'];
         if (stopwords.includes(p)) return null;
+        // A negated qualifier ("noncreature, non-Equipment artifact") is an AND-list of
+        // restrictions on one noun, not an OR-list of subtypes — leave it to the tokenizer.
+        if (/^non-/.test(p) || (/^non/.test(p) && normalizeTypeWord(p.slice(3).split(/\s+/)[0]))) return null;
         const sub = singularizeCreatureType(p);
         if (!sub) return null;
         return { kind: 'creature', value: sub };

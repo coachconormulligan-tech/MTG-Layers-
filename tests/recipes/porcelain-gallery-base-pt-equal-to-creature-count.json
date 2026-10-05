@@ -1,0 +1,19 @@
+{
+  "name": "Porcelain Gallery — base P/T of each creature equals the number of creatures you control",
+  "notes": "Memory: project_porcelain_gallery_countbased_setpt_2026-04-20. Room cards had no per-face oracle text so nothing parsed, and 'base power and toughness each equal to the number of X' had no parser. Three creatures are controlled by p1 so each gets base 3/3 (the countered Bears is 3/3 base +1/+1 = 4/4); the opponent's Runeclaw Bear counts only p1's creatures so it stays 2/2. Count: Bears, Elves, Birds = 3.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Dollmaker's Shop // Porcelain Gallery", "as": "room" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Llanowar Elves" },
+    { "add": "Birds of Paradise" },
+    { "add": "Runeclaw Bear", "controller": "p2" },
+    { "call": ["addCounter", "@bears", "+1/+1", 1] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": 4, "toughness": 4 } },
+    { "perm": "Llanowar Elves", "final": { "power": 3, "toughness": 3 } },
+    { "perm": "Birds of Paradise", "final": { "power": 3, "toughness": 3 } },
+    { "perm": "Runeclaw Bear", "final": { "power": 2, "toughness": 2 } }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "Life and Limb — if layer 4 does not apply to a land, its color change does not either",
+  "notes": "Memory: project_loop_explanation_and_rejection_2026-04-08. Blood Moon makes Taiga a plain Mountain, so Life and Limb (all Forests become green Saproling creatures) no longer applies to it in layer 4, even though Life and Limb is older. Per the ability-group rule the rest of that ability must not apply to Taiga either, so it is not green and not a creature. The basic Forest is a control that Blood Moon leaves alone: green 1/1 Saproling Forest creature land.",
+  "steps": [
+    { "add": "Life and Limb" },
+    { "add": "Blood Moon" },
+    { "add": "Taiga" },
+    { "add": "Forest" }
+  ],
+  "asserts": [
+    { "perm": "Taiga", "final": { "colors": [], "types": ["Land"], "subtypes": ["Mountain"], "power": null } },
+    { "perm": "Forest", "final": { "colors": ["G"], "types": { "$includes": ["Creature", "Land"] }, "subtypes": { "$includes": ["Saproling", "Forest"] }, "power": 1, "toughness": 1 } }
+  ]
+}

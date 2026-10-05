@@ -1,0 +1,12 @@
+{
+  "name": "Duplicant — a noncreature card exiled with it changes nothing",
+  "notes": "Memory: project_imprint_followup_fixes_2026-05-25 (inert imprint rows). Duplicant only copies P/T and types if an exiled-with card is a creature card. With only Lightning Bolt imprinted it stays 2/4 Shapeshifter. NOTE: exile ids are literal; build in its own process.",
+  "steps": [
+    { "add": "Duplicant", "as": "dup" },
+    { "call": ["addToExile", "card:Lightning Bolt"] },
+    { "call": ["setExileTag", "exile_1", "@dup"] }
+  ],
+  "asserts": [
+    { "perm": "Duplicant", "final": { "power": 2, "toughness": 4, "subtypes": ["Shapeshifter"] } }
+  ]
+}

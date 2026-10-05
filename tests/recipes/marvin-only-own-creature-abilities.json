@@ -1,0 +1,14 @@
+{
+  "name": "Marvin — only creatures you control, not opponents or noncreatures",
+  "notes": "Memory: project_marvin_controller_filter_2026-04-16. Marvin's 'all activated abilities of creatures you control' scanned every permanent. He must copy Llanowar Elves' mana ability but not an opponent's Birds of Paradise ability nor a noncreature artifact's (Sol Ring).",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Marvin, Murderous Mimic" },
+    { "add": "Llanowar Elves" },
+    { "add": "Sol Ring" },
+    { "add": "Birds of Paradise", "controller": "p2" }
+  ],
+  "asserts": [
+    { "perm": "Marvin, Murderous Mimic", "final": { "abilities": { "$includes": ["{T}: Add {G}."], "$excludes": ["{T}: Add one mana of any color.", "{T}: Add {C}{C}."] } } }
+  ]
+}

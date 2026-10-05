@@ -1,0 +1,13 @@
+{
+  "name": "Dress Down and Concordant Crossroads — ability grant and removal follow timestamps",
+  "notes": "Memory: project_ability_dependency_2026-04-03. ADD_ABILITY and REMOVE_ABILITIES have no CR 613.8 dependency on each other, so plain timestamp order decides: Dress Down (earlier) removes abilities, then Concordant Crossroads (later) grants haste, so the Bears have Haste.",
+  "steps": [
+    { "add": "Dress Down" },
+    { "add": "Concordant Crossroads" },
+    { "add": "Grizzly Bears" }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$includes": ["Haste"] } } },
+    { "order": { "6": ["Dress Down", "Concordant Crossroads"] } }
+  ]
+}

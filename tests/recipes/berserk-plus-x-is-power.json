@@ -1,0 +1,14 @@
+{
+  "name": "Berserk — gains trample and +X/+0 where X is its power",
+  "notes": "Memory: project_char_boost_x_is_power_2026-06-23. A +X/+0 boost with X equal to the creature's power produced no effect (and prompted for X on add). Hill Giant 3/3 targeted by Berserk becomes 6/3 with trample; Grizzly Bears is the control.",
+  "steps": [
+    { "add": "Hill Giant" },
+    { "add": "Grizzly Bears" },
+    { "add": "Berserk", "as": "berserk", "spell": true },
+    { "call": ["setTarget", "@berserk", "@Hill Giant"] }
+  ],
+  "asserts": [
+    { "perm": "Hill Giant", "final": { "power": 6, "toughness": 3, "abilities": { "$includes": ["Trample"] } } },
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2, "abilities": { "$excludes": ["Trample"] } } }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "name": "Gerrard's Command — it gets +3/+3 resolves to the targeted creature",
+  "notes": "Memory: project_gerrards_command_boost_pronoun_2026-05-20. 'Untap target creature. It gets +3/+3' left filterText as 'It', collapsing to a self-target on the spell. Grizzly Bears (targeted) must be 5/5; Runeclaw Bear stays 2/2.",
+  "steps": [
+    { "add": "Grizzly Bears" },
+    { "add": "Runeclaw Bear" },
+    { "add": "Gerrard's Command", "as": "command", "spell": true },
+    { "call": ["setTarget", "@command", "@Grizzly Bears"] }
+  ],
+  "asserts": [
+    { "effect": { "source": "Gerrard's Command", "layer": "7c", "scope": "targeted", "target": "Grizzly Bears" } },
+    { "perm": "Grizzly Bears", "final": { "power": 5, "toughness": 5 } },
+    { "perm": "Runeclaw Bear", "final": { "power": 2, "toughness": 2 } }
+  ]
+}

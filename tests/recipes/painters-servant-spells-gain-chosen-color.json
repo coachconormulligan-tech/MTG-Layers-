@@ -1,0 +1,14 @@
+{
+  "name": "Painter's Servant — spells gain the chosen color",
+  "notes": "Memory: project_stack_spell_evaluation_2026-05-17. Battlefield effects apply to spells on the stack: with blue chosen, Lightning Bolt (red) becomes red and blue in addition to its other colors. Grizzly Bears also becomes green and blue (permanents are included).",
+  "steps": [
+    { "add": "Painter's Servant", "as": "servant" },
+    { "call": ["setChosenColor", "@servant", "Blue"] },
+    { "add": "Lightning Bolt", "spell": true },
+    { "add": "Grizzly Bears" }
+  ],
+  "asserts": [
+    { "perm": "Lightning Bolt", "final": { "colors": ["R", "U"] } },
+    { "perm": "Grizzly Bears", "final": { "colors": ["G", "U"] } }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "name": "Ashaya — nontoken filter does not hit tokens",
+  "notes": "Memory: project_nontoken_filter_fix_2026-04-08. 'Nontoken creatures you control' was routed through the generic non-X path with Token as a negated type, so tokens were not excluded. A Saproling token must stay a plain creature while a nontoken Grizzly Bears becomes a Forest land.",
+  "steps": [
+    { "add": "Ashaya, Soul of the Wild" },
+    { "add": "Grizzly Bears" },
+    { "add": "Saproling" }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "types": ["Creature", "Land"], "subtypes": ["Bear", "Forest"] } },
+    { "perm": "Saproling", "final": { "types": ["Creature"], "subtypes": ["Saproling"] } }
+  ]
+}

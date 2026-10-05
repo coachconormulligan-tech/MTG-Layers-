@@ -1,0 +1,13 @@
+{
+  "name": "Humility — ability and P/T counters survive loss of all abilities",
+  "notes": "Memory: project_ability_counter_timestamp_fix_2026-04-17. isSourceViable killed counter effects (their source is the permanent itself) once REMOVE_ABILITIES set allAbilitiesRemoved. Counters are not rules text, so a flying counter and a +1/+1 counter must survive Humility: Bears are base 1/1 (7b) plus the counter = 2/2 with Flying.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "call": ["addCounter", "@bears", "flying", 1] },
+    { "call": ["addCounter", "@bears", "+1/+1", 1] },
+    { "add": "Humility" }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2, "abilities": { "$includes": ["Flying"] } } }
+  ]
+}

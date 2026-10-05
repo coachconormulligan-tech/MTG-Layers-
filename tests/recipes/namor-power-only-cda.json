@@ -1,0 +1,15 @@
+{
+  "name": "Namor the Sub-Mariner — power-only CDA keeps printed toughness",
+  "notes": "Memory: project_namor_single_char_cda_2026-06-04. 'Namor's power is equal to the number of Merfolk you control' set no CDA, and a symmetric CDA would have clobbered toughness. Here: Namor (Merfolk) plus Silvergill Adept (Merfolk) = 2 power; toughness stays the printed 4. Grizzly Bears and the opponent's Silvergill Adept must not count.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Namor the Sub-Mariner" },
+    { "add": "Silvergill Adept" },
+    { "add": "Grizzly Bears" },
+    { "add": "Silvergill Adept", "as": "oppadept", "controller": "p2" }
+  ],
+  "asserts": [
+    { "perm": "Namor the Sub-Mariner", "final": { "power": 2, "toughness": 4 } },
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2 } }
+  ]
+}

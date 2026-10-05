@@ -1,0 +1,16 @@
+{
+  "name": "Unleash Fury — doubling reads the power at apply time",
+  "notes": "Memory: project_double_power_toughness_2026-06-02. Doubling must add the creature's current power in layer 7c, not a number baked at parse time. Giant Growth (earlier timestamp) makes Grizzly Bears 5/5, then Unleash Fury adds +5/+0: 10/5. Runeclaw Bear is the untargeted control.",
+  "steps": [
+    { "add": "Grizzly Bears" },
+    { "add": "Runeclaw Bear" },
+    { "add": "Giant Growth", "as": "growth", "spell": true },
+    { "call": ["setTarget", "@growth", "@Grizzly Bears"] },
+    { "add": "Unleash Fury", "as": "fury", "spell": true },
+    { "call": ["setTarget", "@fury", "@Grizzly Bears"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": 10, "toughness": 5 } },
+    { "perm": "Runeclaw Bear", "final": { "power": 2, "toughness": 2 } }
+  ]
+}

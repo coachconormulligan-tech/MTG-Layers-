@@ -1,0 +1,15 @@
+{
+  "name": "The Mycotyrant — creatures you control that are Fungi and/or Saprolings",
+  "notes": "Memory: project_mycotyrant_that_are_subtype_andor_cda_2026-06-05. The 'that are [subtype] and/or [subtype]' restriction had no count handler (0/0). Here: The Mycotyrant (Fungus) 1, Thallid (Fungus) 1, Saproling token 1 = 3. Grizzly Bears and the opponent's Thallid must not count.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "The Mycotyrant" },
+    { "add": "Thallid" },
+    { "add": "Saproling" },
+    { "add": "Grizzly Bears" },
+    { "add": "Thallid", "as": "oppthallid", "controller": "p2" }
+  ],
+  "asserts": [
+    { "perm": "The Mycotyrant", "final": { "power": 3, "toughness": 3 } }
+  ]
+}

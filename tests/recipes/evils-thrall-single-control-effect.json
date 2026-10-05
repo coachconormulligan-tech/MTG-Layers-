@@ -1,0 +1,18 @@
+{
+  "name": "Evil's Thrall — one control effect, only the target is stolen",
+  "notes": "Memory: project_evils_thrall_duplicate_control_instead_2026-06-04. The 'gain control of that creature ... instead' sentence was parsed as a second CONTROL effect, so the inspector showed two identical Control rows. The fixture's recorded effects list also pins the count to one. Targeting the opponent's Grizzly Bears must move only that creature to player_0; the opponent's Vampire Nighthawk and the caster's own Runeclaw Bear are unaffected.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears", "controller": "p2" },
+    { "add": "Vampire Nighthawk", "controller": "p2" },
+    { "add": "Runeclaw Bear" },
+    { "add": "Evil's Thrall", "as": "thrall", "spell": true },
+    { "call": ["setTarget", "@thrall", "@Grizzly Bears"] }
+  ],
+  "asserts": [
+    { "effect": { "source": "Evil's Thrall", "layer": "2", "type": "control" } },
+    { "perm": "Grizzly Bears", "final": { "controller": "player_0" } },
+    { "perm": "Vampire Nighthawk", "final": { "controller": "player_1" } },
+    { "perm": "Runeclaw Bear", "final": { "controller": "player_0" } }
+  ]
+}

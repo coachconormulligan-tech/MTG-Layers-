@@ -1,0 +1,48 @@
+{
+  "name": "Necrotic Ooze — Grist in graveyard counts as a creature card",
+  "notes": "Memory: project_grist_hunger_tide_offbf_creature_2026-06-02 (follow-up 2). Grist is a 1/1 Insect creature in the graveyard (CR 604.3), so Necrotic Ooze gains its activated loyalty abilities. Control: Lightning Bolt in the graveyard is not a creature card and contributes nothing.",
+  "steps": [
+    {
+      "add": "Necrotic Ooze"
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Grist, the Hunger Tide"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Lightning Bolt"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Necrotic Ooze",
+      "final": {
+        "types": [
+          "Creature"
+        ],
+        "power": 4,
+        "toughness": 3,
+        "abilities": {
+          "$includes": [
+            "−2: You may sacrifice a creature. When you do, destroy target creature or planeswalker.",
+            "−5: Each opponent loses life equal to the number of creature cards in your graveyard."
+          ]
+        }
+      }
+    },
+    {
+      "effect": {
+        "source": "Necrotic Ooze",
+        "layer": "6",
+        "type": "gain_activated_from_graveyards"
+      }
+    }
+  ]
+}

@@ -48,7 +48,7 @@ function effectAppliesToPerm(effect, permState, permanent, permId, allStates, ab
   // valid entry — no imprint, missing card data, or fails the requireCreature filter.
   // Covers Duplicant (fromImprintedCard*), Phyrexian Ingester (fromExiledCardPT).
   if (effect.params && typeof _getImprintedExileEntries === 'function' &&
-      (effect.params.fromImprintedCardPT || effect.params.fromImprintedCardCreatureTypes || effect.params.fromExiledCardPT)) {
+      (effect.params.fromImprintedCardPT || effect.params.fromImprintedCardCreatureTypes || effect.params.fromExiledCardPT || effect.params.fromExiledCardMV)) {
     const entries = _getImprintedExileEntries(effect.sourceId);
     const last = entries.length ? entries[entries.length - 1] : null;
     if (!last || !last.card) return false;
@@ -68,6 +68,9 @@ function effectAppliesToPerm(effect, permState, permanent, permId, allStates, ab
     if (val === 0) return false;
   }
 
+  // Aura attachment tracker (Pacifism etc.): exists only to record what the Aura is attached
+  // to. It never changes anything, so keep it out of the layer log.
+  if (effect._isAttachTracker) return false;
   // Equipment attachment tracker: parallel to the engine-apply logic — the tracker only
   // contributes a boost for runtime-gained equipment (no parsed MODIFY_PT from this source).
   // For statically-parsed equipment (Bonesplitter, Strata Scythe), the parsed effect handles

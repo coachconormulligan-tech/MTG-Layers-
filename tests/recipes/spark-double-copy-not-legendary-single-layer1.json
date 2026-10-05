@@ -1,0 +1,66 @@
+{
+  "name": "Spark Double — copy of a legendary creature is not legendary, no spurious Layer 4 effect",
+  "notes": "Memory: project_copy_except_supertype_double_emit_2026-06-27. 'and it isn't legendary' is part of the Layer 1 copy, but removeSupertypeRegex also emitted a second Layer 4 REMOVE_TYPE for it. Spark Double copies legendary Brokkos; the copy must lose Legendary and the effect list must contain no Layer 4 effect from Spark Double.",
+  "steps": [
+    {
+      "add": "Brokkos, Apex of Forever"
+    },
+    {
+      "add": "Spark Double"
+    },
+    {
+      "call": [
+        "setCopySource",
+        "@Spark Double",
+        "card:Brokkos, Apex of Forever"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Brokkos, Apex of Forever",
+      "final": {
+        "supertypes": [
+          "Legendary"
+        ],
+        "power": 6,
+        "toughness": 6
+      }
+    },
+    {
+      "perm": "Spark Double",
+      "final": {
+        "name": "Brokkos, Apex of Forever",
+        "supertypes": [],
+        "types": [
+          "Creature"
+        ],
+        "subtypes": [
+          "Nightmare",
+          "Beast",
+          "Elemental"
+        ],
+        "power": 6,
+        "toughness": 6,
+        "abilities": {
+          "$includes": [
+            "Trample"
+          ]
+        }
+      }
+    },
+    {
+      "effect": {
+        "source": "Spark Double",
+        "layer": "1",
+        "type": "copy"
+      }
+    },
+    {
+      "noEffect": {
+        "source": "Spark Double",
+        "layer": "4"
+      }
+    }
+  ]
+}

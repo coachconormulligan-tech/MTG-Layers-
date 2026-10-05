@@ -1,0 +1,18 @@
+{
+  "name": "Nighthowler — unbestowed, counts creature cards in all graveyards",
+  "notes": "Memory: project_nighthowler_bestow_and_creature_graveyard_count_2026-06-04 (both bugs). X counted every card in the active graveyard and 'this creature and enchanted creature each get' boosted every creature. Graveyards hold Runeclaw Bear (mine), Lightning Bolt (mine) and Vampire Nighthawk (opponent's): 2 creature cards, so X = 2 and the unbestowed 0/0 Nighthowler is 2/2. Grizzly Bears and the opponent's Giant Spider must not be boosted.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Nighthowler" },
+    { "add": "Grizzly Bears" },
+    { "add": "Giant Spider", "controller": "p2" },
+    { "call": ["addToGraveyard", "p1", "card:Runeclaw Bear"] },
+    { "call": ["addToGraveyard", "p1", "card:Lightning Bolt"] },
+    { "call": ["addToGraveyard", "p2", "card:Vampire Nighthawk"] }
+  ],
+  "asserts": [
+    { "perm": "Nighthowler", "final": { "power": 2, "toughness": 2, "types": { "$includes": ["Creature"] } } },
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2 } },
+    { "perm": "Giant Spider", "final": { "power": 2, "toughness": 4 } }
+  ]
+}

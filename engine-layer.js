@@ -88,9 +88,9 @@ function applyLayerGlobal(effects, allStates, allPermanents, inspectedId, applie
       }
     }
 
-    // Step 3: timestamp order
+    // Step 3: characteristic-defining abilities first (CR 613.3), then timestamp order
     const indexed = remaining.map((e, i) => ({ effect: e, idx: i }));
-    indexed.sort((a, b) => a.effect.timestamp - b.effect.timestamp);
+    indexed.sort((a, b) => ((b.effect.isCDA ? 1 : 0) - (a.effect.isCDA ? 1 : 0)) || (a.effect.timestamp - b.effect.timestamp));
 
     // Step 4: first effect with no unresolved dependencies
     let chosen = null;
@@ -548,7 +548,9 @@ function evaluatePermanent(permanent, allPermanents, allEffects, inspectedId) {
     }
 
     // ALL effects in this layer  —  do NOT pre-filter by applicability.
-    const layerEffects = workingEffects.filter(e => e.layer === layerDef.id);
+    // Aura attachment trackers only record what an Aura is attached to (read above, when
+    // stamping the Enchanted trait); they are not effects and must not appear in a layer.
+    const layerEffects = workingEffects.filter(e => e.layer === layerDef.id && !e._isAttachTracker);
 
     // At the start of Layer 4, sync hasChangeling from current ability state.
     // isAllCreatureTypes is now set by the Changeling ADD_TYPE effect generated

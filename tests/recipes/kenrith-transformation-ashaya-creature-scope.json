@@ -1,0 +1,65 @@
+{
+  "name": "Kenrith's Transformation — keeps Ashaya's Forest land",
+  "notes": "Memory: project_enchant_creature_type_scope_2026-04-08. Owner's ruling (2026-10-05): an 'Enchant creature' Aura that makes the creature an Elk replaces its creature types only; the Land type and Forest subtype Ashaya adds in layer 4 stay, and there is no dependency between the two effects.",
+  "steps": [
+    {
+      "add": "Ashaya, Soul of the Wild",
+      "as": "ashaya"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Kenrith's Transformation",
+      "as": "kt"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@kt",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "order": {
+        "4": [
+          "Ashaya, Soul of the Wild",
+          "Kenrith's Transformation"
+        ]
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "types": {
+          "$includes": [
+            "Creature",
+            "Land"
+          ]
+        },
+        "subtypes": {
+          "$includes": [
+            "Elk",
+            "Forest"
+          ],
+          "$excludes": [
+            "Bear"
+          ]
+        },
+        "colors": [
+          "G"
+        ],
+        "power": 3,
+        "toughness": 3,
+        "abilities": {
+          "$excludes": [
+            "Indestructible"
+          ]
+        }
+      }
+    }
+  ]
+}

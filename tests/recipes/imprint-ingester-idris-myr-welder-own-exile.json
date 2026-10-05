@@ -1,0 +1,102 @@
+{
+  "name": "Imprint — Phyrexian Ingester, Idris and Myr Welder each read only their own exiled card",
+  "notes": "Memory: project_imprint_implementation_2026-05-25. Ingester gets +X/+Y of the exiled creature card: Grizzly Bears 2/2, so 3/3 becomes 5/5. Idris gets the exiled card's abilities (Sol Ring: '{T}: Add {C}{C}.'; its +X/+X is in a separate recipe). Myr Welder has the activated abilities of cards exiled with it (Sol Ring: '{T}: Add {C}{C}.'). Birds in exile with no tag must go to nobody. NOTE: exile ids are literal; build in its own process.",
+  "steps": [
+    {
+      "add": "Phyrexian Ingester",
+      "as": "ingester"
+    },
+    {
+      "add": "Idris, Soul of the TARDIS",
+      "as": "idris"
+    },
+    {
+      "add": "Myr Welder",
+      "as": "welder"
+    },
+    {
+      "call": [
+        "addToExile",
+        "card:Grizzly Bears"
+      ]
+    },
+    {
+      "call": [
+        "setExileTag",
+        "exile_1",
+        "@ingester"
+      ]
+    },
+    {
+      "call": [
+        "addToExile",
+        "card:Sol Ring"
+      ]
+    },
+    {
+      "call": [
+        "setExileTag",
+        "exile_2",
+        "@idris"
+      ]
+    },
+    {
+      "call": [
+        "addToExile",
+        "card:Sol Ring"
+      ]
+    },
+    {
+      "call": [
+        "setExileTag",
+        "exile_3",
+        "@welder"
+      ]
+    },
+    {
+      "call": [
+        "addToExile",
+        "card:Birds of Paradise"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Phyrexian Ingester",
+      "final": {
+        "power": 5,
+        "toughness": 5
+      }
+    },
+    {
+      "perm": "Idris, Soul of the TARDIS",
+      "final": {
+        "power": 4,
+        "toughness": 4,
+        "abilities": {
+          "$includes": [
+            "{T}: Add {C}{C}."
+          ],
+          "$excludes": [
+            "{T}: Add one mana of any color."
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Myr Welder",
+      "final": {
+        "power": 1,
+        "toughness": 4,
+        "abilities": {
+          "$includes": [
+            "{T}: Add {C}{C}."
+          ],
+          "$excludes": [
+            "{T}: Add one mana of any color."
+          ]
+        }
+      }
+    }
+  ]
+}

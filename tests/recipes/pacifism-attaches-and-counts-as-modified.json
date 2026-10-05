@@ -1,0 +1,16 @@
+{
+  "name": "Pacifism — attaches, and the creature counts as enchanted",
+  "notes": "Owner report 2026-10-05: Pacifism got no 'Enchant creature' target dropdown because it has no continuous effect to carry the target. An Aura with nothing else targeted now gets an inert attachment tracker. Kodama of the West Tree gives trample to modified creatures (enchanted by an Aura you control counts), so the Pacifism'd Bears must get trample and the plain Runeclaw Bear must not.",
+  "steps": [
+    { "add": "Kodama of the West Tree" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Runeclaw Bear" },
+    { "add": "Pacifism", "as": "pacifism" },
+    { "call": ["setTarget", "@pacifism", "@bears"] }
+  ],
+  "asserts": [
+    { "effect": { "source": "Pacifism", "scope": "targeted", "target": "Grizzly Bears" } },
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2, "traits": ["Enchanted"], "abilities": { "$includes": ["Trample"] } } },
+    { "perm": "Runeclaw Bear", "final": { "abilities": { "$excludes": ["Trample"] } } }
+  ]
+}

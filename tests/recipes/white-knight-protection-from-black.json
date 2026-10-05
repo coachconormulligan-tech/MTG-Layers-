@@ -1,0 +1,17 @@
+{
+  "name": "White Knight — protection from black blocks black Aura but not non-targeting black effects",
+  "notes": "Memory: project_protection_from_x_2026-04-25. A black Aura (Dead Weight) cannot enchant a creature with protection from black, so the Knight stays 2/2, while the same Aura on Bears works (0/0). Dread of Night is a non-targeting black effect and still gives the white Knight -1/-1.",
+  "steps": [
+    { "add": "White Knight", "as": "knight" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Dead Weight", "as": "dw_knight" },
+    { "call": ["setTarget", "@dw_knight", "@knight"] },
+    { "add": "Dead Weight", "as": "dw_bears" },
+    { "call": ["setTarget", "@dw_bears", "@bears"] },
+    { "add": "Dread of Night" }
+  ],
+  "asserts": [
+    { "perm": "White Knight", "final": { "power": 1, "toughness": 1, "abilities": { "$includes": ["Protection from black"] } } },
+    { "perm": "Grizzly Bears", "final": { "power": 0, "toughness": 0 } }
+  ]
+}

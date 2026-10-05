@@ -1,0 +1,14 @@
+{
+  "name": "Odric, Lunarch Marshal — trigger emits no static keyword grants",
+  "notes": "Memory: project_odric_duplicant_same_is_true_2026-05-25 and project_odric_trigger_visibility_and_keyword_substring_fix_2026-05-25. The 'same is true for' expansion and the trailing-if stripper must skip the At the beginning of each combat sentence: Odric alone has no static add_ability effects and keeps his triggered ability line, so Grizzly Bears (and Akroma, whose keywords Odric's own text enumerates) gain nothing without the trigger firing.",
+  "steps": [
+    { "add": "Odric, Lunarch Marshal" },
+    { "add": "Grizzly Bears" },
+    { "add": "Akroma, Angel of Wrath" }
+  ],
+  "asserts": [
+    { "noEffect": { "source": "Odric, Lunarch Marshal", "type": "add_ability" } },
+    { "perm": "Odric, Lunarch Marshal", "final": { "abilities": { "$includes": ["At the beginning of each combat, creatures you control gain first strike until end of turn if a creature you control has first strike. The same is true for flying, deathtouch, double strike, haste, hexproof, indestructible, lifelink, menace, reach, skulk, trample, and vigilance."] } } },
+    { "perm": "Grizzly Bears", "final": { "abilities": [] } }
+  ]
+}
