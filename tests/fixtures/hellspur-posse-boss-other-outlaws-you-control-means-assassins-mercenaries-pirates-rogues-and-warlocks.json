@@ -1,0 +1,709 @@
+{
+ "name": "Hellspur Posse Boss — \"Other outlaws you control\" means Assassins, Mercenaries, Pirates, Rogues and Warlocks",
+ "notes": "Found by tests/sweep.py. 'Outlaw' is a batch of five creature types, not a type itself, so the filter tokenizer treated it as an unknown subtype and filterReferencesPermanents rejected the sentence. The tokenizer now has an outlaw check (OUTLAW_CREATURE_TYPES in cards-text-utils.js). The Rogue gains haste; the Bear does not.",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Hellspur Posse Boss",
+    "as": "boss"
+   },
+   {
+    "add": "Oona's Blackguard",
+    "as": "rogue"
+   },
+   {
+    "add": "Grizzly Bears",
+    "as": "bears"
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Oona's Blackguard",
+   "final": {
+    "abilities": {
+     "$includes": [
+      "Haste"
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Grizzly Bears",
+   "final": {
+    "abilities": {
+     "$excludes": [
+      "Haste"
+     ]
+    }
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "5f348c7e-7d72-40f1-a65f-ee7ff4b09412",
+     "oracle_id": "15260fa6-6062-423a-a248-81292ea46178",
+     "multiverse_ids": [
+      655069
+     ],
+     "mtgo_id": 124167,
+     "arena_id": 90474,
+     "tcgplayer_id": 544404,
+     "cardmarket_id": 763936,
+     "name": "Hellspur Posse Boss",
+     "lang": "en",
+     "released_at": "2024-04-19",
+     "uri": "https://api.scryfall.com/cards/5f348c7e-7d72-40f1-a65f-ee7ff4b09412",
+     "scryfall_uri": "https://scryfall.com/card/otj/128/hellspur-posse-boss?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T03:03:39Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/5/f/5f348c7e-7d72-40f1-a65f-ee7ff4b09412.jpg?1783911819",
+      "normal": "https://cards.scryfall.io/normal/front/5/f/5f348c7e-7d72-40f1-a65f-ee7ff4b09412.jpg?1783911819",
+      "large": "https://cards.scryfall.io/large/front/5/f/5f348c7e-7d72-40f1-a65f-ee7ff4b09412.jpg?1783911819",
+      "png": "https://cards.scryfall.io/png/front/5/f/5f348c7e-7d72-40f1-a65f-ee7ff4b09412.png?1783911819",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/5/f/5f348c7e-7d72-40f1-a65f-ee7ff4b09412.jpg?1783911819",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/5/f/5f348c7e-7d72-40f1-a65f-ee7ff4b09412.jpg?1783911819",
+      "thumb": "https://cards.scryfall.io/thumb/front/5/f/5f348c7e-7d72-40f1-a65f-ee7ff4b09412.webp?1783911819",
+      "grid": "https://cards.scryfall.io/grid/front/5/f/5f348c7e-7d72-40f1-a65f-ee7ff4b09412.webp?1783911819",
+      "display": "https://cards.scryfall.io/display/front/5/f/5f348c7e-7d72-40f1-a65f-ee7ff4b09412.webp?1783911819",
+      "art": "https://cards.scryfall.io/art/front/5/f/5f348c7e-7d72-40f1-a65f-ee7ff4b09412.webp?1783911819",
+      "crop": "https://cards.scryfall.io/crop/front/5/f/5f348c7e-7d72-40f1-a65f-ee7ff4b09412.webp?1783911819"
+     },
+     "mana_cost": "{2}{R}{R}",
+     "cmc": 4,
+     "type_line": "Creature — Lizard Rogue",
+     "oracle_text": "Other outlaws you control have haste. (Assassins, Mercenaries, Pirates, Rogues, and Warlocks are outlaws.)\nWhen this creature enters, create two 1/1 red Mercenary creature tokens with \"{T}: Target creature you control gets +1/+0 until end of turn. Activate only as a sorcery.\"",
+     "power": "2",
+     "toughness": "4",
+     "colors": [
+      "R"
+     ],
+     "color_identity": [
+      "R"
+     ],
+     "keywords": [],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "259262b9-f74b-4e71-9c4e-cf18ba2dc3c2",
+       "component": "combo_piece",
+       "name": "Hellspur Posse Boss",
+       "type_line": "Creature — Lizard Rogue",
+       "uri": "https://api.scryfall.com/cards/259262b9-f74b-4e71-9c4e-cf18ba2dc3c2"
+      },
+      {
+       "object": "related_card",
+       "id": "5f04607f-eed2-462e-897f-82e41e5f7049",
+       "component": "token",
+       "name": "Mercenary",
+       "type_line": "Token Creature — Mercenary",
+       "uri": "https://api.scryfall.com/cards/5f04607f-eed2-462e-897f-82e41e5f7049"
+      }
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo",
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "55a85ebe-644e-4bef-8be8-5290408be3d1",
+     "set": "otj",
+     "set_name": "Outlaws of Thunder Junction",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/55a85ebe-644e-4bef-8be8-5290408be3d1",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aotj&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/otj?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/5f348c7e-7d72-40f1-a65f-ee7ff4b09412/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A15260fa6-6062-423a-a248-81292ea46178&unique=prints",
+     "collector_number": "128",
+     "digital": false,
+     "rarity": "rare",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Artur Nakhodkin",
+     "artist_ids": [
+      "36450ae0-6428-47cb-b1ff-0549e0bbb7ee"
+     ],
+     "illustration_id": "2c484f0b-9287-43c0-8f0c-852eae0a7737",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 7775,
+     "penny_rank": 8198,
+     "prices": {
+      "usd": "0.35",
+      "usd_foil": "0.27",
+      "usd_etched": null,
+      "eur": "0.19",
+      "eur_foil": "0.21",
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=655069&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DHellspur%2BPosse%2BBoss",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DHellspur%2BPosse%2BBoss",
+      "edhrec": "https://edhrec.com/route/?cc=Hellspur+Posse+Boss"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F544404%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=763936&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/124167?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "4677d5d1-de04-4631-8fcf-5ff754d701b1",
+     "oracle_id": "b72cedc2-73b3-4e7f-8b58-8db532a69f6e",
+     "multiverse_ids": [
+      495989
+     ],
+     "tcgplayer_id": 222541,
+     "cardmarket_id": 503940,
+     "name": "Oona's Blackguard",
+     "lang": "en",
+     "released_at": "2020-09-25",
+     "uri": "https://api.scryfall.com/cards/4677d5d1-de04-4631-8fcf-5ff754d701b1",
+     "scryfall_uri": "https://scryfall.com/card/znc/51/oonas-blackguard?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T07:57:54Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/6/4677d5d1-de04-4631-8fcf-5ff754d701b1.jpg?1783929474",
+      "normal": "https://cards.scryfall.io/normal/front/4/6/4677d5d1-de04-4631-8fcf-5ff754d701b1.jpg?1783929474",
+      "large": "https://cards.scryfall.io/large/front/4/6/4677d5d1-de04-4631-8fcf-5ff754d701b1.jpg?1783929474",
+      "png": "https://cards.scryfall.io/png/front/4/6/4677d5d1-de04-4631-8fcf-5ff754d701b1.png?1783929474",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/6/4677d5d1-de04-4631-8fcf-5ff754d701b1.jpg?1783929474",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/6/4677d5d1-de04-4631-8fcf-5ff754d701b1.jpg?1783929474",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/6/4677d5d1-de04-4631-8fcf-5ff754d701b1.webp?1783929474",
+      "grid": "https://cards.scryfall.io/grid/front/4/6/4677d5d1-de04-4631-8fcf-5ff754d701b1.webp?1783929474",
+      "display": "https://cards.scryfall.io/display/front/4/6/4677d5d1-de04-4631-8fcf-5ff754d701b1.webp?1783929474",
+      "art": "https://cards.scryfall.io/art/front/4/6/4677d5d1-de04-4631-8fcf-5ff754d701b1.webp?1783929474",
+      "crop": "https://cards.scryfall.io/crop/front/4/6/4677d5d1-de04-4631-8fcf-5ff754d701b1.webp?1783929474"
+     },
+     "mana_cost": "{1}{B}",
+     "cmc": 2,
+     "type_line": "Creature — Faerie Rogue",
+     "oracle_text": "Flying\nEach other Rogue creature you control enters with an additional +1/+1 counter on it.\nWhenever a creature you control with a +1/+1 counter on it deals combat damage to a player, that player discards a card.",
+     "power": "1",
+     "toughness": "1",
+     "colors": [
+      "B"
+     ],
+     "color_identity": [
+      "B"
+     ],
+     "keywords": [
+      "Flying"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "25c6bd9b-4e10-40a4-b9b5-0f4d9b5852a1",
+     "set": "znc",
+     "set_name": "Zendikar Rising Commander",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/25c6bd9b-4e10-40a4-b9b5-0f4d9b5852a1",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aznc&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/znc?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/4677d5d1-de04-4631-8fcf-5ff754d701b1/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ab72cedc2-73b3-4e7f-8b58-8db532a69f6e&unique=prints",
+     "collector_number": "51",
+     "digital": false,
+     "rarity": "uncommon",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Kev Walker",
+     "artist_ids": [
+      "f366a0ee-a0cd-466d-ba6a-90058c7a31a6"
+     ],
+     "illustration_id": "30129152-5f70-4a7f-b7ba-dcb65cbcc2c3",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 5762,
+     "penny_rank": 3933,
+     "prices": {
+      "usd": "0.36",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.33",
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=495989&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DOona%2527s%2BBlackguard",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DOona%2527s%2BBlackguard",
+      "edhrec": "https://edhrec.com/route/?cc=Oona%27s+Blackguard"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F222541%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=503940&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Oona%27s+Blackguard&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+     "multiverse_ids": [
+      129586
+     ],
+     "mtgo_id": 27400,
+     "mtgo_foil_id": 27401,
+     "tcgplayer_id": 15153,
+     "cardmarket_id": 16432,
+     "name": "Grizzly Bears",
+     "lang": "en",
+     "released_at": "2007-07-13",
+     "uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "scryfall_uri": "https://scryfall.com/card/10e/268/grizzly-bears?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:43:21Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "normal": "https://cards.scryfall.io/normal/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "large": "https://cards.scryfall.io/large/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "png": "https://cards.scryfall.io/png/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.png?1783943001",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "grid": "https://cards.scryfall.io/grid/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "display": "https://cards.scryfall.io/display/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "art": "https://cards.scryfall.io/art/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "crop": "https://cards.scryfall.io/crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001"
+     },
+     "mana_cost": "{1}{G}",
+     "cmc": 2,
+     "type_line": "Creature — Bear",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set": "10e",
+     "set_name": "Tenth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A14c8f55d-d177-4c25-a931-ebeb9e6062a0&unique=prints",
+     "collector_number": "268",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"We cannot forget that among all of Dominaria's wonders, a system of life exists, with prey and predators that will never fight wars nor vie for ancient power.\"\n—Jolrael, empress of beasts",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "D. J. Cleland-Hura",
+     "artist_ids": [
+      "87d21070-2432-4167-8aab-5968af1c14f3"
+     ],
+     "illustration_id": "066bfe81-0f53-43da-a074-b2ecc5dcda72",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 8114,
+     "penny_rank": 10982,
+     "prices": {
+      "usd": "0.22",
+      "usd_foil": "3.29",
+      "usd_etched": null,
+      "eur": "0.11",
+      "eur_foil": "1.97",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129586&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "edhrec": "https://edhrec.com/route/?cc=Grizzly+Bears"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15153%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16432&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27400?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Hellspur Posse Boss",
+    "final": {
+     "name": "Hellspur Posse Boss",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Lizard",
+      "Rogue"
+     ],
+     "power": 2,
+     "toughness": 4,
+     "colors": [
+      "R"
+     ],
+     "abilities": [
+      "Other outlaws you control have haste.",
+      "When this creature enters, create two 1/1 red Mercenary creature tokens with \"{T}: Target creature you control gets +1/+0 until end of turn. Activate only as a sorcery.\""
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Oona's Blackguard",
+    "final": {
+     "name": "Oona's Blackguard",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Faerie",
+      "Rogue"
+     ],
+     "power": 1,
+     "toughness": 1,
+     "colors": [
+      "B"
+     ],
+     "abilities": [
+      "Flying",
+      "Each other Rogue creature you control enters with an additional +1/+1 counter on it.",
+      "Whenever a creature you control with a +1/+1 counter on it deals combat damage to a player, that player discards a card.",
+      "Haste"
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "Hellspur Posse Boss"
+     ]
+    }
+   },
+   {
+    "perm": "Grizzly Bears",
+    "final": {
+     "name": "Grizzly Bears",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Bear"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "G"
+     ],
+     "abilities": []
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "6": [
+    "Hellspur Posse Boss"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Hellspur Posse Boss",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "global",
+    "params": {
+     "ability": "Haste"
+    }
+   }
+  ]
+ }
+}

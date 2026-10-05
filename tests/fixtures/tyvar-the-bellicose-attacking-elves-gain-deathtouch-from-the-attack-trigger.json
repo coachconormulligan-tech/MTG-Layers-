@@ -1,0 +1,1146 @@
+{
+ "name": "Tyvar the Bellicose — attacking Elves gain deathtouch from the attack trigger",
+ "notes": "Found by tests/sweep.py. Needed both fixes: 'they' in a 'one or more Elves you control attack' trigger resolves to 'Attacking Elves you control', and 'Elves' is recognised as a plural creature type. The attacking Elf gains deathtouch; the Elf that stayed home and the attacking Bear do not.",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Tyvar the Bellicose",
+    "as": "tyvar"
+   },
+   {
+    "add": "Llanowar Elves",
+    "as": "attacker"
+   },
+   {
+    "add": "Elvish Mystic",
+    "as": "home"
+   },
+   {
+    "add": "Grizzly Bears",
+    "as": "bears"
+   },
+   {
+    "call": [
+     "toggleAttacking",
+     "@attacker"
+    ]
+   },
+   {
+    "call": [
+     "toggleAttacking",
+     "@bears"
+    ]
+   },
+   {
+    "call": [
+     "addTriggeredAbility",
+     "@tyvar",
+     0,
+     "they gain deathtouch until end of turn.",
+     "Whenever one or more Elves you control attack, they gain deathtouch until end of turn."
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Llanowar Elves",
+   "final": {
+    "abilities": {
+     "$includes": [
+      "Deathtouch"
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Elvish Mystic",
+   "final": {
+    "abilities": {
+     "$excludes": [
+      "Deathtouch"
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Grizzly Bears",
+   "final": {
+    "abilities": {
+     "$excludes": [
+      "Deathtouch"
+     ]
+    }
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "01a543f0-72fe-4a30-a4a0-356971c1c68a",
+     "oracle_id": "a21d321b-2172-4577-a05b-399a019e3448",
+     "multiverse_ids": [
+      615441
+     ],
+     "mtgo_id": 109218,
+     "arena_id": 85104,
+     "tcgplayer_id": 495609,
+     "cardmarket_id": 710211,
+     "name": "Tyvar the Bellicose",
+     "lang": "en",
+     "released_at": "2023-05-12",
+     "uri": "https://api.scryfall.com/cards/01a543f0-72fe-4a30-a4a0-356971c1c68a",
+     "scryfall_uri": "https://scryfall.com/card/mat/48/tyvar-the-bellicose?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T04:21:48Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/0/1/01a543f0-72fe-4a30-a4a0-356971c1c68a.jpg?1783916508",
+      "normal": "https://cards.scryfall.io/normal/front/0/1/01a543f0-72fe-4a30-a4a0-356971c1c68a.jpg?1783916508",
+      "large": "https://cards.scryfall.io/large/front/0/1/01a543f0-72fe-4a30-a4a0-356971c1c68a.jpg?1783916508",
+      "png": "https://cards.scryfall.io/png/front/0/1/01a543f0-72fe-4a30-a4a0-356971c1c68a.png?1783916508",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/0/1/01a543f0-72fe-4a30-a4a0-356971c1c68a.jpg?1783916508",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/0/1/01a543f0-72fe-4a30-a4a0-356971c1c68a.jpg?1783916508",
+      "thumb": "https://cards.scryfall.io/thumb/front/0/1/01a543f0-72fe-4a30-a4a0-356971c1c68a.webp?1783916508",
+      "grid": "https://cards.scryfall.io/grid/front/0/1/01a543f0-72fe-4a30-a4a0-356971c1c68a.webp?1783916508",
+      "display": "https://cards.scryfall.io/display/front/0/1/01a543f0-72fe-4a30-a4a0-356971c1c68a.webp?1783916508",
+      "art": "https://cards.scryfall.io/art/front/0/1/01a543f0-72fe-4a30-a4a0-356971c1c68a.webp?1783916508",
+      "crop": "https://cards.scryfall.io/crop/front/0/1/01a543f0-72fe-4a30-a4a0-356971c1c68a.webp?1783916508"
+     },
+     "mana_cost": "{2}{B}{G}",
+     "cmc": 4,
+     "type_line": "Legendary Creature — Elf Warrior",
+     "oracle_text": "Whenever one or more Elves you control attack, they gain deathtouch until end of turn.\nEach creature you control has \"Whenever a mana ability of this creature resolves, put a number of +1/+1 counters on it equal to the amount of mana this creature produced. This ability triggers only once each turn.\"",
+     "power": "5",
+     "toughness": "4",
+     "colors": [
+      "B",
+      "G"
+     ],
+     "color_identity": [
+      "B",
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "arena",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "6727e43d-31b6-45b0-ae05-7a811ba72f70",
+     "set": "mat",
+     "set_name": "March of the Machine: The Aftermath",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/6727e43d-31b6-45b0-ae05-7a811ba72f70",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Amat&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/mat?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/01a543f0-72fe-4a30-a4a0-356971c1c68a/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aa21d321b-2172-4577-a05b-399a019e3448&unique=prints",
+     "collector_number": "48",
+     "digital": false,
+     "rarity": "mythic",
+     "watermark": "desparked",
+     "flavor_text": "\"Today, we become gods again.\"",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Jarel Threat",
+     "artist_ids": [
+      "0fd89fbd-bd59-4ded-890e-731a8982f278"
+     ],
+     "illustration_id": "f633540d-8d3e-4fde-96d8-04185d6d294a",
+     "border_color": "black",
+     "frame": "2015",
+     "frame_effects": [
+      "legendary"
+     ],
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 6123,
+     "penny_rank": 11572,
+     "prices": {
+      "usd": "13.45",
+      "usd_foil": "13.10",
+      "usd_etched": null,
+      "eur": "10.43",
+      "eur_foil": "11.63",
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=615441&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DTyvar%2Bthe%2BBellicose",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DTyvar%2Bthe%2BBellicose",
+      "edhrec": "https://edhrec.com/route/?cc=Tyvar+the+Bellicose"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F495609%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=710211&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/109218?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "6a0b230b-d391-4998-a3f7-7b158a0ec2cd",
+     "oracle_id": "68954295-54e3-4303-a6bc-fc4547a4e3a3",
+     "multiverse_ids": [
+      679969
+     ],
+     "mtgo_id": 133480,
+     "arena_id": 93940,
+     "tcgplayer_id": 557921,
+     "cardmarket_id": 795132,
+     "name": "Llanowar Elves",
+     "lang": "en",
+     "released_at": "2024-11-15",
+     "uri": "https://api.scryfall.com/cards/6a0b230b-d391-4998-a3f7-7b158a0ec2cd",
+     "scryfall_uri": "https://scryfall.com/card/fdn/227/llanowar-elves?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T02:17:37Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+      "normal": "https://cards.scryfall.io/normal/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+      "large": "https://cards.scryfall.io/large/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+      "png": "https://cards.scryfall.io/png/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.png?1783909057",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+      "thumb": "https://cards.scryfall.io/thumb/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.webp?1783909057",
+      "grid": "https://cards.scryfall.io/grid/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.webp?1783909057",
+      "display": "https://cards.scryfall.io/display/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.webp?1783909057",
+      "art": "https://cards.scryfall.io/art/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.webp?1783909057",
+      "crop": "https://cards.scryfall.io/crop/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.webp?1783909057"
+     },
+     "mana_cost": "{G}",
+     "cmc": 1,
+     "type_line": "Creature — Elf Druid",
+     "oracle_text": "{T}: Add {G}.",
+     "power": "1",
+     "toughness": "1",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "produced_mana": [
+      "G"
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "11bd6cef-f887-4b07-a957-4c53cb3c9c87",
+       "component": "combo_piece",
+       "name": "Llanowar Elves",
+       "type_line": "Creature — Elf Druid",
+       "uri": "https://api.scryfall.com/cards/11bd6cef-f887-4b07-a957-4c53cb3c9c87"
+      },
+      {
+       "object": "related_card",
+       "id": "8ef95e7a-9f07-41f8-908b-2df93e03d391",
+       "component": "combo_piece",
+       "name": "Marwyn's Kindred",
+       "type_line": "Sorcery",
+       "uri": "https://api.scryfall.com/cards/8ef95e7a-9f07-41f8-908b-2df93e03d391"
+      }
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "arena",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a7ecb771-d1b6-4dec-8cf5-8d45179f21e0",
+     "set": "fdn",
+     "set_name": "Foundations",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a7ecb771-d1b6-4dec-8cf5-8d45179f21e0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Afdn&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/fdn?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/6a0b230b-d391-4998-a3f7-7b158a0ec2cd/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A68954295-54e3-4303-a6bc-fc4547a4e3a3&unique=prints",
+     "collector_number": "227",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "The elves of the Llanowar forest have defended it for generations. It is their sacred duty to keep outside influences from corrupting their ancestral home.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Kev Walker",
+     "artist_ids": [
+      "f366a0ee-a0cd-466d-ba6a-90058c7a31a6"
+     ],
+     "illustration_id": "96ffb0f9-113f-4fff-a45f-69cbb8d60890",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "promo_types": [
+      "beginnerbox",
+      "startercollection"
+     ],
+     "edhrec_rank": 58,
+     "penny_rank": 282,
+     "preview": {
+      "source": "Wizards of the Coast",
+      "source_uri": "https://twitter.com/wizards_magic/status/1806644973263302981",
+      "previewed_at": "2024-06-28"
+     },
+     "prices": {
+      "usd": "0.28",
+      "usd_foil": "1.59",
+      "usd_etched": null,
+      "eur": "0.21",
+      "eur_foil": "0.52",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=679969&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DLlanowar%2BElves",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DLlanowar%2BElves",
+      "edhrec": "https://edhrec.com/route/?cc=Llanowar+Elves"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F557921%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=795132&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/133480?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [
+     "Attacking"
+    ],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "08b9a296-3b76-4f8f-9d71-7c9af92bb3b4",
+     "oracle_id": "3f3b2c10-21f8-4e13-be83-4ef3fa36e123",
+     "multiverse_ids": [],
+     "resource_id": "B373835C00EA755F4190B3D2B35274E1C1807E73DDD15695BC5D4B5DFBC0BFD9",
+     "mtgo_id": 154826,
+     "arena_id": 108021,
+     "tcgplayer_id": 709660,
+     "cardmarket_id": 900725,
+     "name": "Elvish Mystic",
+     "lang": "en",
+     "released_at": "2026-08-14",
+     "uri": "https://api.scryfall.com/cards/08b9a296-3b76-4f8f-9d71-7c9af92bb3b4",
+     "scryfall_uri": "https://scryfall.com/card/hoc/205/elvish-mystic?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-08-02T05:10:13Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/0/8/08b9a296-3b76-4f8f-9d71-7c9af92bb3b4.jpg?1785647413",
+      "normal": "https://cards.scryfall.io/normal/front/0/8/08b9a296-3b76-4f8f-9d71-7c9af92bb3b4.jpg?1785647413",
+      "large": "https://cards.scryfall.io/large/front/0/8/08b9a296-3b76-4f8f-9d71-7c9af92bb3b4.jpg?1785647413",
+      "png": "https://cards.scryfall.io/png/front/0/8/08b9a296-3b76-4f8f-9d71-7c9af92bb3b4.png?1785647413",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/0/8/08b9a296-3b76-4f8f-9d71-7c9af92bb3b4.jpg?1785647413",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/0/8/08b9a296-3b76-4f8f-9d71-7c9af92bb3b4.jpg?1785647413",
+      "thumb": "https://cards.scryfall.io/thumb/front/0/8/08b9a296-3b76-4f8f-9d71-7c9af92bb3b4.webp?1785647413",
+      "grid": "https://cards.scryfall.io/grid/front/0/8/08b9a296-3b76-4f8f-9d71-7c9af92bb3b4.webp?1785647413",
+      "display": "https://cards.scryfall.io/display/front/0/8/08b9a296-3b76-4f8f-9d71-7c9af92bb3b4.webp?1785647413",
+      "art": "https://cards.scryfall.io/art/front/0/8/08b9a296-3b76-4f8f-9d71-7c9af92bb3b4.webp?1785647413",
+      "crop": "https://cards.scryfall.io/crop/front/0/8/08b9a296-3b76-4f8f-9d71-7c9af92bb3b4.webp?1785647413"
+     },
+     "mana_cost": "{G}",
+     "cmc": 1,
+     "type_line": "Creature — Elf Druid",
+     "oracle_text": "{T}: Add {G}.",
+     "power": "1",
+     "toughness": "1",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "produced_mana": [
+      "G"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "arena",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a185c905-5359-4f40-85c3-a3eae2ca4ff0",
+     "set": "hoc",
+     "set_name": "The Hobbit Eternal",
+     "set_type": "eternal",
+     "set_uri": "https://api.scryfall.com/sets/a185c905-5359-4f40-85c3-a3eae2ca4ff0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Ahoc&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/hoc?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/08b9a296-3b76-4f8f-9d71-7c9af92bb3b4/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A3f3b2c10-21f8-4e13-be83-4ef3fa36e123&unique=prints",
+     "collector_number": "205",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"The Three Rings of the Elves were not made as weapons of war or conquest—that is not their power. Those who made them did not desire strength or domination or hoarded wealth, but understanding, making, and healing, to preserve all things unstained.\"\n—Elrond",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Iga Oliwiak",
+     "artist_ids": [
+      "b5df2d81-24d8-4784-ba8e-2a40ca628a6d"
+     ],
+     "illustration_id": "444c9b02-053a-4b56-8e48-f0f69ebac72d",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "universesbeyond"
+     ],
+     "edhrec_rank": 102,
+     "penny_rank": 330,
+     "prices": {
+      "usd": "5.21",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "4.86",
+      "eur_foil": null,
+      "tix": "0.01"
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DElvish%2BMystic",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DElvish%2BMystic",
+      "edhrec": "https://edhrec.com/route/?cc=Elvish+Mystic"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F709660%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=900725&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/154826?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+     "multiverse_ids": [
+      129586
+     ],
+     "mtgo_id": 27400,
+     "mtgo_foil_id": 27401,
+     "tcgplayer_id": 15153,
+     "cardmarket_id": 16432,
+     "name": "Grizzly Bears",
+     "lang": "en",
+     "released_at": "2007-07-13",
+     "uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "scryfall_uri": "https://scryfall.com/card/10e/268/grizzly-bears?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:43:21Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "normal": "https://cards.scryfall.io/normal/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "large": "https://cards.scryfall.io/large/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "png": "https://cards.scryfall.io/png/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.png?1783943001",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "grid": "https://cards.scryfall.io/grid/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "display": "https://cards.scryfall.io/display/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "art": "https://cards.scryfall.io/art/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "crop": "https://cards.scryfall.io/crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001"
+     },
+     "mana_cost": "{1}{G}",
+     "cmc": 2,
+     "type_line": "Creature — Bear",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set": "10e",
+     "set_name": "Tenth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A14c8f55d-d177-4c25-a931-ebeb9e6062a0&unique=prints",
+     "collector_number": "268",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"We cannot forget that among all of Dominaria's wonders, a system of life exists, with prey and predators that will never fight wars nor vie for ancient power.\"\n—Jolrael, empress of beasts",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "D. J. Cleland-Hura",
+     "artist_ids": [
+      "87d21070-2432-4167-8aab-5968af1c14f3"
+     ],
+     "illustration_id": "066bfe81-0f53-43da-a074-b2ecc5dcda72",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 8114,
+     "penny_rank": 10982,
+     "prices": {
+      "usd": "0.22",
+      "usd_foil": "3.29",
+      "usd_etched": null,
+      "eur": "0.11",
+      "eur_foil": "1.97",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129586&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "edhrec": "https://edhrec.com/route/?cc=Grizzly+Bears"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15153%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16432&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27400?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 4,
+    "tapped": false,
+    "traits": [
+     "Attacking"
+    ],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [
+   {
+    "id": "trig_perm_1_0_5",
+    "kind": "trigger",
+    "pseudoKind": "ability",
+    "sourceId": "perm_1",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 0,
+    "timestamp": 5,
+    "effectText": "Attacking Elves you control gain deathtouch until end of turn.",
+    "fullText": "Whenever one or more Elves you control attack, they gain deathtouch until end of turn.",
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "firedAtStates": null,
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Tyvar the Bellicose",
+       "imageUri": "https://cards.scryfall.io/small/front/0/1/01a543f0-72fe-4a30-a4a0-356971c1c68a.jpg?1783916508",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [
+        "Legendary"
+       ],
+       "printedSubtypes": [
+        "Elf",
+        "Warrior"
+       ],
+       "printedPower": 5,
+       "printedToughness": 4,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Llanowar Elves",
+       "imageUri": "https://cards.scryfall.io/small/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [
+        "Attacking"
+       ],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Elf",
+        "Druid"
+       ],
+       "printedPower": 1,
+       "printedToughness": 1,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Elvish Mystic",
+       "imageUri": "https://cards.scryfall.io/small/front/0/8/08b9a296-3b76-4f8f-9d71-7c9af92bb3b4.jpg?1785647413",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Elf",
+        "Druid"
+       ],
+       "printedPower": 1,
+       "printedToughness": 1,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [
+        "Attacking"
+       ],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 4
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    },
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null
+   }
+  ],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Tyvar the Bellicose",
+    "final": {
+     "name": "Tyvar the Bellicose",
+     "controller": "player_0",
+     "supertypes": [
+      "Legendary"
+     ],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Elf",
+      "Warrior"
+     ],
+     "power": 5,
+     "toughness": 4,
+     "colors": [
+      "B",
+      "G"
+     ],
+     "abilities": [
+      "Whenever one or more Elves you control attack, they gain deathtouch until end of turn.",
+      "Each creature you control has \"Whenever a mana ability of this creature resolves, put a number of +1/+1 counters on it equal to the amount of mana this creature produced. This ability triggers only once each turn.\"",
+      "Whenever a mana ability of this creature resolves, put a number of +1/+1 counters on it equal to the amount of mana this creature produced. This ability triggers only once each turn."
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "Tyvar the Bellicose"
+     ]
+    }
+   },
+   {
+    "perm": "Llanowar Elves",
+    "final": {
+     "name": "Llanowar Elves",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Elf",
+      "Druid"
+     ],
+     "power": 1,
+     "toughness": 1,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "{T}: Add {G}.",
+      "Whenever a mana ability of this creature resolves, put a number of +1/+1 counters on it equal to the amount of mana this creature produced. This ability triggers only once each turn.",
+      "Deathtouch"
+     ],
+     "traits": [
+      "Attacking"
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "Tyvar the Bellicose",
+      "Tyvar the Bellicose (trigger)"
+     ]
+    }
+   },
+   {
+    "perm": "Elvish Mystic",
+    "final": {
+     "name": "Elvish Mystic",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Elf",
+      "Druid"
+     ],
+     "power": 1,
+     "toughness": 1,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "{T}: Add {G}.",
+      "Whenever a mana ability of this creature resolves, put a number of +1/+1 counters on it equal to the amount of mana this creature produced. This ability triggers only once each turn."
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "Tyvar the Bellicose"
+     ]
+    }
+   },
+   {
+    "perm": "Grizzly Bears",
+    "final": {
+     "name": "Grizzly Bears",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Bear"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "Whenever a mana ability of this creature resolves, put a number of +1/+1 counters on it equal to the amount of mana this creature produced. This ability triggers only once each turn."
+     ],
+     "traits": [
+      "Attacking"
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "Tyvar the Bellicose"
+     ]
+    }
+   }
+  ],
+  "order": {
+   "6": [
+    "Tyvar the Bellicose",
+    "Tyvar the Bellicose (trigger)"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Tyvar the Bellicose",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "global",
+    "params": {
+     "ability": "Whenever a mana ability of this creature resolves, put a number of +1/+1 counters on it equal to the amount of mana this creature produced. This ability triggers only once each turn."
+    }
+   },
+   {
+    "source": "Tyvar the Bellicose (trigger)",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "global",
+    "params": {
+     "ability": "Deathtouch"
+    }
+   }
+  ]
+ }
+}

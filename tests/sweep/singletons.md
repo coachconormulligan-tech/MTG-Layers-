@@ -205,7 +205,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Essence Pulse | gets +N/+N | spell | Each creature gets -X/-X until end of turn, where X is the amount of life you gained this turn. |
 | Exude Toxin | gets +N/+N | spell | Each non-Dragon creature gets -X/-X until end of turn. |
 | Feeding Frenzy | gets +N/+N | spell | Target creature gets -X/-X until end of turn, where X is the number of Zombies on the battlefield. |
-| Flowerfoot Swordmaster | gets +N/+N | triggered | Valiant — Whenever this creature becomes the target of a spell or ability you control for the first time each turn, Mice you control get +1/+0 until end of turn. |
 | Flowstone Slide | gets +N/+N | spell | All creatures get +X/-X until end of turn. |
 | Flunk | gets +N/+N | spell | Target creature gets -X/-X until end of turn, where X is 7 minus the number of cards in that creature's controller's hand. |
 | Fortifying Draught | gets +N/+N | spell | Target creature gets +X/+X until end of turn, where X is the amount of life you gained this turn. |
@@ -218,7 +217,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Great Defender | gets +N/+N | spell | Target creature gets +0/+X until end of turn, where X is its mana value. |
 | Greven, Predator Captain | gets +N/+N | static | This card gets +X/+0, where X is the amount of life you've lost this turn. |
 | Gumdrop Poisoner | gets +N/+N | triggered | When this creature enters, up to one target creature gets -X/-X until end of turn, where X is the amount of life you gained this turn. |
-| Haldir, Lórien Lieutenant | gets +N/+N | activated | {5}{G}: Until end of turn, other Elves you control gain vigilance and get +1/+1 for each +1/+1 counter on this card. |
 | Hapato's Might | gets +N/+N | spell | Target creature gets +X/+0 until end of turn, where X is a number from 0 to 6 chosen at random. |
 | Hedron Matrix | gets +N/+N | static | Equipped creature gets +X/+X, where X is its mana value. |
 | Hoard-Smelter Dragon | gets +N/+N | activated | This creature gets +X/+0 until end of turn, where X is that artifact's mana value. |
@@ -241,8 +239,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Managorger Phoenix | gets +N/+N | triggered | If this card has five or more flame counters on it, return it to the battlefield and it perpetually gets +1/+1. |
 | Marsh Casualties | gets +N/+N | spell | If this spell was kicked, those creatures get -2/-2 until end of turn instead. |
 | Massacre Girl | gets +N/+N | triggered | Whenever a creature dies this turn, each creature other than this card gets -1/-1 until end of turn. |
-| Master Splicer | gets +N/+N | static | Golems you control get +1/+1. |
-| Master Trinketeer | gets +N/+N | static | Servos and Thopters you control get +1/+1. |
 | Meishin, the Mind Cage | gets +N/+N | static | All creatures get -X/-0, where X is the number of cards in your hand. |
 | Miasma Demon | gets +N/+N | triggered | When you do, up to that many target creatures each get -2/-2 until end of turn. |
 | Might of Old Krosa | gets +N/+N | spell | If you cast this spell during your main phase, that creature gets +4/+4 until end of turn instead. |
@@ -285,7 +281,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Specter of Mortality | gets +N/+N | triggered | When you do, each other creature gets -X/-X until end of turn, where X is the number of cards exiled this way. |
 | Spellbound Dragon | gets +N/+N | triggered | This creature gets +X/+0 until end of turn, where X is the discarded card's mana value. |
 | Squealing Devil | gets +N/+N | triggered | If you do, target creature gets +X/+0 until end of turn. |
-| Stridehangar Automaton | gets +N/+N | static | Thopters you control get +1/+1. |
 | Surge to Victory | gets +N/+N | spell | Creatures you control get +X/+0 until end of turn, where X is that card's mana value. |
 | Tah-Crop Elite | gets +N/+N | static | When you do, creatures you control get +1/+1 until end of turn. |
 | Tail Swipe | gets +N/+N | spell | If you cast this spell during your main phase, the creature you control gets +1/+1 until end of turn. |
@@ -295,7 +290,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Terror Tide | gets +N/+N | spell | Fathomless descent — All creatures get -X/-X until end of turn, where X is the number of permanent cards in your graveyard. |
 | The Meathook Massacre | gets +N/+N | triggered | When this card enters, each creature gets -X/-X until end of turn. |
 | The Muckslinger Gang | gets +N/+N | static | Creature spells you control and creature cards you own in any zone other than the battlefield or the stack get +3/+3. |
-| Thorin, King of Durin's Folk | gets +N/+N | static | Other Dwarves you control get +1/+0 for each artifact token you control. |
 | Thornmantle Striker | gets +N/+N | static | • Target creature an opponent controls gets -X/-X until end of turn, where X is the number of Elves you control. |
 | Threnody Singer | gets +N/+N | triggered | When this creature enters, target creature an opponent controls gets -X/-0 until end of turn, where X is your devotion to blue. |
 | Tip the Scales | gets +N/+N | spell | When you do, all creatures get -X/-X until end of turn, where X is the sacrificed creature's toughness. |
@@ -314,7 +308,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Admiral Brass, Unsinkable | has / gains | triggered | It has base power and toughness 4/4. |
 | Aettir and Priwen | has / gains | static | Equipped creature has base power and toughness X/X, where X is your life total. |
 | Alpine Moon | has / gains | static | Lands your opponents control with the chosen name lose all land types and abilities, and they gain "{T}: Add one mana of any color." |
-| At Knifepoint | has / gains | static | During your turn, outlaws you control have first strike. |
 | Behind the Mask | has / gains | spell | If evidence was collected, it has base power and toughness 1/1 until end of turn instead. |
 | Candlekeep Inspiration | has / gains | spell | Until end of turn, creatures you control have base power and toughness X/X, where X is the number of cards you own in exile and in your graveyard that are instant cards, are sorcery cards, and/or have an Adventure. |
 | Carnelian Orb of Dragonkind | has / gains | activated | If that mana is spent on a Dragon creature spell, it gains haste until end of turn. |
@@ -330,8 +323,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Drana and Linvala | has / gains | static | This card has all activated abilities of all creatures your opponents control. |
 | Dread Wight | has / gains | triggered | Each of those creatures gains "{4}: Remove a paralyzation counter from this creature." |
 | Dreams of the Dead | has / gains | activated | That creature gains "Cumulative upkeep {2}." |
-| Eladamri, Lord of Leaves | has / gains | static | Other Elves have shroud. |
-| Elderfang Venom | has / gains | static | Attacking Elves you control have deathtouch. |
 | Encouraging Aviator // Jump | has / gains | spell | Target creature gains flying until end of turn. |
 | Energybending | has / gains | spell | Lands you control gain all basic land types until end of turn. |
 | Evolution Vat | has / gains | activated | Until end of turn, that creature gains "{2}{G}{U}: Double the number of +1/+1 counters on this creature." |
@@ -343,14 +334,13 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Glamer Gifter | has / gains | triggered | Until end of turn, that creature has base power and toughness 4/4 and gains all creature types. |
 | Glyph of Delusion | has / gains | spell | The creature gains "This creature doesn't untap during your untap step if it has a glyph counter on it" and "At the beginning of your upkeep, remove a glyph counter from this creature." |
 | Goblin Wizard | has / gains | activated | {R}: Target this card gains protection from white until end of turn. |
-| Great Goblin, Foul-Hearted | has / gains | static | Armies you control have trample. |
 | Grell Philosopher | has / gains | triggered | Aberrant Tinkering — When this creature enters and at the beginning of your upkeep, each Horror you control gains all activated abilities of target artifact an opponent controls until end of turn. |
 | Greymond, Avacyn's Stalwart | has / gains | static | Humans you control have each of the chosen abilities. |
 | Havengul Lich | has / gains | activated | When you cast it this turn, this creature gains all activated abilities of that card until end of turn. |
 | Immard, the Stormcleaver | has / gains | static | • this card gains lifelink and indestructible until end of turn. |
 | Katsumasa, the Animator | has / gains | activated | If it's not a Vehicle, it has base power and toughness 1/1 until end of turn. |
 | Koh, the Face Stealer | has / gains | static | This card has all activated and triggered abilities of the last chosen card. |
-| Leonardo da Vinci | has / gains | activated | {3}{U}{U}: Until end of turn, Thopters you control have base power and toughness X/X, where X is the number of cards in your hand. |
+| Last Night Together | has / gains | spell | They gain vigilance, indestructible, and haste until end of turn. |
 | Locus of Enlightenment | has / gains | static | This card has each activated ability of the exiled cards used to craft it. |
 | Lord of the Nazgûl | has / gains | triggered | Then if you control nine or more Wraiths, Wraiths you control have base power and toughness 9/9 until end of turn. |
 | Maarika, Brutal Gladiator | has / gains | static | As long as it's your turn, this card has indestructible. |
@@ -378,7 +368,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Sharkey, Tyrant of the Shire | has / gains | static | This card has all activated abilities of lands your opponents control except mana abilities. |
 | Singing Tree | has / gains | activated | {T}: Target attacking creature has base power 0 until end of turn. |
 | Skill Borrower | has / gains | static | As long as the top card of your library is an artifact or creature card, this creature has all activated abilities of that card. |
-| Sokka's Charge | has / gains | static | During your turn, Allies you control have double strike and lifelink. |
 | Spider-Verse | has / gains | triggered | If the copy is a permanent spell, it gains haste. |
 | Spirit-Sister's Call | has / gains | triggered | If you do, return the chosen card from your graveyard to the battlefield and it gains "If this permanent would leave the battlefield, exile it instead of putting it anywhere else." |
 | Stilt-Man, Towering Terror | has / gains | triggered | It gains "This permanent can't be sacrificed" until the end of your next turn. |
@@ -389,7 +378,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Tenza, Godo's Maul | has / gains | static | As long as it's red, it has trample. |
 | Teyo, Aegis Adept | has / gains | activated | It perpetually gains "This creature can attack as though it didn't have defender." |
 | The Apprentice's Folly | has / gains | static | I, II — Choose target nontoken creature you control that doesn't have the same name as a token you control. |
-| The Dalek Emperor | has / gains | static | Other Daleks you control have haste. |
 | The Fourteenth Doctor | has / gains | static | If you do, it gains haste until end of turn. |
 | The Meep | has / gains | triggered | If you do, creatures you control have base power and toughness X/X until end of turn, where X is the sacrificed creature's mana value. |
 | The Ring // The Ring Tempts You | has / gains | static | Once it gains an ability, it has that ability for the rest of the game. |
@@ -411,7 +399,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Festival of Embers | is / are | static | During your turn, you may cast instant and sorcery spells from your graveyard by paying 1 life in addition to their other costs. |
 | Ghost Vacuum | is / are | activated | Each of them is a 1/1 Spirit in addition to its other types. |
 | Grave Betrayal | is / are | triggered | That creature is a black Zombie in addition to its other colors and types. |
-| Laughing Jasper Flint | is / are | static | Creatures you control but don't own are Mercenaries in addition to their other types. |
 | Lim-Dûl the Necromancer | is / are | triggered | If it's a creature, it's a Zombie in addition to its other creature types. |
 | Maskwood Nexus | is / are | static | Creatures you control are every creature type. |
 | Minas Morgul, Dark Fortress | is / are | activated | For as long as that creature has a shadow counter on it, it's a Wraith in addition to its other types. |
@@ -420,7 +407,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Path of the Schemer | is / are | spell | It's an artifact in addition to its other types. |
 | Quicksilver Fountain | is / are | triggered | That land is an Island for as long as it has a flood counter on it. |
 | Secret Arcade // Dusty Parlor | is / are | static | Nonland permanents you control and permanent spells you control are enchantments in addition to their other types. |
-| Valentina Allegra de Fontaine | is / are | static | Other Villains you control are Heroes in addition to their other types. |
 | Bloodletter of Aclazotz | loses | static | If an opponent would lose life during your turn, they lose twice that much life instead. |
 | Hammerheim | loses | activated | {T}: Target creature loses all landwalk abilities until end of turn. |
 | Hunted by The Family | loses | spell | For each of them, that creature's controller faces a villainous choice — That creature becomes a 1/1 white Human creature and loses all abilities, or you create a token that's a copy of it. |
