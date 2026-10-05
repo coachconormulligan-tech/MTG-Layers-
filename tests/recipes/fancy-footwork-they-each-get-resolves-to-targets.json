@@ -1,0 +1,18 @@
+{
+  "name": "Fancy Footwork — \"They each get\" resolves to the one or two targets",
+  "notes": "Found by tests/sweep.py. 'Untap one or two target creatures. They each get +2/+2 until end of turn.' produced no effect. _resolveTheyPronoun rewrites 'They' to 'one or two target creatures', and extractTargetInfo now reads 'N or M target …' (and 'any number of target …') as a multi-target subject instead of falling through to a global filter. Only the chosen creatures are boosted.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Runeclaw Bear", "as": "runeclaw" },
+    { "add": "Gray Ogre", "as": "ogre" },
+    { "add": "Fancy Footwork", "as": "ff", "spell": true },
+    { "call": ["setMultiTarget", "@ff", 0, "@bears"] },
+    { "call": ["setMultiTarget", "@ff", 1, "@runeclaw"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": 4, "toughness": 4 } },
+    { "perm": "Runeclaw Bear", "final": { "power": 4, "toughness": 4 } },
+    { "perm": "Gray Ogre", "final": { "power": 2, "toughness": 2 } },
+    { "effect": { "source": "Fancy Footwork", "layer": "7c", "type": "modify_pt", "scope": "targeted" } }
+  ]
+}

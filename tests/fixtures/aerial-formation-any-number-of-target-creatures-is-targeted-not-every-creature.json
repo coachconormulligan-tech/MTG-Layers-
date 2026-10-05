@@ -1,0 +1,818 @@
+{
+ "name": "Aerial Formation — \"any number of target creatures\" is targeted, not every creature",
+ "notes": "Found by tests/sweep.py while fixing the 'They gain' cluster. 'Any number of target creatures each get +1/+1 and gain flying until end of turn.' fell through extractTargetInfo and became a global effect on every creature. It is now a multi-target effect (6 slots). About 25 cards shared the wording (Ajani's Presence, Colossal Heroics, Launch the Fleet, Kamahl's Will, …).",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Grizzly Bears",
+    "as": "bears"
+   },
+   {
+    "add": "Gray Ogre",
+    "as": "ogre"
+   },
+   {
+    "add": "Aerial Formation",
+    "as": "af",
+    "spell": true
+   },
+   {
+    "call": [
+     "setMultiTarget",
+     "@af",
+     0,
+     "@bears"
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Grizzly Bears",
+   "final": {
+    "power": 3,
+    "toughness": 3,
+    "abilities": {
+     "$includes": [
+      "Flying"
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Gray Ogre",
+   "final": {
+    "power": 2,
+    "toughness": 2,
+    "abilities": {
+     "$excludes": [
+      "Flying"
+     ]
+    }
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+     "multiverse_ids": [
+      129586
+     ],
+     "mtgo_id": 27400,
+     "mtgo_foil_id": 27401,
+     "tcgplayer_id": 15153,
+     "cardmarket_id": 16432,
+     "name": "Grizzly Bears",
+     "lang": "en",
+     "released_at": "2007-07-13",
+     "uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "scryfall_uri": "https://scryfall.com/card/10e/268/grizzly-bears?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:43:21Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "normal": "https://cards.scryfall.io/normal/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "large": "https://cards.scryfall.io/large/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "png": "https://cards.scryfall.io/png/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.png?1783943001",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "grid": "https://cards.scryfall.io/grid/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "display": "https://cards.scryfall.io/display/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "art": "https://cards.scryfall.io/art/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "crop": "https://cards.scryfall.io/crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001"
+     },
+     "mana_cost": "{1}{G}",
+     "cmc": 2,
+     "type_line": "Creature — Bear",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set": "10e",
+     "set_name": "Tenth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A14c8f55d-d177-4c25-a931-ebeb9e6062a0&unique=prints",
+     "collector_number": "268",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"We cannot forget that among all of Dominaria's wonders, a system of life exists, with prey and predators that will never fight wars nor vie for ancient power.\"\n—Jolrael, empress of beasts",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "D. J. Cleland-Hura",
+     "artist_ids": [
+      "87d21070-2432-4167-8aab-5968af1c14f3"
+     ],
+     "illustration_id": "066bfe81-0f53-43da-a074-b2ecc5dcda72",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 8114,
+     "penny_rank": 10982,
+     "prices": {
+      "usd": "0.22",
+      "usd_foil": "3.29",
+      "usd_etched": null,
+      "eur": "0.11",
+      "eur_foil": "1.97",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129586&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "edhrec": "https://edhrec.com/route/?cc=Grizzly+Bears"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15153%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16432&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27400?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "11bf2cc0-799f-4eb8-b338-ed7543f469e7",
+     "oracle_id": "83c8a3a6-2e1a-4e26-8847-6d066f42d906",
+     "multiverse_ids": [
+      2283
+     ],
+     "tcgplayer_id": 1777,
+     "cardmarket_id": 6053,
+     "name": "Gray Ogre",
+     "lang": "en",
+     "released_at": "1995-04-01",
+     "uri": "https://api.scryfall.com/cards/11bf2cc0-799f-4eb8-b338-ed7543f469e7",
+     "scryfall_uri": "https://scryfall.com/card/4ed/200/gray-ogre?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T13:03:48Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+      "normal": "https://cards.scryfall.io/normal/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+      "large": "https://cards.scryfall.io/large/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+      "png": "https://cards.scryfall.io/png/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.png?1783947828",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+      "thumb": "https://cards.scryfall.io/thumb/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.webp?1783947828",
+      "grid": "https://cards.scryfall.io/grid/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.webp?1783947828",
+      "display": "https://cards.scryfall.io/display/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.webp?1783947828",
+      "art": "https://cards.scryfall.io/art/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.webp?1783947828",
+      "crop": "https://cards.scryfall.io/crop/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.webp?1783947828"
+     },
+     "mana_cost": "{2}{R}",
+     "cmc": 3,
+     "type_line": "Creature — Ogre",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "R"
+     ],
+     "color_identity": [
+      "R"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "2dd259d4-dc13-4956-a2dc-3e1d70b4a743",
+     "set": "4ed",
+     "set_name": "Fourth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/2dd259d4-dc13-4956-a2dc-3e1d70b4a743",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A4ed&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/4ed?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/11bf2cc0-799f-4eb8-b338-ed7543f469e7/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A83c8a3a6-2e1a-4e26-8847-6d066f42d906&unique=prints",
+     "collector_number": "200",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "The Ogre philosopher Gnerdel believed the purpose of life was to live as high on the food chain as possible. She refused to eat vegetarians, preferring to live entirely on creatures that preyed on sentient beings.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Dan Frazier",
+     "artist_ids": [
+      "059bba56-5feb-42e4-8c2e-e2f1e6ba11f9"
+     ],
+     "illustration_id": "a7399345-c36e-4a91-a4f5-22a2a0eeffaa",
+     "border_color": "white",
+     "frame": "1993",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 30971,
+     "prices": {
+      "usd": "0.06",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.05",
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=2283&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGray%2BOgre",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGray%2BOgre",
+      "edhrec": "https://edhrec.com/route/?cc=Gray+Ogre"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F1777%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=6053&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Gray+Ogre&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "fce86785-bc03-451e-8422-8bb53082cc12",
+     "oracle_id": "b0168b7e-a8b8-4ce3-af12-a43f3818b6a1",
+     "multiverse_ids": [
+      380365
+     ],
+     "mtgo_id": 52024,
+     "mtgo_foil_id": 52025,
+     "tcgplayer_id": 82325,
+     "cardmarket_id": 266685,
+     "name": "Aerial Formation",
+     "lang": "en",
+     "released_at": "2014-05-02",
+     "uri": "https://api.scryfall.com/cards/fce86785-bc03-451e-8422-8bb53082cc12",
+     "scryfall_uri": "https://scryfall.com/card/jou/30/aerial-formation?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T10:44:11Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/f/c/fce86785-bc03-451e-8422-8bb53082cc12.jpg?1783939451",
+      "normal": "https://cards.scryfall.io/normal/front/f/c/fce86785-bc03-451e-8422-8bb53082cc12.jpg?1783939451",
+      "large": "https://cards.scryfall.io/large/front/f/c/fce86785-bc03-451e-8422-8bb53082cc12.jpg?1783939451",
+      "png": "https://cards.scryfall.io/png/front/f/c/fce86785-bc03-451e-8422-8bb53082cc12.png?1783939451",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/f/c/fce86785-bc03-451e-8422-8bb53082cc12.jpg?1783939451",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/f/c/fce86785-bc03-451e-8422-8bb53082cc12.jpg?1783939451",
+      "thumb": "https://cards.scryfall.io/thumb/front/f/c/fce86785-bc03-451e-8422-8bb53082cc12.webp?1783939451",
+      "grid": "https://cards.scryfall.io/grid/front/f/c/fce86785-bc03-451e-8422-8bb53082cc12.webp?1783939451",
+      "display": "https://cards.scryfall.io/display/front/f/c/fce86785-bc03-451e-8422-8bb53082cc12.webp?1783939451",
+      "art": "https://cards.scryfall.io/art/front/f/c/fce86785-bc03-451e-8422-8bb53082cc12.webp?1783939451",
+      "crop": "https://cards.scryfall.io/crop/front/f/c/fce86785-bc03-451e-8422-8bb53082cc12.webp?1783939451"
+     },
+     "mana_cost": "{U}",
+     "cmc": 1,
+     "type_line": "Instant",
+     "oracle_text": "Strive — This spell costs {2}{U} more to cast for each target beyond the first.\nAny number of target creatures each get +1/+1 and gain flying until end of turn.",
+     "colors": [
+      "U"
+     ],
+     "color_identity": [
+      "U"
+     ],
+     "keywords": [
+      "Strive"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "204d2dca-1887-4721-9558-164aa7bbeb4f",
+     "set": "jou",
+     "set_name": "Journey into Nyx",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/204d2dca-1887-4721-9558-164aa7bbeb4f",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Ajou&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/jou?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/fce86785-bc03-451e-8422-8bb53082cc12/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ab0168b7e-a8b8-4ce3-af12-a43f3818b6a1&unique=prints",
+     "collector_number": "30",
+     "digital": false,
+     "rarity": "common",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Zack Stella",
+     "artist_ids": [
+      "17bc7f55-958b-43f4-bb40-09746d05b3f9"
+     ],
+     "illustration_id": "44ebf6ee-81d2-4996-b6a2-8ada19dccb0b",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 22353,
+     "prices": {
+      "usd": "0.09",
+      "usd_foil": "0.50",
+      "usd_etched": null,
+      "eur": "0.09",
+      "eur_foil": "0.18",
+      "tix": "0.04"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=380365&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DAerial%2BFormation",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DAerial%2BFormation",
+      "edhrec": "https://edhrec.com/route/?cc=Aerial+Formation"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F82325%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=266685&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/52024?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": true,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": [
+     "perm_1"
+    ],
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": {
+     "states": [
+      [
+       "perm_1",
+       {
+        "name": "Grizzly Bears",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Bear"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "colors": [
+         "G"
+        ],
+        "abilities": [],
+        "oracleText": "",
+        "owner": "player_0",
+        "controller": "player_0"
+       }
+      ],
+      [
+       "perm_2",
+       {
+        "name": "Gray Ogre",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Ogre"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "colors": [
+         "R"
+        ],
+        "abilities": [],
+        "oracleText": "",
+        "owner": "player_0",
+        "controller": "player_0"
+       }
+      ]
+     ],
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Gray Ogre",
+       "imageUri": "https://cards.scryfall.io/small/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Ogre"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 2
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    }
+   }
+  ],
+  "firedAbilities": [],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Grizzly Bears",
+    "final": {
+     "name": "Grizzly Bears",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Bear"
+     ],
+     "power": 3,
+     "toughness": 3,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "Flying"
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "Aerial Formation"
+     ],
+     "7c": [
+      "Aerial Formation"
+     ]
+    }
+   },
+   {
+    "perm": "Gray Ogre",
+    "final": {
+     "name": "Gray Ogre",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Ogre"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "R"
+     ],
+     "abilities": []
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Aerial Formation",
+    "final": {
+     "name": "Aerial Formation",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Instant"
+     ],
+     "subtypes": [],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "U"
+     ],
+     "abilities": [
+      "Strive — This spell costs {2}{U} more to cast for each target beyond the first.",
+      "Any number of target creatures each get +1/+1 and gain flying until end of turn."
+     ]
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "6": [
+    "Aerial Formation"
+   ],
+   "7c": [
+    "Aerial Formation"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Aerial Formation",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "targets": [
+     "Grizzly Bears"
+    ],
+    "params": {
+     "power": 1,
+     "toughness": 1
+    }
+   },
+   {
+    "source": "Aerial Formation",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "targets": [
+     "Grizzly Bears"
+    ],
+    "params": {
+     "ability": "Flying"
+    }
+   }
+  ]
+ }
+}

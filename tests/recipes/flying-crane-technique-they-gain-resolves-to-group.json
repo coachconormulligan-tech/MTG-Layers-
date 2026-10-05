@@ -1,0 +1,15 @@
+{
+  "name": "Flying Crane Technique — \"They gain\" resolves to the group the previous sentence untapped",
+  "notes": "Found by tests/sweep.py (42-card cluster 'they gain KEYWORD until end of turn'). 'Untap all creatures you control. They gain flying and double strike until end of turn.' produced no effect: no parser understood the pronoun. _resolveTheyPronoun (cards-text-utils.js) now rewrites a sentence-initial 'They gain/get/have/become' to the 'all …' / 'each …' / '… target …' group named in the preceding sentence before the generic parsers run. It deliberately leaves 'They' alone after a sentence that creates tokens or puts cards onto the battlefield.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "call": ["addPlayer", "Player 2"] },
+    { "add": "Gray Ogre", "as": "ogre", "controller": "p2" },
+    { "add": "Flying Crane Technique", "as": "fct", "spell": true }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$includes": ["Flying", "Double strike"] } } },
+    { "perm": "Gray Ogre", "final": { "abilities": { "$excludes": ["Flying", "Double strike"] } } },
+    { "effect": { "source": "Flying Crane Technique", "layer": "6", "type": "add_ability", "scope": "global" } }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "name": "Angelic Guardian — \"they\" in a one-or-more-attack trigger means the attackers",
+  "notes": "Found by tests/sweep.py. 'Whenever one or more creatures you control attack, they gain indestructible until end of turn.' fired to nothing: the effect text handed to the ability pseudo-permanent is just 'they gain …' and the antecedent lives in the trigger condition. _addAbilityPseudo now rewrites a leading 'they' to 'Attacking <subject of the condition>'. The attacker gains indestructible; the creature that stayed home does not.",
+  "steps": [
+    { "add": "Angelic Guardian", "as": "guardian" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Gray Ogre", "as": "ogre" },
+    { "call": ["toggleAttacking", "@bears"] },
+    { "call": ["addTriggeredAbility", "@guardian", 1, "they gain indestructible until end of turn.", "Whenever one or more creatures you control attack, they gain indestructible until end of turn."] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$includes": ["Indestructible"] } } },
+    { "perm": "Gray Ogre", "final": { "abilities": { "$excludes": ["Indestructible"] } } }
+  ]
+}
