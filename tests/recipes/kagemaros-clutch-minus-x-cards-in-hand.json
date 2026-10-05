@@ -1,0 +1,12 @@
+{
+  "name": "Kagemaro's Clutch — enchanted creature gets -X/-X for cards in hand",
+  "notes": "Found by tests/sweep.py. Static form of the same gap as Olivia's Wrath: 'Enchanted creature gets -X/-X, where X is the number of cards in your hand.' With the default hand of seven, the enchanted Bears are 2/2 -7/-7.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Kagemaro's Clutch", "as": "clutch" },
+    { "call": ["setTarget", "@clutch", "@bears"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": -5, "toughness": -5 } }
+  ]
+}

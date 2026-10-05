@@ -1218,10 +1218,20 @@ const Battlefield = {
     const processedCard = { ...perm.originalCard, oracle_text: newOracleText };
     perm.oracleText = newOracleText;
     // Re-parse effects from the modified text
+    const oldEffects = this.effects.filter(e => e.sourceId === permId);
     this.effects = this.effects.filter(e => e.sourceId !== permId);
     const fakeCard = { ...processedCard, name: perm.name };
     const newPerm = { ...perm, oracleText: newOracleText };
     const newEffects = parseCardEffects(newPerm, fakeCard);
+    if (perm.isSpell) for (const eff of newEffects) eff.isSpellEffect = true;
+    // Changing X must not drop targets already chosen. Carry them over when the re-parse
+    // produced the same effects in the same order (only the numbers differ).
+    if (oldEffects.length === newEffects.length && oldEffects.every((o, i) => o.type === newEffects[i].type && o.scope === newEffects[i].scope)) {
+      oldEffects.forEach((o, i) => {
+        if (o.targetId) newEffects[i].targetId = o.targetId;
+        if (o.targetIds && o.targetIds.length) newEffects[i].targetIds = o.targetIds.slice();
+      });
+    }
     this.effects.push(...newEffects);
   },
 
@@ -2340,6 +2350,23 @@ const Battlefield = {
     const newEffects = parseCardEffects(perm, resolvedForParse);
     for (const eff of newEffects) eff.isSpellEffect = true;
     this.effects.push(...newEffects);
+    // A spell with a variable X ("Target creature gets -X/-X until end of turn") gets the same
+    // X value as a permanent does in addPermanent: asked for when cast, adjustable afterwards
+    // from the X input, and substituted into the text before parsing.
+    const spellOracle = resolvedForParse.oracle_text || '';
+    const spellHasX = (resolvedForParse.mana_cost || '').includes('{X}') ||
+      (/\bX\b/.test(spellOracle) && !(typeof _allXAreAutoComputable === 'function' && _allXAreAutoComputable(spellOracle)));
+    if (spellHasX) {
+      perm.hasXValue = true;
+      perm.xValue = null;
+      perm.originalOracleText = spellOracle;
+      perm.originalCard = resolvedForParse;
+      const xVal = opts.suppressPrompt
+        ? (opts.xValue != null ? String(opts.xValue) : 'X')
+        : prompt('This spell has a variable X value. Enter the value of X (number, or "X" to leave as variable):', '0');
+      const xNum = parseInt(xVal);
+      if (!isNaN(xNum) && xNum >= 0) this.setXValue(perm.id, xNum);
+    }
     this.updateLabels();
     this._invalidate();
     return perm;
@@ -2807,7 +2834,8 @@ const Battlefield = {
       this.activePlayerId = r.owner;   // createPermanent reads activePlayerId for owner/controller
       let np;
       if (r.isSpell) {
-        np = this.addSpell(r.scryfallData, { faceIndex: r.faceIndex, controller: r.owner, owner: r.owner });
+        np = this.addSpell(r.scryfallData, { faceIndex: r.faceIndex, controller: r.owner, owner: r.owner,
+                                             suppressPrompt: true, xValue: r.xValue });
       } else {
         np = this.addPermanent(r.scryfallData, {
           faceIndex: r.faceIndex, isToken: r.isToken,

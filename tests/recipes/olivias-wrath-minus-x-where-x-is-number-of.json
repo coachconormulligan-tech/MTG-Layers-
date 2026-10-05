@@ -1,0 +1,13 @@
+{
+  "name": "Olivia's Wrath — \"-X/-X, where X is the number of Vampires you control\" is computed",
+  "notes": "Found by tests/sweep.py. _normalizeWhereXIs only rewrote '+X/+X, where X is the number of …' into a per-unit 'for each' boost. '-X/-X', '+X/+0', '-0/-X' and '+X/-X' fell through, so about 50 cards either did nothing or needed X typed by hand. All sign and dimension mixes are rewritten now (the non-X half must be 0; quoted abilities are left as printed). One Vampire: the Bears get -1/-1, the Vampire is untouched.",
+  "steps": [
+    { "add": "Vampire Nighthawk", "as": "vampire" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Olivia's Wrath", "as": "wrath", "spell": true }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": 1, "toughness": 1 } },
+    { "perm": "Vampire Nighthawk", "final": { "power": 2, "toughness": 3 } }
+  ]
+}

@@ -452,6 +452,19 @@ function _normalizeWhereXIs(text) {
     /\+X\/\+X(?:\s+until\s+[^,;]+)?,?\s+where\s+X\s+is\s+the\s+number\s+of\s+([^.;\n]+)/gi,
     (m, desc) => `+1/+1 for each ${desc.trim().replace(/\.$/, '')}`
   );
+  // Every other sign / dimension mix: "-X/-X", "+X/+0", "-0/-X", "+X/-X" (Olivia's Wrath,
+  // Downhill Charge, Fear of Death, Charix). The non-X dimension must be 0 — a fixed
+  // nonzero half ("+X/+2") cannot be expressed as a per-unit boost.
+  text = text.replace(
+    /([+-])(X|0)\/([+-])(X|0)(?:\s+until\s+[^,;]+)?,?\s+where\s+X\s+is\s+the\s+number\s+of\s+([^.;\n]+)/gi,
+    (m, s1, a, s2, b, desc, offset, whole) => {
+      if (!/x/i.test(a) && !/x/i.test(b)) return m;
+      // Leave quoted abilities as printed: that text is what the recipient is shown as having.
+      const lineStart = whole.lastIndexOf('\n', offset) + 1;
+      if ((whole.slice(lineStart, offset).match(/"/g) || []).length % 2 === 1) return m;
+      return `${s1}${/x/i.test(a) ? 1 : 0}/${s2}${/x/i.test(b) ? 1 : 0} for each ${desc.trim().replace(/\.$/, '')}`;
+    }
+  );
   return text;
 }
 
