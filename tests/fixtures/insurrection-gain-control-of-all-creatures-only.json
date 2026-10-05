@@ -1,6 +1,6 @@
 {
  "name": "Insurrection — gain control of all creatures only",
- "notes": "Memory: project_insurrection_necrogen_fixes_2026-04-14 (Fix 1). The 'gain control of all creatures' CONTROL effect had appliesTo null and matched every permanent. The opponent's creatures move to player_0; the opponent's Forest and Sol Ring must stay with player_1.",
+ "notes": "Memory: project_insurrection_necrogen_fixes_2026-04-14 (Fix 1). The 'gain control of all creatures' CONTROL effect had appliesTo null and matched every permanent. The opponent's creatures move to player_0; the opponent's Forest and Sol Ring must stay with player_1. 2026-10-05: 'They gain haste until end of turn.' now resolves to 'all creatures' (_resolveTheyPronoun), so the stolen creatures also have haste.",
  "recipe": {
   "steps": [
    {
@@ -61,6 +61,16 @@
    "perm": "Sol Ring",
    "final": {
     "controller": "player_1"
+   }
+  },
+  {
+   "perm": "Grizzly Bears",
+   "final": {
+    "abilities": {
+     "$includes": [
+      "Haste"
+     ]
+    }
    }
   }
  ],
@@ -1215,10 +1225,15 @@
      "colors": [
       "G"
      ],
-     "abilities": []
+     "abilities": [
+      "Haste"
+     ]
     },
     "changedBy": {
      "2": [
+      "Insurrection"
+     ],
+     "6": [
       "Insurrection"
      ]
     }
@@ -1244,11 +1259,15 @@
      "abilities": [
       "Flying",
       "Deathtouch",
-      "Lifelink"
+      "Lifelink",
+      "Haste"
      ]
     },
     "changedBy": {
      "2": [
+      "Insurrection"
+     ],
+     "6": [
       "Insurrection"
      ]
     }
@@ -1320,9 +1339,21 @@
   "order": {
    "2": [
     "Insurrection"
+   ],
+   "6": [
+    "Insurrection"
    ]
   },
   "effects": [
+   {
+    "source": "Insurrection",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "global",
+    "params": {
+     "ability": "Haste"
+    }
+   },
    {
     "source": "Insurrection",
     "layer": "2",

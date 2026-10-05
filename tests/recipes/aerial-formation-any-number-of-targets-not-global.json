@@ -1,0 +1,14 @@
+{
+  "name": "Aerial Formation — \"any number of target creatures\" is targeted, not every creature",
+  "notes": "Found by tests/sweep.py while fixing the 'They gain' cluster. 'Any number of target creatures each get +1/+1 and gain flying until end of turn.' fell through extractTargetInfo and became a global effect on every creature. It is now a multi-target effect (6 slots). About 25 cards shared the wording (Ajani's Presence, Colossal Heroics, Launch the Fleet, Kamahl's Will, …).",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Gray Ogre", "as": "ogre" },
+    { "add": "Aerial Formation", "as": "af", "spell": true },
+    { "call": ["setMultiTarget", "@af", 0, "@bears"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": 3, "toughness": 3, "abilities": { "$includes": ["Flying"] } } },
+    { "perm": "Gray Ogre", "final": { "power": 2, "toughness": 2, "abilities": { "$excludes": ["Flying"] } } }
+  ]
+}

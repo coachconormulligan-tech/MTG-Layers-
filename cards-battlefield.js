@@ -489,6 +489,16 @@ const Battlefield = {
     // to one target creature. It loses all abilities …").
     const _effectTextHadExplicitTarget = /\btarget\b/i.test(parsedEffectText);
 
+    // "Whenever one or more Elves you control attack, they gain deathtouch …" — "they" are the
+    // attackers named by the trigger condition, which the effect text no longer carries.
+    if (fullText && kind === 'trigger' && /^they\s+(?:each\s+)?(?:gain|get|have|become)\b/i.test(parsedEffectText)) {
+      const _attackers = fullText.match(/\bone or more\s+(?:other\s+)?([^,]+?)\s+attacks?\b/i);
+      if (_attackers) {
+        parsedEffectText = parsedEffectText.replace(/^they\b/i,
+          /^attacking\b/i.test(_attackers[1]) ? _attackers[1] : 'Attacking ' + _attackers[1]);
+      }
+    }
+
     let didItConversion = false;
     if (/\bit\b/i.test(parsedEffectText)) {
       const before = parsedEffectText;

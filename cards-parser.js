@@ -736,6 +736,9 @@ function parseCardEffects(permanent, card, opts = {}) {
   oracle = oracle.replace(/\bhere's\b/gi, 'here is');
   oracle = oracle.replace(/\bthere's\b/gi, 'there is');
 
+  // "Untap all attacking creatures. They gain trample …" → "All attacking creatures gain trample …"
+  oracle = _resolveTheyPronoun(oracle);
+
   // Normalize gendered pronouns to "this card" for cards that self-reference with he/she/him/her.
   // "he's a" → "this card is a", "she's a" → "this card is a"
   // "he is" → "this card is", "she is" → "this card is"
@@ -2055,7 +2058,15 @@ function parseCardEffects(permanent, card, opts = {}) {
     const overlaps = addTypeMatchRanges.some(r => mStart < r.end && mEnd > r.start);
     if (overlaps) continue;
 
-    const filterText = setTypeMatch[1].trim();
+    let filterText = setTypeMatch[1].trim();
+    // The lazy filter group can run across a sentence boundary ("Untap up to six target
+    // lands. Up to six target lands become …"). When the last sentence names its own
+    // targets, that alone is the subject. (Pronoun subjects — "…. It becomes" — are left
+    // as captured; they are resolved or skipped further down.)
+    if (/\.\s/.test(filterText)) {
+      const _lastSentence = filterText.split(/\.\s+/).pop().trim();
+      if (/^(?:up to \w+|any number of|\w+ or \w+|\w+)\s+(?:other\s+)?target\s/i.test(_lastSentence)) filterText = _lastSentence;
+    }
     let becomesText = setTypeMatch[2].trim();
     if (becomesText.toLowerCase().includes('in addition to')) continue;
 

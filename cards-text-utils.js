@@ -296,6 +296,52 @@ function buildLandTypeReplacementPairs(from, to) {
    The cleaned text has "target"/"a target" stripped so buildAppliesToFromText can parse the type filter.
    "choose a creature" is normalized to the same output as "target creature". */
 const _TARGET_NUMBER_WORDS = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10 };
+// How many target dropdowns "any number of target …" gets in the UI.
+const _ANY_NUMBER_TARGET_SLOTS = 6;
+
+/* Resolve a sentence-initial "They gain/get/have/become …" to the group the preceding
+   sentence acted on, so the generic parsers see an explicit subject:
+     "Untap all attacking creatures. They gain trample …"      → "All attacking creatures gain trample …"
+     "Put a +1/+1 counter on each legendary creature you control. They gain vigilance …"
+                                                               → "Each legendary creature you control gains vigilance …"
+     "Distribute three +1/+1 counters among up to three target creatures. They gain vigilance …"
+                                                               → "Up to three target creatures gain vigilance …"
+   Left alone when "they" are objects the sentence before just made or moved (tokens,
+   cards put onto the battlefield): those have no permanent on the board to point at. */
+const _THEY_SUBJECT_RE = /^((?:until [^,.]+|if [^,.]+),\s*)?they\s+(each\s+)?(gain|get|have|become)\b/i;
+const _THEY_TARGET_ANTECEDENT_RE = /\b(?:each of\s+)?((?:up to \w+|any number of|\w+ or \w+|two|three|four|five|six|seven|eight|nine|ten)\s+(?:other\s+)?target\s+[^.,]+?)(?=\s+until\b|\s+and\s+(?:gain|untap|put|you|they|it)\b|[.,]|$)/i;
+const _THEY_GROUP_ANTECEDENT_RE = /\b(all|each)\s+(?!of\b|opponent\b|player\b|other player\b)([^.,]+?)(?=\s+until\b|\s+and\s+(?:gain|untap|put|you|they|it)\b|[.,]|$)/i;
+const _THEY_NEW_OBJECT_RE = /\bcreates?\b|\bonto the battlefield\b|\bto the battlefield\b|\breturn\b|\bmills?\b|\bexiles?\b|\bsearch\b/i;
+const _THEY_SINGULAR_VERB = { gain: 'gains', get: 'gets', have: 'has', become: 'becomes' };
+function _resolveTheyPronoun(text) {
+  if (!/\bthey\b/i.test(text)) return text;
+  return text.split('\n').map(line => {
+    if (!/\bthey\b/i.test(line) || line.includes('"')) return line;
+    const sentences = line.split(/(?<=\.)\s+/);
+    for (let i = 1; i < sentences.length; i++) {
+      const m = sentences[i].match(_THEY_SUBJECT_RE);
+      if (!m) continue;
+      let subject = null, verb = m[3];
+      for (let j = i - 1; j >= 0 && !subject; j--) {
+        const prev = sentences[j];
+        if (_THEY_NEW_OBJECT_RE.test(prev)) break;
+        const t = prev.match(_THEY_TARGET_ANTECEDENT_RE);
+        if (t) { subject = t[1] + (m[2] ? ' each' : ''); break; }
+        const g = prev.match(_THEY_GROUP_ANTECEDENT_RE);
+        if (g) {
+          subject = g[1].toLowerCase() + ' ' + g[2];
+          if (g[1].toLowerCase() === 'each') verb = _THEY_SINGULAR_VERB[verb.toLowerCase()];
+        }
+      }
+      if (!subject) continue;
+      const lead = m[1] || '';
+      if (!lead) subject = subject.charAt(0).toUpperCase() + subject.slice(1);
+      sentences[i] = lead + subject + ' ' + verb + sentences[i].slice(m[0].length);
+    }
+    return sentences.join(' ');
+  }).join('\n');
+}
+
 function extractTargetInfo(filterText) {
   const raw = filterText.toLowerCase().trim();
   let needsTargetSelection = false;
@@ -309,6 +355,16 @@ function extractTargetInfo(filterText) {
     const numWord = upToOtherTargetMatch[1].toLowerCase();
     maxTargets = _TARGET_NUMBER_WORDS[numWord] || parseInt(numWord) || 1;
     cleaned = filterText.replace(/^up to \w+\s+other\s+target\s+/i, '').trim();
+    return { cleaned, needsTargetSelection, maxTargets };
+  }
+
+  // "any number of [other] target [type]" (Harness by Force) and "N or M target [type]"
+  // (Fancy Footwork: "one or two target creatures") — multi-target with a slot cap.
+  const anyNumberTargetMatch = raw.match(/^(?:each of\s+)?(?:any number of|(\w+) or (\w+))\s+(?:other\s+)?target\s+/i);
+  if (anyNumberTargetMatch && (!anyNumberTargetMatch[2] || _TARGET_NUMBER_WORDS[anyNumberTargetMatch[2]])) {
+    needsTargetSelection = true;
+    maxTargets = anyNumberTargetMatch[2] ? _TARGET_NUMBER_WORDS[anyNumberTargetMatch[2]] : _ANY_NUMBER_TARGET_SLOTS;
+    cleaned = filterText.trim().slice(anyNumberTargetMatch[0].length).trim();
     return { cleaned, needsTargetSelection, maxTargets };
   }
 
