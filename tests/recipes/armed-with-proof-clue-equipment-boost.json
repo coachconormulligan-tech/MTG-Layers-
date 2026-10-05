@@ -1,0 +1,56 @@
+{
+  "name": "Armed with Proof — dynamically gained Equipment boost applies",
+  "notes": "Memory: project_equipped_creature_carrier_condition_2026-05-28. 'Equipped creature gets +2/+0' granted to Clues was gated on an Equipment-carrier check that fails when the Equipment subtype is gained dynamically, so the boost silently never applied. Here Armed with Proof makes a Clue an Equipment; attached to Grizzly Bears it must give +2/+0 (4/2). Grizzly Bears B is the unequipped control and stays 2/2. The Clue is attached with applyEquipAttachment (index 1 is its granted Equip ability), the same path the Equip popup uses for Equipment that is not printed as Equipment. Bears B has nothing attached and must not get the boost.",
+  "steps": [
+    {
+      "add": "Armed with Proof"
+    },
+    {
+      "add": "Clue",
+      "as": "clue"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bearsA"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bearsB"
+    },
+    {
+      "call": [
+        "applyEquipAttachment",
+        "@clue",
+        1,
+        "@bearsA"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Clue // Clue",
+      "final": {
+        "subtypes": {
+          "$includes": [
+            "Equipment",
+            "Clue"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Grizzly Bears A",
+      "final": {
+        "power": 4,
+        "toughness": 2
+      }
+    },
+    {
+      "perm": "Grizzly Bears B",
+      "final": {
+        "power": 2,
+        "toughness": 2
+      }
+    }
+  ]
+}

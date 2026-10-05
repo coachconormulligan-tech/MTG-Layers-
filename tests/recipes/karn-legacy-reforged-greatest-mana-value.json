@@ -1,0 +1,15 @@
+{
+  "name": "Karn, Legacy Reforged — greatest mana value among artifacts you control",
+  "notes": "Memory: project_karn_greatest_mv_cda_2026-05-11. 'Greatest mana value among' was unrecognised. Here: Karn (MV 5), Sol Ring (1) and Wurmcoil Engine (6) give 6; the opponent's Darksteel Colossus (MV 11) must not count and Grizzly Bears is not an artifact.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Karn, Legacy Reforged" },
+    { "add": "Sol Ring" },
+    { "add": "Wurmcoil Engine" },
+    { "add": "Grizzly Bears" },
+    { "add": "Darksteel Colossus", "controller": "p2" }
+  ],
+  "asserts": [
+    { "perm": "Karn, Legacy Reforged", "final": { "power": 6, "toughness": 6 } }
+  ]
+}

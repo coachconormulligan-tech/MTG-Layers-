@@ -1,0 +1,15 @@
+{
+  "name": "Viridescent Wisps — becomes green and gets +1/+0",
+  "notes": "Memory: project_viridescent_wisps_becomes_color_fix_2026-05-16. 'Target creature becomes green and gets +1/+0' once produced an impossible target filter (no dropdown) and no SET_COLOR effect. Vampire Nighthawk (black 2/3 flier) must become green and 3/3; Grizzly Bears is the untargeted control.",
+  "steps": [
+    { "add": "Vampire Nighthawk" },
+    { "add": "Grizzly Bears" },
+    { "add": "Viridescent Wisps", "as": "wisps", "spell": true },
+    { "call": ["setTarget", "@wisps", "@Vampire Nighthawk"] }
+  ],
+  "asserts": [
+    { "effect": { "source": "Viridescent Wisps", "layer": "5", "target": "Vampire Nighthawk" } },
+    { "perm": "Vampire Nighthawk", "final": { "colors": ["G"], "power": 3, "toughness": 3, "abilities": { "$includes": ["Flying"] } } },
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2 } }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "Dragonfire Blade — granted hexproof from monocolored keeps its qualifier",
+  "notes": "Memory: project_hexproof_from_qualifier_2026-05-28. haveAbilityRegex matched 'hexproof' and dropped the 'from monocolored' qualifier. Dragonfire Blade must grant 'Hexproof from monocolored' (not plain Hexproof) to the equipped Bears; Runeclaw Bear, unequipped, gets nothing.",
+  "steps": [
+    { "add": "Dragonfire Blade", "as": "blade" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "call": ["applyEquipAttachment", "@blade", 0, "@bears"] },
+    { "add": "Runeclaw Bear" }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": 4, "toughness": 4, "abilities": { "$includes": ["Hexproof from monocolored"], "$excludes": ["Hexproof"] } } },
+    { "perm": "Runeclaw Bear", "final": { "power": 2, "toughness": 2, "abilities": [] } }
+  ]
+}

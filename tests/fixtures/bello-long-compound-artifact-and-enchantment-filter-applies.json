@@ -1,0 +1,1264 @@
+{
+ "name": "Bello — long compound artifact and enchantment filter applies",
+ "notes": "Memory: project_bello_fix_addtype_length_2026-04-06. Bello's 90-character filter ('non-Equipment artifacts and non-Aura enchantments you control with mana value 4 or greater') exceeded a 50-char guard so no effects were emitted. Only non-Equipment artifacts and non-Aura enchantments with MV 4+ become 4/4 Elemental creatures with indestructible and haste during your turn.",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Bello, Bard of the Brambles",
+    "as": "bello"
+   },
+   {
+    "add": "Gilded Lotus"
+   },
+   {
+    "add": "Sphere of Safety"
+   },
+   {
+    "add": "Sol Ring"
+   },
+   {
+    "add": "Batterskull"
+   },
+   {
+    "call": [
+     "updateGameState",
+     "isYourTurn",
+     true
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Gilded Lotus",
+   "final": {
+    "types": [
+     "Artifact",
+     "Creature"
+    ],
+    "subtypes": [
+     "Elemental"
+    ],
+    "power": 4,
+    "toughness": 4,
+    "abilities": {
+     "$includes": [
+      "Indestructible",
+      "Haste"
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Sphere of Safety",
+   "final": {
+    "types": [
+     "Enchantment",
+     "Creature"
+    ],
+    "subtypes": [
+     "Elemental"
+    ],
+    "power": 4,
+    "toughness": 4,
+    "abilities": {
+     "$includes": [
+      "Indestructible",
+      "Haste"
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Sol Ring",
+   "final": {
+    "types": [
+     "Artifact"
+    ]
+   }
+  },
+  {
+   "perm": "Batterskull",
+   "final": {
+    "types": [
+     "Artifact"
+    ],
+    "subtypes": [
+     "Equipment"
+    ]
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "31e4b7a1-b377-49d2-a92e-4bcb0db35f16",
+     "oracle_id": "fb773114-6161-46a3-ab30-1853958fbcb0",
+     "multiverse_ids": [
+      670836
+     ],
+     "mtgo_id": 128991,
+     "tcgplayer_id": 558382,
+     "cardmarket_id": 778264,
+     "name": "Bello, Bard of the Brambles",
+     "lang": "en",
+     "released_at": "2024-08-02",
+     "uri": "https://api.scryfall.com/cards/31e4b7a1-b377-49d2-a92e-4bcb0db35f16",
+     "scryfall_uri": "https://scryfall.com/card/blc/1/bello-bard-of-the-brambles?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T02:45:38Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/3/1/31e4b7a1-b377-49d2-a92e-4bcb0db35f16.jpg?1783910738",
+      "normal": "https://cards.scryfall.io/normal/front/3/1/31e4b7a1-b377-49d2-a92e-4bcb0db35f16.jpg?1783910738",
+      "large": "https://cards.scryfall.io/large/front/3/1/31e4b7a1-b377-49d2-a92e-4bcb0db35f16.jpg?1783910738",
+      "png": "https://cards.scryfall.io/png/front/3/1/31e4b7a1-b377-49d2-a92e-4bcb0db35f16.png?1783910738",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/3/1/31e4b7a1-b377-49d2-a92e-4bcb0db35f16.jpg?1783910738",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/3/1/31e4b7a1-b377-49d2-a92e-4bcb0db35f16.jpg?1783910738",
+      "thumb": "https://cards.scryfall.io/thumb/front/3/1/31e4b7a1-b377-49d2-a92e-4bcb0db35f16.webp?1783910738",
+      "grid": "https://cards.scryfall.io/grid/front/3/1/31e4b7a1-b377-49d2-a92e-4bcb0db35f16.webp?1783910738",
+      "display": "https://cards.scryfall.io/display/front/3/1/31e4b7a1-b377-49d2-a92e-4bcb0db35f16.webp?1783910738",
+      "art": "https://cards.scryfall.io/art/front/3/1/31e4b7a1-b377-49d2-a92e-4bcb0db35f16.webp?1783910738",
+      "crop": "https://cards.scryfall.io/crop/front/3/1/31e4b7a1-b377-49d2-a92e-4bcb0db35f16.webp?1783910738"
+     },
+     "mana_cost": "{1}{R}{G}",
+     "cmc": 3,
+     "type_line": "Legendary Creature — Raccoon Bard",
+     "oracle_text": "During your turn, each non-Equipment artifact and non-Aura enchantment you control with mana value 4 or greater is a 4/4 Elemental creature in addition to its other types and has indestructible, haste, and \"Whenever this creature deals combat damage to a player, draw a card.\"",
+     "power": "3",
+     "toughness": "3",
+     "colors": [
+      "G",
+      "R"
+     ],
+     "color_identity": [
+      "G",
+      "R"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "c0f860b9-a2d0-4fd7-bfac-a49ac60c84f1",
+     "set": "blc",
+     "set_name": "Bloomburrow Commander",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/c0f860b9-a2d0-4fd7-bfac-a49ac60c84f1",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Ablc&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/blc?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/31e4b7a1-b377-49d2-a92e-4bcb0db35f16/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Afb773114-6161-46a3-ab30-1853958fbcb0&unique=prints",
+     "collector_number": "1",
+     "digital": false,
+     "rarity": "mythic",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Slawomir Maniak",
+     "artist_ids": [
+      "d887bc66-2779-416c-a1ff-d8720242063e"
+     ],
+     "illustration_id": "40433335-e58c-48c7-811e-3abf44e8b75a",
+     "border_color": "borderless",
+     "frame": "2015",
+     "frame_effects": [
+      "legendary",
+      "inverted"
+     ],
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 3665,
+     "preview": {
+      "source": "Wizards of the Coast",
+      "source_uri": "https://magic.wizards.com/en/products/bloomburrow/card-image-gallery",
+      "previewed_at": "2024-07-09"
+     },
+     "prices": {
+      "usd": "2.87",
+      "usd_foil": "1.52",
+      "usd_etched": null,
+      "eur": "3.06",
+      "eur_foil": "1.74",
+      "tix": "0.76"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=670836&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DBello%252C%2BBard%2Bof%2Bthe%2BBrambles",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DBello%252C%2BBard%2Bof%2Bthe%2BBrambles",
+      "edhrec": "https://edhrec.com/route/?cc=Bello%2C+Bard+of+the+Brambles"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F558382%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=778264&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/128991?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "28e619e6-ecc1-49c3-8fa9-ce42becdb9ba",
+     "oracle_id": "9a02a9a7-39d9-4763-85d3-747a0540b60b",
+     "multiverse_ids": [],
+     "resource_id": "B31BE393C7FDAB1D5659AE2A1F41923EB3EEF5BE8C6A426F3D2E6664A6649539",
+     "mtgo_id": 150867,
+     "tcgplayer_id": 698212,
+     "cardmarket_id": 892719,
+     "name": "Gilded Lotus",
+     "lang": "en",
+     "released_at": "2026-06-26",
+     "uri": "https://api.scryfall.com/cards/28e619e6-ecc1-49c3-8fa9-ce42becdb9ba",
+     "scryfall_uri": "https://scryfall.com/card/msc/199/gilded-lotus?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T00:40:20Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/2/8/28e619e6-ecc1-49c3-8fa9-ce42becdb9ba.jpg?1783903220",
+      "normal": "https://cards.scryfall.io/normal/front/2/8/28e619e6-ecc1-49c3-8fa9-ce42becdb9ba.jpg?1783903220",
+      "large": "https://cards.scryfall.io/large/front/2/8/28e619e6-ecc1-49c3-8fa9-ce42becdb9ba.jpg?1783903220",
+      "png": "https://cards.scryfall.io/png/front/2/8/28e619e6-ecc1-49c3-8fa9-ce42becdb9ba.png?1783903220",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/2/8/28e619e6-ecc1-49c3-8fa9-ce42becdb9ba.jpg?1783903220",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/2/8/28e619e6-ecc1-49c3-8fa9-ce42becdb9ba.jpg?1783903220",
+      "thumb": "https://cards.scryfall.io/thumb/front/2/8/28e619e6-ecc1-49c3-8fa9-ce42becdb9ba.webp?1783903220",
+      "grid": "https://cards.scryfall.io/grid/front/2/8/28e619e6-ecc1-49c3-8fa9-ce42becdb9ba.webp?1783903220",
+      "display": "https://cards.scryfall.io/display/front/2/8/28e619e6-ecc1-49c3-8fa9-ce42becdb9ba.webp?1783903220",
+      "art": "https://cards.scryfall.io/art/front/2/8/28e619e6-ecc1-49c3-8fa9-ce42becdb9ba.webp?1783903220",
+      "crop": "https://cards.scryfall.io/crop/front/2/8/28e619e6-ecc1-49c3-8fa9-ce42becdb9ba.webp?1783903220"
+     },
+     "mana_cost": "{5}",
+     "cmc": 5,
+     "type_line": "Artifact",
+     "oracle_text": "{T}: Add three mana of any one color.",
+     "colors": [],
+     "color_identity": [],
+     "keywords": [],
+     "produced_mana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "9d739461-c5ac-43a1-af41-3d5a585b5c8d",
+     "set": "msc",
+     "set_name": "Marvel Super Heroes Commander",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/9d739461-c5ac-43a1-af41-3d5a585b5c8d",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Amsc&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/msc?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/28e619e6-ecc1-49c3-8fa9-ce42becdb9ba/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A9a02a9a7-39d9-4763-85d3-747a0540b60b&unique=prints",
+     "collector_number": "199",
+     "digital": false,
+     "rarity": "rare",
+     "flavor_text": "T'Challa merged vibranium technology with organic matter to create a jungle of boundless potential.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Domenico Cava",
+     "artist_ids": [
+      "15eda809-1e56-4583-89e6-c9ccda740e16"
+     ],
+     "illustration_id": "ea23a63b-9fe3-423b-852c-41bf65b45b20",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "surgefoil",
+      "universesbeyond"
+     ],
+     "edhrec_rank": 412,
+     "penny_rank": 2947,
+     "prices": {
+      "usd": "0.52",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.59",
+      "eur_foil": null,
+      "tix": "0.07"
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGilded%2BLotus",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGilded%2BLotus",
+      "edhrec": "https://edhrec.com/route/?cc=Gilded+Lotus"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F698212%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=892719&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/150867?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "5c4e3031-ffc2-4d4d-a9f9-e85820059315",
+     "oracle_id": "92f6c063-a740-4c3c-a60a-569fd298854d",
+     "multiverse_ids": [
+      675977
+     ],
+     "mtgo_id": 130831,
+     "tcgplayer_id": 578988,
+     "cardmarket_id": 788604,
+     "name": "Sphere of Safety",
+     "lang": "en",
+     "released_at": "2024-09-27",
+     "uri": "https://api.scryfall.com/cards/5c4e3031-ffc2-4d4d-a9f9-e85820059315",
+     "scryfall_uri": "https://scryfall.com/card/dsc/104/sphere-of-safety?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T02:27:13Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/5/c/5c4e3031-ffc2-4d4d-a9f9-e85820059315.jpg?1783909633",
+      "normal": "https://cards.scryfall.io/normal/front/5/c/5c4e3031-ffc2-4d4d-a9f9-e85820059315.jpg?1783909633",
+      "large": "https://cards.scryfall.io/large/front/5/c/5c4e3031-ffc2-4d4d-a9f9-e85820059315.jpg?1783909633",
+      "png": "https://cards.scryfall.io/png/front/5/c/5c4e3031-ffc2-4d4d-a9f9-e85820059315.png?1783909633",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/5/c/5c4e3031-ffc2-4d4d-a9f9-e85820059315.jpg?1783909633",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/5/c/5c4e3031-ffc2-4d4d-a9f9-e85820059315.jpg?1783909633",
+      "thumb": "https://cards.scryfall.io/thumb/front/5/c/5c4e3031-ffc2-4d4d-a9f9-e85820059315.webp?1783909633",
+      "grid": "https://cards.scryfall.io/grid/front/5/c/5c4e3031-ffc2-4d4d-a9f9-e85820059315.webp?1783909633",
+      "display": "https://cards.scryfall.io/display/front/5/c/5c4e3031-ffc2-4d4d-a9f9-e85820059315.webp?1783909633",
+      "art": "https://cards.scryfall.io/art/front/5/c/5c4e3031-ffc2-4d4d-a9f9-e85820059315.webp?1783909633",
+      "crop": "https://cards.scryfall.io/crop/front/5/c/5c4e3031-ffc2-4d4d-a9f9-e85820059315.webp?1783909633"
+     },
+     "mana_cost": "{4}{W}",
+     "cmc": 5,
+     "type_line": "Enchantment",
+     "oracle_text": "Creatures can't attack you or planeswalkers you control unless their controller pays {X} for each of those creatures, where X is the number of enchantments you control.",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "4c822528-83c3-42c7-8708-dd1d37166819",
+     "set": "dsc",
+     "set_name": "Duskmourn: House of Horror Commander",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/4c822528-83c3-42c7-8708-dd1d37166819",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Adsc&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/dsc?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/5c4e3031-ffc2-4d4d-a9f9-e85820059315/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A92f6c063-a740-4c3c-a60a-569fd298854d&unique=prints",
+     "collector_number": "104",
+     "digital": false,
+     "rarity": "uncommon",
+     "flavor_text": "The Rakdos believe that all are eager to join their revels, even when told otherwise.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Slawomir Maniak",
+     "artist_ids": [
+      "d887bc66-2779-416c-a1ff-d8720242063e"
+     ],
+     "illustration_id": "85c17c04-9b89-4e32-9176-a80fd37151b9",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 681,
+     "penny_rank": 2187,
+     "prices": {
+      "usd": "4.41",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "4.82",
+      "eur_foil": null,
+      "tix": "0.04"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=675977&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DSphere%2Bof%2BSafety",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DSphere%2Bof%2BSafety",
+      "edhrec": "https://edhrec.com/route/?cc=Sphere+of+Safety"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F578988%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=788604&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/130831?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": true,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "8ee443cc-e17a-493b-9c93-1f9e141a30e4",
+     "oracle_id": "6ad8011d-3471-4369-9d68-b264cc027487",
+     "multiverse_ids": [],
+     "resource_id": "B12151C9CD0511F86702A215428AAE1A3170DF60AA4DE769D4FA59EDC207CA20",
+     "mtgo_id": 156438,
+     "tcgplayer_id": 717788,
+     "cardmarket_id": 909814,
+     "name": "Sol Ring",
+     "lang": "en",
+     "released_at": "2026-10-02",
+     "uri": "https://api.scryfall.com/cards/8ee443cc-e17a-493b-9c93-1f9e141a30e4",
+     "scryfall_uri": "https://scryfall.com/card/frc/21/sol-ring?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-09-17T11:27:26Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.jpg?1789644446",
+      "normal": "https://cards.scryfall.io/normal/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.jpg?1789644446",
+      "large": "https://cards.scryfall.io/large/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.jpg?1789644446",
+      "png": "https://cards.scryfall.io/png/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.png?1789644446",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.jpg?1789644446",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.jpg?1789644446",
+      "thumb": "https://cards.scryfall.io/thumb/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.webp?1789644446",
+      "grid": "https://cards.scryfall.io/grid/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.webp?1789644446",
+      "display": "https://cards.scryfall.io/display/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.webp?1789644446",
+      "art": "https://cards.scryfall.io/art/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.webp?1789644446",
+      "crop": "https://cards.scryfall.io/crop/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.webp?1789644446"
+     },
+     "mana_cost": "{1}",
+     "cmc": 1,
+     "type_line": "Artifact",
+     "oracle_text": "{T}: Add {C}{C}.",
+     "colors": [],
+     "color_identity": [],
+     "keywords": [],
+     "produced_mana": [
+      "C"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "banned",
+      "pauper": "not_legal",
+      "vintage": "restricted",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "banned",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "banned",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "banned"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "cfd10490-7397-4143-bda7-d388b877636f",
+     "set": "frc",
+     "set_name": "Reality Fracture Commander",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/cfd10490-7397-4143-bda7-d388b877636f",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Afrc&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/frc?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/8ee443cc-e17a-493b-9c93-1f9e141a30e4/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A6ad8011d-3471-4369-9d68-b264cc027487&unique=prints",
+     "collector_number": "21",
+     "digital": false,
+     "rarity": "uncommon",
+     "flavor_text": "Jace could see the sunlight in his Multiverse, but somewhere along the way, he lost the feel of its warmth.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Titus Lunter",
+     "artist_ids": [
+      "b11e6b3a-f4ca-4cf1-8fd7-475696de5f5c"
+     ],
+     "illustration_id": "f142ba5f-999f-42f6-b56e-26164a3b6b87",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 1,
+     "preview": {
+      "source": "Wizards of the Coast",
+      "source_uri": "https://youtu.be/mvTyHbTbfBo",
+      "previewed_at": "2026-09-16"
+     },
+     "prices": {
+      "usd": "1.13",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "1.13",
+      "eur_foil": null,
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DSol%2BRing",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DSol%2BRing",
+      "edhrec": "https://edhrec.com/route/?cc=Sol+Ring"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F717788%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=909814&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/156438?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 4,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_5",
+    "scryfallData": {
+     "object": "card",
+     "id": "b7f16fdf-a3f5-462d-a64a-789d893b6ef5",
+     "oracle_id": "d12e5ce0-5705-4c35-9a93-b883db52c80c",
+     "multiverse_ids": [
+      489907
+     ],
+     "mtgo_id": 82502,
+     "tcgplayer_id": 218861,
+     "cardmarket_id": 485959,
+     "name": "Batterskull",
+     "lang": "en",
+     "released_at": "2020-08-07",
+     "uri": "https://api.scryfall.com/cards/b7f16fdf-a3f5-462d-a64a-789d893b6ef5",
+     "scryfall_uri": "https://scryfall.com/card/2xm/234/batterskull?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T08:08:38Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/b/7/b7f16fdf-a3f5-462d-a64a-789d893b6ef5.jpg?1783930118",
+      "normal": "https://cards.scryfall.io/normal/front/b/7/b7f16fdf-a3f5-462d-a64a-789d893b6ef5.jpg?1783930118",
+      "large": "https://cards.scryfall.io/large/front/b/7/b7f16fdf-a3f5-462d-a64a-789d893b6ef5.jpg?1783930118",
+      "png": "https://cards.scryfall.io/png/front/b/7/b7f16fdf-a3f5-462d-a64a-789d893b6ef5.png?1783930118",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/b/7/b7f16fdf-a3f5-462d-a64a-789d893b6ef5.jpg?1783930118",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/b/7/b7f16fdf-a3f5-462d-a64a-789d893b6ef5.jpg?1783930118",
+      "thumb": "https://cards.scryfall.io/thumb/front/b/7/b7f16fdf-a3f5-462d-a64a-789d893b6ef5.webp?1783930118",
+      "grid": "https://cards.scryfall.io/grid/front/b/7/b7f16fdf-a3f5-462d-a64a-789d893b6ef5.webp?1783930118",
+      "display": "https://cards.scryfall.io/display/front/b/7/b7f16fdf-a3f5-462d-a64a-789d893b6ef5.webp?1783930118",
+      "art": "https://cards.scryfall.io/art/front/b/7/b7f16fdf-a3f5-462d-a64a-789d893b6ef5.webp?1783930118",
+      "crop": "https://cards.scryfall.io/crop/front/b/7/b7f16fdf-a3f5-462d-a64a-789d893b6ef5.webp?1783930118"
+     },
+     "mana_cost": "{5}",
+     "cmc": 5,
+     "type_line": "Artifact — Equipment",
+     "oracle_text": "Living weapon (When this Equipment enters, create a 0/0 black Phyrexian Germ creature token, then attach this to it.)\nEquipped creature gets +4/+4 and has vigilance and lifelink.\n{3}: Return this Equipment to its owner's hand.\nEquip {5}",
+     "colors": [],
+     "color_identity": [],
+     "keywords": [
+      "Equip",
+      "Living weapon"
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "53c05e53-84c7-4796-ae02-d778faa5afa6",
+       "component": "token",
+       "name": "Phyrexian Germ",
+       "type_line": "Token Creature — Phyrexian Germ",
+       "uri": "https://api.scryfall.com/cards/53c05e53-84c7-4796-ae02-d778faa5afa6"
+      },
+      {
+       "object": "related_card",
+       "id": "2abc5ac8-b944-4b71-b022-c78183eb92c3",
+       "component": "combo_piece",
+       "name": "Batterskull",
+       "type_line": "Artifact — Equipment",
+       "uri": "https://api.scryfall.com/cards/2abc5ac8-b944-4b71-b022-c78183eb92c3"
+      }
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "372dafe8-b5d1-4b81-998f-3ae96b59498a",
+     "set": "2xm",
+     "set_name": "Double Masters",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/372dafe8-b5d1-4b81-998f-3ae96b59498a",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A2xm&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/2xm?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/b7f16fdf-a3f5-462d-a64a-789d893b6ef5/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ad12e5ce0-5705-4c35-9a93-b883db52c80c&unique=prints",
+     "collector_number": "234",
+     "digital": false,
+     "rarity": "mythic",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Mark Zug",
+     "artist_ids": [
+      "48e2b98c-5467-4671-bd42-4c3746115117"
+     ],
+     "illustration_id": "d8bffba1-ff96-447b-b3e4-4a7d538c8690",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 5003,
+     "penny_rank": 1490,
+     "preview": {
+      "source": "Star City Games",
+      "source_uri": "https://articles.starcitygames.com/news/stoneforge-mystic-batterskull-back-together-in-double-masters/",
+      "previewed_at": "2020-07-27"
+     },
+     "prices": {
+      "usd": "5.47",
+      "usd_foil": "4.23",
+      "usd_etched": null,
+      "eur": "3.26",
+      "eur_foil": "4.70",
+      "tix": "0.62"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=489907&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DBatterskull",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DBatterskull",
+      "edhrec": "https://edhrec.com/route/?cc=Batterskull"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F218861%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=485959&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/82502?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 5,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Bello, Bard of the Brambles",
+    "final": {
+     "name": "Bello, Bard of the Brambles",
+     "controller": "player_0",
+     "supertypes": [
+      "Legendary"
+     ],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Raccoon",
+      "Bard"
+     ],
+     "power": 3,
+     "toughness": 3,
+     "colors": [
+      "G",
+      "R"
+     ],
+     "abilities": []
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Gilded Lotus",
+    "final": {
+     "name": "Gilded Lotus",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Artifact",
+      "Creature"
+     ],
+     "subtypes": [
+      "Elemental"
+     ],
+     "power": 4,
+     "toughness": 4,
+     "colors": [],
+     "abilities": [
+      "{T}: Add three mana of any one color.",
+      "Indestructible",
+      "Haste",
+      "Whenever this creature deals combat damage to a player, draw a card."
+     ]
+    },
+    "changedBy": {
+     "4": [
+      "Bello, Bard of the Brambles"
+     ],
+     "6": [
+      "Bello, Bard of the Brambles",
+      "Bello, Bard of the Brambles",
+      "Bello, Bard of the Brambles"
+     ],
+     "7b": [
+      "Bello, Bard of the Brambles"
+     ]
+    }
+   },
+   {
+    "perm": "Sphere of Safety",
+    "final": {
+     "name": "Sphere of Safety",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Enchantment",
+      "Creature"
+     ],
+     "subtypes": [
+      "Elemental"
+     ],
+     "power": 4,
+     "toughness": 4,
+     "colors": [
+      "W"
+     ],
+     "abilities": [
+      "Creatures can't attack you or planeswalkers you control unless their controller pays {X} for each of those creatures, where X is the number of enchantments you control.",
+      "Indestructible",
+      "Haste",
+      "Whenever this creature deals combat damage to a player, draw a card."
+     ]
+    },
+    "changedBy": {
+     "4": [
+      "Bello, Bard of the Brambles"
+     ],
+     "6": [
+      "Bello, Bard of the Brambles",
+      "Bello, Bard of the Brambles",
+      "Bello, Bard of the Brambles"
+     ],
+     "7b": [
+      "Bello, Bard of the Brambles"
+     ]
+    }
+   },
+   {
+    "perm": "Sol Ring",
+    "final": {
+     "name": "Sol Ring",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Artifact"
+     ],
+     "subtypes": [],
+     "power": null,
+     "toughness": null,
+     "colors": [],
+     "abilities": [
+      "{T}: Add {C}{C}."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Batterskull",
+    "final": {
+     "name": "Batterskull",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Artifact"
+     ],
+     "subtypes": [
+      "Equipment"
+     ],
+     "power": null,
+     "toughness": null,
+     "colors": [],
+     "abilities": [
+      "Living weapon",
+      "Equipped creature gets +4/+4 and has vigilance and lifelink.",
+      "{3}: Return this Equipment to its owner's hand.",
+      "Equip {5}"
+     ]
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "4": [
+    "Bello, Bard of the Brambles"
+   ],
+   "6": [
+    "Bello, Bard of the Brambles",
+    "Bello, Bard of the Brambles",
+    "Bello, Bard of the Brambles",
+    "Batterskull",
+    "Batterskull"
+   ],
+   "7b": [
+    "Bello, Bard of the Brambles"
+   ],
+   "7c": [
+    "Batterskull"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Bello, Bard of the Brambles",
+    "layer": "7b",
+    "type": "set_pt",
+    "scope": "global",
+    "params": {
+     "power": 4,
+     "toughness": 4
+    }
+   },
+   {
+    "source": "Bello, Bard of the Brambles",
+    "layer": "4",
+    "type": "add_type",
+    "scope": "global",
+    "params": {
+     "subtypes": [
+      "Elemental"
+     ],
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ]
+    }
+   },
+   {
+    "source": "Bello, Bard of the Brambles",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "global",
+    "params": {
+     "ability": "Indestructible"
+    }
+   },
+   {
+    "source": "Bello, Bard of the Brambles",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "global",
+    "params": {
+     "ability": "Haste"
+    }
+   },
+   {
+    "source": "Bello, Bard of the Brambles",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "global",
+    "params": {
+     "ability": "Whenever this creature deals combat damage to a player, draw a card."
+    }
+   },
+   {
+    "source": "Batterskull",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "params": {
+     "power": 4,
+     "toughness": 4
+    }
+   },
+   {
+    "source": "Batterskull",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "params": {
+     "ability": "Vigilance"
+    }
+   },
+   {
+    "source": "Batterskull",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "params": {
+     "ability": "Lifelink"
+    }
+   }
+  ]
+ }
+}

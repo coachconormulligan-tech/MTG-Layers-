@@ -11,6 +11,19 @@ function _equippedToCarrier(state) {
     e.scope === 'targeted' && !e.selfTarget && e.requiresCreatureTarget && e.targetId === state.id));
 }
 
+/* True if some permanent attached to `state` (Aura/Equipment target link, including the
+   synthetic tracker applyEquipAttachment adds for runtime Equipment) currently has
+   `abilityText` among its abilities. Ties a granted "Equipped creature gets ..." ability to
+   the creature its own carrier is attached to, rather than to every creature. */
+function _attachedSourceHasAbility(state, allStates, abilityText) {
+  if (!allStates) return false;
+  return Battlefield.effects.some(e => {
+    if (e.targetId !== state.id || e.selfTarget) return false;
+    const src = allStates.get(e.sourceId);
+    return !!(src && (src.abilities || []).includes(abilityText));
+  });
+}
+
 /* Helper: detect ADD_ABILITY effects whose ability text itself contains global effect
    patterns (boost or keyword grant), and generate real global effects from them.
    These are conditioned on the source having a targetId (i.e. being equipped/attached).
@@ -30,12 +43,20 @@ function _parseGrantedGlobalAbilities(permanent, effects) {
     if (boostInAbility) {
       const filterText = boostInAbility[1].trim();
       if (!filterReferencesPermanents(filterText)) continue;
-      const { fn, desc } = buildAppliesToFromText(filterText);
-      // Filters that already gate on the equipped/enchanted trait (e.g. "Equipped creature")
-      // don't need _equippedToCarrier — their appliesTo.fn already checks state.traits.
-      // The carrier condition would incorrectly reject cases where Equipment subtype was
-      // gained dynamically (not printed), so it's skipped for these filters.
+      const built = buildAppliesToFromText(filterText);
+      const desc = built.desc;
+      let fn = built.fn;
+      // "Equipped creature" / "Enchanted creature" filters skip _equippedToCarrier: that
+      // condition would incorrectly reject cases where the Equipment subtype was gained
+      // dynamically (not printed). But the singular filter's fn is `() => true` (it is built
+      // for a targeted effect on the attachment itself), so gate it here instead: the state
+      // must be attached-to by a permanent that currently has this granted ability.
       const _filterGatesAttachment = /\bequipped\b|\benchanted\b/i.test(filterText);
+      if (_filterGatesAttachment) {
+        const innerFn = fn;
+        fn = (p, allStates, effectCtrl) => innerFn(p, allStates, effectCtrl) &&
+          _attachedSourceHasAbility(p, allStates, abilityText);
+      }
       toAdd.push({
         id: `${sid}_eff_granted_${toAdd.length}a`,
         layer: '7c', type: EFFECT_TYPE.MODIFY_PT,
@@ -149,6 +170,25 @@ function _finalizeEffects(effects, isEquipmentSource, permanent, oracleText) {
       }
     }
   }
+  // An Aura with no continuous effect on its target (Pacifism: "Enchanted creature can't
+  // attack or block") parses to nothing targeted, so it would get no target dropdown and
+  // could never be attached — which also hides it from "enchanted"/"modified" checks on
+  // other cards. Give it an inert tracker so it attaches like any other Aura.
+  if (permanent && permanent._auraRestriction && !permanent._isEnchantPlayer &&
+      (permanent.printedSubtypes || []).includes('Aura') &&
+      !effects.some(e => e.scope === 'targeted' && !e.selfTarget)) {
+    effects.push({
+      id: `${permanent.id}_attach_tracker`,
+      layer: '7c', type: EFFECT_TYPE.MODIFY_PT,
+      params: { power: 0, toughness: 0 },
+      scope: 'targeted', selfTarget: false,
+      _isAttachTracker: true,
+      targetId: null,
+      sourceId: permanent.id, sourceName: permanent.name,
+      timestamp: permanent.timestamp,
+      desc: 'Aura attachment tracker',
+    });
+  }
   // Propagate auraRestriction: prefer an effect that already has it, then fall back to the
   // permanent-level flag (set during enchant-line parsing, before the main effects loop, so
   // effects added afterward — e.g. enchantTransformRegex — don't inherit it inline).
@@ -180,7 +220,11 @@ function _finalizeEffects(effects, isEquipmentSource, permanent, oracleText) {
   const _slottable = effects.filter(e =>
     e.scope === 'targeted' && !e.selfTarget && e.modalModeIndex === undefined && e._oraclePos !== undefined
   );
-  if (_slottable.length > 1) {
+  // An Aura or Equipment has exactly one attached object, however many of its lines refer
+  // to it (Edge of the Divinity: two "it gets" lines), so it never gets separate slots.
+  const _isAttachment = isEquipmentSource || !!permanent?._auraRestriction
+    || (permanent?.printedSubtypes || []).some(t => t === 'Aura' || t === 'Equipment');
+  if (_slottable.length > 1 && !_isAttachment) {
     const _distinctPos = [...new Set(_slottable.map(e => e._oraclePos))].sort((a, b) => a - b);
     if (_distinctPos.length > 1) {
       for (const eff of _slottable) {

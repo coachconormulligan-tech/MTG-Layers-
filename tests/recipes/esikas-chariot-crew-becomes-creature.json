@@ -1,0 +1,12 @@
+{
+  "name": "Esika's Chariot — crewed Vehicle becomes an artifact creature",
+  "notes": "Memory: project_crew_saddle_battlefield_effect_2026-04-21. A Vehicle with no layer-affecting abilities had empty effects so crewing did nothing (getAllFinalStates skipped evaluation). Crewed Chariot must be an Artifact Creature 4/4; a second, uncrewed Vehicle-less control is Grizzly Bears (unchanged).",
+  "steps": [
+    { "add": "Esika's Chariot", "as": "chariot" },
+    { "add": "Grizzly Bears" },
+    { "call": ["applyCrew", "@chariot", 0, "Crew 4"] }
+  ],
+  "asserts": [
+    { "perm": "Esika's Chariot", "final": { "power": 4, "toughness": 4, "types": { "$includes": ["Artifact", "Creature"] }, "subtypes": ["Vehicle"], "traits": { "$includes": ["Crewed"] } } }
+  ]
+}

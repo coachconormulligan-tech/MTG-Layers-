@@ -1,0 +1,13 @@
+{
+  "name": "Elspeth Knight-Errant Emblem — comma list of types is OR",
+  "notes": "Memory: project_emblem_indestructible_fixes_2026-05-11. 'Artifacts, creatures, enchantments, and lands you control have indestructible' was parsed as a permanent that is all four types at once, matching nothing. Bears (creature) and Glorious Anthem (enchantment) must both be indestructible.",
+  "steps": [
+    { "add": "Grizzly Bears" },
+    { "add": "Glorious Anthem" },
+    { "call": ["addEmblem", "card:Elspeth, Knight-Errant Emblem"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$includes": ["Indestructible"] } } },
+    { "perm": "Glorious Anthem", "final": { "abilities": { "$includes": ["Indestructible"] } } }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "Ancient Ooze — total mana value of other creatures you control",
+  "notes": "Memory: project_ancient_ooze_mana_value_cda_2026-06-05. No CDA was emitted for 'total mana value of' so the Ooze was 0/0. Here: Grizzly Bears (MV 2) plus Vampire Nighthawk (MV 3) = 5; Sol Ring (noncreature) and the opponent's Serra Angel (MV 5) must not count, and the Ooze's own MV 7 is excluded by 'other'.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Ancient Ooze" },
+    { "add": "Grizzly Bears" },
+    { "add": "Vampire Nighthawk" },
+    { "add": "Sol Ring" },
+    { "add": "Serra Angel", "controller": "p2" }
+  ],
+  "asserts": [
+    { "effect": { "source": "Ancient Ooze", "layer": "7a", "type": "cda_pt" } },
+    { "perm": "Ancient Ooze", "final": { "power": 5, "toughness": 5 } }
+  ]
+}

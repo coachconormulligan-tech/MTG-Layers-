@@ -1,0 +1,45 @@
+{
+  "name": "Changeling after Curse of Conformity — still loses all creature types",
+  "notes": "Found by the first conversion batch, confirmed by the owner 2026-10-05 after checking the rules. Changeling is a characteristic-defining ability, so it applies first in layer 4 regardless of timestamp (CR 613.3); Curse of Conformity then removes every creature type. The Changeling is added AFTER the Curse here, so plain timestamp order would wrongly leave it with every creature type.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Curse of Conformity",
+      "as": "curse"
+    },
+    {
+      "call": [
+        "setEnchantedPlayer",
+        "@curse",
+        "p2"
+      ]
+    },
+    {
+      "add": "Amoeboid Changeling",
+      "controller": "p2"
+    }
+  ],
+  "asserts": [
+    {
+      "order": {
+        "4": [
+          "Amoeboid Changeling",
+          "Curse of Conformity"
+        ]
+      }
+    },
+    {
+      "perm": "Amoeboid Changeling",
+      "final": {
+        "subtypes": [],
+        "power": 3,
+        "toughness": 3
+      }
+    }
+  ]
+}

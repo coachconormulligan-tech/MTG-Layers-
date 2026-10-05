@@ -1,0 +1,37 @@
+{
+  "name": "Undercover Skrull — one creature card in graveyard does nothing",
+  "notes": "Memory: project_skrull_wasp_fixes_2026-06-29. The 'two or more creature cards in your graveyard' condition was unparsed so the boost applied unconditionally. One creature card plus a non-creature (Lightning Bolt) is only one creature card, so Skrull stays a 1/1 Skrull Shapeshifter Villain.",
+  "steps": [
+    {
+      "add": "Undercover Skrull"
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Grizzly Bears"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Lightning Bolt"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Undercover Skrull",
+      "final": {
+        "power": 1,
+        "toughness": 1,
+        "subtypes": [
+          "Skrull",
+          "Shapeshifter",
+          "Villain"
+        ]
+      }
+    }
+  ]
+}

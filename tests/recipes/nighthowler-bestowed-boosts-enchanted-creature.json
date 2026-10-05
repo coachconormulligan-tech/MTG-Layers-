@@ -1,0 +1,16 @@
+{
+  "name": "Nighthowler — bestowed, boosts only the enchanted creature once",
+  "notes": "Memory: project_nighthowler_bestow_and_creature_graveyard_count_2026-06-04. With one creature card in a graveyard (X = 1), Nighthowler bestowed on Grizzly Bears redirects its single self boost to the enchanted creature: Bears 3/3, Nighthowler itself 0/0 (not 1/1), and the unenchanted Giant Spider stays 2/4. A double-counted redirect would make Bears 4/4.",
+  "steps": [
+    { "add": "Nighthowler", "as": "nh" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Giant Spider" },
+    { "call": ["addToGraveyard", "p1", "card:Runeclaw Bear"] },
+    { "call": ["applyBestow", "@nh", "@bears"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": 3, "toughness": 3 } },
+    { "perm": "Nighthowler", "final": { "power": 0, "toughness": 0, "types": { "$excludes": ["Creature"] } } },
+    { "perm": "Giant Spider", "final": { "power": 2, "toughness": 4 } }
+  ]
+}

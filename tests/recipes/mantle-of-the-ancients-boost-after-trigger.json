@@ -1,0 +1,15 @@
+{
+  "name": "Mantle of the Ancients — static boost after the enters trigger",
+  "notes": "Memory: project_mantle_ancients_boost_after_trigger_2026-06-04. The static boost line followed a trigger line and was wrongly skipped, so the Aura had no effects at all. Here Mantle and Bonesplitter are both attached to Grizzly Bears: Mantle gives +1/+1 per attached Aura/Equipment (2), Bonesplitter +2/+0, so 2+2+2 / 2+2 = 6/4.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Bonesplitter", "as": "bone" },
+    { "add": "Mantle of the Ancients", "as": "mantle" },
+    { "call": ["setTarget", "@bone", "@bears"] },
+    { "call": ["setTarget", "@mantle", "@bears"] }
+  ],
+  "asserts": [
+    { "effect": { "source": "Mantle of the Ancients", "layer": "7c", "type": "modify_pt" } },
+    { "perm": "Grizzly Bears", "final": { "power": 6, "toughness": 4 } }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "name": "Swirl the Mists — color words changed to the chosen word",
+  "notes": "Memory: project_swirl_the_mists_color_word_2026-05-17. 'Choose a color word' is Layer 3 text replacement, not a chosen color; the TEXT_CHANGE effect must survive. With green chosen, White Knight's 'Protection from black' reads 'Protection from green'. Grizzly Bears has no color words and stays unchanged.",
+  "steps": [
+    { "add": "White Knight" },
+    { "add": "Grizzly Bears" },
+    { "add": "Swirl the Mists", "as": "swirl" },
+    { "call": ["setSwirlColor", "@swirl", "green"] }
+  ],
+  "asserts": [
+    { "effect": { "source": "Swirl the Mists", "layer": "3", "type": "text_change" } },
+    { "perm": "White Knight", "final": { "abilities": { "$includes": ["Protection from green"], "$excludes": ["Protection from black"] } } },
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2 } }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "Kalonian Twingrove — quoted token CDA is not a second self CDA",
+  "notes": "Memory: project_kalonian_twingrove_quoted_token_cda_2026-06-05. The token's quoted CDA inside the enters trigger was also parsed as a CDA on the Twingrove itself, giving two CDA_PT effects. The order assertion would list the source twice if the duplicate returned. Two Forests: 2/2.",
+  "steps": [
+    { "add": "Kalonian Twingrove" },
+    { "add": "Forest", "as": "forest1" },
+    { "add": "Forest", "as": "forest2" }
+  ],
+  "asserts": [
+    { "effect": { "source": "Kalonian Twingrove", "layer": "7a", "type": "cda_pt" } },
+    { "order": { "7a": ["Kalonian Twingrove"] } },
+    { "perm": "Kalonian Twingrove", "final": { "power": 2, "toughness": 2 } }
+  ]
+}

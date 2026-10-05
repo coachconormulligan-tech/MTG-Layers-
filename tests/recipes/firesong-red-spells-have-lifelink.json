@@ -1,0 +1,14 @@
+{
+  "name": "Firesong and Sunspeaker — red instant spells have lifelink",
+  "notes": "Memory: project_firesong_sunspeaker_spell_lifelink_2026-05-17 and project_stack_spell_evaluation_2026-05-17. 'Red instant and sorcery spells you control have lifelink' must apply to spells (not permanents): the red Lightning Bolt gains Lifelink; the blue Counterspell does not.",
+  "steps": [
+    { "add": "Firesong and Sunspeaker" },
+    { "add": "Lightning Bolt", "spell": true },
+    { "add": "Counterspell", "spell": true }
+  ],
+  "asserts": [
+    { "effect": { "source": "Firesong and Sunspeaker", "type": "add_ability" } },
+    { "perm": "Lightning Bolt", "final": { "abilities": { "$includes": ["Lifelink"] } } },
+    { "perm": "Counterspell", "final": { "abilities": { "$excludes": ["Lifelink"] } } }
+  ]
+}

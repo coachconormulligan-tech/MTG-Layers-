@@ -1,0 +1,19 @@
+{
+  "name": "Strata Scythe — +1/+1 per land with the same name as the exiled card",
+  "notes": "Memories: project_imprint_implementation_2026-05-25 and project_imprint_followup_fixes_2026-05-25 (tracker double-counting). Forest is exiled with the Scythe, two Forests and one Island are on the battlefield. Grizzly Bears equipped gets +2/+2 (two Forests; Island does not count) and not the extra +1/+1 the tracker used to add from the literal '+1/+1' in the text: 2/2 + 2/2 = 4/4. Runeclaw Bear is an unequipped control. NOTE: exile ids are literal; build in its own process.",
+  "steps": [
+    { "add": "Strata Scythe", "as": "scythe" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Runeclaw Bear" },
+    { "add": "Forest", "as": "forest1" },
+    { "add": "Forest", "as": "forest2" },
+    { "add": "Island" },
+    { "call": ["addToExile", "card:Forest"] },
+    { "call": ["setExileTag", "exile_1", "@scythe"] },
+    { "call": ["applyEquipAttachment", "@scythe", 0, "@bears"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": 4, "toughness": 4 } },
+    { "perm": "Runeclaw Bear", "final": { "power": 2, "toughness": 2 } }
+  ]
+}

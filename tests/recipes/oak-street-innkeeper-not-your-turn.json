@@ -1,0 +1,15 @@
+{
+  "name": "Oak Street Innkeeper — tapped creatures have hexproof only on other turns",
+  "notes": "Memory: project_during_turns_other_than_yours_2026-04-19. 'During turns other than yours' is normalised to 'As long as it is not your turn', so with isYourTurn false the tapped Bears have Hexproof and the untapped Runeclaw Bear does not.",
+  "steps": [
+    { "add": "Oak Street Innkeeper" },
+    { "add": "Grizzly Bears", "as": "tapped_bears" },
+    { "add": "Runeclaw Bear" },
+    { "call": ["toggleTapped", "@tapped_bears"] },
+    { "call": ["updateGameState", "isYourTurn", false] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$includes": ["Hexproof"] } } },
+    { "perm": "Runeclaw Bear", "final": { "abilities": { "$excludes": ["Hexproof"] } } }
+  ]
+}

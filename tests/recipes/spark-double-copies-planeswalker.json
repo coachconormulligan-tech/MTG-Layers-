@@ -1,0 +1,60 @@
+{
+  "name": "Spark Double — can copy a planeswalker (and the copy is not legendary)",
+  "notes": "Memory: project_spark_double_planeswalker_restriction_2026-04-28. The copy restriction used to be creature-only and 'if it's a creature' in the except clause was parsed as setTypes Creature. Spark Double copying Jace Beleren must be a non-legendary Planeswalker, not a Creature.",
+  "steps": [
+    {
+      "add": "Jace Beleren"
+    },
+    {
+      "add": "Spark Double"
+    },
+    {
+      "call": [
+        "setCopySource",
+        "@Spark Double",
+        "card:Jace Beleren"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Spark Double",
+      "final": {
+        "name": "Jace Beleren",
+        "supertypes": [],
+        "types": [
+          "Planeswalker"
+        ],
+        "subtypes": [
+          "Jace"
+        ],
+        "power": null,
+        "toughness": null
+      }
+    },
+    {
+      "perm": "Jace Beleren",
+      "final": {
+        "supertypes": [
+          "Legendary"
+        ],
+        "types": [
+          "Planeswalker"
+        ]
+      }
+    },
+    {
+      "effect": {
+        "source": "Spark Double",
+        "layer": "1",
+        "type": "copy"
+      }
+    },
+    {
+      "noEffect": {
+        "source": "Spark Double",
+        "layer": "4"
+      }
+    }
+  ]
+}

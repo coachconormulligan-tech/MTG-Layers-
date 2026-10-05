@@ -1,0 +1,1882 @@
+{
+ "name": "Halvar — creatures you control that are enchanted or equipped have double strike",
+ "notes": "Memory: project_halvar_sword_equip_fixes_2026-05-19. The tokenizer read 'enchanted' and 'equipped' as creature subtypes so the filter matched nothing. Pacifism'd Grizzly Bears and Bonesplitter'd Runeclaw Bear (both mine) must gain double strike; plain Vampire Nighthawk must not; the opponent's enchanted Giant Spider must not ('you control'). The Sword equip-cost half of the memory needs the activated-ability list and is not expressible here.",
+ "recipe": {
+  "steps": [
+   {
+    "call": [
+     "addPlayer",
+     "Opponent"
+    ]
+   },
+   {
+    "add": "Halvar, God of Battle"
+   },
+   {
+    "add": "Grizzly Bears",
+    "as": "bears"
+   },
+   {
+    "add": "Runeclaw Bear",
+    "as": "rune"
+   },
+   {
+    "add": "Vampire Nighthawk"
+   },
+   {
+    "add": "Giant Spider",
+    "controller": "p2"
+   },
+   {
+    "add": "Pacifism",
+    "as": "pac1"
+   },
+   {
+    "add": "Pacifism",
+    "as": "pac2"
+   },
+   {
+    "add": "Bonesplitter",
+    "as": "bone"
+   },
+   {
+    "call": [
+     "setTarget",
+     "@pac1",
+     "@bears"
+    ]
+   },
+   {
+    "call": [
+     "setTarget",
+     "@pac2",
+     "@Giant Spider"
+    ]
+   },
+   {
+    "call": [
+     "setTarget",
+     "@bone",
+     "@rune"
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Grizzly Bears",
+   "final": {
+    "abilities": {
+     "$includes": [
+      "Double strike"
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Runeclaw Bear",
+   "final": {
+    "power": 4,
+    "toughness": 2,
+    "abilities": {
+     "$includes": [
+      "Double strike"
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Vampire Nighthawk",
+   "final": {
+    "abilities": {
+     "$excludes": [
+      "Double strike"
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Giant Spider",
+   "final": {
+    "abilities": {
+     "$excludes": [
+      "Double strike"
+     ]
+    }
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "97502411-5c93-434c-b77b-ceb2c32feae7",
+     "oracle_id": "acfc3e07-757f-4ccf-a65e-bee07ce87f40",
+     "multiverse_ids": [
+      503619,
+      503620
+     ],
+     "mtgo_id": 87349,
+     "arena_id": 75050,
+     "tcgplayer_id": 229254,
+     "cardmarket_id": 527525,
+     "name": "Halvar, God of Battle // Sword of the Realms",
+     "lang": "en",
+     "released_at": "2021-02-05",
+     "uri": "https://api.scryfall.com/cards/97502411-5c93-434c-b77b-ceb2c32feae7",
+     "scryfall_uri": "https://scryfall.com/card/khm/15/halvar-god-of-battle-sword-of-the-realms?utm_source=api",
+     "layout": "modal_dfc",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T07:38:11Z",
+     "cmc": 4,
+     "type_line": "Legendary Creature — God // Legendary Artifact — Equipment",
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [
+      "Equip"
+     ],
+     "card_faces": [
+      {
+       "object": "card_face",
+       "name": "Halvar, God of Battle",
+       "mana_cost": "{2}{W}{W}",
+       "type_line": "Legendary Creature — God",
+       "oracle_text": "Creatures you control that are enchanted or equipped have double strike.\nAt the beginning of each combat, you may attach target Aura or Equipment attached to a creature you control to target creature you control.",
+       "colors": [
+        "W"
+       ],
+       "power": "4",
+       "toughness": "4",
+       "artist": "Lie Setiawan",
+       "artist_id": "6f771d3f-310e-4aa4-841f-5ba4ba9f025a",
+       "illustration_id": "a57ddc45-4a21-447f-a2f8-ddc93407b12a",
+       "image_uris": {
+        "small": "https://cards.scryfall.io/small/front/9/7/97502411-5c93-434c-b77b-ceb2c32feae7.jpg?1783928291",
+        "normal": "https://cards.scryfall.io/normal/front/9/7/97502411-5c93-434c-b77b-ceb2c32feae7.jpg?1783928291",
+        "large": "https://cards.scryfall.io/large/front/9/7/97502411-5c93-434c-b77b-ceb2c32feae7.jpg?1783928291",
+        "png": "https://cards.scryfall.io/png/front/9/7/97502411-5c93-434c-b77b-ceb2c32feae7.png?1783928291",
+        "art_crop": "https://cards.scryfall.io/art_crop/front/9/7/97502411-5c93-434c-b77b-ceb2c32feae7.jpg?1783928291",
+        "border_crop": "https://cards.scryfall.io/border_crop/front/9/7/97502411-5c93-434c-b77b-ceb2c32feae7.jpg?1783928291",
+        "thumb": "https://cards.scryfall.io/thumb/front/9/7/97502411-5c93-434c-b77b-ceb2c32feae7.webp?1783928291",
+        "grid": "https://cards.scryfall.io/grid/front/9/7/97502411-5c93-434c-b77b-ceb2c32feae7.webp?1783928291",
+        "display": "https://cards.scryfall.io/display/front/9/7/97502411-5c93-434c-b77b-ceb2c32feae7.webp?1783928291",
+        "art": "https://cards.scryfall.io/art/front/9/7/97502411-5c93-434c-b77b-ceb2c32feae7.webp?1783928291",
+        "crop": "https://cards.scryfall.io/crop/front/9/7/97502411-5c93-434c-b77b-ceb2c32feae7.webp?1783928291"
+       }
+      },
+      {
+       "object": "card_face",
+       "name": "Sword of the Realms",
+       "mana_cost": "{1}{W}",
+       "type_line": "Legendary Artifact — Equipment",
+       "oracle_text": "Equipped creature gets +2/+0 and has vigilance.\nWhenever equipped creature dies, return it to its owner's hand.\nEquip {1}{W}",
+       "colors": [
+        "W"
+       ],
+       "flavor_text": "It cuts through the Cosmos itself, carving new Omenpaths between the realms.",
+       "artist": "Lie Setiawan",
+       "artist_id": "6f771d3f-310e-4aa4-841f-5ba4ba9f025a",
+       "illustration_id": "140e740b-72b7-49fa-a407-7c41a9245124",
+       "image_uris": {
+        "small": "https://cards.scryfall.io/small/back/9/7/97502411-5c93-434c-b77b-ceb2c32feae7.jpg?1783928291",
+        "normal": "https://cards.scryfall.io/normal/back/9/7/97502411-5c93-434c-b77b-ceb2c32feae7.jpg?1783928291",
+        "large": "https://cards.scryfall.io/large/back/9/7/97502411-5c93-434c-b77b-ceb2c32feae7.jpg?1783928291",
+        "png": "https://cards.scryfall.io/png/back/9/7/97502411-5c93-434c-b77b-ceb2c32feae7.png?1783928291",
+        "art_crop": "https://cards.scryfall.io/art_crop/back/9/7/97502411-5c93-434c-b77b-ceb2c32feae7.jpg?1783928291",
+        "border_crop": "https://cards.scryfall.io/border_crop/back/9/7/97502411-5c93-434c-b77b-ceb2c32feae7.jpg?1783928291",
+        "thumb": "https://cards.scryfall.io/thumb/back/9/7/97502411-5c93-434c-b77b-ceb2c32feae7.webp?1783928291",
+        "grid": "https://cards.scryfall.io/grid/back/9/7/97502411-5c93-434c-b77b-ceb2c32feae7.webp?1783928291",
+        "display": "https://cards.scryfall.io/display/back/9/7/97502411-5c93-434c-b77b-ceb2c32feae7.webp?1783928291",
+        "art": "https://cards.scryfall.io/art/back/9/7/97502411-5c93-434c-b77b-ceb2c32feae7.webp?1783928291",
+        "crop": "https://cards.scryfall.io/crop/back/9/7/97502411-5c93-434c-b77b-ceb2c32feae7.webp?1783928291"
+       }
+      }
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "3ce46100-461d-424e-afa4-7a0bb7d0a822",
+       "component": "combo_piece",
+       "name": "Forging the Tyrite Sword",
+       "type_line": "Enchantment — Saga",
+       "uri": "https://api.scryfall.com/cards/3ce46100-461d-424e-afa4-7a0bb7d0a822"
+      },
+      {
+       "object": "related_card",
+       "id": "feddb683-a8f8-4def-bd3e-6d630c42cd34",
+       "component": "combo_piece",
+       "name": "Halvar, God of Battle // Sword of the Realms",
+       "type_line": "Legendary Creature — God // Legendary Artifact — Equipment",
+       "uri": "https://api.scryfall.com/cards/feddb683-a8f8-4def-bd3e-6d630c42cd34"
+      }
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "arena",
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "43057fad-b1c1-437f-bc48-0045bce6d8c9",
+     "set": "khm",
+     "set_name": "Kaldheim",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/43057fad-b1c1-437f-bc48-0045bce6d8c9",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Akhm&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/khm?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/97502411-5c93-434c-b77b-ceb2c32feae7/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aacfc3e07-757f-4ccf-a65e-bee07ce87f40&unique=prints",
+     "collector_number": "15",
+     "digital": false,
+     "rarity": "mythic",
+     "artist": "Lie Setiawan",
+     "artist_ids": [
+      "6f771d3f-310e-4aa4-841f-5ba4ba9f025a"
+     ],
+     "border_color": "black",
+     "frame": "2015",
+     "frame_effects": [
+      "legendary"
+     ],
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 2385,
+     "penny_rank": 6803,
+     "preview": {
+      "source": "Amon Amarth",
+      "source_uri": "https://twitter.com/AmonAmarthBand/status/1339375888434036738",
+      "previewed_at": "2020-12-16"
+     },
+     "prices": {
+      "usd": "21.31",
+      "usd_foil": "25.43",
+      "usd_etched": null,
+      "eur": "22.59",
+      "eur_foil": "21.79",
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=503619&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DHalvar%252C%2BGod%2Bof%2BBattle%2B%252F%252F%2BSword%2Bof%2Bthe%2BRealms",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DHalvar%252C%2BGod%2Bof%2BBattle%2B%252F%252F%2BSword%2Bof%2Bthe%2BRealms",
+      "edhrec": "https://edhrec.com/route/?cc=Halvar%2C+God+of+Battle"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F229254%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=527525&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/87349?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+     "multiverse_ids": [
+      129586
+     ],
+     "mtgo_id": 27400,
+     "mtgo_foil_id": 27401,
+     "tcgplayer_id": 15153,
+     "cardmarket_id": 16432,
+     "name": "Grizzly Bears",
+     "lang": "en",
+     "released_at": "2007-07-13",
+     "uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "scryfall_uri": "https://scryfall.com/card/10e/268/grizzly-bears?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:43:21Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "normal": "https://cards.scryfall.io/normal/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "large": "https://cards.scryfall.io/large/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "png": "https://cards.scryfall.io/png/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.png?1783943001",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "grid": "https://cards.scryfall.io/grid/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "display": "https://cards.scryfall.io/display/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "art": "https://cards.scryfall.io/art/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "crop": "https://cards.scryfall.io/crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001"
+     },
+     "mana_cost": "{1}{G}",
+     "cmc": 2,
+     "type_line": "Creature — Bear",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set": "10e",
+     "set_name": "Tenth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A14c8f55d-d177-4c25-a931-ebeb9e6062a0&unique=prints",
+     "collector_number": "268",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"We cannot forget that among all of Dominaria's wonders, a system of life exists, with prey and predators that will never fight wars nor vie for ancient power.\"\n—Jolrael, empress of beasts",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "D. J. Cleland-Hura",
+     "artist_ids": [
+      "87d21070-2432-4167-8aab-5968af1c14f3"
+     ],
+     "illustration_id": "066bfe81-0f53-43da-a074-b2ecc5dcda72",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 8114,
+     "penny_rank": 10982,
+     "prices": {
+      "usd": "0.22",
+      "usd_foil": "3.29",
+      "usd_etched": null,
+      "eur": "0.11",
+      "eur_foil": "1.97",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129586&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "edhrec": "https://edhrec.com/route/?cc=Grizzly+Bears"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15153%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16432&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27400?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "d1995238-79cc-4381-9595-71ef11ea1e36",
+     "oracle_id": "ec49dfcf-d16d-4621-af4b-4a6f09043221",
+     "multiverse_ids": [
+      383368
+     ],
+     "mtgo_id": 53290,
+     "mtgo_foil_id": 53291,
+     "tcgplayer_id": 90949,
+     "cardmarket_id": 267595,
+     "name": "Runeclaw Bear",
+     "lang": "en",
+     "released_at": "2014-07-18",
+     "uri": "https://api.scryfall.com/cards/d1995238-79cc-4381-9595-71ef11ea1e36",
+     "scryfall_uri": "https://scryfall.com/card/m15/197/runeclaw-bear?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T10:39:22Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
+      "normal": "https://cards.scryfall.io/normal/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
+      "large": "https://cards.scryfall.io/large/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
+      "png": "https://cards.scryfall.io/png/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.png?1783939162",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
+      "thumb": "https://cards.scryfall.io/thumb/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.webp?1783939162",
+      "grid": "https://cards.scryfall.io/grid/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.webp?1783939162",
+      "display": "https://cards.scryfall.io/display/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.webp?1783939162",
+      "art": "https://cards.scryfall.io/art/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.webp?1783939162",
+      "crop": "https://cards.scryfall.io/crop/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.webp?1783939162"
+     },
+     "mana_cost": "{1}{G}",
+     "cmc": 2,
+     "type_line": "Creature — Bear",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "6ce49890-3b37-42a5-8932-dbeef1d7b62c",
+     "set": "m15",
+     "set_name": "Magic 2015",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/6ce49890-3b37-42a5-8932-dbeef1d7b62c",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Am15&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/m15?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/d1995238-79cc-4381-9595-71ef11ea1e36/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aec49dfcf-d16d-4621-af4b-4a6f09043221&unique=prints",
+     "collector_number": "197",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "The magic of the elves leaves its mark on the forest. The magic of the forest leaves its mark on the animals who live there. The animals of the forest leave their mark on all who trespass.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Jesper Ejsing",
+     "artist_ids": [
+      "a5f8354a-8b51-4e59-96b2-0e3aeae4fa1d"
+     ],
+     "illustration_id": "0bb0db79-2039-4f8b-a8ac-d7c952f07ba5",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 9229,
+     "penny_rank": 10859,
+     "prices": {
+      "usd": "0.14",
+      "usd_foil": "0.51",
+      "usd_etched": null,
+      "eur": "0.11",
+      "eur_foil": "0.36",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=383368&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DRuneclaw%2BBear",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DRuneclaw%2BBear",
+      "edhrec": "https://edhrec.com/route/?cc=Runeclaw+Bear"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F90949%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=267595&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/53290?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "7aff07f9-9528-4149-9af0-f4e3c66c9dc5",
+     "oracle_id": "feb244f8-bcb1-44cf-9940-2719221a7309",
+     "multiverse_ids": [],
+     "tcgplayer_id": 695541,
+     "cardmarket_id": 904209,
+     "name": "Vampire Nighthawk",
+     "lang": "en",
+     "released_at": "2026-04-24",
+     "uri": "https://api.scryfall.com/cards/7aff07f9-9528-4149-9af0-f4e3c66c9dc5",
+     "scryfall_uri": "https://scryfall.com/card/fdn/757/vampire-nighthawk?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-08-24T09:13:45Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/7/a/7aff07f9-9528-4149-9af0-f4e3c66c9dc5.jpg?1787562825",
+      "normal": "https://cards.scryfall.io/normal/front/7/a/7aff07f9-9528-4149-9af0-f4e3c66c9dc5.jpg?1787562825",
+      "large": "https://cards.scryfall.io/large/front/7/a/7aff07f9-9528-4149-9af0-f4e3c66c9dc5.jpg?1787562825",
+      "png": "https://cards.scryfall.io/png/front/7/a/7aff07f9-9528-4149-9af0-f4e3c66c9dc5.png?1787562825",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/7/a/7aff07f9-9528-4149-9af0-f4e3c66c9dc5.jpg?1787562825",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/7/a/7aff07f9-9528-4149-9af0-f4e3c66c9dc5.jpg?1787562825",
+      "thumb": "https://cards.scryfall.io/thumb/front/7/a/7aff07f9-9528-4149-9af0-f4e3c66c9dc5.webp?1787562825",
+      "grid": "https://cards.scryfall.io/grid/front/7/a/7aff07f9-9528-4149-9af0-f4e3c66c9dc5.webp?1787562825",
+      "display": "https://cards.scryfall.io/display/front/7/a/7aff07f9-9528-4149-9af0-f4e3c66c9dc5.webp?1787562825",
+      "art": "https://cards.scryfall.io/art/front/7/a/7aff07f9-9528-4149-9af0-f4e3c66c9dc5.webp?1787562825",
+      "crop": "https://cards.scryfall.io/crop/front/7/a/7aff07f9-9528-4149-9af0-f4e3c66c9dc5.webp?1787562825"
+     },
+     "mana_cost": "{1}{B}{B}",
+     "cmc": 3,
+     "type_line": "Creature — Vampire Shaman",
+     "oracle_text": "Flying\nDeathtouch (Any amount of damage this deals to a creature is enough to destroy it.)\nLifelink (Damage dealt by this creature also causes you to gain that much life.)",
+     "power": "2",
+     "toughness": "3",
+     "colors": [
+      "B"
+     ],
+     "color_identity": [
+      "B"
+     ],
+     "keywords": [
+      "Deathtouch",
+      "Flying",
+      "Lifelink"
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "arena",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a7ecb771-d1b6-4dec-8cf5-8d45179f21e0",
+     "set": "fdn",
+     "set_name": "Foundations",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a7ecb771-d1b6-4dec-8cf5-8d45179f21e0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Afdn&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/fdn?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/7aff07f9-9528-4149-9af0-f4e3c66c9dc5/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Afeb244f8-bcb1-44cf-9940-2719221a7309&unique=prints",
+     "collector_number": "757",
+     "digital": false,
+     "rarity": "uncommon",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Jason Chan",
+     "artist_ids": [
+      "8062d5a9-51b6-4822-933f-fa9e9dba8416"
+     ],
+     "illustration_id": "d131a3b3-9639-4095-89cc-e0c87d04e9b9",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "setextension"
+     ],
+     "edhrec_rank": 1755,
+     "penny_rank": 653,
+     "prices": {
+      "usd": "0.20",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.50",
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DVampire%2BNighthawk",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DVampire%2BNighthawk",
+      "edhrec": "https://edhrec.com/route/?cc=Vampire+Nighthawk"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F695541%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=904209&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Vampire+Nighthawk&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 4,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_5",
+    "scryfallData": {
+     "object": "card",
+     "id": "213c9202-b6f4-43ab-b57f-b97a1da5e263",
+     "oracle_id": "e740ce2f-2134-473c-afa1-1b6d2d1e38ef",
+     "multiverse_ids": [
+      599037
+     ],
+     "mtgo_id": 107815,
+     "tcgplayer_id": 457190,
+     "cardmarket_id": 688418,
+     "name": "Giant Spider",
+     "lang": "en",
+     "released_at": "2023-01-13",
+     "uri": "https://api.scryfall.com/cards/213c9202-b6f4-43ab-b57f-b97a1da5e263",
+     "scryfall_uri": "https://scryfall.com/card/dmr/163/giant-spider?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T04:54:03Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/2/1/213c9202-b6f4-43ab-b57f-b97a1da5e263.jpg?1783918443",
+      "normal": "https://cards.scryfall.io/normal/front/2/1/213c9202-b6f4-43ab-b57f-b97a1da5e263.jpg?1783918443",
+      "large": "https://cards.scryfall.io/large/front/2/1/213c9202-b6f4-43ab-b57f-b97a1da5e263.jpg?1783918443",
+      "png": "https://cards.scryfall.io/png/front/2/1/213c9202-b6f4-43ab-b57f-b97a1da5e263.png?1783918443",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/2/1/213c9202-b6f4-43ab-b57f-b97a1da5e263.jpg?1783918443",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/2/1/213c9202-b6f4-43ab-b57f-b97a1da5e263.jpg?1783918443",
+      "thumb": "https://cards.scryfall.io/thumb/front/2/1/213c9202-b6f4-43ab-b57f-b97a1da5e263.webp?1783918443",
+      "grid": "https://cards.scryfall.io/grid/front/2/1/213c9202-b6f4-43ab-b57f-b97a1da5e263.webp?1783918443",
+      "display": "https://cards.scryfall.io/display/front/2/1/213c9202-b6f4-43ab-b57f-b97a1da5e263.webp?1783918443",
+      "art": "https://cards.scryfall.io/art/front/2/1/213c9202-b6f4-43ab-b57f-b97a1da5e263.webp?1783918443",
+      "crop": "https://cards.scryfall.io/crop/front/2/1/213c9202-b6f4-43ab-b57f-b97a1da5e263.webp?1783918443"
+     },
+     "mana_cost": "{3}{G}",
+     "cmc": 4,
+     "type_line": "Creature — Spider",
+     "oracle_text": "Reach (This creature can block creatures with flying.)",
+     "power": "2",
+     "toughness": "4",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [
+      "Reach"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "ca4c2884-e539-4b7f-980d-5d6a50220f2a",
+     "set": "dmr",
+     "set_name": "Dominaria Remastered",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/ca4c2884-e539-4b7f-980d-5d6a50220f2a",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Admr&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/dmr?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/213c9202-b6f4-43ab-b57f-b97a1da5e263/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ae740ce2f-2134-473c-afa1-1b6d2d1e38ef&unique=prints",
+     "collector_number": "163",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "The giant spider's silk naturally resists gravity, almost weaving itself as it blankets the forest canopy.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Randy Gallegos",
+     "artist_ids": [
+      "a5048cc7-438a-4378-98e4-da99b78e1db0"
+     ],
+     "illustration_id": "6bb01311-3a02-4b23-a5a2-ac3d0e676300",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 19577,
+     "penny_rank": 15697,
+     "prices": {
+      "usd": "0.06",
+      "usd_foil": "0.07",
+      "usd_etched": null,
+      "eur": "0.08",
+      "eur_foil": "0.09",
+      "tix": "0.04"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=599037&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGiant%2BSpider",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGiant%2BSpider",
+      "edhrec": "https://edhrec.com/route/?cc=Giant+Spider"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F457190%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=688418&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/107815?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_1",
+    "controller": "player_1",
+    "timestamp": 5,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_6",
+    "scryfallData": {
+     "object": "card",
+     "id": "433eed50-81af-4a59-b624-57b6f5f1bb0f",
+     "oracle_id": "5f5e0b10-c8cf-450c-bfd3-bcb0528ec330",
+     "multiverse_ids": [],
+     "resource_id": "DD79F267B90056EE9C138674874AC9D54115F093F8F1ECAD68C7D3377DB6511B",
+     "mtgo_id": 151175,
+     "tcgplayer_id": 697117,
+     "cardmarket_id": 892276,
+     "name": "Pacifism",
+     "lang": "en",
+     "released_at": "2026-06-26",
+     "uri": "https://api.scryfall.com/cards/433eed50-81af-4a59-b624-57b6f5f1bb0f",
+     "scryfall_uri": "https://scryfall.com/card/msc/575/pacifism?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T00:38:11Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/3/433eed50-81af-4a59-b624-57b6f5f1bb0f.jpg?1783903091",
+      "normal": "https://cards.scryfall.io/normal/front/4/3/433eed50-81af-4a59-b624-57b6f5f1bb0f.jpg?1783903091",
+      "large": "https://cards.scryfall.io/large/front/4/3/433eed50-81af-4a59-b624-57b6f5f1bb0f.jpg?1783903091",
+      "png": "https://cards.scryfall.io/png/front/4/3/433eed50-81af-4a59-b624-57b6f5f1bb0f.png?1783903091",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/3/433eed50-81af-4a59-b624-57b6f5f1bb0f.jpg?1783903091",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/3/433eed50-81af-4a59-b624-57b6f5f1bb0f.jpg?1783903091",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/3/433eed50-81af-4a59-b624-57b6f5f1bb0f.webp?1783903091",
+      "grid": "https://cards.scryfall.io/grid/front/4/3/433eed50-81af-4a59-b624-57b6f5f1bb0f.webp?1783903091",
+      "display": "https://cards.scryfall.io/display/front/4/3/433eed50-81af-4a59-b624-57b6f5f1bb0f.webp?1783903091",
+      "art": "https://cards.scryfall.io/art/front/4/3/433eed50-81af-4a59-b624-57b6f5f1bb0f.webp?1783903091",
+      "crop": "https://cards.scryfall.io/crop/front/4/3/433eed50-81af-4a59-b624-57b6f5f1bb0f.webp?1783903091"
+     },
+     "mana_cost": "{1}{W}",
+     "cmc": 2,
+     "type_line": "Enchantment — Aura",
+     "oracle_text": "Enchant creature\nEnchanted creature can't attack or block.",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [
+      "Enchant"
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo",
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "9d739461-c5ac-43a1-af41-3d5a585b5c8d",
+     "set": "msc",
+     "set_name": "Marvel Super Heroes Commander",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/9d739461-c5ac-43a1-af41-3d5a585b5c8d",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Amsc&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/msc?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/433eed50-81af-4a59-b624-57b6f5f1bb0f/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A5f5e0b10-c8cf-450c-bfd3-bcb0528ec330&unique=prints",
+     "collector_number": "575",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"You wish to get up, brother? It is very simple! All you have to do is be worthy!\"\n—Thor",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Myles Wohl",
+     "artist_ids": [
+      "d08c97ce-ffe1-46ca-a06c-27ed6a5baf42"
+     ],
+     "illustration_id": "6cc67341-8664-4e16-a483-83e0e137ecb9",
+     "border_color": "black",
+     "frame": "2015",
+     "frame_effects": [
+      "enchantment"
+     ],
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "universesbeyond"
+     ],
+     "edhrec_rank": 5247,
+     "penny_rank": 5820,
+     "prices": {
+      "usd": "0.13",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.23",
+      "eur_foil": null,
+      "tix": "0.01"
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DPacifism",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DPacifism",
+      "edhrec": "https://edhrec.com/route/?cc=Pacifism"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F697117%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=892276&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/151175?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 6,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": "perm_2",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 9,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_7",
+    "scryfallData": {
+     "object": "card",
+     "id": "433eed50-81af-4a59-b624-57b6f5f1bb0f",
+     "oracle_id": "5f5e0b10-c8cf-450c-bfd3-bcb0528ec330",
+     "multiverse_ids": [],
+     "resource_id": "DD79F267B90056EE9C138674874AC9D54115F093F8F1ECAD68C7D3377DB6511B",
+     "mtgo_id": 151175,
+     "tcgplayer_id": 697117,
+     "cardmarket_id": 892276,
+     "name": "Pacifism",
+     "lang": "en",
+     "released_at": "2026-06-26",
+     "uri": "https://api.scryfall.com/cards/433eed50-81af-4a59-b624-57b6f5f1bb0f",
+     "scryfall_uri": "https://scryfall.com/card/msc/575/pacifism?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T00:38:11Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/3/433eed50-81af-4a59-b624-57b6f5f1bb0f.jpg?1783903091",
+      "normal": "https://cards.scryfall.io/normal/front/4/3/433eed50-81af-4a59-b624-57b6f5f1bb0f.jpg?1783903091",
+      "large": "https://cards.scryfall.io/large/front/4/3/433eed50-81af-4a59-b624-57b6f5f1bb0f.jpg?1783903091",
+      "png": "https://cards.scryfall.io/png/front/4/3/433eed50-81af-4a59-b624-57b6f5f1bb0f.png?1783903091",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/3/433eed50-81af-4a59-b624-57b6f5f1bb0f.jpg?1783903091",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/3/433eed50-81af-4a59-b624-57b6f5f1bb0f.jpg?1783903091",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/3/433eed50-81af-4a59-b624-57b6f5f1bb0f.webp?1783903091",
+      "grid": "https://cards.scryfall.io/grid/front/4/3/433eed50-81af-4a59-b624-57b6f5f1bb0f.webp?1783903091",
+      "display": "https://cards.scryfall.io/display/front/4/3/433eed50-81af-4a59-b624-57b6f5f1bb0f.webp?1783903091",
+      "art": "https://cards.scryfall.io/art/front/4/3/433eed50-81af-4a59-b624-57b6f5f1bb0f.webp?1783903091",
+      "crop": "https://cards.scryfall.io/crop/front/4/3/433eed50-81af-4a59-b624-57b6f5f1bb0f.webp?1783903091"
+     },
+     "mana_cost": "{1}{W}",
+     "cmc": 2,
+     "type_line": "Enchantment — Aura",
+     "oracle_text": "Enchant creature\nEnchanted creature can't attack or block.",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [
+      "Enchant"
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo",
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "9d739461-c5ac-43a1-af41-3d5a585b5c8d",
+     "set": "msc",
+     "set_name": "Marvel Super Heroes Commander",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/9d739461-c5ac-43a1-af41-3d5a585b5c8d",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Amsc&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/msc?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/433eed50-81af-4a59-b624-57b6f5f1bb0f/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A5f5e0b10-c8cf-450c-bfd3-bcb0528ec330&unique=prints",
+     "collector_number": "575",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"You wish to get up, brother? It is very simple! All you have to do is be worthy!\"\n—Thor",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Myles Wohl",
+     "artist_ids": [
+      "d08c97ce-ffe1-46ca-a06c-27ed6a5baf42"
+     ],
+     "illustration_id": "6cc67341-8664-4e16-a483-83e0e137ecb9",
+     "border_color": "black",
+     "frame": "2015",
+     "frame_effects": [
+      "enchantment"
+     ],
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "universesbeyond"
+     ],
+     "edhrec_rank": 5247,
+     "penny_rank": 5820,
+     "prices": {
+      "usd": "0.13",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.23",
+      "eur_foil": null,
+      "tix": "0.01"
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DPacifism",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DPacifism",
+      "edhrec": "https://edhrec.com/route/?cc=Pacifism"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F697117%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=892276&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/151175?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 7,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": "perm_5",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 10,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_8",
+    "scryfallData": {
+     "object": "card",
+     "id": "690972a8-72df-4050-a353-16e45589167c",
+     "oracle_id": "452e3f5f-ce17-4682-966b-5cc100210aee",
+     "multiverse_ids": [
+      500938
+     ],
+     "mtgo_id": 85734,
+     "tcgplayer_id": 227385,
+     "cardmarket_id": 514804,
+     "name": "Bonesplitter",
+     "lang": "en",
+     "released_at": "2020-11-20",
+     "uri": "https://api.scryfall.com/cards/690972a8-72df-4050-a353-16e45589167c",
+     "scryfall_uri": "https://scryfall.com/card/cmr/458/bonesplitter?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T07:44:53Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/6/9/690972a8-72df-4050-a353-16e45589167c.jpg?1783928693",
+      "normal": "https://cards.scryfall.io/normal/front/6/9/690972a8-72df-4050-a353-16e45589167c.jpg?1783928693",
+      "large": "https://cards.scryfall.io/large/front/6/9/690972a8-72df-4050-a353-16e45589167c.jpg?1783928693",
+      "png": "https://cards.scryfall.io/png/front/6/9/690972a8-72df-4050-a353-16e45589167c.png?1783928693",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/6/9/690972a8-72df-4050-a353-16e45589167c.jpg?1783928693",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/6/9/690972a8-72df-4050-a353-16e45589167c.jpg?1783928693",
+      "thumb": "https://cards.scryfall.io/thumb/front/6/9/690972a8-72df-4050-a353-16e45589167c.webp?1783928693",
+      "grid": "https://cards.scryfall.io/grid/front/6/9/690972a8-72df-4050-a353-16e45589167c.webp?1783928693",
+      "display": "https://cards.scryfall.io/display/front/6/9/690972a8-72df-4050-a353-16e45589167c.webp?1783928693",
+      "art": "https://cards.scryfall.io/art/front/6/9/690972a8-72df-4050-a353-16e45589167c.webp?1783928693",
+      "crop": "https://cards.scryfall.io/crop/front/6/9/690972a8-72df-4050-a353-16e45589167c.webp?1783928693"
+     },
+     "mana_cost": "{1}",
+     "cmc": 1,
+     "type_line": "Artifact — Equipment",
+     "oracle_text": "Equipped creature gets +2/+0.\nEquip {1}",
+     "colors": [],
+     "color_identity": [],
+     "keywords": [
+      "Equip"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "39de6fbf-1f11-48d0-8f04-f0407f6a0732",
+     "set": "cmr",
+     "set_name": "Commander Legends",
+     "set_type": "draft_innovation",
+     "set_uri": "https://api.scryfall.com/sets/39de6fbf-1f11-48d0-8f04-f0407f6a0732",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Acmr&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/cmr?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/690972a8-72df-4050-a353-16e45589167c/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A452e3f5f-ce17-4682-966b-5cc100210aee&unique=prints",
+     "collector_number": "458",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"It puts an end to what ails you.\"\n—Jeorg, Valla battlemaster",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Darrell Riche",
+     "artist_ids": [
+      "262c8e55-4efc-467b-a042-6f734b9d2e01"
+     ],
+     "illustration_id": "e75cfefc-d113-4380-a29c-589358438155",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 11015,
+     "penny_rank": 2903,
+     "prices": {
+      "usd": "0.22",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.17",
+      "eur_foil": null,
+      "tix": "0.04"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=500938&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DBonesplitter",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DBonesplitter",
+      "edhrec": "https://edhrec.com/route/?cc=Bonesplitter"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F227385%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=514804&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/85734?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 8,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": "perm_3",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 11,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "emblems": []
+   },
+   {
+    "id": "player_1",
+    "name": "Opponent",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": false,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 2,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Halvar, God of Battle",
+    "final": {
+     "name": "Halvar, God of Battle",
+     "controller": "player_0",
+     "supertypes": [
+      "Legendary"
+     ],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "God"
+     ],
+     "power": 4,
+     "toughness": 4,
+     "colors": [
+      "W"
+     ],
+     "abilities": [
+      "Creatures you control that are enchanted or equipped have double strike.",
+      "At the beginning of each combat, you may attach target Aura or Equipment attached to a creature you control to target creature you control."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Grizzly Bears",
+    "final": {
+     "name": "Grizzly Bears",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Bear"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "Double strike"
+     ],
+     "traits": [
+      "Enchanted"
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "Halvar, God of Battle"
+     ]
+    }
+   },
+   {
+    "perm": "Runeclaw Bear",
+    "final": {
+     "name": "Runeclaw Bear",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Bear"
+     ],
+     "power": 4,
+     "toughness": 2,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "Double strike"
+     ],
+     "traits": [
+      "Equipped"
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "Halvar, God of Battle"
+     ],
+     "7c": [
+      "Bonesplitter"
+     ]
+    }
+   },
+   {
+    "perm": "Vampire Nighthawk",
+    "final": {
+     "name": "Vampire Nighthawk",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Vampire",
+      "Shaman"
+     ],
+     "power": 2,
+     "toughness": 3,
+     "colors": [
+      "B"
+     ],
+     "abilities": [
+      "Flying",
+      "Deathtouch",
+      "Lifelink"
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Giant Spider",
+    "final": {
+     "name": "Giant Spider",
+     "controller": "player_1",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Spider"
+     ],
+     "power": 2,
+     "toughness": 4,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "Reach"
+     ],
+     "traits": [
+      "Enchanted"
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Pacifism A",
+    "final": {
+     "name": "Pacifism",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Enchantment"
+     ],
+     "subtypes": [
+      "Aura"
+     ],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "W"
+     ],
+     "abilities": [
+      "Enchant creature",
+      "Enchanted creature can't attack or block."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Pacifism B",
+    "final": {
+     "name": "Pacifism",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Enchantment"
+     ],
+     "subtypes": [
+      "Aura"
+     ],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "W"
+     ],
+     "abilities": [
+      "Enchant creature",
+      "Enchanted creature can't attack or block."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Bonesplitter",
+    "final": {
+     "name": "Bonesplitter",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Artifact"
+     ],
+     "subtypes": [
+      "Equipment"
+     ],
+     "power": null,
+     "toughness": null,
+     "colors": [],
+     "abilities": [
+      "Equipped creature gets +2/+0.",
+      "Equip {1}"
+     ]
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "6": [
+    "Halvar, God of Battle"
+   ],
+   "7c": [
+    "Bonesplitter"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Halvar, God of Battle",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "global",
+    "params": {
+     "ability": "Double strike"
+    }
+   },
+   {
+    "source": "Pacifism",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "target": "Grizzly Bears",
+    "params": {
+     "power": 0,
+     "toughness": 0
+    }
+   },
+   {
+    "source": "Pacifism",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "target": "Giant Spider",
+    "params": {
+     "power": 0,
+     "toughness": 0
+    }
+   },
+   {
+    "source": "Bonesplitter",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "target": "Runeclaw Bear",
+    "params": {
+     "power": 2,
+     "toughness": 0
+    }
+   }
+  ]
+ }
+}

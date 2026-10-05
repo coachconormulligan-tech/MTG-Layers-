@@ -1,0 +1,13 @@
+{
+  "name": "Bello + Dress Down — no false source-viability dependency",
+  "notes": "Memory: project_ability_source_viability_fix_2026-04-07. A full REMOVE_ABILITIES effect made Bello's same-layer ADD_ABILITY look dependent on it, forcing non-timestamp ordering. Bello has the earlier timestamp, so layer 6 must run Bello then Dress Down: Bello grants Gilded Lotus indestructible and haste, then Dress Down strips them again (CR 613.6 keeps Bello's grant applying even though Bello loses its own abilities). Lotus ends a 4/4 Artifact Creature - Elemental with no abilities.",
+  "steps": [
+    { "add": "Bello, Bard of the Brambles" },
+    { "add": "Gilded Lotus" },
+    { "add": "Dress Down" }
+  ],
+  "asserts": [
+    { "order": { "6": ["Bello, Bard of the Brambles", "Bello, Bard of the Brambles", "Bello, Bard of the Brambles", "Dress Down"] } },
+    { "perm": "Gilded Lotus", "final": { "types": ["Artifact", "Creature"], "subtypes": ["Elemental"], "power": 4, "toughness": 4, "abilities": [] } }
+  ]
+}
