@@ -1,0 +1,11 @@
+{
+  "name": "Armored Guardian — firing its shroud ability does not overflow the stack",
+  "notes": "Found by tests/sweep.py. Same root cause as the Akroma recipe: _isProtectedFromSource called Battlefield.getAllFinalStates() mid-evaluation for a fired-ability pseudo-perm and recursed forever. Armored Guardian fires '{1}{U}{U}: This creature gains shroud until end of turn' and must gain Shroud and stay 2/5.",
+  "steps": [
+    { "add": "Armored Guardian", "as": "guardian" },
+    { "call": ["addActivatedAbility", "@guardian", 1, "This creature gains shroud until end of turn.", "{1}{U}{U}: This creature gains shroud until end of turn."] }
+  ],
+  "asserts": [
+    { "perm": "Armored Guardian", "final": { "power": 2, "toughness": 5, "abilities": { "$includes": ["Shroud"] } } }
+  ]
+}

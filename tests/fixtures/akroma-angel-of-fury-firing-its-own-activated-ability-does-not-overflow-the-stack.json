@@ -1,0 +1,391 @@
+{
+ "name": "Akroma, Angel of Fury — firing its own activated ability does not overflow the stack",
+ "notes": "Found by tests/sweep.py. _isProtectedFromSource resolved an ability pseudo-perm's real source by calling Battlefield.getAllFinalStates() from inside evaluation; with the cache not yet populated that re-entered the pipeline and recursed forever whenever the affected creature had any protection. effectAppliesToPerm now passes the in-progress states down. Akroma (protection from white and from blue) fires '{R}: gets +1/+0' and must end up 7/6.",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Akroma, Angel of Fury",
+    "as": "akroma"
+   },
+   {
+    "call": [
+     "addActivatedAbility",
+     "@akroma",
+     2,
+     "this card gets +1/+0 until end of turn.",
+     "{R}: this card gets +1/+0 until end of turn."
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Akroma, Angel of Fury",
+   "final": {
+    "power": 7,
+    "toughness": 6,
+    "abilities": {
+     "$includes": [
+      "Flying, trample, protection from white and from blue"
+     ]
+    }
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "2b5ac7bd-3788-4c8b-b945-c1105986807a",
+     "oracle_id": "2b80faaf-92fd-4fa0-a3f6-8bb263e7ff1d",
+     "multiverse_ids": [],
+     "resource_id": "92C43B347D7BC0DB86F35A321F2CDF8697D481F8895F91F409FA1CE3A8CD8EAF",
+     "mtgo_id": 156434,
+     "tcgplayer_id": 717803,
+     "cardmarket_id": 909812,
+     "name": "Akroma, Angel of Fury",
+     "lang": "en",
+     "released_at": "2026-10-02",
+     "uri": "https://api.scryfall.com/cards/2b5ac7bd-3788-4c8b-b945-c1105986807a",
+     "scryfall_uri": "https://scryfall.com/card/frc/19/akroma-angel-of-fury?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-09-17T11:24:54Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/2/b/2b5ac7bd-3788-4c8b-b945-c1105986807a.jpg?1789644294",
+      "normal": "https://cards.scryfall.io/normal/front/2/b/2b5ac7bd-3788-4c8b-b945-c1105986807a.jpg?1789644294",
+      "large": "https://cards.scryfall.io/large/front/2/b/2b5ac7bd-3788-4c8b-b945-c1105986807a.jpg?1789644294",
+      "png": "https://cards.scryfall.io/png/front/2/b/2b5ac7bd-3788-4c8b-b945-c1105986807a.png?1789644294",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/2/b/2b5ac7bd-3788-4c8b-b945-c1105986807a.jpg?1789644294",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/2/b/2b5ac7bd-3788-4c8b-b945-c1105986807a.jpg?1789644294",
+      "thumb": "https://cards.scryfall.io/thumb/front/2/b/2b5ac7bd-3788-4c8b-b945-c1105986807a.webp?1789644294",
+      "grid": "https://cards.scryfall.io/grid/front/2/b/2b5ac7bd-3788-4c8b-b945-c1105986807a.webp?1789644294",
+      "display": "https://cards.scryfall.io/display/front/2/b/2b5ac7bd-3788-4c8b-b945-c1105986807a.webp?1789644294",
+      "art": "https://cards.scryfall.io/art/front/2/b/2b5ac7bd-3788-4c8b-b945-c1105986807a.webp?1789644294",
+      "crop": "https://cards.scryfall.io/crop/front/2/b/2b5ac7bd-3788-4c8b-b945-c1105986807a.webp?1789644294"
+     },
+     "mana_cost": "{5}{R}{R}{R}",
+     "cmc": 8,
+     "type_line": "Legendary Creature — Angel",
+     "oracle_text": "This spell can't be countered.\nFlying, trample, protection from white and from blue\n{R}: Akroma gets +1/+0 until end of turn.\nMorph {3}{R}{R}{R} (You may cast this card face down as a 2/2 creature for {3}. Turn her face up any time for her morph cost.)",
+     "power": "6",
+     "toughness": "6",
+     "colors": [
+      "R"
+     ],
+     "color_identity": [
+      "R"
+     ],
+     "keywords": [
+      "Flying",
+      "Morph",
+      "Protection",
+      "Trample"
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "2b5ac7bd-3788-4c8b-b945-c1105986807a",
+       "component": "combo_piece",
+       "name": "Akroma, Angel of Fury",
+       "type_line": "Legendary Creature — Angel",
+       "uri": "https://api.scryfall.com/cards/2b5ac7bd-3788-4c8b-b945-c1105986807a"
+      },
+      {
+       "object": "related_card",
+       "id": "5430da88-b72e-4d64-bd3c-b21062cac1c2",
+       "component": "combo_piece",
+       "name": "Morph",
+       "type_line": "Creature",
+       "uri": "https://api.scryfall.com/cards/5430da88-b72e-4d64-bd3c-b21062cac1c2"
+      }
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "cfd10490-7397-4143-bda7-d388b877636f",
+     "set": "frc",
+     "set_name": "Reality Fracture Commander",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/cfd10490-7397-4143-bda7-d388b877636f",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Afrc&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/frc?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/2b5ac7bd-3788-4c8b-b945-c1105986807a/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A2b80faaf-92fd-4fa0-a3f6-8bb263e7ff1d&unique=prints",
+     "collector_number": "19",
+     "digital": false,
+     "rarity": "mythic",
+     "watermark": "echoverse",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Slawomir Maniak",
+     "artist_ids": [
+      "d887bc66-2779-416c-a1ff-d8720242063e"
+     ],
+     "illustration_id": "c4f17b2a-f7b5-4d6a-ae6f-3b4993f8cb17",
+     "border_color": "black",
+     "frame": "2015",
+     "frame_effects": [
+      "legendary"
+     ],
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 7028,
+     "penny_rank": 4123,
+     "preview": {
+      "source": "Wizards of the Coast",
+      "source_uri": "https://youtu.be/mvTyHbTbfBo",
+      "previewed_at": "2026-09-16"
+     },
+     "prices": {
+      "usd": "0.34",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.38",
+      "eur_foil": null,
+      "tix": "0.05"
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DAkroma%252C%2BAngel%2Bof%2BFury",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DAkroma%252C%2BAngel%2Bof%2BFury",
+      "edhrec": "https://edhrec.com/route/?cc=Akroma%2C+Angel+of+Fury"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F717803%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=909812&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/156434?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [
+   {
+    "id": "act_perm_1_2_2",
+    "kind": "activated",
+    "pseudoKind": "ability",
+    "sourceId": "perm_1",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 2,
+    "timestamp": 2,
+    "effectText": "this card gets +1/+0 until end of turn.",
+    "fullText": "{R}: this card gets +1/+0 until end of turn.",
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "firedAtStates": null,
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Akroma, Angel of Fury",
+       "imageUri": "https://cards.scryfall.io/small/front/2/b/2b5ac7bd-3788-4c8b-b945-c1105986807a.jpg?1789644294",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [
+        "Legendary"
+       ],
+       "printedSubtypes": [
+        "Angel"
+       ],
+       "printedPower": 6,
+       "printedToughness": 6,
+       "timestamp": 1
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    },
+    "primaryTarget": "perm_1",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 2,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null
+   }
+  ],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Akroma, Angel of Fury",
+    "final": {
+     "name": "Akroma, Angel of Fury",
+     "controller": "player_0",
+     "supertypes": [
+      "Legendary"
+     ],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Angel"
+     ],
+     "power": 7,
+     "toughness": 6,
+     "colors": [
+      "R"
+     ],
+     "abilities": [
+      "This spell can't be countered.",
+      "Flying, trample, protection from white and from blue",
+      "{R}: this card gets +1/+0 until end of turn.",
+      "Morph {3}{R}{R}{R}"
+     ]
+    },
+    "changedBy": {
+     "7c": [
+      "Akroma, Angel of Fury (activated)"
+     ]
+    }
+   }
+  ],
+  "order": {
+   "7c": [
+    "Akroma, Angel of Fury (activated)"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Akroma, Angel of Fury (activated)",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "target": "Akroma, Angel of Fury",
+    "params": {
+     "power": 1,
+     "toughness": 0
+    }
+   }
+  ]
+ }
+}

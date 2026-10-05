@@ -1,0 +1,991 @@
+{
+ "name": "Eight-and-a-Half-Tails — an ability that grants protection is not protection",
+ "notes": "_parseProtectionAbility matched \"protection from ...\" anywhere in a line, so \"{1}{W}: Target permanent you control gains protection from white until end of turn\" made Eight-and-a-Half-Tails itself protected from white without the ability being fired, and a white Aura (Holy Strength) was rejected. Only a protection keyword line or keyword-list item counts. Sword of Fire and Ice's static grant line likewise must not protect the Sword, while the equipped Bears still gets the granted bare \"Protection from red\" / \"Protection from blue\" lines.",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Eight-and-a-Half-Tails",
+    "as": "tails"
+   },
+   {
+    "add": "Holy Strength",
+    "as": "hs"
+   },
+   {
+    "call": [
+     "setTarget",
+     "@hs",
+     "@tails"
+    ]
+   },
+   {
+    "add": "Grizzly Bears",
+    "as": "bears"
+   },
+   {
+    "add": "Sword of Fire and Ice",
+    "as": "sword"
+   },
+   {
+    "call": [
+     "setTarget",
+     "@sword",
+     "@bears"
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Eight-and-a-Half-Tails",
+   "final": {
+    "power": 3,
+    "toughness": 4
+   }
+  },
+  {
+   "perm": "Grizzly Bears",
+   "final": {
+    "power": 4,
+    "toughness": 4,
+    "abilities": {
+     "$includes": [
+      "Protection from red",
+      "Protection from blue"
+     ]
+    }
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "ef722374-0305-4c30-ab45-cb772b252faf",
+     "oracle_id": "01c8d29f-4924-4d55-80bc-0c0c06bcb733",
+     "multiverse_ids": [
+      567509
+     ],
+     "mtgo_id": 100926,
+     "tcgplayer_id": 273684,
+     "cardmarket_id": 661728,
+     "name": "Eight-and-a-Half-Tails",
+     "lang": "en",
+     "released_at": "2022-06-10",
+     "uri": "https://api.scryfall.com/cards/ef722374-0305-4c30-ab45-cb772b252faf",
+     "scryfall_uri": "https://scryfall.com/card/clb/692/eight-and-a-half-tails?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T06:01:34Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/e/f/ef722374-0305-4c30-ab45-cb772b252faf.jpg?1783922494",
+      "normal": "https://cards.scryfall.io/normal/front/e/f/ef722374-0305-4c30-ab45-cb772b252faf.jpg?1783922494",
+      "large": "https://cards.scryfall.io/large/front/e/f/ef722374-0305-4c30-ab45-cb772b252faf.jpg?1783922494",
+      "png": "https://cards.scryfall.io/png/front/e/f/ef722374-0305-4c30-ab45-cb772b252faf.png?1783922494",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/e/f/ef722374-0305-4c30-ab45-cb772b252faf.jpg?1783922494",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/e/f/ef722374-0305-4c30-ab45-cb772b252faf.jpg?1783922494",
+      "thumb": "https://cards.scryfall.io/thumb/front/e/f/ef722374-0305-4c30-ab45-cb772b252faf.webp?1783922494",
+      "grid": "https://cards.scryfall.io/grid/front/e/f/ef722374-0305-4c30-ab45-cb772b252faf.webp?1783922494",
+      "display": "https://cards.scryfall.io/display/front/e/f/ef722374-0305-4c30-ab45-cb772b252faf.webp?1783922494",
+      "art": "https://cards.scryfall.io/art/front/e/f/ef722374-0305-4c30-ab45-cb772b252faf.webp?1783922494",
+      "crop": "https://cards.scryfall.io/crop/front/e/f/ef722374-0305-4c30-ab45-cb772b252faf.webp?1783922494"
+     },
+     "mana_cost": "{W}{W}",
+     "cmc": 2,
+     "type_line": "Legendary Creature — Fox Cleric",
+     "oracle_text": "{1}{W}: Target permanent you control gains protection from white until end of turn.\n{1}: Target spell or permanent becomes white until end of turn.",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "ef722374-0305-4c30-ab45-cb772b252faf",
+       "component": "combo_piece",
+       "name": "Eight-and-a-Half-Tails",
+       "type_line": "Legendary Creature — Fox Cleric",
+       "uri": "https://api.scryfall.com/cards/ef722374-0305-4c30-ab45-cb772b252faf"
+      },
+      {
+       "object": "related_card",
+       "id": "bb4124b9-5169-471e-b805-ceeffeec9184",
+       "component": "combo_piece",
+       "name": "Pious Kitsune",
+       "type_line": "Creature — Fox Cleric",
+       "uri": "https://api.scryfall.com/cards/bb4124b9-5169-471e-b805-ceeffeec9184"
+      }
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "5e4c3fe8-fd57-4b20-ad56-c03790a16cea",
+     "set": "clb",
+     "set_name": "Commander Legends: Battle for Baldur's Gate",
+     "set_type": "draft_innovation",
+     "set_uri": "https://api.scryfall.com/sets/5e4c3fe8-fd57-4b20-ad56-c03790a16cea",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aclb&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/clb?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/ef722374-0305-4c30-ab45-cb772b252faf/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A01c8d29f-4924-4d55-80bc-0c0c06bcb733&unique=prints",
+     "collector_number": "692",
+     "digital": false,
+     "rarity": "rare",
+     "flavor_text": "\"Virtue is an inner light that can prevail in every soul.\"",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Daren Bader",
+     "artist_ids": [
+      "7da1a585-c875-45e4-b322-5da9e8e1f651"
+     ],
+     "illustration_id": "182cc93c-53af-4d7f-be2a-e0e1be2874e1",
+     "border_color": "black",
+     "frame": "2015",
+     "frame_effects": [
+      "legendary"
+     ],
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 8243,
+     "penny_rank": 5294,
+     "prices": {
+      "usd": "0.39",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.22",
+      "eur_foil": null,
+      "tix": "0.11"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=567509&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DEight-and-a-Half-Tails",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DEight-and-a-Half-Tails",
+      "edhrec": "https://edhrec.com/route/?cc=Eight-and-a-Half-Tails"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F273684%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=661728&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/100926?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "ac0987b8-755e-42f1-bd6d-1401fecd4171",
+     "oracle_id": "9357de36-f8be-4f49-b2c8-9fe9eaf82b07",
+     "multiverse_ids": [
+      205226
+     ],
+     "mtgo_id": 37122,
+     "mtgo_foil_id": 37123,
+     "tcgplayer_id": 35389,
+     "cardmarket_id": 241810,
+     "name": "Holy Strength",
+     "lang": "en",
+     "released_at": "2010-07-16",
+     "uri": "https://api.scryfall.com/cards/ac0987b8-755e-42f1-bd6d-1401fecd4171",
+     "scryfall_uri": "https://scryfall.com/card/m11/16/holy-strength?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:23:56Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/a/c/ac0987b8-755e-42f1-bd6d-1401fecd4171.jpg?1783941836",
+      "normal": "https://cards.scryfall.io/normal/front/a/c/ac0987b8-755e-42f1-bd6d-1401fecd4171.jpg?1783941836",
+      "large": "https://cards.scryfall.io/large/front/a/c/ac0987b8-755e-42f1-bd6d-1401fecd4171.jpg?1783941836",
+      "png": "https://cards.scryfall.io/png/front/a/c/ac0987b8-755e-42f1-bd6d-1401fecd4171.png?1783941836",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/a/c/ac0987b8-755e-42f1-bd6d-1401fecd4171.jpg?1783941836",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/a/c/ac0987b8-755e-42f1-bd6d-1401fecd4171.jpg?1783941836",
+      "thumb": "https://cards.scryfall.io/thumb/front/a/c/ac0987b8-755e-42f1-bd6d-1401fecd4171.webp?1783941836",
+      "grid": "https://cards.scryfall.io/grid/front/a/c/ac0987b8-755e-42f1-bd6d-1401fecd4171.webp?1783941836",
+      "display": "https://cards.scryfall.io/display/front/a/c/ac0987b8-755e-42f1-bd6d-1401fecd4171.webp?1783941836",
+      "art": "https://cards.scryfall.io/art/front/a/c/ac0987b8-755e-42f1-bd6d-1401fecd4171.webp?1783941836",
+      "crop": "https://cards.scryfall.io/crop/front/a/c/ac0987b8-755e-42f1-bd6d-1401fecd4171.webp?1783941836"
+     },
+     "mana_cost": "{W}",
+     "cmc": 1,
+     "type_line": "Enchantment — Aura",
+     "oracle_text": "Enchant creature\nEnchanted creature gets +1/+2.",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [
+      "Enchant"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "485d2468-18c8-42a4-9482-ca1c51e0470e",
+     "set": "m11",
+     "set_name": "Magic 2011",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/485d2468-18c8-42a4-9482-ca1c51e0470e",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Am11&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/m11?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/ac0987b8-755e-42f1-bd6d-1401fecd4171/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A9357de36-f8be-4f49-b2c8-9fe9eaf82b07&unique=prints",
+     "collector_number": "16",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"Born under the sun, the first child will seek the foundation of honor and be fortified by its righteousness.\"\n—Codex of the Constellari",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Terese Nielsen",
+     "artist_ids": [
+      "eb55171c-2342-45f4-a503-2d5a75baf752"
+     ],
+     "illustration_id": "b57375d2-c431-4e82-82a6-da90f54a5f0d",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 21066,
+     "penny_rank": 10991,
+     "prices": {
+      "usd": "0.09",
+      "usd_foil": "0.43",
+      "usd_etched": null,
+      "eur": "0.05",
+      "eur_foil": "0.34",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=205226&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DHoly%2BStrength",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DHoly%2BStrength",
+      "edhrec": "https://edhrec.com/route/?cc=Holy+Strength"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F35389%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=241810&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/37122?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": "perm_1",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 3,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+     "multiverse_ids": [
+      129586
+     ],
+     "mtgo_id": 27400,
+     "mtgo_foil_id": 27401,
+     "tcgplayer_id": 15153,
+     "cardmarket_id": 16432,
+     "name": "Grizzly Bears",
+     "lang": "en",
+     "released_at": "2007-07-13",
+     "uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "scryfall_uri": "https://scryfall.com/card/10e/268/grizzly-bears?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:43:21Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "normal": "https://cards.scryfall.io/normal/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "large": "https://cards.scryfall.io/large/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "png": "https://cards.scryfall.io/png/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.png?1783943001",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "grid": "https://cards.scryfall.io/grid/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "display": "https://cards.scryfall.io/display/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "art": "https://cards.scryfall.io/art/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "crop": "https://cards.scryfall.io/crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001"
+     },
+     "mana_cost": "{1}{G}",
+     "cmc": 2,
+     "type_line": "Creature — Bear",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set": "10e",
+     "set_name": "Tenth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A14c8f55d-d177-4c25-a931-ebeb9e6062a0&unique=prints",
+     "collector_number": "268",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"We cannot forget that among all of Dominaria's wonders, a system of life exists, with prey and predators that will never fight wars nor vie for ancient power.\"\n—Jolrael, empress of beasts",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "D. J. Cleland-Hura",
+     "artist_ids": [
+      "87d21070-2432-4167-8aab-5968af1c14f3"
+     ],
+     "illustration_id": "066bfe81-0f53-43da-a074-b2ecc5dcda72",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 8114,
+     "penny_rank": 10982,
+     "prices": {
+      "usd": "0.22",
+      "usd_foil": "3.29",
+      "usd_etched": null,
+      "eur": "0.11",
+      "eur_foil": "1.97",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129586&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "edhrec": "https://edhrec.com/route/?cc=Grizzly+Bears"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15153%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16432&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27400?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 4,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "2626d4c9-fcef-4057-a154-7d987a4a4b84",
+     "oracle_id": "2ccdc60a-49a9-44b9-a7af-0ebf18b26785",
+     "multiverse_ids": [
+      489970
+     ],
+     "mtgo_id": 82628,
+     "tcgplayer_id": 218611,
+     "cardmarket_id": 484289,
+     "name": "Sword of Fire and Ice",
+     "lang": "en",
+     "released_at": "2020-08-07",
+     "uri": "https://api.scryfall.com/cards/2626d4c9-fcef-4057-a154-7d987a4a4b84",
+     "scryfall_uri": "https://scryfall.com/card/2xm/297/sword-of-fire-and-ice?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T08:08:12Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/2/6/2626d4c9-fcef-4057-a154-7d987a4a4b84.jpg?1783930092",
+      "normal": "https://cards.scryfall.io/normal/front/2/6/2626d4c9-fcef-4057-a154-7d987a4a4b84.jpg?1783930092",
+      "large": "https://cards.scryfall.io/large/front/2/6/2626d4c9-fcef-4057-a154-7d987a4a4b84.jpg?1783930092",
+      "png": "https://cards.scryfall.io/png/front/2/6/2626d4c9-fcef-4057-a154-7d987a4a4b84.png?1783930092",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/2/6/2626d4c9-fcef-4057-a154-7d987a4a4b84.jpg?1783930092",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/2/6/2626d4c9-fcef-4057-a154-7d987a4a4b84.jpg?1783930092",
+      "thumb": "https://cards.scryfall.io/thumb/front/2/6/2626d4c9-fcef-4057-a154-7d987a4a4b84.webp?1783930092",
+      "grid": "https://cards.scryfall.io/grid/front/2/6/2626d4c9-fcef-4057-a154-7d987a4a4b84.webp?1783930092",
+      "display": "https://cards.scryfall.io/display/front/2/6/2626d4c9-fcef-4057-a154-7d987a4a4b84.webp?1783930092",
+      "art": "https://cards.scryfall.io/art/front/2/6/2626d4c9-fcef-4057-a154-7d987a4a4b84.webp?1783930092",
+      "crop": "https://cards.scryfall.io/crop/front/2/6/2626d4c9-fcef-4057-a154-7d987a4a4b84.webp?1783930092"
+     },
+     "mana_cost": "{3}",
+     "cmc": 3,
+     "type_line": "Artifact — Equipment",
+     "oracle_text": "Equipped creature gets +2/+2 and has protection from red and from blue.\nWhenever equipped creature deals combat damage to a player, this Equipment deals 2 damage to any target and you draw a card.\nEquip {2}",
+     "colors": [],
+     "color_identity": [],
+     "keywords": [
+      "Equip"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "372dafe8-b5d1-4b81-998f-3ae96b59498a",
+     "set": "2xm",
+     "set_name": "Double Masters",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/372dafe8-b5d1-4b81-998f-3ae96b59498a",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A2xm&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/2xm?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/2626d4c9-fcef-4057-a154-7d987a4a4b84/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A2ccdc60a-49a9-44b9-a7af-0ebf18b26785&unique=prints",
+     "collector_number": "297",
+     "digital": false,
+     "rarity": "mythic",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Chris Rahn",
+     "artist_ids": [
+      "7742047e-0f80-4c0f-a530-d07460165e86"
+     ],
+     "illustration_id": "b27afa4d-4d24-485f-959a-aa4f9f3c3753",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 1339,
+     "penny_rank": 714,
+     "preview": {
+      "source": "Wizards of the Coast",
+      "source_uri": "https://magic.wizards.com/en/articles/archive/card-preview/fire-and-ice-godo-style-2020-07-23",
+      "previewed_at": "2020-07-23"
+     },
+     "prices": {
+      "usd": "46.93",
+      "usd_foil": "58.39",
+      "usd_etched": null,
+      "eur": "26.87",
+      "eur_foil": "31.01",
+      "tix": "0.21"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=489970&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DSword%2Bof%2BFire%2Band%2BIce",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DSword%2Bof%2BFire%2Band%2BIce",
+      "edhrec": "https://edhrec.com/route/?cc=Sword+of+Fire+and+Ice"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F218611%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=484289&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/82628?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 5,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": "perm_3",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 6,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Eight-and-a-Half-Tails",
+    "final": {
+     "name": "Eight-and-a-Half-Tails",
+     "controller": "player_0",
+     "supertypes": [
+      "Legendary"
+     ],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Fox",
+      "Cleric"
+     ],
+     "power": 3,
+     "toughness": 4,
+     "colors": [
+      "W"
+     ],
+     "abilities": [
+      "{1}{W}: Target permanent you control gains protection from white until end of turn.",
+      "{1}: Target spell or permanent becomes white until end of turn."
+     ],
+     "traits": [
+      "Enchanted"
+     ]
+    },
+    "changedBy": {
+     "7c": [
+      "Holy Strength"
+     ]
+    }
+   },
+   {
+    "perm": "Holy Strength",
+    "final": {
+     "name": "Holy Strength",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Enchantment"
+     ],
+     "subtypes": [
+      "Aura"
+     ],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "W"
+     ],
+     "abilities": [
+      "Enchant creature",
+      "Enchanted creature gets +1/+2."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Grizzly Bears",
+    "final": {
+     "name": "Grizzly Bears",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Bear"
+     ],
+     "power": 4,
+     "toughness": 4,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "Protection from red",
+      "Protection from blue"
+     ],
+     "traits": [
+      "Equipped"
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "Sword of Fire and Ice",
+      "Sword of Fire and Ice"
+     ],
+     "7c": [
+      "Sword of Fire and Ice"
+     ]
+    }
+   },
+   {
+    "perm": "Sword of Fire and Ice",
+    "final": {
+     "name": "Sword of Fire and Ice",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Artifact"
+     ],
+     "subtypes": [
+      "Equipment"
+     ],
+     "power": null,
+     "toughness": null,
+     "colors": [],
+     "abilities": [
+      "Equipped creature gets +2/+2 and has protection from red and from blue.",
+      "Whenever equipped creature deals combat damage to a player, this Equipment deals 2 damage to any target and you draw a card.",
+      "Equip {2}"
+     ]
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "6": [
+    "Eight-and-a-Half-Tails",
+    "Sword of Fire and Ice",
+    "Sword of Fire and Ice"
+   ],
+   "7c": [
+    "Holy Strength",
+    "Sword of Fire and Ice"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Eight-and-a-Half-Tails",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "global",
+    "params": {
+     "ability": "Protection from white until end of turn"
+    }
+   },
+   {
+    "source": "Holy Strength",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "target": "Eight-and-a-Half-Tails",
+    "params": {
+     "power": 1,
+     "toughness": 2
+    }
+   },
+   {
+    "source": "Sword of Fire and Ice",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "target": "Grizzly Bears",
+    "params": {
+     "power": 2,
+     "toughness": 2
+    }
+   },
+   {
+    "source": "Sword of Fire and Ice",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "target": "Grizzly Bears",
+    "params": {
+     "ability": "Protection from red"
+    }
+   },
+   {
+    "source": "Sword of Fire and Ice",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "target": "Grizzly Bears",
+    "params": {
+     "ability": "Protection from blue"
+    }
+   }
+  ]
+ }
+}

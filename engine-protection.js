@@ -48,14 +48,25 @@ function _parseOneProtectionClause(clauseRaw) {
   // Otherwise treat as subtype (Goblin, Cleric, Zombie, etc.) — use first word
   return { kind: 'subtype', value: singFirst, raw: clauseRaw };
 }
+/* Words that mean the text before "protection from" is a sentence, not a keyword list:
+   an activated cost, a quoted ability, a trigger, or a grant to some object. */
+const _PROTECTION_NON_KEYWORD_PREFIX = /[:"]|\b(?:gains?|ha(?:s|ve)|gets?|whenever|when|as long as)\b|^\s*(?:at|if)\b/;
+/* Only a protection KEYWORD yields entries: "Protection from black", or an item of a
+   keyword list ("Flying, trample, protection from white and from blue"). Abilities that
+   merely grant protection ("{W}: Target creature gains protection from red until end of
+   turn", "When ... gains protection from ...", "Equipped creature has protection from
+   ...") yield nothing — the grant itself reaches state.abilities as a bare
+   "Protection from X" line via ADD_ABILITY. */
 function _parseProtectionAbility(abilityLine) {
   const out = [];
   if (!abilityLine) return out;
   const text = abilityLine.toLowerCase();
-  const re = /protection from\s+([^.,;\n]+?(?:\s+and from\s+[^.,;\n]+?)*)(?=[.,;]|$)/gi;
+  const re = /(^|[,;\n]\s*)protection from\s+([^.,;\n]+?(?:\s+and from\s+[^.,;\n]+?)*)(?=[.,;\n]|$)/gi;
   let m;
   while ((m = re.exec(text)) !== null) {
-    const body = m[1].trim();
+    const lineStart = text.lastIndexOf('\n', m.index + m[1].length - 1) + 1;
+    if (_PROTECTION_NON_KEYWORD_PREFIX.test(text.slice(lineStart, m.index))) continue;
+    const body = m[2].trim();
     // Split compound: "black and from white" → ["black", "white"]
     const parts = body.split(/\s+and from\s+/i).map(s => s.trim()).filter(Boolean);
     for (const part of parts) {
@@ -133,8 +144,14 @@ function _protectionGrantTimestamp(targetPerm, protEntry) {
    CR 113.7: For triggered/activated ability pseudo-perms, the SOURCE for protection
    purposes is the original permanent that has the ability — not the pseudo-perm
    (whose printedTypes is ['Instant']). Re-resolve via `abilitySourceId` so e.g.
-   Mother of Runes' activated ability counts as a Creature source. */
-function _isProtectedFromSource(targetState, sourceState, sourcePerm, targetPerm) {
+   Mother of Runes' activated ability counts as a Creature source.
+
+   `allStates` is the in-progress state map when called from inside evaluation
+   (effectAppliesToPerm). It MUST be passed there: falling back to
+   Battlefield.getAllFinalStates() mid-evaluation re-enters the pipeline before the
+   cache is populated and recurses until the stack overflows. UI callers, which run
+   outside evaluation, may omit it. */
+function _isProtectedFromSource(targetState, sourceState, sourcePerm, targetPerm, allStates) {
   const prots = _getStateProtection(targetState);
   if (!prots.length) return null;
   // Resolve the real ability-source perm for triggered/activated pseudo-perms.
@@ -146,12 +163,12 @@ function _isProtectedFromSource(targetState, sourceState, sourcePerm, targetPerm
     const orig = Battlefield.getPermById(sourcePerm.abilitySourceId);
     if (orig) {
       realSourcePerm = orig;
-      // Attempt to use the real source's final state if accessible via Battlefield
-      if (typeof Battlefield.getAllFinalStates === 'function') {
-        const fs = Battlefield.getAllFinalStates();
-        const rs = fs && fs.get && fs.get(orig.id);
-        if (rs) realSourceState = rs;
-      }
+      // Use the real source's state: the in-progress one during evaluation, otherwise
+      // its final state via Battlefield.
+      const fs = allStates || (typeof Battlefield.getAllFinalStates === 'function'
+        ? Battlefield.getAllFinalStates() : null);
+      const rs = fs && fs.get && fs.get(orig.id);
+      if (rs) realSourceState = rs;
     }
   }
   // One-time-effect bypass: filter out protection entries acquired AFTER this source's timestamp.

@@ -1,0 +1,11 @@
+{
+  "name": "Akroma, Angel of Fury — firing its own activated ability does not overflow the stack",
+  "notes": "Found by tests/sweep.py. _isProtectedFromSource resolved an ability pseudo-perm's real source by calling Battlefield.getAllFinalStates() from inside evaluation; with the cache not yet populated that re-entered the pipeline and recursed forever whenever the affected creature had any protection. effectAppliesToPerm now passes the in-progress states down. Akroma (protection from white and from blue) fires '{R}: gets +1/+0' and must end up 7/6.",
+  "steps": [
+    { "add": "Akroma, Angel of Fury", "as": "akroma" },
+    { "call": ["addActivatedAbility", "@akroma", 2, "this card gets +1/+0 until end of turn.", "{R}: this card gets +1/+0 until end of turn."] }
+  ],
+  "asserts": [
+    { "perm": "Akroma, Angel of Fury", "final": { "power": 7, "toughness": 6, "abilities": { "$includes": ["Flying, trample, protection from white and from blue"] } } }
+  ]
+}
