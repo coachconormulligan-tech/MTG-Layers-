@@ -1,0 +1,22 @@
+{
+  "name": "Kodama of the West Tree — modified creatures filter",
+  "notes": "Memory: project_kodama_modified_creature_filter_2026-05-21. 'Modified creatures you control have trample' lost its 'modified' qualifier and applied to every creature. Only creatures with a counter, an Aura, or Equipment (CR 701.52) get trample.",
+  "steps": [
+    { "add": "Kodama of the West Tree" },
+    { "add": "Runeclaw Bear", "as": "plain" },
+    { "add": "Grizzly Bears", "as": "countered" },
+    { "add": "Giant Spider", "as": "enchanted" },
+    { "add": "Llanowar Elves", "as": "equipped" },
+    { "add": "Holy Strength", "as": "pac" },
+    { "add": "Bonesplitter", "as": "bs" },
+    { "call": ["addCounter", "@countered", "+1/+1", 1] },
+    { "call": ["setTarget", "@pac", "@enchanted"] },
+    { "call": ["setTarget", "@bs", "@equipped"] }
+  ],
+  "asserts": [
+    { "perm": "Runeclaw Bear", "final": { "abilities": { "$excludes": ["Trample"] } } },
+    { "perm": "Grizzly Bears", "final": { "power": 3, "abilities": { "$includes": ["Trample"] } } },
+    { "perm": "Giant Spider", "final": { "abilities": { "$includes": ["Trample"] } } },
+    { "perm": "Llanowar Elves", "final": { "power": 3, "abilities": { "$includes": ["Trample"] } } }
+  ]
+}

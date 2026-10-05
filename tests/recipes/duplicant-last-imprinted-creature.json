@@ -1,0 +1,15 @@
+{
+  "name": "Duplicant — takes P/T and creature types of the last creature card exiled with it",
+  "notes": "Memories: project_imprint_implementation_2026-05-25 and project_imprint_followup_fixes_2026-05-25. Elves is imprinted first and Vampire Nighthawk second, so Duplicant becomes 2/3 with the Nighthawk's creature types (still a Shapeshifter, never Elf or Druid). A Bears exiled with a different permanent (an untagged exile entry) must not matter. NOTE: exile ids are literal; build in its own process.",
+  "steps": [
+    { "add": "Duplicant", "as": "dup" },
+    { "call": ["addToExile", "card:Llanowar Elves"] },
+    { "call": ["setExileTag", "exile_1", "@dup"] },
+    { "call": ["addToExile", "card:Vampire Nighthawk"] },
+    { "call": ["setExileTag", "exile_2", "@dup"] },
+    { "call": ["addToExile", "card:Grizzly Bears"] }
+  ],
+  "asserts": [
+    { "perm": "Duplicant", "final": { "power": 2, "toughness": 3, "subtypes": { "$includes": ["Shapeshifter", "Vampire", "Shaman"], "$excludes": ["Elf", "Druid", "Bear"] } } }
+  ]
+}

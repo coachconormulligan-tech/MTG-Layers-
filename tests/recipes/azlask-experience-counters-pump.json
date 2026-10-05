@@ -1,0 +1,14 @@
+{
+  "name": "Azlask — +X/+X where X is the number of experience counters you have",
+  "notes": "Memory: project_experience_poison_counters_2026-05-14. The 'until end of turn' clause between +X/+X and 'where X is' stopped the where-X rewrite, and experience counters on the player were not readable by the for-each count. With 3 experience counters, firing Azlask's pump makes Grizzly Bears 5/5 (and Azlask 5/5). The ability pseudo-permanent is added directly with addActivatedAbility (ability index 1).",
+  "steps": [
+    { "add": "Azlask, the Swelling Scourge" , "as": "azlask" },
+    { "add": "Grizzly Bears" },
+    { "call": ["updateGameState", "experienceCounters", 3] },
+    { "call": ["addActivatedAbility", "@azlask", 1, "Creatures you control get +X/+X until end of turn, where X is the number of experience counters you have. Scions and Spawns you control gain indestructible and annihilator 1 until end of turn.", "{W}{U}{B}{R}{G}: Creatures you control get +X/+X until end of turn, where X is the number of experience counters you have. Scions and Spawns you control gain indestructible and annihilator 1 until end of turn."] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": 5, "toughness": 5 } },
+    { "perm": "Azlask, the Swelling Scourge", "final": { "power": 5, "toughness": 5 } }
+  ]
+}

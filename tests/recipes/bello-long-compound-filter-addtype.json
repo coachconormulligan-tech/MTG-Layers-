@@ -1,0 +1,18 @@
+{
+  "name": "Bello — long compound artifact and enchantment filter applies",
+  "notes": "Memory: project_bello_fix_addtype_length_2026-04-06. Bello's 90-character filter ('non-Equipment artifacts and non-Aura enchantments you control with mana value 4 or greater') exceeded a 50-char guard so no effects were emitted. Only non-Equipment artifacts and non-Aura enchantments with MV 4+ become 4/4 Elemental creatures with indestructible and haste during your turn.",
+  "steps": [
+    { "add": "Bello, Bard of the Brambles", "as": "bello" },
+    { "add": "Gilded Lotus" },
+    { "add": "Sphere of Safety" },
+    { "add": "Sol Ring" },
+    { "add": "Batterskull" },
+    { "call": ["updateGameState", "isYourTurn", true] }
+  ],
+  "asserts": [
+    { "perm": "Gilded Lotus", "final": { "types": ["Artifact", "Creature"], "subtypes": ["Elemental"], "power": 4, "toughness": 4, "abilities": { "$includes": ["Indestructible", "Haste"] } } },
+    { "perm": "Sphere of Safety", "final": { "types": ["Enchantment", "Creature"], "subtypes": ["Elemental"], "power": 4, "toughness": 4, "abilities": { "$includes": ["Indestructible", "Haste"] } } },
+    { "perm": "Sol Ring", "final": { "types": ["Artifact"] } },
+    { "perm": "Batterskull", "final": { "types": ["Artifact"], "subtypes": ["Equipment"] } }
+  ]
+}

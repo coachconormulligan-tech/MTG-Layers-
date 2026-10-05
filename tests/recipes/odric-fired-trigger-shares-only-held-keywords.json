@@ -1,0 +1,13 @@
+{
+  "name": "Odric, Lunarch Marshal — fired trigger shares only keywords a creature has",
+  "notes": "Memory: project_odric_trigger_visibility_and_keyword_substring_fix_2026-05-25. The intervening-if 'a creature you control has X' substring-matched Odric's own text, which lists all 13 keywords, so every keyword was granted. With Akroma (flying, first strike, vigilance, trample, haste, protection) out, firing the trigger must give Grizzly Bears exactly Flying, First strike, Haste, Trample and Vigilance, and none of the other eight listed keywords. The trigger pseudo-permanent is added with addTriggeredAbility.",
+  "steps": [
+    { "add": "Odric, Lunarch Marshal", "as": "odric" },
+    { "add": "Akroma, Angel of Wrath" },
+    { "add": "Grizzly Bears" },
+    { "call": ["addTriggeredAbility", "@odric", 0, "creatures you control gain first strike until end of turn if a creature you control has first strike. The same is true for flying, deathtouch, double strike, haste, hexproof, indestructible, lifelink, menace, reach, skulk, trample, and vigilance.", "At the beginning of each combat, creatures you control gain first strike until end of turn if a creature you control has first strike. The same is true for flying, deathtouch, double strike, haste, hexproof, indestructible, lifelink, menace, reach, skulk, trample, and vigilance."] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$includes": ["Flying", "First strike", "Haste", "Trample", "Vigilance"], "$excludes": ["Deathtouch", "Double strike", "Hexproof", "Indestructible", "Lifelink", "Menace", "Reach", "Skulk"] } } }
+  ]
+}

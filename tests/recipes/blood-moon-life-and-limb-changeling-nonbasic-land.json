@@ -1,0 +1,12 @@
+{
+  "name": "Blood Moon — Changeling made a Forest land is a nonbasic land",
+  "notes": "Memory: project_nonbasic_land_changeling_fix_2026-04-08. The 'nonbasic lands' filter wrongly excluded Changelings (isAllCreatureTypes guard applied to the Basic supertype). Life and Limb makes the Changeling (a Saproling) a nonbasic Forest land; Blood Moon must then make it a Mountain, not leave it a Forest.",
+  "steps": [
+    { "add": "Amoeboid Changeling" },
+    { "add": "Life and Limb" },
+    { "add": "Blood Moon" }
+  ],
+  "asserts": [
+    { "perm": "Amoeboid Changeling", "final": { "types": { "$includes": ["Land"] }, "subtypes": { "$includes": ["Mountain"], "$excludes": ["Forest"] } } }
+  ]
+}

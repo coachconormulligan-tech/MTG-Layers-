@@ -1,0 +1,12 @@
+{
+  "name": "Idris — gets +X/+X where X is the exiled card's mana value",
+  "notes": "Memory: project_imprint_implementation_2026-05-25 (Idris, Soul of the TARDIS). Idris, 3/3, has Sol Ring (mana value 1) exiled with it, so it must be 4/4. The Layer 6 ability gain parses, but no +X/+X effect is parsed from the second half of the sentence. NOTE: exile ids are literal; build in its own process.",
+  "steps": [
+    { "add": "Idris, Soul of the TARDIS", "as": "idris" },
+    { "call": ["addToExile", "card:Sol Ring"] },
+    { "call": ["setExileTag", "exile_1", "@idris"] }
+  ],
+  "asserts": [
+    { "perm": "Idris, Soul of the TARDIS", "final": { "power": 4, "toughness": 4 } }
+  ]
+}

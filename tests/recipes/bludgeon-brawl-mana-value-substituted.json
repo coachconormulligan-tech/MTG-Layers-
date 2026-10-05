@@ -1,0 +1,27 @@
+{
+  "name": "Bludgeon Brawl — granted equip ability shows the real mana value",
+  "notes": "Memory: project_three_bug_fixes_2026-05-15 (bug 1). The granted 'Equipped creature gets +{mana value}/+0' was stored with the literal placeholder. Sol Ring has mana value 1 so the granted text must read +1/+0 and never contain '{mana value}'.",
+  "steps": [
+    {
+      "add": "Bludgeon Brawl"
+    },
+    {
+      "add": "Sol Ring"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Sol Ring",
+      "final": {
+        "subtypes": [
+          "Equipment"
+        ],
+        "abilities": [
+          "{T}: Add {C}{C}.",
+          "Equip {1}",
+          "Equipped creature gets +1/+0"
+        ]
+      }
+    }
+  ]
+}

@@ -190,6 +190,10 @@ function applyEffect(state, effect, context) {
           state.types = [...new Set(effect.params.types || [])];
         }
         changes.push(`Replaced ${cat} subtypes: [${oldSub.join(', ')}] → [${state.subtypes.join(', ')}]`);
+        // Replacing the creature subtypes ("loses all creature types", "becomes an Elk")
+        // also ends "is every creature type" — otherwise the type line still claims
+        // "All Creature Types except N types" for a permanent that has lost them.
+        if (cat === 'creature') state.isAllCreatureTypes = false;
         if (cat === 'land') landSubtypesWereReplaced = true;
       } else {
         // Only overwrite types if explicitly provided; undefined means keep existing types
@@ -536,6 +540,16 @@ function applyEffect(state, effect, context) {
             modTou = 0;
           }
         }
+        // Imprint "from exiled card's mana value" — Idris, Soul of the TARDIS: +X/+X where X
+        // is the mana value of the most-recent exile entry tagged with this source.
+        if (effect.params.fromExiledCardMV && typeof _getImprintedExileEntries === 'function') {
+          const entries = _getImprintedExileEntries(effect.sourceId);
+          const last = entries.length ? entries[entries.length - 1] : null;
+          const mv = last && last.card
+            ? (_cmcFromManaCost(last.card.mana_cost) || last.card.cmc || 0) : 0;
+          modPow = mv;
+          modTou = mv;
+        }
         // "for each" variable boost: multiply base by count
         let forEachCount = null;
         if (effect.params.forEachDesc !== undefined) {
@@ -631,7 +645,10 @@ function applyEffect(state, effect, context) {
           src = {
             name: liveSrc.name,
             type_line: [...(liveSrc.supertypes || []), ...(liveSrc.types || [])].join(' ') + _subs,
-            oracle_text: liveSrc.oracleText || (liveSrc.abilities || []).join('\n'),
+            // Abilities, not oracleText: oracleText has any inert "enter as a copy of" line
+            // removed (see below), but that line is still part of the copiable values.
+            oracle_text: (liveSrc.abilities && liveSrc.abilities.length)
+              ? liveSrc.abilities.join('\n') : (liveSrc.oracleText || ''),
             colors: [...(liveSrc.colors || [])],
             power: liveSrc.power != null ? String(liveSrc.power) : undefined,
             toughness: liveSrc.toughness != null ? String(liveSrc.toughness) : undefined,
@@ -674,14 +691,16 @@ function applyEffect(state, effect, context) {
           }
         }
       }
-      // A "enter ... as a copy of ..." ability (Spark Double, Sakashima, Clone, etc.)
-      // is a replacement effect that only functions as the permanent enters. Once the
-      // copy is established it is defunct, so a copy must not carry it forward as a live
-      // ability — drop it from the copied characteristics (and from oracleText so the
-      // post-copy re-parse doesn't re-create a COPY effect from it).
+      // CR 707.2: the copied object's "enter ... as a copy of ..." ability (Sakashima, Clone,
+      // Spark Double) is part of its copiable values, so the copy has that text — it just
+      // does nothing on a permanent already on the battlefield. If the copied object is
+      // itself copying something, the line is already gone from ITS copiable values (they
+      // are the other object's), so nothing special is needed for that case.
+      // The line is kept out of oracleText only so the post-copy re-parse doesn't build a
+      // second COPY effect from it.
       const _isCopyEnablingAbility = (line) => /\benters?\b[^\n]*\bas a copy of\b/i.test(line);
-      state.abilities  = copyOracleText.split('\n').map(l => l.trim()).filter(Boolean).filter(l => !_isCopyEnablingAbility(l));
-      state.oracleText = state.abilities.join('\n');
+      state.abilities  = copyOracleText.split('\n').map(l => l.trim()).filter(Boolean);
+      state.oracleText = state.abilities.filter(l => !_isCopyEnablingAbility(l)).join('\n');
       state.hasChangeling = state.abilities.some(a => /\bchangeling\b/i.test(a));
       state.copySource = src;
       state.oracleTextModified = true; // signals re-parse needed
@@ -715,7 +734,7 @@ function applyEffect(state, effect, context) {
         for (const ab of effect.params.addAbilities) {
           state.abilities.push(ab);
         }
-        state.oracleText = state.abilities.join('\n');
+        state.oracleText = state.abilities.filter(l => !_isCopyEnablingAbility(l)).join('\n');
       }
       // "is not legendary" / "is not [type]" — remove supertypes/types from copy
       if (effect.params.notLegendary) {

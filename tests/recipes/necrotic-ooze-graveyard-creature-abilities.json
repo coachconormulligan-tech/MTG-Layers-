@@ -1,0 +1,14 @@
+{
+  "name": "Necrotic Ooze — gains activated abilities of creature cards in all graveyards",
+  "notes": "Memory: project_necrotic_ooze_graveyard_abilities_2026-04-15. Ooze has the activated abilities of every creature card in every graveyard (including the opponent's), but not of non-creature cards. Elves (p1 graveyard) and Birds (p2 graveyard) are creature cards; Sol Ring is an artifact so its ability must not be gained.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Necrotic Ooze", "as": "ooze" },
+    { "call": ["addToGraveyard", "p1", "card:Llanowar Elves"] },
+    { "call": ["addToGraveyard", "p2", "card:Birds of Paradise"] },
+    { "call": ["addToGraveyard", "p1", "card:Sol Ring"] }
+  ],
+  "asserts": [
+    { "perm": "Necrotic Ooze", "final": { "power": 4, "toughness": 3, "abilities": { "$includes": ["{T}: Add {G}.", "{T}: Add one mana of any color."], "$excludes": ["{T}: Add {C}{C}."] } } }
+  ]
+}

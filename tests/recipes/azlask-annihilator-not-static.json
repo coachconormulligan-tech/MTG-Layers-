@@ -1,0 +1,35 @@
+{
+  "name": "Azlask — Annihilator in the activated ability is not a static grant",
+  "notes": "Memory: project_three_bug_fixes_2026-05-15 (bug 2). haveAbilityRegex matched across the line break from the experience-counter trigger into the activated ability and emitted a static Layer 6 ADD_ABILITY (annihilator 1). The grant exists only inside the {W}{U}{B}{R}{G} activated ability, so no static ability effect and no gained Annihilator on a Scion.",
+  "steps": [
+    {
+      "add": "Azlask, the Swelling Scourge"
+    },
+    {
+      "add": "Eldrazi Scion"
+    }
+  ],
+  "asserts": [
+    {
+      "noEffect": {
+        "source": "Azlask, the Swelling Scourge",
+        "layer": "6"
+      }
+    },
+    {
+      "perm": "Eldrazi Scion",
+      "final": {
+        "abilities": [
+          "Sacrifice this creature: Add {C}."
+        ]
+      }
+    },
+    {
+      "perm": "Azlask, the Swelling Scourge",
+      "final": {
+        "power": 2,
+        "toughness": 2
+      }
+    }
+  ]
+}

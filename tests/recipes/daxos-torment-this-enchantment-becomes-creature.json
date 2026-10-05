@@ -1,0 +1,11 @@
+{
+  "name": "Daxos's Torment — 'this enchantment' becomes a 5/5 Demon creature",
+  "notes": "Memory: project_three_bug_fixes_2026-04-23. 'This enchantment becomes a 5/5 Demon creature with flying and haste in addition to its other types' was not recognised as a self-reference. With the constellation trigger fired, Daxos's Torment is a 5/5 Demon enchantment creature with flying and haste.",
+  "steps": [
+    { "add": "Daxos's Torment", "as": "dax" },
+    { "call": ["addTriggeredAbility", "@dax", 0, "this enchantment becomes a 5/5 Demon creature with flying and haste in addition to its other types until end of turn.", "Constellation — Whenever this enchantment or another enchantment you control enters, this enchantment becomes a 5/5 Demon creature with flying and haste in addition to its other types until end of turn."] }
+  ],
+  "asserts": [
+    { "perm": "Daxos's Torment", "final": { "power": 5, "toughness": 5, "types": ["Enchantment", "Creature"], "subtypes": ["Demon"], "abilities": { "$includes": ["Flying", "Haste"] } } }
+  ]
+}

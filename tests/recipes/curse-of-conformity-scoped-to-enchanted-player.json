@@ -1,0 +1,15 @@
+{
+  "name": "Curse of Conformity — scoped to the enchanted player, not the caster",
+  "notes": "Memory: project_enchant_player_2026-04-26. 'Creatures enchanted player controls' is rewritten to 'you control' at parse time; without the _enchantedPlayerScoped override it would hit the caster's creatures instead. Curse enchants the opponent: their Runeclaw Bear becomes a 3/3 with no subtypes, while the caster's own Grizzly Bears keeps Bear and stays 2/2.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears", "controller": "p1" },
+    { "add": "Runeclaw Bear", "controller": "p2" },
+    { "add": "Curse of Conformity", "as": "curse" },
+    { "call": ["setEnchantedPlayer", "@curse", "p2"] }
+  ],
+  "asserts": [
+    { "perm": "Runeclaw Bear", "final": { "power": 3, "toughness": 3, "subtypes": [] } },
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2, "subtypes": ["Bear"] } }
+  ]
+}

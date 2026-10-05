@@ -1,0 +1,14 @@
+{
+  "name": "Bonesplitter — equipped boost applies once, not twice",
+  "notes": "Memory: project_imprint_followup_fixes_2026-05-25 (section 5). The equip attachment tracker and the parsed MODIFY_PT both applied, so Bonesplitter on a 2/2 gave 6/2 instead of 4/2.",
+  "steps": [
+    { "add": "Bonesplitter", "as": "splitter" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Runeclaw Bear" },
+    { "call": ["applyEquipAttachment", "@splitter", 0, "@bears"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": 4, "toughness": 2 } },
+    { "perm": "Runeclaw Bear", "final": { "power": 2, "toughness": 2 } }
+  ]
+}

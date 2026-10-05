@@ -1,0 +1,18 @@
+{
+  "name": "Seeds of Strength — three separate target slots",
+  "notes": "Memory: project_seeds_of_strength_multi_slot_targeting_2026-05-23. Three 'Target creature gets +1/+1' sentences share one picker unless slotted. Slots 0 and 1 go to Grizzly Bears (the same creature may be chosen twice) and slot 2 to Runeclaw Bear: Grizzly Bears 2/2 +2/+2 = 4/4, Runeclaw Bear 2/2 +1/+1 = 3/3, Hill Giant (untargeted) 3/3.",
+  "steps": [
+    { "add": "Grizzly Bears" },
+    { "add": "Runeclaw Bear" },
+    { "add": "Hill Giant" },
+    { "add": "Seeds of Strength", "as": "seeds", "spell": true },
+    { "call": ["setSlottedTarget", "@seeds", 0, "@Grizzly Bears"] },
+    { "call": ["setSlottedTarget", "@seeds", 1, "@Grizzly Bears"] },
+    { "call": ["setSlottedTarget", "@seeds", 2, "@Runeclaw Bear"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": 4, "toughness": 4 } },
+    { "perm": "Runeclaw Bear", "final": { "power": 3, "toughness": 3 } },
+    { "perm": "Hill Giant", "final": { "power": 3, "toughness": 3 } }
+  ]
+}

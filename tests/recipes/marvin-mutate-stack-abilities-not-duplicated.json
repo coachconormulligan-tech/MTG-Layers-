@@ -1,0 +1,46 @@
+{
+  "name": "Marvin — mutate stack under-card ability is gained once",
+  "notes": "Memory: project_marvin_mutate_duplicate_abilities_2026-05-16. Gemrazer is mutated over Llanowar Elves; the stack merges Elves' mana ability into the top card. Marvin gets all activated abilities of creatures its controller controls and used to see the Elves ability twice (once via the top card, once via the under card).",
+  "steps": [
+    {
+      "add": "Llanowar Elves",
+      "as": "elves"
+    },
+    {
+      "add": "Gemrazer",
+      "as": "gemrazer"
+    },
+    {
+      "call": [
+        "applyMutate",
+        "@gemrazer",
+        "@elves",
+        "top"
+      ]
+    },
+    {
+      "add": "Marvin, Murderous Mimic"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Marvin, Murderous Mimic",
+      "final": {
+        "abilities": [
+          "This card has all activated abilities of creatures you control that don't have the same name as this creature.",
+          "{T}: Add {G}."
+        ]
+      }
+    },
+    {
+      "perm": "Gemrazer",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "{T}: Add {G}."
+          ]
+        }
+      }
+    }
+  ]
+}

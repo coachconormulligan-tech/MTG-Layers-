@@ -1,0 +1,13 @@
+{
+  "name": "Pemmin's Aura — activated abilities are not static effects",
+  "notes": "Memory: project_activated_aura_fixes_2026-04-21 (Bug 1). The '{U}: Enchanted creature gains flying' and '{1}: Enchanted creature gets +1/-1' lines were parsed as static effects, so the enchanted creature got flying and shroud for free. Grizzly Bears enchanted with Pemmin's Aura must stay a 2/2 with neither Flying nor Shroud; the Aura has no static add_ability effect (its only modify_pt is the inert 0/0 attachment tracker, so a static +1/-1 would show as 3/1).",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Pemmin's Aura", "as": "aura" },
+    { "call": ["setTarget", "@aura", "@bears"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2, "abilities": { "$excludes": ["Flying", "Shroud"] } } },
+    { "noEffect": { "source": "Pemmin's Aura", "type": "add_ability" } }
+  ]
+}

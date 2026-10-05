@@ -1,0 +1,15 @@
+{
+  "name": "Titania's Song — noncreature artifacts lose abilities and become creatures",
+  "notes": "Memory: project_titania_song_fix_2026-04-09. The lazy type regex captured 'noncreature artifact loses all abilities and' as the filter, so the effect applied to nothing. Here Sol Ring (MV 1) and Mind Stone (MV 2) become artifact creatures with P/T equal to MV and no abilities; Wurmcoil Engine (already a creature) is the control and keeps 6/6 and its abilities.",
+  "steps": [
+    { "add": "Titania's Song" },
+    { "add": "Sol Ring" },
+    { "add": "Mind Stone" },
+    { "add": "Wurmcoil Engine" }
+  ],
+  "asserts": [
+    { "perm": "Sol Ring", "final": { "types": ["Artifact", "Creature"], "power": 1, "toughness": 1, "abilities": [] } },
+    { "perm": "Mind Stone", "final": { "types": ["Artifact", "Creature"], "power": 2, "toughness": 2, "abilities": [] } },
+    { "perm": "Wurmcoil Engine", "final": { "power": 6, "toughness": 6, "abilities": { "$includes": ["Deathtouch, lifelink"] } } }
+  ]
+}

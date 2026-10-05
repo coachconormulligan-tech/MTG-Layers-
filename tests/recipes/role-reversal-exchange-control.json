@@ -1,0 +1,18 @@
+{
+  "name": "Role Reversal — exchange control of two targets",
+  "notes": "Memory: project_exchange_control_2026-04-15. 'Exchange control of two target permanents that share a permanent type' reuses the CONTROL effect with exchangeControl params. The caster's Runeclaw Bear and the opponent's Grizzly Bears swap controllers; a third creature, Vampire Nighthawk (opponent), is untouched.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Runeclaw Bear", "controller": "p1" },
+    { "add": "Grizzly Bears", "controller": "p2" },
+    { "add": "Vampire Nighthawk", "controller": "p2" },
+    { "add": "Role Reversal", "as": "rr", "spell": true },
+    { "call": ["setExchangeControlTargets", "@rr", "@Runeclaw Bear", "@Grizzly Bears"] }
+  ],
+  "asserts": [
+    { "effect": { "source": "Role Reversal", "layer": "2", "type": "control" } },
+    { "perm": "Runeclaw Bear", "final": { "controller": "player_1" } },
+    { "perm": "Grizzly Bears", "final": { "controller": "player_0" } },
+    { "perm": "Vampire Nighthawk", "final": { "controller": "player_1" } }
+  ]
+}

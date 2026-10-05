@@ -1,0 +1,12 @@
+{
+  "name": "Super-Soldier Serum — legendary Soldier in addition to other types",
+  "notes": "Memory: project_super_solder_serum_legendary_supertype_2026-06-04. parseBecomesType had no supertype handling so 'legendary' was dropped. Enchanted Grizzly Bears must be Legendary Creature — Bear Soldier 4/4 with first strike and vigilance.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Super-Soldier Serum", "as": "serum" },
+    { "call": ["setTarget", "@serum", "@bears"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "supertypes": ["Legendary"], "types": ["Creature"], "subtypes": ["Bear", "Soldier"], "power": 4, "toughness": 4, "abilities": { "$includes": ["First strike", "Vigilance"] } } }
+  ]
+}

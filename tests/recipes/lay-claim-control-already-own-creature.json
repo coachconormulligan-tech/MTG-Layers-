@@ -1,0 +1,22 @@
+{
+  "name": "Lay Claim — Layer 2 control effect on a creature you already control",
+  "notes": "Memory: project_control_no_delta_and_chained_fan_2026-04-24. A CONTROL effect whose target is already controlled by its caster produced no state change and was dropped from the inspector log. Lay Claim on the opponent's Bears must change its controller to player_0; Lay Claim B on the caster's own Runeclaw Bear changes nothing but its Layer 2 effect must still exist and be applied in the Layer 2 order. A control Runeclaw Bear stays with its owner.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears", "controller": "p2" },
+    { "add": "Vampire Nighthawk", "controller": "p2" },
+    { "add": "Runeclaw Bear", "controller": "p1" },
+    { "add": "Lay Claim", "as": "claimA" },
+    { "add": "Lay Claim", "as": "claimB" },
+    { "call": ["setTarget", "@claimA", "@Grizzly Bears"] },
+    { "call": ["setTarget", "@claimB", "@Runeclaw Bear"] }
+  ],
+  "asserts": [
+    { "effect": { "source": "Lay Claim", "layer": "2", "type": "control", "target": "Grizzly Bears" } },
+    { "effect": { "source": "Lay Claim", "layer": "2", "type": "control", "target": "Runeclaw Bear" } },
+    { "perm": "Grizzly Bears", "final": { "controller": "player_0" } },
+    { "perm": "Runeclaw Bear", "final": { "controller": "player_0" } },
+    { "perm": "Vampire Nighthawk", "final": { "controller": "player_1" } },
+    { "order": { "2": ["Lay Claim", "Lay Claim"] } }
+  ]
+}

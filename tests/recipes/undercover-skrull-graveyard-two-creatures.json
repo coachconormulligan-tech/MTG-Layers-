@@ -1,0 +1,54 @@
+{
+  "name": "Undercover Skrull — two creature cards in graveyard gives +2/+2 and all creature types",
+  "notes": "Memory: project_skrull_wasp_fixes_2026-06-29. With two creature cards in your graveyard, Skrull is 1/1 +2/+2 = 3/3 and is every creature type (gets +2/+2 AND is all creature types in one clause). Control: Runeclaw Bear stays a plain Bear.",
+  "steps": [
+    {
+      "add": "Undercover Skrull"
+    },
+    {
+      "add": "Runeclaw Bear"
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Grizzly Bears"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Llanowar Elves"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Undercover Skrull",
+      "final": {
+        "power": 3,
+        "toughness": 3,
+        "isAllCreatureTypes": true,
+        "subtypes": {
+          "$includes": [
+            "Skrull",
+            "Human",
+            "Elf",
+            "Bear"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Runeclaw Bear",
+      "final": {
+        "power": 2,
+        "toughness": 2,
+        "subtypes": [
+          "Bear"
+        ]
+      }
+    }
+  ]
+}

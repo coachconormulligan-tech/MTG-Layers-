@@ -1,0 +1,16 @@
+{
+  "name": "Necrotic Ooze — Yixlid Jailer strips the graveyard cards so nothing is gained",
+  "notes": "Memories: project_gain_activated_dependency_gaps_2026-06-18 and project_yixlid_jailer_graveyard_lose_abilities_2026-06-01. 'Cards in graveyards lose all abilities' used to emit no effect, and Ooze's gain read raw oracle text with no dependency on it. Now Ooze gains nothing from the graveyard Elves. The Elves on the battlefield is a control: Jailer only affects graveyard cards, so it keeps its mana ability.",
+  "steps": [
+    { "add": "Necrotic Ooze", "as": "ooze" },
+    { "add": "Yixlid Jailer", "as": "jailer" },
+    { "add": "Llanowar Elves", "as": "elves" },
+    { "call": ["addToGraveyard", "p1", "card:Birds of Paradise"] }
+  ],
+  "asserts": [
+    { "effect": { "source": "Yixlid Jailer", "layer": "6", "type": "remove_abilities" } },
+    { "perm": "Necrotic Ooze", "final": { "abilities": { "$excludes": ["{T}: Add one mana of any color."] } } },
+    { "perm": "Llanowar Elves", "final": { "abilities": { "$includes": ["{T}: Add {G}."] } } },
+    { "perm": "Yixlid Jailer", "final": { "power": 2, "toughness": 1 } }
+  ]
+}

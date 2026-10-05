@@ -1,0 +1,14 @@
+{
+  "name": "Twisted Image — P/T switch (7d) applies after counters (7c)",
+  "notes": "Memory: project_layer7_merge_counters_into_modify_2026-06-18. Switch moved to 7d, counters merged into 7c. Nighthawk 2/3 with a +1/+1 counter is 3/4 at 7c; the switch then makes it 4/3.",
+  "steps": [
+    { "add": "Vampire Nighthawk", "as": "hawk" },
+    { "call": ["addCounter", "@hawk", "+1/+1", 1] },
+    { "add": "Twisted Image", "as": "image", "spell": true },
+    { "call": ["setTarget", "@image", "@hawk"] }
+  ],
+  "asserts": [
+    { "perm": "Vampire Nighthawk", "final": { "power": 4, "toughness": 3 } },
+    { "effect": { "source": "Twisted Image", "layer": "7d" } }
+  ]
+}

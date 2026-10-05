@@ -1,0 +1,16 @@
+{
+  "name": "Mairsil — only cards you own in exile with cage counters",
+  "notes": "Memory: project_mairsil_exile_owner_filter_2026-04-28 (and exile_zone_implementation). The 'you own' in Mairsil's text was discarded, so cards owned by the opponent were included. exile_1 is Elves (owned by p1, cage counter): gained. exile_2 is Birds (owned by the opponent, cage counter): must NOT be gained. exile_3 is Sol Ring (owned by p1, no cage counter): must NOT be gained. NOTE: exile ids are literal; build this recipe in its own process so nextExileId starts at 1.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Mairsil, the Pretender", "as": "mairsil" },
+    { "call": ["addToExile", "card:Llanowar Elves", { "owner": "player_0" }] },
+    { "call": ["addToExile", "card:Birds of Paradise", { "owner": "player_1" }] },
+    { "call": ["addToExile", "card:Sol Ring", { "owner": "player_0" }] },
+    { "call": ["addExileCounter", "exile_1", "cage", 1] },
+    { "call": ["addExileCounter", "exile_2", "cage", 1] }
+  ],
+  "asserts": [
+    { "perm": "Mairsil, the Pretender", "final": { "power": 4, "toughness": 4, "abilities": { "$includes": ["{T}: Add {G}."], "$excludes": ["{T}: Add one mana of any color.", "{T}: Add {C}{C}."] } } }
+  ]
+}

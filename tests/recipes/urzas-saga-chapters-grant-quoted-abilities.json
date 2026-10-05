@@ -1,0 +1,54 @@
+{
+  "name": "Urza's Saga — chapter abilities are granted, no false effects",
+  "notes": "Memories: project_urzas_saga_fixes_2026-04-23 and project_urzas_saga_quoted_colon_isInActivated_2026-05-31. With two lore counters added the Saga has gained '{T}: Add {C}.' (chapter I) and the Construct-making ability (chapter II). The quoted colons used to be misread as the Saga's own activated abilities or skip the gain entirely, and the Construct token's 'gets +1/+1' text used to leak out as a global P/T boost.",
+  "steps": [
+    {
+      "add": "Urza's Saga",
+      "as": "saga"
+    },
+    {
+      "add": "Grizzly Bears"
+    },
+    {
+      "call": [
+        "addCounter",
+        "@saga",
+        "lore",
+        2
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "noEffect": {
+        "source": "Urza's Saga",
+        "type": "modify_pt"
+      }
+    },
+    {
+      "effect": {
+        "source": "Urza's Saga",
+        "layer": "6",
+        "type": "add_ability"
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 2,
+        "toughness": 2
+      }
+    },
+    {
+      "perm": "Urza's Saga",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "{T}: Add {C}.",
+            "{2}, {T}: Create a 0/0 colorless Construct artifact creature token with 'This token gets +1/+1 for each artifact you control.'"
+          ]
+        }
+      }
+    }
+  ]
+}
