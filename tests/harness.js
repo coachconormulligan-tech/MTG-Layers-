@@ -126,6 +126,7 @@ function summarizeBoard() {
    effect text from extractTriggeredAbilities / extractActivatedAbilities as the site's ability
    popup does — use it when the fix is in how an ability line is split into condition and effect.
    "vote" lists the option(s) that got the most votes, as picked in the site's vote pop-up.
+   "mode" is the 0-based mode picked in the site's pop-up for a "choose one —" trigger.
    "color" is the colour picked in the site's pop-up for "protection from the color of your choice".
    "as" on a call names what the method returns (the pseudo-permanent of a fired ability).
    In call args, "@alias" becomes that permanent's id, "p2" the second player's id, and
@@ -185,6 +186,11 @@ function buildFromRecipe(recipe, cards) {
       if (!ab) throw new Error('fire step: no ' + (isTrigger ? 'triggered' : 'activated') + ' ability at index ' + index + ' of ' + JSON.stringify(abilities));
       // "vote": the option(s) picked in the site's vote pop-up as having the most votes.
       let effectText = step.vote ? resolveVoteText(ab.effectText, step.vote) : ab.effectText;
+      // "mode": which "• …" mode of a "choose one —" trigger was picked in the site's pop-up (0-based).
+      if (step.mode != null) {
+        if (!ab.options || !ab.options[step.mode]) throw new Error('fire step: no mode ' + step.mode + ' in ' + JSON.stringify(ab.options));
+        effectText = ab.options[step.mode];
+      }
       // "color": the colour picked in the site's pop-up for "protection from the color of your choice".
       if (step.color) effectText = effectText.replace(/the\s+color\s+of\s+your\s+choice/i, step.color);
       const ret = isTrigger

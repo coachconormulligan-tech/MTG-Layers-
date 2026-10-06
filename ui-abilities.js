@@ -20,6 +20,11 @@ function fireTriggeredAbility(permId, abilityIdx) {
     const condResult = _evaluateTriggerCondition(ifCondMatch[1].trim(), fState);
     if (condResult === false) return;
   }
+  // "…, choose one —" with "• …" modes (Bill Ferny, Bree Swindler): ask which mode, fire that one.
+  if (t.options && t.options.length >= 2) {
+    openActivateOptionsPopup(permId, abilityIdx, t, '_chooseTriggerMode');
+    return;
+  }
   // A vote decides the effect (Council Guardian): ask which option(s) got the most votes and
   // fire the ability as it reads for that outcome.
   const vote = parseVoteOptions(t.effectText);
@@ -235,7 +240,8 @@ function openColorChoicePopup(promptText, onChoice) {
     </div>`;
 }
 
-function openActivateOptionsPopup(permId, abilityIdx, a) {
+function openActivateOptionsPopup(permId, abilityIdx, a, chooseFn) {
+  chooseFn = chooseFn || '_chooseActivateOption';
   let overlay = document.getElementById('activate-options-overlay');
   if (!overlay) {
     overlay = document.createElement('div');
@@ -245,7 +251,7 @@ function openActivateOptionsPopup(permId, abilityIdx, a) {
   }
   const optsHtml = a.options.map((opt, i) => `
     <button class="ability-popup-fire-btn ability-popup-activated-fire" style="display:block;width:100%;margin:6px 0;text-align:left;"
-      onclick="_chooseActivateOption('${escapeAttr(permId)}', ${abilityIdx}, ${i})">${escapeHtml(_replaceYouControl(opt, permId))}</button>
+      onclick="${chooseFn}('${escapeAttr(permId)}', ${abilityIdx}, ${i})">${escapeHtml(_replaceYouControl(opt, permId))}</button>
   `).join('');
   overlay.onclick = (e) => { if (e.target === overlay) overlay.style.display = 'none'; };
   overlay.style.display = 'flex';
@@ -260,6 +266,17 @@ function openActivateOptionsPopup(permId, abilityIdx, a) {
         ${optsHtml}
       </div>
     </div>`;
+}
+
+function _chooseTriggerMode(permId, abilityIdx, optionIdx) {
+  const finalStates = Battlefield.getAllFinalStates();
+  const fState = finalStates.get(permId);
+  if (!fState) return;
+  const t = Battlefield.extractTriggeredAbilities(fState.abilities || []).find(tr => tr.index === abilityIdx);
+  if (!t || !t.options) return;
+  const _ovl = document.getElementById('activate-options-overlay');
+  if (_ovl) _ovl.style.display = 'none';
+  _fireTriggeredWithText(permId, abilityIdx, t.options[optionIdx], t.fullText, finalStates);
 }
 
 function _chooseActivateOption(permId, abilityIdx, optionIdx) {

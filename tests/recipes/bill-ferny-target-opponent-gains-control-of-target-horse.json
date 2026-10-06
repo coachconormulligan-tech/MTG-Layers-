@@ -1,0 +1,64 @@
+{
+  "name": "Bill Ferny, Bree Swindler \u2014 target opponent gains control of target Horse you control",
+  "notes": "Memory: project_domineering_will_target_player_gain_control_2026-10-06 (last open item). Fired modal becomes-blocked trigger; the opponent picked in the dropdown gets the chosen Horse. The trigger is \"\u2026, choose one \u2014\" with bullet modes: extractTriggeredAbilities offers the modes as options and the recipe fires mode 1.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Bill the Pony",
+      "as": "pony"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Bill Ferny, Bree Swindler",
+      "as": "bf"
+    },
+    {
+      "fire": "@bf",
+      "trigger": 0,
+      "mode": 1,
+      "as": "trig"
+    },
+    {
+      "call": [
+        "setTargetPlayer",
+        "@trig",
+        "p2"
+      ]
+    },
+    {
+      "call": [
+        "setTarget",
+        "@trig",
+        "@pony"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Bill the Pony",
+      "final": {
+        "controller": "player_1"
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "controller": "player_0"
+      }
+    },
+    {
+      "perm": "Bill Ferny, Bree Swindler",
+      "final": {
+        "controller": "player_0"
+      }
+    }
+  ]
+}

@@ -39,19 +39,14 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Welcome to . . . | becomes | static | I — For each opponent, up to one target noncreature artifact they control becomes a 0/4 Wall artifact creature with defender for as long as you control this Saga. |
 | Wild Shape | becomes | spell | Until end of turn, target creature you control has that base power and toughness, becomes that creature type, and gains that ability. |
 | Aminatou, the Fateshifter | gain control | activated | Each player gains control of all nonland permanents other than this card controlled by the next player in the chosen direction. |
-| Bill Ferny, Bree Swindler | gain control | static | • Target opponent gains control of target Horse you control. |
 | Cultural Exchange | gain control | spell | Those players exchange control of those creatures. |
-| Domineering Will | gain control | spell | Target player gains control of up to three target nonattacking creatures until end of turn. |
 | Fumble | gain control | spell | Gain control of all Auras and Equipment that were attached to it, then attach them to another creature. |
 | Herald of Leshrac | gain control | triggered | When this creature leaves the battlefield, each player gains control of each land they own that you control. |
 | Khârn the Betrayer | gain control | static | The Betrayer — If damage would be dealt to this card, prevent that damage and an opponent of your choice gains control of it. |
 | Murderous Spoils | gain control | spell | You gain control of all Equipment that were attached to it. |
 | Power Struggle | gain control | static | During each player's upkeep, that player exchanges control of random target artifact, creature or land he or she controls, for control of random target permanent of the same type that a random opponent controls. |
-| Reins of Power | gain control | spell | You and that opponent each gain control of all creatures the other controls until end of turn. |
 | Scrambleverse | gain control | spell | Then each player gains control of each permanent for which they were chosen. |
-| Sky Swallower | gain control | triggered | When this creature enters, target opponent gains control of all other permanents you control. |
 | Tahngarth, First Mate | gain control | triggered | Whenever an opponent attacks with one or more creatures, if this card is tapped, you may have that opponent gain control of this card until end of combat. |
-| Twist Allegiance | gain control | spell | You and target opponent each gain control of all creatures the other controls until end of turn. |
 | Welcome to the Fold | gain control | spell | Gain control of target creature if its toughness is 2 or less. |
 | Welcome to the Fold | gain control | spell | If this spell's madness cost was paid, instead gain control of that creature if its toughness is X or less. |
 | Aerid Konstrari | gets +N/+N | activated | Then this card gets +X/+0 until end of turn, where X is the number of artifacts you control. |
