@@ -1,0 +1,587 @@
+{
+ "name": "Glittering Lion — loses a quoted ability until end of turn",
+ "notes": "Found by tests/sweep.py (theme: loses QUOTED). '{3}: Until end of turn, this creature loses \"Prevent all damage that would be dealt to this creature.\"' fired to nothing. A quoted ability after 'loses' is now a REMOVE_ABILITIES naming that ability, matched with or without its final period. The activated Lion loses its prevention ability; the Lynx, not activated, keeps it.",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Glittering Lion",
+    "as": "lion"
+   },
+   {
+    "add": "Glittering Lynx"
+   },
+   {
+    "call": [
+     "addActivatedAbility",
+     "@lion",
+     1,
+     "Until end of turn, this creature loses \"Prevent all damage that would be dealt to this creature.\" Any player may activate this ability.",
+     "{3}: Until end of turn, this creature loses \"Prevent all damage that would be dealt to this creature.\" Any player may activate this ability."
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Glittering Lion",
+   "final": {
+    "abilities": {
+     "$excludes": [
+      "Prevent all damage that would be dealt to this creature."
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Glittering Lynx",
+   "final": {
+    "abilities": {
+     "$includes": [
+      "Prevent all damage that would be dealt to this creature."
+     ]
+    }
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "ab4be296-33a6-46b1-9748-5b0d335f40ee",
+     "oracle_id": "549e6de7-56e9-4f5c-8c88-30e446bc53bb",
+     "multiverse_ids": [
+      24558
+     ],
+     "mtgo_id": 14061,
+     "mtgo_foil_id": 14062,
+     "tcgplayer_id": 7308,
+     "cardmarket_id": 3904,
+     "name": "Glittering Lion",
+     "lang": "en",
+     "released_at": "2000-06-05",
+     "uri": "https://api.scryfall.com/cards/ab4be296-33a6-46b1-9748-5b0d335f40ee",
+     "scryfall_uri": "https://scryfall.com/card/pcy/10/glittering-lion?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T12:29:57Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/a/b/ab4be296-33a6-46b1-9748-5b0d335f40ee.jpg?1783945797",
+      "normal": "https://cards.scryfall.io/normal/front/a/b/ab4be296-33a6-46b1-9748-5b0d335f40ee.jpg?1783945797",
+      "large": "https://cards.scryfall.io/large/front/a/b/ab4be296-33a6-46b1-9748-5b0d335f40ee.jpg?1783945797",
+      "png": "https://cards.scryfall.io/png/front/a/b/ab4be296-33a6-46b1-9748-5b0d335f40ee.png?1783945797",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/a/b/ab4be296-33a6-46b1-9748-5b0d335f40ee.jpg?1783945797",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/a/b/ab4be296-33a6-46b1-9748-5b0d335f40ee.jpg?1783945797",
+      "thumb": "https://cards.scryfall.io/thumb/front/a/b/ab4be296-33a6-46b1-9748-5b0d335f40ee.webp?1783945797",
+      "grid": "https://cards.scryfall.io/grid/front/a/b/ab4be296-33a6-46b1-9748-5b0d335f40ee.webp?1783945797",
+      "display": "https://cards.scryfall.io/display/front/a/b/ab4be296-33a6-46b1-9748-5b0d335f40ee.webp?1783945797",
+      "art": "https://cards.scryfall.io/art/front/a/b/ab4be296-33a6-46b1-9748-5b0d335f40ee.webp?1783945797",
+      "crop": "https://cards.scryfall.io/crop/front/a/b/ab4be296-33a6-46b1-9748-5b0d335f40ee.webp?1783945797"
+     },
+     "mana_cost": "{2}{W}",
+     "cmc": 3,
+     "type_line": "Creature — Cat",
+     "oracle_text": "Prevent all damage that would be dealt to this creature.\n{3}: Until end of turn, this creature loses \"Prevent all damage that would be dealt to this creature.\" Any player may activate this ability.",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "c233bd36-57c0-4aa2-ae6c-7aeabfb4e3ce",
+     "set": "pcy",
+     "set_name": "Prophecy",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/c233bd36-57c0-4aa2-ae6c-7aeabfb4e3ce",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Apcy&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/pcy?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/ab4be296-33a6-46b1-9748-5b0d335f40ee/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A549e6de7-56e9-4f5c-8c88-30e446bc53bb&unique=prints",
+     "collector_number": "10",
+     "digital": false,
+     "rarity": "uncommon",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Don Hazeltine",
+     "artist_ids": [
+      "b4117364-73af-47e5-8cf0-901eeea09e01"
+     ],
+     "illustration_id": "02931fef-4bc3-4e69-8bdc-0e4aafa20530",
+     "border_color": "black",
+     "frame": "1997",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 27241,
+     "penny_rank": 7706,
+     "prices": {
+      "usd": "0.21",
+      "usd_foil": "2.00",
+      "usd_etched": null,
+      "eur": "0.14",
+      "eur_foil": "2.60",
+      "tix": "0.04"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=24558&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGlittering%2BLion",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGlittering%2BLion",
+      "edhrec": "https://edhrec.com/route/?cc=Glittering+Lion"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F7308%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=3904&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/14061?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "a3f26c7e-c525-4191-a542-b81343ae95bb",
+     "oracle_id": "890ffe31-642f-46e3-9f09-c744351653b5",
+     "multiverse_ids": [
+      24549
+     ],
+     "mtgo_id": 14063,
+     "mtgo_foil_id": 14064,
+     "tcgplayer_id": 7309,
+     "cardmarket_id": 3905,
+     "name": "Glittering Lynx",
+     "lang": "en",
+     "released_at": "2000-06-05",
+     "uri": "https://api.scryfall.com/cards/a3f26c7e-c525-4191-a542-b81343ae95bb",
+     "scryfall_uri": "https://scryfall.com/card/pcy/11/glittering-lynx?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T12:29:58Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/a/3/a3f26c7e-c525-4191-a542-b81343ae95bb.jpg?1783945798",
+      "normal": "https://cards.scryfall.io/normal/front/a/3/a3f26c7e-c525-4191-a542-b81343ae95bb.jpg?1783945798",
+      "large": "https://cards.scryfall.io/large/front/a/3/a3f26c7e-c525-4191-a542-b81343ae95bb.jpg?1783945798",
+      "png": "https://cards.scryfall.io/png/front/a/3/a3f26c7e-c525-4191-a542-b81343ae95bb.png?1783945798",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/a/3/a3f26c7e-c525-4191-a542-b81343ae95bb.jpg?1783945798",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/a/3/a3f26c7e-c525-4191-a542-b81343ae95bb.jpg?1783945798",
+      "thumb": "https://cards.scryfall.io/thumb/front/a/3/a3f26c7e-c525-4191-a542-b81343ae95bb.webp?1783945798",
+      "grid": "https://cards.scryfall.io/grid/front/a/3/a3f26c7e-c525-4191-a542-b81343ae95bb.webp?1783945798",
+      "display": "https://cards.scryfall.io/display/front/a/3/a3f26c7e-c525-4191-a542-b81343ae95bb.webp?1783945798",
+      "art": "https://cards.scryfall.io/art/front/a/3/a3f26c7e-c525-4191-a542-b81343ae95bb.webp?1783945798",
+      "crop": "https://cards.scryfall.io/crop/front/a/3/a3f26c7e-c525-4191-a542-b81343ae95bb.webp?1783945798"
+     },
+     "mana_cost": "{W}",
+     "cmc": 1,
+     "type_line": "Creature — Cat",
+     "oracle_text": "Prevent all damage that would be dealt to this creature.\n{2}: Until end of turn, this creature loses \"Prevent all damage that would be dealt to this creature.\" Any player may activate this ability.",
+     "power": "1",
+     "toughness": "1",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "c233bd36-57c0-4aa2-ae6c-7aeabfb4e3ce",
+     "set": "pcy",
+     "set_name": "Prophecy",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/c233bd36-57c0-4aa2-ae6c-7aeabfb4e3ce",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Apcy&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/pcy?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/a3f26c7e-c525-4191-a542-b81343ae95bb/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A890ffe31-642f-46e3-9f09-c744351653b5&unique=prints",
+     "collector_number": "11",
+     "digital": false,
+     "rarity": "common",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Dan Frazier",
+     "artist_ids": [
+      "059bba56-5feb-42e4-8c2e-e2f1e6ba11f9"
+     ],
+     "illustration_id": "d20802fa-da70-49c7-9f92-9b675afe9bf4",
+     "border_color": "black",
+     "frame": "1997",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 23130,
+     "prices": {
+      "usd": "0.17",
+      "usd_foil": "2.12",
+      "usd_etched": null,
+      "eur": "0.10",
+      "eur_foil": "2.81",
+      "tix": "0.04"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=24549&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGlittering%2BLynx",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGlittering%2BLynx",
+      "edhrec": "https://edhrec.com/route/?cc=Glittering+Lynx"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F7309%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=3905&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/14063?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [
+   {
+    "id": "act_perm_1_1_3",
+    "kind": "activated",
+    "pseudoKind": "ability",
+    "sourceId": "perm_1",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 1,
+    "timestamp": 3,
+    "effectText": "Until end of turn, this creature loses \"Prevent all damage that would be dealt to this creature.\" Any player may activate this ability.",
+    "fullText": "{3}: Until end of turn, this creature loses \"Prevent all damage that would be dealt to this creature.\" Any player may activate this ability.",
+    "chosenColor": null,
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "firedAtStates": null,
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Glittering Lion",
+       "imageUri": "https://cards.scryfall.io/small/front/a/b/ab4be296-33a6-46b1-9748-5b0d335f40ee.jpg?1783945797",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Cat"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Glittering Lynx",
+       "imageUri": "https://cards.scryfall.io/small/front/a/3/a3f26c7e-c525-4191-a542-b81343ae95bb.jpg?1783945798",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Cat"
+       ],
+       "printedPower": 1,
+       "printedToughness": 1,
+       "timestamp": 2
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    },
+    "primaryTarget": "perm_1",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 3,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null
+   }
+  ],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Glittering Lion",
+    "final": {
+     "name": "Glittering Lion",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Cat"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "W"
+     ],
+     "abilities": [
+      "{3}: Until end of turn, this creature loses \"Prevent all damage that would be dealt to this creature.\" Any player may activate this ability."
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "Glittering Lion (activated)"
+     ]
+    }
+   },
+   {
+    "perm": "Glittering Lynx",
+    "final": {
+     "name": "Glittering Lynx",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Cat"
+     ],
+     "power": 1,
+     "toughness": 1,
+     "colors": [
+      "W"
+     ],
+     "abilities": [
+      "Prevent all damage that would be dealt to this creature.",
+      "{2}: Until end of turn, this creature loses \"Prevent all damage that would be dealt to this creature.\" Any player may activate this ability."
+     ]
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "6": [
+    "Glittering Lion (activated)"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Glittering Lion (activated)",
+    "layer": "6",
+    "type": "remove_abilities",
+    "scope": "targeted",
+    "target": "Glittering Lion",
+    "params": {
+     "specificAbilities": [
+      "Prevent all damage that would be dealt to this creature"
+     ]
+    }
+   }
+  ]
+ }
+}

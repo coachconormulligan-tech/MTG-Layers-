@@ -24,6 +24,24 @@ function _attachedSourceHasAbility(state, allStates, abilityText) {
   });
 }
 
+/* True if `state` is the permanent that the recipient of `grantEff` is attached to.
+   `grantEff` gives an Equipment/Aura an ability such as "Equipped creature has flying"
+   (Rune of Flight on an Equipment); that ability reaches only what the Equipment is on, and
+   only while the grant itself applies (the Rune's "as long as enchanted permanent is an
+   Equipment"). Read from the attachment links rather than from the carrier's abilities, so
+   it does not depend on the order effects are applied within the layer. */
+function _wearsCarrierOfGrant(state, allStates, grantEff) {
+  if (!allStates) return false;
+  let stateId = null;
+  for (const [id, st] of allStates) if (st === state) { stateId = id; break; }
+  const carrierId = grantEff.targetId;
+  if (!stateId || !carrierId || carrierId === stateId) return false;
+  const carrier = allStates.get(carrierId);
+  if (!carrier) return false;
+  if (grantEff.asLongAsCondition && !grantEff.asLongAsCondition(carrier, allStates)) return false;
+  return Battlefield.effects.some(e => e.sourceId === carrierId && !e.selfTarget && e.targetId === stateId);
+}
+
 /* Helper: detect ADD_ABILITY effects whose ability text itself contains global effect
    patterns (boost or keyword grant), and generate real global effects from them.
    These are conditioned on the source having a targetId (i.e. being equipped/attached).
@@ -87,7 +105,17 @@ function _parseGrantedGlobalAbilities(permanent, effects) {
     if (haveInAbility) {
       const filterText = haveInAbility[1].trim();
       if (!filterReferencesPermanents(filterText)) continue;
-      const { fn, desc } = buildAppliesToFromText(filterText);
+      const built = buildAppliesToFromText(filterText);
+      const desc = built.desc;
+      let fn = built.fn;
+      // As for the boost above: "Equipped creature has flying" granted to an Equipment (Rune
+      // of Flight) reaches only the creature that Equipment is attached to.
+      const _filterGatesAttachment = /^(?:equipped|enchanted)\s+\w+$/i.test(filterText);
+      if (_filterGatesAttachment) {
+        const innerFn = fn;
+        fn = (p, allStates, effectCtrl) => innerFn(p, allStates, effectCtrl) &&
+          _wearsCarrierOfGrant(p, allStates, eff);
+      }
       const kwText = haveInAbility[2].replace(/[,.]$/, '').trim();
       const grantedKws = _parseSimpleKeywordList(kwText);
       if (grantedKws.length === 0) continue;
@@ -98,7 +126,7 @@ function _parseGrantedGlobalAbilities(permanent, effects) {
           params: { ability: kw }, appliesTo: fn, scope: 'global', affectsSelf: false,
           sourceId: sid, sourceName: cardName, timestamp: ts,
           desc: `${filterText} have ${kw} (from granted ability). ${desc}`,
-          asLongAsCondition: _equippedToCarrier,
+          asLongAsCondition: _filterGatesAttachment ? undefined : _equippedToCarrier,
         });
       }
     }

@@ -350,7 +350,14 @@ function _resolveTheyPronoun(text) {
         const prev = sentences[j];
         if (_THEY_NEW_OBJECT_RE.test(prev)) break;
         const t = prev.match(_THEY_TARGET_ANTECEDENT_RE);
-        if (t) { subject = t[1] + (m[2] ? ' each' : ''); break; }
+        if (t) {
+          subject = t[1] + (m[2] ? ' each' : '');
+          // "Choose any number of target creatures. Each of those creatures gains persist"
+          // (Cauldron Haze): the choosing sentence only names the targets, and they are now
+          // the subject of the next sentence, so it has nothing left to say.
+          if (new RegExp('^choose\\s+' + t[1].replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\.?$', 'i').test(prev.trim())) sentences[j] = '';
+          break;
+        }
         const g = prev.match(_THEY_GROUP_ANTECEDENT_RE);
         if (g) {
           subject = g[1].toLowerCase() + ' ' + g[2];
@@ -362,7 +369,7 @@ function _resolveTheyPronoun(text) {
       if (!lead) subject = subject.charAt(0).toUpperCase() + subject.slice(1);
       sentences[i] = lead + subject + ' ' + verb + theySentence.slice(m[0].length);
     }
-    return sentences.join(' ');
+    return sentences.filter(Boolean).join(' ');
   }).join('\n');
 }
 

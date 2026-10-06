@@ -1,0 +1,21 @@
+{
+  "name": "Imagecrafter — \"Choose a creature type. Target creature becomes that type\"",
+  "notes": "Found by tests/sweep.py (theme: becomes that type). The fired ability produced nothing, and the sister wording 'becomes the creature type of your choice' (Mistform cycle) wiped the creature's subtypes. A fired ability whose text chooses a creature type now carries the creature-type input; choosing writes the type into the text ('becomes a Goblin') and re-parses, keeping the source pin and any picked target. Imagecrafter turns the Bears into a Goblin; Mistform Dreamer turns itself into an Elf; Hill Giant is untouched.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Hill Giant" },
+    { "add": "Imagecrafter", "as": "crafter" },
+    { "add": "Mistform Dreamer", "as": "dreamer" },
+    { "call": ["addActivatedAbility", "@crafter", 0, "Choose a creature type other than Wall. Target creature becomes that type until end of turn.", "{T}: Choose a creature type other than Wall. Target creature becomes that type until end of turn."], "as": "act1" },
+    { "call": ["setChosenCreatureType", "@act1", "Goblin"] },
+    { "call": ["setTarget", "@act1", "@bears"] },
+    { "call": ["addActivatedAbility", "@dreamer", 1, "This creature becomes the creature type of your choice until end of turn.", "{1}: This creature becomes the creature type of your choice until end of turn."], "as": "act2" },
+    { "call": ["setChosenCreatureType", "@act2", "Elf"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "types": ["Creature"], "subtypes": ["Goblin"] } },
+    { "perm": "Mistform Dreamer", "final": { "types": ["Creature"], "subtypes": ["Elf"] } },
+    { "perm": "Hill Giant", "final": { "subtypes": ["Giant"] } },
+    { "perm": "Imagecrafter", "final": { "subtypes": ["Human", "Wizard"] } }
+  ]
+}

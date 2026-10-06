@@ -60,10 +60,10 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Sita Varma, Masked Racer | becomes | activated | Then you may have the base power and toughness of each other creature you control become equal to this card's power until end of turn. |
 | Slumbering Tora | becomes | activated | {2}, Discard a Spirit or Arcane card: This artifact becomes an X/X Cat artifact creature until end of turn, where X is the discarded card's mana value. |
 | Sparkshaper Visionary | becomes | triggered | Until end of turn, they become 3/3 blue Bird creatures with flying, hexproof, and "Whenever this creature deals combat damage to a player, scry 1." |
-| Standardize | becomes | spell | Each creature becomes that type until end of turn. |
 | Sworn Defender | becomes | activated | {1}: This creature's power becomes the toughness of target creature blocking or being blocked by this creature minus 1 until end of turn, and its toughness becomes 1 plus the power of that creature until end of turn. |
 | Tanazir Quandrix | becomes | triggered | Whenever this card attacks, you may have the base power and toughness of other creatures you control become equal to this card's power and toughness until end of turn. |
 | Taskmaster, Mercenary Mimic | becomes | ability | Photographic Reflexes — At the beginning of your first main phase, until your next turn, Taskmaster becomes a copy of up to one target creature on the battlefield or creature card in a graveyard, except his name is this card and he's a legendary Human Mercenary Villain creature. |
+| Tenth District Hero | becomes | activated | {2}{W}, Collect evidence 4: If this creature is a Detective, it becomes a legendary creature named Mileva, the Stalwart, it has base power and toughness 5/5, and it gains "Other creatures you control have indestructible." |
 | The Flood of Mars | becomes | triggered | If it's a land, it becomes an Island in addition to its other types. |
 | The Legend of Kyoshi | becomes | static | That land becomes an Island in addition to its other types. |
 | The Ring // The Ring Tempts You | becomes | static | Then your emblem gains its next ability and you choose a creature you control to become or remain your Ring-bearer. |
@@ -153,7 +153,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Immard, the Stormcleaver | has / gains | static | • this card gains lifelink and indestructible until end of turn. |
 | Katsumasa, the Animator | has / gains | activated | If it's not a Vehicle, it has base power and toughness 1/1 until end of turn. |
 | Koh, the Face Stealer | has / gains | static | This card has all activated and triggered abilities of the last chosen card. |
-| Last Night Together | has / gains | spell | They gain vigilance, indestructible, and haste until end of turn. |
 | Locus of Enlightenment | has / gains | static | This card has each activated ability of the exiled cards used to craft it. |
 | Lord of the Nazgûl | has / gains | triggered | Then if you control nine or more Wraiths, Wraiths you control have base power and toughness 9/9 until end of turn. |
 | Maarika, Brutal Gladiator | has / gains | static | As long as it's your turn, this card has indestructible. |
