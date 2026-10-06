@@ -159,6 +159,9 @@ function resetBoard() {
 function withOracle(card, faceIndex, text) {
   const c = JSON.parse(JSON.stringify(card));
   if (c.card_faces && c.card_faces[faceIndex] && c.card_faces[faceIndex].oracle_text !== undefined) {
+    // A Room is swept as one face holding both doors' text, so the other door must not
+    // keep its own copy or removing one of its sentences would change nothing.
+    if (c.card_faces.some(f => (f.type_line || '').includes('Room'))) c.card_faces.forEach(f => { f.oracle_text = ''; });
     c.card_faces[faceIndex].oracle_text = text;
     if (typeof c.oracle_text === 'string') c.oracle_text = text;
   } else {
@@ -182,6 +185,8 @@ function addCard(card, faceIndex, isSpell) {
   }
   opts.isToken = card.layout === 'token' || card.layout === 'double_faced_token';
   const perm = Battlefield.addPermanent(card, opts);
+  // A Room enters with both doors locked and no abilities; the sweep reads it with both open.
+  if (perm.isRoom && perm.roomFaces) perm.roomFaces.forEach((_, i) => Battlefield.toggleRoomLock(perm.id, i));
   // "As this enters, choose a …" cards parse to nothing until the choice is made.
   if (perm.needsChosenColor) Battlefield.setChosenColor(perm.id, 'red');
   if (perm.needsChosenCreatureType) Battlefield.setChosenCreatureType(perm.id, 'Goblin');

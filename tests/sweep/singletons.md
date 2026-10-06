@@ -135,7 +135,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Quicksilver Elemental | has / gains | activated | {U}: This creature gains all activated abilities of target creature until end of turn. |
 | Radiant Destiny | has / gains | static | As long as you have the city's blessing, they also have vigilance. |
 | Rapid Fire | has / gains | spell | If it doesn't have rampage, that creature gains rampage 2 until end of turn. |
-| Restricted Office // Lecture Hall | has / gains | static | Other permanents you control have hexproof. |
 | Robaran Mercenaries | has / gains | static | This creature has all activated abilities of all legendary creatures you control. |
 | Rootwise Survivor | has / gains | triggered | It gains haste until your next turn. |
 | Scheming Fence | has / gains | static | This creature has all activated abilities of the chosen permanent except for loyalty abilities. |
@@ -160,7 +159,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Ghost Vacuum | is / are | activated | Each of them is a 1/1 Spirit in addition to its other types. |
 | Lim-Dûl the Necromancer | is / are | triggered | If it's a creature, it's a Zombie in addition to its other creature types. |
 | Maskwood Nexus | is / are | static | Creatures you control are every creature type. |
-| Secret Arcade // Dusty Parlor | is / are | static | Nonland permanents you control and permanent spells you control are enchantments in addition to their other types. |
 | Hammerheim | loses | activated | {T}: Target creature loses all landwalk abilities until end of turn. |
 | Hunted by The Family | loses | spell | For each of them, that creature's controller faces a villainous choice — That creature becomes a 1/1 white Human creature and loses all abilities, or you create a token that's a copy of it. |
 | Shelkin Brownie | loses | activated | {T}: Target creature loses all "bands with other" abilities until end of turn. |

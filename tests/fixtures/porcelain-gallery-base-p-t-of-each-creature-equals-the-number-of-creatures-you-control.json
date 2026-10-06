@@ -1,6 +1,6 @@
 {
  "name": "Porcelain Gallery — base P/T of each creature equals the number of creatures you control",
- "notes": "Memory: project_porcelain_gallery_countbased_setpt_2026-04-20. Room cards had no per-face oracle text so nothing parsed, and 'base power and toughness each equal to the number of X' had no parser. Three creatures are controlled by p1 so each gets base 3/3 (the countered Bears is 3/3 base +1/+1 = 4/4); the opponent's Runeclaw Bear counts only p1's creatures so it stays 2/2. Count: Bears, Elves, Birds = 3.",
+ "notes": "Memory: project_porcelain_gallery_countbased_setpt_2026-04-20. Room cards had no per-face oracle text so nothing parsed, and 'base power and toughness each equal to the number of X' had no parser. Three creatures are controlled by p1 so each gets base 3/3 (the countered Bears is 3/3 base +1/+1 = 4/4); the opponent's Runeclaw Bear counts only p1's creatures so it stays 2/2. Count: Bears, Elves, Birds = 3. The Porcelain Gallery door is unlocked explicitly: a locked door has no effect (2026-10-06).",
  "recipe": {
   "steps": [
    {
@@ -12,6 +12,13 @@
    {
     "add": "Dollmaker's Shop // Porcelain Gallery",
     "as": "room"
+   },
+   {
+    "call": [
+     "toggleRoomLock",
+     "@room",
+     1
+    ]
    },
    {
     "add": "Grizzly Bears",
@@ -256,12 +263,13 @@
     "faceDownMode": null,
     "roomLocked": [
      true,
-     true
+     false
     ],
     "cdaUserValue": null,
     "classLevel": null,
     "hasXValue": false,
     "xValue": null,
+    "additionalCostPaid": false,
     "chosenCreatureType": null,
     "chosenColor": null,
     "chosenCardName": null,
@@ -439,6 +447,7 @@
     "classLevel": null,
     "hasXValue": false,
     "xValue": null,
+    "additionalCostPaid": false,
     "chosenCreatureType": null,
     "chosenColor": null,
     "chosenCardName": null,
@@ -643,6 +652,7 @@
     "classLevel": null,
     "hasXValue": false,
     "xValue": null,
+    "additionalCostPaid": false,
     "chosenCreatureType": null,
     "chosenColor": null,
     "chosenCardName": null,
@@ -827,6 +837,7 @@
     "classLevel": null,
     "hasXValue": false,
     "xValue": null,
+    "additionalCostPaid": false,
     "chosenCreatureType": null,
     "chosenColor": null,
     "chosenCardName": null,
@@ -1000,6 +1011,7 @@
     "classLevel": null,
     "hasXValue": false,
     "xValue": null,
+    "additionalCostPaid": false,
     "chosenCreatureType": null,
     "chosenColor": null,
     "chosenCardName": null,
@@ -1091,7 +1103,9 @@
      "colors": [
       "W"
      ],
-     "abilities": []
+     "abilities": [
+      "Creatures you control have base power and toughness each equal to the number of creatures you control."
+     ]
     },
     "changedBy": {}
    },

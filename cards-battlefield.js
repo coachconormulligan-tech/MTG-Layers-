@@ -1257,6 +1257,8 @@ const Battlefield = {
       });
     }
     this.effects.push(...newEffects);
+    // A Room enters with both doors locked: nothing applies until one is unlocked.
+    if (perm.isRoom && perm.roomFaces) this._applyRoomLocks(perm);
     this.updateLabels();
     return perm;
   },
@@ -2321,8 +2323,13 @@ const Battlefield = {
     const perm = this.getPermById(permId);
     if (!perm?.isRoom || !perm.roomFaces) return;
     perm.roomLocked[faceIndex] = !perm.roomLocked[faceIndex];
+    this._applyRoomLocks(perm);
+  },
 
-    // Rebuild oracle text from only the unlocked rooms
+  /* Rebuild a Room's rules text and effects from its unlocked doors only. A locked door has
+     no abilities, so this also runs when a Room is added (both doors locked) or restored. */
+  _applyRoomLocks(perm) {
+    const permId = perm.id;
     const activeOracle = perm.roomFaces
       .filter((_, i) => !perm.roomLocked[i])
       .map(f => f.oracle_text || '')
@@ -2993,7 +3000,7 @@ const Battlefield = {
       this._syncCounterEffects(np.id);
       if (r.cdaUserValue != null) np.cdaUserValue = r.cdaUserValue;
       if (r.classLevel != null) np.classLevel = r.classLevel;
-      if (r.roomLocked) np.roomLocked = r.roomLocked.slice();
+      if (r.roomLocked && np.isRoom && np.roomFaces) { np.roomLocked = r.roomLocked.slice(); this._applyRoomLocks(np); }
       if (r.modalModeCounts) this.setModalModeCounts(np.id, r.modalModeCounts);
       if (r.targetOpponentPlayerId) this.setTargetOpponent(np.id, r.targetOpponentPlayerId);
       if (r.targetPlayerId) this.setTargetPlayer(np.id, r.targetPlayerId);
