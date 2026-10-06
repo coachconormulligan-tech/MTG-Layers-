@@ -2070,6 +2070,11 @@ function parseCardEffects(permanent, card, opts = {}) {
     {
       const lastSentence = filterText.split(/\.\s+/).pop().trim();
       if (lastSentence !== filterText && /^(?:(?:until|for as long as) [^,]+,\s*)?(?:up to \w+ |another )?target\s/i.test(lastSentence)) filterText = lastSentence;
+      // "Put seven +1/+1 counters on this artifact. This artifact becomes a 0/0 Spirit creature in
+      // addition …" (Haunted Screen, fired): the source is the subject. Not on an ability line
+      // read as part of the whole card; that sentence is parsed when the ability fires.
+      else if (lastSentence !== filterText && /^this (?:card|creature|permanent|token|artifact|land|enchantment|vehicle|equipment)$/i.test(lastSentence) &&
+               !_isInTriggeredSentence(_atStart + addTypeMatch[0].search(/\S/)) && !_isInActivatedEffect(_atStart)) filterText = lastSentence;
     }
     // Skip triggered/activated ability text that matched the regex
     const _atFLower = filterText.toLowerCase();

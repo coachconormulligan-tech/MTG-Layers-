@@ -23,6 +23,34 @@ function _pinAbilityEffectsToSource(effects, sourcePermId) {
   }
 }
 
+/* In a fired ability's effect text, "it gains/gets/…" means the source when the effect has
+   already named the source and nothing else it could stand for:
+     "untap this creature. It gains protection from the color of your choice …" (Pristine Skywise)
+     "put a +1/+1 counter on this creature and it gains trample until end of turn"
+   The pronoun is rewritten to that "this creature" phrase so the effect parses as the source's
+   own and _pinAbilityEffectsToSource pins it. Left alone when the text before the pronoun
+   names anything else "it" could be: a target (The Wondrous Wasp: "tap up to one target
+   creature. It loses all abilities"), a token or card the effect made or moved, or any other
+   object. A pronoun whose antecedent is only in the trigger condition ("Whenever another Cat
+   you control attacks, it gains trample") has no "this creature" before it and is untouched. */
+const _ABILITY_SELF_PHRASE_RE = /\bthis\s+(?:creature|permanent|card|token|land|artifact|enchantment|planeswalker|vehicle|equipment|aura|spacecraft|battle|saga)\b/gi;
+const _ABILITY_IT_RIVAL_RE = /\b(?:target|creates?|tokens?|cards?|cop(?:y|ies)|creatures?|permanents?|artifacts?|lands?|enchantments?|planeswalkers?|spells?|auras?|equipment|vehicles?|them)\b/i;
+// Case-sensitive on purpose: a capitalised word after an article is a subtype ("a Goblin").
+const _ABILITY_IT_SUBTYPE_RIVAL_RE = /\b(?:[Aa]n?|[Aa]nother|[Ee]ach|[Tt]hat|[Tt]hose|[Tt]he|[Oo]ther)\s+[A-Z][a-z]+/;
+function _resolveItToAbilitySource(text) {
+  if (!/\bit\b/i.test(text) || !/\bthis\b/i.test(text)) return text;
+  return text.replace(/\bit\s+(?=(?:gets?|gains?|has|have|is|becomes?|loses?)\b)/gi, (whole, offset) => {
+    const before = text.slice(0, offset);
+    if ((before.match(/"/g) || []).length % 2) return whole; // inside a quoted ability
+    const selves = before.match(_ABILITY_SELF_PHRASE_RE);
+    if (!selves) return whole;
+    const others = before.replace(_ABILITY_SELF_PHRASE_RE, ' ');
+    if (_ABILITY_IT_RIVAL_RE.test(others) || _ABILITY_IT_SUBTYPE_RIVAL_RE.test(others)) return whole;
+    const phrase = selves[selves.length - 1];
+    return (whole[0] === 'I' ? 'T' : 't') + phrase.slice(1) + ' ';
+  });
+}
+
 /* Returns the total mana spent to cast a permanent, accounting for X.
    For cards with {X} in their mana cost, xValue (the chosen X) is added to manaValue
    (which treats X as 0). For all other cards, equals manaValue. */
