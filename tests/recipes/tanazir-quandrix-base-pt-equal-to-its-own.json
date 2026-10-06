@@ -1,0 +1,13 @@
+{
+  "name": "Tanazir Quandrix — other creatures' base P/T become equal to its own when fired",
+  "notes": "Fourth sweep list (2026-10-06). \"You may have the base power and toughness of other creatures you control become equal to this card's power and toughness until end of turn\" produced nothing. The number is locked in as the ability resolves, so the fired text is rewritten from the fire-time snapshot (_lockFireTimeBasePT) to \"become 4/4\" and parsed as a plain base P/T. The Bears are 4/4; Tanazir itself is untouched.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Tanazir Quandrix", "as": "tanazir" },
+    { "fire": "@tanazir", "trigger": 2, "as": "attack" }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": 4, "toughness": 4 } },
+    { "perm": "Tanazir Quandrix", "final": { "power": 4, "toughness": 4 } }
+  ]
+}
