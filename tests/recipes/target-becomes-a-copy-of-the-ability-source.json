@@ -1,0 +1,32 @@
+{
+  "name": "\"X becomes a copy of this creature\" — the target copies the ability's source",
+  "notes": "The copy parser only knew \"the source becomes a copy of a picked object\": The Flood of Mars (\"put a flood counter on another target creature or land. If it's a creature, it becomes a copy of this creature\") and Permeating Mass (\"that creature becomes a copy of this creature\") got a COPY effect pinned to their own source with a copy-source picker, the wrong direction. When the copy's object is \"this creature/card/permanent\" and its subject is another object, the parser now emits a targeted COPY effect on that subject (with its restriction and the line's on-resolution condition) and _addAbilityPseudo fills in the copy source from the fired ability's source permanent. The Flood of Mars is fired at a creature (becomes a copy, not an Island), at a land (becomes an Island, not a copy) and once with no target picked (nothing may fall back on the source); Permeating Mass at a creature; and a Clone copying Permeating Mass passes on what it is copying, not its own printed card.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Forest", "as": "forest" },
+    { "add": "The Flood of Mars", "as": "flood" },
+    { "fire": "@flood", "trigger": 1, "as": "firedFlood1" },
+    { "call": ["setTarget", "@firedFlood1", "@bears"] },
+    { "fire": "@flood", "trigger": 1, "as": "firedFlood2" },
+    { "call": ["setTarget", "@firedFlood2", "@forest"] },
+    { "fire": "@flood", "trigger": 1, "as": "firedFlood3" },
+
+    { "add": "Hill Giant", "as": "giant" },
+    { "add": "Permeating Mass", "as": "mass" },
+    { "fire": "@mass", "trigger": 0, "as": "firedMass" },
+    { "call": ["setTarget", "@firedMass", "@giant"] },
+
+    { "add": "Silvercoat Lion", "as": "lion" },
+    { "add": "Clone", "as": "clone" },
+    { "copy": ["@clone", "@mass"] },
+    { "fire": "@clone", "trigger": 0, "as": "firedClone" },
+    { "call": ["setTarget", "@firedClone", "@lion"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "name": "The Flood of Mars", "types": { "$includes": ["Creature"] }, "subtypes": { "$excludes": ["Bear", "Island"] } } },
+    { "perm": "Forest", "final": { "name": "Forest", "types": ["Land"], "subtypes": { "$includes": ["Forest", "Island"] } } },
+    { "perm": "The Flood of Mars", "final": { "name": "The Flood of Mars", "subtypes": { "$excludes": ["Island"] } } },
+    { "perm": "Hill Giant", "final": { "name": "Permeating Mass", "power": 1, "toughness": 3, "colors": ["G"] } },
+    { "perm": "Silvercoat Lion", "final": { "name": "Permeating Mass", "power": 1, "toughness": 3, "colors": ["G"] } }
+  ]
+}
