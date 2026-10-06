@@ -1,0 +1,14 @@
+{
+  "name": "Room — a locked door has no effect until it is unlocked",
+  "notes": "Sweep theme 5 (2026-10-06). A Room was added with both doors shown as locked and no rules text, but the effects of both doors were parsed from the whole card and applied anyway (and again after a board was restored). Effects are now rebuilt from the unlocked doors on add, on restore and on toggle. Porcelain Gallery (door 2) is locked on the first Room, so the Bears stay 2/2 from it; the second Room has Lecture Hall (door 2) unlocked, so the Bears have hexproof.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Dollmaker's Shop // Porcelain Gallery", "as": "shop" },
+    { "call": ["toggleRoomLock", "@shop", 0] },
+    { "add": "Restricted Office // Lecture Hall", "as": "office" },
+    { "call": ["toggleRoomLock", "@office", 1] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2, "abilities": { "$includes": ["Hexproof"] } } }
+  ]
+}

@@ -632,6 +632,11 @@ function parseCardEffects(permanent, card, opts = {}) {
     oracleRaw = oracleRaw.replace(/(\.\s+)when you do,\s*(\w)/gi, (_, pre, ch) => pre + ch.toUpperCase());
   }
 
+  // "Nonland permanents you control and permanent spells you control are enchantments …"
+  // (Secret Arcade): spells on the stack are not on the board, so the permanents half is the
+  // whole subject here.
+  oracleRaw = oracleRaw.replace(/\b(permanents you control) and permanent spells you control\b/gi, '$1');
+
   // "[You may have] X's base power and toughness become N/N" (Mirkwood Meditator, Creepy
   // Puppeteer) and "the base power and toughness of X become N/N" (Brine Hag) say the same
   // thing as "X has base power and toughness N/N", which is the form the set-P/T parsers read.
