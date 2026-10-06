@@ -1,0 +1,1070 @@
+{
+ "name": "Set types — subtypes of a card type the object still has are kept (CR 205.1a)",
+ "notes": "The set-types branch of applyEffect wiped every subtype. Darksteel Mutation ('is an Insect artifact creature … loses all other card types and creature types') on an Equipment creature swaps the creature types only: Equipment is an artifact type and the object is still an artifact. On a plain creature the result is still just Insect.",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Cloudsteel Kirin",
+    "as": "kirin"
+   },
+   {
+    "add": "Grizzly Bears",
+    "as": "bears"
+   },
+   {
+    "add": "Darksteel Mutation",
+    "as": "dm1"
+   },
+   {
+    "call": [
+     "setTarget",
+     "@dm1",
+     "@kirin"
+    ]
+   },
+   {
+    "add": "Darksteel Mutation",
+    "as": "dm2"
+   },
+   {
+    "call": [
+     "setTarget",
+     "@dm2",
+     "@bears"
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Cloudsteel Kirin",
+   "final": {
+    "types": [
+     "Artifact",
+     "Creature"
+    ],
+    "subtypes": [
+     "Equipment",
+     "Insect"
+    ],
+    "power": 0,
+    "toughness": 1
+   }
+  },
+  {
+   "perm": "Grizzly Bears",
+   "final": {
+    "types": [
+     "Artifact",
+     "Creature"
+    ],
+    "subtypes": [
+     "Insect"
+    ]
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "a13ddda7-da6e-415e-8886-295514f862d4",
+     "oracle_id": "a34a71eb-26a4-4e37-8d3c-a0352bea491b",
+     "multiverse_ids": [
+      548299
+     ],
+     "mtgo_id": 96922,
+     "arena_id": 79426,
+     "tcgplayer_id": 262596,
+     "cardmarket_id": 607630,
+     "name": "Cloudsteel Kirin",
+     "lang": "en",
+     "released_at": "2022-02-18",
+     "uri": "https://api.scryfall.com/cards/a13ddda7-da6e-415e-8886-295514f862d4",
+     "scryfall_uri": "https://scryfall.com/card/neo/8/cloudsteel-kirin?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T06:25:25Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/a/1/a13ddda7-da6e-415e-8886-295514f862d4.jpg?1783923925",
+      "normal": "https://cards.scryfall.io/normal/front/a/1/a13ddda7-da6e-415e-8886-295514f862d4.jpg?1783923925",
+      "large": "https://cards.scryfall.io/large/front/a/1/a13ddda7-da6e-415e-8886-295514f862d4.jpg?1783923925",
+      "png": "https://cards.scryfall.io/png/front/a/1/a13ddda7-da6e-415e-8886-295514f862d4.png?1783923925",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/a/1/a13ddda7-da6e-415e-8886-295514f862d4.jpg?1783923925",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/a/1/a13ddda7-da6e-415e-8886-295514f862d4.jpg?1783923925",
+      "thumb": "https://cards.scryfall.io/thumb/front/a/1/a13ddda7-da6e-415e-8886-295514f862d4.webp?1783923925",
+      "grid": "https://cards.scryfall.io/grid/front/a/1/a13ddda7-da6e-415e-8886-295514f862d4.webp?1783923925",
+      "display": "https://cards.scryfall.io/display/front/a/1/a13ddda7-da6e-415e-8886-295514f862d4.webp?1783923925",
+      "art": "https://cards.scryfall.io/art/front/a/1/a13ddda7-da6e-415e-8886-295514f862d4.webp?1783923925",
+      "crop": "https://cards.scryfall.io/crop/front/a/1/a13ddda7-da6e-415e-8886-295514f862d4.webp?1783923925"
+     },
+     "mana_cost": "{2}{W}",
+     "cmc": 3,
+     "type_line": "Artifact Creature — Equipment Kirin",
+     "oracle_text": "Flying\nEquipped creature has flying and \"You can't lose the game and your opponents can't win the game.\"\nReconfigure {5} ({5}: Attach to target creature you control; or unattach from a creature. Reconfigure only as a sorcery. While attached, this isn't a creature.)",
+     "power": "3",
+     "toughness": "2",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [
+      "Reconfigure",
+      "Flying"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo",
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "59a2059f-5482-433f-8761-eb2e17859b71",
+     "set": "neo",
+     "set_name": "Kamigawa: Neon Dynasty",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/59a2059f-5482-433f-8761-eb2e17859b71",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aneo&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/neo?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/a13ddda7-da6e-415e-8886-295514f862d4/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aa34a71eb-26a4-4e37-8d3c-a0352bea491b&unique=prints",
+     "collector_number": "8",
+     "digital": false,
+     "rarity": "rare",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Jonathan Kuo",
+     "artist_ids": [
+      "babb75bd-4c75-4b13-ad61-c34597ab79ff"
+     ],
+     "illustration_id": "0cfe1968-2c0a-4733-8aea-1475385fe845",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 5099,
+     "penny_rank": 8537,
+     "preview": {
+      "source": "Wizards of the Coast",
+      "source_uri": "",
+      "previewed_at": "2022-02-01"
+     },
+     "prices": {
+      "usd": "0.40",
+      "usd_foil": "0.35",
+      "usd_etched": null,
+      "eur": "0.23",
+      "eur_foil": "0.41",
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=548299&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DCloudsteel%2BKirin",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DCloudsteel%2BKirin",
+      "edhrec": "https://edhrec.com/route/?cc=Cloudsteel+Kirin"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F262596%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=607630&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/96922?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+     "multiverse_ids": [
+      129586
+     ],
+     "mtgo_id": 27400,
+     "mtgo_foil_id": 27401,
+     "tcgplayer_id": 15153,
+     "cardmarket_id": 16432,
+     "name": "Grizzly Bears",
+     "lang": "en",
+     "released_at": "2007-07-13",
+     "uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "scryfall_uri": "https://scryfall.com/card/10e/268/grizzly-bears?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:43:21Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "normal": "https://cards.scryfall.io/normal/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "large": "https://cards.scryfall.io/large/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "png": "https://cards.scryfall.io/png/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.png?1783943001",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "grid": "https://cards.scryfall.io/grid/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "display": "https://cards.scryfall.io/display/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "art": "https://cards.scryfall.io/art/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "crop": "https://cards.scryfall.io/crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001"
+     },
+     "mana_cost": "{1}{G}",
+     "cmc": 2,
+     "type_line": "Creature — Bear",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set": "10e",
+     "set_name": "Tenth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A14c8f55d-d177-4c25-a931-ebeb9e6062a0&unique=prints",
+     "collector_number": "268",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"We cannot forget that among all of Dominaria's wonders, a system of life exists, with prey and predators that will never fight wars nor vie for ancient power.\"\n—Jolrael, empress of beasts",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "D. J. Cleland-Hura",
+     "artist_ids": [
+      "87d21070-2432-4167-8aab-5968af1c14f3"
+     ],
+     "illustration_id": "066bfe81-0f53-43da-a074-b2ecc5dcda72",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 8114,
+     "penny_rank": 10982,
+     "prices": {
+      "usd": "0.22",
+      "usd_foil": "3.29",
+      "usd_etched": null,
+      "eur": "0.11",
+      "eur_foil": "1.97",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129586&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "edhrec": "https://edhrec.com/route/?cc=Grizzly+Bears"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15153%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16432&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27400?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "6e776a1e-266d-4b30-83da-be4721a55ed2",
+     "oracle_id": "05a4f8ff-49da-42af-add5-6248c4b0644b",
+     "multiverse_ids": [],
+     "resource_id": "474FBBEC5C44217FE6F4D5303E1F2E19BC0979C85C476270E3B652501649244A",
+     "mtgo_id": 148755,
+     "tcgplayer_id": 687396,
+     "cardmarket_id": 881464,
+     "name": "Darksteel Mutation",
+     "lang": "en",
+     "released_at": "2026-04-24",
+     "uri": "https://api.scryfall.com/cards/6e776a1e-266d-4b30-83da-be4721a55ed2",
+     "scryfall_uri": "https://scryfall.com/card/soc/142/darksteel-mutation?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T00:50:10Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/6/e/6e776a1e-266d-4b30-83da-be4721a55ed2.jpg?1783903810",
+      "normal": "https://cards.scryfall.io/normal/front/6/e/6e776a1e-266d-4b30-83da-be4721a55ed2.jpg?1783903810",
+      "large": "https://cards.scryfall.io/large/front/6/e/6e776a1e-266d-4b30-83da-be4721a55ed2.jpg?1783903810",
+      "png": "https://cards.scryfall.io/png/front/6/e/6e776a1e-266d-4b30-83da-be4721a55ed2.png?1783903810",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/6/e/6e776a1e-266d-4b30-83da-be4721a55ed2.jpg?1783903810",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/6/e/6e776a1e-266d-4b30-83da-be4721a55ed2.jpg?1783903810",
+      "thumb": "https://cards.scryfall.io/thumb/front/6/e/6e776a1e-266d-4b30-83da-be4721a55ed2.webp?1783903810",
+      "grid": "https://cards.scryfall.io/grid/front/6/e/6e776a1e-266d-4b30-83da-be4721a55ed2.webp?1783903810",
+      "display": "https://cards.scryfall.io/display/front/6/e/6e776a1e-266d-4b30-83da-be4721a55ed2.webp?1783903810",
+      "art": "https://cards.scryfall.io/art/front/6/e/6e776a1e-266d-4b30-83da-be4721a55ed2.webp?1783903810",
+      "crop": "https://cards.scryfall.io/crop/front/6/e/6e776a1e-266d-4b30-83da-be4721a55ed2.webp?1783903810"
+     },
+     "mana_cost": "{1}{W}",
+     "cmc": 2,
+     "type_line": "Enchantment — Aura",
+     "oracle_text": "Enchant creature\nEnchanted creature is an Insect artifact creature with base power and toughness 0/1 and has indestructible, and it loses all other abilities, card types, and creature types.",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [
+      "Enchant"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "97fab8d1-480a-419d-ab14-663968e29b9c",
+     "set": "soc",
+     "set_name": "Secrets of Strixhaven Commander",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/97fab8d1-480a-419d-ab14-663968e29b9c",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Asoc&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/soc?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/6e776a1e-266d-4b30-83da-be4721a55ed2/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A05a4f8ff-49da-42af-add5-6248c4b0644b&unique=prints",
+     "collector_number": "142",
+     "digital": false,
+     "rarity": "uncommon",
+     "flavor_text": "Infinitely powerless.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Daniel Ljunggren",
+     "artist_ids": [
+      "0fbd4798-76eb-46d5-a5d4-1e3a25870e34"
+     ],
+     "illustration_id": "9b440305-2cb6-4695-b7c1-cca54c6882bc",
+     "border_color": "black",
+     "frame": "2015",
+     "frame_effects": [
+      "enchantment"
+     ],
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 585,
+     "prices": {
+      "usd": "0.95",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "1.02",
+      "eur_foil": null,
+      "tix": "0.91"
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DDarksteel%2BMutation",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DDarksteel%2BMutation",
+      "edhrec": "https://edhrec.com/route/?cc=Darksteel+Mutation"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F687396%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=881464&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/148755?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": "perm_1",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 4,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "6e776a1e-266d-4b30-83da-be4721a55ed2",
+     "oracle_id": "05a4f8ff-49da-42af-add5-6248c4b0644b",
+     "multiverse_ids": [],
+     "resource_id": "474FBBEC5C44217FE6F4D5303E1F2E19BC0979C85C476270E3B652501649244A",
+     "mtgo_id": 148755,
+     "tcgplayer_id": 687396,
+     "cardmarket_id": 881464,
+     "name": "Darksteel Mutation",
+     "lang": "en",
+     "released_at": "2026-04-24",
+     "uri": "https://api.scryfall.com/cards/6e776a1e-266d-4b30-83da-be4721a55ed2",
+     "scryfall_uri": "https://scryfall.com/card/soc/142/darksteel-mutation?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T00:50:10Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/6/e/6e776a1e-266d-4b30-83da-be4721a55ed2.jpg?1783903810",
+      "normal": "https://cards.scryfall.io/normal/front/6/e/6e776a1e-266d-4b30-83da-be4721a55ed2.jpg?1783903810",
+      "large": "https://cards.scryfall.io/large/front/6/e/6e776a1e-266d-4b30-83da-be4721a55ed2.jpg?1783903810",
+      "png": "https://cards.scryfall.io/png/front/6/e/6e776a1e-266d-4b30-83da-be4721a55ed2.png?1783903810",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/6/e/6e776a1e-266d-4b30-83da-be4721a55ed2.jpg?1783903810",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/6/e/6e776a1e-266d-4b30-83da-be4721a55ed2.jpg?1783903810",
+      "thumb": "https://cards.scryfall.io/thumb/front/6/e/6e776a1e-266d-4b30-83da-be4721a55ed2.webp?1783903810",
+      "grid": "https://cards.scryfall.io/grid/front/6/e/6e776a1e-266d-4b30-83da-be4721a55ed2.webp?1783903810",
+      "display": "https://cards.scryfall.io/display/front/6/e/6e776a1e-266d-4b30-83da-be4721a55ed2.webp?1783903810",
+      "art": "https://cards.scryfall.io/art/front/6/e/6e776a1e-266d-4b30-83da-be4721a55ed2.webp?1783903810",
+      "crop": "https://cards.scryfall.io/crop/front/6/e/6e776a1e-266d-4b30-83da-be4721a55ed2.webp?1783903810"
+     },
+     "mana_cost": "{1}{W}",
+     "cmc": 2,
+     "type_line": "Enchantment — Aura",
+     "oracle_text": "Enchant creature\nEnchanted creature is an Insect artifact creature with base power and toughness 0/1 and has indestructible, and it loses all other abilities, card types, and creature types.",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [
+      "Enchant"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "97fab8d1-480a-419d-ab14-663968e29b9c",
+     "set": "soc",
+     "set_name": "Secrets of Strixhaven Commander",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/97fab8d1-480a-419d-ab14-663968e29b9c",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Asoc&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/soc?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/6e776a1e-266d-4b30-83da-be4721a55ed2/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A05a4f8ff-49da-42af-add5-6248c4b0644b&unique=prints",
+     "collector_number": "142",
+     "digital": false,
+     "rarity": "uncommon",
+     "flavor_text": "Infinitely powerless.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Daniel Ljunggren",
+     "artist_ids": [
+      "0fbd4798-76eb-46d5-a5d4-1e3a25870e34"
+     ],
+     "illustration_id": "9b440305-2cb6-4695-b7c1-cca54c6882bc",
+     "border_color": "black",
+     "frame": "2015",
+     "frame_effects": [
+      "enchantment"
+     ],
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 585,
+     "prices": {
+      "usd": "0.95",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "1.02",
+      "eur_foil": null,
+      "tix": "0.91"
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DDarksteel%2BMutation",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DDarksteel%2BMutation",
+      "edhrec": "https://edhrec.com/route/?cc=Darksteel+Mutation"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F687396%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=881464&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/148755?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 5,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": "perm_2",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 6,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Cloudsteel Kirin",
+    "final": {
+     "name": "Cloudsteel Kirin",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Artifact",
+      "Creature"
+     ],
+     "subtypes": [
+      "Equipment",
+      "Insect"
+     ],
+     "power": 0,
+     "toughness": 1,
+     "colors": [
+      "W"
+     ],
+     "abilities": [
+      "Indestructible"
+     ],
+     "allAbilitiesRemoved": true,
+     "traits": [
+      "Enchanted"
+     ]
+    },
+    "changedBy": {
+     "4": [
+      "Darksteel Mutation"
+     ],
+     "6": [
+      "Darksteel Mutation",
+      "Darksteel Mutation"
+     ],
+     "7b": [
+      "Darksteel Mutation"
+     ]
+    }
+   },
+   {
+    "perm": "Grizzly Bears",
+    "final": {
+     "name": "Grizzly Bears",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Artifact",
+      "Creature"
+     ],
+     "subtypes": [
+      "Insect"
+     ],
+     "power": 0,
+     "toughness": 1,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "Indestructible"
+     ],
+     "allAbilitiesRemoved": true,
+     "traits": [
+      "Enchanted"
+     ]
+    },
+    "changedBy": {
+     "4": [
+      "Darksteel Mutation"
+     ],
+     "6": [
+      "Darksteel Mutation",
+      "Darksteel Mutation"
+     ],
+     "7b": [
+      "Darksteel Mutation"
+     ]
+    }
+   },
+   {
+    "perm": "Darksteel Mutation A",
+    "final": {
+     "name": "Darksteel Mutation",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Enchantment"
+     ],
+     "subtypes": [
+      "Aura"
+     ],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "W"
+     ],
+     "abilities": [
+      "Enchant creature",
+      "Enchanted creature is an Insect artifact creature with base power and toughness 0/1 and has indestructible, and it loses all other abilities, card types, and creature types."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Darksteel Mutation B",
+    "final": {
+     "name": "Darksteel Mutation",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Enchantment"
+     ],
+     "subtypes": [
+      "Aura"
+     ],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "W"
+     ],
+     "abilities": [
+      "Enchant creature",
+      "Enchanted creature is an Insect artifact creature with base power and toughness 0/1 and has indestructible, and it loses all other abilities, card types, and creature types."
+     ]
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "4": [
+    "Darksteel Mutation",
+    "Darksteel Mutation"
+   ],
+   "6": [
+    "Darksteel Mutation",
+    "Darksteel Mutation",
+    "Cloudsteel Kirin",
+    "Cloudsteel Kirin",
+    "Darksteel Mutation",
+    "Darksteel Mutation"
+   ],
+   "7b": [
+    "Darksteel Mutation",
+    "Darksteel Mutation"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Cloudsteel Kirin",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "params": {
+     "ability": "Flying"
+    }
+   },
+   {
+    "source": "Cloudsteel Kirin",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "params": {
+     "ability": "You can't lose the game and your opponents can't win the game"
+    }
+   },
+   {
+    "source": "Darksteel Mutation",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "global",
+    "params": {
+     "ability": "Indestructible"
+    }
+   },
+   {
+    "source": "Darksteel Mutation",
+    "layer": "4",
+    "type": "set_types",
+    "scope": "targeted",
+    "target": "Cloudsteel Kirin",
+    "params": {
+     "keepSupertypes": true,
+     "subtypes": [
+      "Insect"
+     ],
+     "types": [
+      "Artifact",
+      "Creature"
+     ]
+    }
+   },
+   {
+    "source": "Darksteel Mutation",
+    "layer": "6",
+    "type": "remove_abilities",
+    "scope": "targeted",
+    "target": "Cloudsteel Kirin",
+    "params": {
+     "replaceWith": [
+      "Indestructible"
+     ]
+    }
+   },
+   {
+    "source": "Darksteel Mutation",
+    "layer": "7b",
+    "type": "set_pt",
+    "scope": "targeted",
+    "target": "Cloudsteel Kirin",
+    "params": {
+     "power": 0,
+     "toughness": 1
+    }
+   },
+   {
+    "source": "Darksteel Mutation",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "global",
+    "params": {
+     "ability": "Indestructible"
+    }
+   },
+   {
+    "source": "Darksteel Mutation",
+    "layer": "4",
+    "type": "set_types",
+    "scope": "targeted",
+    "target": "Grizzly Bears",
+    "params": {
+     "keepSupertypes": true,
+     "subtypes": [
+      "Insect"
+     ],
+     "types": [
+      "Artifact",
+      "Creature"
+     ]
+    }
+   },
+   {
+    "source": "Darksteel Mutation",
+    "layer": "6",
+    "type": "remove_abilities",
+    "scope": "targeted",
+    "target": "Grizzly Bears",
+    "params": {
+     "replaceWith": [
+      "Indestructible"
+     ]
+    }
+   },
+   {
+    "source": "Darksteel Mutation",
+    "layer": "7b",
+    "type": "set_pt",
+    "scope": "targeted",
+    "target": "Grizzly Bears",
+    "params": {
+     "power": 0,
+     "toughness": 1
+    }
+   }
+  ]
+ }
+}

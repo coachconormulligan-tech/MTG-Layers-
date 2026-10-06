@@ -1,0 +1,46 @@
+{
+  "name": "Chandra, Spark Hunter — a Vehicle that becomes an artifact creature is still a Vehicle",
+  "notes": "CR 205.1a: setting card types keeps the subtypes that belong to a card type the object still has. The set-types branch wiped every subtype, so Smuggler's Copter lost Vehicle. A creature that becomes an artifact creature likewise keeps its creature types.",
+  "knownFailure": "The engine half is fixed (see set-types-keeps-subtypes-of-remaining-card-types). On this branch the fired trigger does not yet reach the Vehicle at all: that needs the fired 'target X' parser work still uncommitted on claude/heuristic-perlman-f28d92. Holds with both together; drop this key once they are merged.",
+  "steps": [
+    {
+      "add": "Smuggler's Copter",
+      "as": "copter"
+    },
+    {
+      "add": "Chandra, Spark Hunter",
+      "as": "chandra"
+    },
+    {
+      "fire": "@chandra",
+      "trigger": 0,
+      "as": "trigger"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@trigger",
+        "@copter"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Smuggler's Copter",
+      "final": {
+        "types": [
+          "Artifact",
+          "Creature"
+        ],
+        "subtypes": [
+          "Vehicle"
+        ],
+        "abilities": {
+          "$includes": [
+            "Haste"
+          ]
+        }
+      }
+    }
+  ]
+}
