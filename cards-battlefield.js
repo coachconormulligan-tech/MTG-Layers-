@@ -171,6 +171,14 @@ const Battlefield = {
       // Strip ability word prefix (e.g. "Eminence — ") ALWAYS before any parsing.
       // All words before an em dash are flavor/ability words with no rules meaning.
       const stripped = ab.trim().replace(/^[^{\n.;"—\u2014]+[\u2014—]\s*/g, '');
+      // Exert (Hooded Brawler): "You may exert this creature as it attacks. When you do, it gets
+      // +2/+2 until end of turn." The second sentence is a reflexive trigger (CR 603.12) whose
+      // condition is the exert; it fires like any other trigger.
+      const exertMatch = stripped.match(/^You may exert this (?:creature|card|permanent) as it attacks\.\s+When you do,\s*(.+)$/i);
+      if (exertMatch) {
+        result.push({ index: i, fullText: ab, effectText: exertMatch[1].trim(), triggerLimit: null });
+        continue;
+      }
       // Triggered abilities start with "when", "whenever", or "at" (CR 603.1)
       if (!/^(?:when(?:ever)?|at)\b/i.test(stripped)) continue;
       // Extract effect text from the STRIPPED version (after first comma)
@@ -466,7 +474,8 @@ const Battlefield = {
       // In this case "it" in the effect refers back to the source itself.
       // Strip leading trigger keyword ("Whenever/When/At") before testing.
       const condCore = condText.replace(/^(?:when(?:ever)?|at)\s+/i, '');
-      if (/^this\s+(?:creature|permanent|card|token)\b/i.test(condCore)) {
+      // "You may exert this creature as it attacks. When you do, it gets …": "it" is the exerter.
+      if (/^this\s+(?:creature|permanent|card|token)\b/i.test(condCore) || /^you may exert this\b/i.test(condCore)) {
         triggerIsSelf = true;
       }
       // "another [subtype/type]" — also marks that the source itself is excluded
@@ -479,6 +488,9 @@ const Battlefield = {
         const aMatch = condText.match(/\ban?\s+([A-Za-z]\w*)\s+(?:you\s+(?:control|own)\s+)?(?:attacks?|dies|enters|leaves|is\s+dealt|gains?|loses?)/i);
         if (aMatch) triggerSubject = aMatch[1];
       }
+      // "Whenever a player attacks, … that player chooses an attacking creature. It gets +2/+0"
+      // (Mirkwood Trapper): a player is never what "it gets/gains" means.
+      if (/^(?:player|opponent)s?$/i.test(triggerSubject)) triggerSubject = 'creature';
     }
     // "another" or "other [thing]" in the effectText also excludes the source
     // (e.g. "another target creature", "each other creature you control").

@@ -1,0 +1,15 @@
+{
+  "name": "Mirkwood Trapper — \"It gets +2/+0\" is the chosen attacker, not a player",
+  "notes": "Found by tests/sweep.py. 'Whenever a player attacks, … that player chooses an attacking creature. It gets +2/+0 until end of turn.' rewrote 'It' to 'target player' because the trigger condition names 'a player', and a player is no permanent, so nothing was emitted. A player is no longer taken as the pronoun's subject. The chosen Bears are 4/2; the Trapper is untouched.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Mirkwood Trapper", "as": "trapper" },
+    { "call": ["toggleAttacking", "@bears"] },
+    { "call": ["addTriggeredAbility", "@trapper", 1, "if they aren't attacking you, that player chooses an attacking creature. It gets +2/+0 until end of turn.", "Whenever a player attacks, if they aren't attacking you, that player chooses an attacking creature. It gets +2/+0 until end of turn."], "as": "trigger" },
+    { "call": ["setTarget", "@trigger", "@bears"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": 4, "toughness": 2 } },
+    { "perm": "Mirkwood Trapper", "final": { "power": 1, "toughness": 4 } }
+  ]
+}

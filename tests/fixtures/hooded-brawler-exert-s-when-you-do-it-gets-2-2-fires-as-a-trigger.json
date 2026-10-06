@@ -1,0 +1,585 @@
+{
+ "name": "Hooded Brawler — exert's \"When you do, it gets +2/+2\" fires as a trigger",
+ "notes": "Found by tests/sweep.py (four exert cards shared the wording). 'You may exert this creature as it attacks. When you do, it gets +2/+2 until end of turn.' was neither a static effect (the sentence opens with When) nor a triggered ability (the line does not), so nothing could ever apply it. extractTriggeredAbilities now offers the reflexive trigger, and 'it' is the exerter. The Brawler is 5/4; the Bears are untouched.",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Grizzly Bears",
+    "as": "bears"
+   },
+   {
+    "add": "Hooded Brawler",
+    "as": "brawler"
+   },
+   {
+    "call": [
+     "addTriggeredAbility",
+     "@brawler",
+     0,
+     "it gets +2/+2 until end of turn.",
+     "You may exert this creature as it attacks. When you do, it gets +2/+2 until end of turn."
+    ],
+    "as": "trigger"
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Hooded Brawler",
+   "final": {
+    "power": 5,
+    "toughness": 4
+   }
+  },
+  {
+   "perm": "Grizzly Bears",
+   "final": {
+    "power": 2,
+    "toughness": 2
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+     "multiverse_ids": [
+      129586
+     ],
+     "mtgo_id": 27400,
+     "mtgo_foil_id": 27401,
+     "tcgplayer_id": 15153,
+     "cardmarket_id": 16432,
+     "name": "Grizzly Bears",
+     "lang": "en",
+     "released_at": "2007-07-13",
+     "uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "scryfall_uri": "https://scryfall.com/card/10e/268/grizzly-bears?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:43:21Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "normal": "https://cards.scryfall.io/normal/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "large": "https://cards.scryfall.io/large/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "png": "https://cards.scryfall.io/png/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.png?1783943001",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "grid": "https://cards.scryfall.io/grid/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "display": "https://cards.scryfall.io/display/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "art": "https://cards.scryfall.io/art/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "crop": "https://cards.scryfall.io/crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001"
+     },
+     "mana_cost": "{1}{G}",
+     "cmc": 2,
+     "type_line": "Creature — Bear",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set": "10e",
+     "set_name": "Tenth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A14c8f55d-d177-4c25-a931-ebeb9e6062a0&unique=prints",
+     "collector_number": "268",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"We cannot forget that among all of Dominaria's wonders, a system of life exists, with prey and predators that will never fight wars nor vie for ancient power.\"\n—Jolrael, empress of beasts",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "D. J. Cleland-Hura",
+     "artist_ids": [
+      "87d21070-2432-4167-8aab-5968af1c14f3"
+     ],
+     "illustration_id": "066bfe81-0f53-43da-a074-b2ecc5dcda72",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 8114,
+     "penny_rank": 10982,
+     "prices": {
+      "usd": "0.22",
+      "usd_foil": "3.29",
+      "usd_etched": null,
+      "eur": "0.11",
+      "eur_foil": "1.97",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129586&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "edhrec": "https://edhrec.com/route/?cc=Grizzly+Bears"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15153%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16432&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27400?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "1b4dab03-abf1-4c8f-983e-77dffcfb1578",
+     "oracle_id": "4e40a68a-5e0c-4f4f-9757-02f8139797e2",
+     "multiverse_ids": [
+      426875
+     ],
+     "mtgo_id": 63948,
+     "mtgo_foil_id": 63949,
+     "tcgplayer_id": 130235,
+     "cardmarket_id": 297206,
+     "name": "Hooded Brawler",
+     "lang": "en",
+     "released_at": "2017-04-28",
+     "uri": "https://api.scryfall.com/cards/1b4dab03-abf1-4c8f-983e-77dffcfb1578",
+     "scryfall_uri": "https://scryfall.com/card/akh/173/hooded-brawler?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T09:54:32Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/1/b/1b4dab03-abf1-4c8f-983e-77dffcfb1578.jpg?1783936472",
+      "normal": "https://cards.scryfall.io/normal/front/1/b/1b4dab03-abf1-4c8f-983e-77dffcfb1578.jpg?1783936472",
+      "large": "https://cards.scryfall.io/large/front/1/b/1b4dab03-abf1-4c8f-983e-77dffcfb1578.jpg?1783936472",
+      "png": "https://cards.scryfall.io/png/front/1/b/1b4dab03-abf1-4c8f-983e-77dffcfb1578.png?1783936472",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/1/b/1b4dab03-abf1-4c8f-983e-77dffcfb1578.jpg?1783936472",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/1/b/1b4dab03-abf1-4c8f-983e-77dffcfb1578.jpg?1783936472",
+      "thumb": "https://cards.scryfall.io/thumb/front/1/b/1b4dab03-abf1-4c8f-983e-77dffcfb1578.webp?1783936472",
+      "grid": "https://cards.scryfall.io/grid/front/1/b/1b4dab03-abf1-4c8f-983e-77dffcfb1578.webp?1783936472",
+      "display": "https://cards.scryfall.io/display/front/1/b/1b4dab03-abf1-4c8f-983e-77dffcfb1578.webp?1783936472",
+      "art": "https://cards.scryfall.io/art/front/1/b/1b4dab03-abf1-4c8f-983e-77dffcfb1578.webp?1783936472",
+      "crop": "https://cards.scryfall.io/crop/front/1/b/1b4dab03-abf1-4c8f-983e-77dffcfb1578.webp?1783936472"
+     },
+     "mana_cost": "{2}{G}",
+     "cmc": 3,
+     "type_line": "Creature — Snake Warrior",
+     "oracle_text": "You may exert this creature as it attacks. When you do, it gets +2/+2 until end of turn. (An exerted creature won't untap during your next untap step.)",
+     "power": "3",
+     "toughness": "2",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [
+      "Exert"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "02d1c536-68bc-4208-9b65-7741ef1f9da8",
+     "set": "akh",
+     "set_name": "Amonkhet",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/02d1c536-68bc-4208-9b65-7741ef1f9da8",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aakh&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/akh?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/1b4dab03-abf1-4c8f-983e-77dffcfb1578/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A4e40a68a-5e0c-4f4f-9757-02f8139797e2&unique=prints",
+     "collector_number": "173",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "Nagas wielding twin daggers excel at the fighting technique known as the Bite of Rhonas.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Daarken",
+     "artist_ids": [
+      "e607a0d4-fc12-4c01-9e3f-501f5269b9cb"
+     ],
+     "illustration_id": "4e92ee30-5691-45bc-8d22-566a13c5231e",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 28998,
+     "prices": {
+      "usd": "0.08",
+      "usd_foil": "0.40",
+      "usd_etched": null,
+      "eur": "0.02",
+      "eur_foil": "0.15",
+      "tix": "0.05"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=426875&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DHooded%2BBrawler",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DHooded%2BBrawler",
+      "edhrec": "https://edhrec.com/route/?cc=Hooded+Brawler"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F130235%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=297206&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/63948?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [
+   {
+    "id": "trig_perm_2_0_3",
+    "kind": "trigger",
+    "pseudoKind": "ability",
+    "sourceId": "perm_2",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 0,
+    "timestamp": 3,
+    "effectText": "target creature gets +2/+2 until end of turn.",
+    "fullText": "You may exert this creature as it attacks. When you do, it gets +2/+2 until end of turn.",
+    "chosenColor": null,
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "firedAtStates": null,
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Hooded Brawler",
+       "imageUri": "https://cards.scryfall.io/small/front/1/b/1b4dab03-abf1-4c8f-983e-77dffcfb1578.jpg?1783936472",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Snake",
+        "Warrior"
+       ],
+       "printedPower": 3,
+       "printedToughness": 2,
+       "timestamp": 2
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    },
+    "primaryTarget": "perm_2",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 3,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null
+   }
+  ],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Grizzly Bears",
+    "final": {
+     "name": "Grizzly Bears",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Bear"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "G"
+     ],
+     "abilities": []
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Hooded Brawler",
+    "final": {
+     "name": "Hooded Brawler",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Snake",
+      "Warrior"
+     ],
+     "power": 5,
+     "toughness": 4,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "You may exert this creature as it attacks. When you do, it gets +2/+2 until end of turn."
+     ]
+    },
+    "changedBy": {
+     "7c": [
+      "Hooded Brawler (trigger)"
+     ]
+    }
+   }
+  ],
+  "order": {
+   "7c": [
+    "Hooded Brawler (trigger)"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Hooded Brawler (trigger)",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "target": "Hooded Brawler",
+    "params": {
+     "power": 2,
+     "toughness": 2
+    }
+   }
+  ]
+ }
+}

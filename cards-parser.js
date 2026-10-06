@@ -626,6 +626,12 @@ function parseCardEffects(permanent, card, opts = {}) {
     oracleRaw = oracleRaw.replace(/\benchanted player\b/gi, 'you');
   }
 
+  // "Sacrifice a creature. When you do, all creatures get -X/-X …" (Tip the Scales): in a spell
+  // the reflexive trigger is simply the next thing that happens as it resolves.
+  if (/\b(?:instant|sorcery)\b/i.test(card.type_line || '')) {
+    oracleRaw = oracleRaw.replace(/(\.\s+)when you do,\s*(\w)/gi, (_, pre, ch) => pre + ch.toUpperCase());
+  }
+
   // "[You may have] X's base power and toughness become N/N" (Mirkwood Meditator, Creepy
   // Puppeteer) and "the base power and toughness of X become N/N" (Brine Hag) say the same
   // thing as "X has base power and toughness N/N", which is the form the set-P/T parsers read.
