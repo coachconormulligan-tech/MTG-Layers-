@@ -1,0 +1,1543 @@
+{
+ "name": "Double-faced tokens — the playable side supplies type line, P/T and text",
+ "notes": "Found by tests/sweep.py (34 cards with 'power is null on a creature'). Scryfall layout double_faced_token keeps type line, P/T, colours and oracle text on card_faces only; _resolveCardFace had no branch for it, so the combined type line ('Token Creature — Angel // Token') was parsed and P/T stayed null. It now resolves the requested face, or the playable one when the requested face is a bare 'Token' back or a 'Card' helper. Angel // Angel is a 4/4 Angel; City's Blessing // Elemental (face 0 is 'Card') is the 0/1 Elemental; Goblin // Soldier added as face 1 is the white Soldier, then switched to the red Goblin; Incubator // Phyrexian says 'Transform this artifact', so it flips rather than being a choice.",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Angel // Angel",
+    "as": "angel"
+   },
+   {
+    "add": "City's Blessing // Elemental",
+    "as": "elemental"
+   },
+   {
+    "add": "Goblin // Soldier",
+    "as": "soldier",
+    "opts": {
+     "faceIndex": 1
+    }
+   },
+   {
+    "add": "Goblin // Soldier",
+    "as": "goblin",
+    "opts": {
+     "faceIndex": 1
+    }
+   },
+   {
+    "call": [
+     "switchSplitFace",
+     "@goblin",
+     0
+    ]
+   },
+   {
+    "add": "Incubator // Phyrexian",
+    "as": "phyrexian"
+   },
+   {
+    "call": [
+     "flipCard",
+     "@phyrexian"
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Angel",
+   "final": {
+    "power": 4,
+    "toughness": 4,
+    "types": [
+     "Creature"
+    ],
+    "subtypes": [
+     "Angel"
+    ]
+   }
+  },
+  {
+   "perm": "Elemental",
+   "final": {
+    "power": 0,
+    "toughness": 1,
+    "types": [
+     "Creature"
+    ],
+    "colors": [
+     "R"
+    ]
+   }
+  },
+  {
+   "perm": "Soldier",
+   "final": {
+    "power": 1,
+    "toughness": 1,
+    "colors": [
+     "W"
+    ],
+    "subtypes": [
+     "Soldier"
+    ]
+   }
+  },
+  {
+   "perm": "Goblin",
+   "final": {
+    "power": 1,
+    "toughness": 1,
+    "colors": [
+     "R"
+    ],
+    "subtypes": [
+     "Goblin"
+    ]
+   }
+  },
+  {
+   "perm": "Phyrexian",
+   "final": {
+    "power": 0,
+    "toughness": 0,
+    "types": {
+     "$includes": [
+      "Artifact",
+      "Creature"
+     ]
+    }
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "e2235007-b02e-463b-95e1-a8bea74a0f9d",
+     "oracle_id": "a5108f4b-f2ee-41ba-b5e4-29f942b478b3",
+     "multiverse_ids": [],
+     "tcgplayer_id": 152589,
+     "cardmarket_id": 313704,
+     "name": "Angel // Angel",
+     "lang": "en",
+     "released_at": "2017-12-08",
+     "uri": "https://api.scryfall.com/cards/e2235007-b02e-463b-95e1-a8bea74a0f9d",
+     "scryfall_uri": "https://scryfall.com/card/tust/1/angel-angel?utm_source=api",
+     "layout": "double_faced_token",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T09:36:04Z",
+     "cmc": 0,
+     "type_line": "Token Creature — Angel // Token",
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [
+      "Flying"
+     ],
+     "card_faces": [
+      {
+       "object": "card_face",
+       "name": "Angel",
+       "mana_cost": "",
+       "type_line": "Token Creature — Angel",
+       "oracle_text": "Flying",
+       "colors": [
+        "W"
+       ],
+       "power": "4",
+       "toughness": "4",
+       "artist": "Magali Villeneuve",
+       "artist_id": "9e6a55ae-be4d-4c23-a2a5-135737ffd879",
+       "illustration_id": "52433729-f5bc-46b1-a0b6-d03dc7412241",
+       "image_uris": {
+        "small": "https://cards.scryfall.io/small/front/e/2/e2235007-b02e-463b-95e1-a8bea74a0f9d.jpg?1783935364",
+        "normal": "https://cards.scryfall.io/normal/front/e/2/e2235007-b02e-463b-95e1-a8bea74a0f9d.jpg?1783935364",
+        "large": "https://cards.scryfall.io/large/front/e/2/e2235007-b02e-463b-95e1-a8bea74a0f9d.jpg?1783935364",
+        "png": "https://cards.scryfall.io/png/front/e/2/e2235007-b02e-463b-95e1-a8bea74a0f9d.png?1783935364",
+        "art_crop": "https://cards.scryfall.io/art_crop/front/e/2/e2235007-b02e-463b-95e1-a8bea74a0f9d.jpg?1783935364",
+        "border_crop": "https://cards.scryfall.io/border_crop/front/e/2/e2235007-b02e-463b-95e1-a8bea74a0f9d.jpg?1783935364",
+        "thumb": "https://cards.scryfall.io/thumb/front/e/2/e2235007-b02e-463b-95e1-a8bea74a0f9d.webp?1783935364",
+        "grid": "https://cards.scryfall.io/grid/front/e/2/e2235007-b02e-463b-95e1-a8bea74a0f9d.webp?1783935364",
+        "display": "https://cards.scryfall.io/display/front/e/2/e2235007-b02e-463b-95e1-a8bea74a0f9d.webp?1783935364",
+        "art": "https://cards.scryfall.io/art/front/e/2/e2235007-b02e-463b-95e1-a8bea74a0f9d.webp?1783935364",
+        "crop": "https://cards.scryfall.io/crop/front/e/2/e2235007-b02e-463b-95e1-a8bea74a0f9d.webp?1783935364"
+       }
+      },
+      {
+       "object": "card_face",
+       "name": "Angel",
+       "mana_cost": "",
+       "type_line": "Token",
+       "oracle_text": "",
+       "colors": [
+        "W"
+       ],
+       "artist": "Magali Villeneuve",
+       "artist_id": "9e6a55ae-be4d-4c23-a2a5-135737ffd879",
+       "illustration_id": "52433729-f5bc-46b1-a0b6-d03dc7412241",
+       "image_uris": {
+        "small": "https://cards.scryfall.io/small/back/e/2/e2235007-b02e-463b-95e1-a8bea74a0f9d.jpg?1783935364",
+        "normal": "https://cards.scryfall.io/normal/back/e/2/e2235007-b02e-463b-95e1-a8bea74a0f9d.jpg?1783935364",
+        "large": "https://cards.scryfall.io/large/back/e/2/e2235007-b02e-463b-95e1-a8bea74a0f9d.jpg?1783935364",
+        "png": "https://cards.scryfall.io/png/back/e/2/e2235007-b02e-463b-95e1-a8bea74a0f9d.png?1783935364",
+        "art_crop": "https://cards.scryfall.io/art_crop/back/e/2/e2235007-b02e-463b-95e1-a8bea74a0f9d.jpg?1783935364",
+        "border_crop": "https://cards.scryfall.io/border_crop/back/e/2/e2235007-b02e-463b-95e1-a8bea74a0f9d.jpg?1783935364",
+        "thumb": "https://cards.scryfall.io/thumb/back/e/2/e2235007-b02e-463b-95e1-a8bea74a0f9d.webp?1783935364",
+        "grid": "https://cards.scryfall.io/grid/back/e/2/e2235007-b02e-463b-95e1-a8bea74a0f9d.webp?1783935364",
+        "display": "https://cards.scryfall.io/display/back/e/2/e2235007-b02e-463b-95e1-a8bea74a0f9d.webp?1783935364",
+        "art": "https://cards.scryfall.io/art/back/e/2/e2235007-b02e-463b-95e1-a8bea74a0f9d.webp?1783935364",
+        "crop": "https://cards.scryfall.io/crop/back/e/2/e2235007-b02e-463b-95e1-a8bea74a0f9d.webp?1783935364"
+       }
+      }
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "not_legal",
+      "pauper": "not_legal",
+      "vintage": "not_legal",
+      "penny": "not_legal",
+      "commander": "not_legal",
+      "oathbreaker": "not_legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "not_legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": false,
+     "finishes": [
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "f494ec08-2e39-4228-bddb-200967e2b109",
+     "set": "tust",
+     "set_name": "Unstable Tokens",
+     "set_type": "token",
+     "set_uri": "https://api.scryfall.com/sets/f494ec08-2e39-4228-bddb-200967e2b109",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Atust&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/tust?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/e2235007-b02e-463b-95e1-a8bea74a0f9d/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aa5108f4b-f2ee-41ba-b5e4-29f942b478b3&unique=prints",
+     "collector_number": "1",
+     "digital": false,
+     "rarity": "common",
+     "artist": "Magali Villeneuve",
+     "artist_ids": [
+      "9e6a55ae-be4d-4c23-a2a5-135737ffd879"
+     ],
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "prices": {
+      "usd": null,
+      "usd_foil": "1.45",
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": "0.46",
+      "tix": null
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DAngel%2B%252F%252F%2BAngel",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DAngel%2B%252F%252F%2BAngel",
+      "edhrec": "https://edhrec.com/route/?cc=Angel+%2F%2F+Angel"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F152589%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=313704&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Angel+%2F%2F+Angel&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": true,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "60ca146d-4e88-4e87-a775-9cfbc9e6b9f2",
+     "oracle_id": "07bd569f-d14f-4cd7-9614-5131234a032a",
+     "multiverse_ids": [],
+     "tcgplayer_id": 158252,
+     "cardmarket_id": 314992,
+     "name": "City's Blessing // Elemental",
+     "lang": "en",
+     "released_at": "2017-12-27",
+     "uri": "https://api.scryfall.com/cards/60ca146d-4e88-4e87-a775-9cfbc9e6b9f2",
+     "scryfall_uri": "https://scryfall.com/card/f18/2/citys-blessing-elemental?utm_source=api",
+     "layout": "double_faced_token",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T09:35:52Z",
+     "cmc": 0,
+     "type_line": "Card // Token Creature — Elemental",
+     "color_identity": [
+      "R"
+     ],
+     "keywords": [],
+     "card_faces": [
+      {
+       "object": "card_face",
+       "name": "City's Blessing",
+       "mana_cost": "",
+       "type_line": "Card",
+       "oracle_text": "",
+       "colors": [],
+       "flavor_text": "Once you have ascended to the highest temple of Orazca, the power of the Immortal Sun is yours to wield forever.",
+       "artist": "Yeong-Hao Han",
+       "artist_id": "f8e7f8d6-6dde-4059-973c-30f1fd1bbe4e",
+       "illustration_id": "8c1be4a0-ecd2-42ca-bb5e-712668e6a831",
+       "image_uris": {
+        "small": "https://cards.scryfall.io/small/front/6/0/60ca146d-4e88-4e87-a775-9cfbc9e6b9f2.jpg?1783935352",
+        "normal": "https://cards.scryfall.io/normal/front/6/0/60ca146d-4e88-4e87-a775-9cfbc9e6b9f2.jpg?1783935352",
+        "large": "https://cards.scryfall.io/large/front/6/0/60ca146d-4e88-4e87-a775-9cfbc9e6b9f2.jpg?1783935352",
+        "png": "https://cards.scryfall.io/png/front/6/0/60ca146d-4e88-4e87-a775-9cfbc9e6b9f2.png?1783935352",
+        "art_crop": "https://cards.scryfall.io/art_crop/front/6/0/60ca146d-4e88-4e87-a775-9cfbc9e6b9f2.jpg?1783935352",
+        "border_crop": "https://cards.scryfall.io/border_crop/front/6/0/60ca146d-4e88-4e87-a775-9cfbc9e6b9f2.jpg?1783935352",
+        "thumb": "https://cards.scryfall.io/thumb/front/6/0/60ca146d-4e88-4e87-a775-9cfbc9e6b9f2.webp?1783935352",
+        "grid": "https://cards.scryfall.io/grid/front/6/0/60ca146d-4e88-4e87-a775-9cfbc9e6b9f2.webp?1783935352",
+        "display": "https://cards.scryfall.io/display/front/6/0/60ca146d-4e88-4e87-a775-9cfbc9e6b9f2.webp?1783935352",
+        "art": "https://cards.scryfall.io/art/front/6/0/60ca146d-4e88-4e87-a775-9cfbc9e6b9f2.webp?1783935352",
+        "crop": "https://cards.scryfall.io/crop/front/6/0/60ca146d-4e88-4e87-a775-9cfbc9e6b9f2.webp?1783935352"
+       }
+      },
+      {
+       "object": "card_face",
+       "name": "Elemental",
+       "mana_cost": "",
+       "type_line": "Token Creature — Elemental",
+       "oracle_text": "At the beginning of your upkeep, sacrifice this creature and return target card named Rekindling Phoenix from your graveyard to the battlefield. It gains haste until end of turn.",
+       "colors": [
+        "R"
+       ],
+       "power": "0",
+       "toughness": "1",
+       "artist": "Jason Rainville",
+       "artist_id": "6ed7e669-579b-443d-b223-e5cbcb2a7483",
+       "illustration_id": "37071500-1a8d-4298-9202-1931cd2bb073",
+       "image_uris": {
+        "small": "https://cards.scryfall.io/small/back/6/0/60ca146d-4e88-4e87-a775-9cfbc9e6b9f2.jpg?1783935352",
+        "normal": "https://cards.scryfall.io/normal/back/6/0/60ca146d-4e88-4e87-a775-9cfbc9e6b9f2.jpg?1783935352",
+        "large": "https://cards.scryfall.io/large/back/6/0/60ca146d-4e88-4e87-a775-9cfbc9e6b9f2.jpg?1783935352",
+        "png": "https://cards.scryfall.io/png/back/6/0/60ca146d-4e88-4e87-a775-9cfbc9e6b9f2.png?1783935352",
+        "art_crop": "https://cards.scryfall.io/art_crop/back/6/0/60ca146d-4e88-4e87-a775-9cfbc9e6b9f2.jpg?1783935352",
+        "border_crop": "https://cards.scryfall.io/border_crop/back/6/0/60ca146d-4e88-4e87-a775-9cfbc9e6b9f2.jpg?1783935352",
+        "thumb": "https://cards.scryfall.io/thumb/back/6/0/60ca146d-4e88-4e87-a775-9cfbc9e6b9f2.webp?1783935352",
+        "grid": "https://cards.scryfall.io/grid/back/6/0/60ca146d-4e88-4e87-a775-9cfbc9e6b9f2.webp?1783935352",
+        "display": "https://cards.scryfall.io/display/back/6/0/60ca146d-4e88-4e87-a775-9cfbc9e6b9f2.webp?1783935352",
+        "art": "https://cards.scryfall.io/art/back/6/0/60ca146d-4e88-4e87-a775-9cfbc9e6b9f2.webp?1783935352",
+        "crop": "https://cards.scryfall.io/crop/back/6/0/60ca146d-4e88-4e87-a775-9cfbc9e6b9f2.webp?1783935352"
+       }
+      }
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "not_legal",
+      "pauper": "not_legal",
+      "vintage": "not_legal",
+      "penny": "not_legal",
+      "commander": "not_legal",
+      "oathbreaker": "not_legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "not_legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": false,
+     "finishes": [
+      "foil"
+     ],
+     "oversized": false,
+     "promo": true,
+     "reprint": false,
+     "variation": false,
+     "set_id": "3a1c398c-c72b-4617-acae-3e6b06ae08d5",
+     "set": "f18",
+     "set_name": "Friday Night Magic 2018",
+     "set_type": "promo",
+     "set_uri": "https://api.scryfall.com/sets/3a1c398c-c72b-4617-acae-3e6b06ae08d5",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Af18&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/f18?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/60ca146d-4e88-4e87-a775-9cfbc9e6b9f2/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A07bd569f-d14f-4cd7-9614-5131234a032a&unique=prints",
+     "collector_number": "2",
+     "digital": false,
+     "rarity": "common",
+     "artist": "Yeong-Hao Han & Jason Rainville",
+     "artist_ids": [
+      "f8e7f8d6-6dde-4059-973c-30f1fd1bbe4e",
+      "6ed7e669-579b-443d-b223-e5cbcb2a7483"
+     ],
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "tourney",
+      "fnm"
+     ],
+     "prices": {
+      "usd": null,
+      "usd_foil": "0.76",
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": "0.38",
+      "tix": null
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DCity%2527s%2BBlessing%2B%252F%252F%2BElemental",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DCity%2527s%2BBlessing%2B%252F%252F%2BElemental",
+      "edhrec": "https://edhrec.com/route/?cc=City%27s+Blessing+%2F%2F+Elemental"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F158252%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=314992&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=City%27s+Blessing+%2F%2F+Elemental&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 1,
+    "isToken": true,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "64f4dc68-060b-4c63-8f43-00f53c52a251",
+     "oracle_id": "0823fbf2-7b39-4869-b3f0-091b7d7d0a5d",
+     "multiverse_ids": [],
+     "tcgplayer_id": 179417,
+     "cardmarket_id": 366024,
+     "name": "Goblin // Soldier",
+     "lang": "en",
+     "released_at": "2018-11-02",
+     "uri": "https://api.scryfall.com/cards/64f4dc68-060b-4c63-8f43-00f53c52a251",
+     "scryfall_uri": "https://scryfall.com/card/tgk1/4/goblin-soldier?utm_source=api",
+     "layout": "double_faced_token",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T09:13:28Z",
+     "cmc": 0,
+     "type_line": "Token Creature — Goblin // Token Creature — Soldier",
+     "color_identity": [
+      "R",
+      "W"
+     ],
+     "keywords": [
+      "Lifelink"
+     ],
+     "card_faces": [
+      {
+       "object": "card_face",
+       "name": "Goblin",
+       "mana_cost": "",
+       "type_line": "Token Creature — Goblin",
+       "oracle_text": "",
+       "colors": [
+        "R"
+       ],
+       "power": "1",
+       "toughness": "1",
+       "artist": "Mark Zug",
+       "artist_id": "48e2b98c-5467-4671-bd42-4c3746115117",
+       "illustration_id": "1472da50-4fce-4777-8983-ba5d0a0efdea",
+       "image_uris": {
+        "small": "https://cards.scryfall.io/small/front/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.jpg?1783934008",
+        "normal": "https://cards.scryfall.io/normal/front/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.jpg?1783934008",
+        "large": "https://cards.scryfall.io/large/front/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.jpg?1783934008",
+        "png": "https://cards.scryfall.io/png/front/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.png?1783934008",
+        "art_crop": "https://cards.scryfall.io/art_crop/front/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.jpg?1783934008",
+        "border_crop": "https://cards.scryfall.io/border_crop/front/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.jpg?1783934008",
+        "thumb": "https://cards.scryfall.io/thumb/front/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.webp?1783934008",
+        "grid": "https://cards.scryfall.io/grid/front/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.webp?1783934008",
+        "display": "https://cards.scryfall.io/display/front/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.webp?1783934008",
+        "art": "https://cards.scryfall.io/art/front/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.webp?1783934008",
+        "crop": "https://cards.scryfall.io/crop/front/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.webp?1783934008"
+       }
+      },
+      {
+       "object": "card_face",
+       "name": "Soldier",
+       "mana_cost": "",
+       "type_line": "Token Creature — Soldier",
+       "oracle_text": "Lifelink",
+       "colors": [
+        "W"
+       ],
+       "power": "1",
+       "toughness": "1",
+       "artist": "John Severin Brassell",
+       "artist_id": "a4f50310-4b01-4cd3-8ab8-85b31e6876db",
+       "illustration_id": "f8adf437-2876-4669-9007-f4345de0bd43",
+       "image_uris": {
+        "small": "https://cards.scryfall.io/small/back/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.jpg?1783934008",
+        "normal": "https://cards.scryfall.io/normal/back/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.jpg?1783934008",
+        "large": "https://cards.scryfall.io/large/back/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.jpg?1783934008",
+        "png": "https://cards.scryfall.io/png/back/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.png?1783934008",
+        "art_crop": "https://cards.scryfall.io/art_crop/back/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.jpg?1783934008",
+        "border_crop": "https://cards.scryfall.io/border_crop/back/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.jpg?1783934008",
+        "thumb": "https://cards.scryfall.io/thumb/back/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.webp?1783934008",
+        "grid": "https://cards.scryfall.io/grid/back/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.webp?1783934008",
+        "display": "https://cards.scryfall.io/display/back/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.webp?1783934008",
+        "art": "https://cards.scryfall.io/art/back/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.webp?1783934008",
+        "crop": "https://cards.scryfall.io/crop/back/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.webp?1783934008"
+       }
+      }
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "not_legal",
+      "pauper": "not_legal",
+      "vintage": "not_legal",
+      "penny": "not_legal",
+      "commander": "not_legal",
+      "oathbreaker": "not_legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "not_legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "9cabda5f-97cd-4eb3-93b9-83d1e9a191cb",
+     "set": "tgk1",
+     "set_name": "GRN Guild Kit Tokens",
+     "set_type": "token",
+     "set_uri": "https://api.scryfall.com/sets/9cabda5f-97cd-4eb3-93b9-83d1e9a191cb",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Atgk1&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/tgk1?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/64f4dc68-060b-4c63-8f43-00f53c52a251/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A0823fbf2-7b39-4869-b3f0-091b7d7d0a5d&unique=prints",
+     "collector_number": "4",
+     "digital": false,
+     "rarity": "common",
+     "artist": "Mark Zug & John Severin Brassell",
+     "artist_ids": [
+      "48e2b98c-5467-4671-bd42-4c3746115117",
+      "a4f50310-4b01-4cd3-8ab8-85b31e6876db"
+     ],
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "prices": {
+      "usd": "0.38",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.23",
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGoblin%2B%252F%252F%2BSoldier",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGoblin%2B%252F%252F%2BSoldier",
+      "edhrec": "https://edhrec.com/route/?cc=Goblin+%2F%2F+Soldier"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F179417%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=366024&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Goblin+%2F%2F+Soldier&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 1,
+    "isToken": true,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "64f4dc68-060b-4c63-8f43-00f53c52a251",
+     "oracle_id": "0823fbf2-7b39-4869-b3f0-091b7d7d0a5d",
+     "multiverse_ids": [],
+     "tcgplayer_id": 179417,
+     "cardmarket_id": 366024,
+     "name": "Goblin // Soldier",
+     "lang": "en",
+     "released_at": "2018-11-02",
+     "uri": "https://api.scryfall.com/cards/64f4dc68-060b-4c63-8f43-00f53c52a251",
+     "scryfall_uri": "https://scryfall.com/card/tgk1/4/goblin-soldier?utm_source=api",
+     "layout": "double_faced_token",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T09:13:28Z",
+     "cmc": 0,
+     "type_line": "Token Creature — Goblin // Token Creature — Soldier",
+     "color_identity": [
+      "R",
+      "W"
+     ],
+     "keywords": [
+      "Lifelink"
+     ],
+     "card_faces": [
+      {
+       "object": "card_face",
+       "name": "Goblin",
+       "mana_cost": "",
+       "type_line": "Token Creature — Goblin",
+       "oracle_text": "",
+       "colors": [
+        "R"
+       ],
+       "power": "1",
+       "toughness": "1",
+       "artist": "Mark Zug",
+       "artist_id": "48e2b98c-5467-4671-bd42-4c3746115117",
+       "illustration_id": "1472da50-4fce-4777-8983-ba5d0a0efdea",
+       "image_uris": {
+        "small": "https://cards.scryfall.io/small/front/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.jpg?1783934008",
+        "normal": "https://cards.scryfall.io/normal/front/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.jpg?1783934008",
+        "large": "https://cards.scryfall.io/large/front/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.jpg?1783934008",
+        "png": "https://cards.scryfall.io/png/front/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.png?1783934008",
+        "art_crop": "https://cards.scryfall.io/art_crop/front/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.jpg?1783934008",
+        "border_crop": "https://cards.scryfall.io/border_crop/front/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.jpg?1783934008",
+        "thumb": "https://cards.scryfall.io/thumb/front/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.webp?1783934008",
+        "grid": "https://cards.scryfall.io/grid/front/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.webp?1783934008",
+        "display": "https://cards.scryfall.io/display/front/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.webp?1783934008",
+        "art": "https://cards.scryfall.io/art/front/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.webp?1783934008",
+        "crop": "https://cards.scryfall.io/crop/front/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.webp?1783934008"
+       }
+      },
+      {
+       "object": "card_face",
+       "name": "Soldier",
+       "mana_cost": "",
+       "type_line": "Token Creature — Soldier",
+       "oracle_text": "Lifelink",
+       "colors": [
+        "W"
+       ],
+       "power": "1",
+       "toughness": "1",
+       "artist": "John Severin Brassell",
+       "artist_id": "a4f50310-4b01-4cd3-8ab8-85b31e6876db",
+       "illustration_id": "f8adf437-2876-4669-9007-f4345de0bd43",
+       "image_uris": {
+        "small": "https://cards.scryfall.io/small/back/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.jpg?1783934008",
+        "normal": "https://cards.scryfall.io/normal/back/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.jpg?1783934008",
+        "large": "https://cards.scryfall.io/large/back/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.jpg?1783934008",
+        "png": "https://cards.scryfall.io/png/back/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.png?1783934008",
+        "art_crop": "https://cards.scryfall.io/art_crop/back/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.jpg?1783934008",
+        "border_crop": "https://cards.scryfall.io/border_crop/back/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.jpg?1783934008",
+        "thumb": "https://cards.scryfall.io/thumb/back/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.webp?1783934008",
+        "grid": "https://cards.scryfall.io/grid/back/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.webp?1783934008",
+        "display": "https://cards.scryfall.io/display/back/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.webp?1783934008",
+        "art": "https://cards.scryfall.io/art/back/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.webp?1783934008",
+        "crop": "https://cards.scryfall.io/crop/back/6/4/64f4dc68-060b-4c63-8f43-00f53c52a251.webp?1783934008"
+       }
+      }
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "not_legal",
+      "pauper": "not_legal",
+      "vintage": "not_legal",
+      "penny": "not_legal",
+      "commander": "not_legal",
+      "oathbreaker": "not_legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "not_legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "9cabda5f-97cd-4eb3-93b9-83d1e9a191cb",
+     "set": "tgk1",
+     "set_name": "GRN Guild Kit Tokens",
+     "set_type": "token",
+     "set_uri": "https://api.scryfall.com/sets/9cabda5f-97cd-4eb3-93b9-83d1e9a191cb",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Atgk1&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/tgk1?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/64f4dc68-060b-4c63-8f43-00f53c52a251/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A0823fbf2-7b39-4869-b3f0-091b7d7d0a5d&unique=prints",
+     "collector_number": "4",
+     "digital": false,
+     "rarity": "common",
+     "artist": "Mark Zug & John Severin Brassell",
+     "artist_ids": [
+      "48e2b98c-5467-4671-bd42-4c3746115117",
+      "a4f50310-4b01-4cd3-8ab8-85b31e6876db"
+     ],
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "prices": {
+      "usd": "0.38",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.23",
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGoblin%2B%252F%252F%2BSoldier",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGoblin%2B%252F%252F%2BSoldier",
+      "edhrec": "https://edhrec.com/route/?cc=Goblin+%2F%2F+Soldier"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F179417%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=366024&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Goblin+%2F%2F+Soldier&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": true,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 4,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_5",
+    "scryfallData": {
+     "object": "card",
+     "id": "7b7f2e3a-ec43-4408-affd-a09338566ce3",
+     "oracle_id": "dd3bf75e-9ef0-4ded-9b65-1a60a78a6253",
+     "multiverse_ids": [],
+     "name": "Incubator // Phyrexian",
+     "lang": "en",
+     "released_at": "2026-10-02",
+     "uri": "https://api.scryfall.com/cards/7b7f2e3a-ec43-4408-affd-a09338566ce3",
+     "scryfall_uri": "https://scryfall.com/card/tfrc/13/incubator-phyrexian?utm_source=api",
+     "layout": "double_faced_token",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-09-16T23:06:33Z",
+     "cmc": 0,
+     "type_line": "Token Artifact — Incubator // Token Artifact Creature — Phyrexian",
+     "color_identity": [],
+     "keywords": [
+      "Transform"
+     ],
+     "card_faces": [
+      {
+       "object": "card_face",
+       "name": "Incubator",
+       "mana_cost": "",
+       "type_line": "Token Artifact — Incubator",
+       "oracle_text": "{2}: Transform this artifact.",
+       "colors": [],
+       "artist": "Johann Bodin",
+       "artist_id": "d92e2dd9-9ef6-43f6-81f8-df87f9066983",
+       "illustration_id": "ce90ea1c-279c-4419-b18d-c4e021501efc",
+       "image_uris": {
+        "small": "https://cards.scryfall.io/small/front/7/b/7b7f2e3a-ec43-4408-affd-a09338566ce3.jpg?1789599993",
+        "normal": "https://cards.scryfall.io/normal/front/7/b/7b7f2e3a-ec43-4408-affd-a09338566ce3.jpg?1789599993",
+        "large": "https://cards.scryfall.io/large/front/7/b/7b7f2e3a-ec43-4408-affd-a09338566ce3.jpg?1789599993",
+        "png": "https://cards.scryfall.io/png/front/7/b/7b7f2e3a-ec43-4408-affd-a09338566ce3.png?1789599993",
+        "art_crop": "https://cards.scryfall.io/art_crop/front/7/b/7b7f2e3a-ec43-4408-affd-a09338566ce3.jpg?1789599993",
+        "border_crop": "https://cards.scryfall.io/border_crop/front/7/b/7b7f2e3a-ec43-4408-affd-a09338566ce3.jpg?1789599993",
+        "thumb": "https://cards.scryfall.io/thumb/front/7/b/7b7f2e3a-ec43-4408-affd-a09338566ce3.webp?1789599993",
+        "grid": "https://cards.scryfall.io/grid/front/7/b/7b7f2e3a-ec43-4408-affd-a09338566ce3.webp?1789599993",
+        "display": "https://cards.scryfall.io/display/front/7/b/7b7f2e3a-ec43-4408-affd-a09338566ce3.webp?1789599993",
+        "art": "https://cards.scryfall.io/art/front/7/b/7b7f2e3a-ec43-4408-affd-a09338566ce3.webp?1789599993",
+        "crop": "https://cards.scryfall.io/crop/front/7/b/7b7f2e3a-ec43-4408-affd-a09338566ce3.webp?1789599993"
+       }
+      },
+      {
+       "object": "card_face",
+       "name": "Phyrexian",
+       "mana_cost": "",
+       "type_line": "Token Artifact Creature — Phyrexian",
+       "oracle_text": "",
+       "colors": [],
+       "power": "0",
+       "toughness": "0",
+       "artist": "Johann Bodin",
+       "artist_id": "d92e2dd9-9ef6-43f6-81f8-df87f9066983",
+       "illustration_id": "778a4c3a-3878-45f1-850c-1863d29c5267",
+       "image_uris": {
+        "small": "https://cards.scryfall.io/small/back/7/b/7b7f2e3a-ec43-4408-affd-a09338566ce3.jpg?1789599993",
+        "normal": "https://cards.scryfall.io/normal/back/7/b/7b7f2e3a-ec43-4408-affd-a09338566ce3.jpg?1789599993",
+        "large": "https://cards.scryfall.io/large/back/7/b/7b7f2e3a-ec43-4408-affd-a09338566ce3.jpg?1789599993",
+        "png": "https://cards.scryfall.io/png/back/7/b/7b7f2e3a-ec43-4408-affd-a09338566ce3.png?1789599993",
+        "art_crop": "https://cards.scryfall.io/art_crop/back/7/b/7b7f2e3a-ec43-4408-affd-a09338566ce3.jpg?1789599993",
+        "border_crop": "https://cards.scryfall.io/border_crop/back/7/b/7b7f2e3a-ec43-4408-affd-a09338566ce3.jpg?1789599993",
+        "thumb": "https://cards.scryfall.io/thumb/back/7/b/7b7f2e3a-ec43-4408-affd-a09338566ce3.webp?1789599993",
+        "grid": "https://cards.scryfall.io/grid/back/7/b/7b7f2e3a-ec43-4408-affd-a09338566ce3.webp?1789599993",
+        "display": "https://cards.scryfall.io/display/back/7/b/7b7f2e3a-ec43-4408-affd-a09338566ce3.webp?1789599993",
+        "art": "https://cards.scryfall.io/art/back/7/b/7b7f2e3a-ec43-4408-affd-a09338566ce3.webp?1789599993",
+        "crop": "https://cards.scryfall.io/crop/back/7/b/7b7f2e3a-ec43-4408-affd-a09338566ce3.webp?1789599993"
+       }
+      }
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "6b9ed068-b6bb-4c9e-a8c9-56aa9b62037a",
+       "component": "combo_piece",
+       "name": "Phyrexian Awakening",
+       "type_line": "Enchantment",
+       "uri": "https://api.scryfall.com/cards/6b9ed068-b6bb-4c9e-a8c9-56aa9b62037a"
+      },
+      {
+       "object": "related_card",
+       "id": "15625d6a-3844-4d23-ab35-ee3c3508db8d",
+       "component": "combo_piece",
+       "name": "Marauding Dreadship",
+       "type_line": "Artifact — Vehicle",
+       "uri": "https://api.scryfall.com/cards/15625d6a-3844-4d23-ab35-ee3c3508db8d"
+      },
+      {
+       "object": "related_card",
+       "id": "d55b3b4b-2919-4a49-9d51-c717a21aeb49",
+       "component": "combo_piece",
+       "name": "Glistening Dawn",
+       "type_line": "Sorcery",
+       "uri": "https://api.scryfall.com/cards/d55b3b4b-2919-4a49-9d51-c717a21aeb49"
+      },
+      {
+       "object": "related_card",
+       "id": "0e896a87-2a93-488c-a0c9-0bed8404da44",
+       "component": "combo_piece",
+       "name": "Corruption of Towashi",
+       "type_line": "Enchantment",
+       "uri": "https://api.scryfall.com/cards/0e896a87-2a93-488c-a0c9-0bed8404da44"
+      },
+      {
+       "object": "related_card",
+       "id": "e08e0ef1-a8e0-4c0a-a996-3eee89e37fee",
+       "component": "combo_piece",
+       "name": "Tangled Skyline",
+       "type_line": "Enchantment",
+       "uri": "https://api.scryfall.com/cards/e08e0ef1-a8e0-4c0a-a996-3eee89e37fee"
+      },
+      {
+       "object": "related_card",
+       "id": "70edec35-1770-47f0-9ad2-32e597ee0327",
+       "component": "combo_piece",
+       "name": "Merciless Repurposing",
+       "type_line": "Instant",
+       "uri": "https://api.scryfall.com/cards/70edec35-1770-47f0-9ad2-32e597ee0327"
+      },
+      {
+       "object": "related_card",
+       "id": "7fb642e7-40b6-4fce-9d42-c902def18fad",
+       "component": "combo_piece",
+       "name": "Progenitor Exarch",
+       "type_line": "Creature — Phyrexian Cat Cleric",
+       "uri": "https://api.scryfall.com/cards/7fb642e7-40b6-4fce-9d42-c902def18fad"
+      },
+      {
+       "object": "related_card",
+       "id": "91fd7350-cc97-4c35-a072-2c826984293c",
+       "component": "combo_piece",
+       "name": "Ichor Drinker",
+       "type_line": "Creature — Phyrexian Vampire",
+       "uri": "https://api.scryfall.com/cards/91fd7350-cc97-4c35-a072-2c826984293c"
+      },
+      {
+       "object": "related_card",
+       "id": "d1a21edf-c63c-47c1-8670-1f8bcf879fcf",
+       "component": "combo_piece",
+       "name": "Essence of Orthodoxy",
+       "type_line": "Creature — Phyrexian",
+       "uri": "https://api.scryfall.com/cards/d1a21edf-c63c-47c1-8670-1f8bcf879fcf"
+      },
+      {
+       "object": "related_card",
+       "id": "007324b3-b8a9-4a32-a5a1-ad78f3a07bc3",
+       "component": "combo_piece",
+       "name": "Blighted Burgeoning",
+       "type_line": "Enchantment — Aura",
+       "uri": "https://api.scryfall.com/cards/007324b3-b8a9-4a32-a5a1-ad78f3a07bc3"
+      },
+      {
+       "object": "related_card",
+       "id": "e11bfe58-0380-450e-945c-1c58b7e4ec3d",
+       "component": "combo_piece",
+       "name": "Injector Crocodile",
+       "type_line": "Creature — Phyrexian Crocodile",
+       "uri": "https://api.scryfall.com/cards/e11bfe58-0380-450e-945c-1c58b7e4ec3d"
+      },
+      {
+       "object": "related_card",
+       "id": "a05ba5e3-46f0-41eb-be63-ce25f1985dd6",
+       "component": "combo_piece",
+       "name": "Elesh Norn // The Argent Etchings",
+       "type_line": "Legendary Creature — Phyrexian Praetor // Enchantment — Saga",
+       "uri": "https://api.scryfall.com/cards/a05ba5e3-46f0-41eb-be63-ce25f1985dd6"
+      },
+      {
+       "object": "related_card",
+       "id": "4fc23af5-18dd-45f9-8d82-76b48aaf6d4d",
+       "component": "combo_piece",
+       "name": "Compleated Huntmaster",
+       "type_line": "Creature — Phyrexian Elf Warrior",
+       "uri": "https://api.scryfall.com/cards/4fc23af5-18dd-45f9-8d82-76b48aaf6d4d"
+      },
+      {
+       "object": "related_card",
+       "id": "c4303347-3fbd-4bbd-ab3f-e7ddbe0e0a9d",
+       "component": "combo_piece",
+       "name": "Eyes of Gitaxias",
+       "type_line": "Sorcery",
+       "uri": "https://api.scryfall.com/cards/c4303347-3fbd-4bbd-ab3f-e7ddbe0e0a9d"
+      },
+      {
+       "object": "related_card",
+       "id": "1bdd3ecb-8c11-4a4c-a503-bc29f79a9dcb",
+       "component": "combo_piece",
+       "name": "Converter Beast",
+       "type_line": "Creature — Phyrexian Beast",
+       "uri": "https://api.scryfall.com/cards/1bdd3ecb-8c11-4a4c-a503-bc29f79a9dcb"
+      },
+      {
+       "object": "related_card",
+       "id": "a09a19c4-f572-4921-89f4-1515da9fccde",
+       "component": "combo_piece",
+       "name": "Chrome Host Seedshark",
+       "type_line": "Creature — Phyrexian Shark",
+       "uri": "https://api.scryfall.com/cards/a09a19c4-f572-4921-89f4-1515da9fccde"
+      },
+      {
+       "object": "related_card",
+       "id": "ca3d0358-0516-483d-81a3-dbf2ac473e9f",
+       "component": "combo_piece",
+       "name": "Sunder the Gateway",
+       "type_line": "Sorcery",
+       "uri": "https://api.scryfall.com/cards/ca3d0358-0516-483d-81a3-dbf2ac473e9f"
+      },
+      {
+       "object": "related_card",
+       "id": "7bf90c1a-fcad-45b7-8666-79d55edd71b1",
+       "component": "combo_piece",
+       "name": "Norn's Inquisitor",
+       "type_line": "Creature — Phyrexian Knight",
+       "uri": "https://api.scryfall.com/cards/7bf90c1a-fcad-45b7-8666-79d55edd71b1"
+      },
+      {
+       "object": "related_card",
+       "id": "594aefa2-7a5b-4ec1-841b-a6ef4f5aa2b1",
+       "component": "combo_piece",
+       "name": "Sculpted Perfection",
+       "type_line": "Enchantment",
+       "uri": "https://api.scryfall.com/cards/594aefa2-7a5b-4ec1-841b-a6ef4f5aa2b1"
+      },
+      {
+       "object": "related_card",
+       "id": "69f156b6-68c2-4787-b3f0-6d1079bb576f",
+       "component": "combo_piece",
+       "name": "Searing Barb",
+       "type_line": "Sorcery",
+       "uri": "https://api.scryfall.com/cards/69f156b6-68c2-4787-b3f0-6d1079bb576f"
+      },
+      {
+       "object": "related_card",
+       "id": "7872ec26-087e-4422-aa57-d7a413f3248b",
+       "component": "combo_piece",
+       "name": "Glissa, Herald of Predation",
+       "type_line": "Legendary Creature — Phyrexian Zombie Elf",
+       "uri": "https://api.scryfall.com/cards/7872ec26-087e-4422-aa57-d7a413f3248b"
+      },
+      {
+       "object": "related_card",
+       "id": "f6ee12ba-0e6c-485a-a1ff-61726ed72fea",
+       "component": "combo_piece",
+       "name": "Assimilate Essence",
+       "type_line": "Instant",
+       "uri": "https://api.scryfall.com/cards/f6ee12ba-0e6c-485a-a1ff-61726ed72fea"
+      },
+      {
+       "object": "related_card",
+       "id": "2f92733b-6d7e-4037-a2dd-e85726721863",
+       "component": "combo_piece",
+       "name": "Brimaz, Blight of Oreskos",
+       "type_line": "Legendary Creature — Phyrexian Cat",
+       "uri": "https://api.scryfall.com/cards/2f92733b-6d7e-4037-a2dd-e85726721863"
+      },
+      {
+       "object": "related_card",
+       "id": "49e206f2-1647-4456-8f2f-b67d053413e2",
+       "component": "combo_piece",
+       "name": "Tiller of Flesh",
+       "type_line": "Creature — Phyrexian Knight",
+       "uri": "https://api.scryfall.com/cards/49e206f2-1647-4456-8f2f-b67d053413e2"
+      },
+      {
+       "object": "related_card",
+       "id": "b3227c07-9ef2-46a6-9b4f-bbd6ef12f4a5",
+       "component": "combo_piece",
+       "name": "Elvish Vatkeeper",
+       "type_line": "Creature — Phyrexian Elf",
+       "uri": "https://api.scryfall.com/cards/b3227c07-9ef2-46a6-9b4f-bbd6ef12f4a5"
+      },
+      {
+       "object": "related_card",
+       "id": "445b3315-6587-4d57-ab7e-faab1eec0241",
+       "component": "combo_piece",
+       "name": "Furnace Gremlin",
+       "type_line": "Creature — Phyrexian Gremlin",
+       "uri": "https://api.scryfall.com/cards/445b3315-6587-4d57-ab7e-faab1eec0241"
+      },
+      {
+       "object": "related_card",
+       "id": "97e08244-bbdb-402a-8dde-93e17d989467",
+       "component": "combo_piece",
+       "name": "Gift of Compleation",
+       "type_line": "Enchantment",
+       "uri": "https://api.scryfall.com/cards/97e08244-bbdb-402a-8dde-93e17d989467"
+      },
+      {
+       "object": "related_card",
+       "id": "2777f8b5-2f8e-4cb8-9206-8a4978488657",
+       "component": "combo_piece",
+       "name": "Infected Defector",
+       "type_line": "Creature — Phyrexian Knight",
+       "uri": "https://api.scryfall.com/cards/2777f8b5-2f8e-4cb8-9206-8a4978488657"
+      },
+      {
+       "object": "related_card",
+       "id": "e472aa0f-70c7-4e30-b5fb-da053101a5d1",
+       "component": "combo_piece",
+       "name": "Bloated Processor",
+       "type_line": "Creature — Phyrexian",
+       "uri": "https://api.scryfall.com/cards/e472aa0f-70c7-4e30-b5fb-da053101a5d1"
+      },
+      {
+       "object": "related_card",
+       "id": "425f4659-5c39-4e2d-9a6a-7bb38d32fda7",
+       "component": "combo_piece",
+       "name": "Excise the Imperfect",
+       "type_line": "Instant",
+       "uri": "https://api.scryfall.com/cards/425f4659-5c39-4e2d-9a6a-7bb38d32fda7"
+      },
+      {
+       "object": "related_card",
+       "id": "7b7f2e3a-ec43-4408-affd-a09338566ce3",
+       "component": "token",
+       "name": "Incubator // Phyrexian",
+       "type_line": "Token Artifact — Incubator // Token Artifact Creature — Phyrexian",
+       "uri": "https://api.scryfall.com/cards/7b7f2e3a-ec43-4408-affd-a09338566ce3"
+      },
+      {
+       "object": "related_card",
+       "id": "59d40511-c9ff-466c-8eb9-cc7afc5c2eab",
+       "component": "combo_piece",
+       "name": "Traumatic Revelation",
+       "type_line": "Sorcery",
+       "uri": "https://api.scryfall.com/cards/59d40511-c9ff-466c-8eb9-cc7afc5c2eab"
+      },
+      {
+       "object": "related_card",
+       "id": "ae304cbe-aa42-4f02-a6d8-86fd5ded43ea",
+       "component": "combo_piece",
+       "name": "Blight Titan",
+       "type_line": "Creature — Phyrexian Giant",
+       "uri": "https://api.scryfall.com/cards/ae304cbe-aa42-4f02-a6d8-86fd5ded43ea"
+      },
+      {
+       "object": "related_card",
+       "id": "a560b9a7-4c00-4c0c-b63d-774d3f6b9aa9",
+       "component": "combo_piece",
+       "name": "Sunfall",
+       "type_line": "Sorcery",
+       "uri": "https://api.scryfall.com/cards/a560b9a7-4c00-4c0c-b63d-774d3f6b9aa9"
+      }
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "not_legal",
+      "pauper": "not_legal",
+      "vintage": "not_legal",
+      "penny": "not_legal",
+      "commander": "not_legal",
+      "oathbreaker": "not_legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "not_legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "c4c1ce20-ddbc-48e1-83ad-7c3b849ec9ef",
+     "set": "tfrc",
+     "set_name": "Reality Fracture Commander Tokens",
+     "set_type": "token",
+     "set_uri": "https://api.scryfall.com/sets/c4c1ce20-ddbc-48e1-83ad-7c3b849ec9ef",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Atfrc&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/tfrc?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/7b7f2e3a-ec43-4408-affd-a09338566ce3/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Add3bf75e-9ef0-4ded-9b65-1a60a78a6253&unique=prints",
+     "collector_number": "13",
+     "digital": false,
+     "rarity": "common",
+     "artist": "Johann Bodin",
+     "artist_ids": [
+      "d92e2dd9-9ef6-43f6-81f8-df87f9066983"
+     ],
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "prices": {
+      "usd": null,
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DIncubator%2B%252F%252F%2BPhyrexian",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DIncubator%2B%252F%252F%2BPhyrexian",
+      "edhrec": "https://edhrec.com/route/?cc=Incubator+%2F%2F+Phyrexian"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fmagic%2Fproduct%3FproductLineName%3Dmagic%26q%3DIncubator%2B%252F%252F%2BPhyrexian%26view%3Dgrid",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products/Search?referrer=scryfall&searchString=Incubator+%2F%2F+Phyrexian&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Incubator+%2F%2F+Phyrexian&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 1,
+    "isToken": true,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 5,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Angel",
+    "final": {
+     "name": "Angel",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Angel"
+     ],
+     "power": 4,
+     "toughness": 4,
+     "colors": [
+      "W"
+     ],
+     "abilities": [
+      "Flying"
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Elemental",
+    "final": {
+     "name": "Elemental",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Elemental"
+     ],
+     "power": 0,
+     "toughness": 1,
+     "colors": [
+      "R"
+     ],
+     "abilities": [
+      "At the beginning of your upkeep, sacrifice this creature and return target card named Rekindling Phoenix from your graveyard to the battlefield. It gains haste until end of turn."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Soldier",
+    "final": {
+     "name": "Soldier",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Soldier"
+     ],
+     "power": 1,
+     "toughness": 1,
+     "colors": [
+      "W"
+     ],
+     "abilities": [
+      "Lifelink"
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Goblin",
+    "final": {
+     "name": "Goblin",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Goblin"
+     ],
+     "power": 1,
+     "toughness": 1,
+     "colors": [
+      "R"
+     ],
+     "abilities": []
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Phyrexian",
+    "final": {
+     "name": "Phyrexian",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Artifact",
+      "Creature"
+     ],
+     "subtypes": [
+      "Phyrexian"
+     ],
+     "power": 0,
+     "toughness": 0,
+     "colors": [],
+     "abilities": []
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {},
+  "effects": []
+ }
+}
