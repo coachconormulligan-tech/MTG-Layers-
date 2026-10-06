@@ -1,0 +1,1166 @@
+{
+ "name": "Masumaro — \"twice the number of\" doubles a counted CDA",
+ "notes": "Found by tests/sweep.py (theme: remaining P/T CDAs). 'equal to twice the number of cards in your hand' did not match the count CDA regex at all. The regex now accepts 'twice' and stamps cdaMultiplier: 2, applied in engine-apply after the count (and after any typed-in override). Hand size 3 gives Masumaro 6/6. Mwonvuli Ooze ('1 plus twice the number of age counters on it') with two age counters is 5/5. Territorial Maro (twice the basic land types among lands you control; Forest + Island) is 4/4, which also covers the new domain count.",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Masumaro, First to Live"
+   },
+   {
+    "add": "Mwonvuli Ooze",
+    "as": "ooze"
+   },
+   {
+    "call": [
+     "addCounter",
+     "@ooze",
+     "age",
+     2
+    ]
+   },
+   {
+    "add": "Territorial Maro"
+   },
+   {
+    "add": "Forest"
+   },
+   {
+    "add": "Island"
+   },
+   {
+    "call": [
+     "updateGameState",
+     "handSize",
+     3
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Masumaro, First to Live",
+   "final": {
+    "power": 6,
+    "toughness": 6
+   }
+  },
+  {
+   "perm": "Mwonvuli Ooze",
+   "final": {
+    "power": 5,
+    "toughness": 5
+   }
+  },
+  {
+   "perm": "Territorial Maro",
+   "final": {
+    "power": 4,
+    "toughness": 4
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "2c4625b7-c8b1-4fdf-af9f-935313436b35",
+     "oracle_id": "8af347b8-89fa-499e-8e5a-77463edd6773",
+     "multiverse_ids": [
+      74184
+     ],
+     "mtgo_id": 22022,
+     "mtgo_foil_id": 22023,
+     "tcgplayer_id": 12483,
+     "cardmarket_id": 12711,
+     "name": "Masumaro, First to Live",
+     "lang": "en",
+     "released_at": "2005-06-03",
+     "uri": "https://api.scryfall.com/cards/2c4625b7-c8b1-4fdf-af9f-935313436b35",
+     "scryfall_uri": "https://scryfall.com/card/sok/136/masumaro-first-to-live?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T12:02:16Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/2/c/2c4625b7-c8b1-4fdf-af9f-935313436b35.jpg?1783944136",
+      "normal": "https://cards.scryfall.io/normal/front/2/c/2c4625b7-c8b1-4fdf-af9f-935313436b35.jpg?1783944136",
+      "large": "https://cards.scryfall.io/large/front/2/c/2c4625b7-c8b1-4fdf-af9f-935313436b35.jpg?1783944136",
+      "png": "https://cards.scryfall.io/png/front/2/c/2c4625b7-c8b1-4fdf-af9f-935313436b35.png?1783944136",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/2/c/2c4625b7-c8b1-4fdf-af9f-935313436b35.jpg?1783944136",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/2/c/2c4625b7-c8b1-4fdf-af9f-935313436b35.jpg?1783944136",
+      "thumb": "https://cards.scryfall.io/thumb/front/2/c/2c4625b7-c8b1-4fdf-af9f-935313436b35.webp?1783944136",
+      "grid": "https://cards.scryfall.io/grid/front/2/c/2c4625b7-c8b1-4fdf-af9f-935313436b35.webp?1783944136",
+      "display": "https://cards.scryfall.io/display/front/2/c/2c4625b7-c8b1-4fdf-af9f-935313436b35.webp?1783944136",
+      "art": "https://cards.scryfall.io/art/front/2/c/2c4625b7-c8b1-4fdf-af9f-935313436b35.webp?1783944136",
+      "crop": "https://cards.scryfall.io/crop/front/2/c/2c4625b7-c8b1-4fdf-af9f-935313436b35.webp?1783944136"
+     },
+     "mana_cost": "{3}{G}{G}{G}",
+     "cmc": 6,
+     "type_line": "Legendary Creature — Spirit",
+     "oracle_text": "Masumaro's power and toughness are each equal to twice the number of cards in your hand.",
+     "power": "*",
+     "toughness": "*",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "4db16ad3-2b95-442f-bb6b-e9aa7fe7f769",
+     "set": "sok",
+     "set_name": "Saviors of Kamigawa",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/4db16ad3-2b95-442f-bb6b-e9aa7fe7f769",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Asok&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/sok?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/2c4625b7-c8b1-4fdf-af9f-935313436b35/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A8af347b8-89fa-499e-8e5a-77463edd6773&unique=prints",
+     "collector_number": "136",
+     "digital": false,
+     "rarity": "rare",
+     "flavor_text": "\"In the waning moments of war, humanity's most ancient ancestors return. But whose side shall they make their own?\"\n—Isao, Enlightened Bushi",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Adam Rex",
+     "artist_ids": [
+      "445bd2fb-4a70-4599-87a4-83cf5979fc56"
+     ],
+     "illustration_id": "b0d4130b-f885-40b5-a32f-7cabf9b55e21",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 21065,
+     "prices": {
+      "usd": "0.82",
+      "usd_foil": "8.43",
+      "usd_etched": null,
+      "eur": "0.50",
+      "eur_foil": "6.52",
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=74184&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DMasumaro%252C%2BFirst%2Bto%2BLive",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DMasumaro%252C%2BFirst%2Bto%2BLive",
+      "edhrec": "https://edhrec.com/route/?cc=Masumaro%2C+First+to+Live"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F12483%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=12711&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/22022?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "aa9c6f65-93a1-4913-87e7-a17ebfcc7780",
+     "oracle_id": "42b2c6d0-e0da-41b0-8876-f17dbe5db79a",
+     "multiverse_ids": [
+      4523
+     ],
+     "mtgo_id": 9299,
+     "tcgplayer_id": 6071,
+     "cardmarket_id": 8645,
+     "name": "Mwonvuli Ooze",
+     "lang": "en",
+     "released_at": "1997-06-09",
+     "uri": "https://api.scryfall.com/cards/aa9c6f65-93a1-4913-87e7-a17ebfcc7780",
+     "scryfall_uri": "https://scryfall.com/card/wth/135/mwonvuli-ooze?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T12:45:19Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/a/a/aa9c6f65-93a1-4913-87e7-a17ebfcc7780.jpg?1783946719",
+      "normal": "https://cards.scryfall.io/normal/front/a/a/aa9c6f65-93a1-4913-87e7-a17ebfcc7780.jpg?1783946719",
+      "large": "https://cards.scryfall.io/large/front/a/a/aa9c6f65-93a1-4913-87e7-a17ebfcc7780.jpg?1783946719",
+      "png": "https://cards.scryfall.io/png/front/a/a/aa9c6f65-93a1-4913-87e7-a17ebfcc7780.png?1783946719",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/a/a/aa9c6f65-93a1-4913-87e7-a17ebfcc7780.jpg?1783946719",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/a/a/aa9c6f65-93a1-4913-87e7-a17ebfcc7780.jpg?1783946719",
+      "thumb": "https://cards.scryfall.io/thumb/front/a/a/aa9c6f65-93a1-4913-87e7-a17ebfcc7780.webp?1783946719",
+      "grid": "https://cards.scryfall.io/grid/front/a/a/aa9c6f65-93a1-4913-87e7-a17ebfcc7780.webp?1783946719",
+      "display": "https://cards.scryfall.io/display/front/a/a/aa9c6f65-93a1-4913-87e7-a17ebfcc7780.webp?1783946719",
+      "art": "https://cards.scryfall.io/art/front/a/a/aa9c6f65-93a1-4913-87e7-a17ebfcc7780.webp?1783946719",
+      "crop": "https://cards.scryfall.io/crop/front/a/a/aa9c6f65-93a1-4913-87e7-a17ebfcc7780.webp?1783946719"
+     },
+     "mana_cost": "{G}",
+     "cmc": 1,
+     "type_line": "Creature — Ooze",
+     "oracle_text": "Cumulative upkeep {2} (At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay {2} for each age counter on it.)\nMwonvuli Ooze's power and toughness are each equal to 1 plus twice the number of age counters on it.",
+     "power": "1+*",
+     "toughness": "1+*",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [
+      "Cumulative upkeep"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": true,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "700997ac-add2-4ce2-992e-5efa0fdfc0e9",
+     "set": "wth",
+     "set_name": "Weatherlight",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/700997ac-add2-4ce2-992e-5efa0fdfc0e9",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Awth&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/wth?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/aa9c6f65-93a1-4913-87e7-a17ebfcc7780/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A42b2c6d0-e0da-41b0-8876-f17dbe5db79a&unique=prints",
+     "collector_number": "135",
+     "digital": false,
+     "rarity": "rare",
+     "flavor_text": "\"Ewww!\"",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Zina Saunders",
+     "artist_ids": [
+      "eff6a2bb-7ca1-432e-8af9-aa85ee2359a2"
+     ],
+     "illustration_id": "0c73890c-d3f1-42fe-a486-bf367dd5d409",
+     "border_color": "black",
+     "frame": "1997",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 26458,
+     "prices": {
+      "usd": "0.83",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.71",
+      "eur_foil": null,
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=4523&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DMwonvuli%2BOoze",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DMwonvuli%2BOoze",
+      "edhrec": "https://edhrec.com/route/?cc=Mwonvuli+Ooze"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F6071%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=8645&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/9299?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {
+     "age": 2
+    },
+    "counterTimestamps": {
+     "age": 3
+    },
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "853ddf31-826b-411e-9b6d-75d53cdd1b84",
+     "oracle_id": "478eeed5-8170-4fb3-8ec2-bcebc0265622",
+     "multiverse_ids": [
+      574664
+     ],
+     "mtgo_id": 102844,
+     "arena_id": 82236,
+     "tcgplayer_id": 282760,
+     "cardmarket_id": 671373,
+     "name": "Territorial Maro",
+     "lang": "en",
+     "released_at": "2022-09-09",
+     "uri": "https://api.scryfall.com/cards/853ddf31-826b-411e-9b6d-75d53cdd1b84",
+     "scryfall_uri": "https://scryfall.com/card/dmu/184/territorial-maro?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T05:41:33Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/8/5/853ddf31-826b-411e-9b6d-75d53cdd1b84.jpg?1783921293",
+      "normal": "https://cards.scryfall.io/normal/front/8/5/853ddf31-826b-411e-9b6d-75d53cdd1b84.jpg?1783921293",
+      "large": "https://cards.scryfall.io/large/front/8/5/853ddf31-826b-411e-9b6d-75d53cdd1b84.jpg?1783921293",
+      "png": "https://cards.scryfall.io/png/front/8/5/853ddf31-826b-411e-9b6d-75d53cdd1b84.png?1783921293",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/8/5/853ddf31-826b-411e-9b6d-75d53cdd1b84.jpg?1783921293",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/8/5/853ddf31-826b-411e-9b6d-75d53cdd1b84.jpg?1783921293",
+      "thumb": "https://cards.scryfall.io/thumb/front/8/5/853ddf31-826b-411e-9b6d-75d53cdd1b84.webp?1783921293",
+      "grid": "https://cards.scryfall.io/grid/front/8/5/853ddf31-826b-411e-9b6d-75d53cdd1b84.webp?1783921293",
+      "display": "https://cards.scryfall.io/display/front/8/5/853ddf31-826b-411e-9b6d-75d53cdd1b84.webp?1783921293",
+      "art": "https://cards.scryfall.io/art/front/8/5/853ddf31-826b-411e-9b6d-75d53cdd1b84.webp?1783921293",
+      "crop": "https://cards.scryfall.io/crop/front/8/5/853ddf31-826b-411e-9b6d-75d53cdd1b84.webp?1783921293"
+     },
+     "mana_cost": "{4}{G}",
+     "cmc": 5,
+     "type_line": "Creature — Elemental",
+     "oracle_text": "Domain — Territorial Maro's power and toughness are each equal to twice the number of basic land types among lands you control.",
+     "power": "*",
+     "toughness": "*",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [
+      "Domain"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "arena",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "4e47a6cd-cdeb-4b0f-8f24-cfe1a0127cb3",
+     "set": "dmu",
+     "set_name": "Dominaria United",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/4e47a6cd-cdeb-4b0f-8f24-cfe1a0127cb3",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Admu&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/dmu?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/853ddf31-826b-411e-9b6d-75d53cdd1b84/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A478eeed5-8170-4fb3-8ec2-bcebc0265622&unique=prints",
+     "collector_number": "184",
+     "digital": false,
+     "rarity": "uncommon",
+     "flavor_text": "The Coalition was more than just treaties and alliances: it was the soul of a world rising up against the invading tide.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Simon Dominic",
+     "artist_ids": [
+      "b0e80135-db5a-4b88-a0bc-815a0e94faa1"
+     ],
+     "illustration_id": "f2c7cdde-1772-4fb0-8b31-334530f65367",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 24389,
+     "prices": {
+      "usd": "0.16",
+      "usd_foil": "0.06",
+      "usd_etched": null,
+      "eur": "0.04",
+      "eur_foil": "0.16",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=574664&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DTerritorial%2BMaro",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DTerritorial%2BMaro",
+      "edhrec": "https://edhrec.com/route/?cc=Territorial+Maro"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F282760%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=671373&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/102844?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 4,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "dce15387-4114-4b3e-91aa-5b42b45c44ac",
+     "oracle_id": "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
+     "multiverse_ids": [],
+     "name": "Forest",
+     "lang": "en",
+     "released_at": "2026-11-13",
+     "uri": "https://api.scryfall.com/cards/dce15387-4114-4b3e-91aa-5b42b45c44ac",
+     "scryfall_uri": "https://scryfall.com/card/trk/325/forest?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-08-06T02:01:15Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+      "normal": "https://cards.scryfall.io/normal/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+      "large": "https://cards.scryfall.io/large/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+      "png": "https://cards.scryfall.io/png/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.png?1785981675",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+      "thumb": "https://cards.scryfall.io/thumb/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.webp?1785981675",
+      "grid": "https://cards.scryfall.io/grid/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.webp?1785981675",
+      "display": "https://cards.scryfall.io/display/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.webp?1785981675",
+      "art": "https://cards.scryfall.io/art/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.webp?1785981675",
+      "crop": "https://cards.scryfall.io/crop/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.webp?1785981675"
+     },
+     "mana_cost": "",
+     "cmc": 0,
+     "type_line": "Basic Land — Forest",
+     "oracle_text": "({T}: Add {G}.)",
+     "colors": [],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "produced_mana": [
+      "G"
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "4fae200d-5757-4924-8cf4-ab2a5ef2ccc0",
+       "component": "combo_piece",
+       "name": "Forest",
+       "type_line": "Basic Land — Forest",
+       "uri": "https://api.scryfall.com/cards/4fae200d-5757-4924-8cf4-ab2a5ef2ccc0"
+      },
+      {
+       "object": "related_card",
+       "id": "aed8ae06-ae54-4a16-8830-6547164ce6ae",
+       "component": "combo_piece",
+       "name": "Gilt-Leaf Alchemist",
+       "type_line": "Creature — Elf Druid",
+       "uri": "https://api.scryfall.com/cards/aed8ae06-ae54-4a16-8830-6547164ce6ae"
+      }
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo",
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "b47039dc-da5a-448c-8feb-e77d458108a6",
+     "set": "trk",
+     "set_name": "Star Trek",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/b47039dc-da5a-448c-8feb-e77d458108a6",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Atrk&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/trk?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/dce15387-4114-4b3e-91aa-5b42b45c44ac/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ab34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6&unique=prints",
+     "collector_number": "325",
+     "digital": false,
+     "rarity": "common",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Bastien Grivet",
+     "artist_ids": [
+      "434a6cf6-c6bf-4f87-84db-d0a902393b9e"
+     ],
+     "illustration_id": "5a6bbfa9-4075-48e4-b06a-78e31477bd3f",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "universesbeyond"
+     ],
+     "prices": {
+      "usd": null,
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DForest",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DForest",
+      "edhrec": "https://edhrec.com/route/?cc=Forest"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fmagic%2Fproduct%3FproductLineName%3Dmagic%26q%3DForest%26view%3Dgrid",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products/Search?referrer=scryfall&searchString=Forest&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Forest&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 5,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_5",
+    "scryfallData": {
+     "object": "card",
+     "id": "f3cc07cd-cc79-4745-b0b7-eade60175cc3",
+     "oracle_id": "b2c6aa39-2d2a-459c-a555-fb48ba993373",
+     "multiverse_ids": [],
+     "name": "Island",
+     "lang": "en",
+     "released_at": "2026-11-13",
+     "uri": "https://api.scryfall.com/cards/f3cc07cd-cc79-4745-b0b7-eade60175cc3",
+     "scryfall_uri": "https://scryfall.com/card/trk/319/island?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-08-06T02:00:45Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/f/3/f3cc07cd-cc79-4745-b0b7-eade60175cc3.jpg?1785981645",
+      "normal": "https://cards.scryfall.io/normal/front/f/3/f3cc07cd-cc79-4745-b0b7-eade60175cc3.jpg?1785981645",
+      "large": "https://cards.scryfall.io/large/front/f/3/f3cc07cd-cc79-4745-b0b7-eade60175cc3.jpg?1785981645",
+      "png": "https://cards.scryfall.io/png/front/f/3/f3cc07cd-cc79-4745-b0b7-eade60175cc3.png?1785981645",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/f/3/f3cc07cd-cc79-4745-b0b7-eade60175cc3.jpg?1785981645",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/f/3/f3cc07cd-cc79-4745-b0b7-eade60175cc3.jpg?1785981645",
+      "thumb": "https://cards.scryfall.io/thumb/front/f/3/f3cc07cd-cc79-4745-b0b7-eade60175cc3.webp?1785981645",
+      "grid": "https://cards.scryfall.io/grid/front/f/3/f3cc07cd-cc79-4745-b0b7-eade60175cc3.webp?1785981645",
+      "display": "https://cards.scryfall.io/display/front/f/3/f3cc07cd-cc79-4745-b0b7-eade60175cc3.webp?1785981645",
+      "art": "https://cards.scryfall.io/art/front/f/3/f3cc07cd-cc79-4745-b0b7-eade60175cc3.webp?1785981645",
+      "crop": "https://cards.scryfall.io/crop/front/f/3/f3cc07cd-cc79-4745-b0b7-eade60175cc3.webp?1785981645"
+     },
+     "mana_cost": "",
+     "cmc": 0,
+     "type_line": "Basic Land — Island",
+     "oracle_text": "({T}: Add {U}.)",
+     "colors": [],
+     "color_identity": [
+      "U"
+     ],
+     "keywords": [],
+     "produced_mana": [
+      "U"
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo",
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "b47039dc-da5a-448c-8feb-e77d458108a6",
+     "set": "trk",
+     "set_name": "Star Trek",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/b47039dc-da5a-448c-8feb-e77d458108a6",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Atrk&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/trk?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/f3cc07cd-cc79-4745-b0b7-eade60175cc3/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ab2c6aa39-2d2a-459c-a555-fb48ba993373&unique=prints",
+     "collector_number": "319",
+     "digital": false,
+     "rarity": "common",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Bastien Grivet",
+     "artist_ids": [
+      "434a6cf6-c6bf-4f87-84db-d0a902393b9e"
+     ],
+     "illustration_id": "5a803c8c-9fe3-4346-8ef7-6b4ab31f0c03",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "universesbeyond"
+     ],
+     "prices": {
+      "usd": null,
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DIsland",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DIsland",
+      "edhrec": "https://edhrec.com/route/?cc=Island"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fmagic%2Fproduct%3FproductLineName%3Dmagic%26q%3DIsland%26view%3Dgrid",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products/Search?referrer=scryfall&searchString=Island&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Island&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 6,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 3,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Masumaro, First to Live",
+    "final": {
+     "name": "Masumaro, First to Live",
+     "controller": "player_0",
+     "supertypes": [
+      "Legendary"
+     ],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Spirit"
+     ],
+     "power": 6,
+     "toughness": 6,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "This card's power and toughness are each equal to twice the number of cards in your hand."
+     ]
+    },
+    "changedBy": {
+     "7a": [
+      "Masumaro, First to Live"
+     ]
+    }
+   },
+   {
+    "perm": "Mwonvuli Ooze",
+    "final": {
+     "name": "Mwonvuli Ooze",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Ooze"
+     ],
+     "power": 5,
+     "toughness": 5,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "Cumulative upkeep {2}",
+      "this card's power and toughness are each equal to 1 plus twice the number of age counters on it."
+     ],
+     "counters": {
+      "age": 2
+     }
+    },
+    "changedBy": {
+     "7a": [
+      "Mwonvuli Ooze"
+     ]
+    }
+   },
+   {
+    "perm": "Territorial Maro",
+    "final": {
+     "name": "Territorial Maro",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Elemental"
+     ],
+     "power": 4,
+     "toughness": 4,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "Domain — this card's power and toughness are each equal to twice the number of basic land types among lands you control."
+     ]
+    },
+    "changedBy": {
+     "7a": [
+      "Territorial Maro"
+     ]
+    }
+   },
+   {
+    "perm": "Forest",
+    "final": {
+     "name": "Forest",
+     "controller": "player_0",
+     "supertypes": [
+      "Basic"
+     ],
+     "types": [
+      "Land"
+     ],
+     "subtypes": [
+      "Forest"
+     ],
+     "power": null,
+     "toughness": null,
+     "colors": [],
+     "abilities": [
+      "{T}: Add {G}."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Island",
+    "final": {
+     "name": "Island",
+     "controller": "player_0",
+     "supertypes": [
+      "Basic"
+     ],
+     "types": [
+      "Land"
+     ],
+     "subtypes": [
+      "Island"
+     ],
+     "power": null,
+     "toughness": null,
+     "colors": [],
+     "abilities": [
+      "{T}: Add {U}."
+     ]
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "7a": [
+    "Masumaro, First to Live",
+    "Mwonvuli Ooze",
+    "Territorial Maro"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Masumaro, First to Live",
+    "layer": "7a",
+    "type": "cda_pt",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "cdaMultiplier": 2,
+     "compute": null,
+     "forEachDesc": "cards in your hand",
+     "isExileCount": false,
+     "isGraveyardCount": false,
+     "userAdjustable": false
+    }
+   },
+   {
+    "source": "Mwonvuli Ooze",
+    "layer": "7a",
+    "type": "cda_pt",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "cdaBaseValue": 1,
+     "cdaMultiplier": 2,
+     "compute": null,
+     "forEachDesc": "age counters on it",
+     "isGraveyardCount": false,
+     "userAdjustable": false
+    }
+   },
+   {
+    "source": "Territorial Maro",
+    "layer": "7a",
+    "type": "cda_pt",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "cdaMultiplier": 2,
+     "compute": null,
+     "forEachDesc": "basic land types among lands you control",
+     "isExileCount": false,
+     "isGraveyardCount": false,
+     "userAdjustable": false
+    }
+   }
+  ]
+ }
+}

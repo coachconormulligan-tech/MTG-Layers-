@@ -1,0 +1,19 @@
+{
+  "name": "Serra Avatar — power and toughness equal to its controller's life total",
+  "notes": "Found by tests/sweep.py (theme: remaining P/T CDAs). 'power and toughness are each equal to your life total' produced no effect, leaving a 0/0. The life-total CDA parser hands the expression to _computeLifeExpression, which reads the controller's life from that player's game state. Player 1 is at 17, player 2 at 31; each Avatar follows its own controller. Malignus (half the highest opponent life, rounded up) and Scourge of the Skyclaves (20 minus the highest life total) are checked on the same board.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Serra Avatar", "as": "mine" },
+    { "add": "Malignus" },
+    { "add": "Scourge of the Skyclaves" },
+    { "call": ["updateGameState", "currentLife", 17] },
+    { "add": "Soul of Eternity", "controller": "p2" },
+    { "call": ["updateGameState", "currentLife", 31] }
+  ],
+  "asserts": [
+    { "perm": "Serra Avatar", "final": { "power": 17, "toughness": 17 } },
+    { "perm": "Soul of Eternity", "final": { "power": 31, "toughness": 31 } },
+    { "perm": "Malignus", "final": { "power": 16, "toughness": 16 } },
+    { "perm": "Scourge of the Skyclaves", "final": { "power": -11, "toughness": -11 } }
+  ]
+}

@@ -3215,18 +3215,26 @@ function parseCardEffects(permanent, card, opts = {}) {
   // ---- Layer 6: Ability granting (CDA P/T first) ----
   // "power and toughness equal to N plus the number of [thing]" (Tarmogoyf-likes).
   const _cdaSelfCtx = { appliesTo: null, scope: 'targeted', selfTarget: true };
-  const cdaPlusRegex = /(?:power and toughness|power\/toughness)\s+(?:are|is)\s+(?:each\s+)?equal\s+to\s+(\w+)\s+plus\s+(?:the\s+)?(?:number|total number|amount)\s+of\s+(.+?)(?:\.|$)/gmi;
+  // A CDA quoted inside another ability ('create a token with "This token's power and toughness
+  // are each equal to …"') belongs to the token, not to this card.
+  // (A land that "becomes a creature with" a quoted CDA does get it: Chimeric Mass, Svogthos.)
+  const _cdaIsQuoted = (idx) => {
+    const before = oracle.slice(oracle.lastIndexOf('\n', idx) + 1, idx);
+    return (before.split('"').length - 1) % 2 === 1 && /\bcreates?\b[^"]*"[^"]*$/i.test(before);
+  };
+  const cdaPlusRegex = /(?:power and toughness|power\/toughness)\s+(?:are|is)\s+(?:each\s+)?equal\s+to\s+(\w+)\s+plus\s+(twice\s+)?(?:the\s+)?(?:number|total number|amount)\s+of\s+(.+?)(?:\.|$)/gmi;
   let cdaPlusMatch;
   while ((cdaPlusMatch = cdaPlusRegex.exec(oracle)) !== null) {
     const baseRaw = cdaPlusMatch[1].toLowerCase();
     const baseVal = WORD_TO_NUM[baseRaw] !== undefined ? WORD_TO_NUM[baseRaw] : (parseInt(baseRaw) || 0);
-    let countTarget = cdaPlusMatch[2].trim().replace(/\.$/, '');
+    let countTarget = cdaPlusMatch[3].trim().replace(/\.$/, '');
     const isGraveyard = countTarget.toLowerCase().includes('graveyard') || countTarget.toLowerCase().includes('exile');
     const cleanTarget = countTarget.replace(/\s+you control$/i, '').replace(/\s+in your graveyard$/i, '').replace(/\s+in all graveyards$/i, '');
     pushEff('7a', EFFECT_TYPE.CDA_PT,
-      { userAdjustable: isGraveyard, isGraveyardCount: isGraveyard, forEachDesc: cleanTarget, compute: null, cdaBaseValue: baseVal },
+      { userAdjustable: isGraveyard, isGraveyardCount: isGraveyard, forEachDesc: cleanTarget, compute: null, cdaBaseValue: baseVal,
+        ...(cdaPlusMatch[2] ? { cdaMultiplier: 2 } : {}) },
       _cdaSelfCtx,
-      `P/T equal to ${baseVal} plus the number of ${countTarget}.`);
+      `P/T equal to ${baseVal} plus ${cdaPlusMatch[2] ? 'twice ' : ''}the number of ${countTarget}.`);
   }
 
   // Asymmetric CDA: "power is equal to N of X and its toughness is that plus M" (Tarmogoyf-like).
@@ -3272,7 +3280,8 @@ function parseCardEffects(permanent, card, opts = {}) {
   }
 
   // CDA "power and toughness equal to the number of [thing]" (Nighthowler, etc).
-  const cdaEqualRegex = /(?:power and toughness|power\/toughness)\s+(?:are|is)\s+(?:each\s+)?equal\s+to\s+(?:the\s+)?(?:number|total number|amount)\s+of\s+(.+?)(?:\.|$)/gmi;
+  // "twice the number of [thing]" (Masumaro, Majestic Myriarch) doubles the count.
+  const cdaEqualRegex = /(?:power and toughness|power\/toughness)\s+(?:are|is)\s+(?:each\s+)?equal\s+to\s+(twice\s+)?(?:the\s+)?(?:number|total number|amount)\s+of\s+(.+?)(?:\.|$)/gmi;
   let cdaEqualMatch;
   while ((cdaEqualMatch = cdaEqualRegex.exec(oracle)) !== null) {
     // A CDA is a static ability of the card itself. A "power and toughness are each
@@ -3282,10 +3291,11 @@ function parseCardEffects(permanent, card, opts = {}) {
     // granted to a OTHER object, not a CDA on this card — skip it.
     if (_isInTriggeredSentence(cdaEqualMatch.index)) continue;
     if (_isInActivatedEffect(cdaEqualMatch.index)) continue;
+    if (_cdaIsQuoted(cdaEqualMatch.index)) continue;
     // Skip overlaps with the "N plus …" handler above.
     const beforeMatch = oracle.substring(0, cdaEqualMatch.index + cdaEqualMatch[0].indexOf('of'));
-    if (/\bplus\s+(?:the\s+)?(?:number|total number|amount)\s*$/i.test(beforeMatch)) continue;
-    let countTarget = cdaEqualMatch[1].trim().replace(/\.$/, '');
+    if (/\bplus\s+(?:twice\s+)?(?:the\s+)?(?:number|total number|amount)\s*$/i.test(beforeMatch)) continue;
+    let countTarget = cdaEqualMatch[2].trim().replace(/\.$/, '');
     const _ceCtLower = countTarget.toLowerCase();
     // Compound count: "[A] plus the number of [B]" (e.g. Soulless One —
     // "Zombies on the battlefield plus the number of Zombie cards in all graveyards").
@@ -3301,9 +3311,40 @@ function parseCardEffects(permanent, card, opts = {}) {
     const cleanTarget = _ceIsCompound ? countTarget
       : countTarget.replace(/\s+in your graveyard$/i, '').replace(/\s+in all graveyards$/i, '');
     pushEff('7a', EFFECT_TYPE.CDA_PT,
-      { userAdjustable: isGraveyard, isGraveyardCount: _ceIsGrave, isExileCount: _ceIsExile, forEachDesc: cleanTarget, compute: null },
+      { userAdjustable: isGraveyard, isGraveyardCount: _ceIsGrave, isExileCount: _ceIsExile, forEachDesc: cleanTarget, compute: null,
+        ...(cdaEqualMatch[1] ? { cdaMultiplier: 2 } : {}) },
       _cdaSelfCtx,
-      `P/T equal to the number of ${countTarget}.`);
+      `P/T equal to ${cdaEqualMatch[1] ? 'twice ' : ''}the number of ${countTarget}.`);
+  }
+
+  // CDA from life totals: "equal to your life total" (Serra Avatar), "half the highest life total
+  // among your opponents, rounded up" (Malignus), "20 minus the highest life total among players"
+  // (Scourge of the Skyclaves). The expression is evaluated by _computeLifeExpression. The forms
+  // that read an opponent's life also take a manual value, for boards with a single player.
+  const cdaLifeRegex = /(?:power and toughness|power\/toughness)\s+(?:are|is)\s+(?:each\s+)?equal\s+to\s+([^.\n]*\blife\s+total\b[^.\n]*?)(?:\.|$)/gmi;
+  let cdaLifeMatch;
+  while ((cdaLifeMatch = cdaLifeRegex.exec(oracle)) !== null) {
+    if (_isInTriggeredSentence(cdaLifeMatch.index)) continue;
+    if (_isInActivatedEffect(cdaLifeMatch.index)) continue;
+    if (_cdaIsQuoted(cdaLifeMatch.index)) continue;
+    const lifeExpr = cdaLifeMatch[1].trim();
+    if (typeof _computeLifeExpression !== 'function' || _computeLifeExpression(lifeExpr, 'player_0', true) === null) continue;
+    pushEff('7a', EFFECT_TYPE.CDA_PT,
+      { userAdjustable: /\bopponents?\b/i.test(lifeExpr), forEachDesc: lifeExpr, compute: null },
+      _cdaSelfCtx,
+      `P/T equal to ${lifeExpr}.`);
+  }
+
+  // "equal to the life paid as it entered" (Minion of the Wastes, Nameless Race): the amount is
+  // a choice made as the creature entered, so it is typed into the card's value box.
+  const cdaLifePaidRegex = /(?:power and toughness|power\/toughness)\s+(?:are|is)\s+(?:each\s+)?equal\s+to\s+the\s+(life\s+paid\s+as\s+it\s+entered)/gi;
+  let cdaLifePaidMatch;
+  while ((cdaLifePaidMatch = cdaLifePaidRegex.exec(oracle)) !== null) {
+    if (_isInTriggeredSentence(cdaLifePaidMatch.index)) continue;
+    pushEff('7a', EFFECT_TYPE.CDA_PT,
+      { userAdjustable: true, isChosenAmount: true, forEachDesc: 'life paid as it entered', compute: null },
+      _cdaSelfCtx,
+      'P/T equal to the life paid as it entered.');
   }
 
   // Single-characteristic CDA: "[self]'s power|toughness is equal to the number of [thing]" — sets only that

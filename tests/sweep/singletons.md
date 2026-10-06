@@ -223,13 +223,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Ultima, Origin of Oblivion | loses | triggered | For as long as that land has a blight counter on it, it loses all land types and abilities and has "{T}: Add {C}." |
 | Angry Mob | power / toughness | static | During turns other than yours, this card's power and toughness are each 2. |
 | Living Lore | power / toughness | static | This card's power and toughness are each equal to the exiled card's mana value. |
-| Majestic Myriarch | power / toughness | static | This card's power and toughness are each equal to twice the number of creatures you control. |
-| Malignus | power / toughness | static | This card's power and toughness are each equal to half the highest life total among your opponents, rounded up. |
-| Melek, Reforged Researcher | power / toughness | static | This card's power and toughness are each equal to twice the number of instant and sorcery cards in your graveyard. |
-| Mwonvuli Ooze | power / toughness | static | This card's power and toughness are each equal to 1 plus twice the number of age counters on it. |
-| Roiling Horror | power / toughness | static | This card's power and toughness are each equal to your life total minus the life total of an opponent with the most life. |
-| Scourge of the Skyclaves | power / toughness | static | This card's power and toughness are each equal to 20 minus the highest life total among players. |
-| Territorial Maro | power / toughness | static | Domain — this card's power and toughness are each equal to twice the number of basic land types among lands you control. |
 | Two by Four | power / toughness | spell | • Put a base power 4 counter on target creature. |
 | Valakut Fireboar | power / toughness | triggered | Whenever this creature attacks, switch its power and toughness until end of turn. |
 | Wretched Bonemass | power / toughness | static | This card's power and toughness are each equal to the total power of the exiled cards used to craft it. |

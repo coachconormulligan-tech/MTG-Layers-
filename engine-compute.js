@@ -177,6 +177,22 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
     return null; // fall back to user input
   }
 
+  // Life-total expressions ("your life total", "20 minus the highest life total among players").
+  if (/\blife\s+total\b/.test(desc)) return _computeLifeExpression(desc, ctrlId);
+
+  // Domain: "basic land type(s) among lands you control".
+  if (/\bbasic\s+land\s+types?\s+among\s+lands\b/.test(rawDesc)) {
+    const found = new Set();
+    for (const [, st] of allStates) {
+      if (!st.types.includes('Land')) continue;
+      if (youControl && st.controller !== ctrlId) continue;
+      for (const lt of ['Plains', 'Island', 'Swamp', 'Mountain', 'Forest']) {
+        if (st.isAllLandTypes || st.subtypes.includes(lt)) found.add(lt);
+      }
+    }
+    return found.size;
+  }
+
   // "experience counter(s) [you have]" — read from gameState.experienceCounters
   if (/\bexperience\s+counters?\b/.test(desc)) {
     if (typeof Battlefield !== 'undefined' && Battlefield.gameState) {
@@ -590,3 +606,26 @@ function _computeDevotionCounts(allStates, controller) {
   return devotion;
 }
 /* [END: FOR-EACH-COMPUTE] */
+
+/* Value of a life-total expression for the player `ctrlId`, or null when the wording is not
+   one of the known forms (or it needs an opponent and there is none). `probe` asks only whether
+   the wording is known, so the parser can call it before any board exists. */
+function _computeLifeExpression(expr, ctrlId, probe) {
+  const e = (expr || '').toLowerCase().trim().replace(/\.$/, '');
+  const players = (typeof Battlefield !== 'undefined' && Array.isArray(Battlefield.players)) ? Battlefield.players : [];
+  const lifeOf = (pl) => (pl.gameState && pl.gameState.currentLife != null) ? pl.gameState.currentLife : 20;
+  const me = players.find(pl => pl.id === ctrlId);
+  const own = me ? lifeOf(me) : 20;
+  const opps = players.filter(pl => pl.id !== ctrlId).map(lifeOf);
+  const highestOpp = opps.length ? Math.max(...opps) : null;
+  const highestAll = Math.max(own, ...opps);
+  const need = (v, f) => probe ? 0 : (v === null ? null : f(v));
+  let m;
+  if (e === 'your life total') return own;
+  if (/^your life total minus the life total of an opponent with the most life$/.test(e)) return need(highestOpp, v => own - v);
+  if (/^half the highest life total among your opponents, rounded (up|down)$/.test(e)) {
+    return need(highestOpp, v => /up$/.test(e) ? Math.ceil(v / 2) : Math.floor(v / 2));
+  }
+  if ((m = e.match(/^(\d+) minus the highest life total among players$/))) return parseInt(m[1], 10) - highestAll;
+  return null;
+}

@@ -1047,7 +1047,7 @@ function applyEffect(state, effect, context) {
         val = effect.params.compute(effect._allStates);
       }
       // Auto-compute "for each" counts from battlefield state
-      if (val === null && effect.params.forEachDesc && effect._allStates) {
+      if (val === null && effect.params.forEachDesc && effect._allStates && !effect.params.isChosenAmount) {
         val = _computeForEachCount(effect.params.forEachDesc, effect._allStates, state, effect);
       }
       if (val === null || val === undefined) {
@@ -1061,6 +1061,8 @@ function applyEffect(state, effect, context) {
       if (effect.params.maxCount !== undefined && val > effect.params.maxCount) {
         val = effect.params.maxCount;
       }
+      // "twice the number of …"
+      if (effect.params.cdaMultiplier) val *= effect.params.cdaMultiplier;
       const oldP = state.power, oldT = state.toughness;
       // "for each" pattern: multiply base boost by count and ADD to current P/T
       if (effect.params.basePower !== undefined) {
