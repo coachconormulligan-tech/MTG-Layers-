@@ -88,7 +88,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Open into Wonder | has / gains | spell | Until end of turn, those creatures gain "Whenever this creature deals combat damage to a player, draw a card." |
 | Quicksilver Elemental | has / gains | activated | {U}: This creature gains all activated abilities of target creature until end of turn. |
 | Radiant Destiny | has / gains | static | As long as you have the city's blessing, they also have vigilance. |
-| Rootwise Survivor | has / gains | triggered | It gains haste until your next turn. |
 | Scheming Fence | has / gains | static | This creature has all activated abilities of the chosen permanent except for loyalty abilities. |
 | Skill Borrower | has / gains | static | As long as the top card of your library is an artifact or creature card, this creature has all activated abilities of that card. |
 | Spider-Verse | has / gains | triggered | If the copy is a permanent spell, it gains haste. |

@@ -361,7 +361,7 @@ const Battlefield = {
   },
 
   /* Shared: create a pseudo-permanent for a triggered/activated ability and parse its effects. */
-  _addAbilityPseudo(sourcePermId, abilityIdx, effectText, fullText, kind, firedAtStates) {
+  _addAbilityPseudo(sourcePermId, abilityIdx, effectText, fullText, kind, firedAtStates, savedGuesses) {
     const sourcePerm = this.getPermById(sourcePermId);
     if (!sourcePerm) return null;
     const countMap = kind === 'trigger' ? this.triggerCounts : this.activateCounts;
@@ -397,6 +397,14 @@ const Battlefield = {
     // IMPORTANT: This conversion is a UI convenience only — the original ability does NOT
     // actually target, so it bypasses shroud/hexproof. We flag this with _nonTargetingSelection.
     let parsedEffectText = effectText;
+    // The subject of such a "target <trigger subject>" is a guess ("target Pirate" for the "it"
+    // of Coercive Recruiter, which is whatever creature the ability took). Those subjects are
+    // kept on the pseudo-permanent so the parser gives a restriction to every other "target X"
+    // subject and to none of these. A board restored from a save replays this with the text
+    // already rewritten, so the save carries the list (savedGuesses; null from a save made
+    // before it did).
+    const guessedSubjects = new Set(savedGuesses || []);
+    const guessTarget = (subject) => { guessedSubjects.add(String(subject).toLowerCase()); return `target ${subject}`; };
 
     // "where X is this creature's power/toughness/mana value" — substitute X at fire time
     // using the source permanent's live final state (e.g. Ouroboroid).
@@ -521,10 +529,27 @@ const Battlefield = {
     // "…put three +1/+1 counters on target land you control. If you do, that land becomes …"
     // (Cyclone Sire): the optional part is assumed done, as with "you may pay" above.
     parsedEffectText = parsedEffectText.replace(/(^|\.\s+)(?:if|when) you do,\s*(\w)/gi, (_, pre, ch) => pre + ch.toUpperCase());
+    // A pronoun after a target the effect names is that target, and is written out as it:
+    // "put a trample counter on up to one target creature you control. It becomes a Bear …"
+    // (Beorn the Fierce) reads "target creature you control becomes a Bear …", so every parser
+    // sees the real target and the picker offers what the ability can take. Only a pronoun
+    // with no such target before it falls back on a guess or a bare noun, and only that is a
+    // pick the ability does not target (didItConversion).
+    const targetFor = (text, offset, noun) => {
+      if ((text.slice(0, offset).match(/"/g) || []).length % 2) return null; // inside a quoted ability
+      const phrase = _abilityTargetBefore(text, offset);
+      if (!phrase) return null;
+      // "That land" is not a target that can only be a creature.
+      if (noun && noun !== 'permanent') {
+        const kinds = phrase.toLowerCase().match(/\b(?:creature|land|artifact|enchantment|planeswalker|battle)\b/g);
+        if (kinds && !kinds.includes(noun)) return null;
+      }
+      const built = buildAppliesToFromText(phrase);
+      return built && built.isSpellTarget && built.fn ? phrase : null;
+    };
     let didItConversion = false;
     // "It's a Spirit in addition to its other types" → "target creature is a Spirit in addition …"
     {
-      const itsBefore = parsedEffectText;
       // Not inside "create a token that's a copy …, except it's a …": that describes the token.
       // The noun is the target the ability already named, if it named one.
       {
@@ -534,22 +559,35 @@ const Battlefield = {
           soFar += sentence + ' ';
           if (/\bcreates?\b|\bcopy\b/i.test(sentence)) return sentence;
           // Nor the "it's" of a rider's condition ("If it's a land, it becomes an Island in addition …").
+          // One noun of a list ("up to one target artifact, creature, or non-Aura enchantment card"
+          // — Excava, the Risen Past) is as much a guess as the trigger subject.
+          const namedOneOfSeveral = named && /^\s*(?:,|or\b|and\b)/i.test(soFar.slice(named[0].length));
+          const sentenceStart = soFar.length - sentence.length - 1;
           return sentence.replace(/(?<!except\s)(?<!\bif\s)(?<!\bas long as\s)\bit's\s+(an?\s+[^.]*?\bin addition to its other\b)/gi,
-            `target ${named ? named[1].toLowerCase() : triggerSubject} is $1`);
+            (_, rest, offset) => {
+              const real = targetFor(soFar, sentenceStart + offset);
+              if (real) return `${real} is ${rest}`;
+              didItConversion = true;
+              return `${!named ? guessTarget(triggerSubject) : namedOneOfSeveral ? guessTarget(named[1].toLowerCase()) : 'target ' + named[1].toLowerCase()} is ${rest}`;
+            });
         }).join(' ');
       }
       // "that land becomes …", "the creature gains …"
       parsedEffectText = parsedEffectText.replace(
         /\b(?:that\s+(land|artifact|enchantment|planeswalker)|the\s+(creature))\s+(get[s]?|gain[s]?|ha[s]|have|is|becomes?|loses?)\b/gi,
-        (_, n1, n2, verb) => `target ${(n1 || n2).toLowerCase()} ${verb}`);
-      if (parsedEffectText !== itsBefore) didItConversion = true;
+        (_, n1, n2, verb, offset, whole) => {
+          const noun = (n1 || n2).toLowerCase();
+          const real = targetFor(whole, offset, noun);
+          if (!real) didItConversion = true;
+          return `${real || 'target ' + noun} ${verb}`;
+        });
     }
     // "Whenever a Mutant you control attacks, double its power" — "its" is the creature the
     // trigger condition names (or the equipped/enchanted creature), never the ability itself.
     if (/\bdouble\s+its\s+(?:power|toughness)\b/i.test(parsedEffectText)) {
       const attached = kind === 'trigger' && fullText
         ? fullText.match(/\b(?:when(?:ever)?)\s+((?:equipped|enchanted|fortified)\s+\w+)\b/i) : null;
-      const owner = attached ? attached[1].toLowerCase() : `target ${triggerSubject}`;
+      const owner = attached ? attached[1].toLowerCase() : guessTarget(triggerSubject);
       parsedEffectText = parsedEffectText.replace(/\bdouble\s+its\s+(power|toughness)\b/gi, `double ${owner}'s $1`);
       if (!attached) didItConversion = true;
     }
@@ -558,24 +596,28 @@ const Battlefield = {
     parsedEffectText = _resolveItToAbilitySource(parsedEffectText);
     // "Target creature …. If it's a Vampire, it also gains lifelink": the rider is about that target.
     parsedEffectText = _resolveRiderSubjectToTarget(parsedEffectText);
+    // A pronoun subject becomes the target it stands for, or failing that a guess.
+    const pronounSubject = (noun) => (_, verb, offset, whole) => {
+      const real = targetFor(whole, offset, noun);
+      if (!real) didItConversion = true;
+      return `${real || guessTarget(triggerSubject)} ${verb}`;
+    };
     if (/\bit\b/i.test(parsedEffectText)) {
-      const before = parsedEffectText;
       // Replace "it gets/gains/has/is/becomes/loses" → "target [subject] gets/gains/..."
-      parsedEffectText = parsedEffectText.replace(/\bit\s+(get[s]?|gain[s]?|ha[s]|have|is|becomes?|loses?)\b/gi, `target ${triggerSubject} $1`);
+      // (Not "Target opponent whose turn it is puts …" — The Beamtown Bullies.)
+      parsedEffectText = parsedEffectText.replace(/(?<!\bturn\s)\bit\s+(get[s]?|gain[s]?|ha[s]|have|is|becomes?|loses?)\b/gi, pronounSubject(null));
+      const afterSubjects = parsedEffectText;
       // Replace "its power" / "its toughness" → "that creature's power"
       parsedEffectText = parsedEffectText.replace(/\bits\s+(power|toughness)\b/gi, "that creature's $1");
-      if (parsedEffectText !== before) didItConversion = true;
+      if (parsedEffectText !== afterSubjects) didItConversion = true;
     }
     // Also convert "that creature/permanent" pronouns (e.g. Gahiji: "that creature gets +2/+0")
     {
-      const thatBefore = parsedEffectText;
-      parsedEffectText = parsedEffectText.replace(
-        /\bthat\s+(?:creature|permanent)\s+(get[s]?|gain[s]?|ha[s]|have|is|becomes?|loses?)\b/gi,
-        `target ${triggerSubject} $1`
-      );
-      if (parsedEffectText !== thatBefore) didItConversion = true;
+      parsedEffectText = parsedEffectText.replace(/\bthat\s+creature\s+(get[s]?|gain[s]?|ha[s]|have|is|becomes?|loses?)\b/gi, pronounSubject('creature'));
+      parsedEffectText = parsedEffectText.replace(/\bthat\s+permanent\s+(get[s]?|gain[s]?|ha[s]|have|is|becomes?|loses?)\b/gi, pronounSubject('permanent'));
     }
     if (didItConversion) pseudoPerm._nonTargetingSelection = true;
+    pseudoPerm._guessedTargetSubjects = savedGuesses === null ? null : [...guessedSubjects];
     // Sync oracleText with the fully-processed parsedEffectText (X substituted, "if" stripped, etc.)
     pseudoPerm.oracleText = parsedEffectText;
     const fakeCard = { name: sourcePerm.name, oracle_text: parsedEffectText, type_line: 'Instant', colors: sourcePerm.printedColors, cmc: 0 };
@@ -676,12 +718,12 @@ const Battlefield = {
     return pseudoPerm;
   },
 
-  addTriggeredAbility(sourcePermId, abilityIdx, effectText, fullText, firedAtStates) {
-    return this._addAbilityPseudo(sourcePermId, abilityIdx, effectText, fullText, 'trigger', firedAtStates);
+  addTriggeredAbility(sourcePermId, abilityIdx, effectText, fullText, firedAtStates, savedGuesses) {
+    return this._addAbilityPseudo(sourcePermId, abilityIdx, effectText, fullText, 'trigger', firedAtStates, savedGuesses);
   },
 
-  addActivatedAbility(sourcePermId, abilityIdx, effectText, fullText, firedAtStates) {
-    return this._addAbilityPseudo(sourcePermId, abilityIdx, effectText, fullText, 'activated', firedAtStates);
+  addActivatedAbility(sourcePermId, abilityIdx, effectText, fullText, firedAtStates, savedGuesses) {
+    return this._addAbilityPseudo(sourcePermId, abilityIdx, effectText, fullText, 'activated', firedAtStates, savedGuesses);
   },
 
   /* ── Shared pseudo-perm decorations ──
@@ -940,7 +982,7 @@ const Battlefield = {
   /* Fire an eminence triggered/activated ability from a commander in the command zone.
      Unlike _addAbilityPseudo, this works from the commander card data directly
      since the commander has no permanent on the battlefield. */
-  addCommandZoneAbility(commanderIdx, abilityIdx, effectText, fullText, kind, firedAtStates) {
+  addCommandZoneAbility(commanderIdx, abilityIdx, effectText, fullText, kind, firedAtStates, savedGuesses) {
     const commander = this.commanders[commanderIdx];
     if (!commander) return null;
     const face = _resolveCardFace(commander.card, 0);
@@ -983,6 +1025,9 @@ const Battlefield = {
       if (parsedCmdEffectText !== before) didCmdItConversion = true;
     }
     if (didCmdItConversion) pseudoPerm._nonTargetingSelection = true;
+    // "target creature" written for a pronoun is a guess (see _addAbilityPseudo).
+    pseudoPerm._guessedTargetSubjects = savedGuesses === null ? null
+      : [...new Set([...(savedGuesses || []), ...(didCmdItConversion ? ['creature'] : [])])];
     const fakeCard = { name: commander.name, oracle_text: parsedCmdEffectText, type_line: 'Instant', colors, cmc: 0 };
     const newEffects = parseCardEffects({ ...pseudoPerm, printedTypes: ['Instant'] }, fakeCard);
     let cmdAbilityTargetRestriction = null;
@@ -2880,6 +2925,9 @@ const Battlefield = {
         fullText: p.abilityFullText || '',
         chosenColor: p.chosenColor || null,
         additionalCostPaid: !!p.additionalCostPaid,
+        // effectText above is already rewritten ("it" → "target Pirate"); which of its "target X"
+        // subjects were such guesses cannot be read back from it (see _addAbilityPseudo).
+        guessedTargetSubjects: p._guessedTargetSubjects || null,
         owner: p.owner || 'player_0',
         controller: p.controller || p.owner || 'player_0',
         equipTargetId: p._equipTargetId || null,
@@ -3049,10 +3097,10 @@ const Battlefield = {
         pseudo = this.applyEquipAttachment(srcId, f.abilityIndex, idMap[f.equipTargetId]);
       } else if (f.isCommandZone) {
         if (f.commanderIdx == null || !this.commanders[f.commanderIdx]) continue;
-        pseudo = this.addCommandZoneAbility(f.commanderIdx, f.abilityIndex, f.effectText, f.fullText, f.kind, states);
+        pseudo = this.addCommandZoneAbility(f.commanderIdx, f.abilityIndex, f.effectText, f.fullText, f.kind, states, f.guessedTargetSubjects || null);
       } else {
         if (!srcId) continue;
-        pseudo = this._addAbilityPseudo(srcId, f.abilityIndex, f.effectText, f.fullText, f.kind, states);
+        pseudo = this._addAbilityPseudo(srcId, f.abilityIndex, f.effectText, f.fullText, f.kind, states, f.guessedTargetSubjects || null);
         // Re-inject exchange-text / exchange-control effects (no-op for other text).
         if (pseudo) this.injectTriggeredExchange(pseudo, srcId, f.effectText);
         // Re-inject Princess Yue-style becomes-a-land transform effects. The board's

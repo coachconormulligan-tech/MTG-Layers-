@@ -728,12 +728,22 @@ function parseCardEffects(permanent, card, opts = {}) {
 
   // A rider's effect ("If it isn't a creature, it becomes a 0/0 Robot creature …") takes the
   // restriction of the target it was resolved to: in a fired ability an effect without one is
-  // taken for the source's own and pinned to it. Other "target X" subjects of these parsers are
-  // left without one, as before — in a fired ability the subject may be a pronoun rewritten to
-  // "target <trigger subject>", a guess ("target Pirate" for Coercive Recruiter's "it") that a
-  // board restored from a save can no longer tell from a real target.
+  // taken for the source's own and pinned to it.
   function _isRiderEffect(eff) {
     return !!(eff.asLongAsCondition && eff.asLongAsCondition._onResolution);
+  }
+
+  // In a fired ability a "target X" subject may be a pronoun _addAbilityPseudo rewrote to
+  // "target <trigger subject>": a guess ("target Pirate" for Coercive Recruiter's "it", which is
+  // whatever creature the ability took) whose restriction would turn the real target away.
+  // The pseudo-permanent lists the subjects it guessed; a subject that starts with one is left
+  // without a restriction, as is every subject on a board saved before the list was kept.
+  function _isGuessedTargetSubject(subjectText) {
+    if (!permanent.isTriggeredAbility && !permanent.isActivatedAbility) return false;
+    const guessed = permanent._guessedTargetSubjects;
+    if (!guessed) return true;
+    const m = stripDurationPrefix(subjectText.trim()).toLowerCase().match(/^target\s+(.+)$/);
+    return !!m && guessed.some(g => m[1] === g || m[1].startsWith(g + ' '));
   }
 
   // --- "As long as" condition parsing ---
@@ -2144,7 +2154,9 @@ function parseCardEffects(permanent, card, opts = {}) {
       if (leadKw) {
         // (parseKeywordList is declared further down and reads a const not yet initialised here.)
         const parts = leadKw[2].toLowerCase().split(/,\s*(?:and\s+)?|\s+and\s+/).map(k => k.trim()).filter(Boolean);
-        if (parts.length && parts.every(k => KEYWORD_SET.has(k))) {
+        // ("gains bushido 1 and becomes a Samurai …" — Sensei Golden-Tail — has a numbered keyword.)
+        const _firedAbility = permanent.isTriggeredAbility || permanent.isActivatedAbility;
+        if (parts.length && parts.every(k => KEYWORD_SET.has(k) || (_firedAbility && KEYWORD_SET.has(k.replace(/\s+\d+$/, ''))))) {
           addTypeFilterText = leadKw[1].trim();
           _addTypeLeadKeywords = parts.map(k => k.charAt(0).toUpperCase() + k.slice(1));
         }
@@ -2278,13 +2290,15 @@ function parseCardEffects(permanent, card, opts = {}) {
     for (let ei = addTypeEffCountBefore; ei < effects.length; ei++) {
       effects[ei].abilityGroupId = _addAbilityGroupId;
     }
-    // A rider resolved to its target keeps that target's restriction (see _isRiderEffect).
+    // A "target X" subject keeps its restriction, without which a fired ability takes the
+    // effect for its source's own and pins it there (Neurok Transmuter, Doc Ock). Not a subject
+    // that is a guess for a pronoun, unless it is a rider resolved to its target or names
+    // several targets ("Up to two target creatures each are …"), which a guess never does.
     if (_addTypeApplies.isSpellTarget) {
+      const _atGuessed = _isGuessedTargetSubject(addTypeFilterText);
       for (let ei = addTypeEffCountBefore; ei < effects.length; ei++) {
-        // So does a subject of several targets ("Up to two target creatures each are …"),
-        // which is never a rewritten pronoun and needs its target count.
         if (effects[ei].scope === 'targeted' && !effects[ei].selfTarget && !effects[ei].targetRestriction &&
-            (_isRiderEffect(effects[ei]) || _addTypeApplies.maxTargets > 1)) _applyTargetInfo(effects[ei], _addTypeApplies, fn);
+            (!_atGuessed || _isRiderEffect(effects[ei]) || _addTypeApplies.maxTargets > 1)) _applyTargetInfo(effects[ei], _addTypeApplies, fn);
       }
     }
   }
@@ -3328,9 +3342,13 @@ function parseCardEffects(permanent, card, opts = {}) {
         `${gbpFilterText} lose all creature types. ${gbpApplies.desc}`,
         gbpCond ? { asLongAsCondition: gbpCond } : undefined);
     }
-    // A rider resolved to its target keeps that target's restriction (see _isRiderEffect).
+    // A "target X" subject keeps its restriction (Gigantomancer), as in addTypeRegex above.
     if (gbpApplies.isSpellTarget) {
-      for (let ei = _gbpEffCountBefore; ei < effects.length; ei++) if (_isRiderEffect(effects[ei])) _applyTargetInfo(effects[ei], gbpApplies, gbpApplies.fn);
+      const _gbpGuessed = _isGuessedTargetSubject(gbpSubjectText);
+      for (let ei = _gbpEffCountBefore; ei < effects.length; ei++) {
+        if (effects[ei].scope === 'targeted' && !effects[ei].selfTarget && !effects[ei].targetRestriction &&
+            (!_gbpGuessed || _isRiderEffect(effects[ei]))) _applyTargetInfo(effects[ei], gbpApplies, gbpApplies.fn);
+      }
     }
   }
 
@@ -3675,9 +3693,15 @@ function parseCardEffects(permanent, card, opts = {}) {
     // gains haste" describe a token the ability makes; the token's own card carries them.
     if (/\bcreates?\b/i.test(filterText) || /^(?:that|the|those)\s+tokens?$/i.test(filterText)) continue;
     // Skip if this match overlaps with an addType match (already handled with "and has" parsing)
-    const haveStart = haveMatch.index;
-    const haveEnd = haveStart + haveMatch[0].length;
-    if (addTypeMatchRanges.some(r => haveStart < r.end && haveEnd > r.start)) continue;
+    // An addType match is measured from the sentence the subject was cut down to above: the
+    // lazy capture starts at the line start, so "That land becomes a 0/0 Elemental creature in
+    // addition to its other types. It gains haste …" (Rootwise Survivor) would otherwise count
+    // as inside the first. A copy clause still hides the rest of its line ("Create a token
+    // that's a copy of …. It gains haste" — Tempestra, Dame of Games — is about the token).
+    const _haveLastStop = haveMatch[1].search(/\.\s+(?!.*\.\s)/s);
+    const haveStart = _haveLastStop >= 0 ? haveMatch.index + haveMatch[0].indexOf(haveMatch[1]) + _haveLastStop : haveMatch.index;
+    const haveEnd = haveMatch.index + haveMatch[0].length;
+    if (addTypeMatchRanges.some(r => (copyClauseSpans.includes(r) ? haveMatch.index : haveStart) < r.end && haveEnd > r.start)) continue;
     // Skip only singular targeted enchanted/equipped patterns (e.g., "enchanted creature"),
     // NOT plural/global ones (e.g., "Equipped creatures you control", "Enchanted creatures")
     if (/^(?:enchanted|equipped)\s+(?:non\w+\s+)?(?:creature|permanent|land|artifact|enchantment|planeswalker|battle|vehicle)$/i.test(filterText.trim())) continue;
