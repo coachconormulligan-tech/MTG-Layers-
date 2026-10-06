@@ -1,0 +1,40 @@
+{
+  "name": "Evolved Spinoderm — hexproof with more than two oil counters",
+  "notes": "Found by tests/sweep.py ('otherwise' / 'if kicked … instead' theme). 'This creature has trample as long as it has two or fewer oil counters on it. Otherwise, it has hexproof.' Neither half was conditional: 'N or fewer counters' was not a readable condition, and the Otherwise sentence was ignored. With four oil counters it has hexproof and not trample.",
+  "steps": [
+    {
+      "add": "Evolved Spinoderm",
+      "as": "spino"
+    },
+    {
+      "call": [
+        "addCounter",
+        "@spino",
+        "oil",
+        4
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Evolved Spinoderm",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Hexproof"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Evolved Spinoderm",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Trample"
+          ]
+        }
+      }
+    }
+  ]
+}

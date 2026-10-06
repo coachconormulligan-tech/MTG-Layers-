@@ -1,0 +1,70 @@
+{
+  "name": "Stolen Vitality — +3/+1 always, first strike when it is not your turn",
+  "notes": "Found by tests/sweep.py ('otherwise' / 'if kicked … instead' theme). 'Target creature gets +3/+1 until end of turn. If it's your turn, that creature gains trample until end of turn. Otherwise, it gains first strike until end of turn.' The mid-line 'If it's your turn' gated the whole line (no +3/+1 off-turn), trample was a global effect, and the Otherwise sentence was ignored. Both branches now sit on their own lines, with the spell's target as subject and sharing its target slot.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre"
+    },
+    {
+      "add": "Stolen Vitality",
+      "as": "sv",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTarget",
+        "@sv",
+        "@bears"
+      ]
+    },
+    {
+      "call": [
+        "updateGameState",
+        "isYourTurn",
+        false
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 5,
+        "toughness": 3,
+        "abilities": {
+          "$includes": [
+            "First strike"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Trample"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "power": 2,
+        "toughness": 2,
+        "abilities": {
+          "$excludes": [
+            "Trample",
+            "First strike"
+          ]
+        }
+      }
+    }
+  ]
+}

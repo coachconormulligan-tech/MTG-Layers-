@@ -1,0 +1,52 @@
+{
+  "name": "Clutch of Undeath — the Otherwise branch applies to a non-Zombie",
+  "notes": "Found by tests/sweep.py ('otherwise' / 'if kicked … instead' theme). 'Enchanted creature gets +3/+3 as long as it's a Zombie. Otherwise, it gets -3/-3.' The Otherwise sentence shares a line with the sentence it contrasts with and conditions attach per line, so it produced nothing. _splitConditionalBranches now moves it to an appended line with the negated condition ('it is not true that …'). Walking Corpse (Zombie 2/2) is 5/5; Grizzly Bears is -1/-1.",
+  "steps": [
+    {
+      "add": "Walking Corpse",
+      "as": "corpse"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Clutch of Undeath",
+      "as": "c1"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@c1",
+        "@corpse"
+      ]
+    },
+    {
+      "add": "Clutch of Undeath",
+      "as": "c2"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@c2",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Walking Corpse",
+      "final": {
+        "power": 5,
+        "toughness": 5
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": -1,
+        "toughness": -1
+      }
+    }
+  ]
+}

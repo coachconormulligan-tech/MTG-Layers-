@@ -225,10 +225,12 @@ function _finalizeEffects(effects, isEquipmentSource, permanent, oracleText) {
   const _isAttachment = isEquipmentSource || !!permanent?._auraRestriction
     || (permanent?.printedSubtypes || []).some(t => t === 'Aura' || t === 'Equipment');
   if (_slottable.length > 1 && !_isAttachment) {
-    const _distinctPos = [...new Set(_slottable.map(e => e._oraclePos))].sort((a, b) => a - b);
+    // _slotPos: a branch line ("If this spell was kicked, …") shares its base sentence's slot.
+    const _slotPosOf = (e) => e._slotPos !== undefined ? e._slotPos : e._oraclePos;
+    const _distinctPos = [...new Set(_slottable.map(_slotPosOf))].sort((a, b) => a - b);
     if (_distinctPos.length > 1) {
       for (const eff of _slottable) {
-        eff._targetSlot = _distinctPos.indexOf(eff._oraclePos);
+        eff._targetSlot = _distinctPos.indexOf(_slotPosOf(eff));
       }
     }
   }

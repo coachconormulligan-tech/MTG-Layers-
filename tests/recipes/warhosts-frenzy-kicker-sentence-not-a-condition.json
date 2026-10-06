@@ -1,0 +1,24 @@
+{
+  "name": "Warhost's Frenzy — a kicker sentence that is not a continuous effect does not gate the boost",
+  "notes": "Guard for the kicker work: 'Creatures you control get +2/+0 until end of turn. If this spell was kicked, whenever a creature you control dies this turn, draw a card.' The kicked sentence stays in place; it must not turn into a condition on the +2/+0. That is why the kicked condition is an internal bracketed token ('[additional cost paid]') written only by _splitConditionalBranches rather than readable oracle wording: a mid-line 'If <readable condition>,' gates its whole line. Unkicked, Bears are 4/2.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Warhost's Frenzy",
+      "as": "wf",
+      "spell": true
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 4,
+        "toughness": 2
+      }
+    }
+  ]
+}

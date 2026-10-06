@@ -1,0 +1,42 @@
+{
+  "name": "Strength of Night — kicked gives Zombies an additional +2/+2",
+  "notes": "Found by tests/sweep.py ('if kicked' theme). 'Creatures you control get +1/+1 until end of turn. If this spell was kicked, Zombie creatures you control get an additional +2/+2 until end of turn.' No 'instead', so the first sentence always applies; the kicked sentence has its own subject and 'an additional' is dropped. Kicked: Walking Corpse (Zombie 2/2) is 5/5, Grizzly Bears 3/3.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Walking Corpse",
+      "as": "corpse"
+    },
+    {
+      "add": "Strength of Night",
+      "as": "sn",
+      "spell": true
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@sn",
+        true
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 3,
+        "toughness": 3
+      }
+    },
+    {
+      "perm": "Walking Corpse",
+      "final": {
+        "power": 5,
+        "toughness": 5
+      }
+    }
+  ]
+}
