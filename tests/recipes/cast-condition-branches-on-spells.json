@@ -1,0 +1,26 @@
+{
+  "name": "Cast conditions — main phase, mana spent and evidence branches read the spell's toggle",
+  "notes": "Sweep theme 7 (2026-10-06). \"If you cast this spell during your main phase / if {B} was spent / if at least three green mana was spent / if evidence was collected, …\" either produced nothing or applied unconditionally (Outmuscle gave every permanent indestructible; Arrester's Zeal always gave flying). They now use the same one-toggle branch as kicker. Might of Old Krosa with the toggle off is +2/+2 only (Bears 4/4). Arrester's Zeal with it on gives +2/+2 and flying to its one target (Ogre 4/4). Outmuscle with it off gives nothing to anyone. Behind the Mask with evidence collected still makes its target an artifact creature, but 1/1 instead of 4/3.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Gray Ogre", "as": "ogre" },
+    { "add": "Hill Giant", "as": "giant" },
+    { "add": "Darksteel Ingot", "as": "ingot" },
+    { "add": "Might of Old Krosa", "spell": true, "as": "might" },
+    { "call": ["setTarget", "@might", "@bears"] },
+    { "add": "Arrester's Zeal", "spell": true, "as": "zeal" },
+    { "call": ["setTarget", "@zeal", "@ogre"] },
+    { "call": ["setAdditionalCostPaid", "@zeal", true] },
+    { "add": "Outmuscle", "spell": true, "as": "outmuscle" },
+    { "call": ["setTarget", "@outmuscle", "@giant"] },
+    { "add": "Behind the Mask", "spell": true, "as": "mask" },
+    { "call": ["setTarget", "@mask", "@ingot"] },
+    { "call": ["setAdditionalCostPaid", "@mask", true] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": 4, "toughness": 4, "abilities": { "$excludes": ["Indestructible", "Flying"] } } },
+    { "perm": "Gray Ogre", "final": { "power": 4, "toughness": 4, "abilities": { "$includes": ["Flying"] } } },
+    { "perm": "Hill Giant", "final": { "power": 3, "toughness": 3, "abilities": { "$excludes": ["Indestructible"] } } },
+    { "perm": "Darksteel Ingot", "final": { "types": { "$includes": ["Artifact", "Creature"] }, "power": 1, "toughness": 1 } }
+  ]
+}

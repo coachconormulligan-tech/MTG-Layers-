@@ -85,24 +85,18 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Blood Lust | gets +N/+N | spell | Otherwise, it gets +4/-X until end of turn, where X is its toughness minus 1. |
 | Cait Sith, Fortune Teller | gets +N/+N | triggered | When you exile a card this way, target creature you control gets +X/+0 until end of turn, where X is that card's mana value. |
 | Cankerous Thirst | gets +N/+N | spell | If {G} was spent to cast this spell, you may have target creature get +3/+3 until end of turn. |
-| Deluge Virtuoso | gets +N/+N | triggered | If five or more mana was spent to cast that spell, this creature gets +2/+2 until end of turn instead. |
 | Elemental Appeal | gets +N/+N | spell | If this spell was kicked, that creature gets +7/+0 until end of turn. |
 | Glorfindel, Dauntless Rescuer | gets +N/+N | triggered | Whenever you scry, choose one and this card gets +1/+1 until end of turn. |
 | Hope and Glory | gets +N/+N | spell | Each of them gets +1/+1 until end of turn. |
 | Lightfoot Rogue | gets +N/+N | static | 10—19 \| It gets +1/+0 and gains deathtouch until end of turn. |
 | Massacre Girl | gets +N/+N | triggered | Whenever a creature dies this turn, each creature other than this card gets -1/-1 until end of turn. |
-| Might of Old Krosa | gets +N/+N | spell | If you cast this spell during your main phase, that creature gets +4/+4 until end of turn instead. |
 | Mishra's Foundry | gets +N/+N | activated | {1}, {T}: Target attacking Assembly-Worker gets +2/+2 until end of turn. |
 | Ogre Battlecaster | gets +N/+N | triggered | When you cast that spell, this creature gets +X/+0 until end of turn, where X is that spell's mana value. |
 | Ogre Chitterlord | gets +N/+N | triggered | Then if you control five or more Rats, each Rat you control gets +2/+0 until end of turn. |
-| Price of Loyalty | gets +N/+N | spell | If mana from a Treasure was spent to cast this spell, that creature gets +2/+0 until end of turn. |
-| Rolling Spoil | gets +N/+N | spell | If {B} was spent to cast this spell, all creatures get -1/-1 until end of turn. |
 | Sigardian Zealot | gets +N/+N | triggered | Each of them gets +X/+X and gains vigilance until end of turn, where X is this creature's power. |
 | Song of Blood | gets +N/+N | spell | Whenever a creature attacks this turn, it gets +1/+0 until end of turn for each creature card put into your graveyard this way. |
-| Tail Swipe | gets +N/+N | spell | If you cast this spell during your main phase, the creature you control gets +1/+1 until end of turn. |
 | Óin the Brave | gets +N/+N | static | As long as you have an enduring story, Óin gets +1/+0 and has haste. |
 | Alpine Moon | has / gains | static | Lands your opponents control with the chosen name lose all land types and abilities, and they gain "{T}: Add one mana of any color." |
-| Behind the Mask | has / gains | spell | If evidence was collected, it has base power and toughness 1/1 until end of turn instead. |
 | Cauldron Dance | has / gains | spell | That creature gains haste. |
 | Cherished Hatchling | has / gains | triggered | When this creature dies, you may cast Dinosaur spells this turn as though they had flash, and whenever you cast a Dinosaur spell this turn, it gains "When this creature enters, you may have it fight another target creature." |
 | Conspicuous Snoop | has / gains | static | As long as the top card of your library is a Goblin card, this creature has all activated abilities of that card. |
@@ -110,7 +104,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Dread Wight | has / gains | triggered | Each of those creatures gains "{4}: Remove a paralyzation counter from this creature." |
 | Encouraging Aviator // Jump | has / gains | spell | Target creature gains flying until end of turn. |
 | Energybending | has / gains | spell | Lands you control gain all basic land types until end of turn. |
-| Expressive Firedancer | has / gains | triggered | If five or more mana was spent to cast that spell, this creature also gains double strike until end of turn. |
 | Flash Conscription | has / gains | spell | If {W} was spent to cast this spell, the creature gains "Whenever this creature deals combat damage, you gain that much life" until end of turn. |
 | For the Common Good | has / gains | spell | Then tokens you control gain indestructible until your next turn. |
 | Goblin Wizard | has / gains | activated | {R}: Target this card gains protection from white until end of turn. |
