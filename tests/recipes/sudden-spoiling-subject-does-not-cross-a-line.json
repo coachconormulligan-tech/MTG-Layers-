@@ -1,0 +1,15 @@
+{
+  "name": "Sudden Spoiling — the keyword line above is not part of the subject",
+  "notes": "Found by tests/sweep.py. The lose-all-abilities subject could run across a newline, so it was 'Split second / Until end of turn, creatures target player controls' and the whole spell produced nothing. The subject now stops at a line break. The targeted opponent's Wind Drake is 0/2 without flying; your own Drake is untouched. The same change removes inert static effects that leaked out of triggers on the line below a keyword line (Abigale, Warkite Marauder).",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Wind Drake", "as": "theirs", "controller": "p2" },
+    { "add": "Snapping Drake", "as": "mine" },
+    { "add": "Sudden Spoiling", "as": "spoiling", "spell": true },
+    { "call": ["setTargetPlayer", "@spoiling", "p2"] }
+  ],
+  "asserts": [
+    { "perm": "Wind Drake", "final": { "power": 0, "toughness": 2, "abilities": { "$excludes": ["Flying"] } } },
+    { "perm": "Snapping Drake", "final": { "power": 3, "toughness": 2, "abilities": { "$includes": ["Flying"] } } }
+  ]
+}

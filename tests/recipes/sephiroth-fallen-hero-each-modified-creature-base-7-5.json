@@ -1,0 +1,15 @@
+{
+  "name": "Sephiroth, Fallen Hero — each modified creature you control has base P/T 7/5",
+  "notes": "Found by tests/sweep.py. The base-P/T subject ran back across the previous sentence ('you may put a cell counter on target creature. Until end of turn, each modified creature'), was too long, and was skipped. The subject is now the last sentence only. Bears with a +1/+1 counter are 8/6 (base 7/5 plus the counter); the unmodified Ogre stays 2/2.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Gray Ogre", "as": "ogre" },
+    { "add": "Sephiroth, Fallen Hero", "as": "seph" },
+    { "call": ["addCounter", "@bears", "+1/+1", 1] },
+    { "call": ["addTriggeredAbility", "@seph", 0, "you may put a cell counter on target creature. Until end of turn, each modified creature you control has base power and toughness 7/5.", "Jenova Cells — Whenever this card attacks, you may put a cell counter on target creature. Until end of turn, each modified creature you control has base power and toughness 7/5."], "as": "trigger" }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": 8, "toughness": 6 } },
+    { "perm": "Gray Ogre", "final": { "power": 2, "toughness": 2 } }
+  ]
+}

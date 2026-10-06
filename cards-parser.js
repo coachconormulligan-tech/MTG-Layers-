@@ -1040,7 +1040,9 @@ function parseCardEffects(permanent, card, opts = {}) {
   {
     const oLines = oracle.split('\n');
     // Detect modal header: "Choose one/two/three/N", "Choose one or both", "Spree", "Tiered", or pawprint "Choose up to N {P}"
-    const isModalHeader = (l) => /^(?:choose\s+(?:one|two|three|four|five|six|any number|up to\b|one or (?:both|more)\b)|spree\b|tiered\b)/i.test(l.trim());
+    // "Choose up to one other target creature. …" (Glamer Gifter) picks objects, not modes.
+    const isModalHeader = (l) => /^(?:choose\s+(?:one|two|three|four|five|six|any number|up to\b|one or (?:both|more)\b)|spree\b|tiered\b)/i.test(l.trim())
+      && !/^choose\s+(?:up to\s+)?(?:\w+|any number of)\s+(?:(?:other|another)\s+)?target\b/i.test(l.trim());
     const hasModalHeader = oLines.some(l => isModalHeader(l));
     // Also detect by bullet/mode prefix patterns even without explicit header
     const hasModePrefixes = oLines.some(l => /^\s*(?:\u2022|(?:\+\s*)?{[^}]*}\s*[\u2014—])/m.test(l));
@@ -1926,10 +1928,11 @@ function parseCardEffects(permanent, card, opts = {}) {
         oracle.substring(_clauseStart(_losesAllCTMatch.index), _losesAllCTMatch.index + 30));
   // Self / targeted "[subject] gains/is/are/becomes all creature types".
   // - "Target creature gains all creature types until end of turn" (Amoeboid Changeling activated).
+  // - "target creature has base power and toughness 4/4 and gains all creature types" (Glamer Gifter).
   // - "this creature gets +2/+2 and is all creature types" (Undercover Skrull) — the self subject
   //   may be separated from the verb by an earlier conjunct (handled by the [^.;:]*? span). Matching
   //   it here avoids the generic setTypeRegex capturing "this creature gets +2/+2 and" as the filter.
-  const gainsAllCTMatch = /\b(?:target\s+([\w][\w\s]*?(?=\s+(?:gains?|is|are|becomes?)\s+all\s+creature\s+types))|(?:this\s+(?:creature|permanent|card|token)|it)\b[^.;:]*?)\s+(?:gains?|is|are|becomes?)\s+all\s+creature\s+types/i.exec(oracle);
+  const gainsAllCTMatch = /\b(?:target\s+([\w][\w\s]*?(?=\s+(?:(?:has|have|gets?)\b[^.;:]*?\band\s+)?(?:gains?|is|are|becomes?)\s+all\s+creature\s+types))(?:\s+(?:has|have|gets?)\b[^.;:]*?\band)?|(?:this\s+(?:creature|permanent|card|token)|it)\b[^.;:]*?)\s+(?:gains?|is|are|becomes?)\s+all\s+creature\s+types/i.exec(oracle);
   const _isGainsInActivatedAbility = gainsAllCTMatch
     && oracle.substring(_clauseStart(gainsAllCTMatch.index), gainsAllCTMatch.index).includes(':');
   if (gainsAllCTMatch && !_isGainsInActivatedAbility && !effects.some(e => e.params && e.params.gainsAllCreatureTypes && e.selfTarget && e.sourceId === permanent.id)) {
@@ -2685,7 +2688,9 @@ function parseCardEffects(permanent, card, opts = {}) {
     // use only the last sentence segment as the actual filter text.
     if (filterText.includes('.')) {
       const segments = filterText.split(/\.\s*/);
-      filterText = segments[segments.length - 1].trim();
+      // "Choose target creature. Until end of turn, target creature gets +2/+0" — the duration
+      // is not part of the subject.
+      filterText = stripDurationPrefix(segments[segments.length - 1].trim());
       // "Untap target creature. It gets +3/+3" — resolve "It" pronoun to "target [type]"
       // from the prior sentence, mirroring the same resolution in haveAbilityRegex.
       if (/^it$/i.test(filterText) && segments.length >= 2) {
@@ -2710,7 +2715,9 @@ function parseCardEffects(permanent, card, opts = {}) {
     if (!filterText) continue;
     // Multiplayer: The optional "you control" group in boostRegex strips "you control" from group 1.
     // Re-append it so buildAppliesToFromText can apply the controller filter wrapper.
-    if (/\byou (?:control|own)\b/i.test(boostMatch[0]) && !/\byou (?:control|own)\b/i.test(filterText)) {
+    // Only the subject's own sentence counts: in "Choose target creature you control. Until end
+    // of turn, target creature gets +2/+0" the "you control" belongs to the choosing sentence.
+    if (/\byou (?:control|own)\b/i.test(boostMatch[0].split(/\.\s+/).pop()) && !/\byou (?:control|own)\b/i.test(filterText)) {
       filterText += ' you control';
     }
     // Skip if filterText doesn't reference permanents
@@ -3143,12 +3150,16 @@ function parseCardEffects(permanent, card, opts = {}) {
   const generalBasePTRegex = /(?:^|\.)\s*(.+?)\s+(?:you (?:control|own)\s+)?(?:have|has)\s+base\s+power\s+and\s+toughness\s+(\d+)\/(\d+)(?:\s+and\s+(?:are|is)\s+(\w+)((?:\s+in addition to\b)?))?/gmi;
   let generalBasePTMatch;
   while ((generalBasePTMatch = generalBasePTRegex.exec(oracle)) !== null) {
-    const gbpFilterText = stripDurationPrefix(_lastSentenceTargetSubject(generalBasePTMatch[1].trim()));
+    // The subject never spans sentences: "…on target creature. Until end of turn, each modified
+    // creature you control has base power and toughness 7/5" (Sephiroth, Fallen Hero).
+    const gbpFilterText = stripDurationPrefix(generalBasePTMatch[1].trim().split(/\.\s+/).pop().replace(/^["\u201d\s]+/, '').trim());
     const gbpFLower = gbpFilterText.toLowerCase();
     // Skip enchanted/equipped (handled above) and non-permanent references
     if (/enchanted|equipped/i.test(gbpFLower)) continue;
-    // Skip triggered/activated ability text
-    if (gbpFLower.includes('whenever ') || gbpFLower.includes('when ') || gbpFLower.length > 50) continue;
+    // Skip triggered/activated ability text, and a conditional rider ("If it's not a Vehicle, it has …")
+    const gbpRawLower = generalBasePTMatch[1].toLowerCase();
+    if (gbpRawLower.includes('whenever ') || gbpRawLower.includes('when ') || /^(?:then\s+)?if\b/.test(gbpFLower) || gbpFLower.length > 50) continue;
+    if (_isInTriggeredSentence(generalBasePTMatch.index + generalBasePTMatch[0].length - 1)) continue;
     if (!filterReferencesPermanents(gbpFilterText)) continue;
     // Skip if filterText ends with "and" or contains "are" — already handled by setTypeRegex
     if (/\band\s*$/i.test(gbpFLower)) continue;
@@ -3198,6 +3209,30 @@ function parseCardEffects(permanent, card, opts = {}) {
         `${gbpFilterText} lose all creature types. ${gbpApplies.desc}`,
         gbpCond ? { asLongAsCondition: gbpCond } : undefined);
     }
+  }
+
+  // "[filter] has/have base power N" / "base toughness N" — sets one characteristic only
+  // (Maha, Its Feathers Night; Singing Tree; Symmetry Sage; Crater Elemental).
+  const singleBaseRegex = /(?:^|[.;]|\n)\s*([^.;\n]+?)\s+(?:has|have)\s+base\s+(power|toughness)\s+(\d+)(?!\s*\/)(?!\s+or\s+base\b)/gmi;
+  let singleBaseMatch;
+  while ((singleBaseMatch = singleBaseRegex.exec(oracle)) !== null) {
+    const sbFilterText = stripDurationPrefix(singleBaseMatch[1].trim());
+    const sbLower = sbFilterText.toLowerCase();
+    if (/enchanted|equipped/i.test(sbLower)) continue;
+    if (_isTriggeredSentence(sbLower) || /^if\b/.test(sbLower) || sbLower.length > 60) continue;
+    if (_isInActivatedEffect(singleBaseMatch.index) || _isInTriggeredSentence(singleBaseMatch.index)) continue;
+    const sbApplies = buildAppliesToFromText(sbFilterText);
+    if (!sbApplies.isSelf && !filterReferencesPermanents(sbFilterText)) continue;
+    const sbWhich = singleBaseMatch[2].toLowerCase();
+    const sbValue = parseInt(singleBaseMatch[3]);
+    const sbCond = _getConditionForPos(singleBaseMatch.index);
+    const sbEff = pushEff('7b', EFFECT_TYPE.SET_PT,
+      sbWhich === 'power' ? { power: sbValue, powerOnly: true } : { toughness: sbValue, toughnessOnly: true },
+      { isSelf: sbApplies.isSelf, isTargeted: sbApplies.isTargeted, fn: sbApplies.fn,
+        selfAffect: sbApplies.isSelf ? true : detectSelfAffect(sbFilterText) },
+      `${sbFilterText} have base ${sbWhich} ${sbValue}. ${sbApplies.desc}`,
+      sbCond ? { asLongAsCondition: sbCond } : undefined);
+    _applyTargetInfo(sbEff, sbApplies, sbApplies.fn);
   }
 
   // "[filter] have base power and toughness each equal to the number of [countOf]"
@@ -3999,10 +4034,16 @@ function parseCardEffects(permanent, card, opts = {}) {
   // The subject is captured with [^.;] (not .) so it cannot cross a sentence boundary —
   // e.g. The Wondrous Wasp's fired effect "tap up to one target creature. target creature
   // loses all abilities …" must capture "target creature", not the whole preceding sentence.
-  const loseAllAbilitiesRegex = /(?:^|[.;])\s*([^.;]+?)\s+(?:you (?:control|own)\s+)?loses?\s+all(?:\s+other)?\s+abilities(?:\s+except\s+mana\s+abilities)?/gmi;
+  const loseAllAbilitiesRegex = /(?:^|[.;])\s*([^.;\n]+?)\s+(?:you (?:control|own)\s+)?loses?\s+all(?:\s+other)?\s+abilities(?:\s+except\s+mana\s+abilities)?/gmi;
   let loseAllMatch;
   while ((loseAllMatch = loseAllAbilitiesRegex.exec(oracle)) !== null) {
-    const filterSubject = loseAllMatch[1].trim();
+    let filterSubject = loseAllMatch[1].trim();
+    // The optional "you control" group in the regex takes it out of the subject; put it back so
+    // "Creatures you control lose all abilities" (Overwhelming Splendor, once "enchanted player
+    // controls" has been read as "you control") does not reach every creature.
+    if (/\byou (?:control|own)\s+loses?\s+all\b/i.test(loseAllMatch[0]) && !/\byou (?:control|own)\b/i.test(filterSubject)) {
+      filterSubject += ' you control';
+    }
     // Skip enchanted/equipped — handled below
     if (/enchanted|equipped/i.test(filterSubject)) continue;
     // "Cards in [zone] lose all abilities" (e.g. Yixlid Jailer, "Cards in graveyards lose all abilities.")
@@ -4020,6 +4061,9 @@ function parseCardEffects(permanent, card, opts = {}) {
       continue;
     }
     if (!filterReferencesPermanents(filterSubject)) continue;
+    // "…faces a villainous choice — That creature becomes a 1/1 … and loses all abilities, or …"
+    // (Hunted by The Family) is one branch of a choice, not something that simply happens.
+    if (filterSubject.includes('—')) continue;
     // Skip if this match falls inside a triggered-ability sentence
     // ("When/Whenever/At ..."). Those effects apply only when the trigger
     // resolves (via the pseudo-permanent created by fireTriggeredAbility),

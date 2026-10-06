@@ -1,0 +1,15 @@
+{
+  "name": "Overwhelming Splendor — creatures enchanted player controls lose abilities and are 1/1",
+  "notes": "Found by tests/sweep.py. Two bugs. The lose-all-abilities subject could run across a newline, so it began 'Enchant player / Creatures' and the line produced nothing. And the regex's optional 'you control' group took the controller out of the subject ('enchanted player controls' is read as 'you control'), so once it parsed it reached every creature. The enchanted opponent's Wind Drake is a 1/1 without flying; your own Drake keeps flying.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Wind Drake", "as": "theirs", "controller": "p2" },
+    { "add": "Snapping Drake", "as": "mine" },
+    { "add": "Overwhelming Splendor", "as": "splendor" },
+    { "call": ["setEnchantedPlayer", "@splendor", "p2"] }
+  ],
+  "asserts": [
+    { "perm": "Wind Drake", "final": { "power": 1, "toughness": 1, "abilities": { "$excludes": ["Flying"] } } },
+    { "perm": "Snapping Drake", "final": { "power": 3, "toughness": 2, "abilities": { "$includes": ["Flying"] } } }
+  ]
+}

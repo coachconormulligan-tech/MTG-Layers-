@@ -1,0 +1,15 @@
+{
+  "name": "Maha, Its Feathers Night — opponents' creatures have base toughness 1",
+  "notes": "Found by tests/sweep.py. 'Creatures your opponents control have base toughness 1.' produced nothing: only the two-number 'base power and toughness N/N' form was parsed. A single-stat SET_PT (toughnessOnly) now sets toughness and leaves power alone. The opponent's Bears are 2/1; your own Hill Giant is untouched.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears", "as": "bears", "controller": "p2" },
+    { "add": "Hill Giant", "as": "giant" },
+    { "add": "Maha, Its Feathers Night", "as": "maha" }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 1 } },
+    { "perm": "Hill Giant", "final": { "power": 3, "toughness": 3 } },
+    { "effect": { "source": "Maha, Its Feathers Night", "layer": "7b", "type": "set_pt" } }
+  ]
+}

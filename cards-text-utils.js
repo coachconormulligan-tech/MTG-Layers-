@@ -334,7 +334,11 @@ const _THEY_SINGULAR_VERB = { gain: 'gains', get: 'gets', have: 'has', become: '
 function _resolveTheyPronoun(text) {
   if (!/\b(?:they|those)\b/i.test(text)) return text;
   return text.split('\n').map(line => {
-    if (!/\b(?:they|those)\b/i.test(line) || line.includes('"')) return line;
+    if (!/\b(?:they|those)\b/i.test(line)) return line;
+    // A quoted ability may follow the pronoun ("they become 3/3 Birds with flying and QUOTED",
+    // Sparkshaper Visionary) but a pronoun inside or after a quote belongs to that ability.
+    const quoteAt = line.indexOf('"');
+    if (quoteAt >= 0 && (quoteAt < line.search(/\b(?:they|those)\b/i) || /\.\s/.test(line.slice(quoteAt)))) return line;
     const sentences = line.split(/(?<=\.)\s+/);
     for (let i = 1; i < sentences.length; i++) {
       // "Those creatures gain …" / "Each of those creatures gains …" (Cauldron Haze) read as "they".

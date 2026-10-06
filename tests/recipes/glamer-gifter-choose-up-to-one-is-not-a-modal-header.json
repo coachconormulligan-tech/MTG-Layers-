@@ -1,0 +1,16 @@
+{
+  "name": "Glamer Gifter — \"Choose up to one other target creature.\" is not a modal header",
+  "notes": "Found by tests/sweep.py. 'Choose up to …' was taken for a modal spell header (pawprint 'Choose up to five {P} worth of modes'), so everything after it was treated as modes and dropped. A header that goes on to name targets is now ordinary text. Also: 'has base power and toughness 4/4 and gains all creature types' now emits both halves. The chosen Hill Giant is a 4/4 with every creature type; the Bears are untouched and no static effect leaks onto the Gifter.",
+  "steps": [
+    { "add": "Hill Giant", "as": "giant" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Glamer Gifter", "as": "gifter" },
+    { "call": ["addTriggeredAbility", "@gifter", 2, "choose up to one other target creature. Until end of turn, that creature has base power and toughness 4/4 and gains all creature types.", "When this creature enters, choose up to one other target creature. Until end of turn, that creature has base power and toughness 4/4 and gains all creature types."], "as": "trigger" },
+    { "call": ["setTarget", "@trigger", "@giant"] }
+  ],
+  "asserts": [
+    { "perm": "Hill Giant", "final": { "power": 4, "toughness": 4, "isAllCreatureTypes": true } },
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2 } },
+    { "perm": "Glamer Gifter", "final": { "power": 1, "toughness": 2 } }
+  ]
+}
