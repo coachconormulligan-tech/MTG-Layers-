@@ -2810,6 +2810,7 @@ function parseCardEffects(permanent, card, opts = {}) {
   const _doubleForms = [
     { re: /\bdouble\s+(?:the\s+)?(power and toughness|power|toughness)\s+of\s+(.+?)(?=\s+until\b|[.,]|$)/gi, ptGroup: 1, filterGroup: 2 },
     { re: /\bdouble\s+(.+?)['’]s\s+(power and toughness|power|toughness)\b/gi, ptGroup: 2, filterGroup: 1 },
+    { re: /\bdouble\s+(its)\s+(power and toughness|power|toughness)\b/gi, ptGroup: 2, filterGroup: 1, pronoun: true },
   ];
   for (const _df of _doubleForms) {
     let _dm;
@@ -2820,6 +2821,14 @@ function parseCardEffects(permanent, card, opts = {}) {
       let _dFilter = _dm[_df.filterGroup].trim();
       // Possessive pronouns ("its", "their") refer to the source permanent itself.
       if (/^(its|their|his|her)$/i.test(_dFilter)) _dFilter = 'it';
+      // "Choose target creature you control. Until end of turn, double its power …" (World War
+      // Hulk): "its" is the target named earlier on the same line.
+      if (_df.pronoun) {
+        const _dLine = oracle.slice(oracle.lastIndexOf('\n', _dm.index) + 1, _dm.index);
+        const _dNamed = _dLine.match(/.*\b((?:up to one\s+)?(?:another\s+)?target\s+[^.]+?)\.\s/i);
+        if (!_dNamed) continue;
+        _dFilter = _dNamed[1].trim();
+      }
       if (!filterReferencesPermanents(_dFilter)) continue;
       if (_dFilter.includes('"')) continue;
       const _dDoublePower = /power/.test(_ptWhich);

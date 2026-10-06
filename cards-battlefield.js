@@ -524,6 +524,15 @@ const Battlefield = {
         (_, n1, n2, verb) => `target ${(n1 || n2).toLowerCase()} ${verb}`);
       if (parsedEffectText !== itsBefore) didItConversion = true;
     }
+    // "Whenever a Mutant you control attacks, double its power" — "its" is the creature the
+    // trigger condition names (or the equipped/enchanted creature), never the ability itself.
+    if (/\bdouble\s+its\s+(?:power|toughness)\b/i.test(parsedEffectText)) {
+      const attached = kind === 'trigger' && fullText
+        ? fullText.match(/\b(?:when(?:ever)?)\s+((?:equipped|enchanted|fortified)\s+\w+)\b/i) : null;
+      const owner = attached ? attached[1].toLowerCase() : `target ${triggerSubject}`;
+      parsedEffectText = parsedEffectText.replace(/\bdouble\s+its\s+(power|toughness)\b/gi, `double ${owner}'s $1`);
+      if (!attached) didItConversion = true;
+    }
     if (/\bit\b/i.test(parsedEffectText)) {
       const before = parsedEffectText;
       // Replace "it gets/gains/has/is/becomes/loses" → "target [subject] gets/gains/..."

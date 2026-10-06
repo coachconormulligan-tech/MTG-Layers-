@@ -1,0 +1,16 @@
+{
+  "name": "Death Kiss — \"double its power\" for another creature's attack needs a chosen creature",
+  "notes": "Found by tests/sweep.py (theme: double its power). 'Whenever a creature an opponent controls attacks one of your opponents, double its power until end of turn.' The attacker is not the source, so the fired ability gets a creature picker. Hill Giant is picked and becomes 6/3; Death Kiss itself (5/5) and the Bears are untouched.",
+  "steps": [
+    { "add": "Hill Giant", "as": "giant" },
+    { "add": "Grizzly Bears" },
+    { "add": "Death Kiss", "as": "kiss" },
+    { "call": ["addTriggeredAbility", "@kiss", 0, "double its power until end of turn.", "Whenever a creature an opponent controls attacks one of your opponents, double its power until end of turn."], "as": "trig" },
+    { "call": ["setTarget", "@trig", "@giant"] }
+  ],
+  "asserts": [
+    { "perm": "Hill Giant", "final": { "power": 6, "toughness": 3 } },
+    { "perm": "Death Kiss", "final": { "power": 5, "toughness": 5 } },
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2 } }
+  ]
+}
