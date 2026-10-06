@@ -1,0 +1,14 @@
+{
+  "name": "Singing Tree — target attacking creature has base power 0",
+  "notes": "Found by tests/sweep.py. '{T}: Target attacking creature has base power 0 until end of turn.' fired to nothing. The single-stat base power form now emits a powerOnly SET_PT: the attacking Hill Giant is 0/3, toughness unchanged.",
+  "steps": [
+    { "add": "Hill Giant", "as": "giant" },
+    { "add": "Singing Tree", "as": "tree" },
+    { "call": ["toggleAttacking", "@giant"] },
+    { "call": ["addActivatedAbility", "@tree", 0, "Target attacking creature has base power 0 until end of turn.", "{T}: Target attacking creature has base power 0 until end of turn."], "as": "act" },
+    { "call": ["setTarget", "@act", "@giant"] }
+  ],
+  "asserts": [
+    { "perm": "Hill Giant", "final": { "power": 0, "toughness": 3 } }
+  ]
+}

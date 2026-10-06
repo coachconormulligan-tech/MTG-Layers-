@@ -418,6 +418,8 @@ function _aaDescribeEffect(eff) {
   switch (eff.type) {
     case EFFECT_TYPE.SET_PT:
       if (p.useMV) return 'Base power and toughness each become its mana value';
+      if (p.powerOnly) return `Base power set to ${p.power}`;
+      if (p.toughnessOnly) return `Base toughness set to ${p.toughness}`;
       return `Base power/toughness set to ${p.power}/${p.toughness}`;
     case EFFECT_TYPE.MODIFY_PT:
       if (p.charBoost || p.power == null) return 'Power/toughness modified by a variable amount';

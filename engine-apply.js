@@ -453,6 +453,16 @@ function applyEffect(state, effect, context) {
           }
           state.power = val;
           state.toughness = val;
+        } else if (effect.params.powerOnly) {
+          // "has base power N" (Singing Tree): toughness is untouched.
+          state.power = effect.params.power;
+          changes.push(`Set power to ${state.power} (was ${oldP})`);
+          break;
+        } else if (effect.params.toughnessOnly) {
+          // "have base toughness N" (Maha, Its Feathers Night): power is untouched.
+          state.toughness = effect.params.toughness;
+          changes.push(`Set toughness to ${state.toughness} (was ${oldT})`);
+          break;
         } else {
           state.power = effect.params.power;
           state.toughness = effect.params.toughness;
