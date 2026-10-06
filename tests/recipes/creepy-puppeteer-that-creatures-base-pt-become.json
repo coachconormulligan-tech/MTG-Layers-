@@ -1,0 +1,14 @@
+{
+  "name": "Creepy Puppeteer — that creature's base power and toughness become 4/3",
+  "notes": "Found by tests/sweep.py. Same wording gap as Mirkwood Meditator, with 'that creature' as the subject: the user points the fired ability at the other attacker. Bears become 4/3; the Puppeteer keeps its printed P/T.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Creepy Puppeteer", "as": "pup" },
+    { "call": ["addTriggeredAbility", "@pup", 1, "if you attacked with exactly one other creature this combat, you may have that creature's base power and toughness become 4/3 until end of turn.", "Whenever this creature attacks, if you attacked with exactly one other creature this combat, you may have that creature's base power and toughness become 4/3 until end of turn."], "as": "trigger" },
+    { "call": ["setTarget", "@trigger", "@bears"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": 4, "toughness": 3 } },
+    { "perm": "Creepy Puppeteer", "final": { "power": 4, "toughness": 3 } }
+  ]
+}

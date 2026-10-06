@@ -1,0 +1,13 @@
+{
+  "name": "Moon Girl and Devil Dinosaur — base P/T become 6/6 and they gain trample",
+  "notes": "Found while fixing the 'base power and toughness become N/N' wording. 'they' is the two-in-one card itself. A keyword granted after a base-P/T clause used to take the whole clause as its subject ('This card has base power and toughness 6/6'), which is no permanent; the clause is now stripped from the subject. Moon Girl is 6/6 with trample; the Bears get neither. The second sentence of the draw trigger adds nothing.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Moon Girl and Devil Dinosaur", "as": "moon" },
+    { "call": ["addTriggeredAbility", "@moon", 0, "until end of turn, this card's base power and toughness become 6/6 and they gain trample.", "Whenever you draw your second card each turn, until end of turn, this card's base power and toughness become 6/6 and they gain trample."], "as": "trigger" }
+  ],
+  "asserts": [
+    { "perm": "Moon Girl and Devil Dinosaur", "final": { "power": 6, "toughness": 6, "abilities": { "$includes": ["Trample"] } } },
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2, "abilities": { "$excludes": ["Trample"] } } }
+  ]
+}

@@ -626,6 +626,24 @@ function parseCardEffects(permanent, card, opts = {}) {
     oracleRaw = oracleRaw.replace(/\benchanted player\b/gi, 'you');
   }
 
+  // "[You may have] X's base power and toughness become N/N" (Mirkwood Meditator, Creepy
+  // Puppeteer) and "the base power and toughness of X become N/N" (Brine Hag) say the same
+  // thing as "X has base power and toughness N/N", which is the form the set-P/T parsers read.
+  // "become 4/1 or 1/4" (Master of Winds) is a choice and is left alone, and so is
+  // "become X/X …, where X is this creature's power" (Unruly Krasis): a typed-in X is not that.
+  if (/\bbase power and toughness\b[^.\n]*\bbecomes?\s+\d/i.test(oracleRaw)) {
+    oracleRaw = oracleRaw
+      // Not "each creature that dealt damage to it this turn" (Brine Hag): the site keeps no
+      // damage history, so that group cannot be worked out.
+      .replace(/\b(?:you may have )?the base power and toughness of ((?:(?!\bthat\s+dealt\b)[^.,\n])+?) becomes? (\d+\/\d+)(?!\s+or\s+\d)(?![^.\n]*\bwhere\b)/gi,
+        '$1 has base power and toughness $2')
+      .replace(/\b(?:you may have )?([^.,\n]+?)'s base power and toughness becomes? (\d+\/\d+)(?!\s+or\s+\d)(?![^.\n]*\bwhere\b)/gi,
+        '$1 has base power and toughness $2')
+      // "…become 6/6 and they gain trample" (Moon Girl and Devil Dinosaur): "they" is the
+      // two-in-one card itself.
+      .replace(/(\bthis (?:card|creature) has base power and toughness \d+\/\d+) and they (?:gain|have)\b/gi, '$1 and gains');
+  }
+
   // Factory: build + push a parsed effect object with the common boilerplate.
   // ctx accepts either { isSelf, isTargeted, fn, selfAffect } (derives appliesTo/scope/selfTarget)
   // or pre-computed { appliesTo, scope, selfTarget, affectsSelf } (used by setType-section sites).
@@ -3160,6 +3178,8 @@ function parseCardEffects(permanent, card, opts = {}) {
     const gbpRawLower = generalBasePTMatch[1].toLowerCase();
     if (gbpRawLower.includes('whenever ') || gbpRawLower.includes('when ') || /^(?:then\s+)?if\b/.test(gbpFLower) || gbpFLower.length > 50) continue;
     if (_isInTriggeredSentence(generalBasePTMatch.index + generalBasePTMatch[0].length - 1)) continue;
+    // "{1}: This creature has base power and toughness 4/4 …" is handled when the ability fires.
+    if (_isInActivatedEffect(generalBasePTMatch.index + generalBasePTMatch[0].length - 1)) continue;
     if (!filterReferencesPermanents(gbpFilterText)) continue;
     // Skip if filterText ends with "and" or contains "are" — already handled by setTypeRegex
     if (/\band\s*$/i.test(gbpFLower)) continue;
@@ -3577,8 +3597,8 @@ function parseCardEffects(permanent, card, opts = {}) {
     // Strip leading "Until end of turn, " duration prefix that bleeds in from compound activated-ability
     // text like "Until end of turn, this creature has base P/T 5/3, gains trample"
     filterText = stripDurationPrefix(filterText);
-    // Strip trailing "has base power and toughness X/Y[,]" clause
-    filterText = filterText.replace(/\s+has\s+base\s+power\s+and\s+toughness\s+\d+\/\d+\s*,?\s*$/i, '');
+    // Strip trailing "has/have base power and toughness X/Y[,] [and]" clause
+    filterText = filterText.replace(/\s+(?:has|have)\s+base\s+power\s+and\s+toughness\s+\d+\/\d+\s*,?(?:\s+and)?\s*$/i, '');
     // Strip trailing "gains [keyword(s)], and" remainder after the P/T clause
     filterText = filterText.replace(/\s+gains?\s+[^,]+,\s+and\s*$/i, '');
     const _ptAndFilter = filterText.match(/^.+?\s+get[s]?\s+[+-]?\d+\/[+-]?\d+\s+and\s+(.+)$/i);
