@@ -1370,7 +1370,10 @@ function applyEffect(state, effect, context) {
       // For "you control enchanted/equipped" effects, resolve "you" as the current controller
       // of the source permanent in allStates (which may have been updated by earlier Layer 2
       // effects like Lay Claim). Fall back to newController if source not found.
-      const newCtrl = (effect.params.useSourceController && effect._allStates)
+      // "Each player gains control of all creatures they own" (Homeward Path): back to the owner.
+      const newCtrl = effect.params.toOwner
+        ? state.owner
+        : (effect.params.useSourceController && effect._allStates)
         ? getEffectControllerId(effect, effect._allStates)
         : effect.params.newController;
       if (newCtrl && state.controller !== newCtrl) {

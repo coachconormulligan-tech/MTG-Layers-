@@ -1,0 +1,64 @@
+{
+  "name": "Nameless Inversion — only the target loses its creature types",
+  "notes": "Found by tests/sweep.py. 'Target creature gets +3/-3 and loses all creature types' lost its subject behind the first conjunct, so the type removal was global with no filter and stripped every creature. The spell's own Changeling must stay on the spell.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears",
+      "controller": "p2"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Nameless Inversion",
+      "as": "spell",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTarget",
+        "@spell",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "subtypes": [],
+        "power": 5,
+        "toughness": -1
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "subtypes": [
+          "Ogre"
+        ]
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "subtypes": [
+          "Giant"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "name": "Guardian Beast — \"other players can't gain control of them\" is not a control effect",
+  "notes": "Found by tests/sweep.py. The prohibition was parsed as 'gain control of them': a global control with no filter that took every permanent.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears",
+      "controller": "p2"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Guardian Beast"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "controller": "player_1"
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "controller": "player_1"
+      }
+    }
+  ]
+}

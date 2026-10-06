@@ -1,0 +1,45 @@
+{
+  "name": "Threaten — with no target chosen it takes nothing",
+  "notes": "Before the fix an untargeted Threaten moved every permanent to its caster.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears",
+      "controller": "p2"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Threaten",
+      "as": "spell",
+      "spell": true
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "controller": "player_1"
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "controller": "player_1"
+      }
+    }
+  ]
+}

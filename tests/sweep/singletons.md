@@ -86,53 +86,22 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Welcome to . . . | becomes | static | I — For each opponent, up to one target noncreature artifact they control becomes a 0/4 Wall artifact creature with defender for as long as you control this Saga. |
 | Wild Shape | becomes | spell | Until end of turn, target creature you control has that base power and toughness, becomes that creature type, and gains that ability. |
 | You Compleat Me | becomes | spell | If your life total is greater than 10, it becomes 10. |
-| Act of Authority | gain control | triggered | If you do, its controller gains control of this enchantment. |
-| Akroan Horse | gain control | triggered | When this creature enters, an opponent gains control of it. |
 | Aminatou, the Fateshifter | gain control | activated | Each player gains control of all nonland permanents other than this card controlled by the next player in the chosen direction. |
 | Bill Ferny, Bree Swindler | gain control | static | • Target opponent gains control of target Horse you control. |
-| Brooding Saurian | gain control | triggered | At the beginning of each end step, each player gains control of all nontoken permanents they own. |
-| Captivating Glance | gain control | triggered | Otherwise, that player gains control of enchanted creature. |
-| Chaos Lord | gain control | triggered | At the beginning of your upkeep, target opponent gains control of this creature if the number of permanents is even. |
-| Contested Game Ball | gain control | triggered | Whenever you're dealt combat damage, the attacking player gains control of this artifact and untaps it. |
-| Contested War Zone | gain control | triggered | Whenever a creature deals combat damage to you, that creature's controller gains control of this land. |
-| Coveted Falcon | gain control | triggered | When this creature is turned face up, target opponent gains control of any number of target permanents you control. |
-| Coveted Jewel | gain control | triggered | Whenever one or more creatures an opponent controls attack you and aren't blocked, that player draws three cards and gains control of this artifact. |
-| Crag Saurian | gain control | triggered | Whenever a source deals damage to this creature, that source's controller gains control of this creature. |
-| Crown of Doom | gain control | activated | {2}: Target player other than this artifact's owner gains control of it. |
 | Cultural Exchange | gain control | spell | Those players exchange control of those creatures. |
-| Dack Fayden, Helping Hand | gain control | triggered | Each opponent gains control of the permanent for which they were chosen. |
-| Discerning Financier | gain control | activated | That player gains control of target Treasure you control. |
 | Domineering Will | gain control | spell | Target player gains control of up to three target nonattacking creatures until end of turn. |
-| Fateful Handoff | gain control | spell | An opponent gains control of that permanent. |
-| Fractured Loyalty | gain control | triggered | Whenever enchanted creature becomes the target of a spell or ability, that spell or ability's controller gains control of that creature. |
+| Fumble | gain control | spell | Gain control of all Auras and Equipment that were attached to it, then attach them to another creature. |
 | Herald of Leshrac | gain control | triggered | When this creature leaves the battlefield, each player gains control of each land they own that you control. |
-| Inniaz, the Gale Force | gain control | triggered | Whenever three or more creatures you control with flying attack, each player gains control of a nonland permanent of your choice controlled by the player to their right. |
-| Jinxed Choker | gain control | triggered | At the beginning of your end step, target opponent gains control of this artifact and puts a charge counter on it. |
-| Jon Irenicus, Shattered One | gain control | triggered | At the beginning of your end step, target opponent gains control of up to one target creature you control. |
-| Karona, False God | gain control | triggered | At the beginning of each player's upkeep, that player untaps this card and gains control of it. |
 | Khârn the Betrayer | gain control | static | The Betrayer — If damage would be dealt to this card, prevent that damage and an opponent of your choice gains control of it. |
-| Loxodon Peacekeeper | gain control | triggered | If two or more players are tied for lowest life total, you choose one of them, and that player gains control of this creature. |
-| Loxodon Peacekeeper | gain control | triggered | At the beginning of your upkeep, the player with the lowest life total gains control of this creature. |
-| Order of Succession | gain control | spell | Each player gains control of the creature they chose. |
+| Murderous Spoils | gain control | spell | You gain control of all Equipment that were attached to it. |
 | Power Struggle | gain control | static | During each player's upkeep, that player exchanges control of random target artifact, creature or land he or she controls, for control of random target permanent of the same type that a random opponent controls. |
-| Rainbow Vale | gain control | activated | An opponent gains control of this land at the beginning of the next end step. |
-| Rogue Skycaptain | gain control | triggered | If you don't, remove all wage counters from this creature and an opponent gains control of it. |
-| Rohgahh of Kher Keep | gain control | triggered | If you don't, tap this card and all creatures named Kobolds of Kher Keep, then an opponent gains control of them. |
+| Reins of Power | gain control | spell | You and that opponent each gain control of all creatures the other controls until end of turn. |
 | Scrambleverse | gain control | spell | Then each player gains control of each permanent for which they were chosen. |
 | Sky Swallower | gain control | triggered | When this creature enters, target opponent gains control of all other permanents you control. |
-| Sokenzan Renegade | gain control | triggered | At the beginning of your upkeep, if a player has more cards in hand than each other player, the player who has the most cards in hand gains control of this creature. |
-| Starke of Rath | gain control | activated | That permanent's controller gains control of this card. |
-| Stiltzkin, Moogle Merchant | gain control | activated | {2}, {T}: Target opponent gains control of another target permanent you control. |
 | Tahngarth, First Mate | gain control | triggered | Whenever an opponent attacks with one or more creatures, if this card is tapped, you may have that opponent gain control of this card until end of combat. |
-| The Fall of Lord Konda | gain control | static | II — Each player gains control of all permanents they own. |
-| Their | gain control | spell | Target opponent gains control of target creature you control. |
-| Thoughtbound Primoc | gain control | triggered | At the beginning of your upkeep, if a player controls more Wizards than each other player, the player who controls the most Wizards gains control of this creature. |
-| Turf War | gain control | triggered | Whenever a creature deals combat damage to a player, if that player controls one or more lands with contested counters on them, that creature's controller gains control of one of those lands of their choice and untaps it. |
+| Twist Allegiance | gain control | spell | You and target opponent each gain control of all creatures the other controls until end of turn. |
+| Welcome to the Fold | gain control | spell | Gain control of target creature if its toughness is 2 or less. |
 | Welcome to the Fold | gain control | spell | If this spell's madness cost was paid, instead gain control of that creature if its toughness is X or less. |
-| Wild Mammoth | gain control | triggered | At the beginning of your upkeep, if a player controls more creatures than each other player, the player who controls the most creatures gains control of this creature. |
-| Wishclaw Talisman | gain control | activated | An opponent gains control of this artifact. |
-| Witch Hunt | gain control | triggered | At the beginning of your end step, target opponent chosen at random gains control of this enchantment. |
-| Wrong Turn | gain control | spell | Target opponent gains control of target creature. |
 | Aerid Konstrari | gets +N/+N | activated | Then this card gets +X/+0 until end of turn, where X is the number of artifacts you control. |
 | Ambulatory Edifice | gets +N/+N | triggered | When you do, target creature gets -1/-1 until end of turn. |
 | Armix, Filigree Thrasher | gets +N/+N | triggered | When you do, target creature defending player controls gets -X/-X until end of turn, where X is the number of artifacts you control plus the number of artifact cards in your graveyard. |

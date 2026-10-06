@@ -1946,6 +1946,25 @@ function parseCardEffects(permanent, card, opts = {}) {
       const m = /\btarget\s+([\w][\w\s]*?(?=\s+loses?))/i.exec(oracle);
       if (m) losesAllCTAppliesTo = buildAppliesToFromText(m[1].trim()).fn;
     }
+    // The subject may sit before an earlier conjunct: "Target creature gets +3/-3 and loses all
+    // creature types" (Nameless Inversion), "Creatures target player controls get -2/-0 and lose
+    // all creature types" (Ego Erasure). Without it the effect would be global with no filter.
+    let losesAllCTSubject = null;
+    if (!isSelfLose && !isEnchanted && !isTargetedLose) {
+      const loseIdx = oracle.search(/\bloses? all creature types/i);
+      const subjM = oracle.substring(_clauseStart(loseIdx), loseIdx)
+        .match(/^\s*(?:until end of turn,\s*)?(.+?)\s+(?:gets?|gains?|has|have|becomes?|is|are)\b/i);
+      if (subjM && filterReferencesPermanents(subjM[1])) {
+        const subjResult = buildAppliesToFromText(subjM[1].trim());
+        if (subjResult.fn || subjResult.needsTargetSelection) losesAllCTSubject = subjResult;
+      }
+    }
+    if (losesAllCTSubject) {
+      const { fn, isSelf, isTargeted, needsTargetSelection, maxTargets, isTargetPlayerControl } = losesAllCTSubject;
+      const eff = pushEff('4', EFFECT_TYPE.REMOVE_TYPE, { losesAllCreatureTypesOnly: true },
+        { isSelf, isTargeted, fn }, `Loses all creature types.`);
+      _applyTargetInfo(eff, { isSpellTarget: !!needsTargetSelection, maxTargets: maxTargets || 1, isTargetPlayerControl: !!isTargetPlayerControl }, fn);
+    } else {
     pushEff('4', EFFECT_TYPE.REMOVE_TYPE, { losesAllCreatureTypesOnly: true },
       {
         appliesTo: losesAllCTAppliesTo,
@@ -1954,6 +1973,7 @@ function parseCardEffects(permanent, card, opts = {}) {
       },
       `Loses all creature types.`,
       { targetRestriction: losesAllCTAppliesTo });
+    }
   }
 
   // ---- Layer 4: Type changes ----
@@ -4594,6 +4614,11 @@ function parseCardEffects(permanent, card, opts = {}) {
     if (isSpellTarget) {
       eff.scope = 'targeted';
       eff.targetRestriction = fn || null;
+    } else if ((permanent.isManualEffect || permanent.isSpell) && /^(?:it|them|(?:that|those)\s+\w+)$/i.test(targetText)) {
+      // "Untap and goad that creature" (Besmirch): the creature already named, not every creature.
+      eff.scope = 'targeted';
+      eff.appliesTo = null;
+      eff.targetRestriction = fn || null;
     }
   }
 
@@ -4642,7 +4667,11 @@ function parseCardEffects(permanent, card, opts = {}) {
   // --- "gain control of [target/enchanted] [type]" → Layer 2 CONTROL effect ---
   // Skip if KNOWN_ABILITY_EFFECTS already handled this card
   if (!effects.some(e => e.type === EFFECT_TYPE.CONTROL)) {
-    const gainControlRegex = /\bgain control of (target |enchanted )?(.+?)(?:\s+until end of turn)?\.?(?:\s|$)/gi;
+    const gainControlRegex = /\bgains? control of (target |enchanted )?(.+?)(?:\s+until end of turn)?\.?(?:\s|$)/gi;
+    const _isSpellLike = permanent.isManualEffect || permanent.isSpell;
+    // A player other than "you" as the subject: "target opponent gains control of …",
+    // "you may have that player gain control of …", "they gain control of …".
+    const otherPlayerSubjectRe = /(?:^|[\s,])((?:(?:target|that|an|each|another|the chosen)\s+(?:opponent|player)|the\s+player(?:\s+(?:to your (?:left|right)|with the most life))?|they|its\s+(?:owner|controller))(?:\s+each)?)\s+(?:may\s+)?$/i;
     let gcMatch;
     let emittedControl = false;
     while ((gcMatch = gainControlRegex.exec(oracle)) !== null) {
@@ -4653,12 +4682,14 @@ function parseCardEffects(permanent, card, opts = {}) {
       // Skip if inside an activated ability (cost:effect format, e.g. "{T}: ...")
       const fullLine = oracle.substring(lineStart + 1, oracle.indexOf('\n', gcMatch.index) === -1 ? oracle.length : oracle.indexOf('\n', gcMatch.index));
       if (/^[^:]*\{[^}]+\}[^:]*:/.test(fullLine)) continue;
+      // Loyalty abilities ("−8: Gain control of …") are activated abilities as well.
+      if (/^\s*[+\u2212-]?(?:\d+|X):/.test(fullLine)) continue;
       // Skip "target player gains control of ..." — handled above with dropdown
       if (/\btarget player gains control of\b/i.test(lineText)) continue;
 
       const qualifier = (gcMatch[1] || '').trim(); // 'target' or 'enchanted' or ''
       const targetType = gcMatch[2].trim();
-      const isTargeted = qualifier === 'target' || qualifier === 'enchanted';
+      let isTargeted = qualifier === 'target' || qualifier === 'enchanted';
 
       // The non-greedy (.+?) stops at the first space, so gcMatch[0] only contains
       // "gain control of target creature " — "an opponent controls" and "until end of turn"
@@ -4667,6 +4698,70 @@ function parseCardEffects(permanent, card, opts = {}) {
       const dotIdx = oracle.indexOf('.', gcMatch.index);
       const sentenceEnd = dotIdx === -1 ? oracle.length : dotIdx + 1;
       const fullSentence = oracle.slice(sentenceStart, sentenceEnd);
+
+      // Everything after "gain(s) control of " in this sentence, minus duration and trailing
+      // clauses: the thing being taken.
+      const objectText = oracle.slice(gcMatch.index + gcMatch[0].match(/^gains? control of /i)[0].length, sentenceEnd)
+        .replace(/[.,;]?\s*$/, '')
+        .replace(/\s+(?:until end of turn|until the end of [^,]+|for as long as\b.*|this turn)(?=,|\s|$).*$/i, '')
+        .replace(/,\s+(?:then|untap|and)\b.*$/i, '')
+        .replace(/\s+and\s+(?:it|they|untap|that)\b.*$/i, '')
+        .trim();
+      const subjectText = oracle.slice(_clauseStart(gcMatch.index), gcMatch.index);
+      // "other players can't gain control of them" (Guardian Beast) grants no control.
+      if (/\bcan't\s+$/i.test(subjectText)) continue;
+      // "that creature instead if …", "that permanent, it loses all abilities, …": the pronoun
+      // phrase leads and the rest is another clause.
+      const pronounM = objectText.match(/^(it|them|(?:that|those)\s+\w+|the\s+(?:chosen\s+)?(?:creature|permanent|artifact))(?=$|[,\s])/i);
+      const objectIsPronoun = !!pronounM;
+
+      // "that player untaps this card and gains control of it" (Karona): the third-person verb
+      // alone says the subject is someone else.
+      const otherSubject = subjectText.match(otherPlayerSubjectRe)
+        || (/^gains/i.test(gcMatch[0]) ? [null, 'that player'] : null);
+      if (otherSubject) {
+        const who = otherSubject[1].toLowerCase().replace(/\s+each$/, '');
+        // "Each player gains control of all creatures they own" (Homeward Path).
+        const ownM = /^each player$/.test(who) && objectText.match(/^all\s+(.+?)\s+they own$/i);
+        if (ownM) {
+          const ownResult = buildAppliesToFromText(ownM[1]);
+          if (ownResult.fn) {
+            pushEff('2', EFFECT_TYPE.CONTROL, { toOwner: true },
+              { appliesTo: ownResult.fn, scope: 'global', selfTarget: false },
+              `Each player gains control of all ${ownM[1]} they own.`);
+            emittedControl = true;
+          }
+          continue;
+        }
+        // Otherwise the new controller is a player picked from the dropdown. Only fired
+        // abilities and spells; "all X the other controls" (Twist Allegiance) is not expressible.
+        if (!_isSpellLike || /^(?:all|each)\b/i.test(objectText)) continue;
+        const objInfo = extractTargetInfo(objectText);
+        let objRestriction = null, objMax = 1, objYouControl = false;
+        // "this creature", "it", "equipped creature" are the ability's own source or what it
+        // is attached to: left unrestricted so _addAbilityPseudo pins the effect there.
+        const objIsSource = /^(?:this\b|it$|(?:equipped|enchanted|fortified)\s)/i.test(objectText);
+        if (!objIsSource) {
+          // Anything else is picked by the user. An unreadable description still needs a
+          // picker rather than auto-pinning to the source.
+          let objNoun = objInfo.needsTargetSelection ? objInfo.cleaned
+            : objectText.replace(/^(?:an?|that|those|the(?:\s+chosen)?)\s+/i, '');
+          objYouControl = /\byou control\b/i.test(objNoun);
+          objNoun = objNoun.replace(/\s+(?:you control|they chose|of their choice)\b.*$/i, '');
+          objRestriction = buildAppliesToFromText(objNoun).fn || (() => true);
+          objMax = objInfo.maxTargets || 1;
+        }
+        permanent._targetsChosenPlayer = true;
+        if (objYouControl) permanent._youControlRequired = true;
+        const eff = pushEff('2', EFFECT_TYPE.CONTROL,
+          { newController: permanent._targetPlayerId || null, untilEndOfTurn: /until end of turn/i.test(fullSentence) },
+          { appliesTo: null, scope: 'targeted', selfTarget: false },
+          `${otherSubject[1].charAt(0).toUpperCase() + otherSubject[1].slice(1)} gains control of ${objectText}.`,
+          { _targetPlayerControl: true, targetRestriction: objRestriction, youControlRequired: objYouControl || undefined });
+        if (objMax > 1) { eff.maxTargets = objMax; eff.targetIds = []; }
+        emittedControl = true;
+        continue;
+      }
 
       // Skip a conditional duration restatement: "..., gain control of that creature
       // until the end of your next turn instead." — the "instead" replaces the duration
@@ -4684,9 +4779,33 @@ function parseCardEffects(permanent, card, opts = {}) {
       // (e.g. "Untap target permanent and gain control of it"), the "it" pronoun
       // refers to the spell's target. Treat as 'targeted' so the engine requires
       // a targetId before applying — prevents contaminating all permanents' states.
-      const sentenceHasTarget = /\btarget\b/i.test(fullSentence);
-      const effectScope = (isTargeted || (permanent.isManualEffect && sentenceHasTarget))
-        ? 'targeted' : 'global';
+      // That only holds when the thing taken is itself a target or a pronoun for one — not
+      // "all creatures target opponent controls" (Call for Aid).
+      const objectTargetInfo = extractTargetInfo(objectText);
+      let controlRestriction = null, controlMaxTargets = 1;
+      if (objectTargetInfo.needsTargetSelection) {
+        isTargeted = true;
+        const restrictText = objectTargetInfo.cleaned
+          .replace(/\s+(?:an?\s+)?(?:opponent(?:'?s?)?\s+controls?|that player controls|you\s+(?:control|don'?t\s+control))\b/i, '')
+          .trim();
+        controlRestriction = restrictText ? buildAppliesToFromText(restrictText).fn : null;
+        controlMaxTargets = objectTargetInfo.maxTargets || 1;
+        // "For each opponent, gain control of up to one target creature that player controls"
+        // (Mass Mutiny): one slot per opponent.
+        if (/\bfor each opponent\b/i.test(fullSentence) && controlMaxTargets === 1) {
+          const nPlayers = (typeof Battlefield !== 'undefined' && Battlefield.players) ? Battlefield.players.length : 2;
+          controlMaxTargets = Math.max(1, nPlayers - 1);
+        }
+      } else if (_isSpellLike && objectIsPronoun
+          && !/\b(?:all|each|every)\s+\w+/i.test(oracle.slice(sentenceStart, gcMatch.index))) {
+        // "gain control of that creature" / "of it": the antecedent is a target named earlier
+        // (Disharmony) or something the ability refers to (Loki). The user picks it; the
+        // restriction keeps a fired ability from auto-pinning the control to its own source.
+        isTargeted = true;
+        const nounM = pronounM[1].match(/^(?:that|those|the(?:\s+chosen)?)\s+(\w+)$/i);
+        controlRestriction = (nounM && buildAppliesToFromText(nounM[1]).fn) || (() => true);
+      }
+      const effectScope = isTargeted ? 'targeted' : 'global';
 
       // For global scope, extract the full target type from fullSentence (the non-greedy regex
       // only captures the first word of the type, e.g. "all" from "gain control of all creatures").
@@ -4695,6 +4814,7 @@ function parseCardEffects(permanent, card, opts = {}) {
       // of them until end of turn.").
       // Build an appliesTo filter so e.g. Insurrection only affects creatures, not all permanents.
       let appliesToFn = null;
+      let globalTargetPlayerScoped = false;
       if (effectScope === 'global') {
         const gcPhraseIdx = fullSentence.toLowerCase().indexOf('gain control of ');
         if (gcPhraseIdx !== -1) {
@@ -4706,7 +4826,7 @@ function parseCardEffects(permanent, card, opts = {}) {
           // Remove " until end of turn" and everything after
           fullTypeText = fullTypeText.replace(/\s+until end of turn[\s\S]*$/i, '');
           // Remove controller qualifiers
-          fullTypeText = fullTypeText.replace(/\s+(?:an?\s+)?(?:opponent(?:'?s?)?\s+controls?|you\s+control)$/i, '');
+          fullTypeText = fullTypeText.replace(/\s+(?:(?:an?|target)\s+)?(?:opponent(?:'?s?)?\s+controls?|you\s+control)$/i, '');
           // Remove trailing punctuation/whitespace
           fullTypeText = fullTypeText.replace(/[.,;]\s*$/, '').trim();
           // Resolve pronoun "them"/"it" by finding "all/each/every [type]" earlier in the sentence
@@ -4719,16 +4839,25 @@ function parseCardEffects(permanent, card, opts = {}) {
             const btResult = buildAppliesToFromText(fullTypeText);
             if (btResult && btResult.fn && !btResult.isSelf && !btResult.isTargeted) {
               appliesToFn = btResult.fn;
+              globalTargetPlayerScoped = !!btResult.isTargetPlayerControl;
             }
           }
         }
       }
 
-      pushEff('2', EFFECT_TYPE.CONTROL,
+      // A global control effect with no readable filter would take every permanent on the
+      // battlefield ("all Equipment that were attached to it"); emit nothing instead.
+      if (effectScope === 'global' && (!appliesToFn || /\bthat (?:was|were)\b/i.test(objectText))) continue;
+
+      const controlEff = pushEff('2', EFFECT_TYPE.CONTROL,
         { newController: permanent.owner || 'player_0', untilEndOfTurn: isUntilEOT },
         { appliesTo: appliesToFn, scope: effectScope, selfTarget: false },
-        `Gain control of ${qualifier ? qualifier + ' ' : ''}${targetType}${isUntilEOT ? ' until end of turn' : ''}.`,
+        `Gain control of ${objectText}${isUntilEOT ? ' until end of turn' : ''}.`,
         { opponentControlRequired: opponentCtrlRequired });
+      // "all lands target player controls" (Gilt-Leaf Archdruid): scoped to the chosen player.
+      if (globalTargetPlayerScoped) _applyTargetInfo(controlEff, { isTargetPlayerControl: true }, null);
+      if (controlRestriction) controlEff.targetRestriction = controlRestriction;
+      if (controlMaxTargets > 1) { controlEff.maxTargets = controlMaxTargets; controlEff.targetIds = []; }
       emittedControl = true;
     }
 
@@ -4845,7 +4974,9 @@ function parseCardEffects(permanent, card, opts = {}) {
   // Post-process: for instant/sorcery spell effects that have scope:'targeted' from
   // "target [type]" parsing, attach targetRestriction and maxTargets so the UI can
   // show appropriate target dropdowns with type filtering.
-  if (permanent.isManualEffect) {
+  // Real spells come from Battlefield.addSpell, which clears isManualEffect so the spell joins
+  // evaluation; they are recognised by isSpell instead.
+  if (permanent.isManualEffect || permanent.isSpell) {
     // Tag all effects from spells so the engine can enforce timestamp-order targeting:
     // spell effects only affect permanents that existed before the spell was cast.
     for (const eff of effects) { eff.isSpellEffect = true; }
@@ -4853,6 +4984,18 @@ function parseCardEffects(permanent, card, opts = {}) {
     // the spell card itself. Convert selfTarget effects to targeted effects with
     // a dropdown so the user can select which creature the spell targets.
     for (const eff of effects) {
+      // The card's own characteristics stay on the card: printed Changeling, "This card is
+      // colorless" (Ghostfire), and characteristic-defining P/T.
+      if (permanent.isSpell && (eff.isCDA || eff.type === EFFECT_TYPE.CDA_PT || eff.type === EFFECT_TYPE.SET_COLOR)) continue;
+      // "That creature gets -13/-13 until end of turn instead if …" (Tragic Slip) replaces the
+      // sentence before it. Until that replacement is modelled, leave it off the target
+      // rather than stacking it on top of the effect it replaces.
+      if (permanent.isSpell && eff.selfTarget === true && eff._oraclePos !== undefined) {
+        let sStart = eff._oraclePos;
+        while (sStart < oracle.length && /[.\s;]/.test(oracle[sStart])) sStart++;
+        const sEnd = oracle.indexOf('.', sStart);
+        if (/\binstead\b/i.test(oracle.slice(sStart, sEnd === -1 ? oracle.length : sEnd))) continue;
+      }
       if (eff.selfTarget === true && eff.scope === 'targeted') {
         eff.selfTarget = false;
         eff.appliesTo = null;
