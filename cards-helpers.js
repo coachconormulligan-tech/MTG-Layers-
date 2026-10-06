@@ -51,6 +51,69 @@ function _resolveItToAbilitySource(text) {
   });
 }
 
+/* The target a pronoun in a fired ability's effect text stands for: the nearest "target …"
+   phrase before it that names a permanent — "up to one target creature you control", "target
+   artifact, creature, or non-Aura enchantment card with mana value 3 or less" (Excava, the Risen
+   Past), "target Elf" (Tyvar Kell), "target attacking Vampire that isn't a Demon". Returned as
+   "target <what>", loose on purpose: the count ("up to one", "another"), "card", whose it is
+   unless yours ("an opponent controls", "you don't control") and trailing conditions are
+   dropped, so the phrase can admit too much but never turns the real target away. A targeted player ("target opponent draws a card. Put a +1/+1 counter on target
+   creature. It gains flying" — Ms. Bumbleflower) is skipped. Null when the nearest target is
+   something else (a spell, an ability, a card named …), when a word in it is not a known type,
+   when a token was made in between ("Create a token that's a copy of that card …. It gains
+   haste" is about the token), or when the pronoun is in a copy's exception ("this creature
+   becomes a copy of another target creature you control, except it has this ability" — Aurora
+   Shifter — is about the copier). */
+const _TARGET_PHRASE_WORD = String.raw`non-?[\w-]+|attacking|blocking|tapped|untapped|legendary|nonlegendary|basic|snow|white|blue|black|red|green|colorless|multicolored`;
+const _TARGET_PHRASE_NOUN = String.raw`creature|land|artifact|enchantment|planeswalker|permanent|battle|token`;
+// Case-sensitive on purpose: a capitalised word is a subtype ("target Mount or Vehicle").
+const _TARGET_PHRASE_RE = new RegExp(
+  String.raw`^target\s+((?:(?:${_TARGET_PHRASE_WORD}|${_TARGET_PHRASE_NOUN}|or|[A-Z][\w'-]*),?\s+)*(?:${_TARGET_PHRASE_NOUN}|[A-Z][\w'-]*)\b)(\s+you (?:control|own)\b)?`);
+function _isKnownSubtypeWord(word) {
+  if (typeof TypeCatalog === 'undefined') return false;
+  return ['creatureTypes', 'landTypes', 'artifactTypes', 'enchantmentTypes', 'planeswalkerTypes', 'battleTypes']
+    .some(k => TypeCatalog[k] && TypeCatalog[k].has(word));
+}
+function _abilityTargetBefore(text, offset) {
+  const before = text.slice(0, offset);
+  const starts = [];
+  const re = /\btarget\b/gi;
+  for (let m; (m = re.exec(before)) !== null;) starts.push(m.index);
+  for (let i = starts.length - 1; i >= 0; i--) {
+    const rest = 't' + before.slice(starts[i] + 1);
+    if (/^target\s+(?:players?|opponents?)\b/i.test(rest) || /\bany\s+$/i.test(before.slice(0, starts[i]))) continue;
+    const m = rest.match(_TARGET_PHRASE_RE);
+    if (!m) return null;
+    if ((m[1].match(/\b[A-Z][\w'-]*/g) || []).some(w => !_isKnownSubtypeWord(w))) return null;
+    const since = before.slice(starts[i]);
+    if (/\bcreates?\b/i.test(since) || /\bexcept\b[^.]*$/i.test(since)) return null;
+    return m[0];
+  }
+  return null;
+}
+
+/* A rider on the object a fired ability just named — "Target creature can't be blocked this
+   turn. If it's a Vampire, it also gains lifelink …" (Wedding Invitation), "put a flood counter
+   on another target creature or land. If it's a land, it becomes an Island …" (The Flood of
+   Mars). Runs after _resolveItToAbilitySource, so a rider about the source already reads "this
+   creature"; here a rider whose "it" is the ability's target gets that target as its subject,
+   which keeps the generic "it → target <trigger subject>" rewrite (a non-targeting pick of the
+   wrong kind of object) off it. A rider with neither antecedent is left for that rewrite. */
+function _resolveRiderSubjectToTarget(text) {
+  if (!/\b(?:if|as long as) it\b/i.test(text)) return text;
+  const sentences = _splitSentencesOutsideQuotes(text);
+  for (let i = 1; i < sentences.length; i++) {
+    const m = sentences[i].match(_BRANCH_RIDER_RE);
+    const pron = m && m[3].match(/^(?:it's(?=\s+an?\s)|it\b|that (?:creature|permanent)\b)/i);
+    if (!pron || /\bturn\b/i.test(m[2])) continue;
+    const ante = _branchAntecedent(sentences, i);
+    if (!ante || !/\btarget\b/i.test(ante)) continue;
+    const isContraction = /'s$/i.test(pron[0]);
+    sentences[i] = `${m[1]} ${m[2]}, ${ante.charAt(0).toLowerCase() + ante.slice(1)}${isContraction ? ' is' : ''}${m[3].slice(pron[0].length)}`;
+  }
+  return sentences.join(' ');
+}
+
 /* Returns the total mana spent to cast a permanent, accounting for X.
    For cards with {X} in their mana cost, xValue (the chosen X) is added to manaValue
    (which treats X as 0). For all other cards, equals manaValue. */
