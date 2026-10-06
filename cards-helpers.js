@@ -156,6 +156,17 @@ function _permLabelString(n) {
   return s;
 }
 
+// A modal trigger's first line: "Whenever this card becomes blocked, choose one —" (Bill Ferny,
+// Bree Swindler). The modes follow as separate "• …" lines. Returns the line without its
+// closing dash, or null. The dash is not an ability word's, so the ability-word strip must
+// not see it.
+function _modalTriggerHeader(text) {
+  const t = String(text || '').trim();
+  if (!/[\u2014—]$/.test(t)) return null;
+  const head = t.replace(/\s*[\u2014—]$/, '');
+  return /(?:^|[\u2014—]\s*)(?:when(?:ever)?|at)\b[^\n]*,\s*(?:you may\s+)?choose\s[^\n]*$/i.test(head) ? head : null;
+}
+
 /* Index of the comma that ends a trigger condition ("Whenever X, <effect>"), or -1.
    Usually the first comma, but a condition can hold a comma list of its own:
      "Whenever you cast an instant, sorcery, or Wizard spell, this creature gets +2/+0 …"

@@ -296,6 +296,21 @@ function sweepFace(card, faceIndex) {
         for (const l of fullSigs ? fullSigs.split('\n') : []) rec.fx.push(kind + ' ' + ab.index + '|' + l);
         // "+1/-1 or -1/+1"-style abilities are offered as separate options in the site.
         let optionHit = false;
+        // A "choose one —" trigger's modes are whole effects of their own: judge each mode's
+        // sentences by firing that mode.
+        if (kind === 'trigger' && ab.options) {
+          ab.options.forEach((opt, oi) => {
+            const optEffs = fireAbility(base, ab, kind, opt, states, check);
+            const optSigs = effectSigs(optEffs);
+            if (oi > 0) for (const l of optSigs ? optSigs.split('\n') : []) rec.fx.push(kind + ' ' + ab.index + ' mode ' + oi + '|' + l);
+            for (const s of splitSentences(opt)) {
+              const rest = removeSpan(opt, s);
+              const covered = rest ? effectSigs(fireAbility(base, ab, kind, rest, states, null)) !== optSigs : optEffs.length > 0;
+              fired.push({ kind, text: norm(s.text), line: norm('\u2022 ' + opt), covered });
+            }
+          });
+          continue;
+        }
         for (const opt of ab.options || []) {
           if (fireAbility(base, ab, kind, opt, states, check).length) optionHit = true;
         }
@@ -316,7 +331,11 @@ function sweepFace(card, faceIndex) {
   const lines = W.split('\n');
   const abilityLine = new Set();
   try {
-    for (const a of Battlefield.extractTriggeredAbilities(lines)) abilityLine.add(a.index);
+    for (const a of Battlefield.extractTriggeredAbilities(lines)) {
+      abilityLine.add(a.index);
+      // The "• …" mode lines of a "choose one —" trigger belong to it.
+      (a.options || []).forEach((_, oi) => abilityLine.add(a.index + 1 + oi));
+    }
     for (const a of Battlefield.extractActivatedAbilities(lines)) abilityLine.add(a.index);
   } catch (e) { /* classification only */ }
 

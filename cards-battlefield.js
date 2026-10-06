@@ -170,7 +170,22 @@ const Battlefield = {
       const ab = abilities[i];
       // Strip ability word prefix (e.g. "Eminence — ") ALWAYS before any parsing.
       // All words before an em dash are flavor/ability words with no rules meaning.
-      const stripped = ab.trim().replace(/^[^{\n.;"—\u2014]+[\u2014—]\s*/g, '');
+      const modalHead = _modalTriggerHeader(ab);
+      const stripped = (modalHead || ab.trim()).replace(/^[^{\n.;"—\u2014]+[\u2014—]\s*/g, '');
+      // "Whenever this card becomes blocked, choose one —" followed by "• …" lines (Bill Ferny,
+      // Bree Swindler): one trigger whose modes are offered as options, each fired on its own.
+      if (modalHead) {
+        const options = [];
+        for (let j = i + 1; j < abilities.length && /^\s*\u2022/.test(abilities[j]); j++) {
+          options.push(abilities[j].trim().replace(/^\u2022\s*/, ''));
+        }
+        if (options.length && /^(?:when(?:ever)?|at)\b/i.test(stripped)) {
+          const limitM = options.join(' ').match(/this ability triggers only (\w+)(?: times)? each turn/i);
+          result.push({ index: i, fullText: [ab.trim(), ...options.map(o => '\u2022 ' + o)].join('\n'),
+                        effectText: options[0], triggerLimit: limitM ? _parseWordNumber(limitM[1]) : null, options });
+        }
+        continue;
+      }
       // Exert (Hooded Brawler): "You may exert this creature as it attacks. When you do, it gets
       // +2/+2 until end of turn." The second sentence is a reflexive trigger (CR 603.12) whose
       // condition is the exert; it fires like any other trigger.
@@ -477,7 +492,9 @@ const Battlefield = {
     let triggerHasAnother = false;
     let triggerIsSelf = false; // true when condition starts with "this creature/this permanent/this card"
     if (fullText && kind === 'trigger') {
-      const stripped = fullText.trim().replace(/^[^{\n.;"—\u2014]+[\u2014—]\s*/g, '');
+      // A modal trigger's full text carries its "• …" mode lines; the condition is in the first.
+      const headLine = fullText.trim().split('\n')[0];
+      const stripped = (_modalTriggerHeader(headLine) || headLine).replace(/^[^{\n.;"—\u2014]+[\u2014—]\s*/g, '');
       const commaIdx = _triggerConditionCommaIndex(stripped);
       const condText = commaIdx >= 0 ? stripped.substring(0, commaIdx) : stripped;
       // Detect self-referential trigger: "this creature/permanent/card/token [action]"
