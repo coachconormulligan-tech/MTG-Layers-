@@ -107,7 +107,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Cherished Hatchling | has / gains | triggered | When this creature dies, you may cast Dinosaur spells this turn as though they had flash, and whenever you cast a Dinosaur spell this turn, it gains "When this creature enters, you may have it fight another target creature." |
 | Conspicuous Snoop | has / gains | static | As long as the top card of your library is a Goblin card, this creature has all activated abilities of that card. |
 | Dragonrage | has / gains | spell | Until end of turn, attacking creatures you control gain "{R}: This creature gets +1/+0 until end of turn." |
-| Drana and Linvala | has / gains | static | This card has all activated abilities of all creatures your opponents control. |
 | Dread Wight | has / gains | triggered | Each of those creatures gains "{4}: Remove a paralyzation counter from this creature." |
 | Encouraging Aviator // Jump | has / gains | spell | Target creature gains flying until end of turn. |
 | Energybending | has / gains | spell | Lands you control gain all basic land types until end of turn. |
@@ -121,24 +120,19 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Immard, the Stormcleaver | has / gains | static | • this card gains lifelink and indestructible until end of turn. |
 | Katsumasa, the Animator | has / gains | activated | If it's not a Vehicle, it has base power and toughness 1/1 until end of turn. |
 | Koh, the Face Stealer | has / gains | static | This card has all activated and triggered abilities of the last chosen card. |
-| Locus of Enlightenment | has / gains | static | This card has each activated ability of the exiled cards used to craft it. |
 | Maarika, Brutal Gladiator | has / gains | static | As long as it's your turn, this card has indestructible. |
 | Machine Man, Model X-51 | has / gains | triggered | Whenever you cast a noncreature spell, put a +1/+1 counter on this card and he gains flying until end of turn. |
 | Massimo, the Magician | has / gains | triggered | If a card is exiled this way, that creature gains "Whenever this creature deals combat damage to a player, copy the exiled card. You may cast the copy without paying its mana cost." |
-| Mirran Safehouse | has / gains | static | As long as this artifact is on the battlefield, it has all activated abilities of all land cards in all graveyards. |
 | Mizzix, Replica Rider | has / gains | triggered | If the copy is a permanent spell, it gains haste and "At the beginning of your end step, sacrifice this permanent." |
 | Ms. Marvel, Kamala Khan | has / gains | ability | Marvel gains "this card's base power is equal to the number of cards in your hand." |
 | Nalfeshnee | has / gains | triggered | If it's a permanent spell, the copy gains haste and "At the beginning of the end step, sacrifice this permanent." |
-| Nicol Bolas, Dragon-God | has / gains | static | This card has all loyalty abilities of all other planeswalkers on the battlefield. |
 | Omnipresent Impostor | has / gains | static | This card has all card names. |
 | Open into Wonder | has / gains | spell | Until end of turn, those creatures gain "Whenever this creature deals combat damage to a player, draw a card." |
 | Quicksilver Elemental | has / gains | activated | {U}: This creature gains all activated abilities of target creature until end of turn. |
 | Radiant Destiny | has / gains | static | As long as you have the city's blessing, they also have vigilance. |
 | Rapid Fire | has / gains | spell | If it doesn't have rampage, that creature gains rampage 2 until end of turn. |
-| Robaran Mercenaries | has / gains | static | This creature has all activated abilities of all legendary creatures you control. |
 | Rootwise Survivor | has / gains | triggered | It gains haste until your next turn. |
 | Scheming Fence | has / gains | static | This creature has all activated abilities of the chosen permanent except for loyalty abilities. |
-| Sharkey, Tyrant of the Shire | has / gains | static | This card has all activated abilities of lands your opponents control except mana abilities. |
 | Skill Borrower | has / gains | static | As long as the top card of your library is an artifact or creature card, this creature has all activated abilities of that card. |
 | Spider-Verse | has / gains | triggered | If the copy is a permanent spell, it gains haste. |
 | Spirit-Sister's Call | has / gains | triggered | If you do, return the chosen card from your graveyard to the battlefield and it gains "If this permanent would leave the battlefield, exile it instead of putting it anywhere else." |
@@ -146,8 +140,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Teferi's Reproach | has / gains | spell | Until that player's next turn, they gain protection from everything and their life total can't change. |
 | Tenza, Godo's Maul | has / gains | static | As long as it's red, it has trample. |
 | The Fourteenth Doctor | has / gains | static | If you do, it gains haste until end of turn. |
-| Thranduil, the Elvenking | has / gains | static | This card has all activated abilities of all Elf cards in your graveyard. |
-| Trazyn the Infinite | has / gains | static | Prismatic Gallery — As long as this card is on the battlefield, it has all activated abilities of all artifact cards in your graveyard. |
 | Trench Gorger | has / gains | triggered | If you do, this creature has base power and base toughness each equal to the number of cards exiled this way. |
 | Vision Quest | has / gains | spell | If X is 4 or greater, it gains haste until end of turn. |
 | Wedding Invitation | has / gains | activated | If it's a Vampire, it also gains lifelink until end of turn. |

@@ -1138,12 +1138,22 @@ function applyEffect(state, effect, context) {
       const _differentName = !!effect.params.differentName;      // skip permanents sharing the source's name
       const _includeTriggered = !!effect.params.includeTriggered;
       const _requireCounter = effect.params.requireCounter || null; // e.g. '+1/+1'; require this counter on the other perm
+      const _reqSupertype = effect.params.requireSupertype || null; // e.g. 'Legendary' (Robaran Mercenaries)
+      const _opponentController = !!effect.params.opponentController; // only permanents the source's controller doesn't control
+      const _loyaltyOnly = !!effect.params.loyaltyOnly;           // Nicol Bolas, Dragon-God
+      const _excludeMana = !!effect.params.excludeMana;           // Sharkey: "except mana abilities"
+      const _excludeLoyalty = !!effect.params.excludeLoyalty;
+      const _isLoyaltyLine = (ab) => /^[+\-−–]?(?:\d+|X)\s*:/.test(ab.trim());
+      // CR 605.1a: a mana ability has no target and could add mana.
+      const _isManaLine = (ab) => /:.*\badd\b[^.]*(?:\{[^}]+\}|\bmana\b)/i.test(ab) && !/\btarget\b/i.test(ab) && !_isLoyaltyLine(ab);
       if (!effect._allStates) break;
       for (const [pid, otherState] of effect._allStates) {
         if (pid === effect.sourceId) continue; // skip self
         if (_differentName && otherState.name === selfName) continue;
         if (_reqType && !otherState.types.includes(_reqType)) continue;
         if (_sameController && otherState.controller !== selfController) continue;
+        if (_opponentController && otherState.controller === selfController) continue;
+        if (_reqSupertype && !(otherState.supertypes || []).includes(_reqSupertype)) continue;
         if (_requireCounter && !(otherState.counters && otherState.counters[_requireCounter] > 0)) continue;
         // Skip under-mutate cards — their abilities are already merged into the top card's state
         if (typeof Battlefield !== 'undefined' && Battlefield.getStack) {
@@ -1158,6 +1168,9 @@ function applyEffect(state, effect, context) {
           const isActivated = colonIdx >= 0 && !isTriggered;
           if (!isActivated && !(_includeTriggered && isTriggered)) continue;
           if (isActivated && !ab.substring(colonIdx + 1).trim()) continue;
+          if (_loyaltyOnly && !(isActivated && _isLoyaltyLine(ab))) continue;
+          if (_excludeLoyalty && isActivated && _isLoyaltyLine(ab)) continue;
+          if (_excludeMana && isActivated && _isManaLine(ab)) continue;
           // Add it (duplicates are fine for activated abilities)
           state.abilities.push(ab);
           const kind = isActivated ? 'activated' : 'triggered';
@@ -1182,17 +1195,39 @@ function applyEffect(state, effect, context) {
             e.sourceId && (typeof Battlefield.getPermById !== 'function' || Battlefield.getPermById(e.sourceId)))) {
         break;
       }
+      // Which cards count: creature cards in all graveyards by default (Necrotic Ooze); another
+      // card type (Mirran Safehouse, Trazyn), a subtype (Thranduil's "Elf cards") or only the
+      // controller's own graveyard when the effect says so.
+      const _gyCardType = effect.params.cardType || (effect.params.cardSubtype ? null : 'Creature');
+      const _gyCardSubtype = effect.params.cardSubtype || null;
+      const _gyOwnOnly = !!effect.params.ownGraveyardOnly;
       for (const player of Battlefield.players) {
         if (!player.graveyard || !player.graveyard.length) continue;
+        if (_gyOwnOnly && player.id !== (state.controller || 'player_0')) continue;
         for (const card of player.graveyard) {
           // Only process creature cards. Uses the COMPUTED zone state so a card that's a creature
           // only outside the battlefield (Grist, the Hunger Tide — a 1/1 Insect creature in the
           // graveyard via its own Layer 4 ability) qualifies. _isCreatureCardInZone short-circuits
           // on the printed type line and guards against re-entrant zone evaluation.
-          const isCreatureCard = (typeof _isCreatureCardInZone === 'function')
-            ? _isCreatureCardInZone(card, 'graveyard')
-            : ((card.type_line || card.typeLine || '').toLowerCase().includes('creature'));
-          if (!isCreatureCard) continue;
+          const _gyTypeLine = card.type_line || card.typeLine || '';
+          if (_gyCardType === 'Creature') {
+            const isCreatureCard = (typeof _isCreatureCardInZone === 'function')
+              ? _isCreatureCardInZone(card, 'graveyard')
+              : _gyTypeLine.toLowerCase().includes('creature');
+            if (!isCreatureCard) continue;
+          } else if (_gyCardType && !new RegExp('\\b' + _gyCardType + '\\b', 'i').test(_gyTypeLine.split('—')[0])) {
+            continue;
+          }
+          if (_gyCardSubtype && !new RegExp('\\b' + _gyCardSubtype + '\\b', 'i').test(_gyTypeLine.split('—')[1] || '')) continue;
+          // CR 305.6: a basic land type carries its mana ability even with no rules text.
+          if (_gyCardType === 'Land') {
+            for (const sub of (_gyTypeLine.split('—')[1] || '').trim().split(/\s+/)) {
+              if (BASIC_LAND_MANA[sub]) {
+                state.abilities.push(BASIC_LAND_MANA[sub]);
+                changes.push(`Gained activated ability from "${card.name}" (graveyard): "${BASIC_LAND_MANA[sub]}"`);
+              }
+            }
+          }
           // Extract abilities from oracle text. Substitute the card's own name — including short
           // proper-noun forms like "Grist" for "Grist, the Hunger Tide" — with "this card" so the
           // gained ability reads correctly on the Ooze (e.g. "put a loyalty counter on this card").
