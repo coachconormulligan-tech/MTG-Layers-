@@ -693,6 +693,18 @@ const Battlefield = {
         eff.sourceId = sourcePermId;
         eff.sourceName = sourcePerm.name;
       }
+      // "<target> becomes a copy of this creature" (The Flood of Mars, Permeating Mass): the
+      // copy source is the permanent whose ability this is, with the same live link the copy
+      // picker sets, so a source that is itself a copy passes on what it is copying.
+      if (eff.type === EFFECT_TYPE.COPY && eff.params && eff.params.copiesAbilitySource) {
+        const copiable = this.copiableCardOf(sourcePermId);
+        if (copiable) {
+          eff.params.copySource = copiable;
+          eff.params._copyTargetPermId = sourcePermId;
+        }
+        // The source is never what becomes the copy; keep it out of the picker.
+        pseudoPerm._excludeAbilitySource = true;
+      }
     }
     _pinAbilityEffectsToSource(newEffects, sourcePermId);
     // For self-referential triggers ("this creature attacks → it gains X"), force-pin
@@ -703,6 +715,8 @@ const Battlefield = {
     // is already filtered out via pseudoPerm._excludeAbilitySource).
     if (triggerIsSelf && !triggerHasAnother && !_effectTextHadExplicitTarget) {
       for (const eff of newEffects) {
+        // Never the effect that makes something else a copy of the source (Permeating Mass).
+        if (eff.params && eff.params.copiesAbilitySource) continue;
         if (eff.scope === 'targeted' && !eff.selfTarget && !eff.targetId) {
           eff.targetId = sourcePermId;
           eff._autoTargetSource = true;
@@ -1956,6 +1970,32 @@ const Battlefield = {
     }
   },
 
+  /* The card a copy of this permanent would be built from: its copiable values (CR 707.2).
+     A permanent that is itself a copy is copied as it looks after Layer 1 (the copy plus its
+     "except" changes); anything else is its printed card. */
+  copiableCardOf(permId) {
+    const perm = this.getPermById(permId);
+    if (!perm) return null;
+    const isCopy = this.effects.some(e => e.type === EFFECT_TYPE.COPY && e.params.copySource &&
+      (e.sourceId === permId || (e.params.copiesAbilitySource && e.targetId === permId)));
+    const layer1State = isCopy ? this.getPostLayer1State(permId) : null;
+    if (!layer1State || !(layer1State.copySource || this.effects.some(e => e.sourceId === permId && e.type === EFFECT_TYPE.COPY && e.params.copySource))) {
+      return perm.scryfallData || null;
+    }
+    return {
+      name: layer1State.name,
+      type_line: [...(layer1State.supertypes || []), ...(layer1State.types || [])].join(' ')
+        + (layer1State.subtypes && layer1State.subtypes.length
+           ? ' \u2014 ' + layer1State.subtypes.join(' ') : ''),
+      oracle_text: layer1State.oracleText || '',
+      colors: layer1State.colors || [],
+      power: layer1State.power != null ? String(layer1State.power) : undefined,
+      toughness: layer1State.toughness != null ? String(layer1State.toughness) : undefined,
+      cmc: perm.scryfallData?.cmc || 0,
+      mana_cost: perm.scryfallData?.mana_cost || '',
+    };
+  },
+
   /* Set copy source for a COPY effect */
   setCopySource(effectSourceId, copySourceCard) {
     this._invalidate();
@@ -3180,7 +3220,10 @@ const Battlefield = {
           const copyEff = this.effects.find(e => e.sourceId === nsId && e.type === EFFECT_TYPE.COPY);
           if (copyEff) copyEff.params._copyTargetPermId = idMap[r.copyTargetPermId];
         }
-        if (typeof _injectKnownCardEffectsForCopy === 'function') {
+        // Not for a fired "<target> becomes a copy of this creature": its source is the
+        // ability, which has none of the copied card's effects.
+        const isAbilityCopy = this.effects.some(e => e.sourceId === nsId && e.type === EFFECT_TYPE.COPY && e.params.copiesAbilitySource);
+        if (!isAbilityCopy && typeof _injectKnownCardEffectsForCopy === 'function') {
           _injectKnownCardEffectsForCopy(nsId, r.copySource);
         }
       }

@@ -7,7 +7,7 @@ function _isNonTokenCopyCard(perm) {
   return Battlefield.effects.some(e =>
     e.sourceId === perm.id &&
     e.type === EFFECT_TYPE.COPY &&
-    !(e.params && e.params.copyFromExiledCard)
+    !(e.params && (e.params.copyFromExiledCard || e.params.copiesAbilitySource))
   );
 }
 
@@ -15,7 +15,9 @@ function getEffectInfo(permId, finalState) {
   const effs = Battlefield.effects.filter(e => e.sourceId === permId);
   const perm = Battlefield.getPermById(permId);
   const textEff = effs.find(e => e.type === EFFECT_TYPE.TEXT_CHANGE);
-  const copyEff = effs.find(e => e.type === EFFECT_TYPE.COPY);
+  // A copy-source picker only where the source picks what it copies; "<target> becomes a copy
+  // of this creature" (The Flood of Mars) takes an ordinary target instead.
+  const copyEff = effs.find(e => e.type === EFFECT_TYPE.COPY && !(e.params && e.params.copiesAbilitySource));
   // If this permanent has a text-change effect, the text-change modal handles
   // targeting for ALL targeted effects from the same source (via setTextChangeConfig
   // propagation). So suppress the generic target dropdown entirely for such sources.

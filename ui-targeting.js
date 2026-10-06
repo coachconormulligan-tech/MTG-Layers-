@@ -86,35 +86,9 @@ function setCopyTargetFromBattlefield(sourceId, targetPermId) {
   const targetPerm = Battlefield.getPermById(targetPermId);
   if (!targetPerm) return;
 
-  // Copies copy the target as it appears after Layer 1 ("copiable values").
-  // If the target has a COPY effect, its Layer-1 state reflects the copy + except mods.
-  // If not, just use raw scryfallData.
-  let copyCard;
-  const targetHasCopy = Battlefield.effects.some(
-    e => e.sourceId === targetPermId && e.type === EFFECT_TYPE.COPY && e.params.copySource
-  );
-  if (targetHasCopy) {
-    // Target is itself a copy — build synthetic card from its post-Layer-1 state
-    const layer1State = Battlefield.getPostLayer1State(targetPermId);
-    if (layer1State) {
-      copyCard = {
-        name: layer1State.name,
-        type_line: [...(layer1State.supertypes || []), ...(layer1State.types || [])].join(' ')
-          + (layer1State.subtypes && layer1State.subtypes.length
-             ? ' \u2014 ' + layer1State.subtypes.join(' ') : ''),
-        oracle_text: layer1State.oracleText || '',
-        colors: layer1State.colors || [],
-        power: layer1State.power != null ? String(layer1State.power) : undefined,
-        toughness: layer1State.toughness != null ? String(layer1State.toughness) : undefined,
-        cmc: targetPerm.scryfallData?.cmc || 0,
-        mana_cost: targetPerm.scryfallData?.mana_cost || '',
-      };
-    } else {
-      copyCard = targetPerm.scryfallData;
-    }
-  } else {
-    copyCard = targetPerm.scryfallData;
-  }
+  // Copies copy the target's copiable values: its Layer-1 state (the copy plus its "except"
+  // changes) if the target is itself a copy, otherwise its printed card.
+  let copyCard = Battlefield.copiableCardOf(targetPermId);
 
   if (!copyCard) return;
 

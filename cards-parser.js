@@ -1661,7 +1661,32 @@ function parseCardEffects(permanent, card, opts = {}) {
   const copyClauseSpans = [];
   const copyRegex = /(enters?\s+(?:the battlefield\s+)?as|becomes?)\s+a\s+copy\s+of\s+(?:any\s+|a\s+|target\s+)?([^.]+?)(?:\s*,?\s*except\s+(.+?))?(?:\.|$)/i;
   const copyMatch = oracleLower.match(copyRegex);
-  if (copyMatch && !_isInTriggeredSentence(copyMatch.index)) {
+  // "<another object> becomes a copy of this creature" (The Flood of Mars: "another target
+  // creature or land. If it's a creature, it becomes a copy of this creature"; Permeating Mass:
+  // "that creature becomes a copy of this creature") is the other direction: the permanent that
+  // changes is the sentence's subject and what it copies is the source of the ability. Emitted as
+  // a targeted effect on that subject, with its restriction (without one a fired ability would
+  // pin the effect to its own source) and the line's condition; _addAbilityPseudo fills in the
+  // copy source when the ability is fired (params.copiesAbilitySource).
+  let _copyOfSourceHandled = false;
+  if (copyMatch && !_isInTriggeredSentence(copyMatch.index) && !_isInActivatedEffect(copyMatch.index) &&
+      /^becomes?$/i.test(copyMatch[1]) && !copyMatch[3] &&
+      /^this (?:creature|card|permanent|token)(?:\s+until end of turn)?$/.test(copyMatch[2].trim())) {
+    const _cosStart = Math.max(oracle.lastIndexOf('\n', copyMatch.index - 1), oracle.lastIndexOf('.', copyMatch.index - 1)) + 1;
+    const _cosSubject = stripDurationPrefix(oracle.substring(_cosStart, copyMatch.index).trim());
+    const _cosApplies = _cosSubject && !/^this\b/i.test(_cosSubject) ? buildAppliesToFromText(_cosSubject) : null;
+    if (_cosApplies && _cosApplies.isSpellTarget) {
+      _copyOfSourceHandled = true;
+      copyClauseSpans.push({ start: _cosStart, end: copyMatch.index + copyMatch[0].length });
+      const _cosCond = _getConditionForPos(copyMatch.index);
+      const _cosEff = pushEff('1', EFFECT_TYPE.COPY, { copySource: null, copiesAbilitySource: true },
+        { appliesTo: null, scope: 'targeted', selfTarget: false },
+        `${_cosSubject.charAt(0).toUpperCase() + _cosSubject.slice(1)} becomes a copy of ${copyMatch[2].trim()}.`,
+        _cosCond ? { asLongAsCondition: _cosCond } : undefined);
+      _applyTargetInfo(_cosEff, _cosApplies, _cosApplies.fn);
+    }
+  }
+  if (copyMatch && !_copyOfSourceHandled && !_isInTriggeredSentence(copyMatch.index)) {
     const isBecomesCopy = /^becomes?$/i.test(copyMatch[1]);
     copyClauseSpans.push({ start: copyMatch.index, end: copyMatch.index + copyMatch[0].length });
     // Determine restriction from what can be copied (e.g. "any creature", "a creature or artifact")
