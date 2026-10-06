@@ -1,0 +1,12 @@
+{
+  "name": "Minion of the Wastes — life paid as it entered is a typed-in value",
+  "notes": "Found by tests/sweep.py (theme: remaining P/T CDAs). 'power and toughness are each equal to the life paid as it entered' is a choice made on entering, so it becomes a CDA_PT that reads only the card's value box (userAdjustable + isChosenAmount; no automatic count). With 7 entered the Minion is 7/7.",
+  "steps": [
+    { "add": "Minion of the Wastes", "as": "minion" },
+    { "call": ["setCDAValue", "@minion", 7] }
+  ],
+  "asserts": [
+    { "perm": "Minion of the Wastes", "final": { "power": 7, "toughness": 7 } },
+    { "effect": { "source": "Minion of the Wastes", "layer": "7a", "type": "cda_pt" } }
+  ]
+}

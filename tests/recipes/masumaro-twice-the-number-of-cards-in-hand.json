@@ -1,0 +1,18 @@
+{
+  "name": "Masumaro — \"twice the number of\" doubles a counted CDA",
+  "notes": "Found by tests/sweep.py (theme: remaining P/T CDAs). 'equal to twice the number of cards in your hand' did not match the count CDA regex at all. The regex now accepts 'twice' and stamps cdaMultiplier: 2, applied in engine-apply after the count (and after any typed-in override). Hand size 3 gives Masumaro 6/6. Mwonvuli Ooze ('1 plus twice the number of age counters on it') with two age counters is 5/5. Territorial Maro (twice the basic land types among lands you control; Forest + Island) is 4/4, which also covers the new domain count.",
+  "steps": [
+    { "add": "Masumaro, First to Live" },
+    { "add": "Mwonvuli Ooze", "as": "ooze" },
+    { "call": ["addCounter", "@ooze", "age", 2] },
+    { "add": "Territorial Maro" },
+    { "add": "Forest" },
+    { "add": "Island" },
+    { "call": ["updateGameState", "handSize", 3] }
+  ],
+  "asserts": [
+    { "perm": "Masumaro, First to Live", "final": { "power": 6, "toughness": 6 } },
+    { "perm": "Mwonvuli Ooze", "final": { "power": 5, "toughness": 5 } },
+    { "perm": "Territorial Maro", "final": { "power": 4, "toughness": 4 } }
+  ]
+}
