@@ -1,0 +1,65 @@
+{
+  "name": "Homeward Path — each player gains control of all creatures they own",
+  "notes": "Found by tests/sweep.py (no-effect cluster 'each player gains control of all TYPE they own'). Parsed as a global control with params.toOwner; engine-apply sends each matching permanent back to state.owner. Threaten steals the Bears first; the Path, activated later, returns them.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears",
+      "controller": "p2"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Threaten",
+      "as": "spell",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTarget",
+        "@spell",
+        "@bears"
+      ]
+    },
+    {
+      "add": "Homeward Path",
+      "as": "path"
+    },
+    {
+      "call": [
+        "addActivatedAbility",
+        "@path",
+        1,
+        "Each player gains control of all creatures they own.",
+        "{T}: Each player gains control of all creatures they own."
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "controller": "player_1"
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "controller": "player_0"
+      }
+    }
+  ]
+}

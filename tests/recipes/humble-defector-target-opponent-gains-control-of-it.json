@@ -1,0 +1,61 @@
+{
+  "name": "Humble Defector — target opponent gains control of this creature",
+  "notes": "Found by tests/sweep.py (no-effect cluster 'target opponent gains control of THIS'). A player other than 'you' as the subject of 'gains control of' now yields a control effect whose new controller comes from the target-player dropdown; the unrestricted effect is pinned to the ability's source.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears",
+      "controller": "p2"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Humble Defector",
+      "as": "defector"
+    },
+    {
+      "call": [
+        "addActivatedAbility",
+        "@defector",
+        0,
+        "Draw two cards. Target opponent gains control of this creature.",
+        "{T}: Draw two cards. Target opponent gains control of this creature. Activate only during your turn."
+      ],
+      "as": "ability"
+    },
+    {
+      "call": [
+        "setTargetPlayer",
+        "@ability",
+        "p2"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Humble Defector",
+      "final": {
+        "controller": "player_1"
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "controller": "player_0"
+      }
+    }
+  ]
+}

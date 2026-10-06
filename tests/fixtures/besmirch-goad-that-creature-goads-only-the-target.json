@@ -1,6 +1,6 @@
 {
- "name": "Evil's Thrall — one control effect, only the target is stolen",
- "notes": "Memory: project_evils_thrall_duplicate_control_instead_2026-06-04. The 'gain control of that creature ... instead' sentence was parsed as a second CONTROL effect, so the inspector showed two identical Control rows. The fixture's recorded effects list also pins the count to one. Targeting the opponent's Grizzly Bears must move only that creature to player_0; the opponent's Vampire Nighthawk and the caster's own Runeclaw Bear are unaffected.",
+ "name": "Besmirch — \"goad that creature\" goads only the target",
+ "notes": "'Untap and goad that creature' built a creature filter from 'that creature' and goaded every creature. In a spell or fired ability a pronoun object of goad/suspect is now the chosen target. Still open: the mid-sentence '... and it gains haste' on this card is global.",
  "recipe": {
   "steps": [
    {
@@ -11,53 +11,52 @@
    },
    {
     "add": "Grizzly Bears",
+    "as": "bears",
     "controller": "p2"
    },
    {
-    "add": "Vampire Nighthawk",
+    "add": "Gray Ogre",
+    "as": "ogre",
     "controller": "p2"
    },
    {
-    "add": "Runeclaw Bear"
+    "add": "Hill Giant",
+    "as": "giant"
    },
    {
-    "add": "Evil's Thrall",
-    "as": "thrall",
+    "add": "Besmirch",
+    "as": "spell",
     "spell": true
    },
    {
     "call": [
      "setTarget",
-     "@thrall",
-     "@Grizzly Bears"
+     "@spell",
+     "@bears"
     ]
    }
   ]
  },
  "asserts": [
   {
-   "effect": {
-    "source": "Evil's Thrall",
-    "layer": "2",
-    "type": "control"
-   }
-  },
-  {
    "perm": "Grizzly Bears",
    "final": {
-    "controller": "player_0"
+    "controller": "player_0",
+    "abilities": {
+     "$includes": [
+      "Goaded"
+     ]
+    }
    }
   },
   {
-   "perm": "Vampire Nighthawk",
+   "perm": "Gray Ogre",
    "final": {
-    "controller": "player_1"
-   }
-  },
-  {
-   "perm": "Runeclaw Bear",
-   "final": {
-    "controller": "player_0"
+    "abilities": {
+     "$excludes": [
+      "Goaded"
+     ]
+    }
    }
   }
  ],
@@ -217,6 +216,7 @@
     "classLevel": null,
     "hasXValue": false,
     "xValue": null,
+    "additionalCostPaid": false,
     "chosenCreatureType": null,
     "chosenColor": null,
     "chosenCardName": null,
@@ -241,79 +241,75 @@
     "id": "perm_2",
     "scryfallData": {
      "object": "card",
-     "id": "7aff07f9-9528-4149-9af0-f4e3c66c9dc5",
-     "oracle_id": "feb244f8-bcb1-44cf-9940-2719221a7309",
-     "multiverse_ids": [],
-     "tcgplayer_id": 695541,
-     "cardmarket_id": 904209,
-     "name": "Vampire Nighthawk",
+     "id": "11bf2cc0-799f-4eb8-b338-ed7543f469e7",
+     "oracle_id": "83c8a3a6-2e1a-4e26-8847-6d066f42d906",
+     "multiverse_ids": [
+      2283
+     ],
+     "tcgplayer_id": 1777,
+     "cardmarket_id": 6053,
+     "name": "Gray Ogre",
      "lang": "en",
-     "released_at": "2026-04-24",
-     "uri": "https://api.scryfall.com/cards/7aff07f9-9528-4149-9af0-f4e3c66c9dc5",
-     "scryfall_uri": "https://scryfall.com/card/fdn/757/vampire-nighthawk?utm_source=api",
+     "released_at": "1995-04-01",
+     "uri": "https://api.scryfall.com/cards/11bf2cc0-799f-4eb8-b338-ed7543f469e7",
+     "scryfall_uri": "https://scryfall.com/card/4ed/200/gray-ogre?utm_source=api",
      "layout": "normal",
      "highres_image": true,
      "image_status": "highres_scan",
-     "image_updated_at": "2026-08-24T09:13:45Z",
+     "image_updated_at": "2026-07-13T13:03:48Z",
      "image_uris": {
-      "small": "https://cards.scryfall.io/small/front/7/a/7aff07f9-9528-4149-9af0-f4e3c66c9dc5.jpg?1787562825",
-      "normal": "https://cards.scryfall.io/normal/front/7/a/7aff07f9-9528-4149-9af0-f4e3c66c9dc5.jpg?1787562825",
-      "large": "https://cards.scryfall.io/large/front/7/a/7aff07f9-9528-4149-9af0-f4e3c66c9dc5.jpg?1787562825",
-      "png": "https://cards.scryfall.io/png/front/7/a/7aff07f9-9528-4149-9af0-f4e3c66c9dc5.png?1787562825",
-      "art_crop": "https://cards.scryfall.io/art_crop/front/7/a/7aff07f9-9528-4149-9af0-f4e3c66c9dc5.jpg?1787562825",
-      "border_crop": "https://cards.scryfall.io/border_crop/front/7/a/7aff07f9-9528-4149-9af0-f4e3c66c9dc5.jpg?1787562825",
-      "thumb": "https://cards.scryfall.io/thumb/front/7/a/7aff07f9-9528-4149-9af0-f4e3c66c9dc5.webp?1787562825",
-      "grid": "https://cards.scryfall.io/grid/front/7/a/7aff07f9-9528-4149-9af0-f4e3c66c9dc5.webp?1787562825",
-      "display": "https://cards.scryfall.io/display/front/7/a/7aff07f9-9528-4149-9af0-f4e3c66c9dc5.webp?1787562825",
-      "art": "https://cards.scryfall.io/art/front/7/a/7aff07f9-9528-4149-9af0-f4e3c66c9dc5.webp?1787562825",
-      "crop": "https://cards.scryfall.io/crop/front/7/a/7aff07f9-9528-4149-9af0-f4e3c66c9dc5.webp?1787562825"
+      "small": "https://cards.scryfall.io/small/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+      "normal": "https://cards.scryfall.io/normal/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+      "large": "https://cards.scryfall.io/large/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+      "png": "https://cards.scryfall.io/png/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.png?1783947828",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+      "thumb": "https://cards.scryfall.io/thumb/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.webp?1783947828",
+      "grid": "https://cards.scryfall.io/grid/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.webp?1783947828",
+      "display": "https://cards.scryfall.io/display/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.webp?1783947828",
+      "art": "https://cards.scryfall.io/art/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.webp?1783947828",
+      "crop": "https://cards.scryfall.io/crop/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.webp?1783947828"
      },
-     "mana_cost": "{1}{B}{B}",
+     "mana_cost": "{2}{R}",
      "cmc": 3,
-     "type_line": "Creature — Vampire Shaman",
-     "oracle_text": "Flying\nDeathtouch (Any amount of damage this deals to a creature is enough to destroy it.)\nLifelink (Damage dealt by this creature also causes you to gain that much life.)",
+     "type_line": "Creature — Ogre",
+     "oracle_text": "",
      "power": "2",
-     "toughness": "3",
+     "toughness": "2",
      "colors": [
-      "B"
+      "R"
      ],
      "color_identity": [
-      "B"
+      "R"
      ],
-     "keywords": [
-      "Deathtouch",
-      "Flying",
-      "Lifelink"
-     ],
+     "keywords": [],
      "legalities": {
-      "standard": "legal",
-      "future": "legal",
-      "historic": "legal",
-      "timeless": "legal",
-      "gladiator": "legal",
-      "pioneer": "legal",
-      "modern": "legal",
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
       "legacy": "legal",
-      "pauper": "not_legal",
+      "pauper": "legal",
       "vintage": "legal",
-      "penny": "legal",
+      "penny": "not_legal",
       "commander": "legal",
       "oathbreaker": "legal",
-      "standardbrawl": "legal",
-      "brawl": "legal",
-      "competitivebrawl": "legal",
-      "alchemy": "legal",
-      "paupercommander": "not_legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
       "duel": "legal",
-      "oldschool": "not_legal",
-      "premodern": "not_legal",
+      "oldschool": "legal",
+      "premodern": "legal",
       "predh": "legal",
       "tlr": "legal"
      },
      "games": [
-      "paper",
-      "arena",
-      "mtgo"
+      "paper"
      ],
      "reserved": false,
      "game_changer": false,
@@ -326,52 +322,50 @@
      "promo": false,
      "reprint": true,
      "variation": false,
-     "set_id": "a7ecb771-d1b6-4dec-8cf5-8d45179f21e0",
-     "set": "fdn",
-     "set_name": "Foundations",
+     "set_id": "2dd259d4-dc13-4956-a2dc-3e1d70b4a743",
+     "set": "4ed",
+     "set_name": "Fourth Edition",
      "set_type": "core",
-     "set_uri": "https://api.scryfall.com/sets/a7ecb771-d1b6-4dec-8cf5-8d45179f21e0",
-     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Afdn&unique=prints",
-     "scryfall_set_uri": "https://scryfall.com/sets/fdn?utm_source=api",
-     "rulings_uri": "https://api.scryfall.com/cards/7aff07f9-9528-4149-9af0-f4e3c66c9dc5/rulings",
-     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Afeb244f8-bcb1-44cf-9940-2719221a7309&unique=prints",
-     "collector_number": "757",
+     "set_uri": "https://api.scryfall.com/sets/2dd259d4-dc13-4956-a2dc-3e1d70b4a743",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A4ed&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/4ed?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/11bf2cc0-799f-4eb8-b338-ed7543f469e7/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A83c8a3a6-2e1a-4e26-8847-6d066f42d906&unique=prints",
+     "collector_number": "200",
      "digital": false,
-     "rarity": "uncommon",
+     "rarity": "common",
+     "flavor_text": "The Ogre philosopher Gnerdel believed the purpose of life was to live as high on the food chain as possible. She refused to eat vegetarians, preferring to live entirely on creatures that preyed on sentient beings.",
      "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
-     "artist": "Jason Chan",
+     "artist": "Dan Frazier",
      "artist_ids": [
-      "8062d5a9-51b6-4822-933f-fa9e9dba8416"
+      "059bba56-5feb-42e4-8c2e-e2f1e6ba11f9"
      ],
-     "illustration_id": "d131a3b3-9639-4095-89cc-e0c87d04e9b9",
-     "border_color": "black",
-     "frame": "2015",
+     "illustration_id": "a7399345-c36e-4a91-a4f5-22a2a0eeffaa",
+     "border_color": "white",
+     "frame": "1993",
      "full_art": false,
      "textless": false,
-     "booster": false,
+     "booster": true,
      "story_spotlight": false,
-     "promo_types": [
-      "setextension"
-     ],
-     "edhrec_rank": 1755,
-     "penny_rank": 653,
+     "edhrec_rank": 30971,
      "prices": {
-      "usd": "0.20",
+      "usd": "0.06",
       "usd_foil": null,
       "usd_etched": null,
-      "eur": "0.50",
+      "eur": "0.05",
       "eur_foil": null,
       "tix": null
      },
      "related_uris": {
-      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DVampire%2BNighthawk",
-      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DVampire%2BNighthawk",
-      "edhrec": "https://edhrec.com/route/?cc=Vampire+Nighthawk"
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=2283&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGray%2BOgre",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGray%2BOgre",
+      "edhrec": "https://edhrec.com/route/?cc=Gray+Ogre"
      },
      "purchase_uris": {
-      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F695541%3Fpage%3D1",
-      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=904209&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
-      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Vampire+Nighthawk&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F1777%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=6053&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Gray+Ogre&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
      }
     },
     "isSpell": false,
@@ -391,6 +385,7 @@
     "classLevel": null,
     "hasXValue": false,
     "xValue": null,
+    "additionalCostPaid": false,
     "chosenCreatureType": null,
     "chosenColor": null,
     "chosenCardName": null,
@@ -415,57 +410,57 @@
     "id": "perm_3",
     "scryfallData": {
      "object": "card",
-     "id": "d1995238-79cc-4381-9595-71ef11ea1e36",
-     "oracle_id": "ec49dfcf-d16d-4621-af4b-4a6f09043221",
+     "id": "14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8",
+     "oracle_id": "342199e0-15b6-4824-83da-25caef2592b3",
      "multiverse_ids": [
-      383368
+      129591
      ],
-     "mtgo_id": 53290,
-     "mtgo_foil_id": 53291,
-     "tcgplayer_id": 90949,
-     "cardmarket_id": 267595,
-     "name": "Runeclaw Bear",
+     "mtgo_id": 27040,
+     "mtgo_foil_id": 27041,
+     "tcgplayer_id": 15162,
+     "cardmarket_id": 16376,
+     "name": "Hill Giant",
      "lang": "en",
-     "released_at": "2014-07-18",
-     "uri": "https://api.scryfall.com/cards/d1995238-79cc-4381-9595-71ef11ea1e36",
-     "scryfall_uri": "https://scryfall.com/card/m15/197/runeclaw-bear?utm_source=api",
+     "released_at": "2007-07-13",
+     "uri": "https://api.scryfall.com/cards/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8",
+     "scryfall_uri": "https://scryfall.com/card/10e/212/hill-giant?utm_source=api",
      "layout": "normal",
      "highres_image": true,
      "image_status": "highres_scan",
-     "image_updated_at": "2026-07-13T10:39:22Z",
+     "image_updated_at": "2026-07-13T11:43:38Z",
      "image_uris": {
-      "small": "https://cards.scryfall.io/small/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
-      "normal": "https://cards.scryfall.io/normal/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
-      "large": "https://cards.scryfall.io/large/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
-      "png": "https://cards.scryfall.io/png/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.png?1783939162",
-      "art_crop": "https://cards.scryfall.io/art_crop/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
-      "border_crop": "https://cards.scryfall.io/border_crop/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
-      "thumb": "https://cards.scryfall.io/thumb/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.webp?1783939162",
-      "grid": "https://cards.scryfall.io/grid/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.webp?1783939162",
-      "display": "https://cards.scryfall.io/display/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.webp?1783939162",
-      "art": "https://cards.scryfall.io/art/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.webp?1783939162",
-      "crop": "https://cards.scryfall.io/crop/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.webp?1783939162"
+      "small": "https://cards.scryfall.io/small/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+      "normal": "https://cards.scryfall.io/normal/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+      "large": "https://cards.scryfall.io/large/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+      "png": "https://cards.scryfall.io/png/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.png?1783943018",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+      "thumb": "https://cards.scryfall.io/thumb/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018",
+      "grid": "https://cards.scryfall.io/grid/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018",
+      "display": "https://cards.scryfall.io/display/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018",
+      "art": "https://cards.scryfall.io/art/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018",
+      "crop": "https://cards.scryfall.io/crop/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018"
      },
-     "mana_cost": "{1}{G}",
-     "cmc": 2,
-     "type_line": "Creature — Bear",
+     "mana_cost": "{3}{R}",
+     "cmc": 4,
+     "type_line": "Creature — Giant",
      "oracle_text": "",
-     "power": "2",
-     "toughness": "2",
+     "power": "3",
+     "toughness": "3",
      "colors": [
-      "G"
+      "R"
      ],
      "color_identity": [
-      "G"
+      "R"
      ],
      "keywords": [],
      "legalities": {
       "standard": "not_legal",
       "future": "not_legal",
-      "historic": "legal",
-      "timeless": "legal",
-      "gladiator": "legal",
-      "pioneer": "legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
       "modern": "legal",
       "legacy": "legal",
       "pauper": "legal",
@@ -474,15 +469,15 @@
       "commander": "legal",
       "oathbreaker": "legal",
       "standardbrawl": "not_legal",
-      "brawl": "legal",
-      "competitivebrawl": "legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
       "alchemy": "not_legal",
       "paupercommander": "legal",
       "duel": "legal",
       "oldschool": "not_legal",
-      "premodern": "not_legal",
+      "premodern": "legal",
       "predh": "legal",
-      "tlr": "legal"
+      "tlr": "not_legal"
      },
      "games": [
       "paper",
@@ -500,51 +495,50 @@
      "promo": false,
      "reprint": true,
      "variation": false,
-     "set_id": "6ce49890-3b37-42a5-8932-dbeef1d7b62c",
-     "set": "m15",
-     "set_name": "Magic 2015",
+     "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set": "10e",
+     "set_name": "Tenth Edition",
      "set_type": "core",
-     "set_uri": "https://api.scryfall.com/sets/6ce49890-3b37-42a5-8932-dbeef1d7b62c",
-     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Am15&unique=prints",
-     "scryfall_set_uri": "https://scryfall.com/sets/m15?utm_source=api",
-     "rulings_uri": "https://api.scryfall.com/cards/d1995238-79cc-4381-9595-71ef11ea1e36/rulings",
-     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aec49dfcf-d16d-4621-af4b-4a6f09043221&unique=prints",
-     "collector_number": "197",
+     "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A342199e0-15b6-4824-83da-25caef2592b3&unique=prints",
+     "collector_number": "212",
      "digital": false,
      "rarity": "common",
-     "flavor_text": "The magic of the elves leaves its mark on the forest. The magic of the forest leaves its mark on the animals who live there. The animals of the forest leave their mark on all who trespass.",
+     "flavor_text": "Fortunately, hill giants have large blind spots in which a human can easily hide. Unfortunately, these blind spots are beneath the bottoms of their feet.",
      "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
-     "artist": "Jesper Ejsing",
+     "artist": "Kev Walker",
      "artist_ids": [
-      "a5f8354a-8b51-4e59-96b2-0e3aeae4fa1d"
+      "f366a0ee-a0cd-466d-ba6a-90058c7a31a6"
      ],
-     "illustration_id": "0bb0db79-2039-4f8b-a8ac-d7c952f07ba5",
+     "illustration_id": "fd46160d-4dd0-4ab6-b452-cff004f5e6f2",
      "border_color": "black",
-     "frame": "2015",
+     "frame": "2003",
      "full_art": false,
      "textless": false,
      "booster": true,
      "story_spotlight": false,
-     "edhrec_rank": 9229,
-     "penny_rank": 10859,
+     "edhrec_rank": 29148,
      "prices": {
-      "usd": "0.14",
-      "usd_foil": "0.51",
+      "usd": "0.04",
+      "usd_foil": "0.83",
       "usd_etched": null,
-      "eur": "0.11",
-      "eur_foil": "0.36",
-      "tix": "0.03"
+      "eur": "0.02",
+      "eur_foil": "0.28",
+      "tix": "0.04"
      },
      "related_uris": {
-      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=383368&printed=false",
-      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DRuneclaw%2BBear",
-      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DRuneclaw%2BBear",
-      "edhrec": "https://edhrec.com/route/?cc=Runeclaw+Bear"
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129591&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DHill%2BGiant",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DHill%2BGiant",
+      "edhrec": "https://edhrec.com/route/?cc=Hill+Giant"
      },
      "purchase_uris": {
-      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F90949%3Fpage%3D1",
-      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=267595&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
-      "cardhoarder": "https://www.cardhoarder.com/cards/53290?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15162%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16376&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27040?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
      }
     },
     "isSpell": false,
@@ -564,6 +558,7 @@
     "classLevel": null,
     "hasXValue": false,
     "xValue": null,
+    "additionalCostPaid": false,
     "chosenCreatureType": null,
     "chosenColor": null,
     "chosenCardName": null,
@@ -588,65 +583,66 @@
     "id": "perm_4",
     "scryfallData": {
      "object": "card",
-     "id": "310e30cd-b8c3-40ea-9d61-57c5c5fc2a0b",
-     "oracle_id": "d7562f89-4808-44ab-8dc9-fc4078e8a47b",
-     "multiverse_ids": [],
-     "resource_id": "C25F9CDA46432215745DBC0577017631F371787D73955045B3567321B79E0477",
-     "mtgo_id": 152443,
-     "arena_id": 105023,
-     "tcgplayer_id": 696562,
-     "cardmarket_id": 891169,
-     "name": "Evil's Thrall",
+     "id": "534c652a-2345-48d5-bd78-33f91ed914b4",
+     "oracle_id": "fc80380c-7d75-4556-aaf2-bf7b2c757e75",
+     "multiverse_ids": [
+      416806
+     ],
+     "tcgplayer_id": 121421,
+     "cardmarket_id": 291747,
+     "name": "Besmirch",
      "lang": "en",
-     "released_at": "2026-06-26",
-     "uri": "https://api.scryfall.com/cards/310e30cd-b8c3-40ea-9d61-57c5c5fc2a0b",
-     "scryfall_uri": "https://scryfall.com/card/msh/128/evils-thrall?utm_source=api",
+     "released_at": "2016-08-26",
+     "uri": "https://api.scryfall.com/cards/534c652a-2345-48d5-bd78-33f91ed914b4",
+     "scryfall_uri": "https://scryfall.com/card/cn2/49/besmirch?utm_source=api",
      "layout": "normal",
      "highres_image": true,
      "image_status": "highres_scan",
-     "image_updated_at": "2026-07-13T00:35:32Z",
+     "image_updated_at": "2026-07-13T10:09:11Z",
      "image_uris": {
-      "small": "https://cards.scryfall.io/small/front/3/1/310e30cd-b8c3-40ea-9d61-57c5c5fc2a0b.jpg?1783902932",
-      "normal": "https://cards.scryfall.io/normal/front/3/1/310e30cd-b8c3-40ea-9d61-57c5c5fc2a0b.jpg?1783902932",
-      "large": "https://cards.scryfall.io/large/front/3/1/310e30cd-b8c3-40ea-9d61-57c5c5fc2a0b.jpg?1783902932",
-      "png": "https://cards.scryfall.io/png/front/3/1/310e30cd-b8c3-40ea-9d61-57c5c5fc2a0b.png?1783902932",
-      "art_crop": "https://cards.scryfall.io/art_crop/front/3/1/310e30cd-b8c3-40ea-9d61-57c5c5fc2a0b.jpg?1783902932",
-      "border_crop": "https://cards.scryfall.io/border_crop/front/3/1/310e30cd-b8c3-40ea-9d61-57c5c5fc2a0b.jpg?1783902932",
-      "thumb": "https://cards.scryfall.io/thumb/front/3/1/310e30cd-b8c3-40ea-9d61-57c5c5fc2a0b.webp?1783902932",
-      "grid": "https://cards.scryfall.io/grid/front/3/1/310e30cd-b8c3-40ea-9d61-57c5c5fc2a0b.webp?1783902932",
-      "display": "https://cards.scryfall.io/display/front/3/1/310e30cd-b8c3-40ea-9d61-57c5c5fc2a0b.webp?1783902932",
-      "art": "https://cards.scryfall.io/art/front/3/1/310e30cd-b8c3-40ea-9d61-57c5c5fc2a0b.webp?1783902932",
-      "crop": "https://cards.scryfall.io/crop/front/3/1/310e30cd-b8c3-40ea-9d61-57c5c5fc2a0b.webp?1783902932"
+      "small": "https://cards.scryfall.io/small/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.jpg?1783937351",
+      "normal": "https://cards.scryfall.io/normal/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.jpg?1783937351",
+      "large": "https://cards.scryfall.io/large/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.jpg?1783937351",
+      "png": "https://cards.scryfall.io/png/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.png?1783937351",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.jpg?1783937351",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.jpg?1783937351",
+      "thumb": "https://cards.scryfall.io/thumb/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.webp?1783937351",
+      "grid": "https://cards.scryfall.io/grid/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.webp?1783937351",
+      "display": "https://cards.scryfall.io/display/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.webp?1783937351",
+      "art": "https://cards.scryfall.io/art/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.webp?1783937351",
+      "crop": "https://cards.scryfall.io/crop/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.webp?1783937351"
      },
-     "mana_cost": "{2}{R}",
+     "mana_cost": "{1}{R}{R}",
      "cmc": 3,
      "type_line": "Sorcery",
-     "oracle_text": "Gain control of target creature until end of turn. If you control a Villain with greater mana value than that creature, gain control of that creature until the end of your next turn instead. Untap that creature. It gains haste until end of turn.",
+     "oracle_text": "Until end of turn, gain control of target creature and it gains haste. Untap and goad that creature. (Until your next turn, that creature attacks each combat if able and attacks a player other than you if able.)",
      "colors": [
       "R"
      ],
      "color_identity": [
       "R"
      ],
-     "keywords": [],
+     "keywords": [
+      "Goad"
+     ],
      "legalities": {
-      "standard": "legal",
-      "future": "legal",
-      "historic": "legal",
-      "timeless": "legal",
-      "gladiator": "legal",
-      "pioneer": "legal",
-      "modern": "legal",
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
       "legacy": "legal",
       "pauper": "not_legal",
       "vintage": "legal",
-      "penny": "legal",
+      "penny": "not_legal",
       "commander": "legal",
       "oathbreaker": "legal",
-      "standardbrawl": "legal",
-      "brawl": "legal",
-      "competitivebrawl": "legal",
-      "alchemy": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
       "paupercommander": "not_legal",
       "duel": "legal",
       "oldschool": "not_legal",
@@ -655,9 +651,7 @@
       "tlr": "legal"
      },
      "games": [
-      "paper",
-      "mtgo",
-      "arena"
+      "paper"
      ],
      "reserved": false,
      "game_changer": false,
@@ -671,57 +665,50 @@
      "promo": false,
      "reprint": false,
      "variation": false,
-     "set_id": "ba9bf625-681c-4a4e-ab48-399b2fecac6b",
-     "set": "msh",
-     "set_name": "Marvel Super Heroes",
-     "set_type": "expansion",
-     "set_uri": "https://api.scryfall.com/sets/ba9bf625-681c-4a4e-ab48-399b2fecac6b",
-     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Amsh&unique=prints",
-     "scryfall_set_uri": "https://scryfall.com/sets/msh?utm_source=api",
-     "rulings_uri": "https://api.scryfall.com/cards/310e30cd-b8c3-40ea-9d61-57c5c5fc2a0b/rulings",
-     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ad7562f89-4808-44ab-8dc9-fc4078e8a47b&unique=prints",
-     "collector_number": "128",
+     "set_id": "ad1b8847-1905-4080-9e26-80691ea7c1ef",
+     "set": "cn2",
+     "set_name": "Conspiracy: Take the Crown",
+     "set_type": "draft_innovation",
+     "set_uri": "https://api.scryfall.com/sets/ad1b8847-1905-4080-9e26-80691ea7c1ef",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Acn2&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/cn2?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/534c652a-2345-48d5-bd78-33f91ed914b4/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Afc80380c-7d75-4556-aaf2-bf7b2c757e75&unique=prints",
+     "collector_number": "49",
      "digital": false,
      "rarity": "uncommon",
-     "flavor_text": "\"Stay your fists, Rand. You are not well!\"\n—T'Challa, the Black Panther",
+     "flavor_text": "The whitest robes stain best.",
      "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
-     "artist": "Mintautas Šukys",
+     "artist": "Mathias Kollros",
      "artist_ids": [
-      "33147af8-b09e-4cb3-8e21-5271314c3c1e"
+      "2ae0dd12-047c-4efb-80d7-bccc3bac5fba"
      ],
-     "illustration_id": "11df5d19-b4f4-4728-941f-f8c3508ec6c6",
+     "illustration_id": "358d16cf-28d9-4da9-aed5-acd4a59d3bc3",
      "border_color": "black",
      "frame": "2015",
      "full_art": false,
      "textless": false,
-     "booster": false,
+     "booster": true,
      "story_spotlight": false,
-     "promo_types": [
-      "universesbeyond"
-     ],
-     "edhrec_rank": 21542,
-     "preview": {
-      "source": "bilibili",
-      "source_uri": "https://www.bilibili.com/video/BV1bY7X6GEqk/?spm_id_from=333.1368.list.card_archive.click",
-      "previewed_at": "2026-06-03"
-     },
+     "edhrec_rank": 11214,
      "prices": {
-      "usd": "0.13",
-      "usd_foil": "0.25",
+      "usd": "0.35",
+      "usd_foil": "2.88",
       "usd_etched": null,
-      "eur": "0.09",
-      "eur_foil": "0.17",
-      "tix": "0.01"
+      "eur": "0.67",
+      "eur_foil": "6.40",
+      "tix": null
      },
      "related_uris": {
-      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DEvil%2527s%2BThrall",
-      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DEvil%2527s%2BThrall",
-      "edhrec": "https://edhrec.com/route/?cc=Evil%27s+Thrall"
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=416806&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DBesmirch",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DBesmirch",
+      "edhrec": "https://edhrec.com/route/?cc=Besmirch"
      },
      "purchase_uris": {
-      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F696562%3Fpage%3D1",
-      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=891169&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
-      "cardhoarder": "https://www.cardhoarder.com/cards/152443?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F121421%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=291747&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Besmirch&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
      }
     },
     "isSpell": true,
@@ -741,6 +728,7 @@
     "classLevel": null,
     "hasXValue": false,
     "xValue": null,
+    "additionalCostPaid": false,
     "chosenCreatureType": null,
     "chosenColor": null,
     "chosenCardName": null,
@@ -786,26 +774,21 @@
       [
        "perm_2",
        {
-        "name": "Vampire Nighthawk",
+        "name": "Gray Ogre",
         "types": [
          "Creature"
         ],
         "supertypes": [],
         "subtypes": [
-         "Vampire",
-         "Shaman"
+         "Ogre"
         ],
         "power": 2,
-        "toughness": 3,
+        "toughness": 2,
         "colors": [
-         "B"
+         "R"
         ],
-        "abilities": [
-         "Flying",
-         "Deathtouch",
-         "Lifelink"
-        ],
-        "oracleText": "Flying\nDeathtouch\nLifelink",
+        "abilities": [],
+        "oracleText": "",
         "owner": "player_1",
         "controller": "player_1"
        }
@@ -813,18 +796,18 @@
       [
        "perm_3",
        {
-        "name": "Runeclaw Bear",
+        "name": "Hill Giant",
         "types": [
          "Creature"
         ],
         "supertypes": [],
         "subtypes": [
-         "Bear"
+         "Giant"
         ],
-        "power": 2,
-        "toughness": 2,
+        "power": 3,
+        "toughness": 3,
         "colors": [
-         "G"
+         "R"
         ],
         "abilities": [],
         "oracleText": "",
@@ -858,8 +841,8 @@
       },
       {
        "id": "perm_2",
-       "name": "Vampire Nighthawk",
-       "imageUri": "https://cards.scryfall.io/small/front/7/a/7aff07f9-9528-4149-9af0-f4e3c66c9dc5.jpg?1787562825",
+       "name": "Gray Ogre",
+       "imageUri": "https://cards.scryfall.io/small/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
        "owner": "player_1",
        "controller": "player_1",
        "isToken": false,
@@ -872,17 +855,16 @@
        ],
        "printedSupertypes": [],
        "printedSubtypes": [
-        "Vampire",
-        "Shaman"
+        "Ogre"
        ],
        "printedPower": 2,
-       "printedToughness": 3,
+       "printedToughness": 2,
        "timestamp": 2
       },
       {
        "id": "perm_3",
-       "name": "Runeclaw Bear",
-       "imageUri": "https://cards.scryfall.io/small/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
+       "name": "Hill Giant",
+       "imageUri": "https://cards.scryfall.io/small/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
        "owner": "player_0",
        "controller": "player_0",
        "isToken": false,
@@ -895,10 +877,10 @@
        ],
        "printedSupertypes": [],
        "printedSubtypes": [
-        "Bear"
+        "Giant"
        ],
-       "printedPower": 2,
-       "printedToughness": 2,
+       "printedPower": 3,
+       "printedToughness": 3,
        "timestamp": 3
       }
      ],
@@ -988,65 +970,82 @@
      "colors": [
       "G"
      ],
-     "abilities": []
+     "abilities": [
+      "Haste",
+      "Goaded"
+     ],
+     "traits": [
+      "Goaded"
+     ]
     },
     "changedBy": {
      "2": [
-      "Evil's Thrall"
+      "Besmirch"
+     ],
+     "6": [
+      "Besmirch",
+      "Besmirch"
      ]
     }
    },
    {
-    "perm": "Vampire Nighthawk",
+    "perm": "Gray Ogre",
     "final": {
-     "name": "Vampire Nighthawk",
+     "name": "Gray Ogre",
      "controller": "player_1",
      "supertypes": [],
      "types": [
       "Creature"
      ],
      "subtypes": [
-      "Vampire",
-      "Shaman"
+      "Ogre"
      ],
      "power": 2,
-     "toughness": 3,
+     "toughness": 2,
      "colors": [
-      "B"
+      "R"
      ],
      "abilities": [
-      "Flying",
-      "Deathtouch",
-      "Lifelink"
+      "Haste"
      ]
     },
-    "changedBy": {}
+    "changedBy": {
+     "6": [
+      "Besmirch"
+     ]
+    }
    },
    {
-    "perm": "Runeclaw Bear",
+    "perm": "Hill Giant",
     "final": {
-     "name": "Runeclaw Bear",
+     "name": "Hill Giant",
      "controller": "player_0",
      "supertypes": [],
      "types": [
       "Creature"
      ],
      "subtypes": [
-      "Bear"
+      "Giant"
      ],
-     "power": 2,
-     "toughness": 2,
+     "power": 3,
+     "toughness": 3,
      "colors": [
-      "G"
+      "R"
      ],
-     "abilities": []
+     "abilities": [
+      "Haste"
+     ]
     },
-    "changedBy": {}
+    "changedBy": {
+     "6": [
+      "Besmirch"
+     ]
+    }
    },
    {
-    "perm": "Evil's Thrall",
+    "perm": "Besmirch",
     "final": {
-     "name": "Evil's Thrall",
+     "name": "Besmirch",
      "controller": "player_0",
      "supertypes": [],
      "types": [
@@ -1058,39 +1057,52 @@
      "colors": [
       "R"
      ],
-     "abilities": []
+     "abilities": [
+      "Until end of turn, gain control of target creature and it gains haste. Untap and goad that creature."
+     ]
     },
     "changedBy": {}
    }
   ],
   "order": {
    "2": [
-    "Evil's Thrall"
+    "Besmirch"
    ],
    "6": [
-    "Evil's Thrall"
+    "Besmirch",
+    "Besmirch"
    ]
   },
   "effects": [
    {
-    "source": "Evil's Thrall",
+    "source": "Besmirch",
     "layer": "6",
     "type": "add_ability",
-    "scope": "targeted",
-    "target": "Grizzly Bears",
+    "scope": "global",
     "params": {
      "ability": "Haste"
     }
    },
    {
-    "source": "Evil's Thrall",
+    "source": "Besmirch",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "target": "Grizzly Bears",
+    "params": {
+     "ability": "Goaded",
+     "isTrait": true
+    }
+   },
+   {
+    "source": "Besmirch",
     "layer": "2",
     "type": "control",
     "scope": "targeted",
     "target": "Grizzly Bears",
     "params": {
      "newController": "player_0",
-     "untilEndOfTurn": true
+     "untilEndOfTurn": false
     }
    }
   ]

@@ -1,0 +1,61 @@
+{
+  "name": "Besmirch — \"goad that creature\" goads only the target",
+  "notes": "'Untap and goad that creature' built a creature filter from 'that creature' and goaded every creature. In a spell or fired ability a pronoun object of goad/suspect is now the chosen target. Still open: the mid-sentence '... and it gains haste' on this card is global.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears",
+      "controller": "p2"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Besmirch",
+      "as": "spell",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTarget",
+        "@spell",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "controller": "player_0",
+        "abilities": {
+          "$includes": [
+            "Goaded"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Goaded"
+          ]
+        }
+      }
+    }
+  ]
+}

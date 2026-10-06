@@ -1,0 +1,68 @@
+{
+  "name": "Assault Suit — that player gains control of equipped creature",
+  "notes": "Found by tests/sweep.py. 'You may have that player gain control of equipped creature' was read as you gaining control of everything (global, no filter). It now gives the equipped creature to the player picked in the dropdown and leaves the Suit and everything else alone.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears",
+      "controller": "p2"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Assault Suit",
+      "as": "suit"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@suit",
+        "@giant"
+      ]
+    },
+    {
+      "call": [
+        "addTriggeredAbility",
+        "@suit",
+        1,
+        "you may have that player gain control of equipped creature until end of turn. If you do, untap it.",
+        "At the beginning of each opponent's upkeep, you may have that player gain control of equipped creature until end of turn. If you do, untap it."
+      ],
+      "as": "trigger"
+    },
+    {
+      "call": [
+        "setTargetPlayer",
+        "@trigger",
+        "p2"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "controller": "player_1"
+      }
+    },
+    {
+      "perm": "Assault Suit",
+      "final": {
+        "controller": "player_0"
+      }
+    }
+  ]
+}

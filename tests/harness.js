@@ -120,7 +120,8 @@ function summarizeBoard() {
 /* ─── Recipe builder ───
    A recipe builds a board from card names instead of a downloaded board:
      { "add": "Card Name", "as": "alias", "controller": "p2", "spell": true, "x": 3, "opts": {...} }
-     { "call": ["anyBattlefieldMethod", arg, ...] }
+     { "call": ["anyBattlefieldMethod", arg, ...], "as": "alias" }
+   "as" on a call names what the method returns (the pseudo-permanent of a fired ability).
    In call args, "@alias" becomes that permanent's id, "p2" the second player's id, and
    "card:Card Name" the Scryfall card object. Players beyond the first need
    { "call": ["addPlayer", "Name"] } before they are referenced. */
@@ -170,7 +171,8 @@ function buildFromRecipe(recipe, cards) {
     } else if (step.call) {
       const [method, ...rest] = step.call;
       if (typeof Battlefield[method] !== 'function') throw new Error('No Battlefield method: ' + method);
-      Battlefield[method](...rest.map(arg));
+      const ret = Battlefield[method](...rest.map(arg));
+      if (step.as && ret && ret.id) alias[step.as] = ret.id;
     } else {
       throw new Error('Unrecognised recipe step: ' + JSON.stringify(step));
     }
