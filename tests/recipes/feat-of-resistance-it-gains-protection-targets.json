@@ -1,0 +1,17 @@
+{
+  "name": "Feat of Resistance — \"It gains protection\" goes to the spell's target, not everything",
+  "notes": "Found by tests/sweep.py. \"Put a +1/+1 counter on target creature you control. It gains protection from the color of your choice until end of turn.\" The protection parser's subject was the whole capture (\"Put a +1/+1 counter on target creature you control. It\"), which is no filter at all, so the grant was global. The subject is now the last sentence, and a pronoun there takes the target an earlier sentence named. Brave the Elements (\"Choose a color. White creatures you control gain …\") is the reverse case: it was a single-target effect and is now the global grant over white creatures it should be.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Hill Giant", "as": "giant" },
+    { "add": "White Knight", "as": "knight" },
+    { "add": "Feat of Resistance", "as": "feat", "spell": true },
+    { "call": ["setTarget", "@feat", "@bears"] },
+    { "add": "Brave the Elements", "as": "brave", "spell": true }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$includes": ["Protection from the color of your choice until end of turn"] } } },
+    { "perm": "Hill Giant", "final": { "abilities": { "$excludes": ["Protection from the color of your choice until end of turn", "Protection from the chosen color until end of turn"] } } },
+    { "perm": "White Knight", "final": { "abilities": { "$includes": ["Protection from the chosen color until end of turn"], "$excludes": ["Protection from the color of your choice until end of turn"] } } }
+  ]
+}

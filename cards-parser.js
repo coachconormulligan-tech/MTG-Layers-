@@ -3821,6 +3821,16 @@ function parseCardEffects(permanent, card, opts = {}) {
   while ((protMatch = protectionRegex.exec(oracle)) !== null) {
     let filterText = protMatch[1].trim();
     const rawAbility = protMatch[2].trim();
+    // The effect of an activated or triggered ability ("{R}: Target Goblin gains protection
+    // from white until end of turn.") is not a static grant — it is parsed when the ability
+    // is fired. Checked at the protection phrase itself, so the cost and its ":" are always
+    // in the line prefix whichever anchor the match started from.
+    const _protPos = protMatch.index + protMatch[0].length - protMatch[2].length;
+    if (_isInActivatedEffect(_protPos) || _isInTriggeredSentence(_protPos)) continue;
+    // Same for a granted ability's own text ('this creature has "When this creature enters,
+    // creatures you control gain protection from black …"'): it belongs to the quote.
+    const _protLinePrefix = oracle.substring(oracle.lastIndexOf('\n', _protPos - 1) + 1, _protPos);
+    if ((_protLinePrefix.match(/"/g) || []).length % 2 === 1) continue;
     // Imprint: "protection from each of the exiled card's card types" is handled separately
     // by the IMPRINT_PROTECTION_FROM_TYPES branch below — skip here so we don't emit a
     // non-functional literal-string ADD_ABILITY.
@@ -3833,6 +3843,17 @@ function parseCardEffects(permanent, card, opts = {}) {
     }
     // Clean filter of preceding clauses
     filterText = filterText.replace(/\s+and\s*$/i, '').replace(/\s+get[s]?\s+[+-]?\d+\/[+-]?\d+.*$/i, '').trim();
+    // The subject is the last sentence of the capture: "… each player votes for blue, black,
+    // red, or green. This creature" (Council Guardian). A pronoun there stands for the target
+    // an earlier sentence named: "Put a +1/+1 counter on target creature you control. It"
+    // (Feat of Resistance).
+    const _protSentences = filterText.split(/\.\s+/);
+    if (_protSentences.length > 1) {
+      const _protSubject = _protSentences.pop().replace(/^(?:then|if you do),?\s+/i, '').trim();
+      const _protAnte = /^(?:it|that (?:creature|permanent))$/i.test(_protSubject)
+        ? _protSentences.join('. ').match(/\b((?:another |up to \w+ )?target\s+[^.,]+?)(?=\s+(?:and|until)\b|[.,]|$)/i) : null;
+      filterText = _protAnte ? _protAnte[1] : _protSubject;
+    }
     if (!filterText) continue;
     // "You and creatures you control" → "creatures you control" (player protection isn't modeled)
     if (/^you\s+and\s+/i.test(filterText) && /\byou (?:control|own)\b/i.test(protMatch[0])) {
@@ -3840,7 +3861,9 @@ function parseCardEffects(permanent, card, opts = {}) {
     }
     if (!filterReferencesPermanents(filterText)) continue;
     const splitAbilities = _splitProtectionAbilities(rawAbility);
-    const { fn, desc, isSelf, isTargeted } = buildAppliesToFromText(filterText);
+    const { fn, desc, isSelf, isTargeted: _protBuiltTargeted } = buildAppliesToFromText(filterText);
+    // "X target creatures" (Prismatic Boon) names targets the filter builder has no count for.
+    const isTargeted = _protBuiltTargeted || (!isSelf && /^(?:\w+\s+)?target\s/i.test(filterText));
     const selfAffect = isSelf ? true : detectSelfAffect(filterText);
     const protCond = _getConditionForPos(protMatch.index);
     for (const abilityCapitalized of splitAbilities) {
