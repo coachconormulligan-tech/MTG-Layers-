@@ -83,3 +83,47 @@ function _triggerConditionCommaIndex(text) {
   const end = text.indexOf(',', idx + 1 + list[0].length - 1);
   return end < 0 ? idx : end;
 }
+
+// Fire-time values for "base power/toughness becomes equal to …" abilities. The effect locks in
+// a number as the ability resolves (CR 608.2h), so the text is rewritten with that number from
+// the snapshot the ability was fired against and then parsed as a plain "has base power N".
+//   "…base power and toughness of other creatures you control become equal to this card's
+//    power and toughness" (Tanazir Quandrix)           → "… become 4/4"
+//   "this creature's base power becomes equal to the number of Towns you control" (PuPu UFO)
+//   "this creature's base toughness becomes equal to 1 plus the number of creature cards in
+//    your graveyard" (Wall of Tombstones)
+//   "this card's base power become 1 plus the greatest power among other creatures you
+//    control" (Arni Brokenbrow)
+function _lockFireTimeBasePT(text, states, sourceId) {
+  const src = states && states.get(sourceId);
+  if (!src || !/\bbase (?:power|toughness)\b/i.test(text)) return text;
+  const p = src.power || 0, t = src.toughness || 0;
+  const SELF = "this (?:card|creature|permanent)'s";
+  text = text
+    .replace(new RegExp("\\b(base power and toughness\\b[^.\\n]*?\\bbecomes?) equal to " + SELF + " power and toughness\\b", 'gi'), `$1 ${p}/${t}`)
+    .replace(new RegExp("\\b(base power and toughness\\b[^.\\n]*?\\bbecomes?) equal to " + SELF + " power\\b", 'gi'), `$1 ${p}/${p}`)
+    .replace(/\bIts (base power and toughness) becomes? (\d+\/\d+)/g, 'It has $1 $2')
+    .replace(/\bits (base power and toughness) becomes? (\d+\/\d+)/g, 'it has $1 $2');
+  const single = new RegExp("\\b(?:you may have )?(this (?:card|creature|permanent))'s base (power|toughness) becomes? (?:equal to )?(?:(\\d+) plus )?the (number of|greatest power among) ([^.;\\n]+?)(?=\\s+until\\b|[.;\\n]|$)", 'gi');
+  return text.replace(single, (whole, subj, stat, plus, kind, desc) => {
+    let n = null;
+    if (/^number/i.test(kind)) {
+      n = _computeForEachCount(desc.trim(), states, src, null);
+      const own = desc.trim().match(/^(\w+) cards in your graveyard$/i);
+      if (n == null && own) {
+        const me = (Battlefield.players || []).find(pl => pl.id === (src.controller || 'player_0'));
+        n = ((me && me.graveyard) || []).filter(c => _zoneCardMatchesQualifier(c, own[1])).length;
+      } else if (n == null && /^\w+ (?:you control|on the battlefield)$/i.test(desc.trim())) {
+        n = _computeCountClause(desc, states, src);
+      }
+    } else if (/^other creatures you control$/i.test(desc.trim())) {
+      n = 0;
+      for (const [id, st] of states) {
+        if (id === sourceId || !st.types || !st.types.includes('Creature') || st.controller !== src.controller) continue;
+        n = Math.max(n, st.power || 0);
+      }
+    }
+    if (n === null || n === undefined) return whole;
+    return `${subj} has base ${stat.toLowerCase()} ${n + (plus ? parseInt(plus, 10) : 0)}`;
+  });
+}

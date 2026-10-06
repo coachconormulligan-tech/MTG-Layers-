@@ -511,6 +511,9 @@ function _allXAreAutoComputable(oracleText) {
   text = text.replace(
     /[+-]X\/[+-](?:X|0)(?:\s+until\s+[^,.;\n]+)?,?\s+where\s+X\s+is\s+(?:its|this\s+(?:creature|permanent|card)['’]?s?)\s+(?:power|toughness)/gi, ''
   );
+  // Strip "…base power and toughness … become X/X until end of turn, where X is this creature's
+  // power" (Unruly Krasis): the number is read off the creature when the ability is fired.
+  text = text.replace(/\bX\/X(?=[^.\n]*\bwhere\s+X\s+is\s+this\s+(?:creature|permanent|card)'?s?\s+(?:power|toughness)\b)/gi, '');
   // Strip "put X +N/+N counters on TARGET, where X is this creature's power/toughness/mana value"
   text = text.replace(
     /put\s+X\s+[^\n.;]+?where\s+X\s+is\s+(?:this\s+(?:creature|permanent|card)'?s?\s+)?(?:power|toughness|mana\s+value)[^\n.;]*/gi, ''
@@ -840,6 +843,9 @@ function parseCardEffects(permanent, card, opts = {}) {
     oracle = oracle.replace(/\b[Ss]he's\b/g, 'this card is');
     oracle = oracle.replace(/\b[Hh]e\s+(is|has|gains?|loses?|gets?|becomes?|can't|doesn't|isn't)\b/g, 'this card $1');
     oracle = oracle.replace(/\b[Ss]he\s+(is|has|gains?|loses?|gets?|becomes?|can't|doesn't|isn't)\b/g, 'this card $1');
+    // "put a +1/+1 counter on this card and he gains flying" (Machine Man): two things happen to
+    // the same card, so the second is a sentence of its own.
+    oracle = oracle.replace(/\b(on this card) and this card (gains?|gets?|has|becomes?)\b/gi, '$1. This card $2');
     // "on him" / "on her" → "on it" for counter references
     oracle = oracle.replace(/\bon him\b/gi, 'on it');
     oracle = oracle.replace(/\bon her\b/gi, 'on it');
@@ -2248,7 +2254,14 @@ function parseCardEffects(permanent, card, opts = {}) {
     if (/\.\s/.test(filterText)) {
       const _lastSentence = filterText.split(/\.\s+/).pop().trim();
       if (/^(?:(?:up to \w+|any number of|\w+ or \w+|\w+)\s+(?:other\s+)?)?target\s/i.test(_lastSentence)) filterText = _lastSentence;
+      // "Put two +1/+1 counters on this card. This card becomes a God Warrior Hero" (Donald Blake).
+      // Not on a triggered line read as a whole card ("When … dies, return it. She's a land named
+      // Moon", Princess Yue): that sentence belongs to the trigger and is parsed when it fires.
+      else if (/^this (?:card|creature|permanent|token)$/i.test(_lastSentence) &&
+               !_isInTriggeredSentence(mStart + setTypeMatch[0].search(/\S/))) filterText = _lastSentence;
     }
+    // "You may have target land become a Plains" (Graceful Antelope): the land is the subject.
+    filterText = filterText.replace(/^you may have\s+(?=(?:up to \w+\s+)?(?:another\s+|other\s+)?target\b)/i, '');
     // "…target creature or planeswalker that's green or white" (Noxious Grasp): a relative
     // clause describing the object, not a sentence that sets anything.
     if (/\bthat$/i.test(filterText)) continue;
@@ -2309,7 +2322,7 @@ function parseCardEffects(permanent, card, opts = {}) {
 
     // Strip "until end of turn" / "until your next turn" duration clauses from becomesText.
     // Without this, "creature until end of turn" adds "Until", "End", "Turn" as fake subtypes.
-    becomesText = becomesText.replace(/\s+until\s+(?:end\s+of\s+(?:turn|combat|your\s+next\s+turn)|your\s+next\s+turn|the\s+end\s+of\s+(?:turn|combat)|beginning\s+of\s+(?:your|their)\s+next\s+\w+)/i, '').trim();
+    becomesText = becomesText.replace(/\s+until\s+(?:end\s+of\s+(?:turn|combat|your\s+next\s+turn)|your\s+next\s+turn|the\s+end\s+of\s+(?:turn|combat)|beginning\s+of\s+(?:your|their)\s+next\s+\w+|this\s+(?:creature|card|permanent)\s+leaves\s+the\s+battlefield|its\s+controller's\s+next\s+untap\s+step|the\s+next\s+end\s+step)/i, '').trim();
 
     // Strip trailing "and gets +X/+Y" (e.g. "becomes green and gets +1/+0") so the "get" skip-word
     // doesn't abort the whole match. The boost itself is handled separately by boostRegex.
@@ -2405,9 +2418,12 @@ function parseCardEffects(permanent, card, opts = {}) {
     if (skipWords.some(w => bLower.includes(w))) continue;
 
     const fLower = filterText.toLowerCase();
+    // A closing "… an opponent controls" only says whose permanents (Kukemssa Serpent: "Target
+    // land an opponent controls becomes an Island"); players anywhere else are not a subject.
+    const _fNoCtrl = fLower.replace(/\s+(?:an opponent|your opponents|target opponent|target player) controls?$/, '');
     if (fLower.includes('if ') || fLower.includes('when ') || fLower.includes('whenever ') ||
         fLower.includes('that ') || (fLower.includes('with ') && !/\bwith\s+(?:a|an)?\s*[\w+/]+\s+counters?\s+on\b/i.test(fLower)) || fLower.includes('enchanted') ||
-        fLower.includes('equipped') || fLower.includes('opponent') || fLower.includes('player') ||
+        fLower.includes('equipped') || _fNoCtrl.includes('opponent') || _fNoCtrl.includes('player') ||
         fLower.includes('hand') || fLower.includes('library') || fLower.includes('graveyard') ||
         fLower.includes('life') || fLower.includes('spell') || fLower.length > 80) continue;
 

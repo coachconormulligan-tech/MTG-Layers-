@@ -1,0 +1,20 @@
+{
+  "name": "Graceful Antelope / Gaea's Liege — target land changes type for an unusual duration",
+  "notes": "Fourth sweep list (2026-10-06). \"Target land becomes a Forest until this creature leaves the battlefield\" read the duration as part of the type and produced nothing (also \"until its controller's next untap step\", Orcish Farmer). And \"you may have target land become a Plains\" took \"you may have target land\" as its subject, which is not a target. The Island the Antelope points at is a Plains, the Swamp the Liege points at is a Forest, and the Mountain nobody pointed at is still a Mountain.",
+  "steps": [
+    { "add": "Island", "as": "island" },
+    { "add": "Swamp", "as": "swamp" },
+    { "add": "Mountain", "as": "mountain" },
+    { "add": "Graceful Antelope", "as": "antelope" },
+    { "add": "Gaea's Liege", "as": "liege" },
+    { "fire": "@antelope", "trigger": 1, "as": "t1" },
+    { "call": ["setTarget", "@t1", "@island"] },
+    { "fire": "@liege", "activated": 0, "as": "a1" },
+    { "call": ["setTarget", "@a1", "@swamp"] }
+  ],
+  "asserts": [
+    { "perm": "Island", "final": { "subtypes": ["Plains"] } },
+    { "perm": "Swamp", "final": { "subtypes": ["Forest"] } },
+    { "perm": "Mountain", "final": { "subtypes": ["Mountain"] } }
+  ]
+}

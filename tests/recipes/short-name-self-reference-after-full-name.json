@@ -1,0 +1,36 @@
+{
+  "name": "Short-name self references — Maarika and Óin",
+  "notes": "Fourth sweep list (2026-10-06). A card that gives its full name once and its short name afterwards (\"Maarika, Brutal Gladiator must be blocked if able. … Maarika has indestructible\") only had the full name read as itself, so the second sentence did nothing; and \\b never matched before the accented letter in \"Óin\". Both now parse. The first word of a name is not treated as a short name when it is a type word (Rat Colony's \"each other Rat\").",
+  "steps": [
+    {
+      "add": "Maarika, Brutal Gladiator",
+      "as": "maarika"
+    },
+    {
+      "add": "Óin the Brave",
+      "as": "oin"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Maarika, Brutal Gladiator",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Indestructible"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Óin the Brave",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Haste"
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -600,10 +600,21 @@ function _replaceProperNounSelfRef(cardName, oracleText, isToken = false) {
   }
   // Sort candidates longest first to prefer full matches
   candidates.sort((a, b) => b.length - a.length);
+  // A card often gives its full name once and its short name after that ("Maarika, Brutal
+  // Gladiator must be blocked … Maarika has indestructible"), so once one form has matched,
+  // the shorter forms are replaced as well. An article is never a short name.
+  let matchedLonger = false;
   for (const candidate of candidates) {
+    // … and neither is a type word ("Rat Colony … for each other Rat you control").
+    if (matchedLonger && candidate === firstWord && candidate !== normalizedName.slice(0, Math.max(commaIdx, 0)).trim() &&
+        (/^(?:the|a|an|of|to|in)$/i.test(candidate) || normalizeTypeWord(candidate.toLowerCase()) ||
+         (typeof TypeCatalog !== 'undefined' && TypeCatalog.classifySubtype && TypeCatalog.classifySubtype(candidate) !== 'unknown'))) continue;
     const escaped = candidate.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const regex = new RegExp('\\b' + escaped + '\\b', 'g');
+    // Letter-aware boundaries: \b does not see "Ó" as a word character (Óin the Brave).
+    const regex = new RegExp('(?<![\\p{L}\\p{N}_])' + escaped + '(?![\\p{L}\\p{N}_])', 'gu');
     if (!regex.test(result)) continue;
+    regex.lastIndex = 0;
+    matchedLonger = true;
     // Only replace in subject position: start of line/sentence, after comma/semicolon,
     // or after clause words. NOT after "a/an", "is a", "becomes a", "type", "subtype".
     // This prevents replacing creature-type names (e.g. "is a colorless Noggle").
@@ -625,7 +636,6 @@ function _replaceProperNounSelfRef(cardName, oracleText, isToken = false) {
       }
       return selfWord;
     });
-    break;
   }
   return result;
 }

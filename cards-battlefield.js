@@ -403,8 +403,8 @@ const Battlefield = {
     if (/\bX\b/.test(parsedEffectText) && firedAtStates && sourcePermId) {
       const sourceFinalState = firedAtStates.get(sourcePermId);
       if (sourceFinalState) {
-        const powerMatch = parsedEffectText.match(/,?\s*where\s+X\s+is\s+this\s+creature'?s?\s+power\b/i);
-        const toughMatch = parsedEffectText.match(/,?\s*where\s+X\s+is\s+this\s+creature'?s?\s+toughness\b/i);
+        const powerMatch = parsedEffectText.match(/,?\s*where\s+X\s+is\s+this\s+(?:creature|card|permanent)'?s?\s+power\b/i);
+        const toughMatch = parsedEffectText.match(/,?\s*where\s+X\s+is\s+this\s+(?:creature|card|permanent)'?s?\s+toughness\b/i);
         const mvMatch    = parsedEffectText.match(/,?\s*where\s+X\s+is\s+(?:this\s+(?:card|permanent|creature)'?s?\s+)?mana\s+value\b/i);
         if (powerMatch) {
           const xVal = sourceFinalState.power || 0;
@@ -424,6 +424,8 @@ const Battlefield = {
         }
       }
     }
+
+    if (firedAtStates && sourcePermId) parsedEffectText = _lockFireTimeBasePT(parsedEffectText, firedAtStates, sourcePermId);
 
     // "where X is the number of [gameState desc]" — snapshot count at fire time so the
     // displayed effect text and the P/T boost are both frozen to the board state at resolution,
