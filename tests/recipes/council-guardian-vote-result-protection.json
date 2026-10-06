@@ -1,0 +1,14 @@
+{
+  "name": "Council Guardian — protection from the colors that won the vote, on itself only",
+  "notes": "\"Will of the council — When this creature enters, starting with you, each player votes for blue, black, red, or green. This creature gains protection from each color with the most votes or tied for most votes.\" The protection parser took the vote sentence as part of the subject, so the fired trigger gave every permanent the literal \"Protection from each color with the most votes …\". The subject is now the last sentence of the capture (\"This creature\"), and the site's vote pop-up (parseVoteOptions / resolveVoteText in cards-text-utils.js) rewrites the effect for the option(s) picked as having the most votes. Here blue and red tied.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Council Guardian", "as": "guardian" },
+    { "fire": "@guardian", "trigger": 0, "vote": ["blue", "red"], "as": "fired" }
+  ],
+  "asserts": [
+    { "perm": "Council Guardian", "final": { "abilities": { "$includes": ["Protection from blue", "Protection from red"] } } },
+    { "perm": "Council Guardian", "final": { "abilities": { "$excludes": ["Protection from black", "Protection from green"] } } },
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$excludes": ["Protection from blue", "Protection from red"] } } }
+  ]
+}

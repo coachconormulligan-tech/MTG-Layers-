@@ -377,6 +377,43 @@ function _resolveTheyPronoun(text) {
   }).join('\n');
 }
 
+/* Voting ("Will of the council — …, starting with you, each player votes for A, B, or C. …").
+   parseVoteOptions(text) → { options, decidedByMost } or null when the text holds no vote.
+   decidedByMost is true when the outcome depends on which option(s) got the most votes
+   ("each color with the most votes or tied for most votes", "If A gets more votes, …");
+   "for each A vote" cards (Council's dilemma) count votes instead and are left as written.
+   resolveVoteText(text, winners) rewrites the effect for the option(s) that got the most
+   votes — more than one when they tied:
+     "… This creature gains protection from each color with the most votes or tied for most votes."
+        + [blue, red] → "This creature gains protection from blue and from red."
+     "… If sickness gets more votes, X. If psychosis gets more votes or the vote is tied, Y."
+        + [sickness] → "X."      + [psychosis] or a tie → "Y." */
+const _VOTE_SENTENCE_RE = /(?:starting with you,\s+)?each player (?:secretly )?votes for ([^.]+?)(?:,? then those votes are revealed)?\.\s*/i;
+function parseVoteOptions(text) {
+  const m = String(text || '').match(_VOTE_SENTENCE_RE);
+  if (!m) return null;
+  const options = m[1].split(/,\s*(?:or\s+)?|\s+or\s+/).map(s => s.trim()).filter(Boolean);
+  if (options.length < 2) return null;
+  return { options, decidedByMost: /\bmost votes\b|\bgets more votes\b/i.test(text) };
+}
+function resolveVoteText(text, winners) {
+  winners = (winners || []).map(w => String(w).toLowerCase());
+  if (!winners.length || !parseVoteOptions(text)) return text;
+  const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+  const list = (items, lead) => items.length <= 2 ? items.map(i => lead + i).join(' and ')
+    : items.slice(0, -1).map(i => lead + i).join(', ') + ', and ' + lead + items[items.length - 1];
+  let out = text.replace(_VOTE_SENTENCE_RE, '')
+    .replace(/\b(from\s+)?each \w+ with the most votes or tied for most votes/gi,
+      (_, from) => list(winners, from ? 'from ' : ''));
+  out = _splitSentencesOutsideQuotes(out).map(sentence => {
+    const b = sentence.match(/^If (\w+) gets more votes( or the vote is tied)?,\s+([\s\S]+)$/i);
+    if (!b) return sentence;
+    const applies = winners.length === 1 ? winners[0] === b[1].toLowerCase() : !!b[2];
+    return applies ? cap(b[3]) : '';
+  }).filter(Boolean).join(' ');
+  return cap(out.trim());
+}
+
 /* In a spell, give a pronoun-subject sentence an explicit target subject where the generic
    parsers have no pronoun form of their own:
      "Return target creature card … to the battlefield. It's a Spirit in addition to its other types."
@@ -472,6 +509,9 @@ const _BRANCH_CAST_CONDITIONS = [
   [/^(\w+) or more mana was spent to cast that spell$/i, '$1 or more mana spent'],
   [/^you cast this spell during your main phase$/i, 'Cast in your main phase'],
   [/^evidence was collected$/i, 'Evidence collected'],
+  // A vote on a spell (Bite of the Black Rose). The other branch reads "… gets more votes or
+  // the vote is tied", which this does not match, so the spell still has a single toggle.
+  [/^(\w+) gets more votes$/i, '$1 gets more votes'],
 ];
 // "If <cast condition>, <body>" → { label, body }, or null.
 function _branchCastCondition(sentence) {
@@ -526,7 +566,7 @@ function _splitConditionalBranches(text, isSpell, canParse) {
   const lines = text.split('\n');
   const origLines = lines.slice();
   const out = { text, baseLineCount: lines.length, branchLines: new Map(), alwaysOnLines: new Set(), costLabel: null };
-  if (!/\botherwise,|\bif this spell(?:'s \w+ cost)? was\b|\bto cast (?:this|that) spell,|\bif you cast this spell during\b|\bif evidence was collected\b/i.test(text)) return out;
+  if (!/\botherwise,|\bif this spell(?:'s \w+ cost)? was\b|\bto cast (?:this|that) spell,|\bif you cast this spell during\b|\bif evidence was collected\b|\bgets more votes,/i.test(text)) return out;
   // One toggle per spell: a card with two different cast conditions (Cankerous Thirst's {B}
   // and {G}) cannot be told apart by it, so its branches are left where they are.
   const castLabels = new Set();

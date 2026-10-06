@@ -1,0 +1,1827 @@
+{
+ "name": "Goblin Wizard — a protection grant inside an activated or triggered ability is not static",
+ "notes": "Found by tests/sweep.py. protectionRegex (the \"[filter] gains/has protection from X\" parser) had no activated/triggered/quote guard, so \"{R}: Target Goblin gains protection from white until end of turn.\" also produced a static global layer-6 ADD_ABILITY the moment the card was on the battlefield, giving every permanent \"Protection from white until end of turn\". Same for Mother of Runes (\"{T}: Target creature you control gains protection from the color of your choice …\"), Sejiri Steppe's enters trigger and Teroh's Vanguard's quoted granted trigger. Here nothing is fired except Goblin Wizard's ability at Goblin Piker, so only the Piker may have protection.",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Grizzly Bears",
+    "as": "bears"
+   },
+   {
+    "add": "Goblin Piker",
+    "as": "piker"
+   },
+   {
+    "add": "Goblin Wizard",
+    "as": "wizard"
+   },
+   {
+    "add": "Mother of Runes",
+    "as": "mom"
+   },
+   {
+    "add": "Sejiri Steppe",
+    "as": "steppe"
+   },
+   {
+    "add": "Teroh's Vanguard",
+    "as": "vanguard"
+   },
+   {
+    "fire": "@wizard",
+    "activated": 1,
+    "as": "fired"
+   },
+   {
+    "call": [
+     "setTarget",
+     "@fired",
+     "@piker"
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Goblin Piker",
+   "final": {
+    "abilities": {
+     "$includes": [
+      "Protection from white until end of turn"
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Grizzly Bears",
+   "final": {
+    "abilities": {
+     "$excludes": [
+      "Protection from white until end of turn",
+      "Protection from the color of your choice until end of turn",
+      "Protection from black until end of turn"
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Goblin Wizard",
+   "final": {
+    "abilities": {
+     "$excludes": [
+      "Protection from white until end of turn",
+      "Protection from the color of your choice until end of turn",
+      "Protection from black until end of turn"
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Mother of Runes",
+   "final": {
+    "abilities": {
+     "$excludes": [
+      "Protection from white until end of turn",
+      "Protection from the color of your choice until end of turn",
+      "Protection from black until end of turn"
+     ]
+    }
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+     "multiverse_ids": [
+      129586
+     ],
+     "mtgo_id": 27400,
+     "mtgo_foil_id": 27401,
+     "tcgplayer_id": 15153,
+     "cardmarket_id": 16432,
+     "name": "Grizzly Bears",
+     "lang": "en",
+     "released_at": "2007-07-13",
+     "uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "scryfall_uri": "https://scryfall.com/card/10e/268/grizzly-bears?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:43:21Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "normal": "https://cards.scryfall.io/normal/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "large": "https://cards.scryfall.io/large/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "png": "https://cards.scryfall.io/png/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.png?1783943001",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "grid": "https://cards.scryfall.io/grid/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "display": "https://cards.scryfall.io/display/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "art": "https://cards.scryfall.io/art/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "crop": "https://cards.scryfall.io/crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001"
+     },
+     "mana_cost": "{1}{G}",
+     "cmc": 2,
+     "type_line": "Creature — Bear",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set": "10e",
+     "set_name": "Tenth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A14c8f55d-d177-4c25-a931-ebeb9e6062a0&unique=prints",
+     "collector_number": "268",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"We cannot forget that among all of Dominaria's wonders, a system of life exists, with prey and predators that will never fight wars nor vie for ancient power.\"\n—Jolrael, empress of beasts",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "D. J. Cleland-Hura",
+     "artist_ids": [
+      "87d21070-2432-4167-8aab-5968af1c14f3"
+     ],
+     "illustration_id": "066bfe81-0f53-43da-a074-b2ecc5dcda72",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 8114,
+     "penny_rank": 10982,
+     "prices": {
+      "usd": "0.22",
+      "usd_foil": "3.29",
+      "usd_etched": null,
+      "eur": "0.11",
+      "eur_foil": "1.97",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129586&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "edhrec": "https://edhrec.com/route/?cc=Grizzly+Bears"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15153%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16432&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27400?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "083ec3e7-950c-4e9d-aba5-02ed13d723f0",
+     "oracle_id": "50608184-90d3-43d2-a221-deb186c78323",
+     "multiverse_ids": [
+      221199
+     ],
+     "mtgo_id": 41147,
+     "mtgo_foil_id": 41148,
+     "tcgplayer_id": 47244,
+     "cardmarket_id": 247905,
+     "name": "Goblin Piker",
+     "lang": "en",
+     "released_at": "2011-07-15",
+     "uri": "https://api.scryfall.com/cards/083ec3e7-950c-4e9d-aba5-02ed13d723f0",
+     "scryfall_uri": "https://scryfall.com/card/m12/141/goblin-piker?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:11:10Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/0/8/083ec3e7-950c-4e9d-aba5-02ed13d723f0.jpg?1783941070",
+      "normal": "https://cards.scryfall.io/normal/front/0/8/083ec3e7-950c-4e9d-aba5-02ed13d723f0.jpg?1783941070",
+      "large": "https://cards.scryfall.io/large/front/0/8/083ec3e7-950c-4e9d-aba5-02ed13d723f0.jpg?1783941070",
+      "png": "https://cards.scryfall.io/png/front/0/8/083ec3e7-950c-4e9d-aba5-02ed13d723f0.png?1783941070",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/0/8/083ec3e7-950c-4e9d-aba5-02ed13d723f0.jpg?1783941070",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/0/8/083ec3e7-950c-4e9d-aba5-02ed13d723f0.jpg?1783941070",
+      "thumb": "https://cards.scryfall.io/thumb/front/0/8/083ec3e7-950c-4e9d-aba5-02ed13d723f0.webp?1783941070",
+      "grid": "https://cards.scryfall.io/grid/front/0/8/083ec3e7-950c-4e9d-aba5-02ed13d723f0.webp?1783941070",
+      "display": "https://cards.scryfall.io/display/front/0/8/083ec3e7-950c-4e9d-aba5-02ed13d723f0.webp?1783941070",
+      "art": "https://cards.scryfall.io/art/front/0/8/083ec3e7-950c-4e9d-aba5-02ed13d723f0.webp?1783941070",
+      "crop": "https://cards.scryfall.io/crop/front/0/8/083ec3e7-950c-4e9d-aba5-02ed13d723f0.webp?1783941070"
+     },
+     "mana_cost": "{1}{R}",
+     "cmc": 2,
+     "type_line": "Creature — Goblin Warrior",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "1",
+     "colors": [
+      "R"
+     ],
+     "color_identity": [
+      "R"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "5cdd2643-229c-4441-a62a-c34e4b531e1c",
+     "set": "m12",
+     "set_name": "Magic 2012",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/5cdd2643-229c-4441-a62a-c34e4b531e1c",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Am12&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/m12?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/083ec3e7-950c-4e9d-aba5-02ed13d723f0/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A50608184-90d3-43d2-a221-deb186c78323&unique=prints",
+     "collector_number": "141",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "Once he'd worked out which end of the thing was sharp, he was promoted to guard duty.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "DiTerlizzi",
+     "artist_ids": [
+      "ed44dce4-30cf-4c2c-b2e1-a19ba2295690"
+     ],
+     "illustration_id": "71c18550-7b9e-4974-94a7-73f32a279f23",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 26004,
+     "prices": {
+      "usd": "0.04",
+      "usd_foil": "0.22",
+      "usd_etched": null,
+      "eur": "0.05",
+      "eur_foil": "0.17",
+      "tix": "0.04"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=221199&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGoblin%2BPiker",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGoblin%2BPiker",
+      "edhrec": "https://edhrec.com/route/?cc=Goblin+Piker"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F47244%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=247905&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/41147?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "09167603-93ab-488b-88eb-37f7cf9e3e19",
+     "oracle_id": "912c99a0-ee97-4bb9-8ab7-2e469d74fa03",
+     "multiverse_ids": [
+      159758
+     ],
+     "mtgo_id": 27961,
+     "mtgo_foil_id": 27962,
+     "name": "Goblin Wizard",
+     "lang": "en",
+     "released_at": "2007-09-10",
+     "uri": "https://api.scryfall.com/cards/09167603-93ab-488b-88eb-37f7cf9e3e19",
+     "scryfall_uri": "https://scryfall.com/card/me1/97/goblin-wizard?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:42:24Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/0/9/09167603-93ab-488b-88eb-37f7cf9e3e19.jpg?1783942944",
+      "normal": "https://cards.scryfall.io/normal/front/0/9/09167603-93ab-488b-88eb-37f7cf9e3e19.jpg?1783942944",
+      "large": "https://cards.scryfall.io/large/front/0/9/09167603-93ab-488b-88eb-37f7cf9e3e19.jpg?1783942944",
+      "png": "https://cards.scryfall.io/png/front/0/9/09167603-93ab-488b-88eb-37f7cf9e3e19.png?1783942944",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/0/9/09167603-93ab-488b-88eb-37f7cf9e3e19.jpg?1783942944",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/0/9/09167603-93ab-488b-88eb-37f7cf9e3e19.jpg?1783942944",
+      "thumb": "https://cards.scryfall.io/thumb/front/0/9/09167603-93ab-488b-88eb-37f7cf9e3e19.webp?1783942944",
+      "grid": "https://cards.scryfall.io/grid/front/0/9/09167603-93ab-488b-88eb-37f7cf9e3e19.webp?1783942944",
+      "display": "https://cards.scryfall.io/display/front/0/9/09167603-93ab-488b-88eb-37f7cf9e3e19.webp?1783942944",
+      "art": "https://cards.scryfall.io/art/front/0/9/09167603-93ab-488b-88eb-37f7cf9e3e19.webp?1783942944",
+      "crop": "https://cards.scryfall.io/crop/front/0/9/09167603-93ab-488b-88eb-37f7cf9e3e19.webp?1783942944"
+     },
+     "mana_cost": "{2}{R}{R}",
+     "cmc": 4,
+     "type_line": "Creature — Goblin Wizard",
+     "oracle_text": "{T}: You may put a Goblin permanent card from your hand onto the battlefield.\n{R}: Target Goblin gains protection from white until end of turn.",
+     "power": "1",
+     "toughness": "1",
+     "colors": [
+      "R"
+     ],
+     "color_identity": [
+      "R"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "mtgo"
+     ],
+     "reserved": true,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "407d388d-1abf-4c1d-b0c6-f56280898a1a",
+     "set": "me1",
+     "set_name": "Masters Edition",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/407d388d-1abf-4c1d-b0c6-f56280898a1a",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Ame1&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/me1?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/09167603-93ab-488b-88eb-37f7cf9e3e19/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A912c99a0-ee97-4bb9-8ab7-2e469d74fa03&unique=prints",
+     "collector_number": "97",
+     "digital": true,
+     "rarity": "rare",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Daniel Gelon",
+     "artist_ids": [
+      "63ac31a8-dd1a-4679-9f82-ece89429a084"
+     ],
+     "illustration_id": "3472efed-d20b-4646-952b-01a948740625",
+     "border_color": "black",
+     "frame": "1997",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 17153,
+     "prices": {
+      "usd": null,
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": null,
+      "tix": "0.17"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=159758&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGoblin%2BWizard",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGoblin%2BWizard",
+      "edhrec": "https://edhrec.com/route/?cc=Goblin+Wizard"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fmagic%2Fproduct%3FproductLineName%3Dmagic%26q%3DGoblin%2BWizard%26view%3Dgrid",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products/Search?referrer=scryfall&searchString=Goblin+Wizard&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27961?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "a5e19147-e459-43a6-8ef0-e37968a462e3",
+     "oracle_id": "60433b48-d27f-413c-905c-43839b1943f1",
+     "multiverse_ids": [
+      567519
+     ],
+     "tcgplayer_id": 273724,
+     "cardmarket_id": 661779,
+     "name": "Mother of Runes",
+     "lang": "en",
+     "released_at": "2022-06-10",
+     "uri": "https://api.scryfall.com/cards/a5e19147-e459-43a6-8ef0-e37968a462e3",
+     "scryfall_uri": "https://scryfall.com/card/clb/702/mother-of-runes?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T06:01:25Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/a/5/a5e19147-e459-43a6-8ef0-e37968a462e3.jpg?1783922485",
+      "normal": "https://cards.scryfall.io/normal/front/a/5/a5e19147-e459-43a6-8ef0-e37968a462e3.jpg?1783922485",
+      "large": "https://cards.scryfall.io/large/front/a/5/a5e19147-e459-43a6-8ef0-e37968a462e3.jpg?1783922485",
+      "png": "https://cards.scryfall.io/png/front/a/5/a5e19147-e459-43a6-8ef0-e37968a462e3.png?1783922485",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/a/5/a5e19147-e459-43a6-8ef0-e37968a462e3.jpg?1783922485",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/a/5/a5e19147-e459-43a6-8ef0-e37968a462e3.jpg?1783922485",
+      "thumb": "https://cards.scryfall.io/thumb/front/a/5/a5e19147-e459-43a6-8ef0-e37968a462e3.webp?1783922485",
+      "grid": "https://cards.scryfall.io/grid/front/a/5/a5e19147-e459-43a6-8ef0-e37968a462e3.webp?1783922485",
+      "display": "https://cards.scryfall.io/display/front/a/5/a5e19147-e459-43a6-8ef0-e37968a462e3.webp?1783922485",
+      "art": "https://cards.scryfall.io/art/front/a/5/a5e19147-e459-43a6-8ef0-e37968a462e3.webp?1783922485",
+      "crop": "https://cards.scryfall.io/crop/front/a/5/a5e19147-e459-43a6-8ef0-e37968a462e3.webp?1783922485"
+     },
+     "mana_cost": "{W}",
+     "cmc": 1,
+     "type_line": "Creature — Human Cleric",
+     "oracle_text": "{T}: Target creature you control gains protection from the color of your choice until end of turn.",
+     "power": "1",
+     "toughness": "1",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "5e4c3fe8-fd57-4b20-ad56-c03790a16cea",
+     "set": "clb",
+     "set_name": "Commander Legends: Battle for Baldur's Gate",
+     "set_type": "draft_innovation",
+     "set_uri": "https://api.scryfall.com/sets/5e4c3fe8-fd57-4b20-ad56-c03790a16cea",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aclb&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/clb?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/a5e19147-e459-43a6-8ef0-e37968a462e3/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A60433b48-d27f-413c-905c-43839b1943f1&unique=prints",
+     "collector_number": "702",
+     "digital": false,
+     "rarity": "uncommon",
+     "flavor_text": "\"My family protects all families.\"",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Scott M. Fischer",
+     "artist_ids": [
+      "23b0cf43-3e43-44c6-8329-96446eca5bce"
+     ],
+     "illustration_id": "59f603b3-c842-4ba1-aede-25947f8831ee",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 506,
+     "penny_rank": 166,
+     "prices": {
+      "usd": "12.70",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "9.64",
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=567519&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DMother%2Bof%2BRunes",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DMother%2Bof%2BRunes",
+      "edhrec": "https://edhrec.com/route/?cc=Mother+of+Runes"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F273724%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=661779&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Mother+of+Runes&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 4,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_5",
+    "scryfallData": {
+     "object": "card",
+     "id": "d45b0ed8-8692-4fa7-b32c-30d29028da3d",
+     "oracle_id": "3dfbf95e-a91b-429c-96e2-95ac777e7027",
+     "multiverse_ids": [
+      243453
+     ],
+     "mtgo_id": 40202,
+     "mtgo_foil_id": 40203,
+     "tcgplayer_id": 46808,
+     "cardmarket_id": 245761,
+     "name": "Sejiri Steppe",
+     "lang": "en",
+     "released_at": "2011-04-01",
+     "uri": "https://api.scryfall.com/cards/d45b0ed8-8692-4fa7-b32c-30d29028da3d",
+     "scryfall_uri": "https://scryfall.com/card/ddg/36/sejiri-steppe?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:15:43Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/d/4/d45b0ed8-8692-4fa7-b32c-30d29028da3d.jpg?1783941343",
+      "normal": "https://cards.scryfall.io/normal/front/d/4/d45b0ed8-8692-4fa7-b32c-30d29028da3d.jpg?1783941343",
+      "large": "https://cards.scryfall.io/large/front/d/4/d45b0ed8-8692-4fa7-b32c-30d29028da3d.jpg?1783941343",
+      "png": "https://cards.scryfall.io/png/front/d/4/d45b0ed8-8692-4fa7-b32c-30d29028da3d.png?1783941343",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/d/4/d45b0ed8-8692-4fa7-b32c-30d29028da3d.jpg?1783941343",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/d/4/d45b0ed8-8692-4fa7-b32c-30d29028da3d.jpg?1783941343",
+      "thumb": "https://cards.scryfall.io/thumb/front/d/4/d45b0ed8-8692-4fa7-b32c-30d29028da3d.webp?1783941343",
+      "grid": "https://cards.scryfall.io/grid/front/d/4/d45b0ed8-8692-4fa7-b32c-30d29028da3d.webp?1783941343",
+      "display": "https://cards.scryfall.io/display/front/d/4/d45b0ed8-8692-4fa7-b32c-30d29028da3d.webp?1783941343",
+      "art": "https://cards.scryfall.io/art/front/d/4/d45b0ed8-8692-4fa7-b32c-30d29028da3d.webp?1783941343",
+      "crop": "https://cards.scryfall.io/crop/front/d/4/d45b0ed8-8692-4fa7-b32c-30d29028da3d.webp?1783941343"
+     },
+     "mana_cost": "",
+     "cmc": 0,
+     "type_line": "Land",
+     "oracle_text": "This land enters tapped.\nWhen this land enters, target creature you control gains protection from the color of your choice until end of turn.\n{T}: Add {W}.",
+     "colors": [],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [],
+     "produced_mana": [
+      "W"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "cf842e69-7a05-48e2-adac-fd177087caf5",
+     "set": "ddg",
+     "set_name": "Duel Decks: Knights vs. Dragons",
+     "set_type": "duel_deck",
+     "set_uri": "https://api.scryfall.com/sets/cf842e69-7a05-48e2-adac-fd177087caf5",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Addg&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/ddg?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/d45b0ed8-8692-4fa7-b32c-30d29028da3d/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A3dfbf95e-a91b-429c-96e2-95ac777e7027&unique=prints",
+     "collector_number": "36",
+     "digital": false,
+     "rarity": "common",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Anthony Francisco",
+     "artist_ids": [
+      "6ac24c4b-70e9-4286-8f4b-b40c92ab5847"
+     ],
+     "illustration_id": "6520d1e4-762a-42a6-9a71-93661a4bc895",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 11572,
+     "penny_rank": 4483,
+     "prices": {
+      "usd": "0.35",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.24",
+      "eur_foil": null,
+      "tix": "0.64"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=243453&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DSejiri%2BSteppe",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DSejiri%2BSteppe",
+      "edhrec": "https://edhrec.com/route/?cc=Sejiri+Steppe"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F46808%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=245761&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/40202?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 5,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_6",
+    "scryfallData": {
+     "object": "card",
+     "id": "1a39f909-7114-4482-8302-b2a56ca9f556",
+     "oracle_id": "32b0fc43-b5ce-4869-a780-946289305e5a",
+     "multiverse_ids": [
+      32205
+     ],
+     "mtgo_id": 17095,
+     "mtgo_foil_id": 17096,
+     "tcgplayer_id": 9677,
+     "cardmarket_id": 2288,
+     "name": "Teroh's Vanguard",
+     "lang": "en",
+     "released_at": "2002-02-04",
+     "uri": "https://api.scryfall.com/cards/1a39f909-7114-4482-8302-b2a56ca9f556",
+     "scryfall_uri": "https://scryfall.com/card/tor/19/terohs-vanguard?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T12:19:26Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/1/a/1a39f909-7114-4482-8302-b2a56ca9f556.jpg?1783945166",
+      "normal": "https://cards.scryfall.io/normal/front/1/a/1a39f909-7114-4482-8302-b2a56ca9f556.jpg?1783945166",
+      "large": "https://cards.scryfall.io/large/front/1/a/1a39f909-7114-4482-8302-b2a56ca9f556.jpg?1783945166",
+      "png": "https://cards.scryfall.io/png/front/1/a/1a39f909-7114-4482-8302-b2a56ca9f556.png?1783945166",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/1/a/1a39f909-7114-4482-8302-b2a56ca9f556.jpg?1783945166",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/1/a/1a39f909-7114-4482-8302-b2a56ca9f556.jpg?1783945166",
+      "thumb": "https://cards.scryfall.io/thumb/front/1/a/1a39f909-7114-4482-8302-b2a56ca9f556.webp?1783945166",
+      "grid": "https://cards.scryfall.io/grid/front/1/a/1a39f909-7114-4482-8302-b2a56ca9f556.webp?1783945166",
+      "display": "https://cards.scryfall.io/display/front/1/a/1a39f909-7114-4482-8302-b2a56ca9f556.webp?1783945166",
+      "art": "https://cards.scryfall.io/art/front/1/a/1a39f909-7114-4482-8302-b2a56ca9f556.webp?1783945166",
+      "crop": "https://cards.scryfall.io/crop/front/1/a/1a39f909-7114-4482-8302-b2a56ca9f556.webp?1783945166"
+     },
+     "mana_cost": "{3}{W}",
+     "cmc": 4,
+     "type_line": "Creature — Human Nomad",
+     "oracle_text": "Flash\nThreshold — As long as there are seven or more cards in your graveyard, this creature has \"When this creature enters, creatures you control gain protection from black until end of turn.\"",
+     "power": "2",
+     "toughness": "3",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [
+      "Threshold",
+      "Flash"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "e0b3fda1-a6ca-4996-849b-08b463d39484",
+     "set": "tor",
+     "set_name": "Torment",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/e0b3fda1-a6ca-4996-849b-08b463d39484",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Ator&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/tor?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/1a39f909-7114-4482-8302-b2a56ca9f556/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A32b0fc43-b5ce-4869-a780-946289305e5a&unique=prints",
+     "collector_number": "19",
+     "digital": false,
+     "rarity": "uncommon",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Greg Hildebrandt & Tim Hildebrandt",
+     "artist_ids": [
+      "020f967b-0d2f-4166-aabe-901dba8bc7ec",
+      "caa7228c-f74c-4145-91fb-1af8d623c353"
+     ],
+     "illustration_id": "1ccc0cb9-8f6a-46f9-81f1-9dc1fb28765c",
+     "border_color": "black",
+     "frame": "1997",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 32001,
+     "prices": {
+      "usd": "0.11",
+      "usd_foil": "0.67",
+      "usd_etched": null,
+      "eur": "0.07",
+      "eur_foil": "0.58",
+      "tix": "0.09"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=32205&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DTeroh%2527s%2BVanguard",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DTeroh%2527s%2BVanguard",
+      "edhrec": "https://edhrec.com/route/?cc=Teroh%27s+Vanguard"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F9677%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=2288&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/17095?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 6,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [
+   {
+    "id": "act_perm_3_1_7",
+    "kind": "activated",
+    "pseudoKind": "ability",
+    "sourceId": "perm_3",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 1,
+    "timestamp": 7,
+    "effectText": "Target Goblin gains protection from white until end of turn.",
+    "fullText": "{R}: Target Goblin gains protection from white until end of turn.",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Grizzly Bears",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Bear"
+       ],
+       "power": 2,
+       "toughness": 2,
+       "abilities": [],
+       "colors": [
+        "G"
+       ],
+       "manaValue": 2,
+       "manaCost": "{1}{G}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_2",
+      {
+       "name": "Goblin Piker",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Goblin",
+        "Warrior"
+       ],
+       "power": 2,
+       "toughness": 1,
+       "abilities": [],
+       "colors": [
+        "R"
+       ],
+       "manaValue": 2,
+       "manaCost": "{1}{R}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_3",
+      {
+       "name": "Goblin Wizard",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Goblin",
+        "Wizard"
+       ],
+       "power": 1,
+       "toughness": 1,
+       "abilities": [
+        "{T}: You may put a Goblin permanent card from your hand onto the battlefield.",
+        "{R}: Target Goblin gains protection from white until end of turn."
+       ],
+       "colors": [
+        "R"
+       ],
+       "manaValue": 4,
+       "manaCost": "{2}{R}{R}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "{T}: You may put a Goblin permanent card from your hand onto the battlefield.\n{R}: Target Goblin gains protection from white until end of turn.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "{T}: You may put a Goblin permanent card from your hand onto the battlefield.",
+        "{R}: Target Goblin gains protection from white until end of turn."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_4",
+      {
+       "name": "Mother of Runes",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Human",
+        "Cleric"
+       ],
+       "power": 1,
+       "toughness": 1,
+       "abilities": [
+        "{T}: Target creature you control gains protection from the color of your choice until end of turn."
+       ],
+       "colors": [
+        "W"
+       ],
+       "manaValue": 1,
+       "manaCost": "{W}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "{T}: Target creature you control gains protection from the color of your choice until end of turn.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "{T}: Target creature you control gains protection from the color of your choice until end of turn."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_5",
+      {
+       "name": "Sejiri Steppe",
+       "types": [
+        "Land"
+       ],
+       "supertypes": [],
+       "subtypes": [],
+       "power": null,
+       "toughness": null,
+       "abilities": [
+        "This land enters tapped.",
+        "When this land enters, target creature you control gains protection from the color of your choice until end of turn.",
+        "{T}: Add {W}."
+       ],
+       "colors": [],
+       "manaValue": 0,
+       "manaCost": "",
+       "isCreature": false,
+       "isToken": false,
+       "oracleText": "This land enters tapped.\nWhen this land enters, target creature you control gains protection from the color of your choice until end of turn.\n{T}: Add {W}.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "This land enters tapped.",
+        "When this land enters, target creature you control gains protection from the color of your choice until end of turn.",
+        "{T}: Add {W}."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_6",
+      {
+       "name": "Teroh's Vanguard",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Human",
+        "Nomad"
+       ],
+       "power": 2,
+       "toughness": 3,
+       "abilities": [
+        "Flash",
+        "Threshold — As long as there are seven or more cards in your graveyard, this creature has \"When this creature enters, creatures you control gain protection from black until end of turn.\"",
+        "When this creature enters, creatures you control gain protection from black until end of turn."
+       ],
+       "colors": [
+        "W"
+       ],
+       "manaValue": 4,
+       "manaCost": "{3}{W}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "Flash\nThreshold — As long as there are seven or more cards in your graveyard, this creature has \"When this creature enters, creatures you control gain protection from black until end of turn.\"",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "Flash",
+        "Threshold — As long as there are seven or more cards in your graveyard, this creature has \"When this creature enters, creatures you control gain protection from black until end of turn.\""
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Goblin Piker",
+       "imageUri": "https://cards.scryfall.io/small/front/0/8/083ec3e7-950c-4e9d-aba5-02ed13d723f0.jpg?1783941070",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Goblin",
+        "Warrior"
+       ],
+       "printedPower": 2,
+       "printedToughness": 1,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Goblin Wizard",
+       "imageUri": "https://cards.scryfall.io/small/front/0/9/09167603-93ab-488b-88eb-37f7cf9e3e19.jpg?1783942944",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Goblin",
+        "Wizard"
+       ],
+       "printedPower": 1,
+       "printedToughness": 1,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Mother of Runes",
+       "imageUri": "https://cards.scryfall.io/small/front/a/5/a5e19147-e459-43a6-8ef0-e37968a462e3.jpg?1783922485",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Human",
+        "Cleric"
+       ],
+       "printedPower": 1,
+       "printedToughness": 1,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_5",
+       "name": "Sejiri Steppe",
+       "imageUri": "https://cards.scryfall.io/small/front/d/4/d45b0ed8-8692-4fa7-b32c-30d29028da3d.jpg?1783941343",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Land"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 5
+      },
+      {
+       "id": "perm_6",
+       "name": "Teroh's Vanguard",
+       "imageUri": "https://cards.scryfall.io/small/front/1/a/1a39f909-7114-4482-8302-b2a56ca9f556.jpg?1783945166",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Human",
+        "Nomad"
+       ],
+       "printedPower": 2,
+       "printedToughness": 3,
+       "timestamp": 6
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    },
+    "primaryTarget": "perm_2",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 8,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null
+   }
+  ],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Grizzly Bears",
+    "final": {
+     "name": "Grizzly Bears",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Bear"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "G"
+     ],
+     "abilities": []
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Goblin Piker",
+    "final": {
+     "name": "Goblin Piker",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Goblin",
+      "Warrior"
+     ],
+     "power": 2,
+     "toughness": 1,
+     "colors": [
+      "R"
+     ],
+     "abilities": [
+      "Protection from white until end of turn"
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "Goblin Wizard (activated)"
+     ]
+    }
+   },
+   {
+    "perm": "Goblin Wizard",
+    "final": {
+     "name": "Goblin Wizard",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Goblin",
+      "Wizard"
+     ],
+     "power": 1,
+     "toughness": 1,
+     "colors": [
+      "R"
+     ],
+     "abilities": [
+      "{T}: You may put a Goblin permanent card from your hand onto the battlefield.",
+      "{R}: Target Goblin gains protection from white until end of turn."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Mother of Runes",
+    "final": {
+     "name": "Mother of Runes",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Human",
+      "Cleric"
+     ],
+     "power": 1,
+     "toughness": 1,
+     "colors": [
+      "W"
+     ],
+     "abilities": [
+      "{T}: Target creature you control gains protection from the color of your choice until end of turn."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Sejiri Steppe",
+    "final": {
+     "name": "Sejiri Steppe",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Land"
+     ],
+     "subtypes": [],
+     "power": null,
+     "toughness": null,
+     "colors": [],
+     "abilities": [
+      "This land enters tapped.",
+      "When this land enters, target creature you control gains protection from the color of your choice until end of turn.",
+      "{T}: Add {W}."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Teroh's Vanguard",
+    "final": {
+     "name": "Teroh's Vanguard",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Human",
+      "Nomad"
+     ],
+     "power": 2,
+     "toughness": 3,
+     "colors": [
+      "W"
+     ],
+     "abilities": [
+      "Flash",
+      "Threshold — As long as there are seven or more cards in your graveyard, this creature has \"When this creature enters, creatures you control gain protection from black until end of turn.\"",
+      "When this creature enters, creatures you control gain protection from black until end of turn."
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "Teroh's Vanguard"
+     ]
+    }
+   }
+  ],
+  "order": {
+   "6": [
+    "Teroh's Vanguard",
+    "Goblin Wizard (activated)"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Teroh's Vanguard",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "ability": "When this creature enters, creatures you control gain protection from black until end of turn."
+    }
+   },
+   {
+    "source": "Goblin Wizard (activated)",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "target": "Goblin Piker",
+    "params": {
+     "ability": "Protection from white until end of turn"
+    }
+   }
+  ]
+ }
+}

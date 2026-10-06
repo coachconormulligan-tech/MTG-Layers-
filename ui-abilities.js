@@ -20,15 +20,28 @@ function fireTriggeredAbility(permId, abilityIdx) {
     const condResult = _evaluateTriggerCondition(ifCondMatch[1].trim(), fState);
     if (condResult === false) return;
   }
-  const pseudo = Battlefield.addTriggeredAbility(permId, abilityIdx, t.effectText, t.fullText, finalStates);
+  // A vote decides the effect (Council Guardian): ask which option(s) got the most votes and
+  // fire the ability as it reads for that outcome.
+  const vote = parseVoteOptions(t.effectText);
+  if (vote && vote.decidedByMost) {
+    openVotePopup(t.fullText, vote.options, (winners) => {
+      _fireTriggeredWithText(permId, abilityIdx, resolveVoteText(t.effectText, winners), t.fullText, finalStates);
+    });
+    return;
+  }
+  _fireTriggeredWithText(permId, abilityIdx, t.effectText, t.fullText, finalStates);
+}
+
+function _fireTriggeredWithText(permId, abilityIdx, effectText, fullText, finalStates) {
+  const pseudo = Battlefield.addTriggeredAbility(permId, abilityIdx, effectText, fullText, finalStates);
   // Exchange of Words (text-swap) / Gilded Drake-style (control-swap) triggers:
   // parseCardEffects doesn't always emit these for the pronoun phrasings, so inject
   // them onto the pseudo-perm. Shared with board restore via Battlefield.
-  if (pseudo) Battlefield.injectTriggeredExchange(pseudo, permId, t.effectText);
+  if (pseudo) Battlefield.injectTriggeredExchange(pseudo, permId, effectText);
   // Princess Yue-style "dies → becomes a land named X" transform: deselect from all
   // targets, move timestamp to last, then rename (L3) / become a land (L4) / gain the
   // quoted ability (L6). No-op for any other trigger text.
-  if (pseudo) Battlefield.injectTriggeredBecomesLand(pseudo, permId, t.effectText);
+  if (pseudo) Battlefield.injectTriggeredBecomesLand(pseudo, permId, effectText);
   Battlefield.evaluate();
   renderAll();
 }
@@ -125,9 +138,60 @@ function fireActivatedAbility(permId, abilityIdx) {
     });
     return;
   }
+  const vote = parseVoteOptions(a.effectText);
+  if (vote && vote.decidedByMost) {
+    openVotePopup(a.fullText, vote.options, (winners) => {
+      Battlefield.addActivatedAbility(permId, abilityIdx, resolveVoteText(a.effectText, winners), a.fullText, finalStates);
+      Battlefield.evaluate();
+      renderAll();
+    });
+    return;
+  }
   Battlefield.addActivatedAbility(permId, abilityIdx, a.effectText, a.fullText, finalStates);
   Battlefield.evaluate();
   renderAll();
+}
+
+/* Vote result chooser: one checkbox per option of "each player votes for A, B, or C".
+   onConfirm receives the option(s) with the most votes — several when they tied. */
+function openVotePopup(promptText, options, onConfirm) {
+  let overlay = document.getElementById('vote-choice-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'vote-choice-overlay';
+    overlay.className = 'modal-overlay';
+    document.body.appendChild(overlay);
+  }
+  const close = () => { overlay.style.display = 'none'; };
+  window._voteChoiceConfirm = () => {
+    const winners = Array.from(overlay.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value);
+    if (!winners.length) return;
+    close();
+    onConfirm(winners);
+  };
+  window._voteChoiceChanged = () => {
+    const n = overlay.querySelectorAll('input[type="checkbox"]:checked').length;
+    const btn = overlay.querySelector('.vote-confirm-btn');
+    btn.disabled = n === 0;
+    btn.textContent = n > 1 ? 'Confirm tie' : 'Confirm';
+  };
+  overlay.onclick = (e) => { if (e.target === overlay) close(); };
+  overlay.style.display = 'flex';
+  overlay.innerHTML = `
+    <div class="modal ability-popup">
+      <div class="modal-header">
+        <h3>Vote result</h3>
+        <button class="modal-close" onclick="document.getElementById('vote-choice-overlay').style.display='none'">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="color:var(--text-dim);margin-bottom:8px;font-size:13px;">${escapeHtml(promptText || '')}</div>
+        <div style="margin-bottom:8px;font-size:13px;">Select the option that got the most votes. Select more than one if they tied.</div>
+        ${options.map(o => `<label style="display:block;margin:6px 0;cursor:pointer;">
+          <input type="checkbox" value="${escapeAttr(o)}" onchange="window._voteChoiceChanged()"> ${escapeHtml(o.charAt(0).toUpperCase() + o.slice(1))}</label>`).join('')}
+        <button class="ability-popup-fire-btn vote-confirm-btn" style="display:block;width:100%;margin-top:10px;" disabled
+          onclick="window._voteChoiceConfirm()">Confirm</button>
+      </div>
+    </div>`;
 }
 
 function openColorChoicePopup(promptText, onChoice) {

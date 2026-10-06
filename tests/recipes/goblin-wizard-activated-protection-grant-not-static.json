@@ -1,0 +1,20 @@
+{
+  "name": "Goblin Wizard — a protection grant inside an activated or triggered ability is not static",
+  "notes": "Found by tests/sweep.py. protectionRegex (the \"[filter] gains/has protection from X\" parser) had no activated/triggered/quote guard, so \"{R}: Target Goblin gains protection from white until end of turn.\" also produced a static global layer-6 ADD_ABILITY the moment the card was on the battlefield, giving every permanent \"Protection from white until end of turn\". Same for Mother of Runes (\"{T}: Target creature you control gains protection from the color of your choice …\"), Sejiri Steppe's enters trigger and Teroh's Vanguard's quoted granted trigger. Here nothing is fired except Goblin Wizard's ability at Goblin Piker, so only the Piker may have protection.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Goblin Piker", "as": "piker" },
+    { "add": "Goblin Wizard", "as": "wizard" },
+    { "add": "Mother of Runes", "as": "mom" },
+    { "add": "Sejiri Steppe", "as": "steppe" },
+    { "add": "Teroh's Vanguard", "as": "vanguard" },
+    { "fire": "@wizard", "activated": 1, "as": "fired" },
+    { "call": ["setTarget", "@fired", "@piker"] }
+  ],
+  "asserts": [
+    { "perm": "Goblin Piker", "final": { "abilities": { "$includes": ["Protection from white until end of turn"] } } },
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$excludes": ["Protection from white until end of turn", "Protection from the color of your choice until end of turn", "Protection from black until end of turn"] } } },
+    { "perm": "Goblin Wizard", "final": { "abilities": { "$excludes": ["Protection from white until end of turn", "Protection from the color of your choice until end of turn", "Protection from black until end of turn"] } } },
+    { "perm": "Mother of Runes", "final": { "abilities": { "$excludes": ["Protection from white until end of turn", "Protection from the color of your choice until end of turn", "Protection from black until end of turn"] } } }
+  ]
+}
