@@ -6,7 +6,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 |---|---|---|---|
 | Absorb Identity | becomes | spell | You may have Shapeshifters you control become copies of that creature until end of turn. |
 | Adrestia | becomes | triggered | This card becomes an Assassin in addition to its other types until end of turn. |
-| Alchor's Tomb | becomes | activated | {2}, {T}: Target permanent you control becomes the color of your choice. |
 | Amplifire | becomes | triggered | Until your next turn, this creature's base power becomes twice that card's power and its base toughness becomes twice that card's toughness. |
 | Aquamorph Entity | becomes | static | As this creature enters or is turned face up, it becomes your choice of 5/1 or 1/5. |
 | Arni Brokenbrow | becomes | activated | Boast — {1}: You may have this card's base power become 1 plus the greatest power among other creatures you control until end of turn. |
@@ -22,17 +21,12 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Deadly Complication | becomes | spell | You may have it become no longer suspected. |
 | Deceiver of Form | becomes | triggered | If a creature card is revealed this way, you may have creatures you control other than this creature become copies of that card until end of turn. |
 | Dimir Keyrune | becomes | activated | {U}{B}: This artifact becomes a 2/2 blue and black Horror artifact creature until end of turn and can't be blocked this turn. |
-| Distorting Lens | becomes | activated | {T}: Target permanent becomes the color of your choice until end of turn. |
 | Donald Blake, Guise of Thor | becomes | activated | He becomes a God Warrior Hero. |
 | Dracoplasm | becomes | static | This creature's power becomes the total power of those creatures and its toughness becomes their total toughness. |
-| Dream Coat | becomes | activated | {0}: Enchanted creature becomes the color or colors of your choice. |
-| Eight-and-a-Half-Tails | becomes | activated | {1}: Target spell or permanent becomes white until end of turn. |
 | Eldrazi Mimic | becomes | triggered | Whenever another colorless creature you control enters, you may have this creature's base power and toughness become equal to that creature's power and toughness until end of turn. |
 | Emergent Sequence | becomes | spell | That land becomes a 0/0 green and blue Fractal creature that's still a land. |
-| Ersatz Gnomes | becomes | activated | {T}: Target permanent becomes colorless until end of turn. |
 | Ersatz Gnomes | becomes | activated | {T}: Target spell becomes colorless. |
 | Exuberant Wolfbear | becomes | triggered | Whenever this creature attacks, you may have the base power and toughness of target Human you control become equal to this creature's power and toughness until end of turn. |
-| Foraging Wickermaw | becomes | activated | This creature becomes that color until end of turn. |
 | Fractalize | becomes | spell | Until end of turn, target creature becomes a green and blue Fractal with base power and toughness each equal to X plus 1. |
 | Gaea's Liege | becomes | activated | {T}: Target land becomes a Forest until this creature leaves the battlefield. |
 | Galion, Elvenking's Butler | becomes | triggered | Its base power and toughness become equal to this card's power and toughness until end of turn. |
@@ -44,8 +38,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Guide of Souls | becomes | triggered | It becomes an Angel in addition to its other types. |
 | Halfdane | becomes | triggered | At the beginning of your upkeep, this card's base power and toughness become equal to the power and toughness of target creature other than this card until the end of your next upkeep. |
 | Hulkling, Young Avenger | becomes | ability | Whenever you cast a noncreature spell, Hulkling becomes a copy of up to one other target creature until end of turn, except his name is this card, he's 4/4, and he has flying and this ability. |
-| Incite | becomes | spell | Target creature becomes red until end of turn and attacks this turn if able. |
-| Indigo Faerie | becomes | activated | {U}: Target permanent becomes blue in addition to its other colors until end of turn. |
 | Infinite Coursework | becomes | triggered | It becomes unprepared. |
 | Irma, Part-Time Mutant | becomes | ability | At the beginning of combat on your turn, Irma becomes a copy of up to one other target creature you control, except her name is this card and she has this ability. |
 | Jolrael, Empress of Beasts | becomes | activated | {2}{G}, {T}, Discard two cards: All lands target player controls become 3/3 creatures until end of turn. |
@@ -67,27 +59,17 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Primal Adversary | becomes | triggered | When you pay this cost one or more times, put that many +1/+1 counters on this creature, then up to that many target lands you control become 3/3 Wolf creatures with haste that are still lands. |
 | Prismatic Dragon | becomes | activated | {2}: this card becomes a random color permanently. |
 | Prismatic Dragon | becomes | static | During your upkeep, this card becomes a random color permanently. |
-| Prismatic Lace | becomes | spell | Target permanent becomes the color or colors of your choice. |
-| Prismwake Merrow | becomes | triggered | When this creature enters, target permanent becomes the color or colors of your choice until end of turn. |
 | PuPu UFO | becomes | activated | {3}: Until end of turn, this creature's base power becomes equal to the number of Towns you control. |
-| Puca's Eye | becomes | triggered | This artifact becomes the chosen color. |
 | Rampaging Growth | becomes | spell | Until end of turn, that land becomes a 4/3 Insect creature with reach and haste. |
 | Resolute Archangel | becomes | triggered | When this creature enters, if your life total is less than your starting life total, it becomes equal to your starting life total. |
 | Riptide Mangler | becomes | activated | {1}{U}: This creature's base power becomes equal to target creature's power. |
 | Sarkhan, Soul Aflame | becomes | ability | Whenever a Dragon you control enters, you may have Sarkhan become a copy of it until end of turn, except its name is this card and it's legendary in addition to its other types. |
-| Scrapbasket | becomes | activated | {1}: This creature becomes all colors until end of turn. |
 | Shape Stealer | becomes | triggered | Whenever this creature blocks or becomes blocked by a creature, this creature's base power and toughness become equal to that creature's power and toughness until end of turn. |
-| Shyft | becomes | triggered | At the beginning of your upkeep, you may have this creature become the color or colors of your choice. |
-| Singe | becomes | spell | That creature becomes black until end of turn. |
 | Sita Varma, Masked Racer | becomes | activated | Then you may have the base power and toughness of each other creature you control become equal to this card's power until end of turn. |
 | Slumbering Tora | becomes | activated | {2}, Discard a Spirit or Arcane card: This artifact becomes an X/X Cat artifact creature until end of turn, where X is the discarded card's mana value. |
 | Sparkshaper Visionary | becomes | triggered | Until end of turn, they become 3/3 blue Bird creatures with flying, hexproof, and "Whenever this creature deals combat damage to a player, scry 1." |
 | Standardize | becomes | spell | Each creature becomes that type until end of turn. |
-| Surge Engine | becomes | activated | {2}{U}: This creature becomes blue and has base power and toughness 5/4. |
-| Sway of Illusion | becomes | spell | Any number of target creatures become the color of your choice until end of turn. |
-| Swirling Spriggan | becomes | activated | {G/U}{G/U}: Target creature you control becomes the color or colors of your choice until end of turn. |
 | Sworn Defender | becomes | activated | {1}: This creature's power becomes the toughness of target creature blocking or being blocked by this creature minus 1 until end of turn, and its toughness becomes 1 plus the power of that creature until end of turn. |
-| Tam, Mindful First-Year | becomes | activated | {T}: Target creature you control becomes all colors until end of turn. |
 | Tanazir Quandrix | becomes | triggered | Whenever this card attacks, you may have the base power and toughness of other creatures you control become equal to this card's power and toughness until end of turn. |
 | Taskmaster, Mercenary Mimic | becomes | ability | Photographic Reflexes — At the beginning of your first main phase, until your next turn, Taskmaster becomes a copy of up to one target creature on the battlefield or creature card in a graveyard, except his name is this card and he's a legendary Human Mercenary Villain creature. |
 | The Flood of Mars | becomes | triggered | If it's a land, it becomes an Island in addition to its other types. |

@@ -1,0 +1,49 @@
+{
+  "name": "Transguild Courier — \"is all colors\" is a characteristic-defining ability applied first in Layer 5",
+  "notes": "Found by tests/sweep.py (cluster 'THIS is all colors', 10 cards). The sentence was skipped on the grounds that Scryfall's colors already say WUBRG, so the inspector showed nothing in Layer 5. It is now a self SET_COLOR flagged isCDA (CR 604.3, 613.3). Darkest Hour is added FIRST: by timestamp alone the Courier's own later effect would win and leave it five-coloured; as a CDA it applies before Darkest Hour, so the Courier is black.",
+  "steps": [
+    {
+      "add": "Darkest Hour",
+      "as": "hour"
+    },
+    {
+      "add": "Transguild Courier",
+      "as": "courier"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Transguild Courier",
+      "final": {
+        "colors": [
+          "B"
+        ]
+      }
+    },
+    {
+      "effect": {
+        "source": "Transguild Courier",
+        "layer": "5",
+        "type": "set_color",
+        "selfTarget": true,
+        "params": {
+          "colors": [
+            "W",
+            "U",
+            "B",
+            "R",
+            "G"
+          ]
+        }
+      }
+    },
+    {
+      "order": {
+        "5": [
+          "Transguild Courier",
+          "Darkest Hour"
+        ]
+      }
+    }
+  ]
+}

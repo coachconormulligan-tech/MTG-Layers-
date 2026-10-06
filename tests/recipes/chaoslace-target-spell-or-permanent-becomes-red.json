@@ -1,0 +1,78 @@
+{
+  "name": "Chaoslace — \"Target spell or permanent becomes red\" sets the target's colour",
+  "notes": "Found by tests/sweep.py (cluster 'target spell or permanent becomes COLOR', the six Laces). setTypeRegex skips any subject containing 'spell', so the Laces parsed to nothing. becomesColorRegex offers the permanent half of 'spell or permanent' as the target. Moonlace covers 'colorless', which setTypeRegex also dropped because its skip-word list contains 'less'.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre"
+    },
+    {
+      "add": "Chaoslace",
+      "as": "lace",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTarget",
+        "@lace",
+        "@bears"
+      ]
+    },
+    {
+      "add": "Moonlace",
+      "as": "moon",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTarget",
+        "@moon",
+        "@ogre"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "colors": [
+          "R"
+        ]
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "colors": []
+      }
+    },
+    {
+      "effect": {
+        "source": "Chaoslace",
+        "layer": "5",
+        "type": "set_color",
+        "scope": "targeted",
+        "params": {
+          "colors": [
+            "R"
+          ]
+        }
+      }
+    },
+    {
+      "effect": {
+        "source": "Moonlace",
+        "layer": "5",
+        "type": "set_color",
+        "scope": "targeted",
+        "params": {
+          "colors": []
+        }
+      }
+    }
+  ]
+}
