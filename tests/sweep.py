@@ -223,10 +223,16 @@ NEW_OBJECT = r'\bcreates?\b|\bonto the battlefield\b|\bto the battlefield\b|\bre
 def refers_to_new_objects(text, line):
     """'Create two tokens. They gain haste.' - "they" are objects the ability just made or
     moved, which the site has no permanent for, so the sentence cannot produce an effect."""
-    if not re.match(r'(?:until [^,.]+, )?(?:they|those tokens|that token|those creatures|those cards)\b', text, re.I):
+    plural = re.match(r'(?:until [^,.]+, )?(?:they|those tokens|that token|those creatures|those cards)\b', text, re.I)
+    # "Create a token. It has ..." - the token's own card already carries that text. A card
+    # put onto the battlefield is different: it is a permanent the user can point the effect at.
+    made = re.match(r"(?:(?:until [^,.]+|if you do|when you do), )?(?:it|it's|the tokens?|the copy)\b", text, re.I)
+    if not plural and not made:
         return False
     before = line[:line.find(text)] if text in line else ''
     for prev in reversed([p for p in re.split(r'(?<=\.)\s+', before) if p.strip()]):
+        if not plural:
+            return bool(re.search(r'\bcreates?\b[^.]*\btokens?\b|\bcopy target\b', prev, re.I))
         if re.search(NEW_OBJECT, prev, re.I):
             return True
         if re.search(r'\b(?:all|each|target)\b', prev, re.I):
@@ -237,6 +243,9 @@ def refers_to_new_objects(text, line):
 def classify(text, kw_re):
     """Which kind of continuous effect does this sentence read like? None if it doesn't."""
     t = effect_part(text).lower()
+    # Rules about mana in a pool, and the old instant-speed Aura cleanup rule, change no permanent.
+    if re.search(r'\b(?:unspent|this|that) mana\b|\bthe permanent it becomes\b', t):
+        return None
     t = re.sub(r'\bcreates?\b.*', '', t)                                 # token descriptions are not effects
     if re.search(r'\bgains? control of\b|\bexchanges? control\b', t):
         return 'control'
@@ -399,7 +408,7 @@ def write_report(records, keywords, meta):
     L.append('| Sentences that read like a continuous effect | %d |' % totals['candidates'])
     L.append('| ...of which produced an effect | %d (%.1f%%) |' % (totals['candidates_covered'], 100.0 * totals['candidates_covered'] / max(1, totals['candidates'])))
     L.append('| ...of which produced nothing | %d, on %d cards |' % (totals['candidates'] - totals['candidates_covered'], flagged_cards))
-    L.append('| Not counted: "they" / "those tokens" meaning objects the ability just made | %d |' % totals['new_objects'])
+    L.append('| Not counted: "they" / "those tokens" / "it" meaning objects the ability just made | %d |' % totals['new_objects'])
     L.append('| Clusters shared by 2 or more cards | %d |' % len(shared))
     L.append('| Single-card clusters | %d (listed in [singletons.md](singletons.md)) |' % len(single))
     L.append('| Distinct crashes | %d, on %d card faces |' % (len(crashes), totals['faces_with_errors']))

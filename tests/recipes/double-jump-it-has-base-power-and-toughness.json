@@ -1,0 +1,54 @@
+{
+  "name": "Double Jump — \"it has base power and toughness 5/5\" applies to the target",
+  "notes": "Found by tests/sweep.py (pronoun-subject clusters). The base-P/T subject was captured across the sentence boundary ('Put a flying counter on target creature you control. Until end of turn, target creature'); _lastSentenceTargetSubject keeps only the sentence that names the target.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears",
+      "controller": "p2"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Double Jump",
+      "as": "spell",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTarget",
+        "@spell",
+        "@giant"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "power": 5,
+        "toughness": 5
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 2,
+        "toughness": 2
+      }
+    }
+  ]
+}

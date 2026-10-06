@@ -1,0 +1,83 @@
+{
+  "name": "Cyclone Sire — \"If you do, that land becomes a 0/0 Elemental creature\" animates only the target land",
+  "notes": "Found by tests/sweep.py (pronoun-subject clusters). The fired-ability text now drops 'If you do,' and converts 'that land becomes' to 'target land becomes'; the becomes parser trims a cross-sentence subject that starts with plain 'target'. Before, nothing was produced; mid-fix it was global (every land).",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears",
+      "controller": "p2"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Forest",
+      "as": "forest"
+    },
+    {
+      "add": "Mountain",
+      "as": "mountain"
+    },
+    {
+      "add": "Cyclone Sire",
+      "as": "sire"
+    },
+    {
+      "call": [
+        "addTriggeredAbility",
+        "@sire",
+        1,
+        "you may put three +1/+1 counters on target land you control. If you do, that land becomes a 0/0 Elemental creature with haste that's still a land.",
+        "When this creature dies, you may put three +1/+1 counters on target land you control. If you do, that land becomes a 0/0 Elemental creature with haste that's still a land."
+      ],
+      "as": "trigger"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@trigger",
+        "@forest"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Forest",
+      "final": {
+        "types": {
+          "$includes": [
+            "Creature",
+            "Land"
+          ]
+        },
+        "power": 0,
+        "toughness": 0,
+        "abilities": {
+          "$includes": [
+            "Haste"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Mountain",
+      "final": {
+        "types": [
+          "Land"
+        ]
+      }
+    }
+  ]
+}

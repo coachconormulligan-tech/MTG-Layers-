@@ -1,0 +1,56 @@
+{
+  "name": "Can't Stay Away — the quoted ability goes to the chosen creature",
+  "notes": "Found by tests/sweep.py (pronoun-subject clusters). 'It gains \"If this creature would die, exile it instead.\"' produced nothing. The quoted-grant parser now trims a cross-sentence subject to its target sentence and applies target info.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears",
+      "controller": "p2"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Can't Stay Away",
+      "as": "spell",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTarget",
+        "@spell",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "If this creature would die, exile it instead."
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "abilities": []
+      }
+    }
+  ]
+}

@@ -328,17 +328,23 @@ const _ANY_NUMBER_TARGET_SLOTS = 6;
    cards put onto the battlefield): those have no permanent on the board to point at. */
 const _THEY_SUBJECT_RE = /^((?:until [^,.]+|if [^,.]+),\s*)?they\s+(each\s+)?(gain|get|have|become)\b/i;
 const _THEY_TARGET_ANTECEDENT_RE = /\b(?:each of\s+)?((?:up to \w+|any number of|\w+ or \w+|two|three|four|five|six|seven|eight|nine|ten)\s+(?:other\s+)?target\s+[^.,]+?)(?=\s+until\b|\s+and\s+(?:gain|untap|put|you|they|it)\b|[.,]|$)/i;
-const _THEY_GROUP_ANTECEDENT_RE = /\b(all|each)\s+(?!of\b|opponent\b|player\b|other player\b)([^.,]+?)(?=\s+until\b|\s+and\s+(?:gain|untap|put|you|they|it)\b|[.,]|$)/i;
+const _THEY_GROUP_ANTECEDENT_RE = /\b(all|each)\s+(?!of\b|opponent\b|player\b|other player\b|(?:gain|get|untap|put|draw|lose|sacrifice|choose|discard)s?\b|secretly\b)([^.,]+?)(?=\s+until\b|\s+and\s+(?:gain|untap|put|you|they|it)\b|[.,]|$)/i;
 const _THEY_NEW_OBJECT_RE = /\bcreates?\b|\bonto the battlefield\b|\bto the battlefield\b|\breturn\b|\bmills?\b|\bexiles?\b|\bsearch\b/i;
 const _THEY_SINGULAR_VERB = { gain: 'gains', get: 'gets', have: 'has', become: 'becomes' };
 function _resolveTheyPronoun(text) {
-  if (!/\bthey\b/i.test(text)) return text;
+  if (!/\b(?:they|those)\b/i.test(text)) return text;
   return text.split('\n').map(line => {
-    if (!/\bthey\b/i.test(line) || line.includes('"')) return line;
+    if (!/\b(?:they|those)\b/i.test(line) || line.includes('"')) return line;
     const sentences = line.split(/(?<=\.)\s+/);
     for (let i = 1; i < sentences.length; i++) {
-      const m = sentences[i].match(_THEY_SUBJECT_RE);
+      // "Those creatures gain …" / "Each of those creatures gains …" (Cauldron Haze) read as "they".
+      const asThey = sentences[i]
+        .replace(/^((?:until [^,.]+|if [^,.]+),\s*)?those\s+\w+\s+(?=(?:each\s+)?(?:gain|get|have|become)\b)/i, '$1they ')
+        .replace(/^((?:until [^,.]+|if [^,.]+),\s*)?each of those\s+\w+\s+(gain|get|ha|become)(?:s|ve)\b/i,
+          (_, lead, v) => `${lead || ''}they each ${v.toLowerCase() === 'ha' ? 'have' : v}`);
+      const m = asThey.match(_THEY_SUBJECT_RE);
       if (!m) continue;
+      const theySentence = asThey;
       let subject = null, verb = m[3];
       for (let j = i - 1; j >= 0 && !subject; j--) {
         const prev = sentences[j];
@@ -354,7 +360,68 @@ function _resolveTheyPronoun(text) {
       if (!subject) continue;
       const lead = m[1] || '';
       if (!lead) subject = subject.charAt(0).toUpperCase() + subject.slice(1);
-      sentences[i] = lead + subject + ' ' + verb + sentences[i].slice(m[0].length);
+      sentences[i] = lead + subject + ' ' + verb + theySentence.slice(m[0].length);
+    }
+    return sentences.join(' ');
+  }).join('\n');
+}
+
+/* In a spell, give a pronoun-subject sentence an explicit target subject where the generic
+   parsers have no pronoun form of their own:
+     "Return target creature card … to the battlefield. It's a Spirit in addition to its other types."
+        → "… Target creature is a Spirit in addition to its other types."
+     "Put a flying counter on target creature you control. Until end of turn, it has base power
+      and toughness 5/5."  → "… Until end of turn, target creature has base power and toughness 5/5."
+     "… that land becomes a 0/0 Elemental creature …", "It gains "…"" likewise.
+   The user picks the permanent, including one the spell itself put onto the battlefield.
+   "It gets" / "it gains haste" are not touched: those parse as the spell's own target already.
+   Left alone when "it" is a token the spell just made (the token's card carries that text).
+   Also splits "… target creature and it gains haste" (Besmirch) into its own sentence. */
+const _IT_TYPE_NOUN_RE = /^(?:creature|land|artifact|enchantment|permanent|planeswalker)$/i;
+function _splitSentencesOutsideQuotes(line) {
+  const out = []; let cur = '', inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"') inQ = !inQ;
+    cur += ch;
+    if (!inQ && ch === '.' && /\s/.test(line[i + 1] || '')) {
+      out.push(cur); cur = '';
+      while (/\s/.test(line[i + 1] || '')) i++;
+    }
+  }
+  if (cur) out.push(cur);
+  return out;
+}
+function _resolveItPronoun(text) {
+  if (!/\b(?:it|it's|that|the)\b/i.test(text)) return text;
+  return text.split('\n').map(line => {
+    line = line.replace(/^([^."]*\btarget\s+[^.,"]*?)\s+and it (gains?|gets?)\s/i,
+      (all, head, verb) => /^(?:target|up to|any number)\b/i.test(head.trim()) ? all : `${head}. It ${verb} `);
+    const sentences = _splitSentencesOutsideQuotes(line);
+    for (let i = 1; i < sentences.length; i++) {
+      const m = sentences[i].match(/^((?:until end of turn|if you do|when you do|then),?\s+)?(it's|it|(?:that|the)\s+(\w+))\s+([\s\S]*)$/i);
+      if (!m) continue;
+      const pron = m[2].toLowerCase();
+      let rest = m[4];
+      if (pron === "it's") {
+        if (!/^an?\s/i.test(rest)) continue;
+        rest = 'is ' + rest;
+      } else if (!/^(?:is\s+an?\s|becomes\s+an?\s|has\s+base power\b|gains?\s+")/i.test(rest)) {
+        continue;
+      }
+      if (m[3] && !_IT_TYPE_NOUN_RE.test(m[3])) continue;
+      let noun = m[3] ? m[3].toLowerCase() : null;
+      if (!noun) {
+        for (let j = i - 1; j >= 0 && !noun; j--) {
+          const prev = sentences[j];
+          if (/\bcreates?\b[^.]*\btokens?\b|\bcopy target\b/i.test(prev)) break;
+          const t = prev.match(/\b(?:target|an?|that)\s+(?:[\w'-]+\s+){0,4}?(creature|land|artifact|enchantment|planeswalker|permanent)\b/i);
+          if (t) noun = t[1].toLowerCase();
+        }
+      }
+      if (!noun) continue;
+      const lead = m[1] || '';
+      sentences[i] = lead + (lead ? 'target ' : 'Target ') + noun + ' ' + rest;
     }
     return sentences.join(' ');
   }).join('\n');
@@ -492,7 +559,7 @@ function extractTargetInfo(filterText) {
 
   // "any number of [other] target [type]" (Harness by Force) and "N or M target [type]"
   // (Fancy Footwork: "one or two target creatures") — multi-target with a slot cap.
-  const anyNumberTargetMatch = raw.match(/^(?:each of\s+)?(?:any number of|(\w+) or (\w+))\s+(?:other\s+)?target\s+/i);
+  const anyNumberTargetMatch = raw.match(/^(?:each of\s+)?(?:any number of|up to that many|(\w+) or (\w+))\s+(?:other\s+)?target\s+/i);
   if (anyNumberTargetMatch && (!anyNumberTargetMatch[2] || _TARGET_NUMBER_WORDS[anyNumberTargetMatch[2]])) {
     needsTargetSelection = true;
     maxTargets = anyNumberTargetMatch[2] ? _TARGET_NUMBER_WORDS[anyNumberTargetMatch[2]] : _ANY_NUMBER_TARGET_SLOTS;

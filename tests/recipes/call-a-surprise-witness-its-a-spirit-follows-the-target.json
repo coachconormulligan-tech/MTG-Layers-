@@ -1,0 +1,66 @@
+{
+  "name": "Call a Surprise Witness — \"It's a Spirit in addition\" applies to the chosen creature",
+  "notes": "Found by tests/sweep.py (pronoun-subject clusters). In a spell, _resolveItPronoun rewrites a pronoun subject with no parser form of its own (\"It's a …\", \"it has base power\", \"that land becomes\", 'It gains \"…\"') to 'Target <noun>'; the add-type parser now honours an explicit target instead of applying to every creature.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears",
+      "controller": "p2"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Call a Surprise Witness",
+      "as": "spell",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTarget",
+        "@spell",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "subtypes": {
+          "$includes": [
+            "Spirit"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "subtypes": [
+          "Ogre"
+        ]
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "subtypes": [
+          "Giant"
+        ]
+      }
+    }
+  ]
+}

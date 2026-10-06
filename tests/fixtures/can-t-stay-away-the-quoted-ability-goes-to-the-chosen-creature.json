@@ -1,6 +1,6 @@
 {
- "name": "Besmirch — \"goad that creature\" goads only the target",
- "notes": "'Untap and goad that creature' built a creature filter from 'that creature' and goaded every creature; '… gain control of target creature and it gains haste' gave every creature haste. A pronoun object of goad/suspect is now the chosen target, and _resolveItPronoun splits '… target creature and it gains haste' into its own 'It gains haste' sentence.",
+ "name": "Can't Stay Away — the quoted ability goes to the chosen creature",
+ "notes": "Found by tests/sweep.py (pronoun-subject clusters). 'It gains \"If this creature would die, exile it instead.\"' produced nothing. The quoted-grant parser now trims a cross-sentence subject to its target sentence and applies target info.",
  "recipe": {
   "steps": [
    {
@@ -24,7 +24,7 @@
     "as": "giant"
    },
    {
-    "add": "Besmirch",
+    "add": "Can't Stay Away",
     "as": "spell",
     "spell": true
    },
@@ -41,22 +41,9 @@
   {
    "perm": "Grizzly Bears",
    "final": {
-    "controller": "player_0",
     "abilities": {
      "$includes": [
-      "Goaded",
-      "Haste"
-     ]
-    }
-   }
-  },
-  {
-   "perm": "Gray Ogre",
-   "final": {
-    "abilities": {
-     "$excludes": [
-      "Goaded",
-      "Haste"
+      "If this creature would die, exile it instead."
      ]
     }
    }
@@ -64,11 +51,7 @@
   {
    "perm": "Hill Giant",
    "final": {
-    "abilities": {
-     "$excludes": [
-      "Haste"
-     ]
-    }
+    "abilities": []
    }
   }
  ],
@@ -595,65 +578,70 @@
     "id": "perm_4",
     "scryfallData": {
      "object": "card",
-     "id": "534c652a-2345-48d5-bd78-33f91ed914b4",
-     "oracle_id": "fc80380c-7d75-4556-aaf2-bf7b2c757e75",
+     "id": "3ccfebf1-add1-4f62-bffa-9023dea5b7c4",
+     "oracle_id": "69ae219e-bf97-4626-9b16-7901f51f0343",
      "multiverse_ids": [
-      416806
+      535005
      ],
-     "tcgplayer_id": 121421,
-     "cardmarket_id": 291747,
-     "name": "Besmirch",
+     "resource_id": "5312B687C2F337F85B3A2A2E1DB44FD932C636C6F99AEAC0911A71402AF801BC",
+     "mtgo_id": 93424,
+     "arena_id": 78576,
+     "tcgplayer_id": 248146,
+     "cardmarket_id": 574888,
+     "name": "Can't Stay Away",
      "lang": "en",
-     "released_at": "2016-08-26",
-     "uri": "https://api.scryfall.com/cards/534c652a-2345-48d5-bd78-33f91ed914b4",
-     "scryfall_uri": "https://scryfall.com/card/cn2/49/besmirch?utm_source=api",
+     "released_at": "2021-09-24",
+     "uri": "https://api.scryfall.com/cards/3ccfebf1-add1-4f62-bffa-9023dea5b7c4",
+     "scryfall_uri": "https://scryfall.com/card/mid/213/cant-stay-away?utm_source=api",
      "layout": "normal",
      "highres_image": true,
      "image_status": "highres_scan",
-     "image_updated_at": "2026-07-13T10:09:11Z",
+     "image_updated_at": "2026-07-13T06:52:46Z",
      "image_uris": {
-      "small": "https://cards.scryfall.io/small/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.jpg?1783937351",
-      "normal": "https://cards.scryfall.io/normal/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.jpg?1783937351",
-      "large": "https://cards.scryfall.io/large/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.jpg?1783937351",
-      "png": "https://cards.scryfall.io/png/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.png?1783937351",
-      "art_crop": "https://cards.scryfall.io/art_crop/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.jpg?1783937351",
-      "border_crop": "https://cards.scryfall.io/border_crop/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.jpg?1783937351",
-      "thumb": "https://cards.scryfall.io/thumb/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.webp?1783937351",
-      "grid": "https://cards.scryfall.io/grid/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.webp?1783937351",
-      "display": "https://cards.scryfall.io/display/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.webp?1783937351",
-      "art": "https://cards.scryfall.io/art/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.webp?1783937351",
-      "crop": "https://cards.scryfall.io/crop/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.webp?1783937351"
+      "small": "https://cards.scryfall.io/small/front/3/c/3ccfebf1-add1-4f62-bffa-9023dea5b7c4.jpg?1783925566",
+      "normal": "https://cards.scryfall.io/normal/front/3/c/3ccfebf1-add1-4f62-bffa-9023dea5b7c4.jpg?1783925566",
+      "large": "https://cards.scryfall.io/large/front/3/c/3ccfebf1-add1-4f62-bffa-9023dea5b7c4.jpg?1783925566",
+      "png": "https://cards.scryfall.io/png/front/3/c/3ccfebf1-add1-4f62-bffa-9023dea5b7c4.png?1783925566",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/3/c/3ccfebf1-add1-4f62-bffa-9023dea5b7c4.jpg?1783925566",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/3/c/3ccfebf1-add1-4f62-bffa-9023dea5b7c4.jpg?1783925566",
+      "thumb": "https://cards.scryfall.io/thumb/front/3/c/3ccfebf1-add1-4f62-bffa-9023dea5b7c4.webp?1783925566",
+      "grid": "https://cards.scryfall.io/grid/front/3/c/3ccfebf1-add1-4f62-bffa-9023dea5b7c4.webp?1783925566",
+      "display": "https://cards.scryfall.io/display/front/3/c/3ccfebf1-add1-4f62-bffa-9023dea5b7c4.webp?1783925566",
+      "art": "https://cards.scryfall.io/art/front/3/c/3ccfebf1-add1-4f62-bffa-9023dea5b7c4.webp?1783925566",
+      "crop": "https://cards.scryfall.io/crop/front/3/c/3ccfebf1-add1-4f62-bffa-9023dea5b7c4.webp?1783925566"
      },
-     "mana_cost": "{1}{R}{R}",
-     "cmc": 3,
+     "mana_cost": "{W}{B}",
+     "cmc": 2,
      "type_line": "Sorcery",
-     "oracle_text": "Until end of turn, gain control of target creature and it gains haste. Untap and goad that creature. (Until your next turn, that creature attacks each combat if able and attacks a player other than you if able.)",
+     "oracle_text": "Return target creature card with mana value 3 or less from your graveyard to the battlefield. It gains \"If this creature would die, exile it instead.\"\nFlashback {3}{W}{B} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
      "colors": [
-      "R"
+      "B",
+      "W"
      ],
      "color_identity": [
-      "R"
+      "B",
+      "W"
      ],
      "keywords": [
-      "Goad"
+      "Flashback"
      ],
      "legalities": {
       "standard": "not_legal",
       "future": "not_legal",
-      "historic": "not_legal",
-      "timeless": "not_legal",
-      "gladiator": "not_legal",
-      "pioneer": "not_legal",
-      "modern": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
       "legacy": "legal",
       "pauper": "not_legal",
       "vintage": "legal",
-      "penny": "not_legal",
+      "penny": "legal",
       "commander": "legal",
       "oathbreaker": "legal",
       "standardbrawl": "not_legal",
-      "brawl": "not_legal",
-      "competitivebrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
       "alchemy": "not_legal",
       "paupercommander": "not_legal",
       "duel": "legal",
@@ -663,7 +651,9 @@
       "tlr": "legal"
      },
      "games": [
-      "paper"
+      "arena",
+      "paper",
+      "mtgo"
      ],
      "reserved": false,
      "game_changer": false,
@@ -677,50 +667,52 @@
      "promo": false,
      "reprint": false,
      "variation": false,
-     "set_id": "ad1b8847-1905-4080-9e26-80691ea7c1ef",
-     "set": "cn2",
-     "set_name": "Conspiracy: Take the Crown",
-     "set_type": "draft_innovation",
-     "set_uri": "https://api.scryfall.com/sets/ad1b8847-1905-4080-9e26-80691ea7c1ef",
-     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Acn2&unique=prints",
-     "scryfall_set_uri": "https://scryfall.com/sets/cn2?utm_source=api",
-     "rulings_uri": "https://api.scryfall.com/cards/534c652a-2345-48d5-bd78-33f91ed914b4/rulings",
-     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Afc80380c-7d75-4556-aaf2-bf7b2c757e75&unique=prints",
-     "collector_number": "49",
+     "set_id": "44b8eb8f-fa23-401a-98b5-1fbb9871128e",
+     "set": "mid",
+     "set_name": "Innistrad: Midnight Hunt",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/44b8eb8f-fa23-401a-98b5-1fbb9871128e",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Amid&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/mid?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/3ccfebf1-add1-4f62-bffa-9023dea5b7c4/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A69ae219e-bf97-4626-9b16-7901f51f0343&unique=prints",
+     "collector_number": "213",
      "digital": false,
-     "rarity": "uncommon",
-     "flavor_text": "The whitest robes stain best.",
+     "rarity": "rare",
+     "flavor_text": "Death is no impediment to dinner.",
      "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
-     "artist": "Mathias Kollros",
+     "artist": "Milivoj Ćeran",
      "artist_ids": [
-      "2ae0dd12-047c-4efb-80d7-bccc3bac5fba"
+      "1eced451-4da5-42bc-b49d-70c41246581f"
      ],
-     "illustration_id": "358d16cf-28d9-4da9-aed5-acd4a59d3bc3",
+     "illustration_id": "65794525-4704-4741-b853-3574fee68752",
      "border_color": "black",
      "frame": "2015",
+     "security_stamp": "oval",
      "full_art": false,
      "textless": false,
      "booster": true,
      "story_spotlight": false,
-     "edhrec_rank": 11214,
+     "edhrec_rank": 17005,
+     "penny_rank": 1992,
      "prices": {
-      "usd": "0.35",
-      "usd_foil": "2.88",
+      "usd": "0.27",
+      "usd_foil": "0.27",
       "usd_etched": null,
-      "eur": "0.67",
-      "eur_foil": "6.40",
-      "tix": null
+      "eur": "0.33",
+      "eur_foil": "0.42",
+      "tix": "0.02"
      },
      "related_uris": {
-      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=416806&printed=false",
-      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DBesmirch",
-      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DBesmirch",
-      "edhrec": "https://edhrec.com/route/?cc=Besmirch"
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=535005&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DCan%2527t%2BStay%2BAway",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DCan%2527t%2BStay%2BAway",
+      "edhrec": "https://edhrec.com/route/?cc=Can%27t+Stay+Away"
      },
      "purchase_uris": {
-      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F121421%3Fpage%3D1",
-      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=291747&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
-      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Besmirch&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F248146%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=574888&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/93424?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
      }
     },
     "isSpell": true,
@@ -969,7 +961,7 @@
     "perm": "Grizzly Bears",
     "final": {
      "name": "Grizzly Bears",
-     "controller": "player_0",
+     "controller": "player_1",
      "supertypes": [],
      "types": [
       "Creature"
@@ -983,20 +975,12 @@
       "G"
      ],
      "abilities": [
-      "Haste",
-      "Goaded"
-     ],
-     "traits": [
-      "Goaded"
+      "If this creature would die, exile it instead."
      ]
     },
     "changedBy": {
-     "2": [
-      "Besmirch"
-     ],
      "6": [
-      "Besmirch",
-      "Besmirch"
+      "Can't Stay Away"
      ]
     }
    },
@@ -1043,9 +1027,9 @@
     "changedBy": {}
    },
    {
-    "perm": "Besmirch",
+    "perm": "Can't Stay Away",
     "final": {
-     "name": "Besmirch",
+     "name": "Can't Stay Away",
      "controller": "player_0",
      "supertypes": [],
      "types": [
@@ -1055,55 +1039,31 @@
      "power": null,
      "toughness": null,
      "colors": [
-      "R"
+      "B",
+      "W"
      ],
      "abilities": [
-      "Until end of turn, gain control of target creature and it gains haste. Untap and goad that creature."
+      "Return target creature card with mana value 3 or less from your graveyard to the battlefield. It gains \"If this creature would die, exile it instead.\"",
+      "Flashback {3}{W}{B}"
      ]
     },
     "changedBy": {}
    }
   ],
   "order": {
-   "2": [
-    "Besmirch"
-   ],
    "6": [
-    "Besmirch",
-    "Besmirch"
+    "Can't Stay Away"
    ]
   },
   "effects": [
    {
-    "source": "Besmirch",
+    "source": "Can't Stay Away",
     "layer": "6",
     "type": "add_ability",
     "scope": "targeted",
     "target": "Grizzly Bears",
     "params": {
-     "ability": "Haste"
-    }
-   },
-   {
-    "source": "Besmirch",
-    "layer": "6",
-    "type": "add_ability",
-    "scope": "targeted",
-    "target": "Grizzly Bears",
-    "params": {
-     "ability": "Goaded",
-     "isTrait": true
-    }
-   },
-   {
-    "source": "Besmirch",
-    "layer": "2",
-    "type": "control",
-    "scope": "targeted",
-    "target": "Grizzly Bears",
-    "params": {
-     "newController": "player_0",
-     "untilEndOfTurn": false
+     "ability": "If this creature would die, exile it instead."
     }
    }
   ]

@@ -218,7 +218,7 @@ function _finalizeEffects(effects, isEquipmentSource, permanent, oracleText) {
   // from distinct oracle positions, each position is its own independently selectable target.
   // Example: Seeds of Strength — "Target creature gets +1/+1." repeated 3 times.
   const _slottable = effects.filter(e =>
-    e.scope === 'targeted' && !e.selfTarget && e.modalModeIndex === undefined && e._oraclePos !== undefined
+    e.scope === 'targeted' && !e.selfTarget && e.modalModeIndex === undefined && e._oraclePos !== undefined && !e._pronounTarget
   );
   // An Aura or Equipment has exactly one attached object, however many of its lines refer
   // to it (Edge of the Divinity: two "it gets" lines), so it never gets separate slots.

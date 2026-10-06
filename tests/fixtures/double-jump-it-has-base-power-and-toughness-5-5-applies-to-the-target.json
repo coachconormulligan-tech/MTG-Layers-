@@ -1,6 +1,6 @@
 {
- "name": "Besmirch — \"goad that creature\" goads only the target",
- "notes": "'Untap and goad that creature' built a creature filter from 'that creature' and goaded every creature; '… gain control of target creature and it gains haste' gave every creature haste. A pronoun object of goad/suspect is now the chosen target, and _resolveItPronoun splits '… target creature and it gains haste' into its own 'It gains haste' sentence.",
+ "name": "Double Jump — \"it has base power and toughness 5/5\" applies to the target",
+ "notes": "Found by tests/sweep.py (pronoun-subject clusters). The base-P/T subject was captured across the sentence boundary ('Put a flying counter on target creature you control. Until end of turn, target creature'); _lastSentenceTargetSubject keeps only the sentence that names the target.",
  "recipe": {
   "steps": [
    {
@@ -24,7 +24,7 @@
     "as": "giant"
    },
    {
-    "add": "Besmirch",
+    "add": "Double Jump",
     "as": "spell",
     "spell": true
    },
@@ -32,43 +32,24 @@
     "call": [
      "setTarget",
      "@spell",
-     "@bears"
+     "@giant"
     ]
    }
   ]
  },
  "asserts": [
   {
-   "perm": "Grizzly Bears",
-   "final": {
-    "controller": "player_0",
-    "abilities": {
-     "$includes": [
-      "Goaded",
-      "Haste"
-     ]
-    }
-   }
-  },
-  {
-   "perm": "Gray Ogre",
-   "final": {
-    "abilities": {
-     "$excludes": [
-      "Goaded",
-      "Haste"
-     ]
-    }
-   }
-  },
-  {
    "perm": "Hill Giant",
    "final": {
-    "abilities": {
-     "$excludes": [
-      "Haste"
-     ]
-    }
+    "power": 5,
+    "toughness": 5
+   }
+  },
+  {
+   "perm": "Grizzly Bears",
+   "final": {
+    "power": 2,
+    "toughness": 2
    }
   }
  ],
@@ -595,47 +576,69 @@
     "id": "perm_4",
     "scryfallData": {
      "object": "card",
-     "id": "534c652a-2345-48d5-bd78-33f91ed914b4",
-     "oracle_id": "fc80380c-7d75-4556-aaf2-bf7b2c757e75",
-     "multiverse_ids": [
-      416806
-     ],
-     "tcgplayer_id": 121421,
-     "cardmarket_id": 291747,
-     "name": "Besmirch",
+     "id": "c0b94a92-48d5-4d08-a8fa-6f3a992db941",
+     "oracle_id": "cb3072c7-393c-43d9-a2c9-f918bd0fd7be",
+     "multiverse_ids": [],
+     "resource_id": "CF0405AC684AFE131A5CBA677566B0C7CE33D7243C4513C744BE14648D3288DF",
+     "mtgo_id": 147399,
+     "tcgplayer_id": 679604,
+     "cardmarket_id": 873505,
+     "name": "Double Jump // Flying Kick",
      "lang": "en",
-     "released_at": "2016-08-26",
-     "uri": "https://api.scryfall.com/cards/534c652a-2345-48d5-bd78-33f91ed914b4",
-     "scryfall_uri": "https://scryfall.com/card/cn2/49/besmirch?utm_source=api",
-     "layout": "normal",
+     "released_at": "2026-03-06",
+     "uri": "https://api.scryfall.com/cards/c0b94a92-48d5-4d08-a8fa-6f3a992db941",
+     "scryfall_uri": "https://scryfall.com/card/tmc/35/double-jump-flying-kick?utm_source=api",
+     "layout": "split",
      "highres_image": true,
      "image_status": "highres_scan",
-     "image_updated_at": "2026-07-13T10:09:11Z",
+     "image_updated_at": "2026-07-13T00:56:03Z",
      "image_uris": {
-      "small": "https://cards.scryfall.io/small/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.jpg?1783937351",
-      "normal": "https://cards.scryfall.io/normal/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.jpg?1783937351",
-      "large": "https://cards.scryfall.io/large/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.jpg?1783937351",
-      "png": "https://cards.scryfall.io/png/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.png?1783937351",
-      "art_crop": "https://cards.scryfall.io/art_crop/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.jpg?1783937351",
-      "border_crop": "https://cards.scryfall.io/border_crop/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.jpg?1783937351",
-      "thumb": "https://cards.scryfall.io/thumb/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.webp?1783937351",
-      "grid": "https://cards.scryfall.io/grid/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.webp?1783937351",
-      "display": "https://cards.scryfall.io/display/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.webp?1783937351",
-      "art": "https://cards.scryfall.io/art/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.webp?1783937351",
-      "crop": "https://cards.scryfall.io/crop/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.webp?1783937351"
+      "small": "https://cards.scryfall.io/small/front/c/0/c0b94a92-48d5-4d08-a8fa-6f3a992db941.jpg?1783904163",
+      "normal": "https://cards.scryfall.io/normal/front/c/0/c0b94a92-48d5-4d08-a8fa-6f3a992db941.jpg?1783904163",
+      "large": "https://cards.scryfall.io/large/front/c/0/c0b94a92-48d5-4d08-a8fa-6f3a992db941.jpg?1783904163",
+      "png": "https://cards.scryfall.io/png/front/c/0/c0b94a92-48d5-4d08-a8fa-6f3a992db941.png?1783904163",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/c/0/c0b94a92-48d5-4d08-a8fa-6f3a992db941.jpg?1783904163",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/c/0/c0b94a92-48d5-4d08-a8fa-6f3a992db941.jpg?1783904163",
+      "thumb": "https://cards.scryfall.io/thumb/front/c/0/c0b94a92-48d5-4d08-a8fa-6f3a992db941.webp?1783904163",
+      "grid": "https://cards.scryfall.io/grid/front/c/0/c0b94a92-48d5-4d08-a8fa-6f3a992db941.webp?1783904163",
+      "display": "https://cards.scryfall.io/display/front/c/0/c0b94a92-48d5-4d08-a8fa-6f3a992db941.webp?1783904163",
+      "art": "https://cards.scryfall.io/art/front/c/0/c0b94a92-48d5-4d08-a8fa-6f3a992db941.webp?1783904163",
+      "crop": "https://cards.scryfall.io/crop/front/c/0/c0b94a92-48d5-4d08-a8fa-6f3a992db941.webp?1783904163"
      },
-     "mana_cost": "{1}{R}{R}",
-     "cmc": 3,
-     "type_line": "Sorcery",
-     "oracle_text": "Until end of turn, gain control of target creature and it gains haste. Untap and goad that creature. (Until your next turn, that creature attacks each combat if able and attacks a player other than you if able.)",
+     "mana_cost": "{1}{U} // {1}{R}",
+     "cmc": 4,
+     "type_line": "Instant // Instant",
      "colors": [
-      "R"
+      "R",
+      "U"
      ],
      "color_identity": [
-      "R"
+      "R",
+      "U"
      ],
      "keywords": [
-      "Goad"
+      "Fuse"
+     ],
+     "card_faces": [
+      {
+       "object": "card_face",
+       "name": "Double Jump",
+       "mana_cost": "{1}{U}",
+       "type_line": "Instant",
+       "oracle_text": "Put a flying counter on target creature you control. Until end of turn, it has base power and toughness 5/5.\nFuse (You may cast one or both halves of this card from your hand.)",
+       "artist": "Kevin Sidharta",
+       "artist_id": "e0bcff21-4a2b-4151-86a2-a462da7b5aaa",
+       "illustration_id": "f44bc0e5-0f64-4a72-b626-7d709867e2fc"
+      },
+      {
+       "object": "card_face",
+       "name": "Flying Kick",
+       "mana_cost": "{1}{R}",
+       "type_line": "Instant",
+       "oracle_text": "Target creature you control deals damage equal to its power to target creature an opponent controls.\nFuse (You may cast one or both halves of this card from your hand.)",
+       "artist": "Kevin Sidharta",
+       "artist_id": "e0bcff21-4a2b-4151-86a2-a462da7b5aaa"
+      }
      ],
      "legalities": {
       "standard": "not_legal",
@@ -663,7 +666,8 @@
       "tlr": "legal"
      },
      "games": [
-      "paper"
+      "paper",
+      "mtgo"
      ],
      "reserved": false,
      "game_changer": false,
@@ -677,50 +681,53 @@
      "promo": false,
      "reprint": false,
      "variation": false,
-     "set_id": "ad1b8847-1905-4080-9e26-80691ea7c1ef",
-     "set": "cn2",
-     "set_name": "Conspiracy: Take the Crown",
-     "set_type": "draft_innovation",
-     "set_uri": "https://api.scryfall.com/sets/ad1b8847-1905-4080-9e26-80691ea7c1ef",
-     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Acn2&unique=prints",
-     "scryfall_set_uri": "https://scryfall.com/sets/cn2?utm_source=api",
-     "rulings_uri": "https://api.scryfall.com/cards/534c652a-2345-48d5-bd78-33f91ed914b4/rulings",
-     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Afc80380c-7d75-4556-aaf2-bf7b2c757e75&unique=prints",
-     "collector_number": "49",
+     "set_id": "178a07bb-cd54-4443-8b62-675e0c52cfe3",
+     "set": "tmc",
+     "set_name": "Teenage Mutant Ninja Turtles Eternal",
+     "set_type": "eternal",
+     "set_uri": "https://api.scryfall.com/sets/178a07bb-cd54-4443-8b62-675e0c52cfe3",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Atmc&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/tmc?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/c0b94a92-48d5-4d08-a8fa-6f3a992db941/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Acb3072c7-393c-43d9-a2c9-f918bd0fd7be&unique=prints",
+     "collector_number": "35",
      "digital": false,
-     "rarity": "uncommon",
-     "flavor_text": "The whitest robes stain best.",
+     "rarity": "rare",
      "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
-     "artist": "Mathias Kollros",
+     "artist": "Kevin Sidharta",
      "artist_ids": [
-      "2ae0dd12-047c-4efb-80d7-bccc3bac5fba"
+      "e0bcff21-4a2b-4151-86a2-a462da7b5aaa"
      ],
-     "illustration_id": "358d16cf-28d9-4da9-aed5-acd4a59d3bc3",
+     "illustration_id": "f44bc0e5-0f64-4a72-b626-7d709867e2fc",
      "border_color": "black",
      "frame": "2015",
+     "security_stamp": "oval",
      "full_art": false,
      "textless": false,
-     "booster": true,
+     "booster": false,
      "story_spotlight": false,
-     "edhrec_rank": 11214,
+     "promo_types": [
+      "surgefoil",
+      "universesbeyond"
+     ],
+     "edhrec_rank": 11824,
      "prices": {
-      "usd": "0.35",
-      "usd_foil": "2.88",
+      "usd": "0.27",
+      "usd_foil": null,
       "usd_etched": null,
-      "eur": "0.67",
-      "eur_foil": "6.40",
-      "tix": null
+      "eur": "0.27",
+      "eur_foil": "0.02",
+      "tix": "0.71"
      },
      "related_uris": {
-      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=416806&printed=false",
-      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DBesmirch",
-      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DBesmirch",
-      "edhrec": "https://edhrec.com/route/?cc=Besmirch"
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DDouble%2BJump%2B%252F%252F%2BFlying%2BKick",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DDouble%2BJump%2B%252F%252F%2BFlying%2BKick",
+      "edhrec": "https://edhrec.com/route/?cc=Double+Jump+%2F%2F+Flying+Kick"
      },
      "purchase_uris": {
-      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F121421%3Fpage%3D1",
-      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=291747&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
-      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Besmirch&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F679604%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=873505&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/147399?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
      }
     },
     "isSpell": true,
@@ -750,7 +757,7 @@
     "targetPlayerId": null,
     "enchantedPlayerId": null,
     "modalModeCounts": null,
-    "primaryTarget": "perm_1",
+    "primaryTarget": "perm_3",
     "multiTarget": null,
     "slotTargets": {},
     "modalTargets": {},
@@ -969,7 +976,7 @@
     "perm": "Grizzly Bears",
     "final": {
      "name": "Grizzly Bears",
-     "controller": "player_0",
+     "controller": "player_1",
      "supertypes": [],
      "types": [
       "Creature"
@@ -982,23 +989,9 @@
      "colors": [
       "G"
      ],
-     "abilities": [
-      "Haste",
-      "Goaded"
-     ],
-     "traits": [
-      "Goaded"
-     ]
+     "abilities": []
     },
-    "changedBy": {
-     "2": [
-      "Besmirch"
-     ],
-     "6": [
-      "Besmirch",
-      "Besmirch"
-     ]
-    }
+    "changedBy": {}
    },
    {
     "perm": "Gray Ogre",
@@ -1033,77 +1026,58 @@
      "subtypes": [
       "Giant"
      ],
-     "power": 3,
-     "toughness": 3,
+     "power": 5,
+     "toughness": 5,
      "colors": [
       "R"
      ],
      "abilities": []
     },
-    "changedBy": {}
+    "changedBy": {
+     "7b": [
+      "Double Jump"
+     ]
+    }
    },
    {
-    "perm": "Besmirch",
+    "perm": "Double Jump",
     "final": {
-     "name": "Besmirch",
+     "name": "Double Jump",
      "controller": "player_0",
      "supertypes": [],
      "types": [
-      "Sorcery"
+      "Instant"
      ],
      "subtypes": [],
      "power": null,
      "toughness": null,
      "colors": [
-      "R"
+      "R",
+      "U"
      ],
      "abilities": [
-      "Until end of turn, gain control of target creature and it gains haste. Untap and goad that creature."
+      "Put a flying counter on target creature you control. Until end of turn, it has base power and toughness 5/5.",
+      "Fuse"
      ]
     },
     "changedBy": {}
    }
   ],
   "order": {
-   "2": [
-    "Besmirch"
-   ],
-   "6": [
-    "Besmirch",
-    "Besmirch"
+   "7b": [
+    "Double Jump"
    ]
   },
   "effects": [
    {
-    "source": "Besmirch",
-    "layer": "6",
-    "type": "add_ability",
+    "source": "Double Jump",
+    "layer": "7b",
+    "type": "set_pt",
     "scope": "targeted",
-    "target": "Grizzly Bears",
+    "target": "Hill Giant",
     "params": {
-     "ability": "Haste"
-    }
-   },
-   {
-    "source": "Besmirch",
-    "layer": "6",
-    "type": "add_ability",
-    "scope": "targeted",
-    "target": "Grizzly Bears",
-    "params": {
-     "ability": "Goaded",
-     "isTrait": true
-    }
-   },
-   {
-    "source": "Besmirch",
-    "layer": "2",
-    "type": "control",
-    "scope": "targeted",
-    "target": "Grizzly Bears",
-    "params": {
-     "newController": "player_0",
-     "untilEndOfTurn": false
+     "power": 5,
+     "toughness": 5
     }
    }
   ]

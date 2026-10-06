@@ -1,6 +1,6 @@
 {
- "name": "Besmirch — \"goad that creature\" goads only the target",
- "notes": "'Untap and goad that creature' built a creature filter from 'that creature' and goaded every creature; '… gain control of target creature and it gains haste' gave every creature haste. A pronoun object of goad/suspect is now the chosen target, and _resolveItPronoun splits '… target creature and it gains haste' into its own 'It gains haste' sentence.",
+ "name": "Coercive Recruiter — \"it gains haste and becomes a Pirate in addition\" keeps both halves",
+ "notes": "Found by tests/sweep.py (pronoun-subject clusters). The add-type parser took 'target creature gains haste and' as its subject, so either the haste or the Pirate type was lost. Keywords in front of the 'and' now go to the same subject.",
  "recipe": {
   "steps": [
    {
@@ -24,14 +24,23 @@
     "as": "giant"
    },
    {
-    "add": "Besmirch",
-    "as": "spell",
-    "spell": true
+    "add": "Coercive Recruiter",
+    "as": "recruiter"
+   },
+   {
+    "call": [
+     "addTriggeredAbility",
+     "@recruiter",
+     0,
+     "gain control of target creature until end of turn. Untap that creature. Until end of turn, it gains haste and becomes a Pirate in addition to its other types.",
+     "Whenever this creature or another Pirate you control enters, gain control of target creature until end of turn. Untap that creature. Until end of turn, it gains haste and becomes a Pirate in addition to its other types."
+    ],
+    "as": "trigger"
    },
    {
     "call": [
      "setTarget",
-     "@spell",
+     "@trigger",
      "@bears"
     ]
    }
@@ -42,9 +51,13 @@
    "perm": "Grizzly Bears",
    "final": {
     "controller": "player_0",
+    "subtypes": {
+     "$includes": [
+      "Pirate"
+     ]
+    },
     "abilities": {
      "$includes": [
-      "Goaded",
       "Haste"
      ]
     }
@@ -53,22 +66,10 @@
   {
    "perm": "Gray Ogre",
    "final": {
-    "abilities": {
-     "$excludes": [
-      "Goaded",
-      "Haste"
-     ]
-    }
-   }
-  },
-  {
-   "perm": "Hill Giant",
-   "final": {
-    "abilities": {
-     "$excludes": [
-      "Haste"
-     ]
-    }
+    "controller": "player_1",
+    "subtypes": [
+     "Ogre"
+    ]
    }
   }
  ],
@@ -595,48 +596,49 @@
     "id": "perm_4",
     "scryfallData": {
      "object": "card",
-     "id": "534c652a-2345-48d5-bd78-33f91ed914b4",
-     "oracle_id": "fc80380c-7d75-4556-aaf2-bf7b2c757e75",
+     "id": "16a1d084-34f1-4278-ae54-d0dac288b1da",
+     "oracle_id": "ad33530c-a8df-4c1c-a863-501e583290b6",
      "multiverse_ids": [
-      416806
+      640518
      ],
-     "tcgplayer_id": 121421,
-     "cardmarket_id": 291747,
-     "name": "Besmirch",
+     "mtgo_id": 118844,
+     "tcgplayer_id": 525738,
+     "cardmarket_id": 743574,
+     "name": "Coercive Recruiter",
      "lang": "en",
-     "released_at": "2016-08-26",
-     "uri": "https://api.scryfall.com/cards/534c652a-2345-48d5-bd78-33f91ed914b4",
-     "scryfall_uri": "https://scryfall.com/card/cn2/49/besmirch?utm_source=api",
+     "released_at": "2023-11-17",
+     "uri": "https://api.scryfall.com/cards/16a1d084-34f1-4278-ae54-d0dac288b1da",
+     "scryfall_uri": "https://scryfall.com/card/lcc/222/coercive-recruiter?utm_source=api",
      "layout": "normal",
      "highres_image": true,
      "image_status": "highres_scan",
-     "image_updated_at": "2026-07-13T10:09:11Z",
+     "image_updated_at": "2026-07-13T03:37:45Z",
      "image_uris": {
-      "small": "https://cards.scryfall.io/small/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.jpg?1783937351",
-      "normal": "https://cards.scryfall.io/normal/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.jpg?1783937351",
-      "large": "https://cards.scryfall.io/large/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.jpg?1783937351",
-      "png": "https://cards.scryfall.io/png/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.png?1783937351",
-      "art_crop": "https://cards.scryfall.io/art_crop/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.jpg?1783937351",
-      "border_crop": "https://cards.scryfall.io/border_crop/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.jpg?1783937351",
-      "thumb": "https://cards.scryfall.io/thumb/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.webp?1783937351",
-      "grid": "https://cards.scryfall.io/grid/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.webp?1783937351",
-      "display": "https://cards.scryfall.io/display/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.webp?1783937351",
-      "art": "https://cards.scryfall.io/art/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.webp?1783937351",
-      "crop": "https://cards.scryfall.io/crop/front/5/3/534c652a-2345-48d5-bd78-33f91ed914b4.webp?1783937351"
+      "small": "https://cards.scryfall.io/small/front/1/6/16a1d084-34f1-4278-ae54-d0dac288b1da.jpg?1783913865",
+      "normal": "https://cards.scryfall.io/normal/front/1/6/16a1d084-34f1-4278-ae54-d0dac288b1da.jpg?1783913865",
+      "large": "https://cards.scryfall.io/large/front/1/6/16a1d084-34f1-4278-ae54-d0dac288b1da.jpg?1783913865",
+      "png": "https://cards.scryfall.io/png/front/1/6/16a1d084-34f1-4278-ae54-d0dac288b1da.png?1783913865",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/1/6/16a1d084-34f1-4278-ae54-d0dac288b1da.jpg?1783913865",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/1/6/16a1d084-34f1-4278-ae54-d0dac288b1da.jpg?1783913865",
+      "thumb": "https://cards.scryfall.io/thumb/front/1/6/16a1d084-34f1-4278-ae54-d0dac288b1da.webp?1783913865",
+      "grid": "https://cards.scryfall.io/grid/front/1/6/16a1d084-34f1-4278-ae54-d0dac288b1da.webp?1783913865",
+      "display": "https://cards.scryfall.io/display/front/1/6/16a1d084-34f1-4278-ae54-d0dac288b1da.webp?1783913865",
+      "art": "https://cards.scryfall.io/art/front/1/6/16a1d084-34f1-4278-ae54-d0dac288b1da.webp?1783913865",
+      "crop": "https://cards.scryfall.io/crop/front/1/6/16a1d084-34f1-4278-ae54-d0dac288b1da.webp?1783913865"
      },
-     "mana_cost": "{1}{R}{R}",
-     "cmc": 3,
-     "type_line": "Sorcery",
-     "oracle_text": "Until end of turn, gain control of target creature and it gains haste. Untap and goad that creature. (Until your next turn, that creature attacks each combat if able and attacks a player other than you if able.)",
+     "mana_cost": "{4}{R}",
+     "cmc": 5,
+     "type_line": "Creature — Orc Pirate",
+     "oracle_text": "Whenever this creature or another Pirate you control enters, gain control of target creature until end of turn. Untap that creature. Until end of turn, it gains haste and becomes a Pirate in addition to its other types.",
+     "power": "4",
+     "toughness": "3",
      "colors": [
       "R"
      ],
      "color_identity": [
       "R"
      ],
-     "keywords": [
-      "Goad"
-     ],
+     "keywords": [],
      "legalities": {
       "standard": "not_legal",
       "future": "not_legal",
@@ -660,70 +662,71 @@
       "oldschool": "not_legal",
       "premodern": "not_legal",
       "predh": "not_legal",
-      "tlr": "legal"
+      "tlr": "not_legal"
      },
      "games": [
-      "paper"
+      "paper",
+      "mtgo"
      ],
      "reserved": false,
      "game_changer": false,
-     "foil": true,
+     "foil": false,
      "nonfoil": true,
      "finishes": [
-      "nonfoil",
-      "foil"
+      "nonfoil"
      ],
      "oversized": false,
      "promo": false,
-     "reprint": false,
+     "reprint": true,
      "variation": false,
-     "set_id": "ad1b8847-1905-4080-9e26-80691ea7c1ef",
-     "set": "cn2",
-     "set_name": "Conspiracy: Take the Crown",
-     "set_type": "draft_innovation",
-     "set_uri": "https://api.scryfall.com/sets/ad1b8847-1905-4080-9e26-80691ea7c1ef",
-     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Acn2&unique=prints",
-     "scryfall_set_uri": "https://scryfall.com/sets/cn2?utm_source=api",
-     "rulings_uri": "https://api.scryfall.com/cards/534c652a-2345-48d5-bd78-33f91ed914b4/rulings",
-     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Afc80380c-7d75-4556-aaf2-bf7b2c757e75&unique=prints",
-     "collector_number": "49",
+     "set_id": "d253edc3-5bc7-4cf1-9446-a8540dedffa5",
+     "set": "lcc",
+     "set_name": "The Lost Caverns of Ixalan Commander",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/d253edc3-5bc7-4cf1-9446-a8540dedffa5",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Alcc&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/lcc?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/16a1d084-34f1-4278-ae54-d0dac288b1da/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aad33530c-a8df-4c1c-a863-501e583290b6&unique=prints",
+     "collector_number": "222",
      "digital": false,
-     "rarity": "uncommon",
-     "flavor_text": "The whitest robes stain best.",
+     "rarity": "rare",
+     "flavor_text": "\"Choose, vampire: our hat on your head, or no hat, no head.\"",
      "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
-     "artist": "Mathias Kollros",
+     "artist": "Randy Vargas",
      "artist_ids": [
-      "2ae0dd12-047c-4efb-80d7-bccc3bac5fba"
+      "d20672ca-0555-4238-a984-fd171d36b247"
      ],
-     "illustration_id": "358d16cf-28d9-4da9-aed5-acd4a59d3bc3",
+     "illustration_id": "80518b84-d78f-4b2f-a8b1-ee0c4f06d7c5",
      "border_color": "black",
      "frame": "2015",
+     "security_stamp": "oval",
      "full_art": false,
      "textless": false,
-     "booster": true,
+     "booster": false,
      "story_spotlight": false,
-     "edhrec_rank": 11214,
+     "edhrec_rank": 3725,
      "prices": {
-      "usd": "0.35",
-      "usd_foil": "2.88",
+      "usd": "0.31",
+      "usd_foil": null,
       "usd_etched": null,
-      "eur": "0.67",
-      "eur_foil": "6.40",
-      "tix": null
+      "eur": "0.28",
+      "eur_foil": null,
+      "tix": "1.83"
      },
      "related_uris": {
-      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=416806&printed=false",
-      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DBesmirch",
-      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DBesmirch",
-      "edhrec": "https://edhrec.com/route/?cc=Besmirch"
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=640518&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DCoercive%2BRecruiter",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DCoercive%2BRecruiter",
+      "edhrec": "https://edhrec.com/route/?cc=Coercive+Recruiter"
      },
      "purchase_uris": {
-      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F121421%3Fpage%3D1",
-      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=291747&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
-      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Besmirch&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F525738%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=743574&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/118844?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
      }
     },
-    "isSpell": true,
+    "isSpell": false,
     "faceIndex": 0,
     "isToken": false,
     "owner": "player_0",
@@ -750,84 +753,39 @@
     "targetPlayerId": null,
     "enchantedPlayerId": null,
     "modalModeCounts": null,
-    "primaryTarget": "perm_1",
+    "primaryTarget": null,
     "multiTarget": null,
     "slotTargets": {},
     "modalTargets": {},
     "copySource": null,
-    "targetTs": 5,
+    "targetTs": null,
     "slotTs": {},
     "copyTargetPermId": null,
     "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [
+   {
+    "id": "trig_perm_4_0_5",
+    "kind": "trigger",
+    "pseudoKind": "ability",
+    "sourceId": "perm_4",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 0,
+    "timestamp": 5,
+    "effectText": "gain control of target creature until end of turn. Untap that creature. Until end of turn, target Pirate gains haste and becomes a Pirate in addition to its other types.",
+    "fullText": "Whenever this creature or another Pirate you control enters, gain control of target creature until end of turn. Untap that creature. Until end of turn, it gains haste and becomes a Pirate in addition to its other types.",
+    "chosenColor": null,
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "firedAtStates": null,
     "firedAtSnapshot": {
-     "states": [
-      [
-       "perm_1",
-       {
-        "name": "Grizzly Bears",
-        "types": [
-         "Creature"
-        ],
-        "supertypes": [],
-        "subtypes": [
-         "Bear"
-        ],
-        "power": 2,
-        "toughness": 2,
-        "colors": [
-         "G"
-        ],
-        "abilities": [],
-        "oracleText": "",
-        "owner": "player_1",
-        "controller": "player_1"
-       }
-      ],
-      [
-       "perm_2",
-       {
-        "name": "Gray Ogre",
-        "types": [
-         "Creature"
-        ],
-        "supertypes": [],
-        "subtypes": [
-         "Ogre"
-        ],
-        "power": 2,
-        "toughness": 2,
-        "colors": [
-         "R"
-        ],
-        "abilities": [],
-        "oracleText": "",
-        "owner": "player_1",
-        "controller": "player_1"
-       }
-      ],
-      [
-       "perm_3",
-       {
-        "name": "Hill Giant",
-        "types": [
-         "Creature"
-        ],
-        "supertypes": [],
-        "subtypes": [
-         "Giant"
-        ],
-        "power": 3,
-        "toughness": 3,
-        "colors": [
-         "R"
-        ],
-        "abilities": [],
-        "oracleText": "",
-        "owner": "player_0",
-        "controller": "player_0"
-       }
-      ]
-     ],
      "perms": [
       {
        "id": "perm_1",
@@ -894,6 +852,29 @@
        "printedPower": 3,
        "printedToughness": 3,
        "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Coercive Recruiter",
+       "imageUri": "https://cards.scryfall.io/small/front/1/6/16a1d084-34f1-4278-ae54-d0dac288b1da.jpg?1783913865",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Orc",
+        "Pirate"
+       ],
+       "printedPower": 4,
+       "printedToughness": 3,
+       "timestamp": 4
       }
      ],
      "mutateStacks": [],
@@ -909,10 +890,18 @@
        "name": "Opponent"
       }
      ]
-    }
+    },
+    "primaryTarget": "perm_1",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 6,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null
    }
   ],
-  "firedAbilities": [],
   "players": [
    {
     "id": "player_0",
@@ -975,7 +964,8 @@
       "Creature"
      ],
      "subtypes": [
-      "Bear"
+      "Bear",
+      "Pirate"
      ],
      "power": 2,
      "toughness": 2,
@@ -983,20 +973,18 @@
       "G"
      ],
      "abilities": [
-      "Haste",
-      "Goaded"
-     ],
-     "traits": [
-      "Goaded"
+      "Haste"
      ]
     },
     "changedBy": {
      "2": [
-      "Besmirch"
+      "Coercive Recruiter (trigger)"
+     ],
+     "4": [
+      "Coercive Recruiter (trigger)"
      ],
      "6": [
-      "Besmirch",
-      "Besmirch"
+      "Coercive Recruiter (trigger)"
      ]
     }
    },
@@ -1043,22 +1031,25 @@
     "changedBy": {}
    },
    {
-    "perm": "Besmirch",
+    "perm": "Coercive Recruiter",
     "final": {
-     "name": "Besmirch",
+     "name": "Coercive Recruiter",
      "controller": "player_0",
      "supertypes": [],
      "types": [
-      "Sorcery"
+      "Creature"
      ],
-     "subtypes": [],
-     "power": null,
-     "toughness": null,
+     "subtypes": [
+      "Orc",
+      "Pirate"
+     ],
+     "power": 4,
+     "toughness": 3,
      "colors": [
       "R"
      ],
      "abilities": [
-      "Until end of turn, gain control of target creature and it gains haste. Untap and goad that creature."
+      "Whenever this creature or another Pirate you control enters, gain control of target creature until end of turn. Untap that creature. Until end of turn, it gains haste and becomes a Pirate in addition to its other types."
      ]
     },
     "changedBy": {}
@@ -1066,16 +1057,32 @@
   ],
   "order": {
    "2": [
-    "Besmirch"
+    "Coercive Recruiter (trigger)"
+   ],
+   "4": [
+    "Coercive Recruiter (trigger)"
    ],
    "6": [
-    "Besmirch",
-    "Besmirch"
+    "Coercive Recruiter (trigger)"
    ]
   },
   "effects": [
    {
-    "source": "Besmirch",
+    "source": "Coercive Recruiter (trigger)",
+    "layer": "4",
+    "type": "add_type",
+    "scope": "targeted",
+    "target": "Grizzly Bears",
+    "params": {
+     "subtypes": [
+      "Pirate"
+     ],
+     "supertypes": [],
+     "types": []
+    }
+   },
+   {
+    "source": "Coercive Recruiter (trigger)",
     "layer": "6",
     "type": "add_ability",
     "scope": "targeted",
@@ -1085,25 +1092,14 @@
     }
    },
    {
-    "source": "Besmirch",
-    "layer": "6",
-    "type": "add_ability",
-    "scope": "targeted",
-    "target": "Grizzly Bears",
-    "params": {
-     "ability": "Goaded",
-     "isTrait": true
-    }
-   },
-   {
-    "source": "Besmirch",
+    "source": "Coercive Recruiter (trigger)",
     "layer": "2",
     "type": "control",
     "scope": "targeted",
     "target": "Grizzly Bears",
     "params": {
      "newController": "player_0",
-     "untilEndOfTurn": false
+     "untilEndOfTurn": true
     }
    }
   ]

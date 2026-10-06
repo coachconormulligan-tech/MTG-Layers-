@@ -1,0 +1,53 @@
+{
+  "name": "Awakening Zone — the Spawn token's sacrifice ability is not granted to other permanents",
+  "notes": "Seen in the sweep diff. 'Create a 0/1 … token. It has \"Sacrifice this token: Add {C}.\"' gave that ability to every permanent. 'has \"…\"' right after a token is created defines the token and is skipped.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears",
+      "controller": "p2"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Awakening Zone",
+      "as": "zone"
+    },
+    {
+      "call": [
+        "addTriggeredAbility",
+        "@zone",
+        0,
+        "create a 0/1 colorless Eldrazi Spawn creature token. It has \"Sacrifice this token: Add {C}.\"",
+        "At the beginning of your upkeep, you may create a 0/1 colorless Eldrazi Spawn creature token. It has \"Sacrifice this token: Add {C}.\""
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "abilities": []
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": []
+      }
+    }
+  ]
+}
