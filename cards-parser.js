@@ -726,10 +726,21 @@ function parseCardEffects(permanent, card, opts = {}) {
     return eff;
   }
 
+  // A rider's effect ("If it isn't a creature, it becomes a 0/0 Robot creature …") takes the
+  // restriction of the target it was resolved to: in a fired ability an effect without one is
+  // taken for the source's own and pinned to it. Other "target X" subjects of these parsers are
+  // left without one, as before — in a fired ability the subject may be a pronoun rewritten to
+  // "target <trigger subject>", a guess ("target Pirate" for Coercive Recruiter's "it") that a
+  // board restored from a save can no longer tell from a real target.
+  function _isRiderEffect(eff) {
+    return !!(eff.asLongAsCondition && eff.asLongAsCondition._onResolution);
+  }
+
   // --- "As long as" condition parsing ---
   // Instead of stripping conditions, parse them and attach to effects.
   // Store conditions found per line to attach to effects generated from that text.
   const _asLongAsConditions = []; // array of condition functions
+  const _midAbilityConditions = new Set(); // indices of conditions that gate only part of an ability's effect
 
   function _parseCondition(condText) {
     const ct = condText.toLowerCase().trim();
@@ -765,6 +776,17 @@ function parseCardEffects(permanent, card, opts = {}) {
         return false;
       };
     }
+    // "on resolution [condition]" — what _splitConditionalBranches writes for a rider a spell
+    // or ability checks once, as it resolves ("If it's a Vampire, it also gains lifelink").
+    // The engine tests it against the fire-time snapshot when the effect carries one.
+    const onceMatch = ct.match(/^on resolution\s+(.+)$/);
+    if (onceMatch) {
+      const inner = _parseCondition(onceMatch[1]);
+      if (!inner) return null;
+      const once = (state, allStates) => inner(state, allStates);
+      once._onResolution = true;
+      return once;
+    }
     // Compound "X and Y" — split when "and" is followed by another condition-like
     // phrase, recurse on each half, AND the resulting predicates.
     const andParts = ct.split(/\s+and\s+(?=(?:it(?:\s+is|'s)?\s|this\s|you\s|there|during|on\s|\w+\s+(?:is|has)\s))/i);
@@ -779,6 +801,12 @@ function parseCardEffects(permanent, card, opts = {}) {
         const subs = listParts.map(p => _parseCondition(p)).filter(Boolean);
         if (subs.length >= 2) return (state, allStates) => subs.every(c => c(state, allStates));
       }
+    }
+    // "it is a creature or Vehicle", "it is red or green" — either one.
+    const orMatch = ct.match(/^it is (an? )?([\w-]+) or (?:an? )?([\w-]+)$/);
+    if (orMatch) {
+      const subs = [orMatch[2], orMatch[3]].map(w => _parseCondition(`it is ${orMatch[1] || ''}${w}`));
+      if (subs.every(Boolean)) return (state, allStates) => subs.some(c => c(state, allStates));
     }
     // Sequential branch table (CONDITION_PARSERS at module top). First non-null wins.
     // Returns null when no entry matches — "always true" semantics applied by callers.
@@ -1393,6 +1421,11 @@ function parseCardEffects(permanent, card, opts = {}) {
     if (cond) {
       const idx = _asLongAsConditions.length;
       _asLongAsConditions.push(cond);
+      // An "if" in a later sentence of a triggered or activated line ("Target creature can't be
+      // blocked this turn. If it's a Vampire, it also gains lifelink" — Wedding Invitation)
+      // gates part of the effect; the ability itself is always there.
+      const linePrefix = full.substring(full.lastIndexOf('\n', offset) + 1, offset).trimStart();
+      if (_isTriggeredSentence(linePrefix) || /:/.test(linePrefix.replace(/"[^"]*"/g, '').replace(/\{[^}]+\}/g, ''))) _midAbilityConditions.add(idx);
       return ` \x04${idx}\x04`;
     }
     return match;
@@ -2042,8 +2075,9 @@ function parseCardEffects(permanent, card, opts = {}) {
     // Skip matches that overlap a copy clause already consumed by copyRegex
     // (e.g. Mindlink Mech: "becomes a copy of …, except it is a vehicle artifact in
     // addition to its other types" — the type is added via copyParams, not a separate effect).
-    const _atStart = addTypeMatch.index;
-    const _atEnd = _atStart + addTypeMatch[0].length;
+    // (measured from the match's content: its leading "." may be the copy sentence's own).
+    const _atStart = _getMatchContentPos(addTypeMatch.index);
+    const _atEnd = addTypeMatch.index + addTypeMatch[0].length;
     if (copyClauseSpans.some(r => _atStart < r.end && _atEnd > r.start)) continue;
     let filterText = addTypeMatch[1].trim();
     let becomesText = addTypeMatch[2].trim();
@@ -2069,7 +2103,14 @@ function parseCardEffects(permanent, card, opts = {}) {
     // the sentences before it attached ("Put it onto the battlefield. Target creature").
     {
       const lastSentence = filterText.split(/\.\s+/).pop().trim();
-      if (lastSentence !== filterText && /^(?:(?:until|for as long as) [^,]+,\s*)?(?:up to \w+ |another )?target\s/i.test(lastSentence)) filterText = lastSentence;
+      // ("Put each creature card exiled … onto the battlefield …. Any number of target creatures
+      // each are a 1/1 Spirit …" — Ghost Vacuum, once fired.)
+      if (lastSentence !== filterText && _lastSentenceTargetSubject(filterText) === lastSentence) {
+        // On an ability line read as part of the whole card, that sentence waits for the ability to fire.
+        if (!/^(?:(?:until|for as long as) [^,]+,\s*)?(?:up to \w+ |another )?target\s/i.test(lastSentence) &&
+            (_isInTriggeredSentence(_atStart) || _isInActivatedEffect(_atStart))) continue;
+        filterText = lastSentence;
+      }
       // "Put seven +1/+1 counters on this artifact. This artifact becomes a 0/0 Spirit creature in
       // addition …" (Haunted Screen, fired): the source is the subject. Not on an ability line
       // read as part of the whole card; that sentence is parsed when the ability fires.
@@ -2109,7 +2150,8 @@ function parseCardEffects(permanent, card, opts = {}) {
         }
       }
     }
-    const { fn, desc, isSelf, isTargeted } = buildAppliesToFromText(addTypeFilterText);
+    const _addTypeApplies = buildAppliesToFromText(addTypeFilterText);
+    const { fn, desc, isSelf, isTargeted } = _addTypeApplies;
     const selfAffect = detectSelfAffect(addTypeFilterText);
     // Strip quoted ability text from becomesText before parsing types
     // e.g. 'lifelink and "Other commanders you control get +2/+2 and have lifelink," and is a Performer'
@@ -2236,6 +2278,15 @@ function parseCardEffects(permanent, card, opts = {}) {
     for (let ei = addTypeEffCountBefore; ei < effects.length; ei++) {
       effects[ei].abilityGroupId = _addAbilityGroupId;
     }
+    // A rider resolved to its target keeps that target's restriction (see _isRiderEffect).
+    if (_addTypeApplies.isSpellTarget) {
+      for (let ei = addTypeEffCountBefore; ei < effects.length; ei++) {
+        // So does a subject of several targets ("Up to two target creatures each are …"),
+        // which is never a rewritten pronoun and needs its target count.
+        if (effects[ei].scope === 'targeted' && !effects[ei].selfTarget && !effects[ei].targetRestriction &&
+            (_isRiderEffect(effects[ei]) || _addTypeApplies.maxTargets > 1)) _applyTargetInfo(effects[ei], _addTypeApplies, fn);
+      }
+    }
   }
 
   // Spans where setTypeRegex emitted a colour, so becomesColorRegex below does not repeat it.
@@ -2259,6 +2310,10 @@ function parseCardEffects(permanent, card, opts = {}) {
     if (/\.\s/.test(filterText)) {
       const _lastSentence = filterText.split(/\.\s+/).pop().trim();
       if (/^(?:(?:up to \w+|any number of|\w+ or \w+|\w+)\s+(?:other\s+)?)?target\s/i.test(_lastSentence)) filterText = _lastSentence;
+      // "…, then shuffle. Until end of turn, target land becomes …" (Rampaging Growth). Not on a
+      // triggered line read as part of the whole card (Sparkshaper Visionary).
+      else if (/^until end of turn,\s*(?:(?:up to \w+|any number of|\w+ or \w+|\w+)\s+(?:other\s+)?)?target\s/i.test(_lastSentence) &&
+               !_isInTriggeredSentence(mStart + setTypeMatch[0].search(/\S/))) filterText = _lastSentence;
       // "Put two +1/+1 counters on this card. This card becomes a God Warrior Hero" (Donald Blake).
       // Not on a triggered line read as a whole card ("When … dies, return it. She's a land named
       // Moon", Princess Yue): that sentence belongs to the trigger and is parsed when it fires.
@@ -2461,7 +2516,8 @@ function parseCardEffects(permanent, card, opts = {}) {
     if (/\byou (?:control|own)\b/i.test(setTypeMatch[0]) && !/\byou (?:control|own)\b/i.test(_stSubjectText)) {
       _stSubjectText += ' you control';
     }
-    const { fn, desc, isSelf, isTargeted } = buildAppliesToFromText(_stSubjectText);
+    const _stApplies = buildAppliesToFromText(_stSubjectText);
+    const { fn, desc, isSelf, isTargeted } = _stApplies;
     const _stTargetRestriction = isTargeted ? fn : null;
     const selfAffect = isSelf ? true : detectSelfAffect(_stSubjectText);
     const _stScope = (isSelf || isTargeted) ? 'targeted' : 'global';
@@ -2667,6 +2723,11 @@ function parseCardEffects(permanent, card, opts = {}) {
       effects[ei].abilityGroupId = _stAbilityGroupId;
       if (_stTargetRestriction && effects[ei].scope === 'targeted' && !effects[ei].targetRestriction) {
         effects[ei].targetRestriction = _stTargetRestriction;
+      }
+      // "Any number of target lands become 4/4 Elemental creatures …": one pick per target.
+      if (_stApplies.isSpellTarget && _stApplies.maxTargets > 1 && effects[ei].scope === 'targeted' && !effects[ei].selfTarget && !effects[ei].targetIds) {
+        effects[ei].maxTargets = _stApplies.maxTargets;
+        effects[ei].targetIds = [];
       }
     }
   }
@@ -3233,6 +3294,7 @@ function parseCardEffects(permanent, card, opts = {}) {
       selfTarget: gbpApplies.isSelf || false,
       affectsSelf: gbpSelf,
     };
+    const _gbpEffCountBefore = effects.length;
     pushEff('7b', EFFECT_TYPE.SET_PT,
       { power: parseInt(generalBasePTMatch[2]), toughness: parseInt(generalBasePTMatch[3]) },
       _gbpCtx,
@@ -3265,6 +3327,10 @@ function parseCardEffects(permanent, card, opts = {}) {
         _gbpCtx,
         `${gbpFilterText} lose all creature types. ${gbpApplies.desc}`,
         gbpCond ? { asLongAsCondition: gbpCond } : undefined);
+    }
+    // A rider resolved to its target keeps that target's restriction (see _isRiderEffect).
+    if (gbpApplies.isSpellTarget) {
+      for (let ei = _gbpEffCountBefore; ei < effects.length; ei++) if (_isRiderEffect(effects[ei])) _applyTargetInfo(effects[ei], gbpApplies, gbpApplies.fn);
     }
   }
 
@@ -4729,6 +4795,7 @@ function parseCardEffects(permanent, card, opts = {}) {
       // Branch lines are not printed ability lines, and a line with an "Otherwise" branch
       // applies one way or the other whatever its condition says.
       if (_branchInfo && (li >= _branchInfo.baseLineCount || _branchInfo.alwaysOnLines.has(li))) continue;
+      if (_midAbilityConditions.has(condIdx)) continue;
       condMap.set(li, _asLongAsConditions[condIdx]);
     }
     if (condMap.size > 0) {

@@ -51,6 +51,28 @@ function _resolveItToAbilitySource(text) {
   });
 }
 
+/* A rider on the object a fired ability just named — "Target creature can't be blocked this
+   turn. If it's a Vampire, it also gains lifelink …" (Wedding Invitation), "put a flood counter
+   on another target creature or land. If it's a land, it becomes an Island …" (The Flood of
+   Mars). Runs after _resolveItToAbilitySource, so a rider about the source already reads "this
+   creature"; here a rider whose "it" is the ability's target gets that target as its subject,
+   which keeps the generic "it → target <trigger subject>" rewrite (a non-targeting pick of the
+   wrong kind of object) off it. A rider with neither antecedent is left for that rewrite. */
+function _resolveRiderSubjectToTarget(text) {
+  if (!/\b(?:if|as long as) it\b/i.test(text)) return text;
+  const sentences = _splitSentencesOutsideQuotes(text);
+  for (let i = 1; i < sentences.length; i++) {
+    const m = sentences[i].match(_BRANCH_RIDER_RE);
+    const pron = m && m[3].match(/^(?:it's(?=\s+an?\s)|it\b|that (?:creature|permanent)\b)/i);
+    if (!pron || /\bturn\b/i.test(m[2])) continue;
+    const ante = _branchAntecedent(sentences, i);
+    if (!ante || !/\btarget\b/i.test(ante)) continue;
+    const isContraction = /'s$/i.test(pron[0]);
+    sentences[i] = `${m[1]} ${m[2]}, ${ante.charAt(0).toLowerCase() + ante.slice(1)}${isContraction ? ' is' : ''}${m[3].slice(pron[0].length)}`;
+  }
+  return sentences.join(' ');
+}
+
 /* Returns the total mana spent to cast a permanent, accounting for X.
    For cards with {X} in their mana cost, xValue (the chosen X) is added to manaValue
    (which treats X as 0). For all other cards, equals manaValue. */

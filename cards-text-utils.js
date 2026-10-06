@@ -324,17 +324,41 @@ const _ANY_NUMBER_TARGET_SLOTS = 6;
                                                                → "Each legendary creature you control gains vigilance …"
      "Distribute three +1/+1 counters among up to three target creatures. They gain vigilance …"
                                                                → "Up to three target creatures gain vigilance …"
-   Left alone when "they" are objects the sentence before just made or moved (tokens,
-   cards put onto the battlefield): those have no permanent on the board to point at. */
-const _THEY_SUBJECT_RE = /^((?:until [^,.]+|if [^,.]+),\s*)?they\s+(each\s+)?(gain|get|have|become)\b/i;
+   Cards the sentence before put onto the battlefield, and objects it had the player choose
+   without targeting, become a pick of that many permanents of the kind named:
+     "Return up to two target creature cards from your graveyard to the battlefield. Each of
+      those creatures is a black Zombie …" (Ever After)        → "Up to two target creatures each are a black Zombie …"
+     "Search your library for any number of basic land cards, put them onto the battlefield,
+      then shuffle. Those lands become 4/4 …" (Nissa, Worldwaker) → "Any number of target lands become 4/4 …"
+     "Choose any number of creatures with different powers. Those creatures gain double
+      strike …" (Sigarda's Vanguard)                            → "Any number of target creatures gain double strike …"
+   Left alone when "they" are tokens the sentence before made: there is no telling which. */
+const _THEY_SUBJECT_RE = /^((?:until [^,.]+|if [^,.]+),\s*)?they\s+(each\s+)?(gain|get|have|become|are)\b/i;
+// "Choose any number of creatures with different powers." — chosen, not targeted.
+const _THEY_CHOSEN_ANTECEDENT_RE = /^choose\s+(any number of|up to \w+|two|three|four|five|six)\s+(creatures|lands|artifacts|enchantments|permanents)\b[^.]*\.?$/i;
+// Cards put onto the battlefield: [1] how many (when they were targeted), [2] their type.
+const _THEY_MOVED_CARDS_RE = /\b(?:(up to \w+|any number of|two|three|four|five|six|x)\s+target\s+|each\s+|any number of\s+|an?\s+)(?:[\w-]+\s+)?(creature|land|artifact|enchantment|planeswalker|permanent)(?:\s+and\/or\s+[\w-]+\s+\w+)?\s+cards?\b[^.]*\b(?:on)?to the battlefield\b/i;
+// The pick that stands for the cards a sentence put onto the battlefield, or null.
+// noun is the demonstrative's own ("those lands"), when it had one.
+function _theyMovedCardsSubject(prev, noun) {
+  if (/\bcreates?\b|\btokens?\b/i.test(prev)) return null;
+  const m = prev.match(_THEY_MOVED_CARDS_RE);
+  if (!m) return null;
+  // Cards of several kinds ("up to one target artifact card, up to one target enchantment card,
+  // and …" — Relive the Past) are any number of permanents.
+  const mixed = /and\/or/i.test(m[0]) || (prev.match(/\btarget\b/gi) || []).length > 1;
+  const count = m[1] && !mixed && !/\bx$/i.test(m[1]) ? m[1].toLowerCase() : 'any number of';
+  const kind = mixed ? 'permanent' : (noun || m[2]).toLowerCase().replace(/s$/, '');
+  return `${count} target ${kind}s`;
+}
 const _THEY_TARGET_ANTECEDENT_RE = /\b(?:each of\s+)?((?:up to \w+|any number of|\w+ or \w+|two|three|four|five|six|seven|eight|nine|ten)\s+(?:other\s+)?target\s+[^.,]+?)(?=\s+until\b|\s+and\s+(?:gain|untap|put|you|they|it)\b|[.,]|$)/i;
 const _THEY_GROUP_ANTECEDENT_RE = /\b(all|each)\s+(?!of\b|opponent\b|player\b|other player\b|(?:gain|get|untap|put|draw|lose|sacrifice|choose|discard)s?\b|secretly\b)([^.,]+?)(?=\s+until\b|\s+and\s+(?:gain|untap|put|you|they|it)\b|[.,]|$)/i;
 const _THEY_NEW_OBJECT_RE = /\bcreates?\b|\bonto the battlefield\b|\bto the battlefield\b|\breturn\b|\bmills?\b|\bexiles?\b|\bsearch\b/i;
 const _THEY_SINGULAR_VERB = { gain: 'gains', get: 'gets', have: 'has', become: 'becomes' };
 function _resolveTheyPronoun(text) {
-  if (!/\b(?:they|those)\b/i.test(text)) return text;
+  if (!/\b(?:they|those|each of them)\b/i.test(text)) return text;
   return text.split('\n').map(line => {
-    if (!/\b(?:they|those)\b/i.test(line)) return line;
+    if (!/\b(?:they|those|each of them)\b/i.test(line)) return line;
     // A quoted ability may follow the pronoun ("they become 3/3 Birds with flying and QUOTED",
     // Sparkshaper Visionary) but a pronoun inside or after a quote belongs to that ability.
     const quoteAt = line.indexOf('"');
@@ -342,17 +366,29 @@ function _resolveTheyPronoun(text) {
     const sentences = line.split(/(?<=\.)\s+/);
     for (let i = 1; i < sentences.length; i++) {
       // "Those creatures gain …" / "Each of those creatures gains …" (Cauldron Haze) read as "they".
+      // "Each of them gets …" (Hope and Glory), "Those permanents are 4/4 creatures in addition …".
+      const demo = sentences[i].match(/^(?:(?:until [^,.]+|if [^,.]+),\s*)?(?:each of )?those\s+(\w+)\s/i);
       const asThey = sentences[i]
-        .replace(/^((?:until [^,.]+|if [^,.]+),\s*)?those\s+\w+\s+(?=(?:each\s+)?(?:gain|get|have|become)\b)/i, '$1they ')
-        .replace(/^((?:until [^,.]+|if [^,.]+),\s*)?each of those\s+\w+\s+(gain|get|ha|become)(?:s|ve)\b/i,
-          (_, lead, v) => `${lead || ''}they each ${v.toLowerCase() === 'ha' ? 'have' : v}`);
+        .replace(/^((?:until [^,.]+|if [^,.]+),\s*)?those\s+\w+\s+(?=(?:each\s+)?(?:gain|get|have|become)\b|are\s[^.]*\bin addition to their other\b)/i, '$1they ')
+        .replace(/^((?:until [^,.]+|if [^,.]+),\s*)?each of (?:those\s+\w+|them)\s+(gain|get|ha|become)(?:s|ve)\b/i,
+          (_, lead, v) => `${lead || ''}they each ${v.toLowerCase() === 'ha' ? 'have' : v}`)
+        .replace(/^((?:until [^,.]+|if [^,.]+),\s*)?each of (?:those\s+\w+|them)\s+is\s+(?=an?\s[^.]*\bin addition to its other\b)/i,
+          (_, lead) => `${lead || ''}they each are `);
       const m = asThey.match(_THEY_SUBJECT_RE);
-      if (!m) continue;
+      if (!m || (/^are$/i.test(m[3]) && !/\bin addition to (?:its|their) other\b/i.test(asThey))) continue;
       const theySentence = asThey;
       let subject = null, verb = m[3];
       for (let j = i - 1; j >= 0 && !subject; j--) {
         const prev = sentences[j];
+        const moved = _theyMovedCardsSubject(prev, demo && demo[1]);
+        if (moved) { subject = moved + (m[2] ? ' each' : ''); break; }
         if (_THEY_NEW_OBJECT_RE.test(prev)) break;
+        const chosen = prev.trim().match(_THEY_CHOSEN_ANTECEDENT_RE);
+        if (chosen) {
+          subject = `${chosen[1].toLowerCase()} target ${chosen[2].toLowerCase()}` + (m[2] ? ' each' : '');
+          sentences[j] = '';
+          break;
+        }
         const t = prev.match(_THEY_TARGET_ANTECEDENT_RE);
         if (t) {
           subject = t[1] + (m[2] ? ' each' : '');
@@ -487,6 +523,14 @@ function _resolveItPronoun(text) {
         + "If [additional cost paid], Target creature gets -5/-5 until end of turn."
    (a bracketed condition only this function writes: were "this spell was kicked" itself a
    readable condition, a kicker sentence left in place would gate its whole line).
+   A rider on what the object just named is — "If it's a X, it …" / "As long as it's X, it …"
+   after the first sentence — moves the same way:
+     "Target creature can't be blocked this turn. If it's a Vampire, it also gains lifelink
+      until end of turn." (Wedding Invitation)
+        + "If on resolution it is a Vampire, Target creature gains lifelink until end of turn."
+     "Equipped creature gets +1/+1. As long as it's red, it has trample." (Tenza, Godo's Maul)
+        + "As long as it is red, it has trample."
+   ("on resolution" marks a condition a spell or ability checks once, as it resolves.)
    Branch lines are appended after the existing lines, so the indices of the original lines
    (which saga / class / conditional-ability bookkeeping is keyed on) do not move.
    canParse(condText) says whether the condition parser understands a condition; a branch
@@ -498,6 +542,17 @@ function _resolveItPronoun(text) {
 // imperative ("gain control of …", "you gain 3 life").
 const _BRANCH_CONTINUOUS_VERB_RE = /^[^,]+?\s(?:gets?|gains?|ha(?:s|ve)|becomes?|loses?)\b/i;
 const _BRANCH_PRONOUN_RE = /^(?:it|that (?:creature|permanent)|those (?:creatures|permanents)|they)\b/i;
+// "If it's a Vehicle, it becomes …", "As long as it's red, it has …", "If it doesn't have
+// rampage, that creature gains …": [1] If / As long as, [2] the condition, [3] the effect.
+const _BRANCH_RIDER_RE = /^(If|As long as)\s+(it(?:'s|\s+is|\s+isn't|\s+doesn't have|\s+has)\s+[^,]+),\s+(.+)$/i;
+// The rider's condition in the words the condition parser reads.
+function _branchRiderCondition(cond) {
+  cond = cond.replace(/^it's\b/i, 'it is');
+  const negated = cond.match(/^it (?:is not|isn't)\s+(.+)$/i);
+  if (negated) return `it is not true that it is ${negated[1]}`;
+  const lacks = cond.match(/^it doesn't have\s+(.+)$/i);
+  return lacks ? `it is not true that it has ${lacks[1]}` : cond;
+}
 // Things true of how a spell was cast that the board cannot show, each read from the spell's
 // one toggle: [condition regex, label for the toggle]. $1 / $2 are filled from the match.
 const _BRANCH_CAST_CONDITIONS = [
@@ -544,10 +599,19 @@ function _branchAntecedent(sentences, i) {
         ? subj[1] : null;
     }
     if (subj) continue;
-    const tgt = s.match(/\b(target [a-z\s-]*?(?:creature|permanent|artifact|land|enchantment|planeswalker)s?(?: (?:you control|an opponent controls|you don't control))?)(?=[\s.,]|$)/i);
+    const tgt = s.match(/\b((?:another )?target [a-z\s-]*?(?:creature|permanent|artifact|land|enchantment|planeswalker)s?(?: or (?:creature|permanent|artifact|land|enchantment|planeswalker)s?)*(?: (?:you control|an opponent controls|you don't control))?)(?=[\s.,]|$)/i);
     if (tgt) return tgt[1];
   }
   return null;
+}
+// The antecedent of a rider's "it" when the sentence before put a card onto the battlefield
+// ("Return target artifact card from your graveyard to the battlefield. If it's a Vehicle,
+// it …" — Tune Up): that card, picked out on the board by its type.
+function _branchMovedCardAntecedent(sentences, i) {
+  const s = sentences[i - 1] || '';
+  if (/\bcreates?\b|\btokens?\b/i.test(s) || !/\b(?:on)?to the battlefield\b/i.test(s)) return null;
+  const card = s.match(/\b(?:target|an?|that) (?:[\w'-]+ ){0,2}?(creature|permanent|artifact|land|enchantment|planeswalker) card\b/i);
+  return card ? 'target ' + card[1].toLowerCase() : null;
 }
 function _branchResolveSubject(body, sentences, i, isSpell) {
   // "Choose target creature you control and target creature you don't control. … the creature
@@ -566,7 +630,7 @@ function _splitConditionalBranches(text, isSpell, canParse) {
   const lines = text.split('\n');
   const origLines = lines.slice();
   const out = { text, baseLineCount: lines.length, branchLines: new Map(), alwaysOnLines: new Set(), costLabel: null };
-  if (!/\botherwise,|\bif this spell(?:'s \w+ cost)? was\b|\bto cast (?:this|that) spell,|\bif you cast this spell during\b|\bif evidence was collected\b|\bgets more votes,/i.test(text)) return out;
+  if (!/\botherwise,|\bif this spell(?:'s \w+ cost)? was\b|\bto cast (?:this|that) spell,|\bif you cast this spell during\b|\bif evidence was collected\b|\bgets more votes,|\b(?:if|as long as) it(?:'s| is| isn't| doesn't have| has)\b/i.test(text)) return out;
   // One toggle per spell: a card with two different cast conditions (Cankerous Thirst's {B}
   // and {G}) cannot be told apart by it, so its branches are left where they are.
   const castLabels = new Set();
@@ -602,6 +666,43 @@ function _splitConditionalBranches(text, isSpell, canParse) {
           out.alwaysOnLines.add(li);
         }
         add(!isSpell && /^it\s/i.test(body) ? `As long as ${negated}, ${body}` : `If ${negated}, ${body}`, li);
+        moved.add(i);
+        continue;
+      }
+      const rider = i > 0 && sentences[i].match(_BRANCH_RIDER_RE);
+      // Not "If it's not your turn, …" (that "it" is no object), nor a rider about a card just
+      // revealed or exiled ("If it's a land card, …").
+      if (rider && !/\bturn\b|\bcards?$/i.test(rider[2])) {
+        const cond = _branchRiderCondition(rider[2]);
+        let body = rider[3].replace(/\.$/, '').replace(/\balso\s+/i, '').replace(/\ban additional\s+/i, '').replace(/^it's\s+(?=an?\s)/i, 'it is ');
+        const instead = /^instead\s+|\s+instead$/i.test(body);
+        body = body.replace(/^instead\s+|\s+instead$/i, '');
+        const isAddition = /^(?:it|that \w+|target [^,]+?) is an?\s[^.]*\bin addition to its other\b/i.test(body);
+        // The condition's "it" must be what the rider changes: a pronoun, the target, or this permanent.
+        if (!/^(?:it|that (?:creature|permanent)|(?:another )?target|this)\s/i.test(body)) continue;
+        if (!canParse(cond) || !(isAddition || _branchIsContinuous(body))) continue;
+        const lead = isSpell ? 'If on resolution' : 'As long as';
+        if (isSpell) {
+          const moved_ = _BRANCH_PRONOUN_RE.test(body) ? _branchMovedCardAntecedent(sentences, i) : null;
+          body = _branchResolveSubject(body, sentences, i, true) || (moved_ ? moved_ + body.replace(_BRANCH_PRONOUN_RE, '') : null);
+          if (!body) continue;
+        } else if (!/^it\s/i.test(body) || !/^(?:equipped|enchanted|fortified|this)\b/i.test(sentences[0])) {
+          // A static rider's "it" is the permanent the line is about; "As long as …, it …" at
+          // the start of a line already reads that way.
+          continue;
+        }
+        if (instead) {
+          // "… gets +2/+2 until end of turn. If it's a Human, instead it gets +3/+3 …" (Flare of
+          // Faith): the sentence before then applies only when the rider does not.
+          let replaced = !moved.has(i - 1) && !/^(?:if|otherwise|as long as)\b/i.test(prev) && _branchIsContinuous(prev)
+            ? _branchResolveSubject(prev, sentences, i - 1, isSpell) : null;
+          if (!replaced) continue;
+          const durationLead = replaced.match(/^until end of turn,\s+(.+?)\.?$/i);
+          if (durationLead) replaced = durationLead[1].charAt(0).toUpperCase() + durationLead[1].slice(1) + ' until end of turn.';
+          add(`${lead} it is not true that ${cond}, ${replaced}`, li);
+          moved.add(i - 1);
+        }
+        add(`${lead} ${cond}, ${body}.`, li);
         moved.add(i);
         continue;
       }
