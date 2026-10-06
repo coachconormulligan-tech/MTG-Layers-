@@ -100,7 +100,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Sigardian Zealot | gets +N/+N | triggered | Each of them gets +X/+X and gains vigilance until end of turn, where X is this creature's power. |
 | Song of Blood | gets +N/+N | spell | Whenever a creature attacks this turn, it gets +1/+0 until end of turn for each creature card put into your graveyard this way. |
 | Tail Swipe | gets +N/+N | spell | If you cast this spell during your main phase, the creature you control gets +1/+1 until end of turn. |
-| Umara Mystic | gets +N/+N | triggered | Whenever you cast an instant, sorcery, or Wizard spell, this creature gets +2/+0 until end of turn. |
 | Óin the Brave | gets +N/+N | static | As long as you have an enduring story, Óin gets +1/+0 and has haste. |
 | Alpine Moon | has / gains | static | Lands your opponents control with the chosen name lose all land types and abilities, and they gain "{T}: Add one mana of any color." |
 | Behind the Mask | has / gains | spell | If evidence was collected, it has base power and toughness 1/1 until end of turn instead. |
@@ -151,7 +150,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Thranduil, the Elvenking | has / gains | static | This card has all activated abilities of all Elf cards in your graveyard. |
 | Trazyn the Infinite | has / gains | static | Prismatic Gallery — As long as this card is on the battlefield, it has all activated abilities of all artifact cards in your graveyard. |
 | Trench Gorger | has / gains | triggered | If you do, this creature has base power and base toughness each equal to the number of cards exiled this way. |
-| Umara Wizard | has / gains | triggered | Whenever you cast an instant, sorcery, or Wizard spell, this creature gains flying until end of turn. |
 | Vision Quest | has / gains | spell | If X is 4 or greater, it gains haste until end of turn. |
 | Wedding Invitation | has / gains | activated | If it's a Vampire, it also gains lifelink until end of turn. |
 | Wicked // Cursed | has / gains | static | Enchanted creature has base power and toughness 1/1. |

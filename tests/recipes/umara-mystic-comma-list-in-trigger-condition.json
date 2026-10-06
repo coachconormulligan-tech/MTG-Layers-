@@ -1,0 +1,35 @@
+{
+  "name": "Umara Mystic — a comma list inside the trigger condition",
+  "notes": "Found by tests/sweep.py. 'Whenever you cast an instant, sorcery, or Wizard spell, this creature gets +2/+0 until end of turn.' was split at the first comma, so the effect text handed to the fired ability was 'sorcery, or Wizard spell, this creature gets …' and nothing parsed. _triggerConditionCommaIndex now skips the commas of a list inside the condition. The fire step takes the effect text from extractTriggeredAbilities, so this locks the split itself. The Mystic (a 1/3) is 3/3; the Bears are untouched.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Umara Mystic",
+      "as": "mystic"
+    },
+    {
+      "fire": "@mystic",
+      "trigger": 1,
+      "as": "trigger"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Umara Mystic",
+      "final": {
+        "power": 3,
+        "toughness": 3
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 2,
+        "toughness": 2
+      }
+    }
+  ]
+}

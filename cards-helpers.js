@@ -64,3 +64,22 @@ function _permLabelString(n) {
   }
   return s;
 }
+
+/* Index of the comma that ends a trigger condition ("Whenever X, <effect>"), or -1.
+   Usually the first comma, but a condition can hold a comma list of its own:
+     "Whenever you cast an instant, sorcery, or Wizard spell, this creature gets +2/+0 …"
+     "Whenever a Mutant, Ninja, or Turtle you control enters, investigate."
+   A comma is part of such a list when a single item ("an instant") sits right before it and
+   only more one- or two-word items lead up to the closing "or" / "and". */
+function _triggerConditionCommaIndex(text) {
+  let idx = text.indexOf(',');
+  if (idx < 0) return -1;
+  const before = text.slice(0, idx);
+  const after = text.slice(idx + 1);
+  if (!/\b(?:an?|another|each|one or more|two or more)\s+(?:non-?\w+\s+)?[\w'-]+$/i.test(before)) return idx;
+  const list = after.match(/^\s+(?:[\w'-]+(?:\s[\w'-]+)?,\s+)*(?:or|and|and\/or)\s+\S/i);
+  if (!list) return idx;
+  // The list's own commas are behind us; the next one closes the condition.
+  const end = text.indexOf(',', idx + 1 + list[0].length - 1);
+  return end < 0 ? idx : end;
+}
