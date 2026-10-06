@@ -194,7 +194,7 @@ BECOMES_NOT_LAYER = (r'tapped|untapped|blocked|unblocked|the target|a target|tar
                      r'unlocked|locked|exerted|the active|your commander|unsuspected|tapped or untapped|'
                      r'the ring-bearer|your ring-bearer|ring-bearer|plotted|foretold|phased|harnessed|a host|bored|'
                      r'the starting|the initiative|city\'s blessing|max speed|the result|part of|brilliant|'
-                     r'the last|that player\'s')
+                     r'the last|that player\'s|unprepared|no longer|or remain')
 
 
 def quote_mask(text):
@@ -240,11 +240,28 @@ def refers_to_new_objects(text, line):
     return False
 
 
+# Sentences the judge flags although a recipe shows the card behaves correctly: removing the
+# sentence leaves an identically-shaped effect from another line. Card name -> sentence start.
+VERIFIED_BY_RECIPE = {
+    'Rune of Flight': 'As long as enchanted permanent is a creature',
+    'Rune of Might': 'As long as enchanted permanent is a creature',
+    'Rune of Mortality': 'As long as enchanted permanent is a creature',
+    'Rune of Speed': 'As long as enchanted permanent is a creature',
+    'Rune of Sustenance': 'As long as enchanted permanent is a creature',
+}
+
+
 def classify(text, kw_re):
     """Which kind of continuous effect does this sentence read like? None if it doesn't."""
     t = effect_part(text).lower()
     # Rules about mana in a pool, and the old instant-speed Aura cleanup rule, change no permanent.
     if re.search(r'\b(?:unspent|this|that) mana\b|\bthe permanent it becomes\b', t):
+        return None
+    # Things the site has no model for: Alchemy's "perpetually", spells and cards outside the
+    # battlefield as the subject, a life total or the value of X "becoming" a number, the Ring emblem.
+    if re.search(r"\bperpetually\b|\bspell becomes\b|\bspells you control and\b|\btop card of your library has\b|"
+                 r"\blife total\b[^.]*\bit becomes\b|\bvalue of x\b|\bemblem gains\b|\bonce it gains an ability\b|"
+                 r"\bmodal double-faced\b", t):
         return None
     t = re.sub(r'\bcreates?\b.*', '', t)                                 # token descriptions are not effects
     if re.search(r'\bgains? control of\b|\bexchanges? control\b', t):
@@ -254,11 +271,12 @@ def classify(text, kw_re):
     t = re.sub(r'\b(?:as long as|if|unless|while|for each|where x is|equal to|except|instead of|rather than)\b[^,.]*', ' ', t)
     t = re.sub(r'\b(?:that|which|who)\s+(?:has|have|had|is|are|was|were|isn\'t|aren\'t|shares?|became|becomes?)\b[^,.]*', ' ', t)
     t = re.sub(r"\b(?:has|have|had)\s+(?:been|dealt|attacked|blocked|no\b|\w+ed\b|\w+ or more|the greatest|the highest|the least|less|more|fewer)[^,.]*", ' ', t)
+    t = re.sub(r"\b(?:doesn't|don't|does not|do not) have\b[^,.]*", ' ', t)   # "that doesn't have the same name"
     t = re.sub(r'\bwith\b[^,.]*', ' ', t)                                # "creature with flying"
     t = re.sub(r"\bas though\b[^,.]*|\blife totals? becomes?\b[^,.]*", ' ', t)
     if re.search(r'\bgets? [+\-−](?:\d+|x)/[+\-−](?:\d+|x)', t):
         return 'gets'
-    if re.search(r'\bloses? (?!(?:\d|x\b|n\b|that much|half|life|the game|\w+ life|unspent|all unspent|priority|the flip))', t):
+    if re.search(r'\bloses? (?!(?:\d|x\b|n\b|that much|twice that much|half|life|the game|\w+ life|unspent|all unspent|priority|the flip))', t):
         return 'loses'
     if re.search(r'\bbecomes? (?!(?:%s))' % BECOMES_NOT_LAYER, t):
         return 'becomes'
@@ -267,7 +285,7 @@ def classify(text, kw_re):
         return 'has'
     if re.search(r'base power|power and toughness (?:are|is) each|\bswitch [^.]*power|\bdoubles? [^.]*power', t):
         return 'p/t'
-    if re.search(r"in addition to (?:its|their) other|\b(?:is|are) (?:also |still |now )?(?:%s\b|all colors|every |all creature types|"
+    if re.search(r"in addition to (?:its|their) other(?! costs)|\b(?:is|are) (?:also |still |now )?(?:%s\b|all colors|every |all creature types|"
                  r"an? [a-z, \-]*%s\b|[a-z\-]*s? %s\b)" % (COLOR_WORDS, CARD_TYPES, CARD_TYPES), t):
         return 'is'
     return None
@@ -379,6 +397,8 @@ def analyse(records, keywords):
                 continue
             if refers_to_new_objects(s['text'], s.get('line', '')):
                 totals['new_objects'] += 1
+                continue
+            if s['text'].startswith(VERIFIED_BY_RECIPE.get(r['name'], '\0')):
                 continue
             totals['candidates'] += 1
             if s['covered']:
