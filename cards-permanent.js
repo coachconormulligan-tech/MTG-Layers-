@@ -8,8 +8,22 @@ function _escapeRegex(str) { return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); 
 /* Layouts where only one face is active at a time (transformable) */
 const TRANSFORMABLE_LAYOUTS = new Set(['transform', 'modal_dfc', 'reversible_card']);
 
-/* Layouts where the user picks one half to play (split cards, aftermath, adventure) */
-const CHOOSEABLE_FACE_LAYOUTS = new Set(['split', 'aftermath', 'adventure']);
+/* Layouts where the user picks one half to play (split cards, aftermath, adventure, and
+   prepare cards: a creature whose second face is a spell it lets you cast) */
+const CHOOSEABLE_FACE_LAYOUTS = new Set(['split', 'aftermath', 'adventure', 'prepare']);
+
+/* Scryfall files two unrelated Role tokens printed on one card (Wicked // Cursed) under the
+   'flip' layout it uses for Kamigawa flip cards. Those are a choice of token, not a card
+   that flips. */
+function _isFlipTokenPair(card) {
+  return !!card && card.layout === 'flip' && !!card.card_faces &&
+    card.card_faces.every(f => /^Token\b/.test(f.type_line || ''));
+}
+
+/* Is this Scryfall object a token? */
+function _isTokenCard(card) {
+  return !!card && (card.layout === 'token' || card.layout === 'double_faced_token' || _isFlipTokenPair(card));
+}
 
 /* Double-faced tokens (Scryfall layout 'double_faced_token') print an unrelated token on each
    side, and keep type line, P/T, colours and text on the faces only. A face counts as playable
@@ -33,6 +47,7 @@ function _hasChooseableFaces(card) {
   if (!faces || faces.length < 2) return false;
   if (faces.some(f => (f.type_line || '').includes('Room'))) return false;
   if (CHOOSEABLE_FACE_LAYOUTS.has(card.layout || '')) return true;
+  if (_isFlipTokenPair(card)) return true;
   return _playableTokenFaces(card).length >= 2 && !_isTransformingToken(card);
 }
 
@@ -79,8 +94,9 @@ function _resolveCardFace(card, faceIndex) {
     };
   }
 
-  if (TRANSFORMABLE_LAYOUTS.has(layout)) {
-    // Transform/MDFC: use the specified face's data
+  if (TRANSFORMABLE_LAYOUTS.has(layout) || layout === 'flip') {
+    // Transform/MDFC: use the specified face's data. Flip cards (Student of Elements //
+    // Tobita) likewise have one face active at a time; both faces share the card's image.
     const face = faces[faceIndex] || faces[0];
     return {
       ...card,
@@ -177,7 +193,7 @@ function createPermanent(card, timestamp, opts = {}) {
   const resolvedCard = card._isFaceResolved ? card : _resolveCardFace(card, faceIndex);
   
   const types = parseTypeLine(resolvedCard.type_line || '');
-  const isToken = opts.isToken || card.layout === 'token' || card.layout === 'double_faced_token' || false;
+  const isToken = opts.isToken || _isTokenCard(card) || false;
   // Replace proper nouns in oracle text that match the card name with "this card"/"this token"
   let oracleText = resolvedCard.oracle_text || '';
   oracleText = _stripReminderText(oracleText);
@@ -226,7 +242,8 @@ function createPermanent(card, timestamp, opts = {}) {
     perm.isMultiFace = true;
     perm.cardLayout = layout;
     perm.activeFaceIndex = resolvedCard._activeFace !== undefined ? resolvedCard._activeFace : faceIndex;
-    perm.isTransformable = TRANSFORMABLE_LAYOUTS.has(layout) || layout === 'battle' || _isTransformingToken(card);
+    perm.isTransformable = TRANSFORMABLE_LAYOUTS.has(layout) || layout === 'battle' || _isTransformingToken(card)
+      || (layout === 'flip' && !_isFlipTokenPair(card));
     const _isRoomCard = card.card_faces.some(f => (f.type_line || '').includes('Room'));
     perm.isChooseableFace = _hasChooseableFaces(card);
     perm.isRoom = _isRoomCard;

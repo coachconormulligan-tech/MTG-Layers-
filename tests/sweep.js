@@ -183,7 +183,7 @@ function addCard(card, faceIndex, isSpell) {
     if (spell.needsChosenLandType) Battlefield.setChosenLandType(spell.id, 'Forest');
     return spell;
   }
-  opts.isToken = card.layout === 'token' || card.layout === 'double_faced_token';
+  opts.isToken = _isTokenCard(card);
   const perm = Battlefield.addPermanent(card, opts);
   // A Room enters with both doors locked and no abilities; the sweep reads it with both open.
   if (perm.isRoom && perm.roomFaces) perm.roomFaces.forEach((_, i) => Battlefield.toggleRoomLock(perm.id, i));
@@ -240,7 +240,7 @@ function sweepFace(card, faceIndex) {
   const face = _resolveCardFace(card, faceIndex);
   const typeLine = face.type_line || card.type_line || '';
   const isSpell = /\b(instant|sorcery)\b/i.test(typeLine);
-  const isToken = card.layout === 'token' || card.layout === 'double_faced_token';
+  const isToken = _isTokenCard(card);
   const rec = { name: face.name || card.name, face: faceIndex, layout: card.layout, typeLine,
                 nEffects: 0, errors: [], nonsense: [], sentences: [] };
   const norm = (s) => _replaceProperNounSelfRef(face.name || card.name, s, isToken);
@@ -366,7 +366,7 @@ function sweepFace(card, faceIndex) {
   for (const card of cards) {
     const isRoom = (card.card_faces || []).some(f => (f.type_line || '').includes('Room'));
     const multi = card.card_faces && card.card_faces.length >= 2 && !isRoom &&
-      (TRANSFORMABLE_LAYOUTS.has(card.layout) || _hasChooseableFaces(card) || _isTransformingToken(card) || card.layout === 'battle');
+      (TRANSFORMABLE_LAYOUTS.has(card.layout) || _hasChooseableFaces(card) || _isTransformingToken(card) || card.layout === 'battle' || card.layout === 'flip');
     const nFaces = multi ? card.card_faces.length : 1;
     for (let fi = 0; fi < nFaces; fi++) {
       let rec;
