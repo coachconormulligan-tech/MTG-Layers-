@@ -1,0 +1,17 @@
+{
+  "name": "Sliver Legion — \"each other Sliver\" is the creature type, not the card's name",
+  "notes": "The first word of a card's name was rewritten to 'this card' even after 'other', so 'for each other Sliver on the battlefield' became 'for each other this card' and counted nothing (same for Squirrel Mob, Goblin Piledriver, and 'Other Merfolk you control' on Merfolk Mistbinder, which turned into a self boost). With three Slivers each gets +2/+2, counting the opponent's Sliver too ('on the battlefield').",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Sliver Legion" },
+    { "add": "Metallic Sliver" },
+    { "add": "Venom Sliver", "controller": "p2" },
+    { "add": "Grizzly Bears" }
+  ],
+  "asserts": [
+    { "perm": "Sliver Legion", "final": { "power": 9, "toughness": 9 } },
+    { "perm": "Metallic Sliver", "final": { "power": 3, "toughness": 3 } },
+    { "perm": "Venom Sliver", "final": { "power": 3, "toughness": 3 } },
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2 } }
+  ]
+}

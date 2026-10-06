@@ -606,9 +606,15 @@ function _replaceProperNounSelfRef(cardName, oracleText, isToken = false) {
   let matchedLonger = false;
   for (const candidate of candidates) {
     // … and neither is a type word ("Rat Colony … for each other Rat you control").
-    if (matchedLonger && candidate === firstWord && candidate !== normalizedName.slice(0, Math.max(commaIdx, 0)).trim() &&
-        (/^(?:the|a|an|of|to|in)$/i.test(candidate) || normalizeTypeWord(candidate.toLowerCase()) ||
-         (typeof TypeCatalog !== 'undefined' && TypeCatalog.classifySubtype && TypeCatalog.classifySubtype(candidate) !== 'unknown'))) continue;
+    const _isFirstWordOnly = candidate === firstWord && candidate !== normalizedName &&
+      candidate !== normalizedName.slice(0, Math.max(commaIdx, 0)).trim();
+    const _isTypeWord = !!(normalizeTypeWord(candidate.toLowerCase()) ||
+      (typeof TypeCatalog !== 'undefined' && TypeCatalog.classifySubtype && TypeCatalog.classifySubtype(candidate) !== 'unknown'));
+    if (matchedLonger && _isFirstWordOnly && (/^(?:the|a|an|of|to|in)$/i.test(candidate) || _isTypeWord)) continue;
+    // When the full name never appears, a first word that is also a type can still be the
+    // card's short name ("Gideon becomes a 4/4 …"), but only where it stands alone as a
+    // subject — not "All Sliver creatures", "Target Goblin", "this Case", "0/0 Elemental creature".
+    const _typeWordShortName = _isFirstWordOnly && _isTypeWord;
     const escaped = candidate.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     // Letter-aware boundaries: \b does not see "Ó" as a word character (Óin the Brave).
     const regex = new RegExp('(?<![\\p{L}\\p{N}_])' + escaped + '(?![\\p{L}\\p{N}_])', 'gu');
@@ -624,6 +630,16 @@ function _replaceProperNounSelfRef(cardName, oracleText, isToken = false) {
       // Non-subject contexts: after articles, "is a/an", "becomes a", "colorless/color words"
       if (/\b(?:a|an|the|is\s+a|is\s+an|becomes?\s+a|becomes?\s+an|colorless|white|blue|black|red|green)\s*$/i.test(before)) {
         return match; // keep original, not a self-reference
+      }
+      // "other Sliver", "another attacking Goblin": a name can't be "other" than itself, so
+      // this is the creature type (Sliver Legion, Squirrel Mob, Goblin Piledriver).
+      if (/\b(?:an)?other\s+(?:(?:attacking|blocking|tapped|untapped|nontoken|legendary)\s+)?$/i.test(before)) {
+        return match;
+      }
+      if (_typeWordShortName &&
+          (/(?:\b(?:all|each|every|target|this|that|those|these|of|more|attacking|blocking|tapped|untapped|legendary|non-?\w*)|\d+\/\d+|\b[A-Z][\w-]*)\s+$/.test(before) ||
+           /^\s+(?:creatures?|permanents?|cards?|spells?|planeswalkers?|tokens?|artifacts?|enchantments?|lands?|you control|your opponents control|on the battlefield|or\b|and\b)/i.test(result.substring(offset + match.length, offset + match.length + 30)))) {
+        return match;
       }
       // After "type" or "subtype" words
       if (/\b(?:the\s+type|the\s+subtype|type|subtype)\s*$/i.test(before)) {

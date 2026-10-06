@@ -83,7 +83,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Energybending | has / gains | spell | Lands you control gain all basic land types until end of turn. |
 | Flash Conscription | has / gains | spell | If {W} was spent to cast this spell, the creature gains "Whenever this creature deals combat damage, you gain that much life" until end of turn. |
 | For the Common Good | has / gains | spell | Then tokens you control gain indestructible until your next turn. |
-| Goblin Wizard | has / gains | activated | {R}: Target this card gains protection from white until end of turn. |
 | Grell Philosopher | has / gains | triggered | Aberrant Tinkering — When this creature enters and at the beginning of your upkeep, each Horror you control gains all activated abilities of target artifact an opponent controls until end of turn. |
 | Greymond, Avacyn's Stalwart | has / gains | static | Humans you control have each of the chosen abilities. |
 | Havengul Lich | has / gains | activated | When you cast it this turn, this creature gains all activated abilities of that card until end of turn. |

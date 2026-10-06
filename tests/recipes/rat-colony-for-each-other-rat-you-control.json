@@ -1,0 +1,59 @@
+{
+  "name": "Rat Colony — +1/+0 for each other Rat you control",
+  "notes": "'for each other Rat you control' counted nothing: the boost parser dropped 'you control' and _computeForEachCount had no 'other' handling, so it looked for a subtype called 'Other rat'. Each player has two Rats here: two Rat Colonies for the first player, a Rat Colony and Typhoid Rats for the opponent. Every Rat Colony is 3/1 (exactly one other Rat under the same controller); counting itself or the other player's Rats would give 4/1 or 5/1.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Rat Colony",
+      "as": "colony1"
+    },
+    {
+      "add": "Rat Colony",
+      "as": "colony2"
+    },
+    {
+      "add": "Typhoid Rats",
+      "controller": "p2"
+    },
+    {
+      "add": "Rat Colony",
+      "as": "colony3",
+      "controller": "p2"
+    }
+  ],
+  "asserts": [
+    {
+      "effect": {
+        "source": "Rat Colony",
+        "layer": "7c",
+        "type": "modify_pt"
+      }
+    },
+    {
+      "perm": "Rat Colony A",
+      "final": {
+        "power": 3,
+        "toughness": 1
+      }
+    },
+    {
+      "perm": "Rat Colony B",
+      "final": {
+        "power": 3,
+        "toughness": 1
+      }
+    },
+    {
+      "perm": "Rat Colony",
+      "final": {
+        "power": 3,
+        "toughness": 1
+      }
+    }
+  ]
+}
