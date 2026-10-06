@@ -1,0 +1,20 @@
+{
+  "name": "Double-faced tokens — the playable side supplies type line, P/T and text",
+  "notes": "Found by tests/sweep.py (34 cards with 'power is null on a creature'). Scryfall layout double_faced_token keeps type line, P/T, colours and oracle text on card_faces only; _resolveCardFace had no branch for it, so the combined type line ('Token Creature — Angel // Token') was parsed and P/T stayed null. It now resolves the requested face, or the playable one when the requested face is a bare 'Token' back or a 'Card' helper. Angel // Angel is a 4/4 Angel; City's Blessing // Elemental (face 0 is 'Card') is the 0/1 Elemental; Goblin // Soldier added as face 1 is the white Soldier, then switched to the red Goblin; Incubator // Phyrexian says 'Transform this artifact', so it flips rather than being a choice.",
+  "steps": [
+    { "add": "Angel // Angel", "as": "angel" },
+    { "add": "City's Blessing // Elemental", "as": "elemental" },
+    { "add": "Goblin // Soldier", "as": "soldier", "opts": { "faceIndex": 1 } },
+    { "add": "Goblin // Soldier", "as": "goblin", "opts": { "faceIndex": 1 } },
+    { "call": ["switchSplitFace", "@goblin", 0] },
+    { "add": "Incubator // Phyrexian", "as": "phyrexian" },
+    { "call": ["flipCard", "@phyrexian"] }
+  ],
+  "asserts": [
+    { "perm": "Angel", "final": { "power": 4, "toughness": 4, "types": ["Creature"], "subtypes": ["Angel"] } },
+    { "perm": "Elemental", "final": { "power": 0, "toughness": 1, "types": ["Creature"], "colors": ["R"] } },
+    { "perm": "Soldier", "final": { "power": 1, "toughness": 1, "colors": ["W"], "subtypes": ["Soldier"] } },
+    { "perm": "Goblin", "final": { "power": 1, "toughness": 1, "colors": ["R"], "subtypes": ["Goblin"] } },
+    { "perm": "Phyrexian", "final": { "power": 0, "toughness": 0, "types": { "$includes": ["Artifact", "Creature"] } } }
+  ]
+}

@@ -2293,6 +2293,10 @@ const Battlefield = {
 
     perm.name = resolvedCard.name;
     perm.activeFaceIndex = newFaceIndex;
+    // Each side of a double-faced token has its own art (split halves share one image).
+    if (card.layout === 'double_faced_token') {
+      perm.imageUri = resolvedCard.image_uris?.small || resolvedCard.image_uris?.normal || perm.imageUri;
+    }
     perm.printedTypes = types.types;
     perm.printedSupertypes = types.supertypes;
     perm.printedSubtypes = types.subtypes;
