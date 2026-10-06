@@ -1,0 +1,65 @@
+{
+  "name": "Set types — subtypes of a card type the object still has are kept (CR 205.1a)",
+  "notes": "The set-types branch of applyEffect wiped every subtype. Darksteel Mutation ('is an Insect artifact creature … loses all other card types and creature types') on an Equipment creature swaps the creature types only: Equipment is an artifact type and the object is still an artifact. On a plain creature the result is still just Insect.",
+  "steps": [
+    {
+      "add": "Cloudsteel Kirin",
+      "as": "kirin"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Darksteel Mutation",
+      "as": "dm1"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@dm1",
+        "@kirin"
+      ]
+    },
+    {
+      "add": "Darksteel Mutation",
+      "as": "dm2"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@dm2",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Cloudsteel Kirin",
+      "final": {
+        "types": [
+          "Artifact",
+          "Creature"
+        ],
+        "subtypes": [
+          "Equipment",
+          "Insect"
+        ],
+        "power": 0,
+        "toughness": 1
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "types": [
+          "Artifact",
+          "Creature"
+        ],
+        "subtypes": [
+          "Insect"
+        ]
+      }
+    }
+  ]
+}

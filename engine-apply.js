@@ -201,11 +201,24 @@ function applyEffect(state, effect, context) {
           state.types = [...new Set(effect.params.types)];
           changes.push(`Set types to [${state.types.join(', ')}] (was [${oldTypes.join(', ')}])`);
         }
-        state.subtypes = [...new Set(effect.params.subtypes || [])];
+        const suppliedSub = [...new Set(effect.params.subtypes || [])];
+        // CR 205.1a: setting card types leaves alone the subtypes that belong to a card type
+        // the object still has (a Vehicle that "becomes an artifact creature" is still a
+        // Vehicle). New subtypes replace the old ones of their own set only ("becomes an
+        // Insect artifact creature" swaps the creature types and keeps Equipment).
+        let keptSub = [];
+        if (effect.params.types !== undefined && typeof TypeCatalog !== 'undefined' && TypeCatalog.getSubtypesForCardType) {
+          const sets = [...new Set(state.types.map(t => (t === 'Kindred' || t === 'Tribal') ? 'Creature' : t))]
+            .map(t => TypeCatalog.getSubtypesForCardType(t))
+            .filter(set => set && set.size && !suppliedSub.some(s => set.has(s)));
+          keptSub = oldSub.filter(s => sets.some(set => set.has(s)));
+        }
+        state.subtypes = [...new Set([...keptSub, ...suppliedSub])];
         if (!effect.params.types) {
           changes.push(`Set subtypes to [${state.subtypes.join(', ')}] (was [${oldSub.join(', ')}])`);
         } else {
-          if (state.subtypes.length) changes.push(`Set subtypes to [${state.subtypes.join(', ')}]`);
+          if (suppliedSub.length) changes.push(`Set subtypes to [${suppliedSub.join(', ')}]`);
+          if (keptSub.length) changes.push(`Kept subtypes [${keptSub.join(', ')}] (their card type remains)`);
           // CR 205.1a: note any subtypes lost because their associated card type was removed
           if (typeof TypeCatalog !== 'undefined' && TypeCatalog.getSubtypesForCardType) {
             const lostTypes = oldTypes.filter(t => !state.types.includes(t));
@@ -222,7 +235,7 @@ function applyEffect(state, effect, context) {
             }
           }
         }
-        if (state.types.includes('Land') && state.subtypes.some(s => BASIC_LAND_MANA[s])) {
+        if (state.types.includes('Land') && suppliedSub.some(s => BASIC_LAND_MANA[s])) {
           landSubtypesWereReplaced = true;
         }
       }
