@@ -89,7 +89,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Elemental Appeal | gets +N/+N | spell | If this spell was kicked, that creature gets +7/+0 until end of turn. |
 | Glorfindel, Dauntless Rescuer | gets +N/+N | triggered | Whenever you scry, choose one and this card gets +1/+1 until end of turn. |
 | Hope and Glory | gets +N/+N | spell | Each of them gets +1/+1 until end of turn. |
-| Hydra Trainer | gets +N/+N | static | When you do, target creature gets +X/+X until end of turn, where X is the number of counters on permanents you control. |
 | Lightfoot Rogue | gets +N/+N | static | 10—19 \| It gets +1/+0 and gains deathtouch until end of turn. |
 | Massacre Girl | gets +N/+N | triggered | Whenever a creature dies this turn, each creature other than this card gets -1/-1 until end of turn. |
 | Might of Old Krosa | gets +N/+N | spell | If you cast this spell during your main phase, that creature gets +4/+4 until end of turn instead. |
@@ -97,13 +96,10 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Ogre Battlecaster | gets +N/+N | triggered | When you cast that spell, this creature gets +X/+0 until end of turn, where X is that spell's mana value. |
 | Ogre Chitterlord | gets +N/+N | triggered | Then if you control five or more Rats, each Rat you control gets +2/+0 until end of turn. |
 | Price of Loyalty | gets +N/+N | spell | If mana from a Treasure was spent to cast this spell, that creature gets +2/+0 until end of turn. |
-| Rhonas's Stalwart | gets +N/+N | static | When you do, it gets +1/+1 until end of turn and can't be blocked by creatures with power 2 or less this turn. |
 | Rolling Spoil | gets +N/+N | spell | If {B} was spent to cast this spell, all creatures get -1/-1 until end of turn. |
 | Sigardian Zealot | gets +N/+N | triggered | Each of them gets +X/+X and gains vigilance until end of turn, where X is this creature's power. |
 | Song of Blood | gets +N/+N | spell | Whenever a creature attacks this turn, it gets +1/+0 until end of turn for each creature card put into your graveyard this way. |
-| Tah-Crop Elite | gets +N/+N | static | When you do, creatures you control get +1/+1 until end of turn. |
 | Tail Swipe | gets +N/+N | spell | If you cast this spell during your main phase, the creature you control gets +1/+1 until end of turn. |
-| Tip the Scales | gets +N/+N | spell | When you do, all creatures get -X/-X until end of turn, where X is the sacrificed creature's toughness. |
 | Umara Mystic | gets +N/+N | triggered | Whenever you cast an instant, sorcery, or Wizard spell, this creature gets +2/+0 until end of turn. |
 | Óin the Brave | gets +N/+N | static | As long as you have an enduring story, Óin gets +1/+0 and has haste. |
 | Alpine Moon | has / gains | static | Lands your opponents control with the chosen name lose all land types and abilities, and they gain "{T}: Add one mana of any color." |

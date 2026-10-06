@@ -1,0 +1,13 @@
+{
+  "name": "Hooded Brawler — exert's \"When you do, it gets +2/+2\" fires as a trigger",
+  "notes": "Found by tests/sweep.py (four exert cards shared the wording). 'You may exert this creature as it attacks. When you do, it gets +2/+2 until end of turn.' was neither a static effect (the sentence opens with When) nor a triggered ability (the line does not), so nothing could ever apply it. extractTriggeredAbilities now offers the reflexive trigger, and 'it' is the exerter. The Brawler is 5/4; the Bears are untouched.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Hooded Brawler", "as": "brawler" },
+    { "call": ["addTriggeredAbility", "@brawler", 0, "it gets +2/+2 until end of turn.", "You may exert this creature as it attacks. When you do, it gets +2/+2 until end of turn."], "as": "trigger" }
+  ],
+  "asserts": [
+    { "perm": "Hooded Brawler", "final": { "power": 5, "toughness": 4 } },
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2 } }
+  ]
+}
