@@ -121,11 +121,12 @@ function summarizeBoard() {
    A recipe builds a board from card names instead of a downloaded board:
      { "add": "Card Name", "as": "alias", "controller": "p2", "spell": true, "x": 3, "opts": {...} }
      { "call": ["anyBattlefieldMethod", arg, ...], "as": "alias" }
-     { "fire": "@alias", "trigger": 1, "as": "alias", "vote": ["blue", "red"] }   (or "activated": 0)
+     { "fire": "@alias", "trigger": 1, "as": "alias", "vote": ["blue", "red"], "color": "red" }   (or "activated": 0)
    "fire" fires the ability at that index of the permanent's current ability list, taking the
    effect text from extractTriggeredAbilities / extractActivatedAbilities as the site's ability
    popup does — use it when the fix is in how an ability line is split into condition and effect.
    "vote" lists the option(s) that got the most votes, as picked in the site's vote pop-up.
+   "color" is the colour picked in the site's pop-up for "protection from the color of your choice".
    "as" on a call names what the method returns (the pseudo-permanent of a fired ability).
    In call args, "@alias" becomes that permanent's id, "p2" the second player's id, and
    "card:Card Name" the Scryfall card object. Players beyond the first need
@@ -183,7 +184,9 @@ function buildFromRecipe(recipe, cards) {
         .find(a => a.index === index);
       if (!ab) throw new Error('fire step: no ' + (isTrigger ? 'triggered' : 'activated') + ' ability at index ' + index + ' of ' + JSON.stringify(abilities));
       // "vote": the option(s) picked in the site's vote pop-up as having the most votes.
-      const effectText = step.vote ? resolveVoteText(ab.effectText, step.vote) : ab.effectText;
+      let effectText = step.vote ? resolveVoteText(ab.effectText, step.vote) : ab.effectText;
+      // "color": the colour picked in the site's pop-up for "protection from the color of your choice".
+      if (step.color) effectText = effectText.replace(/the\s+color\s+of\s+your\s+choice/i, step.color);
       const ret = isTrigger
         ? Battlefield.addTriggeredAbility(id, ab.index, effectText, ab.fullText, states)
         : Battlefield.addActivatedAbility(id, ab.index, effectText, ab.fullText, states);

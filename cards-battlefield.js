@@ -550,6 +550,9 @@ const Battlefield = {
       parsedEffectText = parsedEffectText.replace(/\bdouble\s+its\s+(power|toughness)\b/gi, `double ${owner}'s $1`);
       if (!attached) didItConversion = true;
     }
+    // "…untap this creature. It gains protection …" (Pristine Skywise): the effect itself names
+    // the source before the pronoun, so "it" is the source, whatever the trigger condition says.
+    parsedEffectText = _resolveItToAbilitySource(parsedEffectText);
     if (/\bit\b/i.test(parsedEffectText)) {
       const before = parsedEffectText;
       // Replace "it gets/gains/has/is/becomes/loses" → "target [subject] gets/gains/..."

@@ -1,0 +1,22 @@
+{
+  "name": "Pristine Skywise — \"untap this creature. It gains …\" is the source, not a chosen creature",
+  "notes": "\"Whenever you cast a noncreature spell, untap this creature. It gains protection from the color of your choice until end of turn.\" A fired ability turned every \"it gains/gets\" into \"target creature gains\" unless the trigger CONDITION began with \"this creature\", so this trigger asked for a target. _resolveItToAbilitySource (cards-helpers.js) now rewrites the pronoun to the \"this creature\" phrase when the effect text before it names the source and nothing else \"it\" could stand for (no target, token, card or other object), and the effect is pinned to the source. The Wondrous Wasp (\"tap up to one target creature. It loses all abilities …\") must stay on the chosen target, and Drudge Sentinel covers the same wording on an activated ability. Firing the trigger in the site now opens the colour pop-up the activated form already had (the recipe's \"color\").",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Serra Angel", "as": "angel" },
+    { "add": "Pristine Skywise", "as": "skywise" },
+    { "fire": "@skywise", "trigger": 1, "color": "red", "as": "firedSkywise" },
+    { "add": "Drudge Sentinel", "as": "sentinel" },
+    { "fire": "@sentinel", "activated": 0, "as": "firedSentinel" },
+    { "add": "The Wondrous Wasp", "as": "wasp" },
+    { "fire": "@wasp", "trigger": 2, "as": "firedWasp" },
+    { "call": ["setTarget", "@firedWasp", "@angel"] }
+  ],
+  "asserts": [
+    { "perm": "Pristine Skywise", "final": { "abilities": { "$includes": ["Protection from red until end of turn"] } } },
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$excludes": ["Protection from red until end of turn", "Indestructible"] } } },
+    { "perm": "Drudge Sentinel", "final": { "abilities": { "$includes": ["Indestructible"] } } },
+    { "perm": "Serra Angel", "final": { "abilities": { "$excludes": ["Flying", "Vigilance", "Protection from red until end of turn", "Indestructible"] } } },
+    { "perm": "The Wondrous Wasp", "final": { "abilities": { "$includes": ["Flying"] } } }
+  ]
+}

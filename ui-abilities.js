@@ -29,6 +29,15 @@ function fireTriggeredAbility(permId, abilityIdx) {
     });
     return;
   }
+  // CR 702.16 — "It gains protection from the color of your choice" (Pristine Skywise): pop a
+  // color chooser and substitute the chosen color into the effect text before firing.
+  if (/gains?\s+protection\s+from\s+the\s+color\s+of\s+your\s+choice/i.test(t.effectText)) {
+    openColorChoicePopup(t.fullText, (chosen) => {
+      const colorName = { W: 'white', U: 'blue', B: 'black', R: 'red', G: 'green' }[chosen] || chosen.toLowerCase();
+      _fireTriggeredWithText(permId, abilityIdx, t.effectText.replace(/the\s+color\s+of\s+your\s+choice/i, colorName), t.fullText, finalStates);
+    });
+    return;
+  }
   _fireTriggeredWithText(permId, abilityIdx, t.effectText, t.fullText, finalStates);
 }
 

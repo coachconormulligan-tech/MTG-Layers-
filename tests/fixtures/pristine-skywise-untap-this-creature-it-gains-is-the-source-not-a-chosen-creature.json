@@ -1,0 +1,2232 @@
+{
+ "name": "Pristine Skywise — \"untap this creature. It gains …\" is the source, not a chosen creature",
+ "notes": "\"Whenever you cast a noncreature spell, untap this creature. It gains protection from the color of your choice until end of turn.\" A fired ability turned every \"it gains/gets\" into \"target creature gains\" unless the trigger CONDITION began with \"this creature\", so this trigger asked for a target. _resolveItToAbilitySource (cards-helpers.js) now rewrites the pronoun to the \"this creature\" phrase when the effect text before it names the source and nothing else \"it\" could stand for (no target, token, card or other object), and the effect is pinned to the source. The Wondrous Wasp (\"tap up to one target creature. It loses all abilities …\") must stay on the chosen target, and Drudge Sentinel covers the same wording on an activated ability. Firing the trigger in the site now opens the colour pop-up the activated form already had (the recipe's \"color\").",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Grizzly Bears",
+    "as": "bears"
+   },
+   {
+    "add": "Serra Angel",
+    "as": "angel"
+   },
+   {
+    "add": "Pristine Skywise",
+    "as": "skywise"
+   },
+   {
+    "fire": "@skywise",
+    "trigger": 1,
+    "color": "red",
+    "as": "firedSkywise"
+   },
+   {
+    "add": "Drudge Sentinel",
+    "as": "sentinel"
+   },
+   {
+    "fire": "@sentinel",
+    "activated": 0,
+    "as": "firedSentinel"
+   },
+   {
+    "add": "The Wondrous Wasp",
+    "as": "wasp"
+   },
+   {
+    "fire": "@wasp",
+    "trigger": 2,
+    "as": "firedWasp"
+   },
+   {
+    "call": [
+     "setTarget",
+     "@firedWasp",
+     "@angel"
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Pristine Skywise",
+   "final": {
+    "abilities": {
+     "$includes": [
+      "Protection from red until end of turn"
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Grizzly Bears",
+   "final": {
+    "abilities": {
+     "$excludes": [
+      "Protection from red until end of turn",
+      "Indestructible"
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Drudge Sentinel",
+   "final": {
+    "abilities": {
+     "$includes": [
+      "Indestructible"
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Serra Angel",
+   "final": {
+    "abilities": {
+     "$excludes": [
+      "Flying",
+      "Vigilance",
+      "Protection from red until end of turn",
+      "Indestructible"
+     ]
+    }
+   }
+  },
+  {
+   "perm": "The Wondrous Wasp",
+   "final": {
+    "abilities": {
+     "$includes": [
+      "Flying"
+     ]
+    }
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+     "multiverse_ids": [
+      129586
+     ],
+     "mtgo_id": 27400,
+     "mtgo_foil_id": 27401,
+     "tcgplayer_id": 15153,
+     "cardmarket_id": 16432,
+     "name": "Grizzly Bears",
+     "lang": "en",
+     "released_at": "2007-07-13",
+     "uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "scryfall_uri": "https://scryfall.com/card/10e/268/grizzly-bears?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:43:21Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "normal": "https://cards.scryfall.io/normal/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "large": "https://cards.scryfall.io/large/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "png": "https://cards.scryfall.io/png/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.png?1783943001",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "grid": "https://cards.scryfall.io/grid/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "display": "https://cards.scryfall.io/display/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "art": "https://cards.scryfall.io/art/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "crop": "https://cards.scryfall.io/crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001"
+     },
+     "mana_cost": "{1}{G}",
+     "cmc": 2,
+     "type_line": "Creature — Bear",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set": "10e",
+     "set_name": "Tenth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A14c8f55d-d177-4c25-a931-ebeb9e6062a0&unique=prints",
+     "collector_number": "268",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"We cannot forget that among all of Dominaria's wonders, a system of life exists, with prey and predators that will never fight wars nor vie for ancient power.\"\n—Jolrael, empress of beasts",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "D. J. Cleland-Hura",
+     "artist_ids": [
+      "87d21070-2432-4167-8aab-5968af1c14f3"
+     ],
+     "illustration_id": "066bfe81-0f53-43da-a074-b2ecc5dcda72",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 8114,
+     "penny_rank": 10982,
+     "prices": {
+      "usd": "0.22",
+      "usd_foil": "3.29",
+      "usd_etched": null,
+      "eur": "0.11",
+      "eur_foil": "1.97",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129586&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "edhrec": "https://edhrec.com/route/?cc=Grizzly+Bears"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15153%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16432&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27400?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d",
+     "oracle_id": "4b7ac066-e5c7-43e6-9e7e-2739b24a905d",
+     "multiverse_ids": [],
+     "tcgplayer_id": 695524,
+     "cardmarket_id": 904192,
+     "name": "Serra Angel",
+     "lang": "en",
+     "released_at": "2026-04-24",
+     "uri": "https://api.scryfall.com/cards/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d",
+     "scryfall_uri": "https://scryfall.com/card/fdn/740/serra-angel?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-08-24T09:18:11Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.jpg?1787563091",
+      "normal": "https://cards.scryfall.io/normal/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.jpg?1787563091",
+      "large": "https://cards.scryfall.io/large/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.jpg?1787563091",
+      "png": "https://cards.scryfall.io/png/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.png?1787563091",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.jpg?1787563091",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.jpg?1787563091",
+      "thumb": "https://cards.scryfall.io/thumb/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.webp?1787563091",
+      "grid": "https://cards.scryfall.io/grid/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.webp?1787563091",
+      "display": "https://cards.scryfall.io/display/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.webp?1787563091",
+      "art": "https://cards.scryfall.io/art/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.webp?1787563091",
+      "crop": "https://cards.scryfall.io/crop/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.webp?1787563091"
+     },
+     "mana_cost": "{3}{W}{W}",
+     "cmc": 5,
+     "type_line": "Creature — Angel",
+     "oracle_text": "Flying\nVigilance (Attacking doesn't cause this creature to tap.)",
+     "power": "4",
+     "toughness": "4",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [
+      "Flying",
+      "Vigilance"
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d",
+       "component": "combo_piece",
+       "name": "Serra Angel",
+       "type_line": "Creature — Angel",
+       "uri": "https://api.scryfall.com/cards/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d"
+      },
+      {
+       "object": "related_card",
+       "id": "ad2bbfa1-81e0-4683-b1dc-a3aaa9837690",
+       "component": "combo_piece",
+       "name": "Treizeci, Sun of Serra",
+       "type_line": "Legendary Creature — Human Knight",
+       "uri": "https://api.scryfall.com/cards/ad2bbfa1-81e0-4683-b1dc-a3aaa9837690"
+      }
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "arena",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a7ecb771-d1b6-4dec-8cf5-8d45179f21e0",
+     "set": "fdn",
+     "set_name": "Foundations",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a7ecb771-d1b6-4dec-8cf5-8d45179f21e0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Afdn&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/fdn?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A4b7ac066-e5c7-43e6-9e7e-2739b24a905d&unique=prints",
+     "collector_number": "740",
+     "digital": false,
+     "rarity": "uncommon",
+     "flavor_text": "Follow the light. In its absence, follow her.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Greg Staples",
+     "artist_ids": [
+      "93d65564-bf00-447b-8406-e2031f03b6b1"
+     ],
+     "illustration_id": "5f5651af-22fb-4fb8-a04c-1f34b5104bd9",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "setextension"
+     ],
+     "edhrec_rank": 9449,
+     "penny_rank": 12470,
+     "prices": {
+      "usd": "0.24",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.20",
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DSerra%2BAngel",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DSerra%2BAngel",
+      "edhrec": "https://edhrec.com/route/?cc=Serra+Angel"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F695524%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=904192&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Serra+Angel&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "516512f5-b4ce-46d3-bdda-c88b357192ca",
+     "oracle_id": "de80c742-4da0-4d67-9711-2b4e6452e2d0",
+     "multiverse_ids": [
+      470742
+     ],
+     "mtgo_id": 77510,
+     "tcgplayer_id": 196621,
+     "cardmarket_id": 392162,
+     "name": "Pristine Skywise",
+     "lang": "en",
+     "released_at": "2019-08-23",
+     "uri": "https://api.scryfall.com/cards/516512f5-b4ce-46d3-bdda-c88b357192ca",
+     "scryfall_uri": "https://scryfall.com/card/c19/196/pristine-skywise?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T08:52:14Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/5/1/516512f5-b4ce-46d3-bdda-c88b357192ca.jpg?1783932734",
+      "normal": "https://cards.scryfall.io/normal/front/5/1/516512f5-b4ce-46d3-bdda-c88b357192ca.jpg?1783932734",
+      "large": "https://cards.scryfall.io/large/front/5/1/516512f5-b4ce-46d3-bdda-c88b357192ca.jpg?1783932734",
+      "png": "https://cards.scryfall.io/png/front/5/1/516512f5-b4ce-46d3-bdda-c88b357192ca.png?1783932734",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/5/1/516512f5-b4ce-46d3-bdda-c88b357192ca.jpg?1783932734",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/5/1/516512f5-b4ce-46d3-bdda-c88b357192ca.jpg?1783932734",
+      "thumb": "https://cards.scryfall.io/thumb/front/5/1/516512f5-b4ce-46d3-bdda-c88b357192ca.webp?1783932734",
+      "grid": "https://cards.scryfall.io/grid/front/5/1/516512f5-b4ce-46d3-bdda-c88b357192ca.webp?1783932734",
+      "display": "https://cards.scryfall.io/display/front/5/1/516512f5-b4ce-46d3-bdda-c88b357192ca.webp?1783932734",
+      "art": "https://cards.scryfall.io/art/front/5/1/516512f5-b4ce-46d3-bdda-c88b357192ca.webp?1783932734",
+      "crop": "https://cards.scryfall.io/crop/front/5/1/516512f5-b4ce-46d3-bdda-c88b357192ca.webp?1783932734"
+     },
+     "mana_cost": "{4}{W}{U}",
+     "cmc": 6,
+     "type_line": "Creature — Dragon",
+     "oracle_text": "Flying\nWhenever you cast a noncreature spell, untap this creature. It gains protection from the color of your choice until end of turn.",
+     "power": "6",
+     "toughness": "4",
+     "colors": [
+      "U",
+      "W"
+     ],
+     "color_identity": [
+      "U",
+      "W"
+     ],
+     "keywords": [
+      "Flying"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "0fa3ccbb-d86d-4a2e-a55e-c4979c4feeb2",
+     "set": "c19",
+     "set_name": "Commander 2019",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/0fa3ccbb-d86d-4a2e-a55e-c4979c4feeb2",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Ac19&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/c19?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/516512f5-b4ce-46d3-bdda-c88b357192ca/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ade80c742-4da0-4d67-9711-2b4e6452e2d0&unique=prints",
+     "collector_number": "196",
+     "digital": false,
+     "rarity": "rare",
+     "flavor_text": "The elite of Ojutai's brood, the skywise see their enemies as puzzles to be solved.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Adam Paquette",
+     "artist_ids": [
+      "89023dad-e6c0-41e0-83fb-eb2bfbbdc3f2"
+     ],
+     "illustration_id": "a4b2e518-93d2-454b-ba0b-7c320ecd7c8c",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 22934,
+     "penny_rank": 12431,
+     "prices": {
+      "usd": "0.24",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.13",
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=470742&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DPristine%2BSkywise",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DPristine%2BSkywise",
+      "edhrec": "https://edhrec.com/route/?cc=Pristine+Skywise"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F196621%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=392162&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/77510?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "9764a718-1748-4c2a-925c-370e22003b62",
+     "oracle_id": "71ecb454-3598-4860-bba1-b3932f906171",
+     "multiverse_ids": [
+      442977
+     ],
+     "mtgo_id": 67643,
+     "arena_id": 67282,
+     "tcgplayer_id": 162156,
+     "cardmarket_id": 319773,
+     "name": "Drudge Sentinel",
+     "lang": "en",
+     "released_at": "2018-04-27",
+     "uri": "https://api.scryfall.com/cards/9764a718-1748-4c2a-925c-370e22003b62",
+     "scryfall_uri": "https://scryfall.com/card/dom/89/drudge-sentinel?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T09:30:09Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/9/7/9764a718-1748-4c2a-925c-370e22003b62.jpg?1783935009",
+      "normal": "https://cards.scryfall.io/normal/front/9/7/9764a718-1748-4c2a-925c-370e22003b62.jpg?1783935009",
+      "large": "https://cards.scryfall.io/large/front/9/7/9764a718-1748-4c2a-925c-370e22003b62.jpg?1783935009",
+      "png": "https://cards.scryfall.io/png/front/9/7/9764a718-1748-4c2a-925c-370e22003b62.png?1783935009",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/9/7/9764a718-1748-4c2a-925c-370e22003b62.jpg?1783935009",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/9/7/9764a718-1748-4c2a-925c-370e22003b62.jpg?1783935009",
+      "thumb": "https://cards.scryfall.io/thumb/front/9/7/9764a718-1748-4c2a-925c-370e22003b62.webp?1783935009",
+      "grid": "https://cards.scryfall.io/grid/front/9/7/9764a718-1748-4c2a-925c-370e22003b62.webp?1783935009",
+      "display": "https://cards.scryfall.io/display/front/9/7/9764a718-1748-4c2a-925c-370e22003b62.webp?1783935009",
+      "art": "https://cards.scryfall.io/art/front/9/7/9764a718-1748-4c2a-925c-370e22003b62.webp?1783935009",
+      "crop": "https://cards.scryfall.io/crop/front/9/7/9764a718-1748-4c2a-925c-370e22003b62.webp?1783935009"
+     },
+     "mana_cost": "{2}{B}",
+     "cmc": 3,
+     "type_line": "Creature — Skeleton Warrior",
+     "oracle_text": "{3}: Tap this creature. It gains indestructible until end of turn. (Damage and effects that say \"destroy\" don't destroy it.)",
+     "power": "2",
+     "toughness": "1",
+     "colors": [
+      "B"
+     ],
+     "color_identity": [
+      "B"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "arena",
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "be1daba3-51c9-4e7e-9212-36e68addc26c",
+     "set": "dom",
+     "set_name": "Dominaria",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/be1daba3-51c9-4e7e-9212-36e68addc26c",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Adom&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/dom?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/9764a718-1748-4c2a-925c-370e22003b62/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A71ecb454-3598-4860-bba1-b3932f906171&unique=prints",
+     "collector_number": "89",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "The Cabal assured the Seven Houses that hostages receive all the food and rest they require.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Sara Winters",
+     "artist_ids": [
+      "56be33dc-a2da-40e9-a4f7-94077dcea31e"
+     ],
+     "illustration_id": "7bf9ac62-65fc-42f5-86b6-c192a61c6027",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 29247,
+     "prices": {
+      "usd": "0.06",
+      "usd_foil": "0.44",
+      "usd_etched": null,
+      "eur": "0.04",
+      "eur_foil": "0.19",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=442977&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DDrudge%2BSentinel",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DDrudge%2BSentinel",
+      "edhrec": "https://edhrec.com/route/?cc=Drudge+Sentinel"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F162156%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=319773&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/67643?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 5,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_5",
+    "scryfallData": {
+     "object": "card",
+     "id": "484e80a4-1d5f-4c27-98a8-ee2ef9d6cbdc",
+     "oracle_id": "5ad8963b-8091-4787-9147-20a1fe7bf0fb",
+     "multiverse_ids": [],
+     "resource_id": "7665E610710902E6E160325599C951A485B87C83E55B851B6419F9CC8A1241B0",
+     "mtgo_id": 152355,
+     "arena_id": 104979,
+     "tcgplayer_id": 696658,
+     "cardmarket_id": 891330,
+     "name": "The Wondrous Wasp",
+     "lang": "en",
+     "released_at": "2026-06-26",
+     "uri": "https://api.scryfall.com/cards/484e80a4-1d5f-4c27-98a8-ee2ef9d6cbdc",
+     "scryfall_uri": "https://scryfall.com/card/msh/84/the-wondrous-wasp?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T00:35:47Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/8/484e80a4-1d5f-4c27-98a8-ee2ef9d6cbdc.jpg?1783902947",
+      "normal": "https://cards.scryfall.io/normal/front/4/8/484e80a4-1d5f-4c27-98a8-ee2ef9d6cbdc.jpg?1783902947",
+      "large": "https://cards.scryfall.io/large/front/4/8/484e80a4-1d5f-4c27-98a8-ee2ef9d6cbdc.jpg?1783902947",
+      "png": "https://cards.scryfall.io/png/front/4/8/484e80a4-1d5f-4c27-98a8-ee2ef9d6cbdc.png?1783902947",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/8/484e80a4-1d5f-4c27-98a8-ee2ef9d6cbdc.jpg?1783902947",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/8/484e80a4-1d5f-4c27-98a8-ee2ef9d6cbdc.jpg?1783902947",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/8/484e80a4-1d5f-4c27-98a8-ee2ef9d6cbdc.webp?1783902947",
+      "grid": "https://cards.scryfall.io/grid/front/4/8/484e80a4-1d5f-4c27-98a8-ee2ef9d6cbdc.webp?1783902947",
+      "display": "https://cards.scryfall.io/display/front/4/8/484e80a4-1d5f-4c27-98a8-ee2ef9d6cbdc.webp?1783902947",
+      "art": "https://cards.scryfall.io/art/front/4/8/484e80a4-1d5f-4c27-98a8-ee2ef9d6cbdc.webp?1783902947",
+      "crop": "https://cards.scryfall.io/crop/front/4/8/484e80a4-1d5f-4c27-98a8-ee2ef9d6cbdc.webp?1783902947"
+     },
+     "mana_cost": "{1}{U}",
+     "cmc": 2,
+     "type_line": "Legendary Creature — Human Hero",
+     "oracle_text": "Flash\nFlying\nWasp's Sting — When The Wondrous Wasp enters, tap up to one target creature. It loses all abilities for as long as The Wondrous Wasp remains on the battlefield.",
+     "power": "2",
+     "toughness": "1",
+     "colors": [
+      "U"
+     ],
+     "color_identity": [
+      "U"
+     ],
+     "keywords": [
+      "Flying",
+      "Wasp's Sting",
+      "Flash"
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo",
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "ba9bf625-681c-4a4e-ab48-399b2fecac6b",
+     "set": "msh",
+     "set_name": "Marvel Super Heroes",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/ba9bf625-681c-4a4e-ab48-399b2fecac6b",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Amsh&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/msh?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/484e80a4-1d5f-4c27-98a8-ee2ef9d6cbdc/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A5ad8963b-8091-4787-9147-20a1fe7bf0fb&unique=prints",
+     "collector_number": "84",
+     "digital": false,
+     "rarity": "rare",
+     "flavor_text": "\"Don't overlook the little things.\"",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Gal Or",
+     "artist_ids": [
+      "4bbf92ce-72b4-4afa-9e3d-b54326e842b0"
+     ],
+     "illustration_id": "a948e450-fa65-4fe9-8d74-d9040ee580b2",
+     "border_color": "black",
+     "frame": "2015",
+     "frame_effects": [
+      "legendary"
+     ],
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "universesbeyond"
+     ],
+     "edhrec_rank": 13009,
+     "prices": {
+      "usd": "0.87",
+      "usd_foil": "2.26",
+      "usd_etched": null,
+      "eur": "1.14",
+      "eur_foil": "2.72",
+      "tix": "0.35"
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DThe%2BWondrous%2BWasp",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DThe%2BWondrous%2BWasp",
+      "edhrec": "https://edhrec.com/route/?cc=The+Wondrous+Wasp"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F696658%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=891330&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/152355?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 7,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [
+   {
+    "id": "trig_perm_3_1_4",
+    "kind": "trigger",
+    "pseudoKind": "ability",
+    "sourceId": "perm_3",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 1,
+    "timestamp": 4,
+    "effectText": "untap this creature. This creature gains protection from red until end of turn.",
+    "fullText": "Whenever you cast a noncreature spell, untap this creature. It gains protection from the color of your choice until end of turn.",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Grizzly Bears",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Bear"
+       ],
+       "power": 2,
+       "toughness": 2,
+       "colors": [
+        "G"
+       ],
+       "abilities": [],
+       "oracleText": "",
+       "owner": "player_0",
+       "controller": "player_0"
+      }
+     ],
+     [
+      "perm_2",
+      {
+       "name": "Serra Angel",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Angel"
+       ],
+       "power": 4,
+       "toughness": 4,
+       "colors": [
+        "W"
+       ],
+       "abilities": [
+        "Flying",
+        "Vigilance"
+       ],
+       "oracleText": "Flying\nVigilance",
+       "owner": "player_0",
+       "controller": "player_0"
+      }
+     ],
+     [
+      "perm_3",
+      {
+       "name": "Pristine Skywise",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Dragon"
+       ],
+       "power": 6,
+       "toughness": 4,
+       "colors": [
+        "U",
+        "W"
+       ],
+       "abilities": [
+        "Flying",
+        "Whenever you cast a noncreature spell, untap this creature. It gains protection from the color of your choice until end of turn."
+       ],
+       "oracleText": "Flying\nWhenever you cast a noncreature spell, untap this creature. It gains protection from the color of your choice until end of turn.",
+       "owner": "player_0",
+       "controller": "player_0"
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Serra Angel",
+       "imageUri": "https://cards.scryfall.io/small/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.jpg?1787563091",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Angel"
+       ],
+       "printedPower": 4,
+       "printedToughness": 4,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Pristine Skywise",
+       "imageUri": "https://cards.scryfall.io/small/front/5/1/516512f5-b4ce-46d3-bdda-c88b357192ca.jpg?1783932734",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Dragon"
+       ],
+       "printedPower": 6,
+       "printedToughness": 4,
+       "timestamp": 3
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    },
+    "primaryTarget": "perm_3",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 4,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null
+   },
+   {
+    "id": "act_perm_4_0_6",
+    "kind": "activated",
+    "pseudoKind": "ability",
+    "sourceId": "perm_4",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 0,
+    "timestamp": 6,
+    "effectText": "Tap this creature. This creature gains indestructible until end of turn.",
+    "fullText": "{3}: Tap this creature. It gains indestructible until end of turn.",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Grizzly Bears",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Bear"
+       ],
+       "power": 2,
+       "toughness": 2,
+       "abilities": [],
+       "colors": [
+        "G"
+       ],
+       "manaValue": 2,
+       "manaCost": "{1}{G}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_2",
+      {
+       "name": "Serra Angel",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Angel"
+       ],
+       "power": 4,
+       "toughness": 4,
+       "abilities": [
+        "Flying",
+        "Vigilance"
+       ],
+       "colors": [
+        "W"
+       ],
+       "manaValue": 5,
+       "manaCost": "{3}{W}{W}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "Flying\nVigilance",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "Flying",
+        "Vigilance"
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_3",
+      {
+       "name": "Pristine Skywise",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Dragon"
+       ],
+       "power": 6,
+       "toughness": 4,
+       "abilities": [
+        "Flying",
+        "Whenever you cast a noncreature spell, untap this creature. It gains protection from the color of your choice until end of turn.",
+        "Protection from red until end of turn"
+       ],
+       "colors": [
+        "U",
+        "W"
+       ],
+       "manaValue": 6,
+       "manaCost": "{4}{W}{U}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "Flying\nWhenever you cast a noncreature spell, untap this creature. It gains protection from the color of your choice until end of turn.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "Flying",
+        "Whenever you cast a noncreature spell, untap this creature. It gains protection from the color of your choice until end of turn."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_4",
+      {
+       "name": "Drudge Sentinel",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Skeleton",
+        "Warrior"
+       ],
+       "power": 2,
+       "toughness": 1,
+       "abilities": [
+        "{3}: Tap this creature. It gains indestructible until end of turn."
+       ],
+       "colors": [
+        "B"
+       ],
+       "manaValue": 3,
+       "manaCost": "{2}{B}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "{3}: Tap this creature. It gains indestructible until end of turn.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "{3}: Tap this creature. It gains indestructible until end of turn."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Serra Angel",
+       "imageUri": "https://cards.scryfall.io/small/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.jpg?1787563091",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Angel"
+       ],
+       "printedPower": 4,
+       "printedToughness": 4,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Pristine Skywise",
+       "imageUri": "https://cards.scryfall.io/small/front/5/1/516512f5-b4ce-46d3-bdda-c88b357192ca.jpg?1783932734",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Dragon"
+       ],
+       "printedPower": 6,
+       "printedToughness": 4,
+       "timestamp": 3
+      },
+      {
+       "id": "trig_perm_3_1_4",
+       "name": "Pristine Skywise (trigger)",
+       "imageUri": "https://cards.scryfall.io/small/front/5/1/516512f5-b4ce-46d3-bdda-c88b357192ca.jpg?1783932734",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": true,
+       "isTriggeredAbility": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "abilitySourceId": "perm_3",
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_4",
+       "name": "Drudge Sentinel",
+       "imageUri": "https://cards.scryfall.io/small/front/9/7/9764a718-1748-4c2a-925c-370e22003b62.jpg?1783935009",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Skeleton",
+        "Warrior"
+       ],
+       "printedPower": 2,
+       "printedToughness": 1,
+       "timestamp": 5
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    },
+    "primaryTarget": "perm_4",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 6,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null
+   },
+   {
+    "id": "trig_perm_5_2_8",
+    "kind": "trigger",
+    "pseudoKind": "ability",
+    "sourceId": "perm_5",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 2,
+    "timestamp": 8,
+    "effectText": "tap up to one target creature. target creature loses all abilities for as long as this card remains on the battlefield.",
+    "fullText": "Wasp's Sting — When this card enters, tap up to one target creature. It loses all abilities for as long as this card remains on the battlefield.",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Grizzly Bears",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Bear"
+       ],
+       "power": 2,
+       "toughness": 2,
+       "abilities": [],
+       "colors": [
+        "G"
+       ],
+       "manaValue": 2,
+       "manaCost": "{1}{G}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_2",
+      {
+       "name": "Serra Angel",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Angel"
+       ],
+       "power": 4,
+       "toughness": 4,
+       "abilities": [
+        "Flying",
+        "Vigilance"
+       ],
+       "colors": [
+        "W"
+       ],
+       "manaValue": 5,
+       "manaCost": "{3}{W}{W}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "Flying\nVigilance",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "Flying",
+        "Vigilance"
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_3",
+      {
+       "name": "Pristine Skywise",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Dragon"
+       ],
+       "power": 6,
+       "toughness": 4,
+       "abilities": [
+        "Flying",
+        "Whenever you cast a noncreature spell, untap this creature. It gains protection from the color of your choice until end of turn.",
+        "Protection from red until end of turn"
+       ],
+       "colors": [
+        "U",
+        "W"
+       ],
+       "manaValue": 6,
+       "manaCost": "{4}{W}{U}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "Flying\nWhenever you cast a noncreature spell, untap this creature. It gains protection from the color of your choice until end of turn.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "Flying",
+        "Whenever you cast a noncreature spell, untap this creature. It gains protection from the color of your choice until end of turn."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_4",
+      {
+       "name": "Drudge Sentinel",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Skeleton",
+        "Warrior"
+       ],
+       "power": 2,
+       "toughness": 1,
+       "abilities": [
+        "{3}: Tap this creature. It gains indestructible until end of turn.",
+        "Indestructible"
+       ],
+       "colors": [
+        "B"
+       ],
+       "manaValue": 3,
+       "manaCost": "{2}{B}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "{3}: Tap this creature. It gains indestructible until end of turn.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "{3}: Tap this creature. It gains indestructible until end of turn."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_5",
+      {
+       "name": "The Wondrous Wasp",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [
+        "Legendary"
+       ],
+       "subtypes": [
+        "Human",
+        "Hero"
+       ],
+       "power": 2,
+       "toughness": 1,
+       "abilities": [
+        "Flash",
+        "Flying",
+        "Wasp's Sting — When this card enters, tap up to one target creature. It loses all abilities for as long as this card remains on the battlefield."
+       ],
+       "colors": [
+        "U"
+       ],
+       "manaValue": 2,
+       "manaCost": "{1}{U}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "Flash\nFlying\nWasp's Sting — When this card enters, tap up to one target creature. It loses all abilities for as long as this card remains on the battlefield.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "Flash",
+        "Flying",
+        "Wasp's Sting — When this card enters, tap up to one target creature. It loses all abilities for as long as this card remains on the battlefield."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Serra Angel",
+       "imageUri": "https://cards.scryfall.io/small/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.jpg?1787563091",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Angel"
+       ],
+       "printedPower": 4,
+       "printedToughness": 4,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Pristine Skywise",
+       "imageUri": "https://cards.scryfall.io/small/front/5/1/516512f5-b4ce-46d3-bdda-c88b357192ca.jpg?1783932734",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Dragon"
+       ],
+       "printedPower": 6,
+       "printedToughness": 4,
+       "timestamp": 3
+      },
+      {
+       "id": "trig_perm_3_1_4",
+       "name": "Pristine Skywise (trigger)",
+       "imageUri": "https://cards.scryfall.io/small/front/5/1/516512f5-b4ce-46d3-bdda-c88b357192ca.jpg?1783932734",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": true,
+       "isTriggeredAbility": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "abilitySourceId": "perm_3",
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_4",
+       "name": "Drudge Sentinel",
+       "imageUri": "https://cards.scryfall.io/small/front/9/7/9764a718-1748-4c2a-925c-370e22003b62.jpg?1783935009",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Skeleton",
+        "Warrior"
+       ],
+       "printedPower": 2,
+       "printedToughness": 1,
+       "timestamp": 5
+      },
+      {
+       "id": "act_perm_4_0_6",
+       "name": "Drudge Sentinel (activated)",
+       "imageUri": "https://cards.scryfall.io/small/front/9/7/9764a718-1748-4c2a-925c-370e22003b62.jpg?1783935009",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": true,
+       "isActivatedAbility": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "abilitySourceId": "perm_4",
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 6
+      },
+      {
+       "id": "perm_5",
+       "name": "The Wondrous Wasp",
+       "imageUri": "https://cards.scryfall.io/small/front/4/8/484e80a4-1d5f-4c27-98a8-ee2ef9d6cbdc.jpg?1783902947",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [
+        "Legendary"
+       ],
+       "printedSubtypes": [
+        "Human",
+        "Hero"
+       ],
+       "printedPower": 2,
+       "printedToughness": 1,
+       "timestamp": 7
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    },
+    "primaryTarget": "perm_2",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 9,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null
+   }
+  ],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Grizzly Bears",
+    "final": {
+     "name": "Grizzly Bears",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Bear"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "G"
+     ],
+     "abilities": []
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Serra Angel",
+    "final": {
+     "name": "Serra Angel",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Angel"
+     ],
+     "power": 4,
+     "toughness": 4,
+     "colors": [
+      "W"
+     ],
+     "abilities": [],
+     "allAbilitiesRemoved": true
+    },
+    "changedBy": {
+     "6": [
+      "The Wondrous Wasp (trigger)"
+     ]
+    }
+   },
+   {
+    "perm": "Pristine Skywise",
+    "final": {
+     "name": "Pristine Skywise",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Dragon"
+     ],
+     "power": 6,
+     "toughness": 4,
+     "colors": [
+      "U",
+      "W"
+     ],
+     "abilities": [
+      "Flying",
+      "Whenever you cast a noncreature spell, untap this creature. It gains protection from the color of your choice until end of turn.",
+      "Protection from red until end of turn"
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "Pristine Skywise (trigger)"
+     ]
+    }
+   },
+   {
+    "perm": "Drudge Sentinel",
+    "final": {
+     "name": "Drudge Sentinel",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Skeleton",
+      "Warrior"
+     ],
+     "power": 2,
+     "toughness": 1,
+     "colors": [
+      "B"
+     ],
+     "abilities": [
+      "{3}: Tap this creature. It gains indestructible until end of turn.",
+      "Indestructible"
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "Drudge Sentinel (activated)"
+     ]
+    }
+   },
+   {
+    "perm": "The Wondrous Wasp",
+    "final": {
+     "name": "The Wondrous Wasp",
+     "controller": "player_0",
+     "supertypes": [
+      "Legendary"
+     ],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Human",
+      "Hero"
+     ],
+     "power": 2,
+     "toughness": 1,
+     "colors": [
+      "U"
+     ],
+     "abilities": [
+      "Flash",
+      "Flying",
+      "Wasp's Sting — When this card enters, tap up to one target creature. It loses all abilities for as long as this card remains on the battlefield."
+     ]
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "6": [
+    "Pristine Skywise (trigger)",
+    "Drudge Sentinel (activated)",
+    "The Wondrous Wasp (trigger)"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Pristine Skywise (trigger)",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "target": "Pristine Skywise",
+    "params": {
+     "ability": "Protection from red until end of turn"
+    }
+   },
+   {
+    "source": "Drudge Sentinel (activated)",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "target": "Drudge Sentinel",
+    "params": {
+     "ability": "Indestructible"
+    }
+   },
+   {
+    "source": "The Wondrous Wasp (trigger)",
+    "layer": "6",
+    "type": "remove_abilities",
+    "scope": "targeted",
+    "target": "Serra Angel",
+    "params": {}
+   }
+  ]
+ }
+}

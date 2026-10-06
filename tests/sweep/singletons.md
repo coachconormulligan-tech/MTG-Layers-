@@ -5,7 +5,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Card | Reads like | Where | Sentence |
 |---|---|---|---|
 | Absorb Identity | becomes | spell | You may have Shapeshifters you control become copies of that creature until end of turn. |
-| Adrestia | becomes | triggered | This card becomes an Assassin in addition to its other types until end of turn. |
 | Amplifire | becomes | triggered | Until your next turn, this creature's base power becomes twice that card's power and its base toughness becomes twice that card's toughness. |
 | Aquamorph Entity | becomes | static | As this creature enters or is turned face up, it becomes your choice of 5/1 or 1/5. |
 | Belligerent Yearling | becomes | triggered | Whenever another Dinosaur you control enters, you may have this creature's base power become equal to that creature's power until end of turn. |

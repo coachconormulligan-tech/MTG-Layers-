@@ -1,0 +1,13 @@
+{
+  "name": "Haunted Screen — \"Put seven +1/+1 counters on this artifact. It becomes …\" changes the Screen only",
+  "notes": "With \"it\" resolved to the source named earlier in the effect (_resolveItToAbilitySource), the fired text reads \"Put seven +1/+1 counters on this artifact. This artifact becomes a 0/0 Spirit creature in addition to its other types\". addTypeRegex captures its subject from the start of the line, so the subject arrived with the counter sentence attached and nothing was parsed. When the last sentence of the capture is just \"this artifact / creature / Vehicle …\", that alone is the subject (as setTypeRegex already did for Donald Blake). Same for Adrestia: \"draw a card. This card becomes an Assassin in addition to its other types\".",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Haunted Screen", "as": "screen" },
+    { "fire": "@screen", "activated": 2, "as": "fired" }
+  ],
+  "asserts": [
+    { "perm": "Haunted Screen", "final": { "types": { "$includes": ["Artifact", "Creature"] }, "subtypes": { "$includes": ["Spirit"] } } },
+    { "perm": "Grizzly Bears", "final": { "subtypes": ["Bear"], "power": 2, "toughness": 2 } }
+  ]
+}
