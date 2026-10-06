@@ -1,0 +1,18 @@
+{
+  "name": "Terraformer — \"Choose a basic land type. Each land you control becomes that type\"",
+  "notes": "Found by tests/sweep.py (theme: becomes that type). Same fix as Imagecrafter for the land-type wording: the fired ability carries the land-type input and 'that type' is replaced by the choice. Forest becomes an Island (and taps for blue). Standardize is the spell form for creature types: every creature becomes a Goblin.",
+  "steps": [
+    { "add": "Forest" },
+    { "add": "Grizzly Bears" },
+    { "add": "Terraformer", "as": "terra" },
+    { "call": ["addActivatedAbility", "@terra", 0, "Choose a basic land type. Each land you control becomes that type until end of turn.", "{1}: Choose a basic land type. Each land you control becomes that type until end of turn."], "as": "act" },
+    { "call": ["setChosenLandType", "@act", "Island"] },
+    { "add": "Standardize", "as": "std", "spell": true },
+    { "call": ["setChosenCreatureType", "@std", "Goblin"] }
+  ],
+  "asserts": [
+    { "perm": "Forest", "final": { "subtypes": ["Island"], "abilities": { "$includes": ["{T}: Add {U}."] } } },
+    { "perm": "Grizzly Bears", "final": { "subtypes": ["Goblin"] } },
+    { "perm": "Terraformer", "final": { "subtypes": ["Goblin"] } }
+  ]
+}

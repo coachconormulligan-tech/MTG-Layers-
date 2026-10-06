@@ -1,0 +1,21 @@
+{
+  "name": "Rune of Flight — flying for a creature, a granted ability for an Equipment",
+  "notes": "Found by tests/sweep.py (theme: Rune cycle). Three things were wrong. (1) 'As long as enchanted permanent is an Equipment' fell to the bare 'is enchanted' condition, true of anything wearing an Aura, so a creature also got the Equipment's quoted ability. (2) The keyword parser read 'it has \"Equipped creature has flying' with a subject running into the quote and emitted a global grant to every enchanted permanent. (3) The quoted 'Equipped creature has flying' granted to an Equipment was not tied to the creature that Equipment is on. Here Rune of Flight is on Bonesplitter (equipped to Hill Giant) and Rune of Mortality is on Grizzly Bears: the Giant flies through the Equipment, the Bears have deathtouch only, Gray Ogre and the Equipment itself get no keyword.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Hill Giant", "as": "giant" },
+    { "add": "Gray Ogre" },
+    { "add": "Bonesplitter", "as": "axe" },
+    { "call": ["applyEquipAttachment", "@axe", 1, "@giant"] },
+    { "add": "Rune of Flight", "as": "flight" },
+    { "call": ["setTarget", "@flight", "@axe"] },
+    { "add": "Rune of Mortality", "as": "mortality" },
+    { "call": ["setTarget", "@mortality", "@bears"] }
+  ],
+  "asserts": [
+    { "perm": "Hill Giant", "final": { "power": 5, "abilities": { "$includes": ["Flying"], "$excludes": ["Deathtouch"] } } },
+    { "perm": "Bonesplitter", "final": { "abilities": { "$includes": ["Equipped creature has flying"], "$excludes": ["Flying", "Deathtouch"] } } },
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$includes": ["Deathtouch"], "$excludes": ["Flying", "Equipped creature has deathtouch"] } } },
+    { "perm": "Gray Ogre", "final": { "abilities": { "$excludes": ["Flying", "Deathtouch"] } } }
+  ]
+}

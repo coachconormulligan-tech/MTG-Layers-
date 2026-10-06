@@ -1,0 +1,16 @@
+{
+  "name": "Cauldron Haze — \"Choose any number of target creatures. Each of those creatures gains persist\"",
+  "notes": "Found by tests/sweep.py. The pronoun resolver already turned 'Each of those creatures gains' into 'Any number of target creatures each gain', but the leftover 'Choose any number of target creatures.' sentence in front stopped the keyword parser. The choosing sentence is dropped once its targets have become the next sentence's subject. The chosen Bears get persist; Gray Ogre does not. Phyrexian Arena is on the board to pin a side fix from the same pass: 'you lose 1 life' is no longer recorded as losing an ability called '1 life'.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Gray Ogre" },
+    { "add": "Phyrexian Arena" },
+    { "add": "Cauldron Haze", "as": "haze", "spell": true },
+    { "call": ["setMultiTarget", "@haze", 0, "@bears"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$includes": ["Persist"] } } },
+    { "perm": "Gray Ogre", "final": { "abilities": { "$excludes": ["Persist"] } } },
+    { "effect": { "source": "Cauldron Haze", "layer": "6", "type": "add_ability", "scope": "targeted" } }
+  ]
+}

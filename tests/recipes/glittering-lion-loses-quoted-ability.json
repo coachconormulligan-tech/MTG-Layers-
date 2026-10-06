@@ -1,0 +1,13 @@
+{
+  "name": "Glittering Lion — loses a quoted ability until end of turn",
+  "notes": "Found by tests/sweep.py (theme: loses QUOTED). '{3}: Until end of turn, this creature loses \"Prevent all damage that would be dealt to this creature.\"' fired to nothing. A quoted ability after 'loses' is now a REMOVE_ABILITIES naming that ability, matched with or without its final period. The activated Lion loses its prevention ability; the Lynx, not activated, keeps it.",
+  "steps": [
+    { "add": "Glittering Lion", "as": "lion" },
+    { "add": "Glittering Lynx" },
+    { "call": ["addActivatedAbility", "@lion", 1, "Until end of turn, this creature loses \"Prevent all damage that would be dealt to this creature.\" Any player may activate this ability.", "{3}: Until end of turn, this creature loses \"Prevent all damage that would be dealt to this creature.\" Any player may activate this ability."] }
+  ],
+  "asserts": [
+    { "perm": "Glittering Lion", "final": { "abilities": { "$excludes": ["Prevent all damage that would be dealt to this creature."] } } },
+    { "perm": "Glittering Lynx", "final": { "abilities": { "$includes": ["Prevent all damage that would be dealt to this creature."] } } }
+  ]
+}

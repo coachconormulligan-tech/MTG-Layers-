@@ -174,6 +174,14 @@ const CONDITION_PARSERS = [
     }
     return null;
   },
+  // "enchanted permanent is an Equipment" (Rune cycle) — the enchanted permanent's subtype.
+  // Must precede the bare "is enchanted" check, which is true of anything wearing an Aura.
+  (ct) => {
+    const m = ct.match(/\benchanted\s+\w+\s+is\s+an?\s+(\w+)\s*$/);
+    if (!m || COLOR_NAMES[m[1]] || CARD_TYPE_WORDS[m[1]]) return null;
+    const subtype = singularizeCreatureType(m[1]);
+    return (s) => s.subtypes.includes(subtype);
+  },
   // "is enchanted" / "enchanted creature". Must precede the "is a [subtype]" branch.
   (ct) => (/\b(?:is\s+)?enchanted\b/.test(ct) && !/equipped/.test(ct))
     ? (s) => (s.traits || []).includes('Enchanted')
@@ -2197,6 +2205,9 @@ function parseCardEffects(permanent, card, opts = {}) {
     const overlaps = addTypeMatchRanges.some(r => mStart < r.end && mEnd > r.start);
     if (overlaps) continue;
 
+    // "{T}: Target creature becomes …" is an activated ability: it does nothing until fired,
+    // and firing parses the effect text on its own, without the cost.
+    if (_isInActivatedEffect(mStart)) continue;
     let filterText = setTypeMatch[1].trim();
     // The lazy filter group can run across a sentence boundary ("Untap up to six target
     // lands. Up to six target lands become …"). When the last sentence names its own
@@ -2211,6 +2222,9 @@ function parseCardEffects(permanent, card, opts = {}) {
     if (/\bthat$/i.test(filterText)) continue;
     let becomesText = setTypeMatch[2].trim();
     if (becomesText.toLowerCase().includes('in addition to')) continue;
+    // "becomes the creature type of your choice": nothing happens until a type is chosen, and
+    // the choice is then written into the text ("becomes a Goblin") before re-parsing.
+    if (/\btype of your choice\b/i.test(becomesText)) continue;
 
     // 'becomes a 3/3 red and green Elemental creature with "Whenever this creature attacks, …"'
     // (Raging Ravine): the match stops at the first period inside the quoted ability. Lift the
@@ -3479,6 +3493,9 @@ function parseCardEffects(permanent, card, opts = {}) {
     // is a combat/rules permission, NOT an ability grant. The captured filter ends with the
     // negation word (e.g. "...as though it didn't"), so skip it. (Pride of Hull Clade.)
     if (/(?:n['’]t|\bnot)$/i.test(filterText)) continue;
+    // 'it has "Equipped creature has flying."' (Rune cycle): the keyword sits inside an ability
+    // being granted, and the captured subject runs from outside the quote into it.
+    if (/\b(?:has|have|gains?)\s+"[^"]*$/i.test(filterText)) continue;
     // Fix: If the regex matched across sentence boundaries (filter contains "."),
     // use only the last sentence segment as the actual filter text.
     // e.g. "Put a +1/+1 counter on target creature you control. It" → "It"
@@ -3924,6 +3941,10 @@ function parseCardEffects(permanent, card, opts = {}) {
       .replace(/\s+(?:until end of turn|until your next turn|for as long as[^.]*)\s*$/, '');
     // Skip if this looks like "loses all abilities" or "loses all creature types"
     if (lostText.includes('all ')) continue;
+    // A quoted ability is handled by losesQuotedRegex below.
+    if (lostText.startsWith('"')) continue;
+    // "target opponent loses 1 life", "loses the game": a player losing something, not an ability.
+    if (/\blife\b|\bthe game\b/.test(lostText)) continue;
     // Skip "loses the type [X]" / "loses the subtype [X]" — handled by losesTypeRegex above
     if (/^the\s+(?:type|subtype)\b/.test(lostText)) continue;
     // Skip non-permanent filters
@@ -3949,6 +3970,25 @@ function parseCardEffects(permanent, card, opts = {}) {
       if (matchCond) eff.asLongAsCondition = matchCond;
       _applyTargetInfo(eff, _lsBResult, fn);
     }
+  }
+
+  // ---- 'loses "[quoted ability]"' (Glittering Lion: this creature loses "Prevent all damage
+  // that would be dealt to this creature.") → REMOVE_ABILITIES naming that one ability. ----
+  const losesQuotedRegex = /(?:^|[.;])\s*([^."\n]+?)\s+loses?\s+"([^"]+)"/gmi;
+  let losesQuotedMatch;
+  while ((losesQuotedMatch = losesQuotedRegex.exec(oracle)) !== null) {
+    if (_isInActivatedEffect(losesQuotedMatch.index) || _isInTriggeredSentence(losesQuotedMatch.index)) continue;
+    const filterText = stripDurationPrefix(losesQuotedMatch[1].trim());
+    if (!filterReferencesPermanents(filterText)) continue;
+    const lostAbility = losesQuotedMatch[2].trim().replace(/\.$/, '');
+    const _lqResult = buildAppliesToFromText(filterText);
+    const { fn, desc, isSelf, isTargeted } = _lqResult;
+    const eff = pushEff('6', EFFECT_TYPE.REMOVE_ABILITIES, { specificAbilities: [lostAbility] },
+      { isSelf, isTargeted, fn, selfAffect: isSelf ? true : detectSelfAffect(filterText) },
+      `${filterText} loses "${lostAbility}". ${desc}`);
+    const matchCond = _getConditionForPos(losesQuotedMatch.index);
+    if (matchCond) eff.asLongAsCondition = matchCond;
+    _applyTargetInfo(eff, _lqResult, fn);
   }
 
   // ---- General "lose all abilities" / "lose all other abilities" parser ----

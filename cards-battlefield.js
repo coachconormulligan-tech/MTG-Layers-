@@ -559,9 +559,17 @@ const Battlefield = {
     const fakeCard = { name: sourcePerm.name, oracle_text: parsedEffectText, type_line: 'Instant', colors: sourcePerm.printedColors, cmc: 0 };
     // Detect "basic land type of your choice" in the ability text so the land-type
     // dropdown appears on the activated-ability pseudo-permanent (not on the source card).
-    if (/\bbasic land type of your choice\b/i.test(parsedEffectText)) {
+    if (/\bbasic land type of your choice\b|\bchoose a basic land type\b[^.]*\.[^\n]*\bbecomes? that type\b/i.test(parsedEffectText)) {
       pseudoPerm.needsChosenLandType = true;
       pseudoPerm.chosenLandType = null;
+      pseudoPerm.originalOracleText = parsedEffectText;
+      pseudoPerm.originalCard = fakeCard;
+    }
+    // Same for a creature type chosen as the ability resolves: "becomes the creature type of
+    // your choice" (Mistform cycle), "Choose a creature type. … becomes that type" (Imagecrafter).
+    if (/\bcreature type of your choice\b|\bchoose a creature type\b[^.]*\.[^\n]*\bbecomes? that type\b/i.test(parsedEffectText)) {
+      pseudoPerm.needsChosenCreatureType = true;
+      pseudoPerm.chosenCreatureType = null;
       pseudoPerm.originalOracleText = parsedEffectText;
       pseudoPerm.originalCard = fakeCard;
     }
@@ -1341,8 +1349,14 @@ const Battlefield = {
       oracleText = oracleText.replace(/\bthe (?:last )?chosen (?:creature )?type\b/gi, ct);
       // "are [chosen type] in addition to" → "are [type]s in addition to"
       oracleText = oracleText.replace(new RegExp('\\bare\\s+' + _escapeRegex(ct) + '\\b', 'gi'), `are ${ctPlural}`);
+      // "becomes the creature type of your choice" / "Choose a creature type. … becomes that type"
+      const ctArticle = /^[aeiou]/i.test(ct) ? 'an' : 'a';
+      oracleText = oracleText.replace(/\bthe creature type of your choice\b/gi, `${ctArticle} ${ct}`);
+      if (/\bchoose a creature type\b/i.test(oracleText)) {
+        oracleText = oracleText.replace(/\b(becomes?)\s+that\s+type\b/gi, `$1 ${ctArticle} ${ct}`);
+      }
       // Strip the "choose a creature type" sentence
-      oracleText = oracleText.replace(/(?:as [^.]*)?choose a creature type\.\s*/gi, '');
+      oracleText = oracleText.replace(/(?:as [^.]*)?choose a creature type(?:\s+other\s+than\s+[\w-]+)?\.\s*/gi, '');
     }
     // Apply combined card name + creature type substitution (Psychic Paper pattern)
     // Must be done before individual substitutions to avoid partial matches
@@ -1364,6 +1378,9 @@ const Battlefield = {
       const lt = perm.chosenLandType;
       oracleText = oracleText.replace(/\bthe chosen (?:basic land )?type\b/gi, `a ${lt}`);
       oracleText = oracleText.replace(/\bthe basic land type of your choice\b/gi, `a ${lt}`);
+      if (/\bchoose a basic land type\b/i.test(oracleText)) {
+        oracleText = oracleText.replace(/\b(becomes?)\s+that\s+type\b/gi, `$1 a ${lt}`);
+      }
       oracleText = oracleText.replace(/(?:as [^.]*)?choose a basic land type\.\s*/gi, '');
     }
     // Apply chosen color substitution
@@ -1383,10 +1400,24 @@ const Battlefield = {
     const processedCard = { ...(perm.originalCard || {}), oracle_text: oracleText };
     perm.oracleText = oracleText;
     // Re-parse effects
+    const priorEffects = this.effects.filter(e => e.sourceId === perm.id);
     this.effects = this.effects.filter(e => e.sourceId !== perm.id);
     const fakeCard = { ...processedCard, name: perm.name };
     const newPerm = { ...perm, oracleText };
     const newEffects = parseCardEffects(newPerm, fakeCard);
+    // A fired ability keeps what _addAbilityPseudo gave its effects: the fire-time snapshot,
+    // the pin to its source, and any target already picked.
+    if (perm.abilitySourceId) {
+      const pickedTarget = priorEffects.find(e => e.scope === 'targeted' && e.targetId && !e._autoTargetSource);
+      for (const eff of newEffects) {
+        eff.isSpellEffect = true;
+        if (perm._firedAtStates) eff._firedAtStates = perm._firedAtStates;
+        if (pickedTarget && eff.scope === 'targeted' && !eff.selfTarget && !eff.targetId) eff.targetId = pickedTarget.targetId;
+      }
+      _pinAbilityEffectsToSource(newEffects, perm.abilitySourceId);
+    } else if (perm.isSpell) {
+      for (const eff of newEffects) eff.isSpellEffect = true;
+    }
     // Inject SET_NAME / SET_TYPE effects for equipment that sets name and creature type
     // (e.g. Psychic Paper: "its name and creature type are [chosen name] and [chosen type]")
     if (perm.chosenCardName && /\bname\b.*\bare\b/i.test(perm.originalOracleText || '')) {
@@ -2420,6 +2451,21 @@ const Battlefield = {
     for (const eff of newEffects) eff.isSpellEffect = true;
     this._flagColorChoice(perm, newEffects);
     this.effects.push(...newEffects);
+    // "Choose a creature type other than Wall. Each creature becomes that type" (Standardize):
+    // the type is chosen from the spell's own input and written into the text before re-parsing.
+    {
+      const choiceText = resolvedForParse.oracle_text || '';
+      for (const [re, needsKey, valueKey] of [
+        [/\bchoose a creature type\b[^.]*\.[^\n]*\bthat type\b|\bcreature type of your choice\b/i, 'needsChosenCreatureType', 'chosenCreatureType'],
+        [/\bchoose a basic land type\b[^.]*\.[^\n]*\bthat type\b|\bbasic land type of your choice\b/i, 'needsChosenLandType', 'chosenLandType'],
+      ]) {
+        if (!re.test(choiceText) || perm[needsKey]) continue;
+        perm[needsKey] = true;
+        perm[valueKey] = null;
+        perm.originalOracleText = perm.originalOracleText || choiceText;
+        perm.originalCard = perm.originalCard || resolvedForParse;
+      }
+    }
     // A spell with a variable X ("Target creature gets -X/-X until end of turn") gets the same
     // X value as a permanent does in addPermanent: asked for when cast, adjustable afterwards
     // from the X input, and substituted into the text before parsing.

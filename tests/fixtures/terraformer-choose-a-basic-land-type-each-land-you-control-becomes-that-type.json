@@ -1,0 +1,1323 @@
+{
+ "name": "Terraformer — \"Choose a basic land type. Each land you control becomes that type\"",
+ "notes": "Found by tests/sweep.py (theme: becomes that type). Same fix as Imagecrafter for the land-type wording: the fired ability carries the land-type input and 'that type' is replaced by the choice. Forest becomes an Island (and taps for blue). Standardize is the spell form for creature types: every creature becomes a Goblin.",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Forest"
+   },
+   {
+    "add": "Grizzly Bears"
+   },
+   {
+    "add": "Terraformer",
+    "as": "terra"
+   },
+   {
+    "call": [
+     "addActivatedAbility",
+     "@terra",
+     0,
+     "Choose a basic land type. Each land you control becomes that type until end of turn.",
+     "{1}: Choose a basic land type. Each land you control becomes that type until end of turn."
+    ],
+    "as": "act"
+   },
+   {
+    "call": [
+     "setChosenLandType",
+     "@act",
+     "Island"
+    ]
+   },
+   {
+    "add": "Standardize",
+    "as": "std",
+    "spell": true
+   },
+   {
+    "call": [
+     "setChosenCreatureType",
+     "@std",
+     "Goblin"
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Forest",
+   "final": {
+    "subtypes": [
+     "Island"
+    ],
+    "abilities": {
+     "$includes": [
+      "{T}: Add {U}."
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Grizzly Bears",
+   "final": {
+    "subtypes": [
+     "Goblin"
+    ]
+   }
+  },
+  {
+   "perm": "Terraformer",
+   "final": {
+    "subtypes": [
+     "Goblin"
+    ]
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "dce15387-4114-4b3e-91aa-5b42b45c44ac",
+     "oracle_id": "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
+     "multiverse_ids": [],
+     "name": "Forest",
+     "lang": "en",
+     "released_at": "2026-11-13",
+     "uri": "https://api.scryfall.com/cards/dce15387-4114-4b3e-91aa-5b42b45c44ac",
+     "scryfall_uri": "https://scryfall.com/card/trk/325/forest?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-08-06T02:01:15Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+      "normal": "https://cards.scryfall.io/normal/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+      "large": "https://cards.scryfall.io/large/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+      "png": "https://cards.scryfall.io/png/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.png?1785981675",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+      "thumb": "https://cards.scryfall.io/thumb/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.webp?1785981675",
+      "grid": "https://cards.scryfall.io/grid/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.webp?1785981675",
+      "display": "https://cards.scryfall.io/display/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.webp?1785981675",
+      "art": "https://cards.scryfall.io/art/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.webp?1785981675",
+      "crop": "https://cards.scryfall.io/crop/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.webp?1785981675"
+     },
+     "mana_cost": "",
+     "cmc": 0,
+     "type_line": "Basic Land — Forest",
+     "oracle_text": "({T}: Add {G}.)",
+     "colors": [],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "produced_mana": [
+      "G"
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "4fae200d-5757-4924-8cf4-ab2a5ef2ccc0",
+       "component": "combo_piece",
+       "name": "Forest",
+       "type_line": "Basic Land — Forest",
+       "uri": "https://api.scryfall.com/cards/4fae200d-5757-4924-8cf4-ab2a5ef2ccc0"
+      },
+      {
+       "object": "related_card",
+       "id": "aed8ae06-ae54-4a16-8830-6547164ce6ae",
+       "component": "combo_piece",
+       "name": "Gilt-Leaf Alchemist",
+       "type_line": "Creature — Elf Druid",
+       "uri": "https://api.scryfall.com/cards/aed8ae06-ae54-4a16-8830-6547164ce6ae"
+      }
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo",
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "b47039dc-da5a-448c-8feb-e77d458108a6",
+     "set": "trk",
+     "set_name": "Star Trek",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/b47039dc-da5a-448c-8feb-e77d458108a6",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Atrk&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/trk?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/dce15387-4114-4b3e-91aa-5b42b45c44ac/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ab34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6&unique=prints",
+     "collector_number": "325",
+     "digital": false,
+     "rarity": "common",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Bastien Grivet",
+     "artist_ids": [
+      "434a6cf6-c6bf-4f87-84db-d0a902393b9e"
+     ],
+     "illustration_id": "5a6bbfa9-4075-48e4-b06a-78e31477bd3f",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "universesbeyond"
+     ],
+     "prices": {
+      "usd": null,
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DForest",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DForest",
+      "edhrec": "https://edhrec.com/route/?cc=Forest"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fmagic%2Fproduct%3FproductLineName%3Dmagic%26q%3DForest%26view%3Dgrid",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products/Search?referrer=scryfall&searchString=Forest&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Forest&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+     "multiverse_ids": [
+      129586
+     ],
+     "mtgo_id": 27400,
+     "mtgo_foil_id": 27401,
+     "tcgplayer_id": 15153,
+     "cardmarket_id": 16432,
+     "name": "Grizzly Bears",
+     "lang": "en",
+     "released_at": "2007-07-13",
+     "uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "scryfall_uri": "https://scryfall.com/card/10e/268/grizzly-bears?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:43:21Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "normal": "https://cards.scryfall.io/normal/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "large": "https://cards.scryfall.io/large/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "png": "https://cards.scryfall.io/png/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.png?1783943001",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "grid": "https://cards.scryfall.io/grid/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "display": "https://cards.scryfall.io/display/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "art": "https://cards.scryfall.io/art/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "crop": "https://cards.scryfall.io/crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001"
+     },
+     "mana_cost": "{1}{G}",
+     "cmc": 2,
+     "type_line": "Creature — Bear",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set": "10e",
+     "set_name": "Tenth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A14c8f55d-d177-4c25-a931-ebeb9e6062a0&unique=prints",
+     "collector_number": "268",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"We cannot forget that among all of Dominaria's wonders, a system of life exists, with prey and predators that will never fight wars nor vie for ancient power.\"\n—Jolrael, empress of beasts",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "D. J. Cleland-Hura",
+     "artist_ids": [
+      "87d21070-2432-4167-8aab-5968af1c14f3"
+     ],
+     "illustration_id": "066bfe81-0f53-43da-a074-b2ecc5dcda72",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 8114,
+     "penny_rank": 10982,
+     "prices": {
+      "usd": "0.22",
+      "usd_foil": "3.29",
+      "usd_etched": null,
+      "eur": "0.11",
+      "eur_foil": "1.97",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129586&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "edhrec": "https://edhrec.com/route/?cc=Grizzly+Bears"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15153%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16432&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27400?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "a0b9d4f3-4570-4fe0-857f-97f5bd6ead44",
+     "oracle_id": "683089a8-d5a9-438a-a463-77cc6148125e",
+     "multiverse_ids": [
+      87905
+     ],
+     "mtgo_id": 23148,
+     "mtgo_foil_id": 23149,
+     "tcgplayer_id": 13445,
+     "cardmarket_id": 13563,
+     "name": "Terraformer",
+     "lang": "en",
+     "released_at": "2005-10-07",
+     "uri": "https://api.scryfall.com/cards/a0b9d4f3-4570-4fe0-857f-97f5bd6ead44",
+     "scryfall_uri": "https://scryfall.com/card/rav/70/terraformer?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:54:36Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/a/0/a0b9d4f3-4570-4fe0-857f-97f5bd6ead44.jpg?1783943676",
+      "normal": "https://cards.scryfall.io/normal/front/a/0/a0b9d4f3-4570-4fe0-857f-97f5bd6ead44.jpg?1783943676",
+      "large": "https://cards.scryfall.io/large/front/a/0/a0b9d4f3-4570-4fe0-857f-97f5bd6ead44.jpg?1783943676",
+      "png": "https://cards.scryfall.io/png/front/a/0/a0b9d4f3-4570-4fe0-857f-97f5bd6ead44.png?1783943676",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/a/0/a0b9d4f3-4570-4fe0-857f-97f5bd6ead44.jpg?1783943676",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/a/0/a0b9d4f3-4570-4fe0-857f-97f5bd6ead44.jpg?1783943676",
+      "thumb": "https://cards.scryfall.io/thumb/front/a/0/a0b9d4f3-4570-4fe0-857f-97f5bd6ead44.webp?1783943676",
+      "grid": "https://cards.scryfall.io/grid/front/a/0/a0b9d4f3-4570-4fe0-857f-97f5bd6ead44.webp?1783943676",
+      "display": "https://cards.scryfall.io/display/front/a/0/a0b9d4f3-4570-4fe0-857f-97f5bd6ead44.webp?1783943676",
+      "art": "https://cards.scryfall.io/art/front/a/0/a0b9d4f3-4570-4fe0-857f-97f5bd6ead44.webp?1783943676",
+      "crop": "https://cards.scryfall.io/crop/front/a/0/a0b9d4f3-4570-4fe0-857f-97f5bd6ead44.webp?1783943676"
+     },
+     "mana_cost": "{2}{U}",
+     "cmc": 3,
+     "type_line": "Creature — Human Wizard",
+     "oracle_text": "{1}: Choose a basic land type. Each land you control becomes that type until end of turn.",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "U"
+     ],
+     "color_identity": [
+      "U"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "15fccbe8-2825-41ca-9d0a-67aebdf91c4a",
+     "set": "rav",
+     "set_name": "Ravnica: City of Guilds",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/15fccbe8-2825-41ca-9d0a-67aebdf91c4a",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Arav&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/rav?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/a0b9d4f3-4570-4fe0-857f-97f5bd6ead44/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A683089a8-d5a9-438a-a463-77cc6148125e&unique=prints",
+     "collector_number": "70",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"This feels a little more like home.\"",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Luca Zontini",
+     "artist_ids": [
+      "aa57d42a-72c1-4d94-a200-3571233c4b20"
+     ],
+     "illustration_id": "bb3ebe2c-f4fb-4c52-86d5-d01e50bdab25",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 31346,
+     "prices": {
+      "usd": "0.03",
+      "usd_foil": "0.33",
+      "usd_etched": null,
+      "eur": "0.07",
+      "eur_foil": "0.21",
+      "tix": "0.04"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=87905&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DTerraformer",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DTerraformer",
+      "edhrec": "https://edhrec.com/route/?cc=Terraformer"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F13445%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=13563&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/23148?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "f2c79e64-91bf-4e87-a4fd-3136ea67c5bb",
+     "oracle_id": "2d4e0e0f-7167-40a4-ad76-2d5b45223eaa",
+     "multiverse_ids": [
+      40205
+     ],
+     "mtgo_id": 17877,
+     "mtgo_foil_id": 17878,
+     "tcgplayer_id": 10512,
+     "cardmarket_id": 1747,
+     "name": "Standardize",
+     "lang": "en",
+     "released_at": "2002-10-07",
+     "uri": "https://api.scryfall.com/cards/f2c79e64-91bf-4e87-a4fd-3136ea67c5bb",
+     "scryfall_uri": "https://scryfall.com/card/ons/116/standardize?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T12:17:56Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/f/2/f2c79e64-91bf-4e87-a4fd-3136ea67c5bb.jpg?1783945076",
+      "normal": "https://cards.scryfall.io/normal/front/f/2/f2c79e64-91bf-4e87-a4fd-3136ea67c5bb.jpg?1783945076",
+      "large": "https://cards.scryfall.io/large/front/f/2/f2c79e64-91bf-4e87-a4fd-3136ea67c5bb.jpg?1783945076",
+      "png": "https://cards.scryfall.io/png/front/f/2/f2c79e64-91bf-4e87-a4fd-3136ea67c5bb.png?1783945076",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/f/2/f2c79e64-91bf-4e87-a4fd-3136ea67c5bb.jpg?1783945076",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/f/2/f2c79e64-91bf-4e87-a4fd-3136ea67c5bb.jpg?1783945076",
+      "thumb": "https://cards.scryfall.io/thumb/front/f/2/f2c79e64-91bf-4e87-a4fd-3136ea67c5bb.webp?1783945076",
+      "grid": "https://cards.scryfall.io/grid/front/f/2/f2c79e64-91bf-4e87-a4fd-3136ea67c5bb.webp?1783945076",
+      "display": "https://cards.scryfall.io/display/front/f/2/f2c79e64-91bf-4e87-a4fd-3136ea67c5bb.webp?1783945076",
+      "art": "https://cards.scryfall.io/art/front/f/2/f2c79e64-91bf-4e87-a4fd-3136ea67c5bb.webp?1783945076",
+      "crop": "https://cards.scryfall.io/crop/front/f/2/f2c79e64-91bf-4e87-a4fd-3136ea67c5bb.webp?1783945076"
+     },
+     "mana_cost": "{U}{U}",
+     "cmc": 2,
+     "type_line": "Instant",
+     "oracle_text": "Choose a creature type other than Wall. Each creature becomes that type until end of turn.",
+     "colors": [
+      "U"
+     ],
+     "color_identity": [
+      "U"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "914a6c6d-cb3b-45e8-a2db-9978a2339faf",
+     "set": "ons",
+     "set_name": "Onslaught",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/914a6c6d-cb3b-45e8-a2db-9978a2339faf",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aons&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/ons?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/f2c79e64-91bf-4e87-a4fd-3136ea67c5bb/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A2d4e0e0f-7167-40a4-ad76-2d5b45223eaa&unique=prints",
+     "collector_number": "116",
+     "digital": false,
+     "rarity": "rare",
+     "flavor_text": "At that point, the wizards' argument got a lot uglier.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Justin Sweet",
+     "artist_ids": [
+      "bb15780e-8f96-4823-b258-a7a9fd79b02c"
+     ],
+     "illustration_id": "d775133b-ab1c-419b-a72c-8dce6bcbf5ad",
+     "border_color": "black",
+     "frame": "1997",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 16162,
+     "prices": {
+      "usd": "1.12",
+      "usd_foil": "13.05",
+      "usd_etched": null,
+      "eur": "0.67",
+      "eur_foil": "5.69",
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=40205&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DStandardize",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DStandardize",
+      "edhrec": "https://edhrec.com/route/?cc=Standardize"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F10512%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=1747&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/17877?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": true,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 5,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": "Goblin",
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": {
+     "states": [
+      [
+       "perm_1",
+       {
+        "name": "Forest",
+        "types": [
+         "Land"
+        ],
+        "supertypes": [
+         "Basic"
+        ],
+        "subtypes": [
+         "Island"
+        ],
+        "power": null,
+        "toughness": null,
+        "abilities": [
+         "{T}: Add {U}."
+        ],
+        "colors": [],
+        "manaValue": 0,
+        "manaCost": "",
+        "isCreature": false,
+        "isToken": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": true,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [
+         "{T}: Add {G}."
+        ],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_2",
+       {
+        "name": "Grizzly Bears",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Bear"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "abilities": [],
+        "colors": [
+         "G"
+        ],
+        "manaValue": 2,
+        "manaCost": "{1}{G}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_3",
+       {
+        "name": "Terraformer",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Human",
+         "Wizard"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "abilities": [
+         "{1}: Choose a basic land type. Each land you control becomes that type until end of turn."
+        ],
+        "colors": [
+         "U"
+        ],
+        "manaValue": 3,
+        "manaCost": "{2}{U}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "{1}: Choose a basic land type. Each land you control becomes that type until end of turn.",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [
+         "{1}: Choose a basic land type. Each land you control becomes that type until end of turn."
+        ],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ]
+     ],
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Forest",
+       "imageUri": "https://cards.scryfall.io/small/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Land"
+       ],
+       "printedSupertypes": [
+        "Basic"
+       ],
+       "printedSubtypes": [
+        "Forest"
+       ],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Terraformer",
+       "imageUri": "https://cards.scryfall.io/small/front/a/0/a0b9d4f3-4570-4fe0-857f-97f5bd6ead44.jpg?1783943676",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Human",
+        "Wizard"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 3
+      },
+      {
+       "id": "act_perm_3_0_4",
+       "name": "Terraformer (activated)",
+       "imageUri": "https://cards.scryfall.io/small/front/a/0/a0b9d4f3-4570-4fe0-857f-97f5bd6ead44.jpg?1783943676",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": true,
+       "isActivatedAbility": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "abilitySourceId": "perm_3",
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 4
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    }
+   }
+  ],
+  "firedAbilities": [
+   {
+    "id": "act_perm_3_0_4",
+    "kind": "activated",
+    "pseudoKind": "ability",
+    "sourceId": "perm_3",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 0,
+    "timestamp": 4,
+    "effectText": "Each land you control becomes a Island until end of turn.",
+    "fullText": "{1}: Choose a basic land type. Each land you control becomes that type until end of turn.",
+    "chosenColor": null,
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "firedAtStates": null,
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Forest",
+       "imageUri": "https://cards.scryfall.io/small/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Land"
+       ],
+       "printedSupertypes": [
+        "Basic"
+       ],
+       "printedSubtypes": [
+        "Forest"
+       ],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Terraformer",
+       "imageUri": "https://cards.scryfall.io/small/front/a/0/a0b9d4f3-4570-4fe0-857f-97f5bd6ead44.jpg?1783943676",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Human",
+        "Wizard"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 3
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    },
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null
+   }
+  ],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Forest",
+    "final": {
+     "name": "Forest",
+     "controller": "player_0",
+     "supertypes": [
+      "Basic"
+     ],
+     "types": [
+      "Land"
+     ],
+     "subtypes": [
+      "Island"
+     ],
+     "power": null,
+     "toughness": null,
+     "colors": [],
+     "abilities": [
+      "{T}: Add {U}."
+     ]
+    },
+    "changedBy": {
+     "4": [
+      "Terraformer (activated)"
+     ]
+    }
+   },
+   {
+    "perm": "Grizzly Bears",
+    "final": {
+     "name": "Grizzly Bears",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Goblin"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "G"
+     ],
+     "abilities": []
+    },
+    "changedBy": {
+     "4": [
+      "Standardize"
+     ]
+    }
+   },
+   {
+    "perm": "Terraformer",
+    "final": {
+     "name": "Terraformer",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Goblin"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "U"
+     ],
+     "abilities": [
+      "{1}: Choose a basic land type. Each land you control becomes that type until end of turn."
+     ]
+    },
+    "changedBy": {
+     "4": [
+      "Standardize"
+     ]
+    }
+   },
+   {
+    "perm": "Standardize",
+    "final": {
+     "name": "Standardize",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Instant"
+     ],
+     "subtypes": [],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "U"
+     ],
+     "abilities": [
+      "Choose a creature type other than Wall. Each creature becomes that type until end of turn."
+     ]
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "4": [
+    "Terraformer (activated)",
+    "Standardize"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Standardize",
+    "layer": "4",
+    "type": "set_types",
+    "scope": "global",
+    "params": {
+     "keepSupertypes": true,
+     "keepTypes": true,
+     "replaceSubtypeCategory": "creature",
+     "subtypes": [
+      "Goblin"
+     ]
+    }
+   },
+   {
+    "source": "Terraformer (activated)",
+    "layer": "4",
+    "type": "set_types",
+    "scope": "global",
+    "params": {
+     "keepSupertypes": true,
+     "keepTypes": true,
+     "replaceSubtypeCategory": "land",
+     "subtypes": [
+      "Island"
+     ]
+    }
+   }
+  ]
+ }
+}

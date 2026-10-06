@@ -350,8 +350,8 @@ function applyEffect(state, effect, context) {
         function isStandaloneKeyword(abilityText, keyword) {
           const a = abilityText.toLowerCase().trim();
           const k = keyword.toLowerCase().trim();
-          // Exact match
-          if (a === k) return true;
+          // Exact match (a full quoted ability may or may not carry its final period)
+          if (a === k || a.replace(/\.$/, '') === k.replace(/\.$/, '')) return true;
           // Keyword followed by parameter: "Ward {2}", "Toxic 1"
           if (a.startsWith(k + ' ') && /^[\s{(\d]/.test(a.slice(k.length))) {
             // Check it's not a full sentence (no verbs/articles after keyword param)

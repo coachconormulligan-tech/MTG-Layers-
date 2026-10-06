@@ -176,6 +176,8 @@ function addCard(card, faceIndex, isSpell) {
   if (isSpell) {
     const spell = Battlefield.addSpell(card, opts);
     if (spell.needsChosenColor) Battlefield.setChosenColor(spell.id, 'red');
+    if (spell.needsChosenCreatureType) Battlefield.setChosenCreatureType(spell.id, 'Goblin');
+    if (spell.needsChosenLandType) Battlefield.setChosenLandType(spell.id, 'Forest');
     return spell;
   }
   opts.isToken = card.layout === 'token' || card.layout === 'double_faced_token';
@@ -207,6 +209,8 @@ function fireAbility(perm, ab, kind, effectText, states, check) {
       ? Battlefield.addTriggeredAbility(perm.id, ab.index, text, ab.fullText, states)
       : Battlefield.addActivatedAbility(perm.id, ab.index, text, ab.fullText, states);
     if (pseudo && pseudo.needsChosenColor) Battlefield.setChosenColor(pseudo.id, 'red');
+    if (pseudo && pseudo.needsChosenCreatureType) Battlefield.setChosenCreatureType(pseudo.id, 'Goblin');
+    if (pseudo && pseudo.needsChosenLandType) Battlefield.setChosenLandType(pseudo.id, 'Forest');
     if (pseudo && kind === 'trigger') {
       Battlefield.injectTriggeredExchange(pseudo, perm.id, text);
       Battlefield.injectTriggeredBecomesLand(pseudo, perm.id, text);
