@@ -1205,6 +1205,15 @@ const Battlefield = {
     return perm;
   },
 
+  /* Whether a spell's optional additional cost (kicker, bargain, …) was paid. The parsed
+     effects read it live through their conditions, so nothing is re-parsed. */
+  setAdditionalCostPaid(permId, paid) {
+    const perm = this.getPermById(permId);
+    if (!perm || !perm.additionalCostLabel) return;
+    perm.additionalCostPaid = !!paid;
+    this._invalidate();
+  },
+
   /* Update X value and re-parse effects */
   setXValue(permId, newX) {
     this._invalidate();
@@ -2701,6 +2710,7 @@ const Battlefield = {
         classLevel: p.classLevel ?? null,
         hasXValue: !!p.hasXValue,
         xValue: p.xValue ?? null,
+        additionalCostPaid: !!p.additionalCostPaid,
         chosenCreatureType: p.chosenCreatureType || null,
         chosenColor: p.chosenColor || null,
         chosenCardName: p.chosenCardName || null,
@@ -2878,6 +2888,7 @@ const Battlefield = {
       if (r.chosenCardName) this.setChosenCardName(np.id, r.chosenCardName);
       if (r.chosenLandType) this.setChosenLandType(np.id, r.chosenLandType);
       if (r.chosenCardType) this.setChosenCardType(np.id, r.chosenCardType);
+      if (r.additionalCostPaid) this.setAdditionalCostPaid(np.id, true);
       // Mutable runtime/display state.
       np.controller = r.controller || r.owner;
       np.tapped = !!r.tapped;

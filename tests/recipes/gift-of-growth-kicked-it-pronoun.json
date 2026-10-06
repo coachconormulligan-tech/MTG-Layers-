@@ -1,0 +1,38 @@
+{
+  "name": "Gift of Growth — kicked replaces the 'It gets +2/+2' sentence",
+  "notes": "Found by tests/sweep.py ('otherwise' / 'if kicked … instead' theme). 'Untap target creature. It gets +2/+2 until end of turn. If this spell was kicked, that creature gets +4/+4 until end of turn instead.' The replaced sentence starts with a pronoun; when it moves to its own line the pronoun must be resolved to the spell's target or it becomes a self-effect on the spell. Kicked: Bears are 6/6, not 4/4 or 8/8.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Gift of Growth",
+      "as": "gg",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTarget",
+        "@gg",
+        "@bears"
+      ]
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@gg",
+        true
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 6,
+        "toughness": 6
+      }
+    }
+  ]
+}

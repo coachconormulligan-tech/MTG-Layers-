@@ -1,0 +1,52 @@
+{
+  "name": "Hunter's Blowgun — reach, not deathtouch, when it is not your turn",
+  "notes": "Found by tests/sweep.py ('otherwise' / 'if kicked … instead' theme). 'Equipped creature has deathtouch during your turn. Otherwise, it has reach.' A trailing 'during your turn' was not read as a condition (deathtouch was permanent) and the Otherwise sentence was ignored. The trailing form is now rewritten to 'as long as it is your turn' and the Otherwise branch gets the negation.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Hunter's Blowgun",
+      "as": "gun"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@gun",
+        "@bears"
+      ]
+    },
+    {
+      "call": [
+        "updateGameState",
+        "isYourTurn",
+        false
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 3,
+        "toughness": 3,
+        "abilities": {
+          "$includes": [
+            "Reach"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Deathtouch"
+          ]
+        }
+      }
+    }
+  ]
+}

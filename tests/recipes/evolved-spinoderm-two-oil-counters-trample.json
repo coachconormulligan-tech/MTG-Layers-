@@ -1,0 +1,40 @@
+{
+  "name": "Evolved Spinoderm — trample with two or fewer oil counters",
+  "notes": "Other half of evolved-spinoderm-otherwise-hexproof: with two oil counters it has trample and not hexproof.",
+  "steps": [
+    {
+      "add": "Evolved Spinoderm",
+      "as": "spino"
+    },
+    {
+      "call": [
+        "addCounter",
+        "@spino",
+        "oil",
+        2
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Evolved Spinoderm",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Trample"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Evolved Spinoderm",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Hexproof"
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -360,6 +360,120 @@ function _resolveTheyPronoun(text) {
   }).join('\n');
 }
 
+/* Give "Otherwise, …" and "If this spell was kicked, …" branches a line and a condition of
+   their own. Conditions attach per line, so a branch sharing a line with the sentence it
+   contrasts with is either ignored or wrongly inherits that sentence's condition:
+     "Enchanted creature gets +3/+3 as long as it is a Zombie. Otherwise, it gets -3/-3."
+        → line stays "Enchanted creature gets +3/+3 as long as it is a Zombie."
+        + "As long as it is not true that it is a Zombie, it gets -3/-3."
+     "Target creature gets -2/-2 until end of turn. If this spell was kicked, that creature
+      gets -5/-5 until end of turn instead."
+        + "If [additional cost not paid], Target creature gets -2/-2 until end of turn."
+        + "If [additional cost paid], Target creature gets -5/-5 until end of turn."
+   (a bracketed condition only this function writes: were "this spell was kicked" itself a
+   readable condition, a kicker sentence left in place would gate its whole line).
+   Branch lines are appended after the existing lines, so the indices of the original lines
+   (which saga / class / conditional-ability bookkeeping is keyed on) do not move.
+   canParse(condText) says whether the condition parser understands a condition; a branch
+   whose condition it cannot read is left untouched rather than made unconditional.
+   Returns { text, baseLineCount, branchLines: Map(appended line → original line),
+             alwaysOnLines: Set(original lines whose two branches cover every case),
+             costLabel: 'Kicked' | 'Bargained' | '<Word> cost paid' | null }. */
+// A subject, then a continuous-effect verb, in the sentence's first clause — not an
+// imperative ("gain control of …", "you gain 3 life").
+const _BRANCH_CONTINUOUS_VERB_RE = /^[^,]+?\s(?:gets?|gains?|ha(?:s|ve)|becomes?|loses?)\b/i;
+const _BRANCH_PRONOUN_RE = /^(?:it|that (?:creature|permanent)|those (?:creatures|permanents)|they)\b/i;
+const _BRANCH_COST_RE = /^If (this spell was (kicked|bargained)|this spell's (\w+) cost was paid),\s+(.+?)\.?$/i;
+const _BRANCH_LEAD_COND_RE = /^(?:As long as|If)\s+([^,]+),\s+(.+)$/i;
+function _branchIsContinuous(body) {
+  return _BRANCH_CONTINUOUS_VERB_RE.test(body) && !/^you\b/i.test(body) && !/\blife\b|\bcounters?\b/i.test(body);
+}
+// The permanents a spell's "it" / "that creature" / "those creatures" / "they" stands for:
+// the subject (or target) of the nearest earlier sentence on the line. null when there is
+// none, or when the pronoun is something the spell just made.
+function _branchAntecedent(sentences, i) {
+  for (let j = i - 1; j >= 0; j--) {
+    const s = sentences[j].replace(/^(?:(?:if|as long as) [^,]+|otherwise|until end of turn),\s+/i, '');
+    if (_THEY_NEW_OBJECT_RE.test(s)) return null;
+    const subj = s.match(/^(.+?)\s+(?:each\s+)?(?:gets?|gains?|ha(?:s|ve)|becomes?|loses?|can't|doesn't|don't)\b/i);
+    if (subj && !_BRANCH_PRONOUN_RE.test(subj[1])) {
+      return /\btarget\b|\b(?:creature|permanent|artifact|land|enchantment|planeswalker)s?\b/i.test(subj[1]) && !/^you\b/i.test(subj[1])
+        ? subj[1] : null;
+    }
+    if (subj) continue;
+    const tgt = s.match(/\b(target [a-z\s-]*?(?:creature|permanent|artifact|land|enchantment|planeswalker)s?(?: (?:you control|an opponent controls|you don't control))?)(?=[\s.,]|$)/i);
+    if (tgt) return tgt[1];
+  }
+  return null;
+}
+function _branchResolveSubject(body, sentences, i, isSpell) {
+  const m = body.match(_BRANCH_PRONOUN_RE);
+  if (!m || !isSpell) return body;
+  const ante = _branchAntecedent(sentences, i);
+  return ante ? ante + body.slice(m[0].length) : null;
+}
+function _splitConditionalBranches(text, isSpell, canParse) {
+  const lines = text.split('\n');
+  const out = { text, baseLineCount: lines.length, branchLines: new Map(), alwaysOnLines: new Set(), costLabel: null };
+  if (!/\botherwise,|\bif this spell(?:'s \w+ cost)? was\b/i.test(text)) return out;
+  const added = [];
+  const add = (lineText, li) => { out.branchLines.set(lines.length + added.length, li); added.push(lineText); };
+  for (let li = 0; li < lines.length; li++) {
+    const line = lines[li];
+    if (line.includes('"') || _isTriggeredSentence(line.trim()) || /^[^.]*:\s/.test(line)) continue;
+    const sentences = line.trim().split(/(?<=\.)\s+/);
+    const moved = new Set();
+    for (let i = 0; i < sentences.length; i++) {
+      const prev = i > 0 ? sentences[i - 1] : '';
+      const other = i > 0 && sentences[i].match(/^Otherwise,\s+(.+)$/i);
+      if (other && !moved.has(i - 1)) {
+        const lead = prev.match(_BRANCH_LEAD_COND_RE);
+        const trail = lead ? null : prev.match(/^(.+?)\s+as long as\s+([^.,;]+)\.$/i);
+        const cond = lead ? lead[1] : trail ? trail[2] : null;
+        if (!cond || !canParse(cond) || !_branchIsContinuous(other[1])) continue;
+        const body = _branchResolveSubject(other[1], sentences, i, isSpell);
+        if (!body) continue;
+        const negated = `it is not true that ${cond}`;
+        if (lead && i - 1 > 0) {
+          // A conditional sentence in the middle of a line would gate the whole line.
+          const leadBody = _branchResolveSubject(lead[2], sentences, i - 1, isSpell);
+          if (!leadBody) continue;
+          add(`If ${cond}, ${leadBody}`, li);
+          moved.add(i - 1);
+        } else {
+          out.alwaysOnLines.add(li);
+        }
+        add(!isSpell && /^it\s/i.test(body) ? `As long as ${negated}, ${body}` : `If ${negated}, ${body}`, li);
+        moved.add(i);
+        continue;
+      }
+      const cost = sentences[i].match(_BRANCH_COST_RE);
+      if (cost) {
+        let body = cost[4];
+        const instead = /^instead\s+|\s+instead$/i.test(body);
+        body = body.replace(/^instead\s+|\s+instead$/i, '').replace(/\balso\s+/i, '').replace(/\ban additional\s+/i, '');
+        if (!_branchIsContinuous(body)) continue;
+        body = _branchResolveSubject(body, sentences, i, isSpell);
+        if (!body) continue;
+        // "… instead" replaces the sentence before it, which then applies only unpaid.
+        const replaced = instead && i > 0 && !moved.has(i - 1) && !/^(?:if|otherwise|as long as)\b/i.test(prev) &&
+          _branchIsContinuous(prev) ? _branchResolveSubject(prev, sentences, i - 1, isSpell) : null;
+        if (replaced) {
+          add(`If [additional cost not paid], ${replaced}`, li);
+          moved.add(i - 1);
+        }
+        add(`If [additional cost paid], ${body}.`, li);
+        moved.add(i);
+        const word = cost[2] || cost[3];
+        out.costLabel = word.charAt(0).toUpperCase() + word.slice(1).toLowerCase() + (cost[2] ? '' : ' cost paid');
+      }
+    }
+    if (moved.size) lines[li] = sentences.filter((_, i) => !moved.has(i)).join(' ');
+  }
+  if (added.length) out.text = lines.concat(added).join('\n');
+  return out;
+}
+
 function extractTargetInfo(filterText) {
   const raw = filterText.toLowerCase().trim();
   let needsTargetSelection = false;

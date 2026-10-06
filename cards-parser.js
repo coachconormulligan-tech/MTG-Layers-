@@ -197,6 +197,15 @@ const CONDITION_PARSERS = [
     const counterType = m[2];
     return (s) => ((s.counters && s.counters[counterType]) || 0) >= threshold;
   },
+  // "has N or fewer [type] counters on it" (Evolved Spinoderm).
+  (ct) => {
+    const m = ct.match(/has\s+(\w+)\s+or\s+fewer\s+([\w+/]+)\s+counter/);
+    if (!m) return null;
+    const threshold = WORD_TO_NUM[m[1]] !== undefined ? WORD_TO_NUM[m[1]] : parseInt(m[1]);
+    if (isNaN(threshold)) return null;
+    const counterType = m[2];
+    return (s) => ((s.counters && s.counters[counterType]) || 0) <= threshold;
+  },
   // "has a counter on it" — any counter type present.
   (ct) => (/\bhas\s+a\s+counter\b/.test(ct) && !/has\s+a\s+[\w+/]+\s+counter/.test(ct))
     ? (s) => Object.values(s.counters || {}).some(v => v > 0)
@@ -207,6 +216,20 @@ const CONDITION_PARSERS = [
     if (!m) return null;
     const counterType = m[1];
     return (s) => ((s.counters && s.counters[counterType]) || 0) > 0;
+  },
+
+  // --- Optional additional cost of a spell (kicker, bargain, madness / mayhem cost) ---
+  // "[additional cost paid]" / "[additional cost not paid]" — what _splitConditionalBranches
+  // writes for "If this spell was kicked, …" and the sentence it replaces. Read from the
+  // spell's Kicked toggle (perm.additionalCostPaid).
+  (ct, srcId) => {
+    const m = ct.match(/^\[additional cost (not )?paid\]$/);
+    if (!m) return null;
+    const wantPaid = !m[1];
+    return () => {
+      const src = typeof Battlefield !== 'undefined' ? Battlefield.getPermById(srcId) : null;
+      return !!(src && src.additionalCostPaid) === wantPaid;
+    };
   },
 
   // --- Game-state conditions (Battlefield.gameState) ---
@@ -661,6 +684,13 @@ function parseCardEffects(permanent, card, opts = {}) {
 
   function _parseCondition(condText) {
     const ct = condText.toLowerCase().trim();
+    // "it is not true that [condition]" — the negation _splitConditionalBranches writes for an
+    // "Otherwise, …" branch. Unreadable inner condition → null, like any other.
+    const notMatch = ct.match(/^it is not true that\s+(.+)$/);
+    if (notMatch) {
+      const inner = _parseCondition(notMatch[1]);
+      return inner ? (state, allStates) => !inner(state, allStates) : null;
+    }
     // "an opponent controls a [type]" — multiplayer: any permanent controlled by a
     // different player matches the (optional) type filter. Kept inline above compound
     // preprocessing to preserve historical precedence: mixed text like "opponent
@@ -1182,6 +1212,24 @@ function parseCardEffects(permanent, card, opts = {}) {
         return sentences.join('\n');
       }
     );
+  }
+
+  // "Equipped creature has deathtouch during your turn." → "… as long as it is your turn."
+  // (Hunter's Blowgun, Razorkin Needlehead) so the trailing-condition pattern below reads it.
+  oracle = oracle.replace(/^((?:this|equipped|enchanted)\s[^.\n:]*?\b(?:has|gets)\b[^.\n:]*?)\s+during your turn\./gim,
+    '$1 as long as it is your turn.');
+
+  // "Otherwise, …" / "If this spell was kicked, …" branches move to lines of their own, each
+  // with its own condition. Not for cards whose lines are already keyed by index to a mode,
+  // chapter, level or station.
+  let _branchInfo = null;
+  if (!_isModalSpell && !_sagaLineThresholds.size && !_classLineThresholds.size && !_isLeveler && !_isSpacecraft) {
+    _branchInfo = _splitConditionalBranches(oracle, /\b(?:instant|sorcery)\b/i.test(card.type_line || ''),
+      // A condition on a card just revealed or exiled is not about anything on the board.
+      (condText) => !condText.includes(',') && !/\b(?:that|the \w+) card\b/i.test(condText) && !!_parseCondition(condText));
+    oracle = _branchInfo.text;
+    // Shows the "Kicked" / "Bargained" toggle on the spell.
+    if (_branchInfo.costLabel) permanent.additionalCostLabel = _branchInfo.costLabel;
   }
 
   // Pattern A: "As long as [condition], it [effect]" at start of line
@@ -4350,6 +4398,9 @@ function parseCardEffects(permanent, card, opts = {}) {
       // have their own condition logic (e.g. asLongAsCondition) and should not
       // also be treated as conditional abilities by the generic display path.
       if (_knownHandledLines.has(li)) continue;
+      // Branch lines are not printed ability lines, and a line with an "Otherwise" branch
+      // applies one way or the other whatever its condition says.
+      if (_branchInfo && (li >= _branchInfo.baseLineCount || _branchInfo.alwaysOnLines.has(li))) continue;
       condMap.set(li, _asLongAsConditions[condIdx]);
     }
     if (condMap.size > 0) {
@@ -5113,6 +5164,21 @@ function parseCardEffects(permanent, card, opts = {}) {
     }
   }
 
+  // A branch line's "target creature" is the same target as the sentence it branched from
+  // (the kicked and unkicked halves of Vicious Offering), not a second target to choose:
+  // give its effects that sentence's slot position.
+  if (_branchInfo && _branchInfo.branchLines.size > 0) {
+    const lineOfPos = (pos) => oracle.substring(0, _getMatchContentPos(pos)).split('\n').length - 1;
+    const located = effects
+      .filter(e => e.scope === 'targeted' && !e.selfTarget && e._oraclePos !== undefined)
+      .map(e => ({ e, line: lineOfPos(e._oraclePos) }));
+    for (const { e, line } of located) {
+      if (!_branchInfo.branchLines.has(line)) continue;
+      const baseLine = _branchInfo.branchLines.get(line);
+      const onBase = located.filter(x => x.line === baseLine).map(x => x.e._oraclePos);
+      e._slotPos = onBase.length ? Math.min(...onBase) : -1 - baseLine;
+    }
+  }
   return _finalizeEffects(effects, isEquipmentSource, permanent, card.oracle_text);
 }
 /* [END: PARSE] */

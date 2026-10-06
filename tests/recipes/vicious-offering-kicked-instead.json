@@ -1,0 +1,61 @@
+{
+  "name": "Vicious Offering — -2/-2 unkicked, -5/-5 instead when kicked",
+  "notes": "Found by tests/sweep.py ('otherwise' / 'if kicked … instead' theme). 'Target creature gets -2/-2 until end of turn. If this spell was kicked, that creature gets -5/-5 until end of turn instead.' The kicked sentence produced nothing and there was no way to say a spell was kicked. Spells with such a sentence now carry additionalCostLabel ('Kicked') and a toggle (setAdditionalCostPaid); the replaced sentence applies only unpaid and the 'instead' sentence only paid, both at the one chosen target. Bears take the unkicked copy (0/0), Hill Giant the kicked one (-2/-2).",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Vicious Offering",
+      "as": "v1",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTarget",
+        "@v1",
+        "@bears"
+      ]
+    },
+    {
+      "add": "Vicious Offering",
+      "as": "v2",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTarget",
+        "@v2",
+        "@giant"
+      ]
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@v2",
+        true
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 0,
+        "toughness": 0
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "power": -2,
+        "toughness": -2
+      }
+    }
+  ]
+}

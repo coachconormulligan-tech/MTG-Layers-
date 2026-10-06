@@ -1,0 +1,29 @@
+{
+  "name": "Savage Offensive — unkicked gives first strike only",
+  "notes": "Other half of savage-offensive-kicked-they-get: the kicked +1/+1 must not apply when the spell was not kicked.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Savage Offensive",
+      "as": "so",
+      "spell": true
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 2,
+        "toughness": 2,
+        "abilities": {
+          "$includes": [
+            "First strike"
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "name": "Savage Offensive — kicked adds +1/+1 to creatures you control",
+  "notes": "Found by tests/sweep.py ('otherwise' / 'if kicked … instead' theme). 'Creatures you control gain first strike until end of turn. If this spell was kicked, they get +1/+1 until end of turn.' No 'instead': first strike always applies and the kicked sentence adds to it, with 'they' resolved to 'Creatures you control'.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Savage Offensive",
+      "as": "so",
+      "spell": true
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@so",
+        true
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 3,
+        "toughness": 3,
+        "abilities": {
+          "$includes": [
+            "First strike"
+          ]
+        }
+      }
+    }
+  ]
+}

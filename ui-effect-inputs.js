@@ -104,6 +104,24 @@ function setXValue(permId, rawValue) {
   renderAll();
 }
 
+/* Toggle for a spell's optional additional cost ("Kicked", "Bargained", "Mayhem cost paid") */
+function renderAdditionalCostToggle(perm) {
+  const paid = !!perm.additionalCostPaid;
+  return `<div class="cda-counter-row" onclick="event.stopPropagation()">
+    <button class="ts-action-btn configure mutate-btn${paid ? ' mutate-active' : ''}"
+            onclick="event.stopPropagation(); toggleAdditionalCostPaid('${perm.id}')"
+            title="Whether this optional cost was paid when the spell was cast">${escapeHtml(perm.additionalCostLabel)}: ${paid ? 'Yes' : 'No'}</button>
+  </div>`;
+}
+
+function toggleAdditionalCostPaid(permId) {
+  const perm = Battlefield.getPermById(permId);
+  if (!perm) return;
+  Battlefield.setAdditionalCostPaid(permId, !perm.additionalCostPaid);
+  Battlefield.evaluate();
+  renderAll();
+}
+
 function renderCDAInput(perm) {
   const val = perm.cdaUserValue ?? '';
   // Find the CDA effect to get forEachDesc if available

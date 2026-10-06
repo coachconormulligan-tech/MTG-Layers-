@@ -109,6 +109,7 @@ function renderTimestampPanel() {
       </div>
       ${effInfo.hasCDA ? renderCDAInput(p) : ''}
       ${p.hasXValue ? renderXValueInput(p) : ''}
+      ${p.additionalCostLabel ? renderAdditionalCostToggle(p) : ''}
       ${p.needsChosenCardName ? renderChosenCardNameInput(p) : ''}
       ${p.needsChosenCreatureType ? renderChosenCreatureTypeInput(p) : ''}
       ${p.needsChosenLandType ? renderChosenLandTypeInput(p) : ''}

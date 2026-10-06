@@ -141,11 +141,10 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Benalish Partisan | gets +N/+N | triggered | If you do, return this card from your graveyard to the battlefield tapped and it perpetually gets +1/+0. |
 | Blood Lust | gets +N/+N | spell | Otherwise, it gets +4/-X until end of turn, where X is its toughness minus 1. |
 | Cait Sith, Fortune Teller | gets +N/+N | triggered | When you exile a card this way, target creature you control gets +X/+0 until end of turn, where X is that card's mana value. |
-| Candy Grapple | gets +N/+N | spell | If this spell was bargained, that creature gets -5/-5 until end of turn instead. |
 | Cankerous Thirst | gets +N/+N | spell | If {G} was spent to cast this spell, you may have target creature get +3/+3 until end of turn. |
-| Dauntless Unity | gets +N/+N | spell | If this spell was kicked, those creatures get +2/+1 until end of turn instead. |
 | Deluge Virtuoso | gets +N/+N | triggered | If five or more mana was spent to cast that spell, this creature gets +2/+2 until end of turn instead. |
 | Eastfarthing Farmer | gets +N/+N | triggered | When you do, target creature you control gets +1/+1 until end of turn for each Food you control. |
+| Elemental Appeal | gets +N/+N | spell | If this spell was kicked, that creature gets +7/+0 until end of turn. |
 | Glorfindel, Dauntless Rescuer | gets +N/+N | triggered | Whenever you scry, choose one and this card gets +1/+1 until end of turn. |
 | Hope and Glory | gets +N/+N | spell | Each of them gets +1/+1 until end of turn. |
 | Hurska Sweet-Tooth | gets +N/+N | triggered | When you do, target creature gets +X/+X until end of turn, where X is the amount of life you gained. |
@@ -155,7 +154,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Kraul Harpooner | gets +N/+N | triggered | This creature gets +X/+0 until end of turn, where X is the number of creature cards in your graveyard, then you may have this creature fight that creature. |
 | Lightfoot Rogue | gets +N/+N | static | 10—19 \| It gets +1/+0 and gains deathtouch until end of turn. |
 | Managorger Phoenix | gets +N/+N | triggered | If this card has five or more flame counters on it, return it to the battlefield and it perpetually gets +1/+1. |
-| Marsh Casualties | gets +N/+N | spell | If this spell was kicked, those creatures get -2/-2 until end of turn instead. |
 | Massacre Girl | gets +N/+N | triggered | Whenever a creature dies this turn, each creature other than this card gets -1/-1 until end of turn. |
 | Miasma Demon | gets +N/+N | triggered | When you do, up to that many target creatures each get -2/-2 until end of turn. |
 | Might of Old Krosa | gets +N/+N | spell | If you cast this spell during your main phase, that creature gets +4/+4 until end of turn instead. |
@@ -166,9 +164,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Price of Loyalty | gets +N/+N | spell | If mana from a Treasure was spent to cast this spell, that creature gets +2/+0 until end of turn. |
 | Rhonas's Stalwart | gets +N/+N | static | When you do, it gets +1/+1 until end of turn and can't be blocked by creatures with power 2 or less this turn. |
 | Rolling Spoil | gets +N/+N | spell | If {B} was spent to cast this spell, all creatures get -1/-1 until end of turn. |
-| Sandman's Quicksand | gets +N/+N | spell | All creatures get -2/-2 until end of turn. |
-| Sandman's Quicksand | gets +N/+N | spell | If this spell's mayhem cost was paid, creatures your opponents control get -2/-2 until end of turn instead. |
-| Savage Offensive | gets +N/+N | spell | If this spell was kicked, they get +1/+1 until end of turn. |
 | Sigardian Zealot | gets +N/+N | triggered | Each of them gets +X/+X and gains vigilance until end of turn, where X is this creature's power. |
 | Song of Blood | gets +N/+N | spell | Whenever a creature attacks this turn, it gets +1/+0 until end of turn for each creature card put into your graveyard this way. |
 | Specter of Mortality | gets +N/+N | triggered | When you do, each other creature gets -X/-X until end of turn, where X is the number of cards exiled this way. |
@@ -242,7 +237,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Spider-Verse | has / gains | triggered | If the copy is a permanent spell, it gains haste. |
 | Spirit-Sister's Call | has / gains | triggered | If you do, return the chosen card from your graveyard to the battlefield and it gains "If this permanent would leave the battlefield, exile it instead of putting it anywhere else." |
 | Stilt-Man, Towering Terror | has / gains | triggered | It gains "This permanent can't be sacrificed" until the end of your next turn. |
-| Stolen Vitality | has / gains | spell | Otherwise, it gains first strike until end of turn. |
 | Student of Elements // Tobita, Master of Winds | has / gains | static | Creatures you control have flying. |
 | Symmetry Sage | has / gains | triggered | Magecraft — Whenever you cast or copy an instant or sorcery spell, target creature you control has base power 2 until end of turn. |
 | Teferi's Reproach | has / gains | spell | Until that player's next turn, they gain protection from everything and their life total can't change. |
