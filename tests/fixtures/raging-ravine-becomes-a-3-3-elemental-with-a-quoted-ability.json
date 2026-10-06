@@ -1,0 +1,663 @@
+{
+ "name": "Raging Ravine — becomes a 3/3 Elemental with a quoted ability",
+ "notes": "Found by tests/sweep.py (theme: manlands with a quoted ability). 'this land becomes a 3/3 red and green Elemental creature with \"Whenever this creature attacks, put a +1/+1 counter on it.\" It's still a land.' fired to nothing: the becomes match ended at the period inside the quote and the leftover text tripped the skip-word list. The quote is now lifted out whole and granted as an ability. A second, un-activated Ravine stays a plain land.",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Raging Ravine",
+    "as": "ravine"
+   },
+   {
+    "add": "Lavaclaw Reaches",
+    "as": "idle"
+   },
+   {
+    "call": [
+     "addActivatedAbility",
+     "@ravine",
+     2,
+     "Until end of turn, this land becomes a 3/3 red and green Elemental creature with \"Whenever this creature attacks, put a +1/+1 counter on it.\" It's still a land.",
+     "{2}{R}{G}: Until end of turn, this land becomes a 3/3 red and green Elemental creature with \"Whenever this creature attacks, put a +1/+1 counter on it.\" It's still a land."
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Raging Ravine",
+   "final": {
+    "power": 3,
+    "toughness": 3,
+    "types": {
+     "$includes": [
+      "Land",
+      "Creature"
+     ]
+    },
+    "subtypes": {
+     "$includes": [
+      "Elemental"
+     ]
+    },
+    "colors": {
+     "$includes": [
+      "R",
+      "G"
+     ]
+    },
+    "abilities": {
+     "$includes": [
+      "Whenever this creature attacks, put a +1/+1 counter on it"
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Lavaclaw Reaches",
+   "final": {
+    "power": null,
+    "types": {
+     "$excludes": [
+      "Creature"
+     ]
+    }
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "3964c3a5-3ce7-4b73-89ec-ed1b9799aef8",
+     "oracle_id": "8d38194e-b607-4ff4-9c19-0e8636d463bf",
+     "multiverse_ids": [],
+     "resource_id": "B039EBC98838D1F7C1A73495BE9DC719F42C104A1A9B4CAB1D5268EB5A966033",
+     "mtgo_id": 146255,
+     "tcgplayer_id": 671216,
+     "cardmarket_id": 865092,
+     "name": "Raging Ravine",
+     "lang": "en",
+     "released_at": "2026-01-23",
+     "uri": "https://api.scryfall.com/cards/3964c3a5-3ce7-4b73-89ec-ed1b9799aef8",
+     "scryfall_uri": "https://scryfall.com/card/ecc/160/raging-ravine?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T01:02:01Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/3/9/3964c3a5-3ce7-4b73-89ec-ed1b9799aef8.jpg?1783904521",
+      "normal": "https://cards.scryfall.io/normal/front/3/9/3964c3a5-3ce7-4b73-89ec-ed1b9799aef8.jpg?1783904521",
+      "large": "https://cards.scryfall.io/large/front/3/9/3964c3a5-3ce7-4b73-89ec-ed1b9799aef8.jpg?1783904521",
+      "png": "https://cards.scryfall.io/png/front/3/9/3964c3a5-3ce7-4b73-89ec-ed1b9799aef8.png?1783904521",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/3/9/3964c3a5-3ce7-4b73-89ec-ed1b9799aef8.jpg?1783904521",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/3/9/3964c3a5-3ce7-4b73-89ec-ed1b9799aef8.jpg?1783904521",
+      "thumb": "https://cards.scryfall.io/thumb/front/3/9/3964c3a5-3ce7-4b73-89ec-ed1b9799aef8.webp?1783904521",
+      "grid": "https://cards.scryfall.io/grid/front/3/9/3964c3a5-3ce7-4b73-89ec-ed1b9799aef8.webp?1783904521",
+      "display": "https://cards.scryfall.io/display/front/3/9/3964c3a5-3ce7-4b73-89ec-ed1b9799aef8.webp?1783904521",
+      "art": "https://cards.scryfall.io/art/front/3/9/3964c3a5-3ce7-4b73-89ec-ed1b9799aef8.webp?1783904521",
+      "crop": "https://cards.scryfall.io/crop/front/3/9/3964c3a5-3ce7-4b73-89ec-ed1b9799aef8.webp?1783904521"
+     },
+     "mana_cost": "",
+     "cmc": 0,
+     "type_line": "Land",
+     "oracle_text": "This land enters tapped.\n{T}: Add {R} or {G}.\n{2}{R}{G}: Until end of turn, this land becomes a 3/3 red and green Elemental creature with \"Whenever this creature attacks, put a +1/+1 counter on it.\" It's still a land.",
+     "colors": [],
+     "color_identity": [
+      "G",
+      "R"
+     ],
+     "keywords": [],
+     "produced_mana": [
+      "G",
+      "R"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "805b5a0c-f8bb-4555-86ea-eb9ec36a011a",
+     "set": "ecc",
+     "set_name": "Lorwyn Eclipsed Commander",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/805b5a0c-f8bb-4555-86ea-eb9ec36a011a",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aecc&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/ecc?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/3964c3a5-3ce7-4b73-89ec-ed1b9799aef8/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A8d38194e-b607-4ff4-9c19-0e8636d463bf&unique=prints",
+     "collector_number": "160",
+     "digital": false,
+     "rarity": "rare",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Todd Lockwood",
+     "artist_ids": [
+      "d0b9f3cc-13fb-42b6-bc43-b034728e5c7b"
+     ],
+     "illustration_id": "24763e4b-3c57-4a2c-852d-8b50eb766cba",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 2775,
+     "penny_rank": 637,
+     "prices": {
+      "usd": "0.24",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.13",
+      "eur_foil": null,
+      "tix": "0.07"
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DRaging%2BRavine",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DRaging%2BRavine",
+      "edhrec": "https://edhrec.com/route/?cc=Raging+Ravine"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F671216%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=865092&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/146255?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "409fcd0c-8449-4623-8bf0-cd7ca0937a4a",
+     "oracle_id": "340de307-982a-4b26-9dc0-99113dc766cd",
+     "multiverse_ids": [
+      456841
+     ],
+     "mtgo_id": 70067,
+     "mtgo_foil_id": 70068,
+     "tcgplayer_id": 179516,
+     "cardmarket_id": 366225,
+     "name": "Lavaclaw Reaches",
+     "lang": "en",
+     "released_at": "2018-12-07",
+     "uri": "https://api.scryfall.com/cards/409fcd0c-8449-4623-8bf0-cd7ca0937a4a",
+     "scryfall_uri": "https://scryfall.com/card/uma/245/lavaclaw-reaches?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T09:09:15Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/0/409fcd0c-8449-4623-8bf0-cd7ca0937a4a.jpg?1783933755",
+      "normal": "https://cards.scryfall.io/normal/front/4/0/409fcd0c-8449-4623-8bf0-cd7ca0937a4a.jpg?1783933755",
+      "large": "https://cards.scryfall.io/large/front/4/0/409fcd0c-8449-4623-8bf0-cd7ca0937a4a.jpg?1783933755",
+      "png": "https://cards.scryfall.io/png/front/4/0/409fcd0c-8449-4623-8bf0-cd7ca0937a4a.png?1783933755",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/0/409fcd0c-8449-4623-8bf0-cd7ca0937a4a.jpg?1783933755",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/0/409fcd0c-8449-4623-8bf0-cd7ca0937a4a.jpg?1783933755",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/0/409fcd0c-8449-4623-8bf0-cd7ca0937a4a.webp?1783933755",
+      "grid": "https://cards.scryfall.io/grid/front/4/0/409fcd0c-8449-4623-8bf0-cd7ca0937a4a.webp?1783933755",
+      "display": "https://cards.scryfall.io/display/front/4/0/409fcd0c-8449-4623-8bf0-cd7ca0937a4a.webp?1783933755",
+      "art": "https://cards.scryfall.io/art/front/4/0/409fcd0c-8449-4623-8bf0-cd7ca0937a4a.webp?1783933755",
+      "crop": "https://cards.scryfall.io/crop/front/4/0/409fcd0c-8449-4623-8bf0-cd7ca0937a4a.webp?1783933755"
+     },
+     "mana_cost": "",
+     "cmc": 0,
+     "type_line": "Land",
+     "oracle_text": "This land enters tapped.\n{T}: Add {B} or {R}.\n{1}{B}{R}: Until end of turn, this land becomes a 2/2 black and red Elemental creature with \"{X}: This creature gets +X/+0 until end of turn.\" It's still a land.",
+     "colors": [],
+     "color_identity": [
+      "B",
+      "R"
+     ],
+     "keywords": [],
+     "produced_mana": [
+      "B",
+      "R"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "2ec77b94-6d47-4891-a480-5d0b4e5c9372",
+     "set": "uma",
+     "set_name": "Ultimate Masters",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/2ec77b94-6d47-4891-a480-5d0b4e5c9372",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Auma&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/uma?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/409fcd0c-8449-4623-8bf0-cd7ca0937a4a/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A340de307-982a-4b26-9dc0-99113dc766cd&unique=prints",
+     "collector_number": "245",
+     "digital": false,
+     "rarity": "rare",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Véronique Meignaud",
+     "artist_ids": [
+      "41084244-a313-4d14-8123-db05855f9cfe"
+     ],
+     "illustration_id": "8c056101-4f05-434e-89e0-3369e38736d7",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 7808,
+     "penny_rank": 681,
+     "prices": {
+      "usd": "0.37",
+      "usd_foil": "0.75",
+      "usd_etched": null,
+      "eur": "0.22",
+      "eur_foil": "0.85",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=456841&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DLavaclaw%2BReaches",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DLavaclaw%2BReaches",
+      "edhrec": "https://edhrec.com/route/?cc=Lavaclaw+Reaches"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F179516%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=366225&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/70067?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": true,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [
+   {
+    "id": "act_perm_1_2_3",
+    "kind": "activated",
+    "pseudoKind": "ability",
+    "sourceId": "perm_1",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 2,
+    "timestamp": 3,
+    "effectText": "Until end of turn, this land becomes a 3/3 red and green Elemental creature with \"Whenever this creature attacks, put a +1/+1 counter on it.\" It's still a land.",
+    "fullText": "{2}{R}{G}: Until end of turn, this land becomes a 3/3 red and green Elemental creature with \"Whenever this creature attacks, put a +1/+1 counter on it.\" It's still a land.",
+    "chosenColor": null,
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "firedAtStates": null,
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Raging Ravine",
+       "imageUri": "https://cards.scryfall.io/small/front/3/9/3964c3a5-3ce7-4b73-89ec-ed1b9799aef8.jpg?1783904521",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Land"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Lavaclaw Reaches",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409fcd0c-8449-4623-8bf0-cd7ca0937a4a.jpg?1783933755",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Land"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 2
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    },
+    "primaryTarget": "perm_1",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 3,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null
+   }
+  ],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Raging Ravine",
+    "final": {
+     "name": "Raging Ravine",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Land",
+      "Creature"
+     ],
+     "subtypes": [
+      "Elemental"
+     ],
+     "power": 3,
+     "toughness": 3,
+     "colors": [
+      "R",
+      "G"
+     ],
+     "abilities": [
+      "This land enters tapped.",
+      "{T}: Add {R} or {G}.",
+      "{2}{R}{G}: Until end of turn, this land becomes a 3/3 red and green Elemental creature with \"Whenever this creature attacks, put a +1/+1 counter on it.\" It's still a land.",
+      "Whenever this creature attacks, put a +1/+1 counter on it"
+     ]
+    },
+    "changedBy": {
+     "4": [
+      "Raging Ravine (activated)"
+     ],
+     "5": [
+      "Raging Ravine (activated)"
+     ],
+     "6": [
+      "Raging Ravine (activated)"
+     ],
+     "7b": [
+      "Raging Ravine (activated)"
+     ]
+    }
+   },
+   {
+    "perm": "Lavaclaw Reaches",
+    "final": {
+     "name": "Lavaclaw Reaches",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Land"
+     ],
+     "subtypes": [],
+     "power": null,
+     "toughness": null,
+     "colors": [],
+     "abilities": [
+      "This land enters tapped.",
+      "{T}: Add {B} or {R}.",
+      "{1}{B}{R}: Until end of turn, this land becomes a 2/2 black and red Elemental creature with \"{X}: This creature gets +X/+0 until end of turn.\" It's still a land."
+     ]
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "4": [
+    "Raging Ravine (activated)"
+   ],
+   "5": [
+    "Raging Ravine (activated)"
+   ],
+   "6": [
+    "Raging Ravine (activated)"
+   ],
+   "7b": [
+    "Raging Ravine (activated)"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Raging Ravine (activated)",
+    "layer": "4",
+    "type": "add_type",
+    "scope": "targeted",
+    "target": "Raging Ravine",
+    "params": {
+     "subtypes": [
+      "Elemental"
+     ],
+     "types": [
+      "Creature",
+      "Land"
+     ]
+    }
+   },
+   {
+    "source": "Raging Ravine (activated)",
+    "layer": "7b",
+    "type": "set_pt",
+    "scope": "targeted",
+    "target": "Raging Ravine",
+    "params": {
+     "power": 3,
+     "toughness": 3
+    }
+   },
+   {
+    "source": "Raging Ravine (activated)",
+    "layer": "5",
+    "type": "set_color",
+    "scope": "targeted",
+    "target": "Raging Ravine",
+    "params": {
+     "colors": [
+      "R",
+      "G"
+     ]
+    }
+   },
+   {
+    "source": "Raging Ravine (activated)",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "target": "Raging Ravine",
+    "params": {
+     "ability": "Whenever this creature attacks, put a +1/+1 counter on it"
+    }
+   }
+  ]
+ }
+}

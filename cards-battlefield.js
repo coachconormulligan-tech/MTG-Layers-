@@ -436,6 +436,9 @@ const Battlefield = {
 
     // Strip leading "if [condition], " — this is a resolution condition, not a filter or target.
     // e.g. Eminence: "if this card is in the command zone or on the battlefield, another target Cat..."
+    // "If this land isn't a creature, it becomes a 2/4 Wizard creature …" (Great Hall of the
+    // Biblioplex, Veiled Serpent): "it" is the permanent the condition just named.
+    parsedEffectText = parsedEffectText.replace(/^if\s+this\s+(land|permanent|creature|artifact|enchantment)\s+[^,]+,\s*it\s+(?=becomes?\b)/i, 'This $1 ');
     parsedEffectText = parsedEffectText.replace(/^if\s+[^,]+,\s*/i, '');
     // Strip "Activate only if/when/as …" restriction — already enforced at fire time, should not
     // become a continuous layer condition on the pseudo-perm's effects.

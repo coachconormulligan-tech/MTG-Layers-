@@ -28,11 +28,9 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Fractalize | becomes | spell | Until end of turn, target creature becomes a green and blue Fractal with base power and toughness each equal to X plus 1. |
 | Gaea's Liege | becomes | activated | {T}: Target land becomes a Forest until this creature leaves the battlefield. |
 | Galion, Elvenking's Butler | becomes | triggered | Its base power and toughness become equal to this card's power and toughness until end of turn. |
-| Genju of the Falls | becomes | activated | {2}: Enchanted Island becomes a 3/2 blue Spirit creature with flying until end of turn. |
 | Glava, Five-Advents Mage | becomes | triggered | Whenever you cast a permanent spell with {X} in its mana cost or activate an ability with {X} in its activation cost that isn't a mana ability, you may have the value of X become 5. |
 | Gornog, the Red Reaper | becomes | triggered | Whenever one or more Warriors you control attack a player, target creature that player controls becomes a Coward. |
 | Graceful Antelope | becomes | triggered | Whenever this creature deals combat damage to a player, you may have target land become a Plains until this creature leaves the battlefield. |
-| Great Hall of the Biblioplex | becomes | activated | {5}: If this land isn't a creature, it becomes a 2/4 Wizard creature with "Whenever you cast an instant or sorcery spell, this creature gets +1/+0 until end of turn." |
 | Halfdane | becomes | triggered | At the beginning of your upkeep, this card's base power and toughness become equal to the power and toughness of target creature other than this card until the end of your next upkeep. |
 | Hulkling, Young Avenger | becomes | ability | Whenever you cast a noncreature spell, Hulkling becomes a copy of up to one other target creature until end of turn, except his name is this card, he's 4/4, and he has flying and this ability. |
 | Infinite Coursework | becomes | triggered | It becomes unprepared. |
@@ -46,7 +44,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Lydari Druid | becomes | triggered | Those lands become the land types chosen this way. |
 | Master of Winds | becomes | triggered | Whenever you cast an instant, sorcery, or Wizard spell, you may have this creature's base power and toughness become 4/1 or 1/4 until end of turn. |
 | Mirkwood Meditator | becomes | triggered | Landfall — Whenever a land you control enters, you may have this creature's base power and toughness become 4/2 until end of turn. |
-| Necromancy | becomes | triggered | When this enchantment enters, if it's on the battlefield, it becomes an Aura with "enchant creature put onto the battlefield with this card." |
 | Niko, Light of Hope | becomes | activated | Shards you control become copies of it until the next end step. |
 | Nissa, Worldwaker | becomes | activated | Those lands become 4/4 Elemental creatures with trample. |
 | Orcish Farmer | becomes | activated | {T}: Target land becomes a Swamp until its controller's next untap step. |
@@ -75,7 +72,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Unruly Krasis | becomes | triggered | Whenever this creature attacks, you may have the base power and toughness of another target creature you control become X/X until end of turn, where X is this creature's power. |
 | Vastwood Animist | becomes | activated | {T}: Target land you control becomes an X/X Elemental creature until end of turn, where X is the number of Allies you control. |
 | Veiled Sentry | becomes | triggered | When an opponent casts a spell, if this permanent is an enchantment, it becomes an Illusion creature with power and toughness each equal to that spell's mana value. |
-| Veiled Serpent | becomes | triggered | When an opponent casts a spell, if this permanent is an enchantment, it becomes a 4/4 Serpent creature with "This creature can't attack unless defending player controls an Island." |
 | Vision Charm | becomes | spell | Each land of the first chosen type becomes the second chosen type until end of turn. |
 | Vodalian Mystic | becomes | activated | {T}: Target instant or sorcery spell becomes the color of your choice. |
 | Vraska, Betrayal's Sting | becomes | activated | −2: Target creature becomes a Treasure artifact with "{T}, Sacrifice this artifact: Add one mana of any color" and loses all other card types and abilities. |

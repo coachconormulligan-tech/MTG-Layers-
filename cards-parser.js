@@ -2212,6 +2212,20 @@ function parseCardEffects(permanent, card, opts = {}) {
     let becomesText = setTypeMatch[2].trim();
     if (becomesText.toLowerCase().includes('in addition to')) continue;
 
+    // 'becomes a 3/3 red and green Elemental creature with "Whenever this creature attacks, …"'
+    // (Raging Ravine): the match stops at the first period inside the quoted ability. Lift the
+    // whole quote out; it is granted further down with the other "with" abilities.
+    let _stQuotedAbility = null;
+    if ((becomesText.split('"').length - 1) % 2 === 1) {
+      const _qOpen = becomesText.match(/\s+(?:with|and)\s+"([^"]*)$/i);
+      const _qClose = oracle.indexOf('"', mEnd);
+      if (_qOpen && _qClose >= 0 && !oracle.slice(mEnd, _qClose).includes('\n')) {
+        _stQuotedAbility = (_qOpen[1] + '.' + oracle.slice(mEnd, _qClose)).trim().replace(/\.$/, '');
+        becomesText = becomesText.slice(0, _qOpen.index).trim();
+        setTypeRegex.lastIndex = _qClose;
+      }
+    }
+
     // Fix: Extract trailing "and have base power and toughness X/Y" before skipWords check.
     // Cards like Kudo: "Other creatures you control are Bears and have base power and toughness 2/2."
     let trailingBasePT = null;
@@ -2557,6 +2571,11 @@ function parseCardEffects(permanent, card, opts = {}) {
       pushEff('4', EFFECT_TYPE.ADD_TYPE,
         { types: _stKeepTypes, subtypes: [] }, _stCtx,
         `${filterText} is still a ${_stKeepTypes.join(', ')}. ${desc}`);
+    }
+
+    if (_stQuotedAbility) {
+      pushEff('6', EFFECT_TYPE.ADD_ABILITY, { ability: _stQuotedAbility }, _stCtx,
+        `${filterText} gains "${_stQuotedAbility}". ${desc}`);
     }
 
     // "with [keyword]" / "and has [keyword]" → ADD_ABILITY
@@ -4054,12 +4073,12 @@ function parseCardEffects(permanent, card, opts = {}) {
   // Uses "is" = REPLACE characteristics. "in addition to" = ADD characteristics.
   // Missing brackets (no color, no P/T, etc.) = no change in those areas.
   // Also handles compound clauses: loses all abilities, has [keyword], etc.
-  const enchantTransformRegex = /(?:enchanted|equipped)\s+(?:(?:non\w+\s+)?(?:creature|permanent|land|artifact|enchantment|planeswalker|battle|vehicle))\s+(.+)/gi;
+  const enchantTransformRegex = /(?:enchanted|equipped)\s+(?:(?:non\w+\s+)?(?:creature|permanent|land|artifact|enchantment|planeswalker|battle|vehicle|plains|island|swamp|mountain|forest))\s+(.+)/gi;
   let enchantTransformMatch;
   while ((enchantTransformMatch = enchantTransformRegex.exec(oracle)) !== null) {
     // Extract the enchant target type (creature, permanent, land, etc.)
     // Used to determine whether the effect scopes to creature-only characteristics.
-    const _enchantTargetTypeMatch = enchantTransformMatch[0].match(/(?:enchanted|equipped)\s+((?:non\w+\s+)?(?:creature|permanent|land|artifact|enchantment|planeswalker|battle|vehicle))/i);
+    const _enchantTargetTypeMatch = enchantTransformMatch[0].match(/(?:enchanted|equipped)\s+((?:non\w+\s+)?(?:creature|permanent|land|artifact|enchantment|planeswalker|battle|vehicle|plains|island|swamp|mountain|forest))/i);
     const enchantTargetIsCreatureOnly = _enchantTargetTypeMatch && _enchantTargetTypeMatch[1].toLowerCase().trim() === 'creature';
 
     // Determine if this match's line has an "as long as" condition
@@ -4067,6 +4086,8 @@ function parseCardEffects(permanent, card, opts = {}) {
     const textBefore = oracle.substring(0, matchPos);
     // Skip matches that fall inside a quoted ability string (e.g. "Equipped creature gets +2/+0")
     if ((textBefore.match(/["“”]/g) || []).length % 2 !== 0) continue;
+    // "{2}: Enchanted Forest becomes a 4/4 …" (Genju cycle) applies only once activated.
+    if (_isInActivatedEffect(matchPos)) continue;
     const lineNum = textBefore.split('\n').length - 1;
     const _matchConditionIdx = _lineConditionMap.has(lineNum) ? _lineConditionMap.get(lineNum) : -1;
     const _matchCondition = _matchConditionIdx >= 0 ? _asLongAsConditions[_matchConditionIdx] : null;
@@ -4205,7 +4226,7 @@ function parseCardEffects(permanent, card, opts = {}) {
       if (isMatch) {
         hasIsClause = true;
         // Use original-case clause for text extraction (preserves {T}, {C} etc. in quoted abilities)
-        const isMatchOriginal = clause.match(/^is\s+(?:a\s+|an\s+)?(.+)/i);
+        const isMatchOriginal = clause.match(/^(?:is|becomes?)\s+(?:a\s+|an\s+)?(.+)/i);
         let isText = isMatchOriginal ? isMatchOriginal[1] : isMatch[1];
 
         // Check "in addition to" — determine whether it covers colors, types, or both
@@ -4271,7 +4292,8 @@ function parseCardEffects(permanent, card, opts = {}) {
               }
             }
             // Keyword abilities: "with indestructible"
-            const kwText = withText.replace(/[""\u201c](?:[^""\u201d]|'(?!(?:\s|$|,)))*[""\u201d]/g, '').trim();
+            const kwText = withText.replace(/[""\u201c](?:[^""\u201d]|'(?!(?:\s|$|,)))*[""\u201d]/g, '')
+              .replace(/\s+until\s+end\s+of\s+turn\b/i, '').trim();
             if (kwText) {
               const kws = parseKeywordList(kwText);
               for (const kw of kws) abilitiesToGrant.push(kw);
