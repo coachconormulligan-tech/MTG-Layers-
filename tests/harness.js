@@ -121,6 +121,10 @@ function summarizeBoard() {
    A recipe builds a board from card names instead of a downloaded board:
      { "add": "Card Name", "as": "alias", "controller": "p2", "spell": true, "x": 3, "opts": {...} }
      { "call": ["anyBattlefieldMethod", arg, ...], "as": "alias" }
+     { "fire": "@alias", "trigger": 1, "as": "alias" }   (or "activated": 0)
+   "fire" fires the ability at that index of the permanent's current ability list, taking the
+   effect text from extractTriggeredAbilities / extractActivatedAbilities as the site's ability
+   popup does — use it when the fix is in how an ability line is split into condition and effect.
    "as" on a call names what the method returns (the pseudo-permanent of a fired ability).
    In call args, "@alias" becomes that permanent's id, "p2" the second player's id, and
    "card:Card Name" the Scryfall card object. Players beyond the first need
@@ -168,6 +172,19 @@ function buildFromRecipe(recipe, cards) {
       if (!eff || !tp) throw new Error('copy step: no COPY effect or no target');
       eff.params._copyTargetPermId = target;
       Battlefield.setCopySource(copier, JSON.parse(JSON.stringify(tp.scryfallData)));
+    } else if (step.fire) {
+      const id = arg(step.fire);
+      const states = Battlefield.getAllFinalStates();
+      const abilities = ((states.get(id) || {}).abilities || []).slice();
+      const isTrigger = step.trigger != null;
+      const index = isTrigger ? step.trigger : step.activated;
+      const ab = (isTrigger ? Battlefield.extractTriggeredAbilities(abilities) : Battlefield.extractActivatedAbilities(abilities))
+        .find(a => a.index === index);
+      if (!ab) throw new Error('fire step: no ' + (isTrigger ? 'triggered' : 'activated') + ' ability at index ' + index + ' of ' + JSON.stringify(abilities));
+      const ret = isTrigger
+        ? Battlefield.addTriggeredAbility(id, ab.index, ab.effectText, ab.fullText, states)
+        : Battlefield.addActivatedAbility(id, ab.index, ab.effectText, ab.fullText, states);
+      if (step.as && ret && ret.id) alias[step.as] = ret.id;
     } else if (step.call) {
       const [method, ...rest] = step.call;
       if (typeof Battlefield[method] !== 'function') throw new Error('No Battlefield method: ' + method);

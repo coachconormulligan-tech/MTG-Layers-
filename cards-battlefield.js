@@ -182,7 +182,7 @@ const Battlefield = {
       // Triggered abilities start with "when", "whenever", or "at" (CR 603.1)
       if (!/^(?:when(?:ever)?|at)\b/i.test(stripped)) continue;
       // Extract effect text from the STRIPPED version (after first comma)
-      const commaIdx = stripped.indexOf(',');
+      const commaIdx = _triggerConditionCommaIndex(stripped);
       if (commaIdx < 0) continue; // no effect portion found
       const effectText = stripped.substring(commaIdx + 1).trim();
       if (!effectText) continue;
@@ -468,7 +468,7 @@ const Battlefield = {
     let triggerIsSelf = false; // true when condition starts with "this creature/this permanent/this card"
     if (fullText && kind === 'trigger') {
       const stripped = fullText.trim().replace(/^[^{\n.;"—\u2014]+[\u2014—]\s*/g, '');
-      const commaIdx = stripped.indexOf(',');
+      const commaIdx = _triggerConditionCommaIndex(stripped);
       const condText = commaIdx >= 0 ? stripped.substring(0, commaIdx) : stripped;
       // Detect self-referential trigger: "this creature/permanent/card/token [action]"
       // In this case "it" in the effect refers back to the source itself.
