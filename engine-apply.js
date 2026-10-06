@@ -602,6 +602,8 @@ function applyEffect(state, effect, context) {
     }
 
     case EFFECT_TYPE.SET_COLOR: {
+      // "Becomes the color of your choice": does nothing until a colour has been picked.
+      if (effect.params.colorChoice && !(effect.params.colors || []).length) break;
       const oldColors = state.colors.join(', ') || 'none';
       state.colors = [...(effect.params.colors || [])];
       const newColors = state.colors.length ? state.colors.join(', ') : 'colorless';

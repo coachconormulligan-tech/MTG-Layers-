@@ -1,0 +1,71 @@
+{
+  "name": "Noxious Grasp / Pack Rat — \"that's [color / a copy]\" describes an object and sets nothing",
+  "notes": "Found while reviewing the sweep diff for the colour-change theme. The parser rewrites \"that's\" to \"that is\", and setTypeRegex / colorSetRegex then read \"Destroy target creature or planeswalker that is green or white\" as a global 'everything is green and white', and Pack Rat's fired \"Create a token that is a copy of this creature\" as a global 'everything is a creature' (63 cards, among them Fry, Devout Decree, Godsire, Hollowhenge Overlord, Riku, Hashaton). Both regexes now skip a subject that ends in 'that'. With Noxious Grasp cast and Pack Rat's ability fired, the Bears stay a green Bear and the Forest stays a colourless noncreature land.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Forest",
+      "as": "forest"
+    },
+    {
+      "add": "Pack Rat",
+      "as": "rat"
+    },
+    {
+      "add": "Noxious Grasp",
+      "as": "grasp",
+      "spell": true
+    },
+    {
+      "call": [
+        "addActivatedAbility",
+        "@rat",
+        1,
+        "Create a token that's a copy of this creature.",
+        "{2}{B}, Discard a card: Create a token that's a copy of this creature."
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "colors": [
+          "G"
+        ],
+        "types": [
+          "Creature"
+        ],
+        "subtypes": [
+          "Bear"
+        ]
+      }
+    },
+    {
+      "perm": "Forest",
+      "final": {
+        "colors": [],
+        "types": [
+          "Land"
+        ],
+        "subtypes": [
+          "Forest"
+        ]
+      }
+    },
+    {
+      "perm": "Pack Rat",
+      "final": {
+        "colors": [
+          "B"
+        ],
+        "subtypes": [
+          "Rat"
+        ]
+      }
+    }
+  ]
+}

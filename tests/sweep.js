@@ -173,7 +173,11 @@ function addCard(card, faceIndex, isSpell) {
   // X is given a value, as the site's prompt would; unsubstituted X text parses to nothing.
   const opts = { suppressPrompt: true, controller: 'player_0', owner: 'player_0', xValue: X_VALUE };
   if (card.card_faces && card.card_faces.length >= 2) opts.faceIndex = faceIndex;
-  if (isSpell) return Battlefield.addSpell(card, opts);
+  if (isSpell) {
+    const spell = Battlefield.addSpell(card, opts);
+    if (spell.needsChosenColor) Battlefield.setChosenColor(spell.id, 'red');
+    return spell;
+  }
   opts.isToken = card.layout === 'token' || card.layout === 'double_faced_token';
   const perm = Battlefield.addPermanent(card, opts);
   // "As this enters, choose a …" cards parse to nothing until the choice is made.
@@ -202,6 +206,7 @@ function fireAbility(perm, ab, kind, effectText, states, check) {
     const pseudo = kind === 'trigger'
       ? Battlefield.addTriggeredAbility(perm.id, ab.index, text, ab.fullText, states)
       : Battlefield.addActivatedAbility(perm.id, ab.index, text, ab.fullText, states);
+    if (pseudo && pseudo.needsChosenColor) Battlefield.setChosenColor(pseudo.id, 'red');
     if (pseudo && kind === 'trigger') {
       Battlefield.injectTriggeredExchange(pseudo, perm.id, text);
       Battlefield.injectTriggeredBecomesLand(pseudo, perm.id, text);

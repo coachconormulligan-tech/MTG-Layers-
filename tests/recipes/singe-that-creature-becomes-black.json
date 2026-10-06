@@ -1,0 +1,45 @@
+{
+  "name": "Singe — \"That creature becomes black\" follows the spell's target",
+  "notes": "Found by tests/sweep.py. setTypeRegex skips subjects containing 'that'. becomesColorRegex reads 'That creature' as the creature the previous sentence targeted.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Singe",
+      "as": "singe",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTarget",
+        "@singe",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "colors": [
+          "B"
+        ]
+      }
+    },
+    {
+      "effect": {
+        "source": "Singe",
+        "layer": "5",
+        "type": "set_color",
+        "target": "Grizzly Bears",
+        "params": {
+          "colors": [
+            "B"
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "name": "Quickchange — \"becomes the color or colors of your choice\" takes its colour from the colour dropdown",
+  "notes": "Found by tests/sweep.py (clusters 'becomes the color of your choice' / 'color or colors of your choice'). The effect is a SET_COLOR with params.colorChoice and no colours (the engine skips it until a colour is picked); the spell gets needsChosenColor so the colour dropdown shows, and Battlefield.setChosenColor fills the colour in place without re-parsing, so the chosen target survives. The second Quickchange has a target but no colour chosen and must leave the Ogre red, not turn it colourless. The fixture is restored from a serialized board, so it also covers saving the choice.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre"
+    },
+    {
+      "add": "Quickchange",
+      "as": "qc",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTarget",
+        "@qc",
+        "@bears"
+      ]
+    },
+    {
+      "call": [
+        "setChosenColor",
+        "@qc",
+        "Blue"
+      ]
+    },
+    {
+      "add": "Quickchange",
+      "as": "qc2",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTarget",
+        "@qc2",
+        "@ogre"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "colors": [
+          "U"
+        ]
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "colors": [
+          "R"
+        ]
+      }
+    },
+    {
+      "effect": {
+        "source": "Quickchange",
+        "layer": "5",
+        "type": "set_color",
+        "target": "Grizzly Bears",
+        "params": {
+          "colorChoice": true,
+          "colors": [
+            "U"
+          ]
+        }
+      }
+    }
+  ]
+}

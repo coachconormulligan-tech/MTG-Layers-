@@ -532,6 +532,7 @@ const Battlefield = {
     // Pass pseudoPerm directly (not a spread) so choice flags persist on the stored object.
     pseudoPerm.printedTypes = ['Instant'];
     const newEffects = parseCardEffects(pseudoPerm, fakeCard);
+    this._flagColorChoice(pseudoPerm, newEffects);
     // Determine the ability's overall target restriction from the earliest targeted effect
     // that specifies one. This is stamped on ALL effects so that the snapshot gate in
     // effectAppliesToPerm can uniformly block the ability when the target didn't qualify
@@ -1244,7 +1245,30 @@ const Battlefield = {
   },
   setChosenCreatureType(permId, type) { this._setChoice(permId, 'needsChosenCreatureType', 'chosenCreatureType', type); },
   setChosenLandType(permId, type) { this._setChoice(permId, 'needsChosenLandType', 'chosenLandType', type); },
-  setChosenColor(permId, color) { this._setChoice(permId, 'needsChosenColor', 'chosenColor', color); },
+  setChosenColor(permId, color) {
+    // "Becomes the color of your choice" (Rainbow Crow, Quickchange): the colour is a
+    // parameter of the already-parsed effect. Fill it in place — a re-parse would drop the
+    // targets and source pinning of a spell / fired ability.
+    const perm = this.getPermById(permId);
+    const choiceEffects = perm ? this.effects.filter(e => e.sourceId === permId && e.params && e.params.colorChoice) : [];
+    if (choiceEffects.length) {
+      this._invalidate();
+      perm.chosenColor = color || null;
+      const code = { white: 'W', blue: 'U', black: 'B', red: 'R', green: 'G' }[String(color || '').toLowerCase()];
+      for (const e of choiceEffects) {
+        e.params.colors = code ? [code] : [];
+        if (e._colorChoiceDesc) e.desc = code ? e._colorChoiceDesc.replace('. ', ` (${color}). `) : e._colorChoiceDesc;
+      }
+      return;
+    }
+    this._setChoice(permId, 'needsChosenColor', 'chosenColor', color);
+  },
+  /* Show the colour dropdown on a spell / fired ability whose effect has a colour to choose. */
+  _flagColorChoice(perm, effects) {
+    if (!effects.some(e => e.params && e.params.colorChoice)) return;
+    perm.needsChosenColor = true;
+    if (perm.chosenColor === undefined) perm.chosenColor = null;
+  },
   setChosenCardName(permId, name) { this._setChoice(permId, 'needsChosenCardName', 'chosenCardName', name); },
   setChosenCardType(permId, type) { this._setChoice(permId, 'needsChosenCardType', 'chosenCardType', type); },
 
@@ -2349,6 +2373,7 @@ const Battlefield = {
     const resolvedForParse = _resolveCardFace(card, opts.faceIndex || 0);
     const newEffects = parseCardEffects(perm, resolvedForParse);
     for (const eff of newEffects) eff.isSpellEffect = true;
+    this._flagColorChoice(perm, newEffects);
     this.effects.push(...newEffects);
     // A spell with a variable X ("Target creature gets -X/-X until end of turn") gets the same
     // X value as a permanent does in addPermanent: asked for when cast, adjustable afterwards
@@ -2728,6 +2753,7 @@ const Battlefield = {
         timestamp: p.timestamp,
         effectText: p.oracleText || '',
         fullText: p.abilityFullText || '',
+        chosenColor: p.chosenColor || null,
         owner: p.owner || 'player_0',
         controller: p.controller || p.owner || 'player_0',
         equipTargetId: p._equipTargetId || null,
@@ -2909,6 +2935,7 @@ const Battlefield = {
       if (!pseudo) continue;
       idMap[f.id] = pseudo.id;
       pseudo.timestamp = f.timestamp;
+      if (f.chosenColor) this.setChosenColor(pseudo.id, f.chosenColor);
       // Re-stamp the ability's effects to its saved timestamp so layer ordering matches.
       for (const e of this.effects) { if (e.sourceId === pseudo.id) e.timestamp = f.timestamp; }
     }

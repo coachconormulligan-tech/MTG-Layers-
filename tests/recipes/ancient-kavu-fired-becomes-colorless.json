@@ -1,0 +1,39 @@
+{
+  "name": "Ancient Kavu — fired \"This creature becomes colorless until end of turn\" applies to the Kavu",
+  "notes": "Found by tests/sweep.py (cluster 'THIS becomes COLOR until end of turn'). 'colorless' contains the setTypeRegex skip-word 'less', so the fired ability had no effect. becomesColorRegex emits a self SET_COLOR that the fired-ability code pins to the source; the unfired printed ability must stay inert (Gray Ogre keeps its colour, and the Kavu is only colourless because the ability was fired).",
+  "steps": [
+    {
+      "add": "Ancient Kavu",
+      "as": "kavu"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre"
+    },
+    {
+      "call": [
+        "addActivatedAbility",
+        "@kavu",
+        0,
+        "This creature becomes colorless until end of turn.",
+        "{2}: This creature becomes colorless until end of turn."
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Ancient Kavu",
+      "final": {
+        "colors": []
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "colors": [
+          "R"
+        ]
+      }
+    }
+  ]
+}

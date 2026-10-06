@@ -2063,6 +2063,8 @@ function parseCardEffects(permanent, card, opts = {}) {
     }
   }
 
+  // Spans where setTypeRegex emitted a colour, so becomesColorRegex below does not repeat it.
+  const _stColorRanges = [];
   const setTypeRegex = /(?:^|[.;])\s*(?:all\s+|each\s+)?(.+?)\s+(?:you (?:control|own)\s+)?(?:are|is|becomes?)\s+(.+?)(?:\.|$)/gmi;
   let setTypeMatch;
   while ((setTypeMatch = setTypeRegex.exec(oracle)) !== null) {
@@ -2080,6 +2082,9 @@ function parseCardEffects(permanent, card, opts = {}) {
       const _lastSentence = filterText.split(/\.\s+/).pop().trim();
       if (/^(?:up to \w+|any number of|\w+ or \w+|\w+)\s+(?:other\s+)?target\s/i.test(_lastSentence)) filterText = _lastSentence;
     }
+    // "…target creature or planeswalker that's green or white" (Noxious Grasp): a relative
+    // clause describing the object, not a sentence that sets anything.
+    if (/\bthat$/i.test(filterText)) continue;
     let becomesText = setTypeMatch[2].trim();
     if (becomesText.toLowerCase().includes('in addition to')) continue;
 
@@ -2400,6 +2405,7 @@ function parseCardEffects(permanent, card, opts = {}) {
     for (const [colorName, colorCode] of Object.entries(COLOR_NAMES)) {
       if (becomesText.toLowerCase().includes(colorName)) setColors.push(colorCode);
     }
+    if (setColors.length > 0 || becomesText.toLowerCase().includes('colorless')) _stColorRanges.push({ start: mStart, end: mEnd });
     if (setColors.length > 0) {
       const colorEffectType = _stKeepTypes.length > 0 ? EFFECT_TYPE.ADD_COLOR : EFFECT_TYPE.SET_COLOR;
       pushEff('5', colorEffectType, { colors: setColors }, _stCtx,
@@ -2755,6 +2761,7 @@ function parseCardEffects(permanent, card, opts = {}) {
   let colorSetMatch;
   while ((colorSetMatch = colorSetRegex.exec(oracle)) !== null) {
     const csFilterText = colorSetMatch[1].trim();
+    if (/\bthat$/i.test(csFilterText)) continue; // relative clause ("…token that's red"), see setTypeRegex
     // Skip overlaps with "in addition to" (handled by addTypeRegex)
     const afterMatch = oracle.substring(colorSetMatch.index + colorSetMatch[0].length, colorSetMatch.index + colorSetMatch[0].length + 30);
     if (/in addition to/i.test(afterMatch)) continue;
@@ -2795,6 +2802,11 @@ function parseCardEffects(permanent, card, opts = {}) {
       continue;
     }
     if (!filterReferencesPermanents(csFilterText)) continue;
+    // setTypeRegex already emitted this sentence's colour (Darkest Hour: "All creatures are black").
+    {
+      const csStart = colorSetMatch.index, csEnd = csStart + colorSetMatch[0].length;
+      if (_stColorRanges.some(r => csStart < r.end && csEnd > r.start)) continue;
+    }
     const csColor = colorSetMatch[2].toLowerCase();
     // Multiplayer: restore "you control" stripped by optional regex group
     let csSubjectText = csFilterText;
@@ -2813,7 +2825,16 @@ function parseCardEffects(permanent, card, opts = {}) {
   let allColorsMatch;
   while ((allColorsMatch = allColorsRegex.exec(oracle)) !== null) {
     const acFilterText = allColorsMatch[1].trim();
-    if (/^\s*this\s+\w+\s*$/i.test(acFilterText)) continue; // "This [type] is all colors" — printed characteristic, Scryfall already has correct colors
+    // "This [type] is all colors" (Transguild Courier) is a characteristic-defining ability
+    // (CR 604.3): it applies in Layer 5 before any other colour effect, whatever its timestamp.
+    if (/^\s*this\s+\w+\s*$/i.test(acFilterText)) {
+      if (_isInActivatedEffect(allColorsMatch.index) || _isInTriggeredSentence(allColorsMatch.index)) continue;
+      pushEff('5', EFFECT_TYPE.SET_COLOR, { colors: ['W', 'U', 'B', 'R', 'G'] },
+        { appliesTo: null, scope: 'targeted', selfTarget: true, affectsSelf: true },
+        'Is all colors (characteristic-defining ability).',
+        { isCDA: true });
+      continue;
+    }
     if (!filterReferencesPermanents(acFilterText)) continue;
     let acSubjectText = acFilterText;
     if (/\byou (?:control|own)\b/i.test(allColorsMatch[0]) && !/\byou (?:control|own)\b/i.test(acSubjectText)) {
@@ -2873,6 +2894,70 @@ function parseCardEffects(permanent, card, opts = {}) {
     pushEff('5', EFFECT_TYPE.ADD_COLOR, { colors: acAddColors },
       { isSelf: acAddIsSelf, isTargeted: acAddIsTargeted, fn: acAddFn, selfAffect: detectSelfAffect(acAddSubjectText) },
       `${acAddSubjectText} are ${acAddColor} in addition to their other colors. ${acAddDesc}`);
+  }
+
+  // ---- Layer 5: "[subject] becomes [color]" → SET_COLOR / ADD_COLOR ----
+  // Chaoslace ("Target spell or permanent becomes red"), Ancient Kavu ("This creature becomes
+  // colorless until end of turn"), Scrapbasket ("becomes all colors"), Indigo Faerie ("becomes
+  // blue in addition to its other colors") and the chosen-colour family (Rainbow Crow, Quickchange:
+  // "becomes the color or colors of your choice"). setTypeRegex only reaches the few of these
+  // whose text survives its skip-word list ("colorless" contains "less", "spell" is skipped).
+  // A colour that is chosen on resolution is emitted with params.colorChoice and no colours;
+  // Battlefield.setChosenColor fills it in from the colour dropdown on the spell / ability.
+  const _bcColor = '(?:white|blue|black|red|green)';
+  const becomesColorRegex = new RegExp(
+    '(?:^|[.;,]\\s+|\\n)\\s*(?:until end of turn,\\s+)?(?:you may have\\s+)?' +
+    '((?:(?:up to \\w+|any number of)\\s+)?(?:other\\s+)?target\\s+[^.,;:\\n]+?|this\\s+\\w+|(?:enchanted|equipped|that)\\s+\\w+)' +
+    '\\s+becomes?\\s+' +
+    '(' + _bcColor + '(?:(?:,\\s*and\\s+|,\\s*|\\s+and\\s+)' + _bcColor + ')*|colorless|all colors' +
+    '|the color(?: or colors)? of your choice|that color|the chosen color)' +
+    '(\\s+in addition to (?:its|their) other colors)?' +
+    '(?=\\s+until\\b|\\s+permanently\\b|\\s+and\\s|\\s*[.,;]|\\s*$)', 'gim');
+  let becomesColorMatch;
+  while ((becomesColorMatch = becomesColorRegex.exec(oracle)) !== null) {
+    const bcStart = becomesColorMatch.index;
+    const bcEnd = bcStart + becomesColorMatch[0].length;
+    if (_stColorRanges.some(r => bcStart < r.end && bcEnd > r.start)) continue;
+    if (_isInActivatedEffect(bcStart) || _isInTriggeredSentence(bcStart)) continue;
+    const bcSubjectRaw = becomesColorMatch[1].trim();
+    // A spell on the stack cannot be picked as a target here; "spell or permanent" is offered
+    // as "permanent", and a spell-only target is left alone.
+    let bcSubject = bcSubjectRaw.replace(/\bspell or permanent\b/i, 'permanent');
+    if (/\bspells?\b/i.test(bcSubject)) continue;
+    // "That creature" names the object the previous sentence targeted (Singe).
+    bcSubject = bcSubject.replace(/^that\s+/i, 'target ');
+    if (!/^this\s/i.test(bcSubject) && !filterReferencesPermanents(bcSubject.replace(/^(?:(?:up to \w+|any number of)\s+)?(?:other\s+)?target\s+/i, ''))) continue;
+    const bcSpec = becomesColorMatch[2].toLowerCase();
+    const bcIsChoice = /of your choice|that color|chosen color/.test(bcSpec);
+    let bcColors;
+    if (bcIsChoice) {
+      const bcChosen = COLOR_NAMES[String(permanent.chosenColor || '').toLowerCase()];
+      bcColors = bcChosen ? [bcChosen] : [];
+    } else if (bcSpec === 'colorless') {
+      bcColors = [];
+    } else if (bcSpec === 'all colors') {
+      bcColors = ['W', 'U', 'B', 'R', 'G'];
+    } else {
+      bcColors = Object.keys(COLOR_NAMES).filter(c => new RegExp(`\\b${c}\\b`).test(bcSpec)).map(c => COLOR_NAMES[c]);
+    }
+    const bcBuild = buildAppliesToFromText(bcSubject);
+    const bcSubjectDesc = bcSubjectRaw.charAt(0).toUpperCase() + bcSubjectRaw.slice(1);
+    const bcAdditive = !!becomesColorMatch[3];
+    const bcBaseDesc = `${bcSubjectDesc} becomes ${becomesColorMatch[2]}${bcAdditive ? ' in addition to its other colors' : ''}. ${bcBuild.desc}`;
+    const bcParams = { colors: bcColors };
+    const bcExtra = { _oraclePos: bcStart };
+    if (bcIsChoice) {
+      bcParams.colorChoice = true;
+      bcExtra._colorChoiceDesc = bcBaseDesc;
+    }
+    const bcEff = pushEff('5', bcAdditive ? EFFECT_TYPE.ADD_COLOR : EFFECT_TYPE.SET_COLOR, bcParams,
+      { isSelf: bcBuild.isSelf, isTargeted: bcBuild.isTargeted, fn: bcBuild.fn, selfAffect: bcBuild.isSelf ? true : detectSelfAffect(bcSubject) },
+      bcIsChoice && bcColors.length ? bcBaseDesc.replace('. ', ` (${permanent.chosenColor}). `) : bcBaseDesc,
+      bcExtra);
+    _applyTargetInfo(bcEff, bcBuild, bcBuild.fn);
+    if (bcBuild.isTargeted) bcEff.targetRestriction = bcBuild.fn;
+    const bcCond = _getConditionForPos(bcStart);
+    if (bcCond) bcEff.asLongAsCondition = bcCond;
   }
 
   // ---- Layer 7b: Set P/T ----
