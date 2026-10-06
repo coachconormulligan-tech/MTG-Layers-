@@ -203,7 +203,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Wedding Invitation | has / gains | activated | If it's a Vampire, it also gains lifelink until end of turn. |
 | Wicked // Cursed | has / gains | static | Enchanted creature has base power and toughness 1/1. |
 | Woolly Razorback | has / gains | static | As long as this creature has an ice counter on it, prevent all combat damage it would deal and it has defender. |
-| World War Hulk | has / gains | static | Until end of turn, double its power and toughness and it gains trample. |
 | Ascent of the Worthy | is / are | static | That creature is an Angel Warrior in addition to its other types. |
 | Dance of the Manse | is / are | spell | If X is 6 or more, those permanents are 4/4 creatures in addition to their other types. |
 | Ever After | is / are | spell | Each of those creatures is a black Zombie in addition to its other colors and types. |

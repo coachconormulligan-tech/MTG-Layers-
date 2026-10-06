@@ -1,0 +1,13 @@
+{
+  "name": "Overclocked Electromancer — \"double its power\" in a self trigger doubles the source",
+  "notes": "Found by tests/sweep.py (theme: double its power). 'Whenever this creature attacks, double its power until end of turn.' fired to nothing: the doubling parser only knew \"double X's power\" and \"double the power of X\", and \"its\" has no apostrophe. _addAbilityPseudo now rewrites 'double its power' to the creature the trigger condition names. A self trigger pins to the source: the 2/2 becomes 4/2, the Bears are untouched.",
+  "steps": [
+    { "add": "Grizzly Bears" },
+    { "add": "Overclocked Electromancer", "as": "mancer" },
+    { "call": ["addTriggeredAbility", "@mancer", 2, "double its power until end of turn.", "Whenever this creature attacks, double its power until end of turn."] }
+  ],
+  "asserts": [
+    { "perm": "Overclocked Electromancer", "final": { "power": 4, "toughness": 2 } },
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2 } }
+  ]
+}
