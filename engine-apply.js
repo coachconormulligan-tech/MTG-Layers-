@@ -1431,6 +1431,21 @@ function applyEffect(state, effect, context) {
       // of the source permanent in allStates (which may have been updated by earlier Layer 2
       // effects like Lay Claim). Fall back to newController if source not found.
       // "Each player gains control of all creatures they own" (Homeward Path): back to the owner.
+      // "You and target opponent each gain control of all creatures the other controls"
+      // (Reins of Power): the source's controller and the chosen player trade every match.
+      if (effect.params.mutualSwap) {
+        const you = effect._allStates ? getEffectControllerId(effect, effect._allStates) : null;
+        const other = effect.params.newController;
+        if (!you || !other || you === other) break;
+        const swapTo = state.controller === you ? other : state.controller === other ? you : null;
+        if (swapTo) {
+          state.controller = swapTo;
+          const playerName = (typeof Battlefield !== 'undefined' && Battlefield.getPlayerName)
+            ? Battlefield.getPlayerName(swapTo) : swapTo;
+          changes.push(`Controller changed to ${playerName}`);
+        }
+        break;
+      }
       const newCtrl = effect.params.toOwner
         ? state.owner
         : (effect.params.useSourceController && effect._allStates)

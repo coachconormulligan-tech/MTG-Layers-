@@ -5084,7 +5084,7 @@ function parseCardEffects(permanent, card, opts = {}) {
       // Loyalty abilities ("−8: Gain control of …") are activated abilities as well.
       if (/^\s*[+\u2212-]?(?:\d+|X):/.test(fullLine)) continue;
       // Skip "target player gains control of ..." — handled above with dropdown
-      if (/\btarget player gains control of\b/i.test(lineText)) continue;
+      if (/\btarget player gains control of target (?:.+?) you control\b/i.test(lineText)) continue;
 
       const qualifier = (gcMatch[1] || '').trim(); // 'target' or 'enchanted' or ''
       const targetType = gcMatch[2].trim();
@@ -5114,6 +5114,26 @@ function parseCardEffects(permanent, card, opts = {}) {
       const pronounM = objectText.match(/^(it|them|(?:that|those)\s+\w+|the\s+(?:chosen\s+)?(?:creature|permanent|artifact))(?=$|[,\s])/i);
       const objectIsPronoun = !!pronounM;
 
+      // "You and target opponent each gain control of all creatures the other controls"
+      // (Reins of Power, Twist Allegiance): every matching permanent changes hands, in both
+      // directions. The chosen player comes from the dropdown; the engine swaps per permanent.
+      const mutualM = _isSpellLike && /\byou and (?:target|that) (?:opponent|player)\s+each\s+$/i.test(subjectText)
+        && objectText.match(/^all\s+(.+?)\s+the other controls$/i);
+      if (mutualM) {
+        const mutualResult = buildAppliesToFromText(mutualM[1]);
+        if (mutualResult.fn) {
+          // Uses the "target opponent" dropdown; _finalizeEffects must not restrict this
+          // effect to the opponent's permanents, since both sides' creatures change hands.
+          permanent._targetsOpponentPlayer = true;
+          pushEff('2', EFFECT_TYPE.CONTROL,
+            { newController: permanent._targetOpponentPlayerId || null, mutualSwap: true, untilEndOfTurn: /until end of turn/i.test(fullSentence) },
+            { appliesTo: mutualResult.fn, scope: 'global', selfTarget: false, affectsSelf: true },
+            `You and the chosen opponent each gain control of all ${mutualM[1]} the other controls.`);
+          emittedControl = true;
+        }
+        continue;
+      }
+
       // "that player untaps this card and gains control of it" (Karona): the third-person verb
       // alone says the subject is someone else.
       const otherSubject = subjectText.match(otherPlayerSubjectRe)
@@ -5134,6 +5154,26 @@ function parseCardEffects(permanent, card, opts = {}) {
         }
         // Otherwise the new controller is a player picked from the dropdown. Only fired
         // abilities and spells; "all X the other controls" (Twist Allegiance) is not expressible.
+        // "Target opponent gains control of all other permanents you control" (Sky Swallower):
+        // a global effect scoped to the source's controller, handed to the chosen player.
+        const allYouControlM = _isSpellLike && !/^each player$/.test(who)
+          && objectText.match(/^all\s+(?:other\s+)?(.+?\s+you control)$/i);
+        if (allYouControlM) {
+          const allResult = buildAppliesToFromText(allYouControlM[1]);
+          if (allResult.fn) {
+            // "Target opponent" uses the opponent dropdown, "target player" the player one.
+            const viaOpponent = /\bopponent$/.test(who);
+            if (viaOpponent) permanent._targetsOpponentPlayer = true; else permanent._targetsChosenPlayer = true;
+            pushEff('2', EFFECT_TYPE.CONTROL,
+              { newController: (viaOpponent ? permanent._targetOpponentPlayerId : permanent._targetPlayerId) || null,
+                untilEndOfTurn: /until end of turn/i.test(fullSentence), opponentGetsControl: viaOpponent || undefined },
+              { appliesTo: allResult.fn, scope: 'global', selfTarget: false, affectsSelf: !/^all\s+other\b/i.test(objectText) },
+              `${otherSubject[1].charAt(0).toUpperCase() + otherSubject[1].slice(1)} gains control of ${objectText}.`,
+              viaOpponent ? undefined : { _targetPlayerControl: true });
+            emittedControl = true;
+          }
+          continue;
+        }
         if (!_isSpellLike || /^(?:all|each)\b/i.test(objectText)) continue;
         const objInfo = extractTargetInfo(objectText);
         let objRestriction = null, objMax = 1, objYouControl = false;

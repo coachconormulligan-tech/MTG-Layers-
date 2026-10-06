@@ -1,0 +1,66 @@
+{
+  "name": "Sky Swallower \u2014 target opponent gains control of all other permanents you control",
+  "notes": "Memory: project_domineering_will_target_player_gain_control_2026-10-06 (open item). Fired ETB trigger, global CONTROL scoped to the source's controller, affectsSelf false so Sky Swallower stays; opponent's own permanents unchanged.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "mine"
+    },
+    {
+      "add": "Forest",
+      "as": "land"
+    },
+    {
+      "add": "Gray Ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Sky Swallower",
+      "as": "sw"
+    },
+    {
+      "fire": "@sw",
+      "trigger": 1,
+      "as": "trig"
+    },
+    {
+      "call": [
+        "setTargetOpponent",
+        "@trig",
+        "p2"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "controller": "player_1"
+      }
+    },
+    {
+      "perm": "Forest",
+      "final": {
+        "controller": "player_1"
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "controller": "player_1"
+      }
+    },
+    {
+      "perm": "Sky Swallower",
+      "final": {
+        "controller": "player_0"
+      }
+    }
+  ]
+}
