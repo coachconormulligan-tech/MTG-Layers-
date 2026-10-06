@@ -1,6 +1,6 @@
 {
  "name": "Besmirch — \"goad that creature\" goads only the target",
- "notes": "'Untap and goad that creature' built a creature filter from 'that creature' and goaded every creature. In a spell or fired ability a pronoun object of goad/suspect is now the chosen target. Still open: the mid-sentence '... and it gains haste' on this card is global.",
+ "notes": "'Untap and goad that creature' built a creature filter from 'that creature' and goaded every creature; '… gain control of target creature and it gains haste' gave every creature haste. A pronoun object of goad/suspect is now the chosen target, and _resolveItPronoun splits '… target creature and it gains haste' into its own 'It gains haste' sentence.",
  "recipe": {
   "steps": [
    {
@@ -44,7 +44,8 @@
     "controller": "player_0",
     "abilities": {
      "$includes": [
-      "Goaded"
+      "Goaded",
+      "Haste"
      ]
     }
    }
@@ -54,7 +55,18 @@
    "final": {
     "abilities": {
      "$excludes": [
-      "Goaded"
+      "Goaded",
+      "Haste"
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Hill Giant",
+   "final": {
+    "abilities": {
+     "$excludes": [
+      "Haste"
      ]
     }
    }
@@ -1005,15 +1017,9 @@
      "colors": [
       "R"
      ],
-     "abilities": [
-      "Haste"
-     ]
+     "abilities": []
     },
-    "changedBy": {
-     "6": [
-      "Besmirch"
-     ]
-    }
+    "changedBy": {}
    },
    {
     "perm": "Hill Giant",
@@ -1032,15 +1038,9 @@
      "colors": [
       "R"
      ],
-     "abilities": [
-      "Haste"
-     ]
+     "abilities": []
     },
-    "changedBy": {
-     "6": [
-      "Besmirch"
-     ]
-    }
+    "changedBy": {}
    },
    {
     "perm": "Besmirch",
@@ -1078,7 +1078,8 @@
     "source": "Besmirch",
     "layer": "6",
     "type": "add_ability",
-    "scope": "global",
+    "scope": "targeted",
+    "target": "Grizzly Bears",
     "params": {
      "ability": "Haste"
     }

@@ -1,0 +1,53 @@
+{
+  "name": "Kiki-Jiki, Mirror Breaker — the token's haste is not granted to the battlefield",
+  "notes": "Seen in the sweep diff. 'Create a token that's a copy of …, except it has haste' was parsed as a global haste grant with a junk filter (about 40 cards with token-copy or token-defining text did this). Keyword, quoted-ability and add-type parsers now skip a subject that contains 'create'.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears",
+      "controller": "p2"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Kiki-Jiki, Mirror Breaker",
+      "as": "kiki"
+    },
+    {
+      "call": [
+        "addActivatedAbility",
+        "@kiki",
+        1,
+        "Create a token that's a copy of target nonlegendary creature you control, except it has haste. Sacrifice it at the beginning of the next end step.",
+        "{T}: Create a token that's a copy of target nonlegendary creature you control, except it has haste. Sacrifice it at the beginning of the next end step."
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "abilities": []
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": []
+      }
+    }
+  ]
+}

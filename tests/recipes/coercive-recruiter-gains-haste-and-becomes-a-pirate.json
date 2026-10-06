@@ -1,0 +1,74 @@
+{
+  "name": "Coercive Recruiter — \"it gains haste and becomes a Pirate in addition\" keeps both halves",
+  "notes": "Found by tests/sweep.py (pronoun-subject clusters). The add-type parser took 'target creature gains haste and' as its subject, so either the haste or the Pirate type was lost. Keywords in front of the 'and' now go to the same subject.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears",
+      "controller": "p2"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Coercive Recruiter",
+      "as": "recruiter"
+    },
+    {
+      "call": [
+        "addTriggeredAbility",
+        "@recruiter",
+        0,
+        "gain control of target creature until end of turn. Untap that creature. Until end of turn, it gains haste and becomes a Pirate in addition to its other types.",
+        "Whenever this creature or another Pirate you control enters, gain control of target creature until end of turn. Untap that creature. Until end of turn, it gains haste and becomes a Pirate in addition to its other types."
+      ],
+      "as": "trigger"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@trigger",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "controller": "player_0",
+        "subtypes": {
+          "$includes": [
+            "Pirate"
+          ]
+        },
+        "abilities": {
+          "$includes": [
+            "Haste"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "controller": "player_1",
+        "subtypes": [
+          "Ogre"
+        ]
+      }
+    }
+  ]
+}

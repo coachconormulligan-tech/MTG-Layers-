@@ -657,6 +657,15 @@ function parseCardEffects(permanent, card, opts = {}) {
       || /^hexproof from\s+/.test(k);
   }
 
+  // The subject regexes capture lazily from the start of the line, so a subject can arrive with
+  // the sentences before it attached ("Return … to the battlefield. Target creature"). When the
+  // last sentence names its own target, that alone is the subject. Deliberately narrow: other
+  // cross-sentence captures are left as they are (trimming them all changed dozens of cards).
+  function _lastSentenceTargetSubject(ft) {
+    const last = ft.split(/\.\s+/).pop().replace(/^["\u201d\s]+/, '').trim();
+    return (last !== ft && /^(?:(?:until|for as long as) [^,]+,\s*)?(?:(?:up to \w+|any number of|\w+ or \w+|another|\w+)\s+(?:other\s+)?)?target\s/i.test(last)) ? last : ft;
+  }
+
   // Helper: apply target/choose metadata to an effect object.
   // bResult is the return value of buildAppliesToFromText; fn is the filter function.
   function _applyTargetInfo(eff, bResult, restrictionFn) {
@@ -781,6 +790,7 @@ function parseCardEffects(permanent, card, opts = {}) {
 
   // "Untap all attacking creatures. They gain trample …" → "All attacking creatures gain trample …"
   oracle = _resolveTheyPronoun(oracle);
+  if (permanent.isSpell) oracle = _resolveItPronoun(oracle);
 
   // Normalize gendered pronouns to "this card" for cards that self-reference with he/she/him/her.
   // "he's a" → "this card is a", "she's a" → "this card is a"
@@ -1989,8 +1999,32 @@ function parseCardEffects(permanent, card, opts = {}) {
     const _atStart = addTypeMatch.index;
     const _atEnd = _atStart + addTypeMatch[0].length;
     if (copyClauseSpans.some(r => _atStart < r.end && _atEnd > r.start)) continue;
-    const filterText = addTypeMatch[1].trim();
-    const becomesText = addTypeMatch[2].trim();
+    let filterText = addTypeMatch[1].trim();
+    let becomesText = addTypeMatch[2].trim();
+    // "Target creature has flying and is an Angel in addition …" (Valkyrie's Call): the lazy
+    // capture took "has" as the verb, leaving the keywords at the front of the type text.
+    let _addTypeFrontKeywords = [];
+    {
+      const frontKw = becomesText.match(/^([^"]+?)\s+and\s+(?:is|are|becomes?)\s+(.+)$/i);
+      // Only for an explicit target subject; Auras and Equipment ("Enchanted creature gets
+      // +4/+4, has flying and first strike, and is an Angel …") have their own parser.
+      if (frontKw && /(?:^|\.\s+)(?:until [^,]+,\s*)?target\s[^.]*$/i.test(addTypeMatch[1]) && /^ha(?:s|ve)\b/i.test(addTypeMatch[0].slice(addTypeMatch[0].indexOf(addTypeMatch[1]) + addTypeMatch[1].length).trim())) {
+        const parts = frontKw[1].toLowerCase().split(/,\s*(?:and\s+)?|\s+and\s+/).map(k => k.trim()).filter(Boolean);
+        if (parts.length && parts.every(k => KEYWORD_SET.has(k))) {
+          _addTypeFrontKeywords = parts.map(k => k.charAt(0).toUpperCase() + k.slice(1));
+          becomesText = frontKw[2].trim();
+        }
+      }
+    }
+    // "Create a token that's a copy of that creature, except it's a Spirit in addition to its
+    // other types" (Hofri Ghostforge) describes the token, not anything on the battlefield.
+    if (/\bcreates?\b/i.test(filterText)) continue;
+    // The lazy capture starts at the line start, so an explicit target subject can arrive with
+    // the sentences before it attached ("Put it onto the battlefield. Target creature").
+    {
+      const lastSentence = filterText.split(/\.\s+/).pop().trim();
+      if (lastSentence !== filterText && /^(?:(?:until|for as long as) [^,]+,\s*)?(?:up to \w+ |another )?target\s/i.test(lastSentence)) filterText = lastSentence;
+    }
     // Skip triggered/activated ability text that matched the regex
     const _atFLower = filterText.toLowerCase();
     if (_atFLower.includes('whenever ') || _atFLower.includes('when ') ||
@@ -2005,6 +2039,24 @@ function parseCardEffects(permanent, card, opts = {}) {
     let addTypeFilterText = filterText;
     if (/\byou (?:control|own)\b/i.test(addTypeMatch[0]) && !/\byou (?:control|own)\b/i.test(addTypeFilterText)) {
       addTypeFilterText += ' you control';
+    }
+    addTypeFilterText = stripDurationPrefix(addTypeFilterText)
+      // "For as long as that creature has a shadow counter on it, target creature is a Wraith …"
+      .replace(/^for as long as [^,]+,\s*/i, '');
+    // "Target creature gains haste and becomes a Pirate in addition …" (Coercive Recruiter),
+    // "… has flying and is an Angel in addition …" (Valkyrie's Call): the keywords before the
+    // "and" belong to the same subject. haveAbilityRegex skips this span as already handled.
+    let _addTypeLeadKeywords = [];
+    {
+      const leadKw = addTypeFilterText.match(/^(.+?)\s+(?:gains?|ha(?:s|ve))\s+([^".]+?)\s+and$/i);
+      if (leadKw) {
+        // (parseKeywordList is declared further down and reads a const not yet initialised here.)
+        const parts = leadKw[2].toLowerCase().split(/,\s*(?:and\s+)?|\s+and\s+/).map(k => k.trim()).filter(Boolean);
+        if (parts.length && parts.every(k => KEYWORD_SET.has(k))) {
+          addTypeFilterText = leadKw[1].trim();
+          _addTypeLeadKeywords = parts.map(k => k.charAt(0).toUpperCase() + k.slice(1));
+        }
+      }
     }
     const { fn, desc, isSelf, isTargeted } = buildAppliesToFromText(addTypeFilterText);
     const selfAffect = detectSelfAffect(addTypeFilterText);
@@ -2119,6 +2171,10 @@ function parseCardEffects(permanent, card, opts = {}) {
       }
     }
 
+    for (const ability of [..._addTypeLeadKeywords, ..._addTypeFrontKeywords]) {
+      pushEff('6', EFFECT_TYPE.ADD_ABILITY, { ability }, _ctx, `${addTypeFilterText} gain ${ability}. ${desc}`);
+    }
+
     // Attach "as long as" condition to all effects generated from this addType match
     if (addTypeCond) {
       for (let ei = addTypeEffCountBefore; ei < effects.length; ei++) {
@@ -2148,7 +2204,7 @@ function parseCardEffects(permanent, card, opts = {}) {
     // as captured; they are resolved or skipped further down.)
     if (/\.\s/.test(filterText)) {
       const _lastSentence = filterText.split(/\.\s+/).pop().trim();
-      if (/^(?:up to \w+|any number of|\w+ or \w+|\w+)\s+(?:other\s+)?target\s/i.test(_lastSentence)) filterText = _lastSentence;
+      if (/^(?:(?:up to \w+|any number of|\w+ or \w+|\w+)\s+(?:other\s+)?)?target\s/i.test(_lastSentence)) filterText = _lastSentence;
     }
     // "…target creature or planeswalker that's green or white" (Noxious Grasp): a relative
     // clause describing the object, not a sentence that sets anything.
@@ -2505,7 +2561,8 @@ function parseCardEffects(permanent, card, opts = {}) {
 
     // "with [keyword]" / "and has [keyword]" → ADD_ABILITY
     if (_stGrantAbilities.length > 0) {
-      for (const ability of _stGrantAbilities) {
+      for (const rawAbility of _stGrantAbilities) {
+        const ability = rawAbility.charAt(0).toUpperCase() + rawAbility.slice(1);
         pushEff('6', EFFECT_TYPE.ADD_ABILITY, { ability }, _stCtx,
           `${filterText} gains ${ability}. ${desc}`);
       }
@@ -3044,7 +3101,7 @@ function parseCardEffects(permanent, card, opts = {}) {
   const generalBasePTRegex = /(?:^|\.)\s*(.+?)\s+(?:you (?:control|own)\s+)?(?:have|has)\s+base\s+power\s+and\s+toughness\s+(\d+)\/(\d+)(?:\s+and\s+(?:are|is)\s+(\w+)((?:\s+in addition to\b)?))?/gmi;
   let generalBasePTMatch;
   while ((generalBasePTMatch = generalBasePTRegex.exec(oracle)) !== null) {
-    const gbpFilterText = generalBasePTMatch[1].trim();
+    const gbpFilterText = stripDurationPrefix(_lastSentenceTargetSubject(generalBasePTMatch[1].trim()));
     const gbpFLower = gbpFilterText.toLowerCase();
     // Skip enchanted/equipped (handled above) and non-permanent references
     if (/enchanted|equipped/i.test(gbpFLower)) continue;
@@ -3358,7 +3415,8 @@ function parseCardEffects(permanent, card, opts = {}) {
     // e.g. "Put a +1/+1 counter on target creature you control. It" → "It"
     if (filterText.includes('.')) {
       const segments = filterText.split(/\.\s*/);
-      filterText = segments[segments.length - 1].trim();
+      // A sentence ending inside a quoted ability leaves the closing quote on the next segment.
+      filterText = segments[segments.length - 1].replace(/^["\u201d\s]+/, '').trim();
       // "Choose a [type] [restriction]. It gains [keyword]" — when the match spans
       // "Choose a creature you control. It gains indestructible", the .split leaves
       // "It" as the last segment. Resolve "It" to a targeted effect on the chosen type.
@@ -3369,6 +3427,9 @@ function parseCardEffects(permanent, card, opts = {}) {
       }
       if (!filterText) continue;
     }
+    // "Create a token that's a copy of …, except … it has flying and haste" and "That token
+    // gains haste" describe a token the ability makes; the token's own card carries them.
+    if (/\bcreates?\b/i.test(filterText) || /^(?:that|the|those)\s+tokens?$/i.test(filterText)) continue;
     // Skip if this match overlaps with an addType match (already handled with "and has" parsing)
     const haveStart = haveMatch.index;
     const haveEnd = haveStart + haveMatch[0].length;
@@ -3646,9 +3707,19 @@ function parseCardEffects(permanent, card, opts = {}) {
     const _ftStart = ftMatch.index;
     const _ftEnd = _ftStart + ftMatch[0].length;
     if (addTypeMatchRanges.some(r => _ftStart < r.end && _ftEnd > r.start)) continue;
-    let filterText = ftMatch[1].trim();
+    let filterText = _lastSentenceTargetSubject(ftMatch[1].trim());
     const abilityText = ftMatch[2].trim().replace(/,$/, '').trim();
     if (filterText.toLowerCase().includes('enchanted')) continue;
+    // 'Create a token … with "…"' / 'That token gains "…"': the token's own card carries it.
+    if (/\bcreates?\b/i.test(filterText) || /^(?:that|the|those)\s+tokens?$/i.test(filterText)) continue;
+    // 'Create a 0/1 Eldrazi Spawn creature token. It has "Sacrifice this token: Add {C}."' —
+    // "has" right after the token is made defines the token. ("It gains haste" does not.)
+    {
+      const head = ftMatch[0].match(/^([\s\S]*?)\s+(?:you (?:control|own)\s+)?(have|has|gains?)\s+"/i);
+      const subjAt = ftMatch.index + (head ? head[1].length - filterText.length : 0);
+      const prevSentence = oracle.slice(0, Math.max(0, subjAt)).split(/\n/).pop().split(/\.\s+/).filter(x => x.trim()).pop() || '';
+      if (head && /^ha/i.test(head[2]) && /\bcreates?\b[^.]*\btokens?\b/i.test(prevSentence)) continue;
+    }
     // Skip triggered/activated ability text that matched the regex
     const _ftFLower = filterText.toLowerCase();
     if (_ftFLower.includes('whenever ') || _ftFLower.includes('when ') ||
@@ -3667,13 +3738,14 @@ function parseCardEffects(permanent, card, opts = {}) {
     // Dedup against the saga/self quoted-ability grant (sagaGainsQuotedRegex), which already
     // handled "This Saga/card/enchantment gains \"…\"" earlier in this pass.
     if (effects.some(e => e.layer === '6' && e.params && e.params.ability === abilityText && e.sourceId === permanent.id)) continue;
-    const { fn, desc, isSelf, isTargeted } = buildAppliesToFromText(filterText);
+    const { fn, desc, isSelf, isTargeted, needsTargetSelection: _ftNTS, maxTargets: _ftMaxT } = buildAppliesToFromText(filterText);
     const selfAffect = isSelf ? true : detectSelfAffect(filterText);
     const ftMatchCond = _getConditionForPos(ftMatch.index);
     const ftMatchEffectStart = effects.length; // track effects added in this match
     const ftEff = pushEff('6', EFFECT_TYPE.ADD_ABILITY, { ability: abilityText },
       { isSelf, isTargeted, fn, selfAffect },
       `${filterText} have "${abilityText}". ${desc}`);
+    _applyTargetInfo(ftEff, { isSpellTarget: !!_ftNTS, maxTargets: _ftMaxT || 1 }, fn);
     if (ftMatchCond) ftEff.asLongAsCondition = ftMatchCond;
     // Fix #7: Check for "and" continuation quoted abilities after this match
     // Pattern: ... has "ability1" and "ability2" and "ability3" ...
@@ -4998,6 +5070,7 @@ function parseCardEffects(permanent, card, opts = {}) {
       }
       if (eff.selfTarget === true && eff.scope === 'targeted') {
         eff.selfTarget = false;
+        eff._pronounTarget = true; // same target as the sentence before, never a slot of its own
         eff.appliesTo = null;
       }
     }

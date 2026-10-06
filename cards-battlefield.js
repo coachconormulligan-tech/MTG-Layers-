@@ -499,7 +499,31 @@ const Battlefield = {
       }
     }
 
+    // "…put three +1/+1 counters on target land you control. If you do, that land becomes …"
+    // (Cyclone Sire): the optional part is assumed done, as with "you may pay" above.
+    parsedEffectText = parsedEffectText.replace(/(^|\.\s+)(?:if|when) you do,\s*(\w)/gi, (_, pre, ch) => pre + ch.toUpperCase());
     let didItConversion = false;
+    // "It's a Spirit in addition to its other types" → "target creature is a Spirit in addition …"
+    {
+      const itsBefore = parsedEffectText;
+      // Not inside "create a token that's a copy …, except it's a …": that describes the token.
+      // The noun is the target the ability already named, if it named one.
+      {
+        let soFar = '';
+        parsedEffectText = _splitSentencesOutsideQuotes(parsedEffectText).map(sentence => {
+          const named = soFar.match(/.*\btarget\s+(?:[\w'-]+\s+){0,3}?(creature|land|artifact|enchantment|planeswalker|permanent)\b/i);
+          soFar += sentence + ' ';
+          if (/\bcreates?\b|\bcopy\b/i.test(sentence)) return sentence;
+          return sentence.replace(/(?<!except\s)\bit's\s+(an?\s+[^.]*?\bin addition to its other\b)/gi,
+            `target ${named ? named[1].toLowerCase() : triggerSubject} is $1`);
+        }).join(' ');
+      }
+      // "that land becomes …", "the creature gains …"
+      parsedEffectText = parsedEffectText.replace(
+        /\b(?:that\s+(land|artifact|enchantment|planeswalker)|the\s+(creature))\s+(get[s]?|gain[s]?|ha[s]|have|is|becomes?|loses?)\b/gi,
+        (_, n1, n2, verb) => `target ${(n1 || n2).toLowerCase()} ${verb}`);
+      if (parsedEffectText !== itsBefore) didItConversion = true;
+    }
     if (/\bit\b/i.test(parsedEffectText)) {
       const before = parsedEffectText;
       // Replace "it gets/gains/has/is/becomes/loses" → "target [subject] gets/gains/..."

@@ -9,7 +9,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Amplifire | becomes | triggered | Until your next turn, this creature's base power becomes twice that card's power and its base toughness becomes twice that card's toughness. |
 | Aquamorph Entity | becomes | static | As this creature enters or is turned face up, it becomes your choice of 5/1 or 1/5. |
 | Arni Brokenbrow | becomes | activated | Boast — {1}: You may have this card's base power become 1 plus the greatest power among other creatures you control until end of turn. |
-| Aurora Shifter | becomes | triggered | When you do, this creature becomes a copy of another target creature you control, except it has this ability and "Whenever this creature deals combat damage to a player, you get that many {E}." |
 | Baffling Defenses | becomes | spell | Target creature's base power perpetually becomes 0. |
 | Belligerent Yearling | becomes | triggered | Whenever another Dinosaur you control enters, you may have this creature's base power become equal to that creature's power until end of turn. |
 | Biblioplex Tomekeeper | becomes | static | • Target creature becomes unprepared. |
@@ -24,7 +23,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Donald Blake, Guise of Thor | becomes | activated | He becomes a God Warrior Hero. |
 | Dracoplasm | becomes | static | This creature's power becomes the total power of those creatures and its toughness becomes their total toughness. |
 | Eldrazi Mimic | becomes | triggered | Whenever another colorless creature you control enters, you may have this creature's base power and toughness become equal to that creature's power and toughness until end of turn. |
-| Emergent Sequence | becomes | spell | That land becomes a 0/0 green and blue Fractal creature that's still a land. |
 | Ersatz Gnomes | becomes | activated | {T}: Target spell becomes colorless. |
 | Exuberant Wolfbear | becomes | triggered | Whenever this creature attacks, you may have the base power and toughness of target Human you control become equal to this creature's power and toughness until end of turn. |
 | Fractalize | becomes | spell | Until end of turn, target creature becomes a green and blue Fractal with base power and toughness each equal to X plus 1. |
@@ -35,13 +33,11 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Gornog, the Red Reaper | becomes | triggered | Whenever one or more Warriors you control attack a player, target creature that player controls becomes a Coward. |
 | Graceful Antelope | becomes | triggered | Whenever this creature deals combat damage to a player, you may have target land become a Plains until this creature leaves the battlefield. |
 | Great Hall of the Biblioplex | becomes | activated | {5}: If this land isn't a creature, it becomes a 2/4 Wizard creature with "Whenever you cast an instant or sorcery spell, this creature gets +1/+0 until end of turn." |
-| Guide of Souls | becomes | triggered | It becomes an Angel in addition to its other types. |
 | Halfdane | becomes | triggered | At the beginning of your upkeep, this card's base power and toughness become equal to the power and toughness of target creature other than this card until the end of your next upkeep. |
 | Hulkling, Young Avenger | becomes | ability | Whenever you cast a noncreature spell, Hulkling becomes a copy of up to one other target creature until end of turn, except his name is this card, he's 4/4, and he has flying and this ability. |
 | Infinite Coursework | becomes | triggered | It becomes unprepared. |
 | Irma, Part-Time Mutant | becomes | ability | At the beginning of combat on your turn, Irma becomes a copy of up to one other target creature you control, except her name is this card and she has this ability. |
 | Jolrael, Empress of Beasts | becomes | activated | {2}{G}, {T}, Discard two cards: All lands target player controls become 3/3 creatures until end of turn. |
-| Kenku Artificer | becomes | triggered | That artifact becomes a 0/0 Homunculus artifact creature with flying. |
 | Kimahri, Valiant Guardian | becomes | ability | Then you may have Kimahri become a copy of that creature, except its name is this card and it has vigilance and this ability. |
 | Kitesail Larcenist | becomes | triggered | For as long as this creature remains on the battlefield, the chosen permanents become Treasure artifacts with "{T}, Sacrifice this artifact: Add one mana of any color" and lose all other abilities. |
 | Kukemssa Serpent | becomes | activated | {U}, Sacrifice an Island: Target land an opponent controls becomes an Island until end of turn. |
@@ -52,7 +48,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Mirkwood Meditator | becomes | triggered | Landfall — Whenever a land you control enters, you may have this creature's base power and toughness become 4/2 until end of turn. |
 | Necromancy | becomes | triggered | When this enchantment enters, if it's on the battlefield, it becomes an Aura with "enchant creature put onto the battlefield with this card." |
 | Niko, Light of Hope | becomes | activated | Shards you control become copies of it until the next end step. |
-| Nissa, Who Shakes the World | becomes | activated | It becomes a 0/0 Elemental creature with vigilance and haste that's still a land. |
 | Nissa, Worldwaker | becomes | activated | Those lands become 4/4 Elemental creatures with trample. |
 | Orcish Farmer | becomes | activated | {T}: Target land becomes a Swamp until its controller's next untap step. |
 | Planeswalkerificate | becomes | static | Its toughness becomes its loyalty. |
@@ -73,8 +68,10 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Tanazir Quandrix | becomes | triggered | Whenever this card attacks, you may have the base power and toughness of other creatures you control become equal to this card's power and toughness until end of turn. |
 | Taskmaster, Mercenary Mimic | becomes | ability | Photographic Reflexes — At the beginning of your first main phase, until your next turn, Taskmaster becomes a copy of up to one target creature on the battlefield or creature card in a graveyard, except his name is this card and he's a legendary Human Mercenary Villain creature. |
 | The Flood of Mars | becomes | triggered | If it's a land, it becomes an Island in addition to its other types. |
+| The Legend of Kyoshi | becomes | static | That land becomes an Island in addition to its other types. |
 | The Ring // The Ring Tempts You | becomes | static | Then your emblem gains its next ability and you choose a creature you control to become or remain your Ring-bearer. |
 | Tune Up | becomes | spell | If it's a Vehicle, it becomes an artifact creature. |
+| Ultron, Artificial Malevolence | becomes | triggered | If the token isn't a creature, it becomes a 2/2 Robot Villain creature in addition to its other types. |
 | Unruly Krasis | becomes | triggered | Whenever this creature attacks, you may have the base power and toughness of another target creature you control become X/X until end of turn, where X is this creature's power. |
 | Vastwood Animist | becomes | activated | {T}: Target land you control becomes an X/X Elemental creature until end of turn, where X is the number of Allies you control. |
 | Veiled Sentry | becomes | triggered | When an opponent casts a spell, if this permanent is an enchantment, it becomes an Illusion creature with power and toughness each equal to that spell's mana value. |
@@ -103,8 +100,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Welcome to the Fold | gain control | spell | Gain control of target creature if its toughness is 2 or less. |
 | Welcome to the Fold | gain control | spell | If this spell's madness cost was paid, instead gain control of that creature if its toughness is X or less. |
 | Aerid Konstrari | gets +N/+N | activated | Then this card gets +X/+0 until end of turn, where X is the number of artifacts you control. |
-| Ambulatory Edifice | gets +N/+N | triggered | When you do, target creature gets -1/-1 until end of turn. |
-| Armix, Filigree Thrasher | gets +N/+N | triggered | When you do, target creature defending player controls gets -X/-X until end of turn, where X is the number of artifacts you control plus the number of artifact cards in your graveyard. |
 | Aurelia, Exemplar of Justice | gets +N/+N | triggered | Until end of turn, that creature gets +2/+0, gains trample if it's red, and gains vigilance if it's white. |
 | Barreling Attack | gets +N/+N | spell | When that creature becomes blocked this turn, it gets +1/+1 until end of turn for each creature blocking it. |
 | Benalish Partisan | gets +N/+N | triggered | If you do, return this card from your graveyard to the battlefield tapped and it perpetually gets +1/+0. |
@@ -112,63 +107,49 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Cait Sith, Fortune Teller | gets +N/+N | triggered | When you exile a card this way, target creature you control gets +X/+0 until end of turn, where X is that card's mana value. |
 | Cankerous Thirst | gets +N/+N | spell | If {G} was spent to cast this spell, you may have target creature get +3/+3 until end of turn. |
 | Deluge Virtuoso | gets +N/+N | triggered | If five or more mana was spent to cast that spell, this creature gets +2/+2 until end of turn instead. |
-| Eastfarthing Farmer | gets +N/+N | triggered | When you do, target creature you control gets +1/+1 until end of turn for each Food you control. |
 | Elemental Appeal | gets +N/+N | spell | If this spell was kicked, that creature gets +7/+0 until end of turn. |
 | Glorfindel, Dauntless Rescuer | gets +N/+N | triggered | Whenever you scry, choose one and this card gets +1/+1 until end of turn. |
 | Hope and Glory | gets +N/+N | spell | Each of them gets +1/+1 until end of turn. |
-| Hurska Sweet-Tooth | gets +N/+N | triggered | When you do, target creature gets +X/+X until end of turn, where X is the amount of life you gained. |
 | Hydra Trainer | gets +N/+N | static | When you do, target creature gets +X/+X until end of turn, where X is the number of counters on permanents you control. |
 | I'm a Doctor, Not a . . . | gets +N/+N | spell | Until end of turn, it gets +1/+1 and becomes a Doctor. |
-| Invisible Woman | gets +N/+N | triggered | When you do, target creature gets +1/+0 until end of turn for each creature you control and can't be blocked this turn. |
 | Kraul Harpooner | gets +N/+N | triggered | This creature gets +X/+0 until end of turn, where X is the number of creature cards in your graveyard, then you may have this creature fight that creature. |
 | Lightfoot Rogue | gets +N/+N | static | 10—19 \| It gets +1/+0 and gains deathtouch until end of turn. |
+| Longtusk Stalker | gets +N/+N | activated | If you do, that card perpetually gets +1/+0. |
 | Managorger Phoenix | gets +N/+N | triggered | If this card has five or more flame counters on it, return it to the battlefield and it perpetually gets +1/+1. |
 | Massacre Girl | gets +N/+N | triggered | Whenever a creature dies this turn, each creature other than this card gets -1/-1 until end of turn. |
-| Miasma Demon | gets +N/+N | triggered | When you do, up to that many target creatures each get -2/-2 until end of turn. |
 | Might of Old Krosa | gets +N/+N | spell | If you cast this spell during your main phase, that creature gets +4/+4 until end of turn instead. |
 | Mishra's Foundry | gets +N/+N | activated | {1}, {T}: Target attacking Assembly-Worker gets +2/+2 until end of turn. |
 | Ogre Battlecaster | gets +N/+N | triggered | When you cast that spell, this creature gets +X/+0 until end of turn, where X is that spell's mana value. |
 | Ogre Chitterlord | gets +N/+N | triggered | Then if you control five or more Rats, each Rat you control gets +2/+0 until end of turn. |
-| Old Man Willow | gets +N/+N | triggered | When you do, target creature an opponent controls gets -2/-2 until end of turn. |
 | Price of Loyalty | gets +N/+N | spell | If mana from a Treasure was spent to cast this spell, that creature gets +2/+0 until end of turn. |
 | Rhonas's Stalwart | gets +N/+N | static | When you do, it gets +1/+1 until end of turn and can't be blocked by creatures with power 2 or less this turn. |
 | Rolling Spoil | gets +N/+N | spell | If {B} was spent to cast this spell, all creatures get -1/-1 until end of turn. |
 | Sigardian Zealot | gets +N/+N | triggered | Each of them gets +X/+X and gains vigilance until end of turn, where X is this creature's power. |
 | Song of Blood | gets +N/+N | spell | Whenever a creature attacks this turn, it gets +1/+0 until end of turn for each creature card put into your graveyard this way. |
-| Specter of Mortality | gets +N/+N | triggered | When you do, each other creature gets -X/-X until end of turn, where X is the number of cards exiled this way. |
 | Tah-Crop Elite | gets +N/+N | static | When you do, creatures you control get +1/+1 until end of turn. |
 | Tail Swipe | gets +N/+N | spell | If you cast this spell during your main phase, the creature you control gets +1/+1 until end of turn. |
 | The Muckslinger Gang | gets +N/+N | static | Creature spells you control and creature cards you own in any zone other than the battlefield or the stack get +3/+3. |
 | Tip the Scales | gets +N/+N | spell | When you do, all creatures get -X/-X until end of turn, where X is the sacrificed creature's toughness. |
 | Umara Mystic | gets +N/+N | triggered | Whenever you cast an instant, sorcery, or Wizard spell, this creature gets +2/+0 until end of turn. |
-| Wick's Patrol | gets +N/+N | triggered | When you do, target creature an opponent controls gets -X/-X until end of turn, where X is the greatest mana value among cards in your graveyard. |
 | Óin the Brave | gets +N/+N | static | As long as you have an enduring story, Óin gets +1/+0 and has haste. |
-| Admiral Brass, Unsinkable | has / gains | triggered | It has base power and toughness 4/4. |
 | Alpine Moon | has / gains | static | Lands your opponents control with the chosen name lose all land types and abilities, and they gain "{T}: Add one mana of any color." |
 | Behind the Mask | has / gains | spell | If evidence was collected, it has base power and toughness 1/1 until end of turn instead. |
-| Carnelian Orb of Dragonkind | has / gains | activated | If that mana is spent on a Dragon creature spell, it gains haste until end of turn. |
 | Cauldron Dance | has / gains | spell | That creature gains haste. |
 | Central Elevator // Promising Stairs | has / gains | triggered | When you unlock this door, search your library for a Room card that doesn't have the same name as a Room you control, reveal it, put it into your hand, then shuffle. |
 | Cherished Hatchling | has / gains | triggered | When this creature dies, you may cast Dinosaur spells this turn as though they had flash, and whenever you cast a Dinosaur spell this turn, it gains "When this creature enters, you may have it fight another target creature." |
-| Choreographed Sparks | has / gains | spell | The copy gains haste and "At the beginning of the end step, sacrifice this token." |
 | Conspicuous Snoop | has / gains | static | As long as the top card of your library is a Goblin card, this creature has all activated abilities of that card. |
 | Crater Elemental | has / gains | activated | Formidable — {2}{R}: This creature has base power 8 until end of turn. |
 | Curse of Misfortunes | has / gains | triggered | At the beginning of your upkeep, you may search your library for a Curse card that doesn't have the same name as a Curse attached to enchanted player, put it onto the battlefield attached to that player, then shuffle. |
-| Double Jump | has / gains | spell | Until end of turn, it has base power and toughness 5/5. |
 | Dragonrage | has / gains | spell | Until end of turn, attacking creatures you control gain "{R}: This creature gets +1/+0 until end of turn." |
 | Drana and Linvala | has / gains | static | This card has all activated abilities of all creatures your opponents control. |
 | Dread Wight | has / gains | triggered | Each of those creatures gains "{4}: Remove a paralyzation counter from this creature." |
-| Dreams of the Dead | has / gains | activated | That creature gains "Cumulative upkeep {2}." |
 | Encouraging Aviator // Jump | has / gains | spell | Target creature gains flying until end of turn. |
 | Energybending | has / gains | spell | Lands you control gain all basic land types until end of turn. |
-| Evolution Vat | has / gains | activated | Until end of turn, that creature gains "{2}{G}{U}: Double the number of +1/+1 counters on this creature." |
 | Expressive Firedancer | has / gains | triggered | If five or more mana was spent to cast that spell, this creature also gains double strike until end of turn. |
-| Family's Favor | has / gains | triggered | Until end of turn, it gains "Whenever this creature deals combat damage to a player, remove a shield counter from it. If you do, draw a card." |
 | Fblthp, Lost on the Range | has / gains | static | The top card of your library has plot. |
 | Flash Conscription | has / gains | spell | If {W} was spent to cast this spell, the creature gains "Whenever this creature deals combat damage, you gain that much life" until end of turn. |
 | For the Common Good | has / gains | spell | Then tokens you control gain indestructible until your next turn. |
 | Glamer Gifter | has / gains | triggered | Until end of turn, that creature has base power and toughness 4/4 and gains all creature types. |
-| Glyph of Delusion | has / gains | spell | The creature gains "This creature doesn't untap during your untap step if it has a glyph counter on it" and "At the beginning of your upkeep, remove a glyph counter from this creature." |
 | Goblin Wizard | has / gains | activated | {R}: Target this card gains protection from white until end of turn. |
 | Grell Philosopher | has / gains | triggered | Aberrant Tinkering — When this creature enters and at the beginning of your upkeep, each Horror you control gains all activated abilities of target artifact an opponent controls until end of turn. |
 | Greymond, Avacyn's Stalwart | has / gains | static | Humans you control have each of the chosen abilities. |
@@ -182,7 +163,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Maarika, Brutal Gladiator | has / gains | static | As long as it's your turn, this card has indestructible. |
 | Machine Man, Model X-51 | has / gains | triggered | Whenever you cast a noncreature spell, put a +1/+1 counter on this card and he gains flying until end of turn. |
 | Maha, Its Feathers Night | has / gains | static | Creatures your opponents control have base toughness 1. |
-| Mass Diminish | has / gains | spell | Until your next turn, creatures target player controls have base power and toughness 1/1. |
 | Massimo, the Magician | has / gains | triggered | If a card is exiled this way, that creature gains "Whenever this creature deals combat damage to a player, copy the exiled card. You may cast the copy without paying its mana cost." |
 | Mirran Safehouse | has / gains | static | As long as this artifact is on the battlefield, it has all activated abilities of all land cards in all graveyards. |
 | Mizzix, Replica Rider | has / gains | triggered | If the copy is a permanent spell, it gains haste and "At the beginning of your end step, sacrifice this permanent." |
@@ -205,7 +185,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Skill Borrower | has / gains | static | As long as the top card of your library is an artifact or creature card, this creature has all activated abilities of that card. |
 | Spider-Verse | has / gains | triggered | If the copy is a permanent spell, it gains haste. |
 | Spirit-Sister's Call | has / gains | triggered | If you do, return the chosen card from your graveyard to the battlefield and it gains "If this permanent would leave the battlefield, exile it instead of putting it anywhere else." |
-| Stilt-Man, Towering Terror | has / gains | triggered | It gains "This permanent can't be sacrificed" until the end of your next turn. |
 | Student of Elements // Tobita, Master of Winds | has / gains | static | Creatures you control have flying. |
 | Symmetry Sage | has / gains | triggered | Magecraft — Whenever you cast or copy an instant or sorcery spell, target creature you control has base power 2 until end of turn. |
 | Teferi's Reproach | has / gains | spell | Until that player's next turn, they gain protection from everything and their life total can't change. |
@@ -213,7 +192,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Teyo, Aegis Adept | has / gains | activated | It perpetually gains "This creature can attack as though it didn't have defender." |
 | The Apprentice's Folly | has / gains | static | I, II — Choose target nontoken creature you control that doesn't have the same name as a token you control. |
 | The Fourteenth Doctor | has / gains | static | If you do, it gains haste until end of turn. |
-| The Meep | has / gains | triggered | If you do, creatures you control have base power and toughness X/X until end of turn, where X is the sacrificed creature's mana value. |
 | The Ring // The Ring Tempts You | has / gains | static | Once it gains an ability, it has that ability for the rest of the game. |
 | Thranduil, the Elvenking | has / gains | static | This card has all activated abilities of all Elf cards in your graveyard. |
 | Trazyn the Infinite | has / gains | static | Prismatic Gallery — As long as this card is on the battlefield, it has all activated abilities of all artifact cards in your graveyard. |
@@ -221,32 +199,25 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Umara Wizard | has / gains | triggered | Whenever you cast an instant, sorcery, or Wizard spell, this creature gains flying until end of turn. |
 | Vhati il-Dal | has / gains | activated | {T}: Until end of turn, target creature has base power 1 or base toughness 1. |
 | Vision Quest | has / gains | spell | If X is 4 or greater, it gains haste until end of turn. |
+| Wake to Slaughter | has / gains | spell | It gains haste. |
 | Wedding Invitation | has / gains | activated | If it's a Vampire, it also gains lifelink until end of turn. |
 | Wicked // Cursed | has / gains | static | Enchanted creature has base power and toughness 1/1. |
 | Woolly Razorback | has / gains | static | As long as this creature has an ice counter on it, prevent all combat damage it would deal and it has defender. |
 | World War Hulk | has / gains | static | Until end of turn, double its power and toughness and it gains trample. |
-| Arbiter of the Ideal | is / are | triggered | That permanent is an enchantment in addition to its other types. |
+| Ascent of the Worthy | is / are | static | That creature is an Angel Warrior in addition to its other types. |
 | Dance of the Manse | is / are | spell | If X is 6 or more, those permanents are 4/4 creatures in addition to their other types. |
-| Drana, the Last Bloodchief | is / are | triggered | The creature is a Vampire in addition to its other types. |
-| Eluge, the Shoreless Sea | is / are | triggered | It's an Island in addition to its other types for as long as it has a flood counter on it. |
 | Ever After | is / are | spell | Each of those creatures is a black Zombie in addition to its other colors and types. |
 | Festival of Embers | is / are | static | During your turn, you may cast instant and sorcery spells from your graveyard by paying 1 life in addition to their other costs. |
 | Ghost Vacuum | is / are | activated | Each of them is a 1/1 Spirit in addition to its other types. |
-| Grave Betrayal | is / are | triggered | That creature is a black Zombie in addition to its other colors and types. |
 | Lim-Dûl the Necromancer | is / are | triggered | If it's a creature, it's a Zombie in addition to its other creature types. |
 | Maskwood Nexus | is / are | static | Creatures you control are every creature type. |
-| Minas Morgul, Dark Fortress | is / are | activated | For as long as that creature has a shadow counter on it, it's a Wraith in addition to its other types. |
-| Necromantic Selection | is / are | spell | It's a black Zombie in addition to its other colors and types. |
 | Ogre Battlecaster | is / are | triggered | Whenever this creature attacks, you may cast target instant or sorcery card from your graveyard by paying {R}{R} in addition to its other costs. |
-| Path of the Schemer | is / are | spell | It's an artifact in addition to its other types. |
-| Quicksilver Fountain | is / are | triggered | That land is an Island for as long as it has a flood counter on it. |
 | Secret Arcade // Dusty Parlor | is / are | static | Nonland permanents you control and permanent spells you control are enchantments in addition to their other types. |
 | Bloodletter of Aclazotz | loses | static | If an opponent would lose life during your turn, they lose twice that much life instead. |
 | Hammerheim | loses | activated | {T}: Target creature loses all landwalk abilities until end of turn. |
 | Hunted by The Family | loses | spell | For each of them, that creature's controller faces a villainous choice — That creature becomes a 1/1 white Human creature and loses all abilities, or you create a token that's a copy of it. |
 | Overwhelming Splendor | loses | static | Creatures enchanted player controls lose all abilities and have base power and toughness 1/1. |
 | Shelkin Brownie | loses | activated | {T}: Target creature loses all "bands with other" abilities until end of turn. |
-| Shizuko, Caller of Autumn | loses | triggered | Until end of turn, they don't lose this mana as steps and phases end. |
 | Spectacular Pileup | loses | spell | All creatures and Vehicles lose indestructible until end of turn, then destroy all creatures and Vehicles. |
 | Sudden Spoiling | loses | spell | Until end of turn, creatures target player controls lose all abilities and have base power and toughness 0/2. |
 | Tolaria | loses | activated | {T}: Target creature loses banding and all "bands with other" abilities until end of turn. |
