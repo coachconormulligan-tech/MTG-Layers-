@@ -1,0 +1,28 @@
+{
+  "name": "Gain activated abilities — legendary, opponents', graveyard and loyalty variants",
+  "notes": "Sweep theme 6 (2026-10-06). \"Has all activated abilities of …\" only parsed the 'on the battlefield', '+1/+1 counter' and exile forms. Robaran Mercenaries takes abilities only from legendary creatures you control (Arcanis, not Prodigal Pyromancer). Sharkey takes them from lands opponents control except mana abilities (Mishra's Factory's animate and pump, not its {T}: Add {C}; nothing from your own Maze of Ith). Thranduil takes them from Elf cards in your graveyard only (Llanowar Elves in yours, not Elvish Mystic in the opponent's, not Prodigal Pyromancer's ping from a non-Elf). Nicol Bolas, Dragon-God takes only loyalty abilities of other planeswalkers.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Robaran Mercenaries", "as": "robaran" },
+    { "add": "Arcanis the Omnipotent" },
+    { "add": "Prodigal Pyromancer" },
+    { "add": "Sharkey, Tyrant of the Shire", "as": "sharkey" },
+    { "add": "Maze of Ith" },
+    { "add": "Mishra's Factory", "controller": "p2" },
+    { "add": "Thranduil, the Elvenking", "as": "thranduil" },
+    { "call": ["addToGraveyard", "p1", "card:Llanowar Elves"] },
+    { "call": ["addToGraveyard", "p1", "card:Prodigal Pyromancer"] },
+    { "call": ["addToGraveyard", "p2", "card:Elvish Mystic"] },
+    { "add": "Nicol Bolas, Dragon-God", "as": "bolas" },
+    { "add": "Jace Beleren" }
+  ],
+  "asserts": [
+    { "perm": "Robaran Mercenaries", "final": { "abilities": { "$includes": ["{T}: Draw three cards."] } } },
+    { "perm": "Robaran Mercenaries", "final": { "abilities": { "$excludes": ["{T}: This creature deals 1 damage to any target."] } } },
+    { "perm": "Sharkey, Tyrant of the Shire", "final": { "abilities": { "$includes": ["{T}: Target Assembly-Worker creature gets +1/+1 until end of turn."] } } },
+    { "perm": "Sharkey, Tyrant of the Shire", "final": { "abilities": { "$excludes": ["{T}: Add {C}.", "{T}: Untap target attacking creature. Prevent all combat damage that would be dealt to and dealt by that creature this turn."] } } },
+    { "perm": "Thranduil, the Elvenking", "final": { "abilities": { "$includes": ["{T}: Add {G}."] } } },
+    { "perm": "Thranduil, the Elvenking", "final": { "abilities": { "$excludes": ["{T}: This creature deals 1 damage to any target."] } } },
+    { "perm": "Nicol Bolas, Dragon-God", "final": { "abilities": { "$includes": ["+2: Each player draws a card."] } } }
+  ]
+}

@@ -5470,12 +5470,78 @@ function parseCardEffects(permanent, card, opts = {}) {
     }
   }
 
+  // --- "<subject> has all activated abilities of [all] [other] [legendary] <type> (you control |
+  //     your opponents control | on the battlefield) [except mana abilities]" (Layer 6) ---
+  // Covers Robaran Mercenaries (legendary creatures you control), Drana and Linvala (creatures
+  // your opponents control), Sharkey (lands your opponents control, except mana abilities) and
+  // Nicol Bolas, Dragon-God ("all loyalty abilities of all other planeswalkers on the battlefield").
+  // "As long as this artifact is on the battlefield, it has …" is the same static ability.
+  const _gainAbilitiesSelfSubject = /^(?:it|this\s+(?:card|creature|permanent|artifact|enchantment|land|planeswalker))$/;
+  if (!effects.some(e => e.type === EFFECT_TYPE.GAIN_ACTIVATED_FROM_OTHERS)) {
+    const scopedRegex = /^(?:[A-Z][\w' ]* — )?(?:as long as this \w+ is on the battlefield,\s*)?(.+?)\s+(?:has|have)\s+all\s+(activated|loyalty)(\s+and\s+triggered)?\s+abilities\s+of\s+(?:all\s+|each\s+|every\s+)?(?:other\s+)?(?:(legendary|snow|basic)\s+)?([a-z]+)\s+(you control|your opponents control|an opponent controls|on the battlefield)(?:\s+except\s+(?:for\s+)?(mana|loyalty)\s+abilities)?(?=\s*(?:\.|$))/im;
+    const scMatch = scopedRegex.exec(oracleRaw);
+    const typeInfo = scMatch ? normalizeTypeWord(scMatch[5].toLowerCase()) : null;
+    if (scMatch && typeInfo) {
+      const subjectRaw = scMatch[1].trim().toLowerCase();
+      const loyaltyOnly = scMatch[2].toLowerCase() === 'loyalty';
+      const includeTriggered = !!scMatch[3];
+      const supertypeWord = (scMatch[4] || '').toLowerCase();
+      const whose = scMatch[6].toLowerCase();
+      const except = (scMatch[7] || '').toLowerCase();
+      let selfTarget = false, scope = 'global', appliesToFn = null;
+      if (_gainAbilitiesSelfSubject.test(subjectRaw)) {
+        selfTarget = true;
+        scope = 'targeted';
+      } else {
+        const bResult = buildAppliesToFromText(subjectRaw);
+        appliesToFn = bResult ? bResult.fn : null;
+      }
+      if (selfTarget || appliesToFn) {
+        const params = { requireType: typeInfo.value, includeTriggered,
+          sameController: whose === 'you control', differentName: false };
+        if (whose !== 'you control' && whose !== 'on the battlefield') params.opponentController = true;
+        if (supertypeWord) params.requireSupertype = supertypeWord.charAt(0).toUpperCase() + supertypeWord.slice(1);
+        if (loyaltyOnly) params.loyaltyOnly = true;
+        if (except === 'mana') params.excludeMana = true;
+        if (except === 'loyalty') params.excludeLoyalty = true;
+        const descSubject = selfTarget ? 'This permanent' : subjectRaw.charAt(0).toUpperCase() + subjectRaw.slice(1);
+        const descAbilities = loyaltyOnly ? 'loyalty abilities' : (includeTriggered ? 'activated and triggered abilities' : 'activated abilities');
+        pushEff('6', EFFECT_TYPE.GAIN_ACTIVATED_FROM_OTHERS, params,
+          { appliesTo: appliesToFn || null, scope, selfTarget: selfTarget || undefined, affectsSelf: selfTarget || false },
+          `${descSubject} has all ${descAbilities} of all other ${supertypeWord ? supertypeWord + ' ' : ''}${scMatch[5].toLowerCase()} ${whose}${except ? ` except ${except} abilities` : ''}.`);
+      }
+    }
+  }
+
+  // --- "<this> has all activated abilities of all <type or subtype> cards in (all graveyards |
+  //     your graveyard)" (Layer 6) ---
+  // Covers Mirran Safehouse (land cards in all graveyards), Thranduil, the Elvenking (Elf cards
+  // in your graveyard) and Trazyn the Infinite (artifact cards in your graveyard). Necrotic
+  // Ooze's creature-cards form has the same shape.
+  if (!effects.some(e => e.type === EFFECT_TYPE.GAIN_ACTIVATED_FROM_GRAVEYARDS)) {
+    const gyRegex = /^(?:[A-Z][\w' ]* — )?(?:as long as this \w+ is on the battlefield,\s*)?(.+?)\s+(?:has|have)\s+all\s+activated\s+abilities\s+of\s+(?:all\s+|each\s+)?([a-z]+)\s+cards\s+in\s+(all graveyards|your graveyard)(?=\s*(?:\.|$))/im;
+    const gyMatch = gyRegex.exec(oracleRaw);
+    if (gyMatch && _gainAbilitiesSelfSubject.test(gyMatch[1].trim().toLowerCase())) {
+      const word = gyMatch[2].toLowerCase();
+      const gyTypeInfo = normalizeTypeWord(word);
+      const ownGraveyardOnly = gyMatch[3].toLowerCase() === 'your graveyard';
+      const params = gyTypeInfo
+        ? { cardType: gyTypeInfo.value, ownGraveyardOnly }
+        : { cardSubtype: word.charAt(0).toUpperCase() + word.slice(1), ownGraveyardOnly };
+      pushEff('6', EFFECT_TYPE.GAIN_ACTIVATED_FROM_GRAVEYARDS, params,
+        { appliesTo: null, scope: 'targeted', selfTarget: true, affectsSelf: true },
+        `This permanent has all activated abilities of all ${word} cards in ${ownGraveyardOnly ? 'your graveyard' : 'all graveyards'}.`);
+    }
+  }
+
   // --- Imprint-style "<subject> has all activated [and triggered] abilities of the exiled card" ---
   // Covers Idris, Soul of the TARDIS ("Idris has all activated and triggered abilities of the exiled card...").
   // Distinct from exiledWithRegex above because the reference is the singular "the exiled card",
   // not "cards exiled with <ref>". Always filters to exile entries tagged with this source.
   if (!effects.some(e => e.type === EFFECT_TYPE.GAIN_ACTIVATED_FROM_EXILE)) {
-    const imprintAbilitiesRegex = /^(.+?)\s+(?:has|have)\s+all\s+activated(\s+and\s+triggered)?\s+abilities\s+of\s+the\s+exiled\s+cards?\b/im;
+    // "has each activated ability of the exiled cards used to craft it" (Locus of Enlightenment)
+    // names the same set: craft materials are exiled with the permanent.
+    const imprintAbilitiesRegex = /^(.+?)\s+(?:has|have)\s+(?:all|each)\s+activated(\s+and\s+triggered)?\s+abilit(?:ies|y)\s+of\s+the\s+exiled\s+cards?\b/im;
     const imprintMatch = imprintAbilitiesRegex.exec(oracleRaw);
     if (imprintMatch) {
       const subjectRaw = imprintMatch[1].trim().toLowerCase();
