@@ -899,7 +899,7 @@ function addCardToBattlefield(card) {
   const layout = card.layout || '';
   const isRoom = card.card_faces?.some(f => (f.type_line || '').includes('Room'));
   const needsFaceChoice = !isRoom && card.card_faces?.length >= 2 &&
-    (CHOOSEABLE_FACE_LAYOUTS.has(layout) || layout === 'modal_dfc');
+    (_hasChooseableFaces(card) || layout === 'modal_dfc');
   if (needsFaceChoice) {
     _showSplitFaceModal(card);
     return;
@@ -957,7 +957,7 @@ function _showSplitFaceModal(card) {
   const html = `<div class="modal-overlay" id="split-face-modal" onclick="if(event.target===this)_closeSplitFaceModal()">
     <div class="modal split-face-modal-box">
       <div class="modal-header">
-        <h3>Choose which half to play — <em>${escapeHtml(card.name)}</em></h3>
+        <h3>${card.layout === 'double_faced_token' ? 'Choose which token to add' : 'Choose which half to play'} — <em>${escapeHtml(card.name)}</em></h3>
         <button class="modal-close" onclick="_closeSplitFaceModal()">\u00D7</button>
       </div>
       <div class="modal-body split-face-body">${faceCards}</div>

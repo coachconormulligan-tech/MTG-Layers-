@@ -11,6 +11,31 @@ const TRANSFORMABLE_LAYOUTS = new Set(['transform', 'modal_dfc', 'reversible_car
 /* Layouts where the user picks one half to play (split cards, aftermath, adventure) */
 const CHOOSEABLE_FACE_LAYOUTS = new Set(['split', 'aftermath', 'adventure']);
 
+/* Double-faced tokens (Scryfall layout 'double_faced_token') print an unrelated token on each
+   side, and keep type line, P/T, colours and text on the faces only. A face counts as playable
+   when it has a real card type — 'Card' helper faces (City's Blessing) and bare 'Token' backs don't. */
+function _playableTokenFaces(card) {
+  if (!card || card.layout !== 'double_faced_token' || !card.card_faces) return [];
+  return card.card_faces.map((f, i) => i).filter(i =>
+    /\b(Creature|Artifact|Enchantment|Land|Planeswalker|Battle)\b/.test(card.card_faces[i].type_line || ''));
+}
+
+/* A double-faced token whose front says "Transform this …" (Incubator // Phyrexian) is one
+   token that flips, not a choice between two. */
+function _isTransformingToken(card) {
+  return _playableTokenFaces(card).length >= 2 && /\btransform this\b/i.test(card.card_faces[0].oracle_text || '');
+}
+
+/* True when the player picks which face to put onto the battlefield: split/aftermath/adventure
+   cards (not Rooms), and double-faced tokens with two playable sides (Angel // Demon). */
+function _hasChooseableFaces(card) {
+  const faces = card && card.card_faces;
+  if (!faces || faces.length < 2) return false;
+  if (faces.some(f => (f.type_line || '').includes('Room'))) return false;
+  if (CHOOSEABLE_FACE_LAYOUTS.has(card.layout || '')) return true;
+  return _playableTokenFaces(card).length >= 2 && !_isTransformingToken(card);
+}
+
 /* Compute CMC from a mana cost string like "{2}{G}" → 3.
    Handles generic numbers, variable (X=0), twobrid ({2/W}=2), and all pip symbols (=1 each). */
 function _cmcFromManaCost(manaCost) {
@@ -108,6 +133,30 @@ function _resolveCardFace(card, faceIndex) {
     };
   }
 
+  // Double-faced tokens: use the requested side, or the playable one when the requested side
+  // isn't a permanent ("Angel // Angel" has a bare 'Token' back; "City's Blessing // Elemental"
+  // has a 'Card' front). With no playable side (minigame cards) fall through unchanged.
+  if (layout === 'double_faced_token') {
+    const playable = _playableTokenFaces(card);
+    if (playable.length) {
+      const idx = playable.includes(faceIndex) ? faceIndex : playable[0];
+      const face = faces[idx];
+      return {
+        ...card,
+        name: face.name || card.name,
+        oracle_text: face.oracle_text || '',
+        type_line: face.type_line || '',
+        power: face.power,
+        toughness: face.toughness,
+        colors: face.colors || card.colors || [],
+        mana_cost: face.mana_cost || '',
+        image_uris: face.image_uris || card.image_uris || null,
+        _activeFace: idx,
+        _isFaceResolved: true,
+      };
+    }
+  }
+
   // Room (and other fallback layouts): combine oracle text from all faces
   // Use the top-level card data but fill in missing fields from faces
   const combinedOracle = faces.map(f => f.oracle_text || '').filter(Boolean).join('\n');
@@ -176,10 +225,10 @@ function createPermanent(card, timestamp, opts = {}) {
     const layout = card.layout || '';
     perm.isMultiFace = true;
     perm.cardLayout = layout;
-    perm.activeFaceIndex = faceIndex;
-    perm.isTransformable = TRANSFORMABLE_LAYOUTS.has(layout) || layout === 'battle';
+    perm.activeFaceIndex = resolvedCard._activeFace !== undefined ? resolvedCard._activeFace : faceIndex;
+    perm.isTransformable = TRANSFORMABLE_LAYOUTS.has(layout) || layout === 'battle' || _isTransformingToken(card);
     const _isRoomCard = card.card_faces.some(f => (f.type_line || '').includes('Room'));
-    perm.isChooseableFace = CHOOSEABLE_FACE_LAYOUTS.has(layout) && !_isRoomCard;
+    perm.isChooseableFace = _hasChooseableFaces(card);
     perm.isRoom = _isRoomCard;
     // Store face names for display
     perm.faceNames = card.card_faces.map(f => f.name || '');

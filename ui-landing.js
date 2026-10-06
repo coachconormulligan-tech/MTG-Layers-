@@ -229,7 +229,7 @@ function _addStagedCardToBattlefield(card) {
   const layout = card.layout || '';
   const isRoom = card.card_faces?.some(f => (f.type_line || '').includes('Room'));
   const needsFaceChoice = !isRoom && card.card_faces?.length >= 2 &&
-    (CHOOSEABLE_FACE_LAYOUTS.has(layout) || layout === 'modal_dfc');
+    (_hasChooseableFaces(card) || layout === 'modal_dfc');
   _doAddCardToBattlefield(card, needsFaceChoice ? { faceIndex: 0 } : {});
 }
 

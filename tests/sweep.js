@@ -357,7 +357,7 @@ function sweepFace(card, faceIndex) {
   for (const card of cards) {
     const isRoom = (card.card_faces || []).some(f => (f.type_line || '').includes('Room'));
     const multi = card.card_faces && card.card_faces.length >= 2 && !isRoom &&
-      (TRANSFORMABLE_LAYOUTS.has(card.layout) || CHOOSEABLE_FACE_LAYOUTS.has(card.layout) || card.layout === 'battle');
+      (TRANSFORMABLE_LAYOUTS.has(card.layout) || _hasChooseableFaces(card) || _isTransformingToken(card) || card.layout === 'battle');
     const nFaces = multi ? card.card_faces.length : 1;
     for (let fi = 0; fi < nFaces; fi++) {
       let rec;
