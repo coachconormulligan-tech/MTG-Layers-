@@ -174,13 +174,13 @@ function _finalizeEffects(effects, isEquipmentSource, permanent, oracleText) {
     const chosen = permanent._targetOpponentPlayerId || null;
     let tagged = false;
     for (const eff of effects) {
-      if (eff.scope === 'global') {
+      if (eff.scope === 'global' && !(eff.params && (eff.params.mutualSwap || eff.params.opponentGetsControl))) {
         eff._targetsOpponentPlayer = true;
         if (chosen) eff._targetOpponentPlayerId = chosen;
         tagged = true;
       }
     }
-    if (tagged) permanent._targetsOpponentPlayer = true;
+    if (tagged || effects.some(e => e.params && (e.params.mutualSwap || e.params.opponentGetsControl))) permanent._targetsOpponentPlayer = true;
   }
   if (permanent?._isEnchantPlayer) {
     const chosenPlayer = permanent._enchantedPlayerId || null;

@@ -1785,6 +1785,10 @@ const Battlefield = {
       if (e.sourceId === effectSourceId && e._targetsOpponentPlayer) {
         e._targetOpponentPlayerId = playerId || null;
       }
+      // "You and target opponent each gain control of all creatures the other controls".
+      if (e.sourceId === effectSourceId && e.params && (e.params.mutualSwap || e.params.opponentGetsControl)) {
+        e.params.newController = playerId || null;
+      }
     });
   },
 
