@@ -1,0 +1,1920 @@
+{
+ "name": "Genju of the Fens — enchanted Swamp becomes a creature only when activated",
+ "notes": "Found by tests/sweep.py (theme: Genju cycle). '{2}: Until end of turn, enchanted Swamp becomes a 2/2 black Spirit creature with \"{B}: This creature gets +1/+1 until end of turn.\" It's still a land.' The aura-transform parser only knew 'enchanted creature/land/…', not a basic land type, so firing did nothing. It now accepts the five basic land types and skips text inside an activated ability on the static pass, so the Swamp under Genju of the Fens is animated by the fired ability while the Forest under an un-activated Genju of the Cedars stays a land. Genju of the Falls checks 'with flying until end of turn'.",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Swamp",
+    "as": "swamp"
+   },
+   {
+    "add": "Forest",
+    "as": "forest"
+   },
+   {
+    "add": "Island",
+    "as": "island"
+   },
+   {
+    "add": "Genju of the Fens",
+    "as": "fens"
+   },
+   {
+    "call": [
+     "setTarget",
+     "@fens",
+     "@swamp"
+    ]
+   },
+   {
+    "add": "Genju of the Cedars",
+    "as": "cedars"
+   },
+   {
+    "call": [
+     "setTarget",
+     "@cedars",
+     "@forest"
+    ]
+   },
+   {
+    "add": "Genju of the Falls",
+    "as": "falls"
+   },
+   {
+    "call": [
+     "setTarget",
+     "@falls",
+     "@island"
+    ]
+   },
+   {
+    "call": [
+     "addActivatedAbility",
+     "@fens",
+     1,
+     "Until end of turn, enchanted Swamp becomes a 2/2 black Spirit creature with \"{B}: This creature gets +1/+1 until end of turn.\" It's still a land.",
+     "{2}: Until end of turn, enchanted Swamp becomes a 2/2 black Spirit creature with \"{B}: This creature gets +1/+1 until end of turn.\" It's still a land."
+    ]
+   },
+   {
+    "call": [
+     "addActivatedAbility",
+     "@falls",
+     1,
+     "Enchanted Island becomes a 3/2 blue Spirit creature with flying until end of turn. It's still a land.",
+     "{2}: Enchanted Island becomes a 3/2 blue Spirit creature with flying until end of turn. It's still a land."
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Swamp",
+   "final": {
+    "power": 2,
+    "toughness": 2,
+    "types": {
+     "$includes": [
+      "Land",
+      "Creature"
+     ]
+    },
+    "subtypes": {
+     "$includes": [
+      "Swamp",
+      "Spirit"
+     ]
+    },
+    "colors": [
+     "B"
+    ],
+    "abilities": {
+     "$includes": [
+      "{B}: This creature gets +1/+1 until end of turn"
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Island",
+   "final": {
+    "power": 3,
+    "toughness": 2,
+    "types": {
+     "$includes": [
+      "Land",
+      "Creature"
+     ]
+    },
+    "abilities": {
+     "$includes": [
+      "Flying"
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Forest",
+   "final": {
+    "power": null,
+    "types": {
+     "$excludes": [
+      "Creature"
+     ]
+    }
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "b7387103-1df1-4fd0-9e91-1544509792c7",
+     "oracle_id": "56719f6a-1a6c-4c0a-8d21-18f7d7350b68",
+     "multiverse_ids": [],
+     "name": "Swamp",
+     "lang": "en",
+     "released_at": "2026-11-13",
+     "uri": "https://api.scryfall.com/cards/b7387103-1df1-4fd0-9e91-1544509792c7",
+     "scryfall_uri": "https://scryfall.com/card/trk/321/swamp?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-08-06T02:00:59Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/b/7/b7387103-1df1-4fd0-9e91-1544509792c7.jpg?1785981659",
+      "normal": "https://cards.scryfall.io/normal/front/b/7/b7387103-1df1-4fd0-9e91-1544509792c7.jpg?1785981659",
+      "large": "https://cards.scryfall.io/large/front/b/7/b7387103-1df1-4fd0-9e91-1544509792c7.jpg?1785981659",
+      "png": "https://cards.scryfall.io/png/front/b/7/b7387103-1df1-4fd0-9e91-1544509792c7.png?1785981659",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/b/7/b7387103-1df1-4fd0-9e91-1544509792c7.jpg?1785981659",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/b/7/b7387103-1df1-4fd0-9e91-1544509792c7.jpg?1785981659",
+      "thumb": "https://cards.scryfall.io/thumb/front/b/7/b7387103-1df1-4fd0-9e91-1544509792c7.webp?1785981659",
+      "grid": "https://cards.scryfall.io/grid/front/b/7/b7387103-1df1-4fd0-9e91-1544509792c7.webp?1785981659",
+      "display": "https://cards.scryfall.io/display/front/b/7/b7387103-1df1-4fd0-9e91-1544509792c7.webp?1785981659",
+      "art": "https://cards.scryfall.io/art/front/b/7/b7387103-1df1-4fd0-9e91-1544509792c7.webp?1785981659",
+      "crop": "https://cards.scryfall.io/crop/front/b/7/b7387103-1df1-4fd0-9e91-1544509792c7.webp?1785981659"
+     },
+     "mana_cost": "",
+     "cmc": 0,
+     "type_line": "Basic Land — Swamp",
+     "oracle_text": "({T}: Add {B}.)",
+     "colors": [],
+     "color_identity": [
+      "B"
+     ],
+     "keywords": [],
+     "produced_mana": [
+      "B"
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo",
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "b47039dc-da5a-448c-8feb-e77d458108a6",
+     "set": "trk",
+     "set_name": "Star Trek",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/b47039dc-da5a-448c-8feb-e77d458108a6",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Atrk&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/trk?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/b7387103-1df1-4fd0-9e91-1544509792c7/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A56719f6a-1a6c-4c0a-8d21-18f7d7350b68&unique=prints",
+     "collector_number": "321",
+     "digital": false,
+     "rarity": "common",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Bastien Grivet",
+     "artist_ids": [
+      "434a6cf6-c6bf-4f87-84db-d0a902393b9e"
+     ],
+     "illustration_id": "2df014dd-87f0-401c-b09e-54a7b53f6459",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "universesbeyond"
+     ],
+     "prices": {
+      "usd": null,
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DSwamp",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DSwamp",
+      "edhrec": "https://edhrec.com/route/?cc=Swamp"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fmagic%2Fproduct%3FproductLineName%3Dmagic%26q%3DSwamp%26view%3Dgrid",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products/Search?referrer=scryfall&searchString=Swamp&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Swamp&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "dce15387-4114-4b3e-91aa-5b42b45c44ac",
+     "oracle_id": "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
+     "multiverse_ids": [],
+     "name": "Forest",
+     "lang": "en",
+     "released_at": "2026-11-13",
+     "uri": "https://api.scryfall.com/cards/dce15387-4114-4b3e-91aa-5b42b45c44ac",
+     "scryfall_uri": "https://scryfall.com/card/trk/325/forest?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-08-06T02:01:15Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+      "normal": "https://cards.scryfall.io/normal/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+      "large": "https://cards.scryfall.io/large/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+      "png": "https://cards.scryfall.io/png/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.png?1785981675",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+      "thumb": "https://cards.scryfall.io/thumb/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.webp?1785981675",
+      "grid": "https://cards.scryfall.io/grid/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.webp?1785981675",
+      "display": "https://cards.scryfall.io/display/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.webp?1785981675",
+      "art": "https://cards.scryfall.io/art/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.webp?1785981675",
+      "crop": "https://cards.scryfall.io/crop/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.webp?1785981675"
+     },
+     "mana_cost": "",
+     "cmc": 0,
+     "type_line": "Basic Land — Forest",
+     "oracle_text": "({T}: Add {G}.)",
+     "colors": [],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "produced_mana": [
+      "G"
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "4fae200d-5757-4924-8cf4-ab2a5ef2ccc0",
+       "component": "combo_piece",
+       "name": "Forest",
+       "type_line": "Basic Land — Forest",
+       "uri": "https://api.scryfall.com/cards/4fae200d-5757-4924-8cf4-ab2a5ef2ccc0"
+      },
+      {
+       "object": "related_card",
+       "id": "aed8ae06-ae54-4a16-8830-6547164ce6ae",
+       "component": "combo_piece",
+       "name": "Gilt-Leaf Alchemist",
+       "type_line": "Creature — Elf Druid",
+       "uri": "https://api.scryfall.com/cards/aed8ae06-ae54-4a16-8830-6547164ce6ae"
+      }
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo",
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "b47039dc-da5a-448c-8feb-e77d458108a6",
+     "set": "trk",
+     "set_name": "Star Trek",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/b47039dc-da5a-448c-8feb-e77d458108a6",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Atrk&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/trk?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/dce15387-4114-4b3e-91aa-5b42b45c44ac/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ab34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6&unique=prints",
+     "collector_number": "325",
+     "digital": false,
+     "rarity": "common",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Bastien Grivet",
+     "artist_ids": [
+      "434a6cf6-c6bf-4f87-84db-d0a902393b9e"
+     ],
+     "illustration_id": "5a6bbfa9-4075-48e4-b06a-78e31477bd3f",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "universesbeyond"
+     ],
+     "prices": {
+      "usd": null,
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DForest",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DForest",
+      "edhrec": "https://edhrec.com/route/?cc=Forest"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fmagic%2Fproduct%3FproductLineName%3Dmagic%26q%3DForest%26view%3Dgrid",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products/Search?referrer=scryfall&searchString=Forest&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Forest&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "f3cc07cd-cc79-4745-b0b7-eade60175cc3",
+     "oracle_id": "b2c6aa39-2d2a-459c-a555-fb48ba993373",
+     "multiverse_ids": [],
+     "name": "Island",
+     "lang": "en",
+     "released_at": "2026-11-13",
+     "uri": "https://api.scryfall.com/cards/f3cc07cd-cc79-4745-b0b7-eade60175cc3",
+     "scryfall_uri": "https://scryfall.com/card/trk/319/island?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-08-06T02:00:45Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/f/3/f3cc07cd-cc79-4745-b0b7-eade60175cc3.jpg?1785981645",
+      "normal": "https://cards.scryfall.io/normal/front/f/3/f3cc07cd-cc79-4745-b0b7-eade60175cc3.jpg?1785981645",
+      "large": "https://cards.scryfall.io/large/front/f/3/f3cc07cd-cc79-4745-b0b7-eade60175cc3.jpg?1785981645",
+      "png": "https://cards.scryfall.io/png/front/f/3/f3cc07cd-cc79-4745-b0b7-eade60175cc3.png?1785981645",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/f/3/f3cc07cd-cc79-4745-b0b7-eade60175cc3.jpg?1785981645",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/f/3/f3cc07cd-cc79-4745-b0b7-eade60175cc3.jpg?1785981645",
+      "thumb": "https://cards.scryfall.io/thumb/front/f/3/f3cc07cd-cc79-4745-b0b7-eade60175cc3.webp?1785981645",
+      "grid": "https://cards.scryfall.io/grid/front/f/3/f3cc07cd-cc79-4745-b0b7-eade60175cc3.webp?1785981645",
+      "display": "https://cards.scryfall.io/display/front/f/3/f3cc07cd-cc79-4745-b0b7-eade60175cc3.webp?1785981645",
+      "art": "https://cards.scryfall.io/art/front/f/3/f3cc07cd-cc79-4745-b0b7-eade60175cc3.webp?1785981645",
+      "crop": "https://cards.scryfall.io/crop/front/f/3/f3cc07cd-cc79-4745-b0b7-eade60175cc3.webp?1785981645"
+     },
+     "mana_cost": "",
+     "cmc": 0,
+     "type_line": "Basic Land — Island",
+     "oracle_text": "({T}: Add {U}.)",
+     "colors": [],
+     "color_identity": [
+      "U"
+     ],
+     "keywords": [],
+     "produced_mana": [
+      "U"
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo",
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "b47039dc-da5a-448c-8feb-e77d458108a6",
+     "set": "trk",
+     "set_name": "Star Trek",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/b47039dc-da5a-448c-8feb-e77d458108a6",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Atrk&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/trk?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/f3cc07cd-cc79-4745-b0b7-eade60175cc3/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ab2c6aa39-2d2a-459c-a555-fb48ba993373&unique=prints",
+     "collector_number": "319",
+     "digital": false,
+     "rarity": "common",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Bastien Grivet",
+     "artist_ids": [
+      "434a6cf6-c6bf-4f87-84db-d0a902393b9e"
+     ],
+     "illustration_id": "5a803c8c-9fe3-4346-8ef7-6b4ab31f0c03",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "universesbeyond"
+     ],
+     "prices": {
+      "usd": null,
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DIsland",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DIsland",
+      "edhrec": "https://edhrec.com/route/?cc=Island"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fmagic%2Fproduct%3FproductLineName%3Dmagic%26q%3DIsland%26view%3Dgrid",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products/Search?referrer=scryfall&searchString=Island&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Island&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "d8e06ff3-5fdd-444d-916e-3764f795456e",
+     "oracle_id": "f6c9c0e6-b851-4ede-8d7a-190c7cfd9051",
+     "multiverse_ids": [
+      393896
+     ],
+     "tcgplayer_id": 93710,
+     "cardmarket_id": 269996,
+     "name": "Genju of the Fens",
+     "lang": "en",
+     "released_at": "2014-12-05",
+     "uri": "https://api.scryfall.com/cards/d8e06ff3-5fdd-444d-916e-3764f795456e",
+     "scryfall_uri": "https://scryfall.com/card/gvl/47/genju-of-the-fens?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T10:32:32Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/d/8/d8e06ff3-5fdd-444d-916e-3764f795456e.jpg?1783938752",
+      "normal": "https://cards.scryfall.io/normal/front/d/8/d8e06ff3-5fdd-444d-916e-3764f795456e.jpg?1783938752",
+      "large": "https://cards.scryfall.io/large/front/d/8/d8e06ff3-5fdd-444d-916e-3764f795456e.jpg?1783938752",
+      "png": "https://cards.scryfall.io/png/front/d/8/d8e06ff3-5fdd-444d-916e-3764f795456e.png?1783938752",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/d/8/d8e06ff3-5fdd-444d-916e-3764f795456e.jpg?1783938752",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/d/8/d8e06ff3-5fdd-444d-916e-3764f795456e.jpg?1783938752",
+      "thumb": "https://cards.scryfall.io/thumb/front/d/8/d8e06ff3-5fdd-444d-916e-3764f795456e.webp?1783938752",
+      "grid": "https://cards.scryfall.io/grid/front/d/8/d8e06ff3-5fdd-444d-916e-3764f795456e.webp?1783938752",
+      "display": "https://cards.scryfall.io/display/front/d/8/d8e06ff3-5fdd-444d-916e-3764f795456e.webp?1783938752",
+      "art": "https://cards.scryfall.io/art/front/d/8/d8e06ff3-5fdd-444d-916e-3764f795456e.webp?1783938752",
+      "crop": "https://cards.scryfall.io/crop/front/d/8/d8e06ff3-5fdd-444d-916e-3764f795456e.webp?1783938752"
+     },
+     "mana_cost": "{B}",
+     "cmc": 1,
+     "type_line": "Enchantment — Aura",
+     "oracle_text": "Enchant Swamp\n{2}: Until end of turn, enchanted Swamp becomes a 2/2 black Spirit creature with \"{B}: This creature gets +1/+1 until end of turn.\" It's still a land.\nWhen enchanted Swamp is put into a graveyard, you may return this card from your graveyard to your hand.",
+     "colors": [
+      "B"
+     ],
+     "color_identity": [
+      "B"
+     ],
+     "keywords": [
+      "Enchant"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "db352daa-9827-44ca-ba19-511969a97689",
+     "set": "gvl",
+     "set_name": "Duel Decks Anthology: Garruk vs. Liliana",
+     "set_type": "duel_deck",
+     "set_uri": "https://api.scryfall.com/sets/db352daa-9827-44ca-ba19-511969a97689",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Agvl&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/gvl?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/d8e06ff3-5fdd-444d-916e-3764f795456e/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Af6c9c0e6-b851-4ede-8d7a-190c7cfd9051&unique=prints",
+     "collector_number": "47",
+     "digital": false,
+     "rarity": "uncommon",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Tsutomu Kawade",
+     "artist_ids": [
+      "433a40d2-2caa-4cba-ba8d-0308a951d026"
+     ],
+     "illustration_id": "7e6922fd-18b5-4882-9ba5-9fb5fb46517a",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 26359,
+     "penny_rank": 12323,
+     "prices": {
+      "usd": "0.21",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.30",
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=393896&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGenju%2Bof%2Bthe%2BFens",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGenju%2Bof%2Bthe%2BFens",
+      "edhrec": "https://edhrec.com/route/?cc=Genju+of+the+Fens"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F93710%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=269996&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Genju+of+the+Fens&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 4,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": "perm_1",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 5,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_5",
+    "scryfallData": {
+     "object": "card",
+     "id": "1254929b-0be1-4068-af69-7e59840c8b98",
+     "oracle_id": "ada3c285-3449-4037-8b44-42e128456a65",
+     "multiverse_ids": [
+      393895
+     ],
+     "tcgplayer_id": 93709,
+     "cardmarket_id": 269995,
+     "name": "Genju of the Cedars",
+     "lang": "en",
+     "released_at": "2014-12-05",
+     "uri": "https://api.scryfall.com/cards/1254929b-0be1-4068-af69-7e59840c8b98",
+     "scryfall_uri": "https://scryfall.com/card/gvl/13/genju-of-the-cedars?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T10:32:39Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/1/2/1254929b-0be1-4068-af69-7e59840c8b98.jpg?1783938759",
+      "normal": "https://cards.scryfall.io/normal/front/1/2/1254929b-0be1-4068-af69-7e59840c8b98.jpg?1783938759",
+      "large": "https://cards.scryfall.io/large/front/1/2/1254929b-0be1-4068-af69-7e59840c8b98.jpg?1783938759",
+      "png": "https://cards.scryfall.io/png/front/1/2/1254929b-0be1-4068-af69-7e59840c8b98.png?1783938759",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/1/2/1254929b-0be1-4068-af69-7e59840c8b98.jpg?1783938759",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/1/2/1254929b-0be1-4068-af69-7e59840c8b98.jpg?1783938759",
+      "thumb": "https://cards.scryfall.io/thumb/front/1/2/1254929b-0be1-4068-af69-7e59840c8b98.webp?1783938759",
+      "grid": "https://cards.scryfall.io/grid/front/1/2/1254929b-0be1-4068-af69-7e59840c8b98.webp?1783938759",
+      "display": "https://cards.scryfall.io/display/front/1/2/1254929b-0be1-4068-af69-7e59840c8b98.webp?1783938759",
+      "art": "https://cards.scryfall.io/art/front/1/2/1254929b-0be1-4068-af69-7e59840c8b98.webp?1783938759",
+      "crop": "https://cards.scryfall.io/crop/front/1/2/1254929b-0be1-4068-af69-7e59840c8b98.webp?1783938759"
+     },
+     "mana_cost": "{G}",
+     "cmc": 1,
+     "type_line": "Enchantment — Aura",
+     "oracle_text": "Enchant Forest\n{2}: Enchanted Forest becomes a 4/4 green Spirit creature until end of turn. It's still a land.\nWhen enchanted Forest is put into a graveyard, you may return this card from your graveyard to your hand.",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [
+      "Enchant"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "db352daa-9827-44ca-ba19-511969a97689",
+     "set": "gvl",
+     "set_name": "Duel Decks Anthology: Garruk vs. Liliana",
+     "set_type": "duel_deck",
+     "set_uri": "https://api.scryfall.com/sets/db352daa-9827-44ca-ba19-511969a97689",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Agvl&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/gvl?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/1254929b-0be1-4068-af69-7e59840c8b98/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aada3c285-3449-4037-8b44-42e128456a65&unique=prints",
+     "collector_number": "13",
+     "digital": false,
+     "rarity": "uncommon",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Arnie Swekel",
+     "artist_ids": [
+      "af10ecf2-eb82-4100-97b2-6c236b0fa644"
+     ],
+     "illustration_id": "a984b201-8064-4113-aeec-7fa633321899",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 22622,
+     "penny_rank": 10569,
+     "prices": {
+      "usd": "0.38",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.35",
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=393895&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGenju%2Bof%2Bthe%2BCedars",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGenju%2Bof%2Bthe%2BCedars",
+      "edhrec": "https://edhrec.com/route/?cc=Genju+of+the+Cedars"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F93709%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=269995&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Genju+of+the+Cedars&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 6,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": "perm_2",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 7,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_6",
+    "scryfallData": {
+     "object": "card",
+     "id": "c6ba3a2f-0224-4ace-bb49-8dc41b34fb57",
+     "oracle_id": "c546747a-1935-4c59-a45f-cad7da41fe38",
+     "multiverse_ids": [
+      442048
+     ],
+     "mtgo_id": 67032,
+     "mtgo_foil_id": 67033,
+     "tcgplayer_id": 161814,
+     "cardmarket_id": 319476,
+     "name": "Genju of the Falls",
+     "lang": "en",
+     "released_at": "2018-03-16",
+     "uri": "https://api.scryfall.com/cards/c6ba3a2f-0224-4ace-bb49-8dc41b34fb57",
+     "scryfall_uri": "https://scryfall.com/card/a25/59/genju-of-the-falls?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T09:32:58Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/c/6/c6ba3a2f-0224-4ace-bb49-8dc41b34fb57.jpg?1783935178",
+      "normal": "https://cards.scryfall.io/normal/front/c/6/c6ba3a2f-0224-4ace-bb49-8dc41b34fb57.jpg?1783935178",
+      "large": "https://cards.scryfall.io/large/front/c/6/c6ba3a2f-0224-4ace-bb49-8dc41b34fb57.jpg?1783935178",
+      "png": "https://cards.scryfall.io/png/front/c/6/c6ba3a2f-0224-4ace-bb49-8dc41b34fb57.png?1783935178",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/c/6/c6ba3a2f-0224-4ace-bb49-8dc41b34fb57.jpg?1783935178",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/c/6/c6ba3a2f-0224-4ace-bb49-8dc41b34fb57.jpg?1783935178",
+      "thumb": "https://cards.scryfall.io/thumb/front/c/6/c6ba3a2f-0224-4ace-bb49-8dc41b34fb57.webp?1783935178",
+      "grid": "https://cards.scryfall.io/grid/front/c/6/c6ba3a2f-0224-4ace-bb49-8dc41b34fb57.webp?1783935178",
+      "display": "https://cards.scryfall.io/display/front/c/6/c6ba3a2f-0224-4ace-bb49-8dc41b34fb57.webp?1783935178",
+      "art": "https://cards.scryfall.io/art/front/c/6/c6ba3a2f-0224-4ace-bb49-8dc41b34fb57.webp?1783935178",
+      "crop": "https://cards.scryfall.io/crop/front/c/6/c6ba3a2f-0224-4ace-bb49-8dc41b34fb57.webp?1783935178"
+     },
+     "mana_cost": "{U}",
+     "cmc": 1,
+     "type_line": "Enchantment — Aura",
+     "oracle_text": "Enchant Island\n{2}: Enchanted Island becomes a 3/2 blue Spirit creature with flying until end of turn. It's still a land.\nWhen enchanted Island is put into a graveyard, you may return this card from your graveyard to your hand.",
+     "colors": [
+      "U"
+     ],
+     "color_identity": [
+      "U"
+     ],
+     "keywords": [
+      "Enchant"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "41ee6e2f-69b3-4c53-8a8e-960f5e974cfc",
+     "set": "a25",
+     "set_name": "Masters 25",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/41ee6e2f-69b3-4c53-8a8e-960f5e974cfc",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aa25&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/a25?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/c6ba3a2f-0224-4ace-bb49-8dc41b34fb57/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ac546747a-1935-4c59-a45f-cad7da41fe38&unique=prints",
+     "collector_number": "59",
+     "digital": false,
+     "rarity": "uncommon",
+     "watermark": "set",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Glen Angus",
+     "artist_ids": [
+      "7be3b9e4-de9b-4a3d-884e-e67b9681d409"
+     ],
+     "illustration_id": "32fb0bfa-5a92-4987-b177-1af06e631b65",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 25968,
+     "penny_rank": 14805,
+     "prices": {
+      "usd": "0.11",
+      "usd_foil": "0.34",
+      "usd_etched": null,
+      "eur": "0.12",
+      "eur_foil": "0.25",
+      "tix": "0.06"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=442048&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGenju%2Bof%2Bthe%2BFalls",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGenju%2Bof%2Bthe%2BFalls",
+      "edhrec": "https://edhrec.com/route/?cc=Genju+of+the+Falls"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F161814%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=319476&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/67032?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 8,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": "perm_3",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 9,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [
+   {
+    "id": "act_perm_4_1_10",
+    "kind": "activated",
+    "pseudoKind": "ability",
+    "sourceId": "perm_4",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 1,
+    "timestamp": 10,
+    "effectText": "Until end of turn, enchanted Swamp becomes a 2/2 black Spirit creature with \"{B}: This creature gets +1/+1 until end of turn.\" It's still a land.",
+    "fullText": "{2}: Until end of turn, enchanted Swamp becomes a 2/2 black Spirit creature with \"{B}: This creature gets +1/+1 until end of turn.\" It's still a land.",
+    "chosenColor": null,
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "firedAtStates": null,
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Swamp",
+       "imageUri": "https://cards.scryfall.io/small/front/b/7/b7387103-1df1-4fd0-9e91-1544509792c7.jpg?1785981659",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Land"
+       ],
+       "printedSupertypes": [
+        "Basic"
+       ],
+       "printedSubtypes": [
+        "Swamp"
+       ],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Forest",
+       "imageUri": "https://cards.scryfall.io/small/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Land"
+       ],
+       "printedSupertypes": [
+        "Basic"
+       ],
+       "printedSubtypes": [
+        "Forest"
+       ],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Island",
+       "imageUri": "https://cards.scryfall.io/small/front/f/3/f3cc07cd-cc79-4745-b0b7-eade60175cc3.jpg?1785981645",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Land"
+       ],
+       "printedSupertypes": [
+        "Basic"
+       ],
+       "printedSubtypes": [
+        "Island"
+       ],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Genju of the Fens",
+       "imageUri": "https://cards.scryfall.io/small/front/d/8/d8e06ff3-5fdd-444d-916e-3764f795456e.jpg?1783938752",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Enchantment"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Aura"
+       ],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_5",
+       "name": "Genju of the Cedars",
+       "imageUri": "https://cards.scryfall.io/small/front/1/2/1254929b-0be1-4068-af69-7e59840c8b98.jpg?1783938759",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Enchantment"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Aura"
+       ],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 6
+      },
+      {
+       "id": "perm_6",
+       "name": "Genju of the Falls",
+       "imageUri": "https://cards.scryfall.io/small/front/c/6/c6ba3a2f-0224-4ace-bb49-8dc41b34fb57.jpg?1783935178",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Enchantment"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Aura"
+       ],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 8
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    },
+    "primaryTarget": "perm_1",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 10,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null
+   },
+   {
+    "id": "act_perm_6_1_11",
+    "kind": "activated",
+    "pseudoKind": "ability",
+    "sourceId": "perm_6",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 1,
+    "timestamp": 11,
+    "effectText": "Enchanted Island becomes a 3/2 blue Spirit creature with flying until end of turn. It's still a land.",
+    "fullText": "{2}: Enchanted Island becomes a 3/2 blue Spirit creature with flying until end of turn. It's still a land.",
+    "chosenColor": null,
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "firedAtStates": null,
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Swamp",
+       "imageUri": "https://cards.scryfall.io/small/front/b/7/b7387103-1df1-4fd0-9e91-1544509792c7.jpg?1785981659",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Land"
+       ],
+       "printedSupertypes": [
+        "Basic"
+       ],
+       "printedSubtypes": [
+        "Swamp"
+       ],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Forest",
+       "imageUri": "https://cards.scryfall.io/small/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Land"
+       ],
+       "printedSupertypes": [
+        "Basic"
+       ],
+       "printedSubtypes": [
+        "Forest"
+       ],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Island",
+       "imageUri": "https://cards.scryfall.io/small/front/f/3/f3cc07cd-cc79-4745-b0b7-eade60175cc3.jpg?1785981645",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Land"
+       ],
+       "printedSupertypes": [
+        "Basic"
+       ],
+       "printedSubtypes": [
+        "Island"
+       ],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Genju of the Fens",
+       "imageUri": "https://cards.scryfall.io/small/front/d/8/d8e06ff3-5fdd-444d-916e-3764f795456e.jpg?1783938752",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Enchantment"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Aura"
+       ],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_5",
+       "name": "Genju of the Cedars",
+       "imageUri": "https://cards.scryfall.io/small/front/1/2/1254929b-0be1-4068-af69-7e59840c8b98.jpg?1783938759",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Enchantment"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Aura"
+       ],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 6
+      },
+      {
+       "id": "perm_6",
+       "name": "Genju of the Falls",
+       "imageUri": "https://cards.scryfall.io/small/front/c/6/c6ba3a2f-0224-4ace-bb49-8dc41b34fb57.jpg?1783935178",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Enchantment"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Aura"
+       ],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 8
+      },
+      {
+       "id": "act_perm_4_1_10",
+       "name": "Genju of the Fens (activated)",
+       "imageUri": "https://cards.scryfall.io/small/front/d/8/d8e06ff3-5fdd-444d-916e-3764f795456e.jpg?1783938752",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": true,
+       "isActivatedAbility": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "abilitySourceId": "perm_4",
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 10
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    },
+    "primaryTarget": "perm_3",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 11,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null
+   }
+  ],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Swamp",
+    "final": {
+     "name": "Swamp",
+     "controller": "player_0",
+     "supertypes": [
+      "Basic"
+     ],
+     "types": [
+      "Land",
+      "Creature"
+     ],
+     "subtypes": [
+      "Swamp",
+      "Spirit"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "B"
+     ],
+     "abilities": [
+      "{T}: Add {B}.",
+      "{B}: This creature gets +1/+1 until end of turn"
+     ],
+     "traits": [
+      "Enchanted"
+     ]
+    },
+    "changedBy": {
+     "4": [
+      "Genju of the Fens (activated)"
+     ],
+     "5": [
+      "Genju of the Fens (activated)"
+     ],
+     "6": [
+      "Genju of the Fens (activated)"
+     ],
+     "7b": [
+      "Genju of the Fens (activated)"
+     ]
+    }
+   },
+   {
+    "perm": "Forest",
+    "final": {
+     "name": "Forest",
+     "controller": "player_0",
+     "supertypes": [
+      "Basic"
+     ],
+     "types": [
+      "Land"
+     ],
+     "subtypes": [
+      "Forest"
+     ],
+     "power": null,
+     "toughness": null,
+     "colors": [],
+     "abilities": [
+      "{T}: Add {G}."
+     ],
+     "traits": [
+      "Enchanted"
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Island",
+    "final": {
+     "name": "Island",
+     "controller": "player_0",
+     "supertypes": [
+      "Basic"
+     ],
+     "types": [
+      "Land",
+      "Creature"
+     ],
+     "subtypes": [
+      "Island",
+      "Spirit"
+     ],
+     "power": 3,
+     "toughness": 2,
+     "colors": [
+      "U"
+     ],
+     "abilities": [
+      "{T}: Add {U}.",
+      "Flying"
+     ],
+     "traits": [
+      "Enchanted"
+     ]
+    },
+    "changedBy": {
+     "4": [
+      "Genju of the Falls (activated)"
+     ],
+     "5": [
+      "Genju of the Falls (activated)"
+     ],
+     "6": [
+      "Genju of the Falls (activated)"
+     ],
+     "7b": [
+      "Genju of the Falls (activated)"
+     ]
+    }
+   },
+   {
+    "perm": "Genju of the Fens",
+    "final": {
+     "name": "Genju of the Fens",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Enchantment"
+     ],
+     "subtypes": [
+      "Aura"
+     ],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "B"
+     ],
+     "abilities": [
+      "Enchant Swamp",
+      "{2}: Until end of turn, enchanted Swamp becomes a 2/2 black Spirit creature with \"{B}: This creature gets +1/+1 until end of turn.\" It's still a land.",
+      "When enchanted Swamp is put into a graveyard, you may return this card from your graveyard to your hand."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Genju of the Cedars",
+    "final": {
+     "name": "Genju of the Cedars",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Enchantment"
+     ],
+     "subtypes": [
+      "Aura"
+     ],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "Enchant Forest",
+      "{2}: Enchanted Forest becomes a 4/4 green Spirit creature until end of turn. It's still a land.",
+      "When enchanted Forest is put into a graveyard, you may return this card from your graveyard to your hand."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Genju of the Falls",
+    "final": {
+     "name": "Genju of the Falls",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Enchantment"
+     ],
+     "subtypes": [
+      "Aura"
+     ],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "U"
+     ],
+     "abilities": [
+      "Enchant Island",
+      "{2}: Enchanted Island becomes a 3/2 blue Spirit creature with flying until end of turn. It's still a land.",
+      "When enchanted Island is put into a graveyard, you may return this card from your graveyard to your hand."
+     ]
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "4": [
+    "Genju of the Fens (activated)",
+    "Genju of the Falls (activated)"
+   ],
+   "5": [
+    "Genju of the Fens (activated)",
+    "Genju of the Falls (activated)"
+   ],
+   "6": [
+    "Genju of the Fens (activated)",
+    "Genju of the Falls (activated)"
+   ],
+   "7b": [
+    "Genju of the Fens (activated)",
+    "Genju of the Falls (activated)"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Genju of the Fens",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "target": "Swamp",
+    "params": {
+     "power": 0,
+     "toughness": 0
+    }
+   },
+   {
+    "source": "Genju of the Cedars",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "target": "Forest",
+    "params": {
+     "power": 0,
+     "toughness": 0
+    }
+   },
+   {
+    "source": "Genju of the Falls",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "target": "Island",
+    "params": {
+     "power": 0,
+     "toughness": 0
+    }
+   },
+   {
+    "source": "Genju of the Fens (activated)",
+    "layer": "4",
+    "type": "add_type",
+    "scope": "targeted",
+    "target": "Swamp",
+    "params": {
+     "subtypes": [
+      "Spirit"
+     ],
+     "types": [
+      "Creature"
+     ]
+    }
+   },
+   {
+    "source": "Genju of the Fens (activated)",
+    "layer": "5",
+    "type": "add_color",
+    "scope": "targeted",
+    "target": "Swamp",
+    "params": {
+     "colors": [
+      "B"
+     ]
+    }
+   },
+   {
+    "source": "Genju of the Fens (activated)",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "target": "Swamp",
+    "params": {
+     "ability": "{B}: This creature gets +1/+1 until end of turn"
+    }
+   },
+   {
+    "source": "Genju of the Fens (activated)",
+    "layer": "7b",
+    "type": "set_pt",
+    "scope": "targeted",
+    "target": "Swamp",
+    "params": {
+     "power": 2,
+     "toughness": 2
+    }
+   },
+   {
+    "source": "Genju of the Falls (activated)",
+    "layer": "4",
+    "type": "add_type",
+    "scope": "targeted",
+    "target": "Island",
+    "params": {
+     "subtypes": [
+      "Spirit"
+     ],
+     "types": [
+      "Creature"
+     ]
+    }
+   },
+   {
+    "source": "Genju of the Falls (activated)",
+    "layer": "5",
+    "type": "add_color",
+    "scope": "targeted",
+    "target": "Island",
+    "params": {
+     "colors": [
+      "U"
+     ]
+    }
+   },
+   {
+    "source": "Genju of the Falls (activated)",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "target": "Island",
+    "params": {
+     "ability": "Flying"
+    }
+   },
+   {
+    "source": "Genju of the Falls (activated)",
+    "layer": "7b",
+    "type": "set_pt",
+    "scope": "targeted",
+    "target": "Island",
+    "params": {
+     "power": 3,
+     "toughness": 2
+    }
+   }
+  ]
+ }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "Great Hall of the Biblioplex — \"if this land isn't a creature, it becomes\" animates the land itself",
+  "notes": "Found by tests/sweep.py (theme: manlands with a quoted ability). The leading 'If this land isn't a creature,' was stripped as a resolution condition, leaving 'it becomes …', which the fired-ability code turned into a creature picker. 'it' after 'if this land/permanent …,' is now the permanent the condition names, so the effect pins to the source. The Hall becomes a 2/4 Wizard creature land with the quoted ability; the Bears are untouched.",
+  "steps": [
+    { "add": "Grizzly Bears" },
+    { "add": "Great Hall of the Biblioplex", "as": "hall" },
+    { "call": ["addActivatedAbility", "@hall", 2, "If this land isn't a creature, it becomes a 2/4 Wizard creature with \"Whenever you cast an instant or sorcery spell, this creature gets +1/+0 until end of turn.\" It's still a land.", "{5}: If this land isn't a creature, it becomes a 2/4 Wizard creature with \"Whenever you cast an instant or sorcery spell, this creature gets +1/+0 until end of turn.\" It's still a land."] }
+  ],
+  "asserts": [
+    { "perm": "Great Hall of the Biblioplex", "final": { "power": 2, "toughness": 4, "types": { "$includes": ["Land", "Creature"] }, "subtypes": { "$includes": ["Wizard"] } } },
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2, "subtypes": ["Bear"] } }
+  ]
+}

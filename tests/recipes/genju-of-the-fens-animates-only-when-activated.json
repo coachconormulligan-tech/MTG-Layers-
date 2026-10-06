@@ -1,0 +1,22 @@
+{
+  "name": "Genju of the Fens — enchanted Swamp becomes a creature only when activated",
+  "notes": "Found by tests/sweep.py (theme: Genju cycle). '{2}: Until end of turn, enchanted Swamp becomes a 2/2 black Spirit creature with \"{B}: This creature gets +1/+1 until end of turn.\" It's still a land.' The aura-transform parser only knew 'enchanted creature/land/…', not a basic land type, so firing did nothing. It now accepts the five basic land types and skips text inside an activated ability on the static pass, so the Swamp under Genju of the Fens is animated by the fired ability while the Forest under an un-activated Genju of the Cedars stays a land. Genju of the Falls checks 'with flying until end of turn'.",
+  "steps": [
+    { "add": "Swamp", "as": "swamp" },
+    { "add": "Forest", "as": "forest" },
+    { "add": "Island", "as": "island" },
+    { "add": "Genju of the Fens", "as": "fens" },
+    { "call": ["setTarget", "@fens", "@swamp"] },
+    { "add": "Genju of the Cedars", "as": "cedars" },
+    { "call": ["setTarget", "@cedars", "@forest"] },
+    { "add": "Genju of the Falls", "as": "falls" },
+    { "call": ["setTarget", "@falls", "@island"] },
+    { "call": ["addActivatedAbility", "@fens", 1, "Until end of turn, enchanted Swamp becomes a 2/2 black Spirit creature with \"{B}: This creature gets +1/+1 until end of turn.\" It's still a land.", "{2}: Until end of turn, enchanted Swamp becomes a 2/2 black Spirit creature with \"{B}: This creature gets +1/+1 until end of turn.\" It's still a land."] },
+    { "call": ["addActivatedAbility", "@falls", 1, "Enchanted Island becomes a 3/2 blue Spirit creature with flying until end of turn. It's still a land.", "{2}: Enchanted Island becomes a 3/2 blue Spirit creature with flying until end of turn. It's still a land."] }
+  ],
+  "asserts": [
+    { "perm": "Swamp", "final": { "power": 2, "toughness": 2, "types": { "$includes": ["Land", "Creature"] }, "subtypes": { "$includes": ["Swamp", "Spirit"] }, "colors": ["B"], "abilities": { "$includes": ["{B}: This creature gets +1/+1 until end of turn"] } } },
+    { "perm": "Island", "final": { "power": 3, "toughness": 2, "types": { "$includes": ["Land", "Creature"] }, "abilities": { "$includes": ["Flying"] } } },
+    { "perm": "Forest", "final": { "power": null, "types": { "$excludes": ["Creature"] } } }
+  ]
+}
