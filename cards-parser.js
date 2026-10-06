@@ -818,7 +818,7 @@ function parseCardEffects(permanent, card, opts = {}) {
   // Normalize "this [card-type]" to "this card" so self-reference detection works for all card types.
   // e.g. "this enchantment becomes..." (Daxos' Torment), "this artifact gains...", etc.
   // Skip "this creature" and "this permanent" — those are already handled as self-refs.
-  oracle = oracle.replace(/\bthis\s+(enchantment|artifact|land|planeswalker|battle|vehicle|instant|sorcery)\b/gi, 'this card');
+  oracle = oracle.replace(/\bthis\s+(enchantment|artifact|land|planeswalker|battle|vehicle|instant|sorcery|case)\b/gi, 'this card');
 
   // Normalize common contractions so regex patterns work uniformly
   oracle = oracle.replace(/\bit's\b/gi, 'it is');
@@ -2824,6 +2824,9 @@ function parseCardEffects(permanent, card, opts = {}) {
       const _ctx = { isSelf: rcpt.isSelf, isTargeted: rcpt.isTargeted, fn: rcpt.fn, selfAffect: rcpt.selfAffect };
       if (forEachMatch) {
         let countTarget = forEachMatch[1].trim().replace(/\.$/, '');
+        // The count ends where the sentence moves on to a second predicate — Nephilim Epochal:
+        // "for each other Nephilim you control and can't be blocked by monocolored creatures".
+        countTarget = countTarget.replace(/,?\s+and\s+(?:is|are|has|have|gains?|gets?|loses?|can't|cannot|can|must|doesn't|don't|attacks?|blocks?)\b.*$/i, '').trim();
         // Parse max cap: "to a maximum of N"
         let maxCount = undefined;
         const maxMatch = countTarget.match(/,?\s*to a maximum of (\d+)/i);
@@ -2835,7 +2838,8 @@ function parseCardEffects(permanent, card, opts = {}) {
         const andEachParts = countTarget.split(/\s+and\s+(?:each|every)\s+/i);
         if (andEachParts.length > 1) {
           for (const part of andEachParts) {
-            const cleanPart = part.trim().replace(/\s+in your graveyard$/i, '').replace(/\s+you control$/i, '');
+            // Keep "you control" in forEachDesc so _computeForEachCount filters by controller.
+            const cleanPart = part.trim().replace(/\s+in your graveyard$/i, '');
             const isGraveyard = part.toLowerCase().includes('graveyard');
             const _eff = pushEff('7c', EFFECT_TYPE.MODIFY_PT, {
                 power: parseInt(boostMatch[2]),
@@ -2852,7 +2856,8 @@ function parseCardEffects(permanent, card, opts = {}) {
           }
           return;
         }
-        const cleanTarget = countTarget.replace(/\s+you control$/i, '').replace(/\s+in your graveyard$/i, '');
+        // Keep "you control" in forEachDesc so _computeForEachCount filters by controller.
+        const cleanTarget = countTarget.replace(/\s+in your graveyard$/i, '');
         const isGraveyard = countTarget.toLowerCase().includes('graveyard');
         const _effFe = pushEff('7c', EFFECT_TYPE.MODIFY_PT, {
             power: parseInt(boostMatch[2]),

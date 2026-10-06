@@ -1,0 +1,16 @@
+{
+  "name": "Heroes' Podium — each legendary creature counts the others, not itself",
+  "notes": "Sibling of the Rat Colony fix for a boost whose source is not the creature being boosted: 'Each legendary creature you control gets +1/+1 for each other legendary creature you control.' 'Other' excludes the creature receiving the boost, and 'you' is the Podium's controller. Two legendary creatures here get +1/+1 each; the opponent's Zurgo is neither boosted nor counted.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Heroes' Podium" },
+    { "add": "Isamaru, Hound of Konda" },
+    { "add": "Kari Zev, Skyship Raider" },
+    { "add": "Zurgo Bellstriker", "controller": "p2" }
+  ],
+  "asserts": [
+    { "perm": "Isamaru, Hound of Konda", "final": { "power": 3, "toughness": 3 } },
+    { "perm": "Kari Zev, Skyship Raider", "final": { "power": 2, "toughness": 4 } },
+    { "perm": "Zurgo Bellstriker", "final": { "power": 2, "toughness": 2 } }
+  ]
+}

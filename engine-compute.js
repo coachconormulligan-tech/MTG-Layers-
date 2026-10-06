@@ -18,9 +18,11 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
   const rawDesc = forEachDesc.toLowerCase().trim();
   const youControl = rawDesc.includes('you control');
   const opponentsControl = rawDesc.includes('your opponents control') || rawDesc.includes("opponents' control") || rawDesc.includes('opponents control');
-  const ctrlId = (selfState && selfState.controller) || 'player_0';
+  // "You" is the controller of the effect's source (an Aura's controller, not the enchanted
+  // creature's), falling back to the permanent being modified.
+  const ctrlId = (sourceState && sourceState.controller) || (selfState && selfState.controller) || 'player_0';
 
-  const desc = forEachDesc.toLowerCase().trim()
+  let desc = forEachDesc.toLowerCase().trim()
     .replace(/\s+you control$/, '')
     .replace(/\s+your opponents control$/, '')
     .replace(/\s+on the battlefield$/, '')
@@ -253,6 +255,12 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
     return creatureSubtypes.length;
   }
 
+  // "other [type/subtype]" — the permanent being modified doesn't count itself (Rat Colony:
+  // "+1/+0 for each other Rat you control"; Coat of Arms: each creature skips itself).
+  const excludeSelf = /^other\s+/.test(desc);
+  if (excludeSelf) desc = desc.replace(/^other\s+/, '');
+  const pool = excludeSelf ? [...allStates].filter(([, st]) => st !== selfState) : allStates;
+
   // Count by type/subtype across all permanents on the battlefield
   let count = 0;
   const _typeEntries = [
@@ -281,7 +289,7 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
     if (!negChecker && SUPERTYPE_MAP[negWord]) { const sv = SUPERTYPE_MAP[negWord]; negChecker = (st) => st.supertypes.includes(sv); }
     if (!negChecker && (negWord === 'token' || negWord === 'tokens')) negChecker = (st) => st.isToken;
     if (baseChecker && negChecker) {
-      for (const [, st] of allStates) {
+      for (const [, st] of pool) {
         if (youControl && st.controller !== ctrlId) continue;
         if (opponentsControl && st.controller === ctrlId) continue;
         if (baseChecker(st) && !negChecker(st)) count++;
@@ -292,7 +300,7 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
   for (const [stWord, stVal] of Object.entries(SUPERTYPE_MAP)) {
     // "snow permanents" / "snow permanent"
     if (desc === stWord + ' permanent' || desc === stWord + ' permanents') {
-      for (const [, st] of allStates) {
+      for (const [, st] of pool) {
         if (youControl && st.controller !== ctrlId) continue;
         if (opponentsControl && st.controller === ctrlId) continue;
         if (st.supertypes.includes(stVal)) count++;
@@ -302,7 +310,7 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
     // "snow creatures" / "snow lands" etc.
     for (const [typeWord, typeChecker] of Object.entries(TYPE_MAP)) {
       if (desc === stWord + ' ' + typeWord) {
-        for (const [, st] of allStates) {
+        for (const [, st] of pool) {
           if (youControl && st.controller !== ctrlId) continue;
           if (opponentsControl && st.controller === ctrlId) continue;
           if (st.supertypes.includes(stVal) && typeChecker(st)) count++;
@@ -315,7 +323,7 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
   // Check if desc matches a simple type: "artifact", "creature", etc.
   const typeChecker = TYPE_MAP[desc];
   if (typeChecker) {
-    for (const [, st] of allStates) {
+    for (const [, st] of pool) {
       if (youControl && st.controller !== ctrlId) continue;
       if (opponentsControl && st.controller === ctrlId) continue;
       if (typeChecker(st)) count++;
@@ -329,7 +337,7 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
     const checkers = andOrParts.map(p => TYPE_MAP[p.trim()]).filter(Boolean);
     if (checkers.length === andOrParts.length) {
       // All parts are recognized types — count permanents matching ANY
-      for (const [, st] of allStates) {
+      for (const [, st] of pool) {
         if (youControl && st.controller !== ctrlId) continue;
         if (opponentsControl && st.controller === ctrlId) continue;
         if (checkers.some(fn => fn(st))) count++;
@@ -363,7 +371,7 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
     const subParts = thatAreMatch[2].split(/\s+and\/or\s+|\s+and\s+|\s+or\s+/)
       .map(s => _singularize(s.trim())).filter(Boolean);
     if (baseCheck && subParts.length) {
-      for (const [, st] of allStates) {
+      for (const [, st] of pool) {
         if (youControl && st.controller !== ctrlId) continue;
         if (opponentsControl && st.controller === ctrlId) continue;
         if (baseCheck(st) && subParts.some(sub => st.subtypes.includes(sub))) count++;
@@ -380,7 +388,7 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
       const subtypeWords = words.slice(0, i);
       if (subtypeWords.length > 0) {
         const subtype = subtypeWords.map(s => _singularize(s)).join(' ');
-        for (const [, st] of allStates) {
+        for (const [, st] of pool) {
           if (youControl && st.controller !== ctrlId) continue;
           if (opponentsControl && st.controller === ctrlId) continue;
           if (typeCheck(st) && st.subtypes.includes(subtype)) count++;
@@ -495,7 +503,7 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
   const subtypeSingular = _singularize(desc);
   // Guard: skip bare subtype check if desc contains counter/non-subtype words
   if (!/\bcounters?\b|\bon\b/.test(desc)) {
-    for (const [, st] of allStates) {
+    for (const [, st] of pool) {
       if (youControl && st.controller !== ctrlId) continue;
       if (opponentsControl && st.controller === ctrlId) continue;
       if (st.subtypes.includes(subtype) || st.subtypes.includes(subtypeSingular)) count++;
