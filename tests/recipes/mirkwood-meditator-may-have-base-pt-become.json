@@ -1,0 +1,13 @@
+{
+  "name": "Mirkwood Meditator — \"you may have this creature's base power and toughness become 4/2\"",
+  "notes": "Found by tests/sweep.py. Only 'X has base power and toughness N/N' was read; the possessive 'X's base power and toughness become N/N' and its 'you may have' wrapper fired to nothing. The text is now normalised to the 'has' form before parsing. The Meditator is 4/2; the Bears are untouched.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Mirkwood Meditator", "as": "med" },
+    { "call": ["addTriggeredAbility", "@med", 0, "you may have this creature's base power and toughness become 4/2 until end of turn.", "Landfall — Whenever a land you control enters, you may have this creature's base power and toughness become 4/2 until end of turn."], "as": "trigger" }
+  ],
+  "asserts": [
+    { "perm": "Mirkwood Meditator", "final": { "power": 4, "toughness": 2 } },
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2 } }
+  ]
+}

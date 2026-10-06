@@ -12,7 +12,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Belligerent Yearling | becomes | triggered | Whenever another Dinosaur you control enters, you may have this creature's base power become equal to that creature's power until end of turn. |
 | Breach the Multiverse | becomes | spell | Then each creature you control becomes a Phyrexian in addition to its other types. |
 | Brine Hag | becomes | triggered | When this creature dies, the base power and toughness of each creature that dealt damage to it this turn become 0/2. |
-| Creepy Puppeteer | becomes | triggered | Whenever this creature attacks, if you attacked with exactly one other creature this combat, you may have that creature's base power and toughness become 4/3 until end of turn. |
 | Deceiver of Form | becomes | triggered | If a creature card is revealed this way, you may have creatures you control other than this creature become copies of that card until end of turn. |
 | Dimir Keyrune | becomes | activated | {U}{B}: This artifact becomes a 2/2 blue and black Horror artifact creature until end of turn and can't be blocked this turn. |
 | Donald Blake, Guise of Thor | becomes | activated | He becomes a God Warrior Hero. |
@@ -35,7 +34,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Lazav, the Multifarious | becomes | ability | {X}: Lazav becomes a copy of target creature card in your graveyard with mana value X, except its name is this card, it's legendary in addition to its other types, and it has this ability. |
 | Lydari Druid | becomes | triggered | Those lands become the land types chosen this way. |
 | Master of Winds | becomes | triggered | Whenever you cast an instant, sorcery, or Wizard spell, you may have this creature's base power and toughness become 4/1 or 1/4 until end of turn. |
-| Mirkwood Meditator | becomes | triggered | Landfall — Whenever a land you control enters, you may have this creature's base power and toughness become 4/2 until end of turn. |
 | Niko, Light of Hope | becomes | activated | Shards you control become copies of it until the next end step. |
 | Nissa, Worldwaker | becomes | activated | Those lands become 4/4 Elemental creatures with trample. |
 | Orcish Farmer | becomes | activated | {T}: Target land becomes a Swamp until its controller's next untap step. |
