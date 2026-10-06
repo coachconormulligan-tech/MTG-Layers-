@@ -1178,7 +1178,7 @@ const Battlefield = {
     }
     // Token clone detection: if a token has "clone" in its name or subtypes,
     // or if it has "copy" in its oracle text, mark it as needing a clone prompt
-    const isToken = opts.isToken || card.layout === 'token' || card.layout === 'double_faced_token' || false;
+    const isToken = opts.isToken || _isTokenCard(card) || false;
     const isCloneToken = isToken && (
       /\bclone\b/i.test(card.name) ||
       /\bcopy\b/i.test(card.oracle_text || '') ||

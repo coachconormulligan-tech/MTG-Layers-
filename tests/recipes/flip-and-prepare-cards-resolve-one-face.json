@@ -1,0 +1,19 @@
+{
+  "name": "Flip and prepare cards — one face at a time",
+  "notes": "Sweep theme 5 (2026-10-06). Scryfall's 'flip' and 'prepare' layouts fell through to 'all faces combined': Student of Elements showed both halves' text at once with the unflipped type line and 1/1, and a prepare card (creature plus a spell it lets you cast) was treated as a spell. A flip card now flips like a transforming card (Tobita is a legendary 3/3 and gives your creatures flying); a Role token pair filed under 'flip' (Wicked // Cursed) is a choice of token, here Cursed making the Ogre 1/1; a prepare card enters as its creature face (Encouraging Aviator 2/3) and its spell is a separate choice.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Gray Ogre", "as": "ogre" },
+    { "add": "Student of Elements // Tobita, Master of Winds", "as": "student" },
+    { "call": ["flipCard", "@student"] },
+    { "add": "Wicked // Cursed", "as": "cursed", "opts": { "faceIndex": 1 } },
+    { "call": ["setTarget", "@cursed", "@ogre"] },
+    { "add": "Encouraging Aviator // Jump", "as": "aviator" }
+  ],
+  "asserts": [
+    { "perm": "Tobita, Master of Winds", "final": { "supertypes": ["Legendary"], "power": 3, "toughness": 3, "abilities": { "$excludes": ["When this creature has flying, flip it."] } } },
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$includes": ["Flying"] } } },
+    { "perm": "Gray Ogre", "final": { "power": 1, "toughness": 1 } },
+    { "perm": "Encouraging Aviator", "final": { "types": ["Creature"], "power": 2, "toughness": 3 } }
+  ]
+}

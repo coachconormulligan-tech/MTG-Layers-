@@ -857,7 +857,7 @@ function renderSearchResults(cards) {
 
   let html = `<div class="search-results-header"><span class="search-count">${cards.length} result${cards.length !== 1 ? 's' : ''}</span><button class="search-close-btn" onclick="closeSearch()" title="Close search results">&#x2715; Close</button></div>`;
   html += cards.map((card, i) => {
-    const isToken = card.layout === 'token' || card.layout === 'double_faced_token';
+    const isToken = _isTokenCard(card);
     const imgUri = card.image_uris?.small || (card.card_faces && card.card_faces[0]?.image_uris?.small) || '';
     return `
     <div class="search-result-card" data-idx="${i}">
@@ -928,7 +928,7 @@ function _doAddCardToBattlefield(card, opts) {
     return;
   }
 
-  const isToken = card.layout === 'token' || card.layout === 'double_faced_token';
+  const isToken = _isTokenCard(card);
   const perm = Battlefield.addPermanent(card, { isToken, ...opts });
   document.getElementById('card-search-input').value = '';
   document.getElementById('search-results').innerHTML = '';

@@ -102,7 +102,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Conspicuous Snoop | has / gains | static | As long as the top card of your library is a Goblin card, this creature has all activated abilities of that card. |
 | Dragonrage | has / gains | spell | Until end of turn, attacking creatures you control gain "{R}: This creature gets +1/+0 until end of turn." |
 | Dread Wight | has / gains | triggered | Each of those creatures gains "{4}: Remove a paralyzation counter from this creature." |
-| Encouraging Aviator // Jump | has / gains | spell | Target creature gains flying until end of turn. |
 | Energybending | has / gains | spell | Lands you control gain all basic land types until end of turn. |
 | Flash Conscription | has / gains | spell | If {W} was spent to cast this spell, the creature gains "Whenever this creature deals combat damage, you gain that much life" until end of turn. |
 | For the Common Good | has / gains | spell | Then tokens you control gain indestructible until your next turn. |
@@ -126,17 +125,16 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Rapid Fire | has / gains | spell | If it doesn't have rampage, that creature gains rampage 2 until end of turn. |
 | Rootwise Survivor | has / gains | triggered | It gains haste until your next turn. |
 | Scheming Fence | has / gains | static | This creature has all activated abilities of the chosen permanent except for loyalty abilities. |
+| Sigarda's Vanguard | has / gains | triggered | Those creatures gain double strike until end of turn. |
 | Skill Borrower | has / gains | static | As long as the top card of your library is an artifact or creature card, this creature has all activated abilities of that card. |
 | Spider-Verse | has / gains | triggered | If the copy is a permanent spell, it gains haste. |
 | Spirit-Sister's Call | has / gains | triggered | If you do, return the chosen card from your graveyard to the battlefield and it gains "If this permanent would leave the battlefield, exile it instead of putting it anywhere else." |
-| Student of Elements // Tobita, Master of Winds | has / gains | static | Creatures you control have flying. |
 | Teferi's Reproach | has / gains | spell | Until that player's next turn, they gain protection from everything and their life total can't change. |
 | Tenza, Godo's Maul | has / gains | static | As long as it's red, it has trample. |
 | The Fourteenth Doctor | has / gains | static | If you do, it gains haste until end of turn. |
 | Trench Gorger | has / gains | triggered | If you do, this creature has base power and base toughness each equal to the number of cards exiled this way. |
 | Vision Quest | has / gains | spell | If X is 4 or greater, it gains haste until end of turn. |
 | Wedding Invitation | has / gains | activated | If it's a Vampire, it also gains lifelink until end of turn. |
-| Wicked // Cursed | has / gains | static | Enchanted creature has base power and toughness 1/1. |
 | Woolly Razorback | has / gains | static | As long as this creature has an ice counter on it, prevent all combat damage it would deal and it has defender. |
 | Ascent of the Worthy | is / are | static | That creature is an Angel Warrior in addition to its other types. |
 | Dance of the Manse | is / are | spell | If X is 6 or more, those permanents are 4/4 creatures in addition to their other types. |
