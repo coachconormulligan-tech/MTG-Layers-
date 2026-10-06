@@ -2865,6 +2865,7 @@ const Battlefield = {
         effectText: p.oracleText || '',
         fullText: p.abilityFullText || '',
         chosenColor: p.chosenColor || null,
+        additionalCostPaid: !!p.additionalCostPaid,
         owner: p.owner || 'player_0',
         controller: p.controller || p.owner || 'player_0',
         equipTargetId: p._equipTargetId || null,
@@ -3048,6 +3049,7 @@ const Battlefield = {
       idMap[f.id] = pseudo.id;
       pseudo.timestamp = f.timestamp;
       if (f.chosenColor) this.setChosenColor(pseudo.id, f.chosenColor);
+      if (f.additionalCostPaid) this.setAdditionalCostPaid(pseudo.id, true);
       // Re-stamp the ability's effects to its saved timestamp so layer ordering matches.
       for (const e of this.effects) { if (e.sourceId === pseudo.id) e.timestamp = f.timestamp; }
     }

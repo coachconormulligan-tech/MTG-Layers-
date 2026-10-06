@@ -1,0 +1,12 @@
+{
+  "name": "Opus — five or more mana spent replaces the +1/+1 on a fired trigger",
+  "notes": "Sweep theme 7 (2026-10-06). Deluge Virtuoso's Opus trigger: \"this creature gets +1/+1 until end of turn. If five or more mana was spent to cast that spell, this creature gets +2/+2 until end of turn instead.\" The second sentence produced nothing. A fired trigger now carries the same toggle a spell does; with it on the Virtuoso (2/2) is 4/4, not 3/3 and not 5/5.",
+  "steps": [
+    { "add": "Deluge Virtuoso", "as": "virtuoso" },
+    { "fire": "@virtuoso", "trigger": 1, "as": "opus" },
+    { "call": ["setAdditionalCostPaid", "@opus", true] }
+  ],
+  "asserts": [
+    { "perm": "Deluge Virtuoso", "final": { "power": 4, "toughness": 4 } }
+  ]
+}

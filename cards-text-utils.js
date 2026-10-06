@@ -461,9 +461,34 @@ function _resolveItPronoun(text) {
 // imperative ("gain control of …", "you gain 3 life").
 const _BRANCH_CONTINUOUS_VERB_RE = /^[^,]+?\s(?:gets?|gains?|ha(?:s|ve)|becomes?|loses?)\b/i;
 const _BRANCH_PRONOUN_RE = /^(?:it|that (?:creature|permanent)|those (?:creatures|permanents)|they)\b/i;
-const _BRANCH_COST_RE = /^If (this spell was (kicked|bargained)|this spell's (\w+) cost was paid),\s+(.+?)\.?$/i;
+// Things true of how a spell was cast that the board cannot show, each read from the spell's
+// one toggle: [condition regex, label for the toggle]. $1 / $2 are filled from the match.
+const _BRANCH_CAST_CONDITIONS = [
+  [/^this spell was (kicked|bargained)$/i, '$1'],
+  [/^this spell's (\w+) cost was paid$/i, '$1 cost paid'],
+  [/^((?:\{[WUBRGCS]\})+) was spent to cast this spell$/i, '$1 spent'],
+  [/^at least (\w+) (\w+) mana was spent to cast this spell$/i, '$1 $2 mana spent'],
+  [/^mana from an? (\w+) was spent to cast this spell$/i, '$1 mana spent'],
+  [/^(\w+) or more mana was spent to cast that spell$/i, '$1 or more mana spent'],
+  [/^you cast this spell during your main phase$/i, 'Cast in your main phase'],
+  [/^evidence was collected$/i, 'Evidence collected'],
+];
+// "If <cast condition>, <body>" → { label, body }, or null.
+function _branchCastCondition(sentence) {
+  // An ability word in front ("Adamant — If at least three green mana was spent …") is flavour.
+  const m = sentence.match(/^(?:[A-Z][\w']*(?: [\w']+)* — )?If ([^,]+),\s+(.+?)\.?$/i);
+  if (!m) return null;
+  for (const [re, label] of _BRANCH_CAST_CONDITIONS) {
+    const c = m[1].match(re);
+    if (!c) continue;
+    const text = label.replace('$1', c[1] || '').replace('$2', c[2] || '');
+    return { label: /^\{/.test(text) ? text : text.charAt(0).toUpperCase() + text.slice(1).toLowerCase(), body: m[2] };
+  }
+  return null;
+}
 const _BRANCH_LEAD_COND_RE = /^(?:As long as|If)\s+([^,]+),\s+(.+)$/i;
 function _branchIsContinuous(body) {
+  body = body.replace(/^until end of turn,\s+/i, '');
   return _BRANCH_CONTINUOUS_VERB_RE.test(body) && !/^you\b/i.test(body) && !/\blife\b|\bcounters?\b/i.test(body);
 }
 // The permanents a spell's "it" / "that creature" / "those creatures" / "they" stands for:
@@ -485,6 +510,13 @@ function _branchAntecedent(sentences, i) {
   return null;
 }
 function _branchResolveSubject(body, sentences, i, isSpell) {
+  // "Choose target creature you control and target creature you don't control. … the creature
+  // you control gets +1/+1" (Tail Swipe): "the" picks out one of the targets just chosen.
+  const the = isSpell && body.match(/^the ((?:creature|permanent) you (?:control|don't control))\b/i);
+  if (the) {
+    const chosen = sentences.slice(0, i).some(x => x.toLowerCase().includes('target ' + the[1].toLowerCase()));
+    return chosen ? 'target ' + the[1] + body.slice(the[0].length) : null;
+  }
   const m = body.match(_BRANCH_PRONOUN_RE);
   if (!m || !isSpell) return body;
   const ante = _branchAntecedent(sentences, i);
@@ -492,8 +524,16 @@ function _branchResolveSubject(body, sentences, i, isSpell) {
 }
 function _splitConditionalBranches(text, isSpell, canParse) {
   const lines = text.split('\n');
+  const origLines = lines.slice();
   const out = { text, baseLineCount: lines.length, branchLines: new Map(), alwaysOnLines: new Set(), costLabel: null };
-  if (!/\botherwise,|\bif this spell(?:'s \w+ cost)? was\b/i.test(text)) return out;
+  if (!/\botherwise,|\bif this spell(?:'s \w+ cost)? was\b|\bto cast (?:this|that) spell,|\bif you cast this spell during\b|\bif evidence was collected\b/i.test(text)) return out;
+  // One toggle per spell: a card with two different cast conditions (Cankerous Thirst's {B}
+  // and {G}) cannot be told apart by it, so its branches are left where they are.
+  const castLabels = new Set();
+  for (const sentence of text.split(/\n|(?<=\.)\s+/)) {
+    const c = _branchCastCondition(sentence.trim());
+    if (c) castLabels.add(c.label);
+  }
   const added = [];
   const add = (lineText, li) => { out.branchLines.set(lines.length + added.length, li); added.push(lineText); };
   for (let li = 0; li < lines.length; li++) {
@@ -525,25 +565,45 @@ function _splitConditionalBranches(text, isSpell, canParse) {
         moved.add(i);
         continue;
       }
-      const cost = sentences[i].match(_BRANCH_COST_RE);
+      const cost = castLabels.size === 1 ? _branchCastCondition(sentences[i]) : null;
       if (cost) {
-        let body = cost[4];
+        let body = cost.body;
         const instead = /^instead\s+|\s+instead$/i.test(body);
         body = body.replace(/^instead\s+|\s+instead$/i, '').replace(/\balso\s+/i, '').replace(/\ban additional\s+/i, '');
         if (!_branchIsContinuous(body)) continue;
-        body = _branchResolveSubject(body, sentences, i, isSpell);
+        // A spell's "that creature" may be the target named on an earlier line (Arrester's
+        // Zeal: the Addendum sentence is a line of its own).
+        const prior = isSpell ? origLines.slice(0, li).flatMap(l => l.trim().split(/(?<=\.)\s+/)) : [];
+        const unresolved = body;
+        body = _branchResolveSubject(body, prior.concat(sentences), prior.length + i, isSpell);
         if (!body) continue;
+        // The branch shares the target slot of the line its target was named on.
+        let baseLi = li;
+        if (body !== unresolved && !sentences.slice(0, i).some(x => /\btarget\b/i.test(x))) {
+          for (let j = li - 1; j >= 0; j--) if (/\btarget\b/i.test(origLines[j])) { baseLi = j; break; }
+        }
         // "… instead" replaces the sentence before it, which then applies only unpaid.
-        const replaced = instead && i > 0 && !moved.has(i - 1) && !/^(?:if|otherwise|as long as)\b/i.test(prev) &&
+        let replaced = instead && i > 0 && !moved.has(i - 1) && !/^(?:if|otherwise|as long as)\b/i.test(prev) &&
           _branchIsContinuous(prev) ? _branchResolveSubject(prev, sentences, i - 1, isSpell) : null;
         if (replaced) {
+          // "Until end of turn, X becomes …" reads the same with the duration at the end, where
+          // it does not sit between the condition and the subject.
+          const lead = replaced.match(/^until end of turn,\s+(.+?)\.?$/i);
+          if (lead) replaced = lead[1].charAt(0).toUpperCase() + lead[1].slice(1) + ' until end of turn.';
+          // "… becomes an artifact creature with base power and toughness 4/3. If evidence was
+          // collected, it has base power and toughness 1/1 instead." (Behind the Mask): only
+          // the numbers are replaced, the rest of the sentence still happens.
+          const newPT = body.match(/\bha(?:s|ve) base power and toughness (\d+\/\d+)/i);
+          const oldPT = /\bbase power and toughness \d+\/\d+/i;
+          if (newPT && oldPT.test(replaced) && !/\bha(?:s|ve) base power and toughness\b/i.test(replaced)) {
+            body = replaced.replace(oldPT, 'base power and toughness ' + newPT[1]).replace(/\.$/, '');
+          }
           add(`If [additional cost not paid], ${replaced}`, li);
           moved.add(i - 1);
         }
-        add(`If [additional cost paid], ${body}.`, li);
+        add(`If [additional cost paid], ${body}.`, baseLi);
         moved.add(i);
-        const word = cost[2] || cost[3];
-        out.costLabel = word.charAt(0).toUpperCase() + word.slice(1).toLowerCase() + (cost[2] ? '' : ' cost paid');
+        out.costLabel = cost.label;
       }
     }
     if (moved.size) lines[li] = sentences.filter((_, i) => !moved.has(i)).join(' ');
