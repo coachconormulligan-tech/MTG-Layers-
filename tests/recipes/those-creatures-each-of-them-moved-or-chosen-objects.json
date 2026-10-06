@@ -1,0 +1,56 @@
+{
+  "name": "\"Those creatures\" / \"Each of them\" — objects the effect just moved or chose",
+  "notes": "Found by tests/sweep.py. A second sentence whose subject is a demonstrative for objects the sentence before returned, put onto the battlefield or had the player choose produced nothing: Ever After (\"Each of those creatures is a black Zombie in addition …\"), Hope and Glory (\"Each of them gets +1/+1\"), Ghost Vacuum (\"Each of them is a 1/1 Spirit in addition …\"), Nissa, Worldwaker −7 (\"Those lands become 4/4 Elemental creatures with trample\"), Sigarda's Vanguard and Sigardian Zealot (\"choose any number of creatures with different powers. Those creatures gain …\"), Rampaging Growth (\"Until end of turn, that land becomes …\" after a search). _resolveTheyPronoun (cards-text-utils.js) now turns those subjects into a pick of that many permanents of the kind named (\"Up to two target creatures each are …\", \"Any number of target lands become …\"); the add-type parser keeps the target count of such a subject, and Sigarda's Vanguard's own-trigger effect is no longer force-pinned to the Vanguard. Tokens the sentence before created are still left alone. Each effect is shown on the permanents picked and not on one left out.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Gray Ogre", "as": "ogre" },
+    { "add": "Hill Giant", "as": "giant" },
+    { "add": "Ever After", "as": "ever", "spell": true },
+    { "call": ["setMultiTarget", "@ever", 0, "@bears"] },
+    { "call": ["setMultiTarget", "@ever", 1, "@ogre"] },
+
+    { "add": "Silvercoat Lion", "as": "lion" },
+    { "add": "Runeclaw Bear", "as": "runeclaw" },
+    { "add": "Hope and Glory", "as": "hope", "spell": true },
+    { "call": ["setMultiTarget", "@hope", 0, "@lion"] },
+    { "call": ["setMultiTarget", "@hope", 1, "@runeclaw"] },
+
+    { "add": "Forest", "as": "forest" },
+    { "add": "Island", "as": "island" },
+    { "add": "Swamp", "as": "swamp" },
+    { "add": "Nissa, Worldwaker", "as": "nissa" },
+    { "fire": "@nissa", "activated": 2, "as": "firedNissa" },
+    { "call": ["setMultiTarget", "@firedNissa", 0, "@forest"] },
+    { "call": ["setMultiTarget", "@firedNissa", 1, "@island"] },
+
+    { "add": "Mountain", "as": "mountain" },
+    { "add": "Rampaging Growth", "as": "growth", "spell": true },
+    { "call": ["setTarget", "@growth", "@mountain"] },
+
+    { "add": "Serra Angel", "as": "angel" },
+    { "add": "Air Elemental", "as": "air" },
+    { "add": "Sigarda's Vanguard", "as": "vanguard" },
+    { "fire": "@vanguard", "trigger": 2, "as": "firedVanguard" },
+    { "call": ["setMultiTarget", "@firedVanguard", 0, "@angel"] },
+
+    { "add": "Eager Cadet", "as": "cadet" },
+    { "add": "Ghost Vacuum", "as": "vacuum" },
+    { "fire": "@vacuum", "activated": 1, "as": "firedVacuum" },
+    { "call": ["setMultiTarget", "@firedVacuum", 0, "@cadet"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "subtypes": { "$includes": ["Bear", "Zombie"] }, "colors": { "$includes": ["B", "G"] } } },
+    { "perm": "Gray Ogre", "final": { "subtypes": { "$includes": ["Ogre", "Zombie"] } } },
+    { "perm": "Hill Giant", "final": { "subtypes": { "$excludes": ["Zombie", "Spirit"] }, "power": 3, "toughness": 3 } },
+    { "perm": "Silvercoat Lion", "final": { "power": 3, "toughness": 3 } },
+    { "perm": "Runeclaw Bear", "final": { "power": 3, "toughness": 3 } },
+    { "perm": "Forest", "final": { "types": { "$includes": ["Land", "Creature"] }, "power": 4, "toughness": 4, "abilities": { "$includes": ["Trample"] } } },
+    { "perm": "Island", "final": { "types": { "$includes": ["Land", "Creature"] }, "power": 4, "toughness": 4 } },
+    { "perm": "Swamp", "final": { "types": { "$excludes": ["Creature"] } } },
+    { "perm": "Mountain", "final": { "types": { "$includes": ["Land", "Creature"] }, "subtypes": { "$includes": ["Insect"] }, "power": 4, "toughness": 3, "abilities": { "$includes": ["Reach", "Haste"] } } },
+    { "perm": "Serra Angel", "final": { "abilities": { "$includes": ["Double strike"] } } },
+    { "perm": "Air Elemental", "final": { "abilities": { "$excludes": ["Double strike"] } } },
+    { "perm": "Sigarda's Vanguard", "final": { "abilities": { "$excludes": ["Double strike"] } } },
+    { "perm": "Eager Cadet", "final": { "subtypes": { "$includes": ["Spirit"] }, "power": 1, "toughness": 1 } }
+  ]
+}

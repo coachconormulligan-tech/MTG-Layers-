@@ -235,7 +235,13 @@ function effectAppliesToPerm(effect, permState, permanent, permId, allStates, ab
       const groupAlreadyAppliedTargeted = abilityGroupAffectedPerms && effect.abilityGroupId
         && abilityGroupAffectedPerms.has(effect.abilityGroupId)
         && abilityGroupAffectedPerms.get(effect.abilityGroupId).has(permId);
-      if (!groupAlreadyAppliedTargeted) {
+      // A rider checked once as the ability resolves ("If it's a Vampire, it also gains
+      // lifelink") reads the fire-time snapshot, not the board as it is now.
+      const snapState = effect.asLongAsCondition._onResolution && effect._firedAtStates
+        ? effect._firedAtStates.get(permId) : null;
+      if (snapState) {
+        if (!effect.asLongAsCondition(snapState, effect._firedAtStates)) return false;
+      } else if (!groupAlreadyAppliedTargeted) {
         if (!effect.asLongAsCondition(permState, allStates)) return false;
       }
     }

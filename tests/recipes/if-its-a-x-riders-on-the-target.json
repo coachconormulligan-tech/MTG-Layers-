@@ -1,0 +1,68 @@
+{
+  "name": "\"If it's a X, it …\" riders — conditional on what the target is",
+  "notes": "Found by tests/sweep.py. A second sentence that applies only if the object just named is something (Wedding Invitation \"If it's a Vampire, it also gains lifelink\", Katsumasa \"If it's not a Vehicle, it has base power and toughness 1/1\", Tune Up, The Flood of Mars, Lim-Dûl, Rapid Fire \"If it doesn't have rampage, that creature gains rampage 2\", Tenza \"As long as it's red, it has trample\") produced nothing. _splitConditionalBranches (cards-text-utils.js) now gives each rider its own line and condition, with the target of the sentence before as its subject and the same target slot; in a fired ability _resolveRiderSubjectToTarget (cards-helpers.js) names that target first so the generic \"it → target <trigger subject>\" rewrite stays off it. Spell and ability riders are checked once (\"on resolution\", read from the fire-time snapshot when there is one). Each rider is shown here on a target it applies to and one it does not. A rider whose target has not been picked yet (the third Katsumasa activation, Donatello) must not fall back on the ability's source: the base-P/T and add-type parsers now give a rider's effect its target's restriction, without which a fired ability pins the effect to its source. A later-sentence \"if\" on a triggered or activated line also no longer hides the whole ability line from the permanent (Wedding Invitation, The Flood of Mars, Hidden Blade).",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Bloodthrone Vampire", "as": "vamp" },
+    { "add": "Wedding Invitation", "as": "inv1" },
+    { "fire": "@inv1", "activated": 1, "as": "firedInv1" },
+    { "call": ["setTarget", "@firedInv1", "@vamp"] },
+    { "add": "Wedding Invitation", "as": "inv2" },
+    { "fire": "@inv2", "activated": 1, "as": "firedInv2" },
+    { "call": ["setTarget", "@firedInv2", "@bears"] },
+
+    { "add": "Sol Ring", "as": "ring" },
+    { "add": "Smuggler's Copter", "as": "copter" },
+    { "add": "Katsumasa, the Animator", "as": "kat" },
+    { "fire": "@kat", "activated": 1, "as": "firedKat1" },
+    { "call": ["setTarget", "@firedKat1", "@ring"] },
+    { "fire": "@kat", "activated": 1, "as": "firedKat2" },
+    { "call": ["setTarget", "@firedKat2", "@copter"] },
+    { "fire": "@kat", "activated": 1, "as": "firedKat3" },
+    { "add": "Donatello, Mutant Mechanic", "as": "don" },
+    { "fire": "@don", "activated": 0, "as": "firedDon" },
+
+    { "add": "Mind Stone", "as": "stone" },
+    { "add": "Sky Skiff", "as": "skiff" },
+    { "add": "Tune Up", "as": "tune1", "spell": true },
+    { "call": ["setTarget", "@tune1", "@skiff"] },
+    { "add": "Tune Up", "as": "tune2", "spell": true },
+    { "call": ["setTarget", "@tune2", "@stone"] },
+
+    { "add": "Hill Giant", "as": "giant" },
+    { "add": "Rapid Fire", "as": "rapid", "spell": true },
+    { "call": ["setTarget", "@rapid", "@giant"] },
+
+    { "add": "Forest", "as": "forest" },
+    { "add": "The Flood of Mars", "as": "flood" },
+    { "fire": "@flood", "trigger": 1, "as": "firedFlood" },
+    { "call": ["setTarget", "@firedFlood", "@forest"] },
+
+    { "add": "Runeclaw Bear", "as": "runeclaw" },
+    { "add": "Lim-Dûl the Necromancer", "as": "limdul" },
+    { "fire": "@limdul", "trigger": 0, "as": "firedLimdul" },
+    { "call": ["setTarget", "@firedLimdul", "@runeclaw"] },
+
+    { "add": "Godo, Bandit Warlord", "as": "godo" },
+    { "add": "Tenza, Godo's Maul", "as": "tenza1" },
+    { "call": ["applyEquipAttachment", "@tenza1", 1, "@godo"] },
+    { "add": "Silvercoat Lion", "as": "lion" },
+    { "add": "Tenza, Godo's Maul", "as": "tenza2" },
+    { "call": ["applyEquipAttachment", "@tenza2", 1, "@lion"] }
+  ],
+  "asserts": [
+    { "perm": "Bloodthrone Vampire", "final": { "abilities": { "$includes": ["Lifelink"] } } },
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$excludes": ["Lifelink"] } } },
+    { "perm": "Sol Ring", "final": { "power": 1, "toughness": 1, "abilities": { "$includes": ["Flying"] } } },
+    { "perm": "Smuggler's Copter", "final": { "power": 3, "toughness": 3, "abilities": { "$includes": ["Flying"] } } },
+    { "perm": "Katsumasa, the Animator", "final": { "power": 3, "toughness": 3 } },
+    { "perm": "Donatello, Mutant Mechanic", "final": { "subtypes": { "$excludes": ["Robot"] } } },
+    { "perm": "Sky Skiff", "final": { "types": { "$includes": ["Creature"] } } },
+    { "perm": "Mind Stone", "final": { "types": { "$excludes": ["Creature"] } } },
+    { "perm": "Hill Giant", "final": { "abilities": { "$includes": ["First strike", "Rampage 2"] } } },
+    { "perm": "Forest", "final": { "subtypes": { "$includes": ["Forest", "Island"] } } },
+    { "perm": "Runeclaw Bear", "final": { "subtypes": { "$includes": ["Bear", "Zombie"] } } },
+    { "perm": "Godo, Bandit Warlord", "final": { "power": 6, "toughness": 6, "abilities": { "$includes": ["Trample"] } } },
+    { "perm": "Silvercoat Lion", "final": { "power": 3, "toughness": 3, "abilities": { "$excludes": ["Trample"] } } }
+  ]
+}

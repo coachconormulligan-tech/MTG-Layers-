@@ -504,7 +504,9 @@ const Battlefield = {
     // that chosen target — not the source — so a self-referential trigger must NOT auto-pin
     // the targeted effect to the source (e.g. The Wondrous Wasp: "When [self] enters, tap up
     // to one target creature. It loses all abilities …").
-    const _effectTextHadExplicitTarget = /\btarget\b/i.test(parsedEffectText);
+    // "choose any number of creatures with different powers. Those creatures gain …"
+    // (Sigarda's Vanguard) names the objects it affects just as a target does.
+    const _effectTextHadExplicitTarget = /\btarget\b|\bchoose (?:any number of|up to \w+|two|three|four|five|six) (?:creatures|lands|artifacts|enchantments|permanents)\b/i.test(parsedEffectText);
 
     // "Whenever one or more Elves you control attack, they gain deathtouch …" — "they" are the
     // attackers named by the trigger condition, which the effect text no longer carries.
@@ -531,7 +533,8 @@ const Battlefield = {
           const named = soFar.match(/.*\btarget\s+(?:[\w'-]+\s+){0,3}?(creature|land|artifact|enchantment|planeswalker|permanent)\b/i);
           soFar += sentence + ' ';
           if (/\bcreates?\b|\bcopy\b/i.test(sentence)) return sentence;
-          return sentence.replace(/(?<!except\s)\bit's\s+(an?\s+[^.]*?\bin addition to its other\b)/gi,
+          // Nor the "it's" of a rider's condition ("If it's a land, it becomes an Island in addition …").
+          return sentence.replace(/(?<!except\s)(?<!\bif\s)(?<!\bas long as\s)\bit's\s+(an?\s+[^.]*?\bin addition to its other\b)/gi,
             `target ${named ? named[1].toLowerCase() : triggerSubject} is $1`);
         }).join(' ');
       }
@@ -553,6 +556,8 @@ const Battlefield = {
     // "…untap this creature. It gains protection …" (Pristine Skywise): the effect itself names
     // the source before the pronoun, so "it" is the source, whatever the trigger condition says.
     parsedEffectText = _resolveItToAbilitySource(parsedEffectText);
+    // "Target creature …. If it's a Vampire, it also gains lifelink": the rider is about that target.
+    parsedEffectText = _resolveRiderSubjectToTarget(parsedEffectText);
     if (/\bit\b/i.test(parsedEffectText)) {
       const before = parsedEffectText;
       // Replace "it gets/gains/has/is/becomes/loses" → "target [subject] gets/gains/..."
