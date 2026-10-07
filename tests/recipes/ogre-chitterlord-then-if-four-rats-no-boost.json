@@ -1,0 +1,43 @@
+{
+  "name": "Ogre Chitterlord — with four Rats when the trigger is fired, no Rat gets +2/+0",
+  "notes": "Sweep singleton (2026-10-07). \"… Then if you control five or more Rats, each Rat you control gets +2/+0 until end of turn\" produced nothing: the sentence sits after a token with a quoted ability on the same line, and \"Then if\" was not read as a condition. _addAbilityPseudo moves it to a line of its own as \"If on resolution <condition>, …\", tested against the board the trigger was fired on (the tokens the trigger makes are not counted unless they are on the board). Four Rats: nothing changes.",
+  "steps": [
+    {
+      "add": "Typhoid Rats"
+    },
+    {
+      "add": "Ravenous Rats"
+    },
+    {
+      "add": "Chittering Rats"
+    },
+    {
+      "add": "Pestilence Rats"
+    },
+    {
+      "add": "Ogre Chitterlord",
+      "as": "ogre"
+    },
+    {
+      "fire": "@ogre",
+      "trigger": 1,
+      "as": "t"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Typhoid Rats",
+      "final": {
+        "power": 1,
+        "toughness": 1
+      }
+    },
+    {
+      "perm": "Ravenous Rats",
+      "final": {
+        "power": 1,
+        "toughness": 1
+      }
+    }
+  ]
+}

@@ -229,15 +229,28 @@ const CONDITION_PARSERS = [
   // --- Optional additional cost of a spell (kicker, bargain, madness / mayhem cost) ---
   // "[additional cost paid]" / "[additional cost not paid]" — what _splitConditionalBranches
   // writes for "If this spell was kicked, …" and the sentence it replaces. Read from the
-  // spell's Kicked toggle (perm.additionalCostPaid).
+  // spell's Kicked toggle (perm.additionalCostPaid). "[additional cost 2 paid]" is the second
+  // toggle of a spell with two cast conditions (Cankerous Thirst: {B} spent, {G} spent).
   (ct, srcId) => {
-    const m = ct.match(/^\[additional cost (not )?paid\]$/);
+    const m = ct.match(/^\[additional cost (2 )?(not )?paid\]$/);
     if (!m) return null;
-    const wantPaid = !m[1];
+    const field = m[1] ? 'additionalCostPaid2' : 'additionalCostPaid';
+    const wantPaid = !m[2];
     return () => {
       const src = typeof Battlefield !== 'undefined' ? Battlefield.getPermById(srcId) : null;
-      return !!(src && src.additionalCostPaid) === wantPaid;
+      return !!(src && src[field]) === wantPaid;
     };
+  },
+
+  // "[6 is 6 or more]" / "[X is 4 or greater]" — what _splitConditionalBranches writes for a
+  // spell's "If X is 6 or more, …" (Dance of the Manse). X is substituted before parsing, so
+  // this is simply true or false; with no value given for X it is false.
+  (ct) => {
+    const m = ct.match(/^\[(x|\d+) is (\d+) or (more|greater|less|fewer)\]$/i);
+    if (!m) return null;
+    const x = parseInt(m[1]), n = parseInt(m[2]);
+    const holds = !isNaN(x) && (/^(?:more|greater)$/i.test(m[3]) ? x >= n : x <= n);
+    return () => holds;
   },
 
   // --- Game-state conditions (Battlefield.gameState) ---
@@ -375,14 +388,21 @@ const CONDITION_PARSERS = [
     const m = ct.match(/you control (\w+)\s+or\s+more\s+(\w+)/);
     if (!m) return null;
     const threshold = _wordThresh(m[1]);
-    const typeInfo = normalizeTypeWord(m[2].toLowerCase());
-    if (!typeInfo) return null;
+    let typeInfo = normalizeTypeWord(m[2].toLowerCase());
+    // "you control five or more Rats" (Ogre Chitterlord): a creature type counts creatures of it.
+    if (!typeInfo) {
+      const subtype = singularizeCreatureType(m[2]);
+      if (typeof TypeCatalog === 'undefined' || !TypeCatalog.creatureTypes.has(subtype)) return null;
+      typeInfo = { check: 'subtype', value: subtype };
+    }
     return (state, allStates) => {
       if (!allStates) return true;
       const myCtrl = state.controller;
       let count = 0;
       for (const [, s] of allStates) {
-        if ((!myCtrl || s.controller === myCtrl) && (typeInfo.check === 'any' || (typeInfo.check === 'type' && s.types.includes(typeInfo.value)))) count++;
+        if (myCtrl && s.controller !== myCtrl) continue;
+        if (typeInfo.check === 'any' || (typeInfo.check === 'type' && s.types.includes(typeInfo.value))
+          || (typeInfo.check === 'subtype' && ((s.subtypes || []).includes(typeInfo.value) || (s.isAllCreatureTypes && s.types.includes('Creature'))))) count++;
       }
       return count >= threshold;
     };
@@ -790,6 +810,16 @@ function parseCardEffects(permanent, card, opts = {}) {
     // or ability checks once, as it resolves ("If it's a Vampire, it also gains lifelink").
     // The engine tests it against the fire-time snapshot when the effect carries one.
     const onceMatch = ct.match(/^on resolution\s+(.+)$/);
+    // "… its toughness is 2 or less" (Welcome to the Fold), "… has power 4 or greater" (Strider,
+    // Ranger of the North): the object's power/toughness as the spell or ability resolved. It is
+    // only read from that snapshot (_finalPT) — in a layer before 7 the live value is not final.
+    const oncePT = onceMatch && onceMatch[1].match(/\b(power|toughness)\s+(?:is\s+)?(\d+)\s+or\s+(greater|more|less|fewer)\b/);
+    if (oncePT) {
+      const n = parseInt(oncePT[2], 10), atLeast = /^(?:greater|more)$/.test(oncePT[3]);
+      const once = (state) => state[oncePT[1]] != null && (atLeast ? state[oncePT[1]] >= n : state[oncePT[1]] <= n);
+      once._onResolution = once._finalPT = true;
+      return once;
+    }
     if (onceMatch) {
       const inner = _parseCondition(onceMatch[1]);
       if (!inner) return null;
@@ -1323,6 +1353,7 @@ function parseCardEffects(permanent, card, opts = {}) {
     oracle = _branchInfo.text;
     // Shows the "Kicked" / "Bargained" toggle on the spell.
     if (_branchInfo.costLabel) permanent.additionalCostLabel = _branchInfo.costLabel;
+    if (_branchInfo.costLabel2) permanent.additionalCostLabel2 = _branchInfo.costLabel2;
   }
 
   // Pattern A: "As long as [condition], it [effect]" at start of line
@@ -1386,7 +1417,11 @@ function parseCardEffects(permanent, card, opts = {}) {
 
   // Pattern B: trailing "as long as [condition]" at end of sentence
   // Exception: preserve "as long as your devotion" (Theros gods)
-  oracle = oracle.replace(/\s+as long as\s+(?!your devotion\b)([^.,;\n]+)(?=[.,;]|$)/gi, (match, condText) => {
+  oracle = oracle.replace(/\s+as long as\s+(?!your devotion\b)([^.,;\n]+)(?=[.,;]|$)/gi, (match, condText, offset, full) => {
+    // "… doesn't untap during its controller's untap step for as long as it has a paralyzation
+    // counter on it." (Dread Wight): how long that sentence's own rule lasts, not a condition
+    // on the other sentences of the line.
+    if (/\b(?:doesn't|don't) untap during [^.\n]*\bfor$/i.test(full.slice(0, offset))) return match;
     const cond = _parseCondition(condText);
     if (cond) {
       const idx = _asLongAsConditions.length;
@@ -2832,7 +2867,9 @@ function parseCardEffects(permanent, card, opts = {}) {
   // Standard: "[filter] get +X/+Y"
   // Anchor also matches after ", and " / " and " to catch compound sentences like
   // "red creatures get +2/+0 and white creatures get +0/+2" (e.g. Agrus Kos).
-  const boostRegex = /(?:^|\.|,?\s+and\s+)\s*(.+?)\s+(?:you (?:control|own)\s+)?get[s]?\s+([+-]\d+)\/([+-]\d+)/gmi;
+  // … and after a comma that opens another target's clause: "target creature gets +3/+3, up to
+  // one other target creature gets +2/+2, and …" (Arm the Cathars, Blue Dragon).
+  const boostRegex = /(?:^|\.|,?\s+and\s+|,\s+(?=(?:up to \w+\s+)?(?:(?:an)?other\s+)?target\b))\s*(.+?)\s+(?:you (?:control|own)\s+)?get[s]?\s+([+-]\d+)\/([+-]\d+)/gmi;
   let boostMatch;
   while ((boostMatch = boostRegex.exec(oracle)) !== null) {
     let filterText = boostMatch[1].trim();
@@ -3844,7 +3881,13 @@ function parseCardEffects(permanent, card, opts = {}) {
     for (const ability of allKeywords) {
       // For modal spells, include the match line position in the dedup key
       // so identical modes (e.g. Cure and Cura both granting hexproof) each produce effects.
-      const linePos = _isModalSpell ? `@${haveMatch.index}` : '';
+      // A spell that says the same thing on two lines says it about two objects ("That creature
+      // gains haste." for each of Cauldron Dance's two creatures), and so does one that says it
+      // twice on a line about a target ("Up to one other target creature gains vigilance." for
+      // the second and third creatures of Arm the Cathars).
+      const linePos = _isModalSpell ? `@${haveMatch.index}`
+        : permanent.isSpell ? `@line${oracle.slice(0, haveMatch.index + haveMatch[0].length).split('\n').length}`
+          + (/\btarget\b/i.test(filterText) ? `@${haveMatch.index}` : '') : '';
       const key = `${filterText}|${ability}${linePos}`.toLowerCase();
       if (haveAbilityParsed.has(key)) continue;
       haveAbilityParsed.add(key);
@@ -4031,6 +4074,9 @@ function parseCardEffects(permanent, card, opts = {}) {
     if (addTypeMatchRanges.some(r => (copyClauseSpans.includes(r) ? ftMatch.index : _ftStart) < r.end && _ftEnd > r.start)) continue;
     let filterText = _lastSentenceTargetSubject(ftMatch[1].trim());
     const abilityText = ftMatch[2].trim().replace(/,$/, '').trim();
+    // A grant made by a permanent's triggered ability ('At end of combat, … Each of those
+    // creatures gains "…"' — Dread Wight) happens when the trigger is fired, not statically.
+    if (!permanent.isSpell && !permanent.isManualEffect && _isInTriggeredSentence(ftMatch.index + ftMatch[0].indexOf('"'))) continue;
     if (filterText.toLowerCase().includes('enchanted')) continue;
     // 'Create a token … with "…"' / 'That token gains "…"': the token's own card carries it.
     if (/\bcreates?\b/i.test(filterText) || /^(?:that|the|those)\s+tokens?$/i.test(filterText)) continue;
@@ -5329,6 +5375,26 @@ function parseCardEffects(permanent, card, opts = {}) {
       if (controlRestriction) controlEff.targetRestriction = controlRestriction;
       if (controlMaxTargets > 1) { controlEff.maxTargets = controlMaxTargets; controlEff.targetIds = []; }
       emittedControl = true;
+      // "Gain control of target creature if its toughness is 2 or less. If this spell's madness
+      // cost was paid, instead gain control of that creature if its toughness is X or less."
+      // (Welcome to the Fold): the target's toughness as the spell resolved, against 2 or,
+      // with the cost toggle on, X.
+      const ptIf = effectScope === 'targeted'
+        && oracle.slice(gcMatch.index).match(/^gains? control of (target [^.]+?) if its (power|toughness) is (\d+) or (less|greater)\./i);
+      if (ptIf) {
+        const alt = oracle.slice(gcMatch.index + ptIf[0].length)
+          .match(/^\s*If this (?:spell|card)'s (\w+) cost was paid, instead gain control of (?:that \w+|it) if its (?:power|toughness) is (\d+|x) or (?:less|greater)\b/i);
+        const threshold = (n) => _parseCondition(`on resolution its ${ptIf[2]} is ${/^\d+$/.test(n) ? n : 0} or ${ptIf[4]}`);
+        const unpaid = threshold(ptIf[3]), paid = alt ? threshold(alt[2]) : null;
+        const cond = (state, allStates) => {
+          const src = paid && typeof Battlefield !== 'undefined' ? Battlefield.getPermById(permanent.id) : null;
+          return (src && src.additionalCostPaid ? paid : unpaid)(state, allStates);
+        };
+        cond._onResolution = cond._finalPT = true;
+        controlEff.asLongAsCondition = cond;
+        controlEff.targetRestriction = buildAppliesToFromText(ptIf[1].replace(/^target\s+/i, '')).fn || controlRestriction;
+        if (alt) permanent.additionalCostLabel = alt[1].charAt(0).toUpperCase() + alt[1].slice(1).toLowerCase() + ' cost paid';
+      }
     }
 
     // "you control enchanted [type]" on auras → Layer 2 CONTROL for the enchanted permanent
@@ -5924,10 +5990,21 @@ function parseCardEffects(permanent, card, opts = {}) {
       .filter(e => e.scope === 'targeted' && !e.selfTarget && e._oraclePos !== undefined)
       .map(e => ({ e, line: lineOfPos(e._oraclePos) }));
     for (const { e, line } of located) {
-      if (!_branchInfo.branchLines.has(line)) continue;
+      if (!_branchInfo.branchLines.has(line) || _branchInfo.ownSlotLines.has(line)) continue;
       const baseLine = _branchInfo.branchLines.get(line);
       const onBase = located.filter(x => x.line === baseLine).map(x => x.e._oraclePos);
       e._slotPos = onBase.length ? Math.min(...onBase) : -1 - baseLine;
+    }
+  }
+  // "Those creatures gain vigilance" after a sentence that named its targets one by one (Arm
+  // the Cathars) was written out once for each target: each copy has that target's slot.
+  {
+    const located = effects.filter(e => e.scope === 'targeted' && !e.selfTarget && e._oraclePos !== undefined);
+    const within = (e, span) => { const p = _getMatchContentPos(e._oraclePos); return p >= span[0] && p < span[1]; };
+    for (const { from, to } of located.length > 1 ? _repeatedTargetSpans(oracle) : []) {
+      const named = located.filter(e => within(e, to)).map(e => e._oraclePos);
+      if (!named.length) continue;
+      for (const e of located) if (within(e, from)) e._slotPos = Math.min(...named);
     }
   }
   return _finalizeEffects(effects, isEquipmentSource, permanent, card.oracle_text);

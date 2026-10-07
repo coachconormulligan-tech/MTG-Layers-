@@ -106,20 +106,25 @@ function setXValue(permId, rawValue) {
   renderAll();
 }
 
-/* Toggle for a spell's optional additional cost ("Kicked", "Bargained", "Mayhem cost paid") */
+/* Toggle for a spell's optional additional cost ("Kicked", "Bargained", "Mayhem cost paid").
+   A spell with two cast conditions (Cankerous Thirst: "{B} spent", "{G} spent") gets two. */
 function renderAdditionalCostToggle(perm) {
-  const paid = !!perm.additionalCostPaid;
+  const button = (slot) => {
+    const suffix = slot === 2 ? '2' : '';
+    const paid = !!perm['additionalCostPaid' + suffix];
+    return `<button class="ts-action-btn configure mutate-btn${paid ? ' mutate-active' : ''}"
+            onclick="event.stopPropagation(); toggleAdditionalCostPaid('${perm.id}', ${slot})"
+            title="Whether this was true when the spell was cast">${escapeHtml(perm['additionalCostLabel' + suffix])}: ${paid ? 'Yes' : 'No'}</button>`;
+  };
   return `<div class="cda-counter-row" onclick="event.stopPropagation()">
-    <button class="ts-action-btn configure mutate-btn${paid ? ' mutate-active' : ''}"
-            onclick="event.stopPropagation(); toggleAdditionalCostPaid('${perm.id}')"
-            title="Whether this optional cost was paid when the spell was cast">${escapeHtml(perm.additionalCostLabel)}: ${paid ? 'Yes' : 'No'}</button>
+    ${button(1)}${perm.additionalCostLabel2 ? button(2) : ''}
   </div>`;
 }
 
-function toggleAdditionalCostPaid(permId) {
+function toggleAdditionalCostPaid(permId, slot = 1) {
   const perm = Battlefield.getPermById(permId);
   if (!perm) return;
-  Battlefield.setAdditionalCostPaid(permId, !perm.additionalCostPaid);
+  Battlefield.setAdditionalCostPaid(permId, !perm[slot === 2 ? 'additionalCostPaid2' : 'additionalCostPaid'], slot);
   Battlefield.evaluate();
   renderAll();
 }

@@ -1,0 +1,92 @@
+{
+  "name": "Dance of the Manse — returned permanents are 4/4 creatures only if X is 6 or more",
+  "notes": "Sweep cast-condition leftovers (2026-10-06). \"Return up to X target artifact and/or non-Aura enchantment cards … to the battlefield. If X is 6 or more, those permanents are 4/4 creatures in addition to their other types.\" produced nothing. The second sentence is now a branch line \"If [6 is 6 or more], Up to 6 target artifacts and/or non-Aura enchantments are 4/4 creatures in addition to their other types.\" — the subject comes from the cards the first sentence returned. X = 6 on Darksteel Ingot and Leyline of Sanctity: both 4/4 creatures that keep their types. X = 5 on Sol Ring: still not a creature.",
+  "steps": [
+    {
+      "add": "Darksteel Ingot",
+      "as": "ingot"
+    },
+    {
+      "add": "Leyline of Sanctity",
+      "as": "leyline"
+    },
+    {
+      "add": "Sol Ring",
+      "as": "ring"
+    },
+    {
+      "add": "Dance of the Manse",
+      "as": "six",
+      "spell": true,
+      "x": 6
+    },
+    {
+      "call": [
+        "setMultiTarget",
+        "@six",
+        0,
+        "@ingot"
+      ]
+    },
+    {
+      "call": [
+        "setMultiTarget",
+        "@six",
+        1,
+        "@leyline"
+      ]
+    },
+    {
+      "add": "Dance of the Manse",
+      "as": "five",
+      "spell": true,
+      "x": 5
+    },
+    {
+      "call": [
+        "setMultiTarget",
+        "@five",
+        0,
+        "@ring"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Darksteel Ingot",
+      "final": {
+        "types": {
+          "$includes": [
+            "Artifact",
+            "Creature"
+          ]
+        },
+        "power": 4,
+        "toughness": 4
+      }
+    },
+    {
+      "perm": "Leyline of Sanctity",
+      "final": {
+        "types": {
+          "$includes": [
+            "Enchantment",
+            "Creature"
+          ]
+        },
+        "power": 4,
+        "toughness": 4
+      }
+    },
+    {
+      "perm": "Sol Ring",
+      "final": {
+        "types": {
+          "$excludes": [
+            "Creature"
+          ]
+        }
+      }
+    }
+  ]
+}

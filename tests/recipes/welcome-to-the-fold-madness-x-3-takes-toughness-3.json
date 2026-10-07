@@ -1,0 +1,50 @@
+{
+  "name": "Welcome to the Fold — with the madness cost paid and X = 3, a creature with toughness 3 is taken",
+  "notes": "Last open cast-condition card (2026-10-07). \"Gain control of target creature if its toughness is 2 or less. If this spell's madness cost was paid, instead gain control of that creature if its toughness is X or less.\" was an unconditional gain-control. The control effect now carries a condition on the target's toughness as the spell resolved (the spell's cast-time states, _castStates), against 2, or against X when the \"Madness cost paid\" toggle is on. Madness toggle on, X = 3: Hill Giant 3/3 changes controller.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears",
+      "controller": "p2"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant",
+      "controller": "p2"
+    },
+    {
+      "add": "Welcome to the Fold",
+      "as": "fold",
+      "spell": true,
+      "x": 3
+    },
+    {
+      "call": [
+        "setTarget",
+        "@fold",
+        "@giant"
+      ]
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@fold",
+        true
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "controller": "player_0"
+      }
+    }
+  ]
+}

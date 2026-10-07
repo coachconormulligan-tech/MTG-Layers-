@@ -1,0 +1,62 @@
+{
+  "name": "Vision Quest — \"If X is 4 or greater, it gains haste\" follows the X value",
+  "notes": "Sweep cast-condition leftovers (2026-10-06). \"… put it onto the battlefield … If X is 4 or greater, it gains haste until end of turn.\" produced nothing. The sentence now moves to a branch line whose condition is the comparison itself (\"[4 is 4 or greater]\", true or false once X is substituted; false with no X), and \"it\" is the card just put onto the battlefield, picked on the board. X = 4 on Ornithopter: haste. X = 3 on Phyrexian Walker: none.",
+  "steps": [
+    {
+      "add": "Ornithopter",
+      "as": "thopter"
+    },
+    {
+      "add": "Phyrexian Walker",
+      "as": "walker"
+    },
+    {
+      "add": "Vision Quest",
+      "as": "four",
+      "spell": true,
+      "x": 4
+    },
+    {
+      "call": [
+        "setTarget",
+        "@four",
+        "@thopter"
+      ]
+    },
+    {
+      "add": "Vision Quest",
+      "as": "three",
+      "spell": true,
+      "x": 3
+    },
+    {
+      "call": [
+        "setTarget",
+        "@three",
+        "@walker"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Ornithopter",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Haste"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Phyrexian Walker",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Haste"
+          ]
+        }
+      }
+    }
+  ]
+}

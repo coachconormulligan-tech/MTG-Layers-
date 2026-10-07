@@ -1,0 +1,72 @@
+{
+  "name": "Open into Wonder — \"X target creatures … those creatures gain\" reaches the X creatures picked",
+  "notes": "Sweep singleton (2026-10-07). \"X target creatures can't be blocked this turn. Until end of turn, those creatures gain \\\"Whenever this creature deals combat damage to a player, draw a card.\\\"\" produced nothing: with X replaced by its value the antecedent read \"2 target creatures\", a count neither _resolveTheyPronoun nor extractTargetInfo knew (a digit count fell through to a board-wide filter), and the antecedent phrase ran on into its own verb (\"… can't be blocked this turn\"). Both now read digit counts and the phrase stops at the verb. X = 2: the two creatures picked have the ability, the third does not.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Open into Wonder",
+      "as": "wonder",
+      "spell": true,
+      "x": 2
+    },
+    {
+      "call": [
+        "setMultiTarget",
+        "@wonder",
+        0,
+        "@bears"
+      ]
+    },
+    {
+      "call": [
+        "setMultiTarget",
+        "@wonder",
+        1,
+        "@ogre"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Whenever this creature deals combat damage to a player, draw a card."
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Whenever this creature deals combat damage to a player, draw a card."
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Whenever this creature deals combat damage to a player, draw a card."
+          ]
+        }
+      }
+    }
+  ]
+}

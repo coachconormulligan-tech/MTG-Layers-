@@ -1,0 +1,78 @@
+{
+  "name": "Torrent of Souls — +2/+0 and haste only if {R} was spent",
+  "notes": "Sweep cast-condition leftovers (2026-10-06). \"Creatures target player controls get +2/+0 and gain haste until end of turn if {R} was spent to cast this spell.\" applied unconditionally: the condition ends the sentence with a full stop, which neither the branch splitter's entry test nor its leading-\"If\" reader looked for. It now moves to a branch line read from a \"{R} spent\" toggle. The {B} half (return a creature card) is not a continuous effect and gets no toggle. First copy targets you with {R} spent: Grizzly Bears 4/2 with haste. Second copy targets the opponent without it: Hill Giant stays 3/3 without haste.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant",
+      "controller": "p2"
+    },
+    {
+      "add": "Torrent of Souls",
+      "as": "paid",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTargetPlayer",
+        "@paid",
+        "p1"
+      ]
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@paid",
+        true
+      ]
+    },
+    {
+      "add": "Torrent of Souls",
+      "as": "unpaid",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTargetPlayer",
+        "@unpaid",
+        "p2"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 4,
+        "toughness": 2,
+        "abilities": {
+          "$includes": [
+            "Haste"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "power": 3,
+        "toughness": 3,
+        "abilities": {
+          "$excludes": [
+            "Haste"
+          ]
+        }
+      }
+    }
+  ]
+}

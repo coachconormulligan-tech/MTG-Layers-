@@ -1,0 +1,79 @@
+{
+  "name": "Flash Conscription — the quoted lifegain ability is granted only if {W} was spent",
+  "notes": "Sweep cast-condition leftovers (2026-10-06). 'If {W} was spent to cast this spell, the creature gains \"Whenever this creature deals combat damage, you gain that much life\" until end of turn.' produced nothing: the branch splitter skipped every line holding a quoted ability, and \"the creature\" was not read as the spell's target. Quotes are now held out of the line while it is split, and \"the creature gains\" resolves to the target of \"Untap target creature and gain control of it\". With {W} spent, Hill Giant has haste and the quoted ability; without it, Gray Ogre has haste only.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant",
+      "controller": "p2"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Flash Conscription",
+      "as": "white",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTarget",
+        "@white",
+        "@giant"
+      ]
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@white",
+        true
+      ]
+    },
+    {
+      "add": "Flash Conscription",
+      "as": "plain",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTarget",
+        "@plain",
+        "@ogre"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Haste",
+            "Whenever this creature deals combat damage, you gain that much life"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Haste"
+          ],
+          "$excludes": [
+            "Whenever this creature deals combat damage, you gain that much life"
+          ]
+        }
+      }
+    }
+  ]
+}

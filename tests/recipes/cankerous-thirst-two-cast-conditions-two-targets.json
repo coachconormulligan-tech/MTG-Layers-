@@ -1,0 +1,98 @@
+{
+  "name": "Cankerous Thirst — {B} spent and {G} spent are separate toggles with separate targets",
+  "notes": "Sweep singleton (2026-10-06). \"If {B} was spent to cast this spell, you may have target creature get -3/-3 until end of turn. If {G} was spent to cast this spell, you may have target creature get +3/+3 until end of turn.\" A spell had one cast-condition toggle, so a card with two different conditions was left alone: the first sentence gave every creature -3/-3 unconditionally and the second did nothing. The spell now has a second toggle (additionalCostLabel2 / additionalCostPaid2, condition \"[additional cost 2 paid]\") and each sentence is its own target slot. First copy, only {G} spent: Hill Giant (the -3/-3 target) stays 3/3, Grizzly Bears (the +3/+3 target) is 5/5. Second copy, only {B} spent, both targets Gray Ogre: 2/2 becomes -1/-1, not 2/2.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre"
+    },
+    {
+      "add": "Cankerous Thirst",
+      "as": "green",
+      "spell": true
+    },
+    {
+      "call": [
+        "setSlottedTarget",
+        "@green",
+        0,
+        "@giant"
+      ]
+    },
+    {
+      "call": [
+        "setSlottedTarget",
+        "@green",
+        1,
+        "@bears"
+      ]
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@green",
+        true,
+        2
+      ]
+    },
+    {
+      "add": "Cankerous Thirst",
+      "as": "black",
+      "spell": true
+    },
+    {
+      "call": [
+        "setSlottedTarget",
+        "@black",
+        0,
+        "@ogre"
+      ]
+    },
+    {
+      "call": [
+        "setSlottedTarget",
+        "@black",
+        1,
+        "@ogre"
+      ]
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@black",
+        true
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 5,
+        "toughness": 5
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "power": 3,
+        "toughness": 3
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "power": -1,
+        "toughness": -1
+      }
+    }
+  ]
+}

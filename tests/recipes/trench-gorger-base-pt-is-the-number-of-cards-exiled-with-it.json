@@ -1,0 +1,80 @@
+{
+  "name": "Trench Gorger — base power and toughness are the number of cards exiled with it when the trigger is fired",
+  "notes": "Sweep singleton (2026-10-07). \"If you do, this creature has base power and base toughness each equal to the number of cards exiled this way\" produced nothing. _lockFireTimeBasePT now counts the exile entries tagged to the source (exiledWithId) when the trigger is fired and writes \"has base power and toughness N/N\". Three lands exiled with it, one card in exile not tagged: 3/3. NOTE: exile ids are literal; build in its own process.",
+  "steps": [
+    {
+      "add": "Trench Gorger",
+      "as": "gorger"
+    },
+    {
+      "call": [
+        "addToExile",
+        "card:Forest"
+      ]
+    },
+    {
+      "call": [
+        "addToExile",
+        "card:Island"
+      ]
+    },
+    {
+      "call": [
+        "addToExile",
+        "card:Swamp"
+      ]
+    },
+    {
+      "call": [
+        "addToExile",
+        "card:Mountain"
+      ]
+    },
+    {
+      "call": [
+        "setExileTag",
+        "exile_1",
+        "@gorger"
+      ]
+    },
+    {
+      "call": [
+        "setExileTag",
+        "exile_2",
+        "@gorger"
+      ]
+    },
+    {
+      "call": [
+        "setExileTag",
+        "exile_3",
+        "@gorger"
+      ]
+    },
+    {
+      "fire": "@gorger",
+      "trigger": 1,
+      "as": "t"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Trench Gorger",
+      "final": {
+        "power": 3,
+        "toughness": 3
+      }
+    },
+    {
+      "effect": {
+        "source": "Trench Gorger (trigger)",
+        "layer": "7b",
+        "type": "set_pt",
+        "params": {
+          "power": 3,
+          "toughness": 3
+        }
+      }
+    }
+  ]
+}

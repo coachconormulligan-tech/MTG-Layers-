@@ -1,0 +1,55 @@
+{
+  "name": "Invert the Skies — \"… if {G} was spent …, and … if {U} was spent …\" are two conditional halves",
+  "notes": "Sweep cast-condition leftovers (2026-10-06). \"Creatures your opponents control lose flying until end of turn if {G} was spent to cast this spell, and creatures you control gain flying until end of turn if {U} was spent to cast this spell.\" The condition follows each clause instead of leading the sentence, so the whole sentence was read as one garbled \"lose\" (an ability named \"Flying until end of turn if {g} was spent …\"). _branchCastClauses now splits it into two branch lines, one per toggle. With only {G} spent, the opponent's Wind Drake loses flying and your Grizzly Bears do not gain it.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Wind Drake",
+      "as": "drake",
+      "controller": "p2"
+    },
+    {
+      "add": "Invert the Skies",
+      "as": "invert",
+      "spell": true
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@invert",
+        true
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Wind Drake",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Flying"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Flying"
+          ]
+        }
+      }
+    }
+  ]
+}

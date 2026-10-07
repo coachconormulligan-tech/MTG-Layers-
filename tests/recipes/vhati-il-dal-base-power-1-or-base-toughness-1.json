@@ -1,0 +1,67 @@
+{
+  "name": "Vhati il-Dal — base power 1 or base toughness 1 are two options, each setting one value",
+  "notes": "Sweep open list (trigger options, 2026-10-07). Already worked: extractActivatedAbilities splits \"has base power 1 or base toughness 1\" into two options and each sets one value only (powerOnly / toughnessOnly). Recipe locks it in; the modes are fired on two different creatures.",
+  "steps": [
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre"
+    },
+    {
+      "add": "Vhati il-Dal",
+      "as": "vhati"
+    },
+    {
+      "fire": "@vhati",
+      "activated": 0,
+      "mode": 0,
+      "as": "a"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@a",
+        "@giant"
+      ]
+    },
+    {
+      "fire": "@vhati",
+      "activated": 0,
+      "mode": 1,
+      "as": "b"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@b",
+        "@ogre"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "power": 1,
+        "toughness": 3
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "power": 2,
+        "toughness": 1
+      }
+    },
+    {
+      "perm": "Vhati il-Dal",
+      "final": {
+        "power": 3,
+        "toughness": 3
+      }
+    }
+  ]
+}

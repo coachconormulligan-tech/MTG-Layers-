@@ -1,0 +1,60 @@
+{
+  "name": "Finale of Devastation — +X/+X and haste only if X is 10 or more",
+  "notes": "Found in the sweep diff for the \"If X is N or more\" branch (2026-10-06). \"If X is 10 or more, creatures you control get +X/+X and gain haste until end of turn.\" applied at every X (X = 2 gave +2/+2 and haste). It is now behind the comparison. Player 1 casts it with X = 2: Grizzly Bears stay 2/2 without haste. The opponent casts it with X = 10: their Hill Giant is 13/13 with haste.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant",
+      "controller": "p2"
+    },
+    {
+      "add": "Finale of Devastation",
+      "as": "two",
+      "spell": true,
+      "x": 2
+    },
+    {
+      "add": "Finale of Devastation",
+      "as": "ten",
+      "spell": true,
+      "x": 10,
+      "controller": "p2"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 2,
+        "toughness": 2,
+        "abilities": {
+          "$excludes": [
+            "Haste"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "power": 13,
+        "toughness": 13,
+        "abilities": {
+          "$includes": [
+            "Haste"
+          ]
+        }
+      }
+    }
+  ]
+}
