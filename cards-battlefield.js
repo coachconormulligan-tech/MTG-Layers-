@@ -13,6 +13,7 @@ const DEFAULT_GAME_STATE = {
   isYourTurn: false,
   isMonarch: false,
   hasInitiative: false,
+  hasCityBlessing: false,
   poisonCounters: 0,
   experienceCounters: 0,
   customCounters: {},
@@ -40,6 +41,7 @@ const Battlefield = {
         isYourTurn: true,
         isMonarch: false,
         hasInitiative: false,
+        hasCityBlessing: false,
         poisonCounters: 0,
         experienceCounters: 0,
         customCounters: {},
@@ -99,6 +101,7 @@ const Battlefield = {
         isYourTurn: false,
         isMonarch: false,
         hasInitiative: false,
+        hasCityBlessing: false,
         poisonCounters: 0,
         experienceCounters: 0,
         customCounters: {},
@@ -194,6 +197,22 @@ const Battlefield = {
         result.push({ index: i, fullText: ab, effectText: exertMatch[1].trim(), triggerLimit: null });
         continue;
       }
+      // "As this creature enters or is turned face up, it becomes your choice of 5/1 or 1/5"
+      // (Aquamorph Entity): not a trigger, but a choice made at a moment like one, so it is
+      // offered the same way — fired with one of the two values.
+      const asEntersPT = stripped.match(/^As this (creature|card|permanent) enters(?: or is turned face up)?, it becomes your choice of (\d+\/\d+) or (\d+\/\d+)\.?$/i);
+      if (asEntersPT) {
+        const options = [2, 3].map(g => `This ${asEntersPT[1].toLowerCase()} has base power and toughness ${asEntersPT[g]}.`);
+        result.push({ index: i, fullText: ab, effectText: options[0], triggerLimit: null, options });
+        continue;
+      }
+      // "During your upkeep, this card becomes a random color permanently." (Prismatic Dragon):
+      // a trigger in wording older than "At the beginning of your upkeep".
+      const oldUpkeep = stripped.match(/^During your upkeep,\s*(.*\bbecomes a random color\b.*)$/i);
+      if (oldUpkeep) {
+        result.push({ index: i, fullText: ab, effectText: oldUpkeep[1].trim(), triggerLimit: null });
+        continue;
+      }
       // Triggered abilities start with "when", "whenever", or "at" (CR 603.1)
       if (!/^(?:when(?:ever)?|at)\b/i.test(stripped)) continue;
       // Extract effect text from the STRIPPED version (after first comma)
@@ -214,6 +233,13 @@ const Battlefield = {
         result.push({ index: i, fullText: ab, effectText, triggerLimit,
                       options: [2, 3].map(g => (eitherPT[1] + eitherPT[g] + eitherPT[4])
                         .replace(/^you may have\s+/i, '').replace(/^./, c => c.toUpperCase())) });
+        continue;
+      }
+      // "…, roll a d20." with its result rows on the lines below (Lightfoot Rogue): the rows
+      // are the outcomes, picked from when the trigger is fired.
+      const d20Rows = /\broll a d20\b/i.test(effectText) ? _d20Rows(abilities, i) : [];
+      if (d20Rows.length >= 2) {
+        result.push({ index: i, fullText: [ab.trim(), ...d20Rows].join('\n'), effectText, triggerLimit, options: d20Rows });
         continue;
       }
       result.push({ index: i, fullText: ab, effectText, triggerLimit });
@@ -334,6 +360,12 @@ const Battlefield = {
           }
         }
       }
+      // "{4}, Sacrifice this artifact: Roll a d20." with result rows below (Treasure Chest).
+      const d20Rows = /\broll a d20\b/i.test(effectText) ? _d20Rows(abilities, i) : [];
+      if (d20Rows.length >= 2) {
+        result.push({ index: i, fullText: [ab.trim(), ...d20Rows].join('\n'), effectText, costText, activateLimit, isMonstrosity, monstrosityN, options: d20Rows });
+        continue;
+      }
       result.push({ index: i, fullText: ab, effectText, costText, activateLimit, isMonstrosity, monstrosityN, options });
     }
     return result;
@@ -430,7 +462,8 @@ const Battlefield = {
     // IMPORTANT: This conversion is a UI convenience only — the original ability does NOT
     // actually target, so it bypasses shroud/hexproof. We flag this with _nonTargetingSelection.
     // (A save replays the text as _THEN_IF_RE below left it; read it back as it was written.)
-    let parsedEffectText = effectText.replace(/\nIf (?:on resolution )?(?=[^,.\n]+,\s*[^.\n]*\b(?:gets?|gains?|has|have|becomes?|loses?)\b)/g, ' Then if ');
+    // (A d20 result row is fired with its "10—19 | " label, which is not part of the effect.)
+    let parsedEffectText = effectText.replace(_D20_ROW_RE, '').replace(/\nIf (?:on resolution )?(?=[^,.\n]+,\s*[^.\n]*\b(?:gets?|gains?|has|have|becomes?|loses?)\b)/g, ' Then if ');
     // The subject of such a "target <trigger subject>" is a guess ("target Pirate" for the "it"
     // of Coercive Recruiter, which is whatever creature the ability took). Those subjects are
     // kept on the pseudo-permanent so the parser gives a restriction to every other "target X"
@@ -493,6 +526,13 @@ const Battlefield = {
       }
     }
 
+    // "…, choose one and this card gets +1/+1 until end of turn." with two modes that change
+    // no characteristic (Glorfindel, Dauntless Rescuer): the boost happens whichever is chosen.
+    parsedEffectText = parsedEffectText.replace(/^choose one and\s+(?=this\b)/i, '');
+    // "…becomes a random color permanently." (Prismatic Dragon): rolled now. A saved board
+    // replays the text with the colour already written in.
+    parsedEffectText = parsedEffectText.replace(/\bbecomes a random color(?:\s+permanently)?/gi,
+      () => `becomes ${this._randomPick(['white', 'blue', 'black', 'red', 'green'])}`);
     // Strip leading "if [condition], " — this is a resolution condition, not a filter or target.
     // e.g. Eminence: "if this card is in the command zone or on the battlefield, another target Cat..."
     // "If this land isn't a creature, it becomes a 2/4 Wizard creature …" (Great Hall of the
@@ -544,6 +584,11 @@ const Battlefield = {
       // "Whenever a player attacks, … that player chooses an attacking creature. It gets +2/+0"
       // (Mirkwood Trapper): a player is never what "it gets/gains" means.
       if (/^(?:player|opponent)s?$/i.test(triggerSubject)) triggerSubject = 'creature';
+    }
+    // "Whenever one or more Warriors you control attack a player, target creature that player
+    // controls becomes a Coward" (Gornog, the Red Reaper): the player attacked is an opponent.
+    if (fullText && kind === 'trigger' && /\battacks? (?:a player|an opponent)\b/i.test(fullText.trim().split('\n')[0])) {
+      parsedEffectText = parsedEffectText.replace(/\b(target [\w-]+(?: [\w-]+)?) that player controls\b/gi, '$1 an opponent controls');
     }
     // "another" or "other [thing]" in the effectText also excludes the source
     // (e.g. "another target creature", "each other creature you control").
@@ -652,6 +697,14 @@ const Battlefield = {
       if (!real) didItConversion = true;
       return `${real || guessTarget(triggerSubject)} ${verb}`;
     };
+    // "Whenever this creature attacks, switch its power and toughness until end of turn"
+    // (Valakut Fireboar): "its" is the source the trigger condition names, or else the object
+    // the trigger is about.
+    if (kind === 'trigger' && !_effectTextHadExplicitTarget && /\bswitch\s+its\s+(?:power|toughness)\b/i.test(parsedEffectText)) {
+      const owner = triggerIsSelf ? 'this creature' : guessTarget(triggerSubject);
+      parsedEffectText = parsedEffectText.replace(/\bswitch\s+its\s+(?=power|toughness)/gi, (m) => `${m[0]}witch ${owner}'s `);
+      if (!triggerIsSelf) didItConversion = true;
+    }
     if (/\bit\b/i.test(parsedEffectText)) {
       // Replace "it gets/gains/has/is/becomes/loses" → "target [subject] gets/gains/..."
       // (Not "Target opponent whose turn it is puts …" — The Beamtown Bullies.)
@@ -1424,6 +1477,19 @@ const Battlefield = {
       perm.originalOracleText = perm.originalOracleText || card.oracle_text || '';
       perm.originalCard = perm.originalCard || card;
     }
+    // "As this card enters, choose two abilities from among first strike, vigilance, and
+    // lifelink. Humans you control have each of the chosen abilities." (Greymond, Avacyn's Stalwart)
+    {
+      const fromAmong = resolvedOracleForChoice.match(/\bchoose (two|three) abilities from among ([^.]+)\./i);
+      if (fromAmong) {
+        perm.needsChosenAbilities = true;
+        perm.chosenAbilities = null;
+        perm.abilityChoiceCount = fromAmong[1] === 'three' ? 3 : 2;
+        perm.abilityChoices = fromAmong[2].split(/,\s*(?:and\s+)?|\s+and\s+/).map(a => a.trim()).filter(Boolean);
+        perm.originalOracleText = perm.originalOracleText || card.oracle_text || '';
+        perm.originalCard = perm.originalCard || card;
+      }
+    }
     if (/\bchoose a card type\b/i.test(resolvedOracleForChoice)) {
       perm.needsChosenCardType = true;
       perm.chosenCardType = null;
@@ -1535,6 +1601,8 @@ const Battlefield = {
   },
   setChosenCardName(permId, name) { this._setChoice(permId, 'needsChosenCardName', 'chosenCardName', name); },
   setChosenCardType(permId, type) { this._setChoice(permId, 'needsChosenCardType', 'chosenCardType', type); },
+  // `abilities`: the chosen keywords joined as they will read, "first strike and vigilance".
+  setChosenAbilities(permId, abilities) { this._setChoice(permId, 'needsChosenAbilities', 'chosenAbilities', abilities); },
 
   /* Re-parse effects after chosen type/color/X change */
   _reparseWithChoices(perm) {
@@ -1606,6 +1674,11 @@ const Battlefield = {
       const cct = perm.chosenCardType;
       oracleText = oracleText.replace(/\bthe chosen card type\b/gi, cct);
       oracleText = oracleText.replace(/(?:as [^.]*)?choose a card type\.\s*/gi, '');
+    }
+    // Apply chosen abilities substitution
+    if (perm.chosenAbilities) {
+      oracleText = oracleText.replace(/\beach of the chosen abilities\b/gi, perm.chosenAbilities);
+      oracleText = oracleText.replace(/(?:as [^.]*)?choose (?:two|three) abilities from among [^.]*\.\s*/gi, '');
     }
     oracleText = _stripReminderText(oracleText);
     const processedCard = { ...(perm.originalCard || {}), oracle_text: oracleText };
@@ -3093,6 +3166,7 @@ const Battlefield = {
           ? this.exile.findIndex(e => e.id === p._chosenExileId) : null,
         chosenLandType: p.chosenLandType || null,
         chosenCardType: p.chosenCardType || null,
+        chosenAbilities: p.chosenAbilities || null,
         targetOpponentPlayerId: p._targetOpponentPlayerId || null,
         targetPlayerId: p._targetPlayerId || null,
         enchantedPlayerId: p._enchantedPlayerId || null,
@@ -3272,6 +3346,7 @@ const Battlefield = {
       if (r.chosenCardName) this.setChosenCardName(np.id, r.chosenCardName);
       if (r.chosenLandType) this.setChosenLandType(np.id, r.chosenLandType);
       if (r.chosenCardType) this.setChosenCardType(np.id, r.chosenCardType);
+      if (r.chosenAbilities) this.setChosenAbilities(np.id, r.chosenAbilities);
       if (r.additionalCostPaid) this.setAdditionalCostPaid(np.id, true);
       if (r.additionalCostPaid2) this.setAdditionalCostPaid(np.id, true, 2);
       // Mutable runtime/display state.
@@ -3541,7 +3616,7 @@ const Battlefield = {
       gameState: {
         handSize: 7, drawsThisTurn: 0, graveyardCount: 0,
         startingLife: 20, currentLife: 20, isYourTurn: true,
-        isMonarch: false, hasInitiative: false,
+        isMonarch: false, hasInitiative: false, hasCityBlessing: false,
         poisonCounters: 0, experienceCounters: 0,
         customCounters: {},
       },

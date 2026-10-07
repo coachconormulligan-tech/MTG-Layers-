@@ -117,6 +117,7 @@ function renderTimestampPanel() {
       ${p.needsChosenLandType ? renderChosenLandTypeInput(p) : ''}
       ${p.needsChosenColor ? renderChosenColorInput(p) : ''}
       ${p.needsChosenCardType ? renderChosenCardTypeInput(p) : ''}
+      ${p.needsChosenAbilities ? renderChosenAbilitiesInput(p) : ''}
       ${p.isModalSpell && p.modalModeTexts && p.modalModeTexts.length > 0 ? renderModalModeToggles(p.id) : ''}
       ${abilityButtonsHtml}
       ${!hasAnyParsableAbility ? '<div class="ts-no-parse-label">no parsable abilities</div>' : ''}

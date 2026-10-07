@@ -1,0 +1,23 @@
+{
+  "name": "Valakut Fireboar — \"switch its power and toughness\" switches the Fireboar's own",
+  "notes": "Sweep singleton (2026-10-07). \"Whenever this creature attacks, switch its power and toughness until end of turn\" produced nothing: \"its\" became \"that creature's\", which no parser reads. In a fired trigger whose condition names the source, \"switch its\" now reads \"switch this creature's\". The 1/7 Fireboar is 7/1.",
+  "steps": [
+    {
+      "add": "Valakut Fireboar",
+      "as": "boar"
+    },
+    {
+      "fire": "@boar",
+      "trigger": 0
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Valakut Fireboar",
+      "final": {
+        "power": 7,
+        "toughness": 1
+      }
+    }
+  ]
+}

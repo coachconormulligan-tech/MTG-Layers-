@@ -1,0 +1,50 @@
+{
+  "name": "Hammerheim — \"loses all landwalk abilities\" takes swampwalk",
+  "notes": "Sweep singleton (2026-10-07). \"Target creature loses all landwalk abilities\" produced nothing (the keyword-loss parser skips anything with \"all\"). A family of keywords is now its own case: specificAbilities [\"Landwalk\"], which the engine matches against every \"<land>walk\" keyword. Bog Wraith loses swampwalk.",
+  "steps": [
+    {
+      "add": "Bog Wraith",
+      "as": "w"
+    },
+    {
+      "add": "Hammerheim",
+      "as": "h"
+    },
+    {
+      "fire": "@h",
+      "activated": 1,
+      "as": "a"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@a",
+        "@w"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Bog Wraith",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Swampwalk"
+          ]
+        }
+      }
+    },
+    {
+      "effect": {
+        "source": "Hammerheim (activated)",
+        "layer": "6",
+        "type": "remove_abilities",
+        "params": {
+          "specificAbilities": [
+            "Landwalk"
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "name": "Gornog, the Red Reaper — \"target creature that player controls becomes a Coward\"",
+  "notes": "Sweep singleton (2026-10-07). \"that player\" (the player attacked) made the subject unreadable. In a trigger on attacking a player it is written \"an opponent controls\". The opponent's Bears become a Coward (losing Bear).",
+  "steps": [
+    {
+      "add": "Gornog, the Red Reaper",
+      "as": "g"
+    },
+    {
+      "call": [
+        "addPlayer",
+        "Player 2"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "b",
+      "controller": "p2"
+    },
+    {
+      "fire": "@g",
+      "trigger": 2,
+      "as": "t"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@t",
+        "@b"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "subtypes": [
+          "Coward"
+        ]
+      }
+    }
+  ]
+}

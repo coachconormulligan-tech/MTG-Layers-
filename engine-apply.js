@@ -365,6 +365,10 @@ function applyEffect(state, effect, context) {
           const k = keyword.toLowerCase().trim();
           // Exact match (a full quoted ability may or may not carry its final period)
           if (a === k || a.replace(/\.$/, '') === k.replace(/\.$/, '')) return true;
+          // A family of keywords: "loses all landwalk abilities" takes islandwalk, snow swampwalk,
+          // nonbasic landwalk…; "all "bands with other" abilities" takes each "bands with other X".
+          if (k === 'landwalk' && /^(?:[\w-]+ )?\w+walk$/.test(a.replace(/\s*\(.*$/, ''))) return true;
+          if (k === 'bands with other' && a.startsWith(k)) return true;
           // Keyword followed by parameter: "Ward {2}", "Toxic 1"
           if (a.startsWith(k + ' ') && /^[\s{(\d]/.test(a.slice(k.length))) {
             // Check it's not a full sentence (no verbs/articles after keyword param)

@@ -1,0 +1,41 @@
+{
+  "name": "Shelkin Brownie — \"loses all \"bands with other\" abilities\" is a keyword-family loss",
+  "notes": "Sweep singleton (2026-10-07). Produced nothing before (see Tolaria). The fired ability removes every \"bands with other …\" ability from its target.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "b"
+    },
+    {
+      "add": "Shelkin Brownie",
+      "as": "s"
+    },
+    {
+      "fire": "@s",
+      "activated": 0,
+      "as": "a"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@a",
+        "@b"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "effect": {
+        "source": "Shelkin Brownie (activated)",
+        "layer": "6",
+        "type": "remove_abilities",
+        "target": "Grizzly Bears",
+        "params": {
+          "specificAbilities": [
+            "Bands with other"
+          ]
+        }
+      }
+    }
+  ]
+}

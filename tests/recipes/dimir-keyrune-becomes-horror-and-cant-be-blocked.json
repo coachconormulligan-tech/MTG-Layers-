@@ -1,0 +1,40 @@
+{
+  "name": "Dimir Keyrune — \"…artifact creature until end of turn and can't be blocked this turn\" still becomes the creature",
+  "notes": "Sweep singleton (2026-10-07). The trailing \"and can't be blocked this turn\" hit the becomes-parser's skip words, so the whole ability produced nothing. The evasion clause is cut off first. The Keyrune is a 2/2 blue and black Horror artifact creature.",
+  "steps": [
+    {
+      "add": "Dimir Keyrune",
+      "as": "k"
+    },
+    {
+      "fire": "@k",
+      "activated": 1
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Dimir Keyrune",
+      "final": {
+        "power": 2,
+        "toughness": 2,
+        "types": {
+          "$includes": [
+            "Artifact",
+            "Creature"
+          ]
+        },
+        "subtypes": {
+          "$includes": [
+            "Horror"
+          ]
+        },
+        "colors": {
+          "$includes": [
+            "U",
+            "B"
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "name": "Woolly Razorback — without an ice counter it does not have defender",
+  "notes": "Sweep singleton (2026-10-07). The other half of the Woolly Razorback fix: the grant carries its condition.",
+  "steps": [
+    {
+      "add": "Woolly Razorback",
+      "as": "r"
+    },
+    {
+      "call": [
+        "addCounter",
+        "@r",
+        "ice",
+        1
+      ]
+    },
+    {
+      "call": [
+        "addCounter",
+        "@r",
+        "ice",
+        -1
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Woolly Razorback",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Defender"
+          ]
+        }
+      }
+    }
+  ]
+}

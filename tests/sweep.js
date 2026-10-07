@@ -49,7 +49,9 @@ function splitSentences(text) {
     if (c === '\n') { push(i); start = i + 1; line++; inQuote = false; continue; }
     if (c === '"' || c === '“' || c === '”') { inQuote = !inQuote; }
     if (inQuote) continue;
-    const endsHere = (c === '.' || (c === '"' && text[i - 1] === '.')) && text[i + 1] === ' ';
+    // ("Ms. Marvel gains …" is one sentence.)
+    const endsHere = (c === '.' || (c === '"' && text[i - 1] === '.')) && text[i + 1] === ' ' &&
+      !(c === '.' && /\b(?:Ms|Mrs|Mr|Dr)$/.test(text.slice(Math.max(0, i - 4), i)));
     if (endsHere) push(i + 1);
   }
   push(text.length);
@@ -193,6 +195,7 @@ function addCard(card, faceIndex, isSpell) {
   if (perm.needsChosenLandType) Battlefield.setChosenLandType(perm.id, 'Forest');
   if (perm.needsChosenCardType) Battlefield.setChosenCardType(perm.id, 'artifact');
   if (perm.needsChosenCardName) Battlefield.setChosenCardName(perm.id, 'Grizzly Bears');
+  if (perm.needsChosenAbilities) Battlefield.setChosenAbilities(perm.id, perm.abilityChoices.slice(0, perm.abilityChoiceCount).join(' and '));
   return perm;
 }
 
@@ -298,16 +301,17 @@ function sweepFace(card, faceIndex) {
         let optionHit = false;
         // A "choose one —" trigger's modes are whole effects of their own: judge each mode's
         // sentences by firing that mode.
-        const bulletModes = kind === 'trigger' && ab.options && /\n\s*\u2022/.test(ab.fullText);
+        // The result rows of a d20 table are judged the same way, by firing that result.
+        const bulletModes = ab.options && (kind === 'trigger' ? /\n\s*(?:\u2022|\d+(?:\u2014\d+)? \|)/ : /\n\s*\d+(?:\u2014\d+)? \|/).test(ab.fullText);
         if (bulletModes) {
           ab.options.forEach((opt, oi) => {
             const optEffs = fireAbility(base, ab, kind, opt, states, check);
             const optSigs = effectSigs(optEffs);
-            if (oi > 0) for (const l of optSigs ? optSigs.split('\n') : []) rec.fx.push(kind + ' ' + ab.index + ' mode ' + oi + '|' + l);
+            if (oi > 0 || /^\d/.test(opt)) for (const l of optSigs ? optSigs.split('\n') : []) rec.fx.push(kind + ' ' + ab.index + ' mode ' + oi + '|' + l);
             for (const s of splitSentences(opt)) {
               const rest = removeSpan(opt, s);
               const covered = rest ? effectSigs(fireAbility(base, ab, kind, rest, states, null)) !== optSigs : optEffs.length > 0;
-              fired.push({ kind, text: norm(s.text), line: norm('\u2022 ' + opt), covered });
+              fired.push({ kind, text: norm(s.text), line: norm(/^\d/.test(opt) ? opt : '\u2022 ' + opt), covered });
             }
           });
           continue;
@@ -339,9 +343,12 @@ function sweepFace(card, faceIndex) {
     for (const a of Battlefield.extractTriggeredAbilities(lines)) {
       abilityLine.add(a.index);
       // The "• …" mode lines of a "choose one —" trigger belong to it.
-      if (/\n\s*\u2022/.test(a.fullText)) a.options.forEach((_, oi) => abilityLine.add(a.index + 1 + oi));
+      if (/\n\s*(?:\u2022|\d+(?:\u2014\d+)? \|)/.test(a.fullText)) a.options.forEach((_, oi) => abilityLine.add(a.index + 1 + oi));
     }
-    for (const a of Battlefield.extractActivatedAbilities(lines)) abilityLine.add(a.index);
+    for (const a of Battlefield.extractActivatedAbilities(lines)) {
+      abilityLine.add(a.index);
+      if (a.options && /\n\s*\d+(?:\u2014\d+)? \|/.test(a.fullText)) a.options.forEach((_, oi) => abilityLine.add(a.index + 1 + oi));
+    }
   } catch (e) { /* classification only */ }
 
   const usedFired = new Set();
@@ -382,6 +389,8 @@ function sweepFace(card, faceIndex) {
   VALID_LAYERS = new Set(Object.keys(LAYER_MAP));
   VALID_TYPES = new Set(Object.values(EFFECT_TYPE));
   globalThis.prompt = () => { throw new Error('prompt() called headlessly'); };
+  // "A random color" (Prismatic Dragon) must come out the same on every run, or each diff lists it.
+  Battlefield._randomPick = (options) => options[0];
   globalThis.console = globalThis.console || {};
   for (const k of ['log', 'warn', 'error', 'info', 'debug']) console[k] = () => {};
 

@@ -180,6 +180,17 @@ function _modalTriggerHeader(text) {
   return /(?:^|[\u2014—]\s*)(?:when(?:ever)?|at)\b[^\n]*,\s*(?:you may\s+)?choose\s[^\n]*$/i.test(head) ? head : null;
 }
 
+/* A d20 table: an ability that says "roll a d20" followed by its result rows, each a line of its
+   own — "1—9 | This creature gains deathtouch until end of turn.", "10—19 | It gets +1/+0 …",
+   "20 | …" (Lightfoot Rogue). The rows are the ability's outcomes: they are offered as its
+   options when it is fired (the result picked is the roll), and are never static text. */
+const _D20_ROW_RE = /^\s*\d+(?:\s*[\u2014\u2013-]\s*\d+)?\s*\|\s*/;
+function _d20Rows(abilities, i) {
+  const rows = [];
+  for (let j = i + 1; j < abilities.length && _D20_ROW_RE.test(abilities[j]); j++) rows.push(String(abilities[j]).trim());
+  return rows;
+}
+
 /* Index of the comma that ends a trigger condition ("Whenever X, <effect>"), or -1.
    Usually the first comma, but a condition can hold a comma list of its own:
      "Whenever you cast an instant, sorcery, or Wizard spell, this creature gets +2/+0 …"

@@ -204,7 +204,9 @@ function singularizeCreatureType(word) {
   const low = word.toLowerCase();
   // Check irregular map first
   if (IRREGULAR_PLURALS[low]) return IRREGULAR_PLURALS[low];
-  const cap = low.charAt(0).toUpperCase() + low.slice(1);
+  // Each part of a hyphenated type takes a capital ("Assembly-Worker").
+  const capOf = (w) => w.replace(/(^|-)([a-z])/g, (_, pre, ch) => pre + ch.toUpperCase());
+  const cap = capOf(low);
   // Check TypeCatalog before stripping trailing s -- some types end in s (e.g. "Fungus")
   if (typeof TypeCatalog !== 'undefined' && TypeCatalog.creatureTypes.has(cap)) return cap;
   // "-ies" / "-es" plurals of a known type ("Armies" -> "Army", "Heroes" -> "Hero")
@@ -218,7 +220,7 @@ function singularizeCreatureType(word) {
   // Remove trailing 's' for standard plurals (e.g. "Goblins" -> "Goblin")
   if (low.endsWith('s') && low.length > 2) {
     const withoutS = low.slice(0, -1);
-    return withoutS.charAt(0).toUpperCase() + withoutS.slice(1);
+    return capOf(withoutS);
   }
   return cap;
 }
@@ -1894,6 +1896,9 @@ function _evaluateTriggerCondition(condText, sourceState) {
   }
   if (/\byou\s+have\s+the\s+initiative\b/.test(ct)) {
     return (typeof Battlefield !== 'undefined' && Battlefield.gameState) ? !!Battlefield.gameState.hasInitiative : null;
+  }
+  if (/\byou\s+have\s+the\s+city's\s+blessing\b/.test(ct)) {
+    return (typeof Battlefield !== 'undefined' && Battlefield.gameState) ? !!Battlefield.gameState.hasCityBlessing : null;
   }
   if (/\byou(?:'re| are)\s+the\s+monarch\b/.test(ct)) {
     return (typeof Battlefield !== 'undefined' && Battlefield.gameState) ? !!Battlefield.gameState.isMonarch : null;

@@ -1,0 +1,33 @@
+{
+  "name": "Mark of Sakiko — the quoted \"you don't lose this mana\" is not an ability-loss effect",
+  "notes": "Sweep singleton (2026-10-07). Found in the sweep diff. The keyword-loss parser read \"lose this mana as steps and phases end\" inside the quoted ability as abilities every permanent loses (about 30 cards with that mana wording had the stray effect). Matches inside a quote or after \"don't\" are skipped. Mark of Sakiko has one effect: the grant.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "b"
+    },
+    {
+      "add": "Mark of Sakiko",
+      "as": "m"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@m",
+        "@b"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Whenever this creature deals combat damage to a player, add that much {G}. Until end of turn, you don't lose this mana as steps and phases end"
+          ]
+        }
+      }
+    }
+  ]
+}

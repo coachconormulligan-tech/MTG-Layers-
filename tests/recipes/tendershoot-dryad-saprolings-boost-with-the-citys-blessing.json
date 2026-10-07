@@ -1,0 +1,32 @@
+{
+  "name": "Tendershoot Dryad — Saprolings get +2/+2 with the city's blessing",
+  "notes": "Sweep singleton (2026-10-07). With the City's Blessing toggle on, the condition holds: the 1/1 Saproling is 3/3.",
+  "steps": [
+    {
+      "add": "Saproling",
+      "as": "s",
+      "opts": {
+        "isToken": true
+      }
+    },
+    {
+      "add": "Tendershoot Dryad"
+    },
+    {
+      "call": [
+        "updateGameState",
+        "hasCityBlessing",
+        true
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Saproling",
+      "final": {
+        "power": 3,
+        "toughness": 3
+      }
+    }
+  ]
+}

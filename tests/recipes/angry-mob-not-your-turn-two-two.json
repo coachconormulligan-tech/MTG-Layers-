@@ -1,0 +1,41 @@
+{
+  "name": "Angry Mob — during other turns it is 2/2",
+  "notes": "Sweep singleton (2026-10-07). The other half of the Angry Mob fix: not your turn, the Swamps do not count.",
+  "steps": [
+    {
+      "add": "Angry Mob"
+    },
+    {
+      "call": [
+        "updateGameState",
+        "isYourTurn",
+        false
+      ]
+    },
+    {
+      "call": [
+        "addPlayer",
+        "Player 2"
+      ]
+    },
+    {
+      "add": "Swamp",
+      "as": "s1",
+      "controller": "p2"
+    },
+    {
+      "add": "Swamp",
+      "as": "s2",
+      "controller": "p2"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Angry Mob",
+      "final": {
+        "power": 2,
+        "toughness": 2
+      }
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "name": "Ent's Fury — \"Then that creature gets +1/+1\" is the target, not every creature",
+  "notes": "Sweep singleton (2026-10-07). Collateral of dropping a sentence-opening \"Then\": the boost was a global +1/+1; it now lands on the spell's target only.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "t"
+    },
+    {
+      "add": "Runeclaw Bear",
+      "as": "o"
+    },
+    {
+      "add": "Ent's Fury",
+      "spell": true,
+      "as": "s"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@s",
+        "@t"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 3,
+        "toughness": 3
+      }
+    },
+    {
+      "perm": "Runeclaw Bear",
+      "final": {
+        "power": 2,
+        "toughness": 2
+      }
+    }
+  ]
+}

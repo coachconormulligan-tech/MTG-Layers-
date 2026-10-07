@@ -1,0 +1,35 @@
+{
+  "name": "Radiant Destiny — without the city's blessing, +1/+1 only",
+  "notes": "Sweep singleton (2026-10-07). The other half: the +1/+1 is unconditional, the vigilance is not.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "b"
+    },
+    {
+      "add": "Radiant Destiny",
+      "as": "d"
+    },
+    {
+      "call": [
+        "setChosenCreatureType",
+        "@d",
+        "Bear"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 3,
+        "toughness": 3,
+        "abilities": {
+          "$excludes": [
+            "Vigilance"
+          ]
+        }
+      }
+    }
+  ]
+}

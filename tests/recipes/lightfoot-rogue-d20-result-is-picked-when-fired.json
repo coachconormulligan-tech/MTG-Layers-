@@ -1,0 +1,44 @@
+{
+  "name": "Lightfoot Rogue — a d20 result row is an option of the trigger",
+  "notes": "Sweep singleton (2026-10-07). The rows of a d20 table were read as static text: \"It gets +1/+0 and gains deathtouch\" gave every creature deathtouch, all the time. The rows are now the options of the ability that rolls (picked in the options pop-up) and are not parsed statically. Result 10—19: the Rogue is 3/1 with deathtouch; the Bears have nothing.",
+  "steps": [
+    {
+      "add": "Grizzly Bears"
+    },
+    {
+      "add": "Lightfoot Rogue",
+      "as": "r"
+    },
+    {
+      "fire": "@r",
+      "trigger": 0,
+      "mode": 1
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Lightfoot Rogue",
+      "final": {
+        "power": 3,
+        "toughness": 1,
+        "abilities": {
+          "$includes": [
+            "Deathtouch"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 2,
+        "toughness": 2,
+        "abilities": {
+          "$excludes": [
+            "Deathtouch"
+          ]
+        }
+      }
+    }
+  ]
+}
