@@ -2790,6 +2790,8 @@ function parseCardEffects(permanent, card, opts = {}) {
       // Strip ", gains [keywords], and" trailing clause
       isntFilter = isntFilter.replace(/\s+gains?\s+[^,]+,\s+and\s*$/i, '');
       isntFilter = isntFilter.replace(/\s+and\s*$/i, '').trim();
+      // "target attacking Vampire that isn't a Demon" (Clavileño) describes the subject.
+      if (/\b(?:that|which|who)$/i.test(isntFilter)) continue;
       if (!isntFilter || !filterReferencesPermanents(isntFilter)) continue;
       const isntParsed = parseBecomesType(isntWord);
       if (isntParsed.types.length === 0 && isntParsed.subtypes.length === 0) continue;
@@ -4020,9 +4022,13 @@ function parseCardEffects(permanent, card, opts = {}) {
   let ftMatch;
   while ((ftMatch = fullTextAbilityRegex.exec(oracle)) !== null) {
     // Skip if this match overlaps with an addType "and has/have" range already consumed
-    const _ftStart = ftMatch.index;
-    const _ftEnd = _ftStart + ftMatch[0].length;
-    if (addTypeMatchRanges.some(r => _ftStart < r.end && _ftEnd > r.start)) continue;
+    // (measured, as in haveAbilityRegex, from the sentence the subject is cut down to: 'Target
+    // attacking Vampire … becomes a Demon in addition to its other types. It gains "…"' —
+    // Clavileño, First of the Blessed — is not inside the first sentence's match).
+    const _ftLastStop = ftMatch[1].search(/\.\s+(?!.*\.\s)/s);
+    const _ftStart = _ftLastStop >= 0 ? ftMatch.index + ftMatch[0].indexOf(ftMatch[1]) + _ftLastStop : ftMatch.index;
+    const _ftEnd = ftMatch.index + ftMatch[0].length;
+    if (addTypeMatchRanges.some(r => (copyClauseSpans.includes(r) ? ftMatch.index : _ftStart) < r.end && _ftEnd > r.start)) continue;
     let filterText = _lastSentenceTargetSubject(ftMatch[1].trim());
     const abilityText = ftMatch[2].trim().replace(/,$/, '').trim();
     if (filterText.toLowerCase().includes('enchanted')) continue;

@@ -1,0 +1,2391 @@
+{
+ "name": "Base P/T taken from \"that creature\" of the trigger — Belligerent Yearling, Eldrazi Mimic, Shape Stealer",
+ "notes": "Found by tests/sweep.py. 'Whenever another Dinosaur you control enters, you may have this creature's base power become equal to that creature's power': the creature is picked after firing (setRefPerm), the effect lands on the ability's source. Yearling takes only power (6/2 from Colossal Dreadmaw's 6/6); Mimic and Shape Stealer take both.",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Belligerent Yearling",
+    "as": "year"
+   },
+   {
+    "add": "Eldrazi Mimic",
+    "as": "mimic"
+   },
+   {
+    "add": "Shape Stealer",
+    "as": "steal"
+   },
+   {
+    "add": "Colossal Dreadmaw",
+    "as": "maw"
+   },
+   {
+    "add": "Ornithopter",
+    "as": "thopter"
+   },
+   {
+    "fire": "@year",
+    "trigger": 1,
+    "as": "t1"
+   },
+   {
+    "call": [
+     "setRefPerm",
+     "@t1",
+     "@maw"
+    ]
+   },
+   {
+    "fire": "@mimic",
+    "trigger": 0,
+    "as": "t2"
+   },
+   {
+    "call": [
+     "setRefPerm",
+     "@t2",
+     "@thopter"
+    ]
+   },
+   {
+    "fire": "@steal",
+    "trigger": 0,
+    "as": "t3"
+   },
+   {
+    "call": [
+     "setRefPerm",
+     "@t3",
+     "@maw"
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Belligerent Yearling",
+   "final": {
+    "power": 6,
+    "toughness": 2
+   }
+  },
+  {
+   "perm": "Eldrazi Mimic",
+   "final": {
+    "power": 0,
+    "toughness": 2
+   }
+  },
+  {
+   "perm": "Shape Stealer",
+   "final": {
+    "power": 6,
+    "toughness": 6
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "0b2debca-8535-4cf6-a461-c268faaacaae",
+     "oracle_id": "2d785e3e-8e19-4eea-b09f-9a30c792dba1",
+     "multiverse_ids": [
+      636841
+     ],
+     "mtgo_id": 118078,
+     "arena_id": 87281,
+     "tcgplayer_id": 525170,
+     "cardmarket_id": 743024,
+     "name": "Belligerent Yearling",
+     "lang": "en",
+     "released_at": "2023-11-17",
+     "uri": "https://api.scryfall.com/cards/0b2debca-8535-4cf6-a461-c268faaacaae",
+     "scryfall_uri": "https://scryfall.com/card/lci/133/belligerent-yearling?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T03:36:06Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/0/b/0b2debca-8535-4cf6-a461-c268faaacaae.jpg?1783913766",
+      "normal": "https://cards.scryfall.io/normal/front/0/b/0b2debca-8535-4cf6-a461-c268faaacaae.jpg?1783913766",
+      "large": "https://cards.scryfall.io/large/front/0/b/0b2debca-8535-4cf6-a461-c268faaacaae.jpg?1783913766",
+      "png": "https://cards.scryfall.io/png/front/0/b/0b2debca-8535-4cf6-a461-c268faaacaae.png?1783913766",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/0/b/0b2debca-8535-4cf6-a461-c268faaacaae.jpg?1783913766",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/0/b/0b2debca-8535-4cf6-a461-c268faaacaae.jpg?1783913766",
+      "thumb": "https://cards.scryfall.io/thumb/front/0/b/0b2debca-8535-4cf6-a461-c268faaacaae.webp?1783913766",
+      "grid": "https://cards.scryfall.io/grid/front/0/b/0b2debca-8535-4cf6-a461-c268faaacaae.webp?1783913766",
+      "display": "https://cards.scryfall.io/display/front/0/b/0b2debca-8535-4cf6-a461-c268faaacaae.webp?1783913766",
+      "art": "https://cards.scryfall.io/art/front/0/b/0b2debca-8535-4cf6-a461-c268faaacaae.webp?1783913766",
+      "crop": "https://cards.scryfall.io/crop/front/0/b/0b2debca-8535-4cf6-a461-c268faaacaae.webp?1783913766"
+     },
+     "mana_cost": "{1}{R}",
+     "cmc": 2,
+     "type_line": "Creature — Dinosaur",
+     "oracle_text": "Trample\nWhenever another Dinosaur you control enters, you may have this creature's base power become equal to that creature's power until end of turn.",
+     "power": "3",
+     "toughness": "2",
+     "colors": [
+      "R"
+     ],
+     "color_identity": [
+      "R"
+     ],
+     "keywords": [
+      "Trample"
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo",
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "70169a6e-89d1-4a3a-aef7-3152958d55ac",
+     "set": "lci",
+     "set_name": "The Lost Caverns of Ixalan",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/70169a6e-89d1-4a3a-aef7-3152958d55ac",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Alci&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/lci?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/0b2debca-8535-4cf6-a461-c268faaacaae/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A2d785e3e-8e19-4eea-b09f-9a30c792dba1&unique=prints",
+     "collector_number": "133",
+     "digital": false,
+     "rarity": "uncommon",
+     "flavor_text": "One day it will be as terrifying as it thinks it is.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Maxime Minard",
+     "artist_ids": [
+      "a9065769-afcd-4e54-a3c0-5809e7b4108b"
+     ],
+     "illustration_id": "d0354887-e267-4d34-b390-807a13b1cdd0",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 9081,
+     "penny_rank": 7204,
+     "preview": {
+      "source": "Games Haven",
+      "source_uri": "https://www.facebook.com/gameshavensg/posts/1054212022481349",
+      "previewed_at": "2023-10-29"
+     },
+     "prices": {
+      "usd": "0.30",
+      "usd_foil": "0.32",
+      "usd_etched": null,
+      "eur": "0.10",
+      "eur_foil": "0.25",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=636841&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DBelligerent%2BYearling",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DBelligerent%2BYearling",
+      "edhrec": "https://edhrec.com/route/?cc=Belligerent+Yearling"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F525170%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=743024&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/118078?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "311a05b1-042d-47e7-9fd7-6e8abe8fc578",
+     "oracle_id": "cddb3ec4-01a2-4f4d-a690-3486c73c3df8",
+     "multiverse_ids": [
+      407512
+     ],
+     "mtgo_id": 59389,
+     "mtgo_foil_id": 59390,
+     "tcgplayer_id": 110798,
+     "cardmarket_id": 287207,
+     "name": "Eldrazi Mimic",
+     "lang": "en",
+     "released_at": "2016-01-22",
+     "uri": "https://api.scryfall.com/cards/311a05b1-042d-47e7-9fd7-6e8abe8fc578",
+     "scryfall_uri": "https://scryfall.com/card/ogw/2/eldrazi-mimic?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T10:18:50Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/3/1/311a05b1-042d-47e7-9fd7-6e8abe8fc578.jpg?1783937930",
+      "normal": "https://cards.scryfall.io/normal/front/3/1/311a05b1-042d-47e7-9fd7-6e8abe8fc578.jpg?1783937930",
+      "large": "https://cards.scryfall.io/large/front/3/1/311a05b1-042d-47e7-9fd7-6e8abe8fc578.jpg?1783937930",
+      "png": "https://cards.scryfall.io/png/front/3/1/311a05b1-042d-47e7-9fd7-6e8abe8fc578.png?1783937930",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/3/1/311a05b1-042d-47e7-9fd7-6e8abe8fc578.jpg?1783937930",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/3/1/311a05b1-042d-47e7-9fd7-6e8abe8fc578.jpg?1783937930",
+      "thumb": "https://cards.scryfall.io/thumb/front/3/1/311a05b1-042d-47e7-9fd7-6e8abe8fc578.webp?1783937930",
+      "grid": "https://cards.scryfall.io/grid/front/3/1/311a05b1-042d-47e7-9fd7-6e8abe8fc578.webp?1783937930",
+      "display": "https://cards.scryfall.io/display/front/3/1/311a05b1-042d-47e7-9fd7-6e8abe8fc578.webp?1783937930",
+      "art": "https://cards.scryfall.io/art/front/3/1/311a05b1-042d-47e7-9fd7-6e8abe8fc578.webp?1783937930",
+      "crop": "https://cards.scryfall.io/crop/front/3/1/311a05b1-042d-47e7-9fd7-6e8abe8fc578.webp?1783937930"
+     },
+     "mana_cost": "{2}",
+     "cmc": 2,
+     "type_line": "Creature — Eldrazi",
+     "oracle_text": "Whenever another colorless creature you control enters, you may have this creature's base power and toughness become equal to that creature's power and toughness until end of turn.",
+     "power": "2",
+     "toughness": "1",
+     "colors": [],
+     "color_identity": [],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "cd51d245-8f95-45b0-ab5f-e2b3a3eb5dfe",
+     "set": "ogw",
+     "set_name": "Oath of the Gatewatch",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/cd51d245-8f95-45b0-ab5f-e2b3a3eb5dfe",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aogw&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/ogw?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/311a05b1-042d-47e7-9fd7-6e8abe8fc578/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Acddb3ec4-01a2-4f4d-a690-3486c73c3df8&unique=prints",
+     "collector_number": "2",
+     "digital": false,
+     "rarity": "rare",
+     "flavor_text": "It is consistently inconsistent.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Craig J Spearing",
+     "artist_ids": [
+      "b0f15e74-0dd6-4156-959e-c5e30c5cdc52"
+     ],
+     "illustration_id": "e23c2742-6759-42e2-9c0d-d7a6963e8044",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 10688,
+     "penny_rank": 2861,
+     "prices": {
+      "usd": "1.26",
+      "usd_foil": "2.75",
+      "usd_etched": null,
+      "eur": "0.88",
+      "eur_foil": "2.80",
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=407512&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DEldrazi%2BMimic",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DEldrazi%2BMimic",
+      "edhrec": "https://edhrec.com/route/?cc=Eldrazi+Mimic"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F110798%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=287207&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/59389?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "da2a4871-8bc3-4db0-9f9e-b2e96b90ebd5",
+     "oracle_id": "fa9a6617-fd89-490e-9ca5-8e6da99d89ed",
+     "multiverse_ids": [
+      88823
+     ],
+     "mtgo_id": 22230,
+     "mtgo_foil_id": 22231,
+     "tcgplayer_id": 12532,
+     "cardmarket_id": 12760,
+     "name": "Shape Stealer",
+     "lang": "en",
+     "released_at": "2005-06-03",
+     "uri": "https://api.scryfall.com/cards/da2a4871-8bc3-4db0-9f9e-b2e96b90ebd5",
+     "scryfall_uri": "https://scryfall.com/card/sok/55/shape-stealer?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T12:02:39Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/d/a/da2a4871-8bc3-4db0-9f9e-b2e96b90ebd5.jpg?1783944159",
+      "normal": "https://cards.scryfall.io/normal/front/d/a/da2a4871-8bc3-4db0-9f9e-b2e96b90ebd5.jpg?1783944159",
+      "large": "https://cards.scryfall.io/large/front/d/a/da2a4871-8bc3-4db0-9f9e-b2e96b90ebd5.jpg?1783944159",
+      "png": "https://cards.scryfall.io/png/front/d/a/da2a4871-8bc3-4db0-9f9e-b2e96b90ebd5.png?1783944159",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/d/a/da2a4871-8bc3-4db0-9f9e-b2e96b90ebd5.jpg?1783944159",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/d/a/da2a4871-8bc3-4db0-9f9e-b2e96b90ebd5.jpg?1783944159",
+      "thumb": "https://cards.scryfall.io/thumb/front/d/a/da2a4871-8bc3-4db0-9f9e-b2e96b90ebd5.webp?1783944159",
+      "grid": "https://cards.scryfall.io/grid/front/d/a/da2a4871-8bc3-4db0-9f9e-b2e96b90ebd5.webp?1783944159",
+      "display": "https://cards.scryfall.io/display/front/d/a/da2a4871-8bc3-4db0-9f9e-b2e96b90ebd5.webp?1783944159",
+      "art": "https://cards.scryfall.io/art/front/d/a/da2a4871-8bc3-4db0-9f9e-b2e96b90ebd5.webp?1783944159",
+      "crop": "https://cards.scryfall.io/crop/front/d/a/da2a4871-8bc3-4db0-9f9e-b2e96b90ebd5.webp?1783944159"
+     },
+     "mana_cost": "{U}{U}",
+     "cmc": 2,
+     "type_line": "Creature — Shapeshifter Spirit",
+     "oracle_text": "Whenever this creature blocks or becomes blocked by a creature, this creature's base power and toughness become equal to that creature's power and toughness until end of turn.",
+     "power": "1",
+     "toughness": "1",
+     "colors": [
+      "U"
+     ],
+     "color_identity": [
+      "U"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "4db16ad3-2b95-442f-bb6b-e9aa7fe7f769",
+     "set": "sok",
+     "set_name": "Saviors of Kamigawa",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/4db16ad3-2b95-442f-bb6b-e9aa7fe7f769",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Asok&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/sok?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/da2a4871-8bc3-4db0-9f9e-b2e96b90ebd5/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Afa9a6617-fd89-490e-9ca5-8e6da99d89ed&unique=prints",
+     "collector_number": "55",
+     "digital": false,
+     "rarity": "uncommon",
+     "flavor_text": "\"Stand back. I know just what to do.\"\n—Kiki-Jiki, Mirror Breaker",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Jim Nelson",
+     "artist_ids": [
+      "aa9f64d1-29e1-4c82-877e-44c18183f40b"
+     ],
+     "illustration_id": "0892fd96-0c51-48a4-84fe-95e158db9c0d",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 25933,
+     "prices": {
+      "usd": "0.33",
+      "usd_foil": "1.99",
+      "usd_etched": null,
+      "eur": "0.25",
+      "eur_foil": "0.57",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=88823&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DShape%2BStealer",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DShape%2BStealer",
+      "edhrec": "https://edhrec.com/route/?cc=Shape+Stealer"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F12532%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=12760&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/22230?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "8059c52b-5d25-4052-b48a-e9e219a7a546",
+     "oracle_id": "08c7db90-c0cf-4482-b7ee-bb033e5996d2",
+     "multiverse_ids": [
+      485499
+     ],
+     "mtgo_id": 81579,
+     "arena_id": 71958,
+     "tcgplayer_id": 215686,
+     "cardmarket_id": 470914,
+     "name": "Colossal Dreadmaw",
+     "lang": "en",
+     "released_at": "2020-07-03",
+     "uri": "https://api.scryfall.com/cards/8059c52b-5d25-4052-b48a-e9e219a7a546",
+     "scryfall_uri": "https://scryfall.com/card/m21/176/colossal-dreadmaw?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T08:17:58Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/8/0/8059c52b-5d25-4052-b48a-e9e219a7a546.jpg?1783930678",
+      "normal": "https://cards.scryfall.io/normal/front/8/0/8059c52b-5d25-4052-b48a-e9e219a7a546.jpg?1783930678",
+      "large": "https://cards.scryfall.io/large/front/8/0/8059c52b-5d25-4052-b48a-e9e219a7a546.jpg?1783930678",
+      "png": "https://cards.scryfall.io/png/front/8/0/8059c52b-5d25-4052-b48a-e9e219a7a546.png?1783930678",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/8/0/8059c52b-5d25-4052-b48a-e9e219a7a546.jpg?1783930678",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/8/0/8059c52b-5d25-4052-b48a-e9e219a7a546.jpg?1783930678",
+      "thumb": "https://cards.scryfall.io/thumb/front/8/0/8059c52b-5d25-4052-b48a-e9e219a7a546.webp?1783930678",
+      "grid": "https://cards.scryfall.io/grid/front/8/0/8059c52b-5d25-4052-b48a-e9e219a7a546.webp?1783930678",
+      "display": "https://cards.scryfall.io/display/front/8/0/8059c52b-5d25-4052-b48a-e9e219a7a546.webp?1783930678",
+      "art": "https://cards.scryfall.io/art/front/8/0/8059c52b-5d25-4052-b48a-e9e219a7a546.webp?1783930678",
+      "crop": "https://cards.scryfall.io/crop/front/8/0/8059c52b-5d25-4052-b48a-e9e219a7a546.webp?1783930678"
+     },
+     "mana_cost": "{4}{G}{G}",
+     "cmc": 6,
+     "type_line": "Creature — Dinosaur",
+     "oracle_text": "Trample (This creature can deal excess combat damage to the player or planeswalker it's attacking.)",
+     "power": "6",
+     "toughness": "6",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [
+      "Trample"
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "8059c52b-5d25-4052-b48a-e9e219a7a546",
+       "component": "combo_piece",
+       "name": "Colossal Dreadmaw",
+       "type_line": "Creature — Dinosaur",
+       "uri": "https://api.scryfall.com/cards/8059c52b-5d25-4052-b48a-e9e219a7a546"
+      },
+      {
+       "object": "related_card",
+       "id": "3d668722-fbbf-43d8-94da-60cffc1dd9cd",
+       "component": "combo_piece",
+       "name": "Colossal Chorus",
+       "type_line": "Sorcery — Chorus",
+       "uri": "https://api.scryfall.com/cards/3d668722-fbbf-43d8-94da-60cffc1dd9cd"
+      }
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "arena",
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "bc94aba1-7376-4e02-a12d-3a2efb66ab0f",
+     "set": "m21",
+     "set_name": "Core Set 2021",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/bc94aba1-7376-4e02-a12d-3a2efb66ab0f",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Am21&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/m21?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/8059c52b-5d25-4052-b48a-e9e219a7a546/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A08c7db90-c0cf-4482-b7ee-bb033e5996d2&unique=prints",
+     "collector_number": "176",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "If you feel the ground quake, run. If you hear its bellow, flee. If you see its teeth, it's too late.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Jesper Ejsing",
+     "artist_ids": [
+      "a5f8354a-8b51-4e59-96b2-0e3aeae4fa1d"
+     ],
+     "illustration_id": "1339de69-bb3d-4925-a3c3-fd44da310958",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 10480,
+     "penny_rank": 11364,
+     "preview": {
+      "source": "Wizards of the Coast",
+      "source_uri": "https://twitter.com/MTG_Arena/status/1271520510178766849",
+      "previewed_at": "2020-06-12"
+     },
+     "prices": {
+      "usd": "0.16",
+      "usd_foil": "0.32",
+      "usd_etched": null,
+      "eur": "0.07",
+      "eur_foil": "0.28",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=485499&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DColossal%2BDreadmaw",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DColossal%2BDreadmaw",
+      "edhrec": "https://edhrec.com/route/?cc=Colossal+Dreadmaw"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F215686%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=470914&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/81579?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 4,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_5",
+    "scryfallData": {
+     "object": "card",
+     "id": "305078a5-ac18-4721-bba2-3434eba5b1cf",
+     "oracle_id": "a3a98bc9-caa0-49b7-951c-fe4e4f54e4ba",
+     "multiverse_ids": [
+      599107
+     ],
+     "mtgo_id": 107995,
+     "tcgplayer_id": 457188,
+     "cardmarket_id": 688483,
+     "name": "Ornithopter",
+     "lang": "en",
+     "released_at": "2023-01-13",
+     "uri": "https://api.scryfall.com/cards/305078a5-ac18-4721-bba2-3434eba5b1cf",
+     "scryfall_uri": "https://scryfall.com/card/dmr/233/ornithopter?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T04:53:30Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+      "normal": "https://cards.scryfall.io/normal/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+      "large": "https://cards.scryfall.io/large/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+      "png": "https://cards.scryfall.io/png/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.png?1783918410",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+      "thumb": "https://cards.scryfall.io/thumb/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.webp?1783918410",
+      "grid": "https://cards.scryfall.io/grid/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.webp?1783918410",
+      "display": "https://cards.scryfall.io/display/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.webp?1783918410",
+      "art": "https://cards.scryfall.io/art/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.webp?1783918410",
+      "crop": "https://cards.scryfall.io/crop/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.webp?1783918410"
+     },
+     "mana_cost": "{0}",
+     "cmc": 0,
+     "type_line": "Artifact Creature — Thopter",
+     "oracle_text": "Flying",
+     "power": "0",
+     "toughness": "2",
+     "colors": [],
+     "color_identity": [],
+     "keywords": [
+      "Flying"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "ca4c2884-e539-4b7f-980d-5d6a50220f2a",
+     "set": "dmr",
+     "set_name": "Dominaria Remastered",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/ca4c2884-e539-4b7f-980d-5d6a50220f2a",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Admr&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/dmr?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/305078a5-ac18-4721-bba2-3434eba5b1cf/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aa3a98bc9-caa0-49b7-951c-fe4e4f54e4ba&unique=prints",
+     "collector_number": "233",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"It has been my honor to improve on Thran's original design. Perhaps history will remember me in some small part for my work.\"\n—Urza, in his apprenticeship",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Franz Vohwinkel",
+     "artist_ids": [
+      "3a243c17-3baa-4b53-9599-645311cd7d3d"
+     ],
+     "illustration_id": "ba23fb60-f170-40cc-8d2e-fe88ba070269",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 783,
+     "penny_rank": 393,
+     "prices": {
+      "usd": "0.31",
+      "usd_foil": "0.38",
+      "usd_etched": null,
+      "eur": "0.24",
+      "eur_foil": "0.35",
+      "tix": "0.04"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=599107&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DOrnithopter",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DOrnithopter",
+      "edhrec": "https://edhrec.com/route/?cc=Ornithopter"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F457188%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=688483&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/107995?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 5,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [
+   {
+    "id": "trig_perm_1_1_6",
+    "kind": "trigger",
+    "pseudoKind": "ability",
+    "sourceId": "perm_1",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 1,
+    "timestamp": 6,
+    "effectText": "you may have this creature's base power become equal to that creature's power until end of turn.",
+    "fullText": "Whenever another Dinosaur you control enters, you may have this creature's base power become equal to that creature's power until end of turn.",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "guessedTargetSubjects": [],
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Belligerent Yearling",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Dinosaur"
+       ],
+       "power": 3,
+       "toughness": 2,
+       "colors": [
+        "R"
+       ],
+       "abilities": [
+        "Trample",
+        "Whenever another Dinosaur you control enters, you may have this creature's base power become equal to that creature's power until end of turn."
+       ],
+       "oracleText": "Trample\nWhenever another Dinosaur you control enters, you may have this creature's base power become equal to that creature's power until end of turn.",
+       "owner": "player_0",
+       "controller": "player_0"
+      }
+     ],
+     [
+      "perm_2",
+      {
+       "name": "Eldrazi Mimic",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Eldrazi"
+       ],
+       "power": 2,
+       "toughness": 1,
+       "colors": [],
+       "abilities": [
+        "Whenever another colorless creature you control enters, you may have this creature's base power and toughness become equal to that creature's power and toughness until end of turn."
+       ],
+       "oracleText": "Whenever another colorless creature you control enters, you may have this creature's base power and toughness become equal to that creature's power and toughness until end of turn.",
+       "owner": "player_0",
+       "controller": "player_0"
+      }
+     ],
+     [
+      "perm_3",
+      {
+       "name": "Shape Stealer",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Shapeshifter",
+        "Spirit"
+       ],
+       "power": 1,
+       "toughness": 1,
+       "colors": [
+        "U"
+       ],
+       "abilities": [
+        "Whenever this creature blocks or becomes blocked by a creature, this creature's base power and toughness become equal to that creature's power and toughness until end of turn."
+       ],
+       "oracleText": "Whenever this creature blocks or becomes blocked by a creature, this creature's base power and toughness become equal to that creature's power and toughness until end of turn.",
+       "owner": "player_0",
+       "controller": "player_0"
+      }
+     ],
+     [
+      "perm_4",
+      {
+       "name": "Colossal Dreadmaw",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Dinosaur"
+       ],
+       "power": 6,
+       "toughness": 6,
+       "colors": [
+        "G"
+       ],
+       "abilities": [
+        "Trample"
+       ],
+       "oracleText": "Trample",
+       "owner": "player_0",
+       "controller": "player_0"
+      }
+     ],
+     [
+      "perm_5",
+      {
+       "name": "Ornithopter",
+       "types": [
+        "Artifact",
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Thopter"
+       ],
+       "power": 0,
+       "toughness": 2,
+       "colors": [],
+       "abilities": [
+        "Flying"
+       ],
+       "oracleText": "Flying",
+       "owner": "player_0",
+       "controller": "player_0"
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Belligerent Yearling",
+       "imageUri": "https://cards.scryfall.io/small/front/0/b/0b2debca-8535-4cf6-a461-c268faaacaae.jpg?1783913766",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Dinosaur"
+       ],
+       "printedPower": 3,
+       "printedToughness": 2,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Eldrazi Mimic",
+       "imageUri": "https://cards.scryfall.io/small/front/3/1/311a05b1-042d-47e7-9fd7-6e8abe8fc578.jpg?1783937930",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Eldrazi"
+       ],
+       "printedPower": 2,
+       "printedToughness": 1,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Shape Stealer",
+       "imageUri": "https://cards.scryfall.io/small/front/d/a/da2a4871-8bc3-4db0-9f9e-b2e96b90ebd5.jpg?1783944159",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Shapeshifter",
+        "Spirit"
+       ],
+       "printedPower": 1,
+       "printedToughness": 1,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Colossal Dreadmaw",
+       "imageUri": "https://cards.scryfall.io/small/front/8/0/8059c52b-5d25-4052-b48a-e9e219a7a546.jpg?1783930678",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Dinosaur"
+       ],
+       "printedPower": 6,
+       "printedToughness": 6,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_5",
+       "name": "Ornithopter",
+       "imageUri": "https://cards.scryfall.io/small/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Artifact",
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Thopter"
+       ],
+       "printedPower": 0,
+       "printedToughness": 2,
+       "timestamp": 5
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    },
+    "primaryTarget": "perm_1",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 6,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": "perm_4",
+    "choices": null
+   },
+   {
+    "id": "trig_perm_2_0_7",
+    "kind": "trigger",
+    "pseudoKind": "ability",
+    "sourceId": "perm_2",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 0,
+    "timestamp": 7,
+    "effectText": "you may have this creature's base power and toughness become equal to that creature's power and toughness until end of turn.",
+    "fullText": "Whenever another colorless creature you control enters, you may have this creature's base power and toughness become equal to that creature's power and toughness until end of turn.",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "guessedTargetSubjects": [],
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Belligerent Yearling",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Dinosaur"
+       ],
+       "power": 6,
+       "toughness": 2,
+       "abilities": [
+        "Trample",
+        "Whenever another Dinosaur you control enters, you may have this creature's base power become equal to that creature's power until end of turn."
+       ],
+       "colors": [
+        "R"
+       ],
+       "manaValue": 2,
+       "manaCost": "{1}{R}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "Trample\nWhenever another Dinosaur you control enters, you may have this creature's base power become equal to that creature's power until end of turn.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "Trample",
+        "Whenever another Dinosaur you control enters, you may have this creature's base power become equal to that creature's power until end of turn."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_2",
+      {
+       "name": "Eldrazi Mimic",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Eldrazi"
+       ],
+       "power": 2,
+       "toughness": 1,
+       "abilities": [
+        "Whenever another colorless creature you control enters, you may have this creature's base power and toughness become equal to that creature's power and toughness until end of turn."
+       ],
+       "colors": [],
+       "manaValue": 2,
+       "manaCost": "{2}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "Whenever another colorless creature you control enters, you may have this creature's base power and toughness become equal to that creature's power and toughness until end of turn.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "Whenever another colorless creature you control enters, you may have this creature's base power and toughness become equal to that creature's power and toughness until end of turn."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_3",
+      {
+       "name": "Shape Stealer",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Shapeshifter",
+        "Spirit"
+       ],
+       "power": 1,
+       "toughness": 1,
+       "abilities": [
+        "Whenever this creature blocks or becomes blocked by a creature, this creature's base power and toughness become equal to that creature's power and toughness until end of turn."
+       ],
+       "colors": [
+        "U"
+       ],
+       "manaValue": 2,
+       "manaCost": "{U}{U}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "Whenever this creature blocks or becomes blocked by a creature, this creature's base power and toughness become equal to that creature's power and toughness until end of turn.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "Whenever this creature blocks or becomes blocked by a creature, this creature's base power and toughness become equal to that creature's power and toughness until end of turn."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_4",
+      {
+       "name": "Colossal Dreadmaw",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Dinosaur"
+       ],
+       "power": 6,
+       "toughness": 6,
+       "abilities": [
+        "Trample"
+       ],
+       "colors": [
+        "G"
+       ],
+       "manaValue": 6,
+       "manaCost": "{4}{G}{G}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "Trample",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "Trample"
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_5",
+      {
+       "name": "Ornithopter",
+       "types": [
+        "Artifact",
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Thopter"
+       ],
+       "power": 0,
+       "toughness": 2,
+       "abilities": [
+        "Flying"
+       ],
+       "colors": [],
+       "manaValue": 0,
+       "manaCost": "{0}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "Flying",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "Flying"
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Belligerent Yearling",
+       "imageUri": "https://cards.scryfall.io/small/front/0/b/0b2debca-8535-4cf6-a461-c268faaacaae.jpg?1783913766",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Dinosaur"
+       ],
+       "printedPower": 3,
+       "printedToughness": 2,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Eldrazi Mimic",
+       "imageUri": "https://cards.scryfall.io/small/front/3/1/311a05b1-042d-47e7-9fd7-6e8abe8fc578.jpg?1783937930",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Eldrazi"
+       ],
+       "printedPower": 2,
+       "printedToughness": 1,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Shape Stealer",
+       "imageUri": "https://cards.scryfall.io/small/front/d/a/da2a4871-8bc3-4db0-9f9e-b2e96b90ebd5.jpg?1783944159",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Shapeshifter",
+        "Spirit"
+       ],
+       "printedPower": 1,
+       "printedToughness": 1,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Colossal Dreadmaw",
+       "imageUri": "https://cards.scryfall.io/small/front/8/0/8059c52b-5d25-4052-b48a-e9e219a7a546.jpg?1783930678",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Dinosaur"
+       ],
+       "printedPower": 6,
+       "printedToughness": 6,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_5",
+       "name": "Ornithopter",
+       "imageUri": "https://cards.scryfall.io/small/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Artifact",
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Thopter"
+       ],
+       "printedPower": 0,
+       "printedToughness": 2,
+       "timestamp": 5
+      },
+      {
+       "id": "trig_perm_1_1_6",
+       "name": "Belligerent Yearling (trigger)",
+       "imageUri": "https://cards.scryfall.io/small/front/0/b/0b2debca-8535-4cf6-a461-c268faaacaae.jpg?1783913766",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": true,
+       "isTriggeredAbility": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "abilitySourceId": "perm_1",
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 6
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    },
+    "primaryTarget": "perm_2",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 7,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": "perm_5",
+    "choices": null
+   },
+   {
+    "id": "trig_perm_3_0_8",
+    "kind": "trigger",
+    "pseudoKind": "ability",
+    "sourceId": "perm_3",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 0,
+    "timestamp": 8,
+    "effectText": "this creature's base power and toughness become equal to that creature's power and toughness until end of turn.",
+    "fullText": "Whenever this creature blocks or becomes blocked by a creature, this creature's base power and toughness become equal to that creature's power and toughness until end of turn.",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "guessedTargetSubjects": [],
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Belligerent Yearling",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Dinosaur"
+       ],
+       "power": 6,
+       "toughness": 2,
+       "abilities": [
+        "Trample",
+        "Whenever another Dinosaur you control enters, you may have this creature's base power become equal to that creature's power until end of turn."
+       ],
+       "colors": [
+        "R"
+       ],
+       "manaValue": 2,
+       "manaCost": "{1}{R}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "Trample\nWhenever another Dinosaur you control enters, you may have this creature's base power become equal to that creature's power until end of turn.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "Trample",
+        "Whenever another Dinosaur you control enters, you may have this creature's base power become equal to that creature's power until end of turn."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_2",
+      {
+       "name": "Eldrazi Mimic",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Eldrazi"
+       ],
+       "power": 0,
+       "toughness": 2,
+       "abilities": [
+        "Whenever another colorless creature you control enters, you may have this creature's base power and toughness become equal to that creature's power and toughness until end of turn."
+       ],
+       "colors": [],
+       "manaValue": 2,
+       "manaCost": "{2}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "Whenever another colorless creature you control enters, you may have this creature's base power and toughness become equal to that creature's power and toughness until end of turn.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "Whenever another colorless creature you control enters, you may have this creature's base power and toughness become equal to that creature's power and toughness until end of turn."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_3",
+      {
+       "name": "Shape Stealer",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Shapeshifter",
+        "Spirit"
+       ],
+       "power": 1,
+       "toughness": 1,
+       "abilities": [
+        "Whenever this creature blocks or becomes blocked by a creature, this creature's base power and toughness become equal to that creature's power and toughness until end of turn."
+       ],
+       "colors": [
+        "U"
+       ],
+       "manaValue": 2,
+       "manaCost": "{U}{U}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "Whenever this creature blocks or becomes blocked by a creature, this creature's base power and toughness become equal to that creature's power and toughness until end of turn.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "Whenever this creature blocks or becomes blocked by a creature, this creature's base power and toughness become equal to that creature's power and toughness until end of turn."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_4",
+      {
+       "name": "Colossal Dreadmaw",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Dinosaur"
+       ],
+       "power": 6,
+       "toughness": 6,
+       "abilities": [
+        "Trample"
+       ],
+       "colors": [
+        "G"
+       ],
+       "manaValue": 6,
+       "manaCost": "{4}{G}{G}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "Trample",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "Trample"
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_5",
+      {
+       "name": "Ornithopter",
+       "types": [
+        "Artifact",
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Thopter"
+       ],
+       "power": 0,
+       "toughness": 2,
+       "abilities": [
+        "Flying"
+       ],
+       "colors": [],
+       "manaValue": 0,
+       "manaCost": "{0}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "Flying",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "Flying"
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Belligerent Yearling",
+       "imageUri": "https://cards.scryfall.io/small/front/0/b/0b2debca-8535-4cf6-a461-c268faaacaae.jpg?1783913766",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Dinosaur"
+       ],
+       "printedPower": 3,
+       "printedToughness": 2,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Eldrazi Mimic",
+       "imageUri": "https://cards.scryfall.io/small/front/3/1/311a05b1-042d-47e7-9fd7-6e8abe8fc578.jpg?1783937930",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Eldrazi"
+       ],
+       "printedPower": 2,
+       "printedToughness": 1,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Shape Stealer",
+       "imageUri": "https://cards.scryfall.io/small/front/d/a/da2a4871-8bc3-4db0-9f9e-b2e96b90ebd5.jpg?1783944159",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Shapeshifter",
+        "Spirit"
+       ],
+       "printedPower": 1,
+       "printedToughness": 1,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Colossal Dreadmaw",
+       "imageUri": "https://cards.scryfall.io/small/front/8/0/8059c52b-5d25-4052-b48a-e9e219a7a546.jpg?1783930678",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Dinosaur"
+       ],
+       "printedPower": 6,
+       "printedToughness": 6,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_5",
+       "name": "Ornithopter",
+       "imageUri": "https://cards.scryfall.io/small/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Artifact",
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Thopter"
+       ],
+       "printedPower": 0,
+       "printedToughness": 2,
+       "timestamp": 5
+      },
+      {
+       "id": "trig_perm_1_1_6",
+       "name": "Belligerent Yearling (trigger)",
+       "imageUri": "https://cards.scryfall.io/small/front/0/b/0b2debca-8535-4cf6-a461-c268faaacaae.jpg?1783913766",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": true,
+       "isTriggeredAbility": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "abilitySourceId": "perm_1",
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 6
+      },
+      {
+       "id": "trig_perm_2_0_7",
+       "name": "Eldrazi Mimic (trigger)",
+       "imageUri": "https://cards.scryfall.io/small/front/3/1/311a05b1-042d-47e7-9fd7-6e8abe8fc578.jpg?1783937930",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": true,
+       "isTriggeredAbility": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "abilitySourceId": "perm_2",
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 7
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    },
+    "primaryTarget": "perm_3",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 8,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": "perm_4",
+    "choices": null
+   }
+  ],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Belligerent Yearling",
+    "final": {
+     "name": "Belligerent Yearling",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Dinosaur"
+     ],
+     "power": 6,
+     "toughness": 2,
+     "colors": [
+      "R"
+     ],
+     "abilities": [
+      "Trample",
+      "Whenever another Dinosaur you control enters, you may have this creature's base power become equal to that creature's power until end of turn."
+     ]
+    },
+    "changedBy": {
+     "7b": [
+      "Belligerent Yearling (trigger)"
+     ]
+    }
+   },
+   {
+    "perm": "Eldrazi Mimic",
+    "final": {
+     "name": "Eldrazi Mimic",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Eldrazi"
+     ],
+     "power": 0,
+     "toughness": 2,
+     "colors": [],
+     "abilities": [
+      "Whenever another colorless creature you control enters, you may have this creature's base power and toughness become equal to that creature's power and toughness until end of turn."
+     ]
+    },
+    "changedBy": {
+     "7b": [
+      "Eldrazi Mimic (trigger)"
+     ]
+    }
+   },
+   {
+    "perm": "Shape Stealer",
+    "final": {
+     "name": "Shape Stealer",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Shapeshifter",
+      "Spirit"
+     ],
+     "power": 6,
+     "toughness": 6,
+     "colors": [
+      "U"
+     ],
+     "abilities": [
+      "Whenever this creature blocks or becomes blocked by a creature, this creature's base power and toughness become equal to that creature's power and toughness until end of turn."
+     ]
+    },
+    "changedBy": {
+     "7b": [
+      "Shape Stealer (trigger)"
+     ]
+    }
+   },
+   {
+    "perm": "Colossal Dreadmaw",
+    "final": {
+     "name": "Colossal Dreadmaw",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Dinosaur"
+     ],
+     "power": 6,
+     "toughness": 6,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "Trample"
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Ornithopter",
+    "final": {
+     "name": "Ornithopter",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Artifact",
+      "Creature"
+     ],
+     "subtypes": [
+      "Thopter"
+     ],
+     "power": 0,
+     "toughness": 2,
+     "colors": [],
+     "abilities": [
+      "Flying"
+     ]
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "7b": [
+    "Belligerent Yearling (trigger)",
+    "Eldrazi Mimic (trigger)",
+    "Shape Stealer (trigger)"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Belligerent Yearling (trigger)",
+    "layer": "7b",
+    "type": "set_pt",
+    "scope": "targeted",
+    "target": "Belligerent Yearling",
+    "params": {
+     "power": 0,
+     "powerOnly": true,
+     "ptFromRef": {
+      "power": {
+       "add": 0,
+       "stat": "power"
+      },
+      "toughness": null
+     },
+     "refPermId": "@Colossal Dreadmaw"
+    }
+   },
+   {
+    "source": "Eldrazi Mimic (trigger)",
+    "layer": "7b",
+    "type": "set_pt",
+    "scope": "targeted",
+    "target": "Eldrazi Mimic",
+    "params": {
+     "power": 0,
+     "ptFromRef": {
+      "power": {
+       "add": 0,
+       "stat": "power"
+      },
+      "toughness": {
+       "add": 0,
+       "stat": "toughness"
+      }
+     },
+     "refPermId": "@Ornithopter",
+     "toughness": 0
+    }
+   },
+   {
+    "source": "Shape Stealer (trigger)",
+    "layer": "7b",
+    "type": "set_pt",
+    "scope": "targeted",
+    "target": "Shape Stealer",
+    "params": {
+     "power": 0,
+     "ptFromRef": {
+      "power": {
+       "add": 0,
+       "stat": "power"
+      },
+      "toughness": {
+       "add": 0,
+       "stat": "toughness"
+      }
+     },
+     "refPermId": "@Colossal Dreadmaw",
+     "toughness": 0
+    }
+   }
+  ]
+ }
+}

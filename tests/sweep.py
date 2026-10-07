@@ -263,6 +263,12 @@ def classify(text, kw_re):
                  r"\blife total\b[^.]*\bit becomes\b|\bvalue of x\b|\bemblem gains\b|\bonce it gains an ability\b|"
                  r"\bmodal double-faced\b", t):
         return None
+    # A spell gaining an ability as it is cast ("When you cast an Equipment spell this way, it
+    # gains …" - Galea; "… or cast a permanent spell from your graveyard. If you do, it gains
+    # "When this permanent …"" - Serra Paragon): the site has no step for casting a spell.
+    if re.search(r'\bcast (?:an? )?[a-z ]*\bspell\b[^.]*, it gains\b', t) or \
+            re.match(r'if you do, it gains "(?:when|if) this permanent\b', text.strip().lower()):
+        return None
     t = re.sub(r'\bcreates?\b.*', '', t)                                 # token descriptions are not effects
     if re.search(r'\bgains? control of\b|\bexchanges? control\b', t):
         return 'control'

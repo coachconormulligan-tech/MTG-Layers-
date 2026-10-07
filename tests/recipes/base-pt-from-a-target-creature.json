@@ -1,0 +1,95 @@
+{
+  "name": "Base P/T taken from a target creature — Riptide Mangler, Halfdane, Sworn Defender",
+  "notes": "Found by tests/sweep.py. The number comes from another object picked after the ability is fired (Battlefield.setRefPerm; the 'Value from' picker). The effect stays on the ability's source and reads the picked creature's stats from the fire-time snapshot, so the Glorious Anthem added afterwards changes nothing that was locked: Craw Wurm was 6/4 when each ability resolved. Sworn Defender: power = toughness - 1, toughness = 1 + power.",
+  "steps": [
+    {
+      "add": "Craw Wurm",
+      "as": "wurm"
+    },
+    {
+      "add": "Riptide Mangler",
+      "as": "mangler"
+    },
+    {
+      "add": "Halfdane",
+      "as": "half"
+    },
+    {
+      "add": "Sworn Defender",
+      "as": "sworn"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre"
+    },
+    {
+      "fire": "@mangler",
+      "activated": 0,
+      "as": "a1"
+    },
+    {
+      "call": [
+        "setRefPerm",
+        "@a1",
+        "@wurm"
+      ]
+    },
+    {
+      "fire": "@half",
+      "trigger": 0,
+      "as": "a2"
+    },
+    {
+      "call": [
+        "setRefPerm",
+        "@a2",
+        "@wurm"
+      ]
+    },
+    {
+      "fire": "@sworn",
+      "activated": 0,
+      "as": "a3"
+    },
+    {
+      "call": [
+        "setRefPerm",
+        "@a3",
+        "@wurm"
+      ]
+    },
+    {
+      "add": "Glorious Anthem"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Riptide Mangler",
+      "final": {
+        "power": 7,
+        "toughness": 4
+      }
+    },
+    {
+      "perm": "Halfdane",
+      "final": {
+        "power": 7,
+        "toughness": 5
+      }
+    },
+    {
+      "perm": "Sworn Defender",
+      "final": {
+        "power": 4,
+        "toughness": 8
+      }
+    },
+    {
+      "perm": "Craw Wurm",
+      "final": {
+        "power": 7,
+        "toughness": 5
+      }
+    }
+  ]
+}

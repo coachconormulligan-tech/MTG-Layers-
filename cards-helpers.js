@@ -186,6 +186,53 @@ function _triggerConditionCommaIndex(text) {
   return end < 0 ? idx : end;
 }
 
+// "…base power becomes equal to that creature's power" / "… of target creature": the number
+// comes from another object, which the user picks after the ability is fired. The sentence is
+// rewritten to a plain "has base power 0" for the parser, and the returned spec says which of
+// the picked object's stats fills each number (_addAbilityPseudo puts it on the SET_PT effect
+// as params.ptFromRef; the engine reads the stats from the fire-time snapshot).
+//   Belligerent Yearling, Eldrazi Mimic, Shape Stealer — "that creature" of the trigger condition
+//   Riptide Mangler, Halfdane, Sworn Defender          — a target
+// Returns { text, ptFromRef: { power, toughness }, pick: { filter, isTarget, excludeSource, youControl } } or null.
+function _basePTFromOtherObject(text, fullText) {
+  const SELF = "this (?:card|creature|permanent)";
+  const DUR = "(\\s+until end of turn)?(?:\\s+until [^.,;\\n]+)?";
+  const OBJ = "(that creature|target creature)";
+  let m, ptFromRef = null, obj = null, dur = '', other = false;
+  const whole = (re) => (m = text.match(new RegExp("(?:you may have )?" + re, 'i')));
+  if (whole(`(${SELF})'s base power and toughness becomes? equal to (?:${OBJ}'s power and toughness|the power and toughness of ${OBJ}( other than ${SELF})?)${DUR}`)) {
+    ptFromRef = { power: { stat: 'power', add: 0 }, toughness: { stat: 'toughness', add: 0 } };
+    obj = m[2] || m[3]; other = !!m[4]; dur = m[5] || '';
+  } else if (whole(`(${SELF})'s base (power|toughness) becomes? equal to ${OBJ}'s (power|toughness)${DUR}`)) {
+    ptFromRef = { power: null, toughness: null };
+    ptFromRef[m[2].toLowerCase()] = { stat: m[4].toLowerCase(), add: 0 };
+    obj = m[3]; dur = m[5] || '';
+  } else if (whole(`(${SELF})'s power becomes the toughness of target creature[^,.]*? minus (\\d+) until end of turn, and its toughness becomes (\\d+) plus the power of that creature until end of turn`)) {
+    ptFromRef = { power: { stat: 'toughness', add: -parseInt(m[2], 10) }, toughness: { stat: 'power', add: parseInt(m[3], 10) } };
+    obj = 'target creature'; other = true; dur = ' until end of turn';
+  }
+  if (!ptFromRef) return null;
+  const both = ptFromRef.power && ptFromRef.toughness;
+  const subj = m[1].charAt(0).toUpperCase() + m[1].slice(1);
+  const plain = both ? `${subj} has base power and toughness 0/0${dur}`
+    : `${subj} has base ${ptFromRef.power ? 'power' : 'toughness'} 0${dur}`;
+  const isTarget = /^target/i.test(obj);
+  const pick = { filter: 'creature', isTarget, excludeSource: other, youControl: false };
+  if (!isTarget) {
+    // "that creature" is the one the trigger condition names.
+    const cond = String(fullText || '').split('\n')[0];
+    const named = cond.match(/\b(another|an?)\s+([^,]+?)\s+(you control\s+)?(?:enters|attacks|dies|blocks)\b/i);
+    if (named) {
+      pick.filter = named[2].trim();
+      pick.excludeSource = /^another$/i.test(named[1]);
+      pick.youControl = !!named[3];
+    } else {
+      pick.excludeSource = true; // "blocks or becomes blocked by a creature" (Shape Stealer)
+    }
+  }
+  return { text: text.replace(m[0], plain), plain, original: m[0], ptFromRef, pick };
+}
+
 // Fire-time values for "base power/toughness becomes equal to …" abilities. The effect locks in
 // a number as the ability resolves (CR 608.2h), so the text is rewritten with that number from
 // the snapshot the ability was fired against and then parsed as a plain "has base power N".

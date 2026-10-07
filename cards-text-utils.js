@@ -881,7 +881,9 @@ function _buildAppliesToFromTextInner(filterText) {
     .replace(/\s+opponents control(?=\s|$)/g, '')
     .replace(/\s+target\s+opponent\s+controls?(?=\s|$)/g, '')
     .replace(/\s+target\s+player\s+controls?(?=\s|$)/g, '')
-    .replace(/^(?:other|another)\s+/, '');
+    .replace(/^(?:other|another)\s+/, '')
+    // "attacking Vampire that isn't a Demon" (Clavileño) reads as "non-demon attacking vampire".
+    .replace(/^(.+?)\s+that\s+(?:isn't|is not)\s+an?\s+([a-z-]+)$/, 'non-$2 $1');
 
   // --- "this creature" / "this permanent" / "it" — selfTarget ---
   if (/^(this creature|this permanent|this card|this token|it|itself|that creature|that permanent)$/.test(f)) {

@@ -1,0 +1,2594 @@
+{
+ "name": "Base P/T taken from a target creature — Riptide Mangler, Halfdane, Sworn Defender",
+ "notes": "Found by tests/sweep.py. The number comes from another object picked after the ability is fired (Battlefield.setRefPerm; the 'Value from' picker). The effect stays on the ability's source and reads the picked creature's stats from the fire-time snapshot, so the Glorious Anthem added afterwards changes nothing that was locked: Craw Wurm was 6/4 when each ability resolved. Sworn Defender: power = toughness - 1, toughness = 1 + power.",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Craw Wurm",
+    "as": "wurm"
+   },
+   {
+    "add": "Riptide Mangler",
+    "as": "mangler"
+   },
+   {
+    "add": "Halfdane",
+    "as": "half"
+   },
+   {
+    "add": "Sworn Defender",
+    "as": "sworn"
+   },
+   {
+    "add": "Gray Ogre",
+    "as": "ogre"
+   },
+   {
+    "fire": "@mangler",
+    "activated": 0,
+    "as": "a1"
+   },
+   {
+    "call": [
+     "setRefPerm",
+     "@a1",
+     "@wurm"
+    ]
+   },
+   {
+    "fire": "@half",
+    "trigger": 0,
+    "as": "a2"
+   },
+   {
+    "call": [
+     "setRefPerm",
+     "@a2",
+     "@wurm"
+    ]
+   },
+   {
+    "fire": "@sworn",
+    "activated": 0,
+    "as": "a3"
+   },
+   {
+    "call": [
+     "setRefPerm",
+     "@a3",
+     "@wurm"
+    ]
+   },
+   {
+    "add": "Glorious Anthem"
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Riptide Mangler",
+   "final": {
+    "power": 7,
+    "toughness": 4
+   }
+  },
+  {
+   "perm": "Halfdane",
+   "final": {
+    "power": 7,
+    "toughness": 5
+   }
+  },
+  {
+   "perm": "Sworn Defender",
+   "final": {
+    "power": 4,
+    "toughness": 8
+   }
+  },
+  {
+   "perm": "Craw Wurm",
+   "final": {
+    "power": 7,
+    "toughness": 5
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "3875f73d-6108-488b-bd34-4cf2c23ce6b3",
+     "oracle_id": "6a462a69-3e42-41de-a3aa-a488d9f38d69",
+     "multiverse_ids": [
+      189903
+     ],
+     "mtgo_id": 33063,
+     "mtgo_foil_id": 33064,
+     "tcgplayer_id": 32579,
+     "cardmarket_id": 21219,
+     "name": "Craw Wurm",
+     "lang": "en",
+     "released_at": "2009-07-17",
+     "uri": "https://api.scryfall.com/cards/3875f73d-6108-488b-bd34-4cf2c23ce6b3",
+     "scryfall_uri": "https://scryfall.com/card/m10/173/craw-wurm?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:32:44Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.jpg?1783942364",
+      "normal": "https://cards.scryfall.io/normal/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.jpg?1783942364",
+      "large": "https://cards.scryfall.io/large/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.jpg?1783942364",
+      "png": "https://cards.scryfall.io/png/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.png?1783942364",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.jpg?1783942364",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.jpg?1783942364",
+      "thumb": "https://cards.scryfall.io/thumb/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.webp?1783942364",
+      "grid": "https://cards.scryfall.io/grid/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.webp?1783942364",
+      "display": "https://cards.scryfall.io/display/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.webp?1783942364",
+      "art": "https://cards.scryfall.io/art/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.webp?1783942364",
+      "crop": "https://cards.scryfall.io/crop/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.webp?1783942364"
+     },
+     "mana_cost": "{4}{G}{G}",
+     "cmc": 6,
+     "type_line": "Creature — Wurm",
+     "oracle_text": "",
+     "power": "6",
+     "toughness": "4",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "0dba38a9-6b9d-4768-9831-4e03e8970a0b",
+     "set": "m10",
+     "set_name": "Magic 2010",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/0dba38a9-6b9d-4768-9831-4e03e8970a0b",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Am10&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/m10?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/3875f73d-6108-488b-bd34-4cf2c23ce6b3/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A6a462a69-3e42-41de-a3aa-a488d9f38d69&unique=prints",
+     "collector_number": "173",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "The most terrifying thing about the craw wurm is probably the horrible crashing sound it makes as it speeds through the forest. This noise is so loud it echoes through the trees and seems to come from all directions at once.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Richard Sardinha",
+     "artist_ids": [
+      "a3cce4f0-fbf5-4883-aac7-fb28b993b132"
+     ],
+     "illustration_id": "296615a8-58e7-4f90-9c56-01d83b85849b",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 22392,
+     "prices": {
+      "usd": "0.12",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.02",
+      "eur_foil": "0.29",
+      "tix": "0.04"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=189903&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DCraw%2BWurm",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DCraw%2BWurm",
+      "edhrec": "https://edhrec.com/route/?cc=Craw+Wurm"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F32579%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=21219&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/33063?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "5314a802-85d6-4d7b-ae9a-ca64eec652cf",
+     "oracle_id": "d5a4edda-fb04-43fa-8e0e-cc9f19b0776b",
+     "multiverse_ids": [
+      39914
+     ],
+     "mtgo_id": 18495,
+     "mtgo_foil_id": 18496,
+     "tcgplayer_id": 10739,
+     "cardmarket_id": 2032,
+     "name": "Riptide Mangler",
+     "lang": "en",
+     "released_at": "2003-02-03",
+     "uri": "https://api.scryfall.com/cards/5314a802-85d6-4d7b-ae9a-ca64eec652cf",
+     "scryfall_uri": "https://scryfall.com/card/lgn/51/riptide-mangler?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T12:15:19Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/5/3/5314a802-85d6-4d7b-ae9a-ca64eec652cf.jpg?1783944919",
+      "normal": "https://cards.scryfall.io/normal/front/5/3/5314a802-85d6-4d7b-ae9a-ca64eec652cf.jpg?1783944919",
+      "large": "https://cards.scryfall.io/large/front/5/3/5314a802-85d6-4d7b-ae9a-ca64eec652cf.jpg?1783944919",
+      "png": "https://cards.scryfall.io/png/front/5/3/5314a802-85d6-4d7b-ae9a-ca64eec652cf.png?1783944919",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/5/3/5314a802-85d6-4d7b-ae9a-ca64eec652cf.jpg?1783944919",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/5/3/5314a802-85d6-4d7b-ae9a-ca64eec652cf.jpg?1783944919",
+      "thumb": "https://cards.scryfall.io/thumb/front/5/3/5314a802-85d6-4d7b-ae9a-ca64eec652cf.webp?1783944919",
+      "grid": "https://cards.scryfall.io/grid/front/5/3/5314a802-85d6-4d7b-ae9a-ca64eec652cf.webp?1783944919",
+      "display": "https://cards.scryfall.io/display/front/5/3/5314a802-85d6-4d7b-ae9a-ca64eec652cf.webp?1783944919",
+      "art": "https://cards.scryfall.io/art/front/5/3/5314a802-85d6-4d7b-ae9a-ca64eec652cf.webp?1783944919",
+      "crop": "https://cards.scryfall.io/crop/front/5/3/5314a802-85d6-4d7b-ae9a-ca64eec652cf.webp?1783944919"
+     },
+     "mana_cost": "{1}{U}",
+     "cmc": 2,
+     "type_line": "Creature — Beast",
+     "oracle_text": "{1}{U}: This creature's base power becomes equal to target creature's power. (This effect lasts indefinitely.)",
+     "power": "0",
+     "toughness": "3",
+     "colors": [
+      "U"
+     ],
+     "color_identity": [
+      "U"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "c2d60a18-1a81-4784-8e0c-e1de2f43c5cf",
+     "set": "lgn",
+     "set_name": "Legions",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/c2d60a18-1a81-4784-8e0c-e1de2f43c5cf",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Algn&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/lgn?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/5314a802-85d6-4d7b-ae9a-ca64eec652cf/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ad5a4edda-fb04-43fa-8e0e-cc9f19b0776b&unique=prints",
+     "collector_number": "51",
+     "digital": false,
+     "rarity": "rare",
+     "flavor_text": "It wants you to be its chum.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Arnie Swekel",
+     "artist_ids": [
+      "af10ecf2-eb82-4100-97b2-6c236b0fa644"
+     ],
+     "illustration_id": "eb0b6850-f243-48e3-a278-db088117ee34",
+     "border_color": "black",
+     "frame": "1997",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 28702,
+     "penny_rank": 17650,
+     "prices": {
+      "usd": "0.36",
+      "usd_foil": "3.00",
+      "usd_etched": null,
+      "eur": "0.34",
+      "eur_foil": "9.15",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=39914&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DRiptide%2BMangler",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DRiptide%2BMangler",
+      "edhrec": "https://edhrec.com/route/?cc=Riptide+Mangler"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F10739%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=2032&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/18495?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "cac1e57a-0ef5-442b-a492-059fc6ff3dfc",
+     "oracle_id": "2ee13155-a3b8-4cad-8e68-5d2c5aba3bb4",
+     "multiverse_ids": [
+      201192
+     ],
+     "mtgo_id": 33702,
+     "mtgo_foil_id": 33703,
+     "name": "Halfdane",
+     "lang": "en",
+     "released_at": "2009-09-07",
+     "uri": "https://api.scryfall.com/cards/cac1e57a-0ef5-442b-a492-059fc6ff3dfc",
+     "scryfall_uri": "https://scryfall.com/card/me3/150/halfdane?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:30:03Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/c/a/cac1e57a-0ef5-442b-a492-059fc6ff3dfc.jpg?1783942203",
+      "normal": "https://cards.scryfall.io/normal/front/c/a/cac1e57a-0ef5-442b-a492-059fc6ff3dfc.jpg?1783942203",
+      "large": "https://cards.scryfall.io/large/front/c/a/cac1e57a-0ef5-442b-a492-059fc6ff3dfc.jpg?1783942203",
+      "png": "https://cards.scryfall.io/png/front/c/a/cac1e57a-0ef5-442b-a492-059fc6ff3dfc.png?1783942203",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/c/a/cac1e57a-0ef5-442b-a492-059fc6ff3dfc.jpg?1783942203",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/c/a/cac1e57a-0ef5-442b-a492-059fc6ff3dfc.jpg?1783942203",
+      "thumb": "https://cards.scryfall.io/thumb/front/c/a/cac1e57a-0ef5-442b-a492-059fc6ff3dfc.webp?1783942203",
+      "grid": "https://cards.scryfall.io/grid/front/c/a/cac1e57a-0ef5-442b-a492-059fc6ff3dfc.webp?1783942203",
+      "display": "https://cards.scryfall.io/display/front/c/a/cac1e57a-0ef5-442b-a492-059fc6ff3dfc.webp?1783942203",
+      "art": "https://cards.scryfall.io/art/front/c/a/cac1e57a-0ef5-442b-a492-059fc6ff3dfc.webp?1783942203",
+      "crop": "https://cards.scryfall.io/crop/front/c/a/cac1e57a-0ef5-442b-a492-059fc6ff3dfc.webp?1783942203"
+     },
+     "mana_cost": "{1}{W}{U}{B}",
+     "cmc": 4,
+     "type_line": "Legendary Creature — Shapeshifter",
+     "oracle_text": "At the beginning of your upkeep, Halfdane's base power and toughness become equal to the power and toughness of target creature other than Halfdane until the end of your next upkeep.",
+     "power": "3",
+     "toughness": "3",
+     "colors": [
+      "B",
+      "U",
+      "W"
+     ],
+     "color_identity": [
+      "B",
+      "U",
+      "W"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "mtgo"
+     ],
+     "reserved": true,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "b65fb1f2-4768-4c70-8fdf-30a069ad592e",
+     "set": "me3",
+     "set_name": "Masters Edition III",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/b65fb1f2-4768-4c70-8fdf-30a069ad592e",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Ame3&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/me3?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/cac1e57a-0ef5-442b-a492-059fc6ff3dfc/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A2ee13155-a3b8-4cad-8e68-5d2c5aba3bb4&unique=prints",
+     "collector_number": "150",
+     "digital": true,
+     "rarity": "rare",
+     "flavor_text": "Hail from Tolaria the ever changing 'Dane.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Melissa A. Benson",
+     "artist_ids": [
+      "9ade7727-1436-4828-9a1d-487c3d2ad1d9"
+     ],
+     "illustration_id": "adfbbc6c-c358-4afe-ad28-94aeef64b8ba",
+     "border_color": "black",
+     "frame": "1997",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 28610,
+     "penny_rank": 17082,
+     "prices": {
+      "usd": null,
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": null,
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=201192&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DHalfdane",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DHalfdane",
+      "edhrec": "https://edhrec.com/route/?cc=Halfdane"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fmagic%2Fproduct%3FproductLineName%3Dmagic%26q%3DHalfdane%26view%3Dgrid",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products/Search?referrer=scryfall&searchString=Halfdane&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/33702?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "328e6ceb-30f7-415e-93b4-7075af0fed89",
+     "oracle_id": "02197d14-8d9f-4b1f-9ee0-ce8ef690843c",
+     "multiverse_ids": [
+      3217
+     ],
+     "tcgplayer_id": 4263,
+     "cardmarket_id": 8004,
+     "name": "Sworn Defender",
+     "lang": "en",
+     "released_at": "1996-06-10",
+     "uri": "https://api.scryfall.com/cards/328e6ceb-30f7-415e-93b4-7075af0fed89",
+     "scryfall_uri": "https://scryfall.com/card/all/19/sworn-defender?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T12:53:18Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/3/2/328e6ceb-30f7-415e-93b4-7075af0fed89.jpg?1783947198",
+      "normal": "https://cards.scryfall.io/normal/front/3/2/328e6ceb-30f7-415e-93b4-7075af0fed89.jpg?1783947198",
+      "large": "https://cards.scryfall.io/large/front/3/2/328e6ceb-30f7-415e-93b4-7075af0fed89.jpg?1783947198",
+      "png": "https://cards.scryfall.io/png/front/3/2/328e6ceb-30f7-415e-93b4-7075af0fed89.png?1783947198",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/3/2/328e6ceb-30f7-415e-93b4-7075af0fed89.jpg?1783947198",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/3/2/328e6ceb-30f7-415e-93b4-7075af0fed89.jpg?1783947198",
+      "thumb": "https://cards.scryfall.io/thumb/front/3/2/328e6ceb-30f7-415e-93b4-7075af0fed89.webp?1783947198",
+      "grid": "https://cards.scryfall.io/grid/front/3/2/328e6ceb-30f7-415e-93b4-7075af0fed89.webp?1783947198",
+      "display": "https://cards.scryfall.io/display/front/3/2/328e6ceb-30f7-415e-93b4-7075af0fed89.webp?1783947198",
+      "art": "https://cards.scryfall.io/art/front/3/2/328e6ceb-30f7-415e-93b4-7075af0fed89.webp?1783947198",
+      "crop": "https://cards.scryfall.io/crop/front/3/2/328e6ceb-30f7-415e-93b4-7075af0fed89.webp?1783947198"
+     },
+     "mana_cost": "{2}{W}{W}",
+     "cmc": 4,
+     "type_line": "Creature — Human Knight",
+     "oracle_text": "{1}: This creature's power becomes the toughness of target creature blocking or being blocked by this creature minus 1 until end of turn, and its toughness becomes 1 plus the power of that creature until end of turn.",
+     "power": "1",
+     "toughness": "3",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper"
+     ],
+     "reserved": true,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "64987b06-4a5c-443d-b560-ff5691744582",
+     "set": "all",
+     "set_name": "Alliances",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/64987b06-4a5c-443d-b560-ff5691744582",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aall&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/all?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/328e6ceb-30f7-415e-93b4-7075af0fed89/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A02197d14-8d9f-4b1f-9ee0-ce8ef690843c&unique=prints",
+     "collector_number": "19",
+     "digital": false,
+     "rarity": "rare",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "D. Alexander Gregory",
+     "artist_ids": [
+      "38433e15-f0f5-4223-a985-2d13c4aa0922"
+     ],
+     "illustration_id": "dbfed80e-4369-414d-94e6-7ccce7a74b28",
+     "border_color": "black",
+     "frame": "1993",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 29006,
+     "prices": {
+      "usd": "1.01",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.61",
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=3217&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DSworn%2BDefender",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DSworn%2BDefender",
+      "edhrec": "https://edhrec.com/route/?cc=Sworn+Defender"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F4263%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=8004&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Sworn+Defender&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 4,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_5",
+    "scryfallData": {
+     "object": "card",
+     "id": "11bf2cc0-799f-4eb8-b338-ed7543f469e7",
+     "oracle_id": "83c8a3a6-2e1a-4e26-8847-6d066f42d906",
+     "multiverse_ids": [
+      2283
+     ],
+     "tcgplayer_id": 1777,
+     "cardmarket_id": 6053,
+     "name": "Gray Ogre",
+     "lang": "en",
+     "released_at": "1995-04-01",
+     "uri": "https://api.scryfall.com/cards/11bf2cc0-799f-4eb8-b338-ed7543f469e7",
+     "scryfall_uri": "https://scryfall.com/card/4ed/200/gray-ogre?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T13:03:48Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+      "normal": "https://cards.scryfall.io/normal/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+      "large": "https://cards.scryfall.io/large/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+      "png": "https://cards.scryfall.io/png/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.png?1783947828",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+      "thumb": "https://cards.scryfall.io/thumb/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.webp?1783947828",
+      "grid": "https://cards.scryfall.io/grid/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.webp?1783947828",
+      "display": "https://cards.scryfall.io/display/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.webp?1783947828",
+      "art": "https://cards.scryfall.io/art/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.webp?1783947828",
+      "crop": "https://cards.scryfall.io/crop/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.webp?1783947828"
+     },
+     "mana_cost": "{2}{R}",
+     "cmc": 3,
+     "type_line": "Creature — Ogre",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "R"
+     ],
+     "color_identity": [
+      "R"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "2dd259d4-dc13-4956-a2dc-3e1d70b4a743",
+     "set": "4ed",
+     "set_name": "Fourth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/2dd259d4-dc13-4956-a2dc-3e1d70b4a743",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A4ed&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/4ed?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/11bf2cc0-799f-4eb8-b338-ed7543f469e7/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A83c8a3a6-2e1a-4e26-8847-6d066f42d906&unique=prints",
+     "collector_number": "200",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "The Ogre philosopher Gnerdel believed the purpose of life was to live as high on the food chain as possible. She refused to eat vegetarians, preferring to live entirely on creatures that preyed on sentient beings.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Dan Frazier",
+     "artist_ids": [
+      "059bba56-5feb-42e4-8c2e-e2f1e6ba11f9"
+     ],
+     "illustration_id": "a7399345-c36e-4a91-a4f5-22a2a0eeffaa",
+     "border_color": "white",
+     "frame": "1993",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 30971,
+     "prices": {
+      "usd": "0.06",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.05",
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=2283&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGray%2BOgre",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGray%2BOgre",
+      "edhrec": "https://edhrec.com/route/?cc=Gray+Ogre"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F1777%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=6053&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Gray+Ogre&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 5,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_6",
+    "scryfallData": {
+     "object": "card",
+     "id": "17d154d3-7ae5-43ff-9978-d974285e2c89",
+     "oracle_id": "e3886fe8-9b76-4613-8891-4ec74657c087",
+     "multiverse_ids": [
+      485344
+     ],
+     "mtgo_id": 81269,
+     "arena_id": 71803,
+     "tcgplayer_id": 215674,
+     "cardmarket_id": 470879,
+     "name": "Glorious Anthem",
+     "lang": "en",
+     "released_at": "2020-07-03",
+     "uri": "https://api.scryfall.com/cards/17d154d3-7ae5-43ff-9978-d974285e2c89",
+     "scryfall_uri": "https://scryfall.com/card/m21/21/glorious-anthem?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T08:19:01Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/1/7/17d154d3-7ae5-43ff-9978-d974285e2c89.jpg?1783930741",
+      "normal": "https://cards.scryfall.io/normal/front/1/7/17d154d3-7ae5-43ff-9978-d974285e2c89.jpg?1783930741",
+      "large": "https://cards.scryfall.io/large/front/1/7/17d154d3-7ae5-43ff-9978-d974285e2c89.jpg?1783930741",
+      "png": "https://cards.scryfall.io/png/front/1/7/17d154d3-7ae5-43ff-9978-d974285e2c89.png?1783930741",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/1/7/17d154d3-7ae5-43ff-9978-d974285e2c89.jpg?1783930741",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/1/7/17d154d3-7ae5-43ff-9978-d974285e2c89.jpg?1783930741",
+      "thumb": "https://cards.scryfall.io/thumb/front/1/7/17d154d3-7ae5-43ff-9978-d974285e2c89.webp?1783930741",
+      "grid": "https://cards.scryfall.io/grid/front/1/7/17d154d3-7ae5-43ff-9978-d974285e2c89.webp?1783930741",
+      "display": "https://cards.scryfall.io/display/front/1/7/17d154d3-7ae5-43ff-9978-d974285e2c89.webp?1783930741",
+      "art": "https://cards.scryfall.io/art/front/1/7/17d154d3-7ae5-43ff-9978-d974285e2c89.webp?1783930741",
+      "crop": "https://cards.scryfall.io/crop/front/1/7/17d154d3-7ae5-43ff-9978-d974285e2c89.webp?1783930741"
+     },
+     "mana_cost": "{1}{W}{W}",
+     "cmc": 3,
+     "type_line": "Enchantment",
+     "oracle_text": "Creatures you control get +1/+1.",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "arena",
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "bc94aba1-7376-4e02-a12d-3a2efb66ab0f",
+     "set": "m21",
+     "set_name": "Core Set 2021",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/bc94aba1-7376-4e02-a12d-3a2efb66ab0f",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Am21&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/m21?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/17d154d3-7ae5-43ff-9978-d974285e2c89/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ae3886fe8-9b76-4613-8891-4ec74657c087&unique=prints",
+     "collector_number": "21",
+     "digital": false,
+     "rarity": "rare",
+     "flavor_text": "The songs of angels are perceived not as words in the ears but as stirrings in the soul.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Raymond Swanland",
+     "artist_ids": [
+      "e956bacc-077d-4c12-b6bc-ba798b718af9"
+     ],
+     "illustration_id": "8f05bbfe-383a-454a-b8d3-94d7234797ba",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 7262,
+     "penny_rank": 4278,
+     "preview": {
+      "source": "CoolStuffInc",
+      "source_uri": "https://www.coolstuffinc.com/a/abesargent-06122020-core-set-2021-glory-days-are-here-again",
+      "previewed_at": "2020-06-12"
+     },
+     "prices": {
+      "usd": "0.41",
+      "usd_foil": "0.49",
+      "usd_etched": null,
+      "eur": "0.19",
+      "eur_foil": "0.42",
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=485344&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGlorious%2BAnthem",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGlorious%2BAnthem",
+      "edhrec": "https://edhrec.com/route/?cc=Glorious+Anthem"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F215674%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=470879&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/81269?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 9,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [
+   {
+    "id": "act_perm_2_0_6",
+    "kind": "activated",
+    "pseudoKind": "ability",
+    "sourceId": "perm_2",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 0,
+    "timestamp": 6,
+    "effectText": "This creature's base power becomes equal to target creature's power.",
+    "fullText": "{1}{U}: This creature's base power becomes equal to target creature's power.",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "guessedTargetSubjects": [],
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Craw Wurm",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Wurm"
+       ],
+       "power": 6,
+       "toughness": 4,
+       "colors": [
+        "G"
+       ],
+       "abilities": [],
+       "oracleText": "",
+       "owner": "player_0",
+       "controller": "player_0"
+      }
+     ],
+     [
+      "perm_2",
+      {
+       "name": "Riptide Mangler",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Beast"
+       ],
+       "power": 0,
+       "toughness": 3,
+       "colors": [
+        "U"
+       ],
+       "abilities": [
+        "{1}{U}: This creature's base power becomes equal to target creature's power."
+       ],
+       "oracleText": "{1}{U}: This creature's base power becomes equal to target creature's power.",
+       "owner": "player_0",
+       "controller": "player_0"
+      }
+     ],
+     [
+      "perm_3",
+      {
+       "name": "Halfdane",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [
+        "Legendary"
+       ],
+       "subtypes": [
+        "Shapeshifter"
+       ],
+       "power": 3,
+       "toughness": 3,
+       "colors": [
+        "B",
+        "U",
+        "W"
+       ],
+       "abilities": [
+        "At the beginning of your upkeep, this card's base power and toughness become equal to the power and toughness of target creature other than this card until the end of your next upkeep."
+       ],
+       "oracleText": "At the beginning of your upkeep, this card's base power and toughness become equal to the power and toughness of target creature other than this card until the end of your next upkeep.",
+       "owner": "player_0",
+       "controller": "player_0"
+      }
+     ],
+     [
+      "perm_4",
+      {
+       "name": "Sworn Defender",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Human",
+        "Knight"
+       ],
+       "power": 1,
+       "toughness": 3,
+       "colors": [
+        "W"
+       ],
+       "abilities": [
+        "{1}: This creature's power becomes the toughness of target creature blocking or being blocked by this creature minus 1 until end of turn, and its toughness becomes 1 plus the power of that creature until end of turn."
+       ],
+       "oracleText": "{1}: This creature's power becomes the toughness of target creature blocking or being blocked by this creature minus 1 until end of turn, and its toughness becomes 1 plus the power of that creature until end of turn.",
+       "owner": "player_0",
+       "controller": "player_0"
+      }
+     ],
+     [
+      "perm_5",
+      {
+       "name": "Gray Ogre",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Ogre"
+       ],
+       "power": 2,
+       "toughness": 2,
+       "colors": [
+        "R"
+       ],
+       "abilities": [],
+       "oracleText": "",
+       "owner": "player_0",
+       "controller": "player_0"
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Craw Wurm",
+       "imageUri": "https://cards.scryfall.io/small/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.jpg?1783942364",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Wurm"
+       ],
+       "printedPower": 6,
+       "printedToughness": 4,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Riptide Mangler",
+       "imageUri": "https://cards.scryfall.io/small/front/5/3/5314a802-85d6-4d7b-ae9a-ca64eec652cf.jpg?1783944919",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Beast"
+       ],
+       "printedPower": 0,
+       "printedToughness": 3,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Halfdane",
+       "imageUri": "https://cards.scryfall.io/small/front/c/a/cac1e57a-0ef5-442b-a492-059fc6ff3dfc.jpg?1783942203",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [
+        "Legendary"
+       ],
+       "printedSubtypes": [
+        "Shapeshifter"
+       ],
+       "printedPower": 3,
+       "printedToughness": 3,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Sworn Defender",
+       "imageUri": "https://cards.scryfall.io/small/front/3/2/328e6ceb-30f7-415e-93b4-7075af0fed89.jpg?1783947198",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Human",
+        "Knight"
+       ],
+       "printedPower": 1,
+       "printedToughness": 3,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_5",
+       "name": "Gray Ogre",
+       "imageUri": "https://cards.scryfall.io/small/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Ogre"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 5
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    },
+    "primaryTarget": "perm_2",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 6,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": "perm_1",
+    "choices": null
+   },
+   {
+    "id": "trig_perm_3_0_7",
+    "kind": "trigger",
+    "pseudoKind": "ability",
+    "sourceId": "perm_3",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 0,
+    "timestamp": 7,
+    "effectText": "this card's base power and toughness become equal to the power and toughness of target creature other than this card until the end of your next upkeep.",
+    "fullText": "At the beginning of your upkeep, this card's base power and toughness become equal to the power and toughness of target creature other than this card until the end of your next upkeep.",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "guessedTargetSubjects": [],
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Craw Wurm",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Wurm"
+       ],
+       "power": 6,
+       "toughness": 4,
+       "abilities": [],
+       "colors": [
+        "G"
+       ],
+       "manaValue": 6,
+       "manaCost": "{4}{G}{G}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_2",
+      {
+       "name": "Riptide Mangler",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Beast"
+       ],
+       "power": 6,
+       "toughness": 3,
+       "abilities": [
+        "{1}{U}: This creature's base power becomes equal to target creature's power."
+       ],
+       "colors": [
+        "U"
+       ],
+       "manaValue": 2,
+       "manaCost": "{1}{U}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "{1}{U}: This creature's base power becomes equal to target creature's power.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "{1}{U}: This creature's base power becomes equal to target creature's power."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_3",
+      {
+       "name": "Halfdane",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [
+        "Legendary"
+       ],
+       "subtypes": [
+        "Shapeshifter"
+       ],
+       "power": 3,
+       "toughness": 3,
+       "abilities": [
+        "At the beginning of your upkeep, this card's base power and toughness become equal to the power and toughness of target creature other than this card until the end of your next upkeep."
+       ],
+       "colors": [
+        "B",
+        "U",
+        "W"
+       ],
+       "manaValue": 4,
+       "manaCost": "{1}{W}{U}{B}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "At the beginning of your upkeep, this card's base power and toughness become equal to the power and toughness of target creature other than this card until the end of your next upkeep.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "At the beginning of your upkeep, this card's base power and toughness become equal to the power and toughness of target creature other than this card until the end of your next upkeep."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_4",
+      {
+       "name": "Sworn Defender",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Human",
+        "Knight"
+       ],
+       "power": 1,
+       "toughness": 3,
+       "abilities": [
+        "{1}: This creature's power becomes the toughness of target creature blocking or being blocked by this creature minus 1 until end of turn, and its toughness becomes 1 plus the power of that creature until end of turn."
+       ],
+       "colors": [
+        "W"
+       ],
+       "manaValue": 4,
+       "manaCost": "{2}{W}{W}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "{1}: This creature's power becomes the toughness of target creature blocking or being blocked by this creature minus 1 until end of turn, and its toughness becomes 1 plus the power of that creature until end of turn.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "{1}: This creature's power becomes the toughness of target creature blocking or being blocked by this creature minus 1 until end of turn, and its toughness becomes 1 plus the power of that creature until end of turn."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_5",
+      {
+       "name": "Gray Ogre",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Ogre"
+       ],
+       "power": 2,
+       "toughness": 2,
+       "abilities": [],
+       "colors": [
+        "R"
+       ],
+       "manaValue": 3,
+       "manaCost": "{2}{R}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Craw Wurm",
+       "imageUri": "https://cards.scryfall.io/small/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.jpg?1783942364",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Wurm"
+       ],
+       "printedPower": 6,
+       "printedToughness": 4,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Riptide Mangler",
+       "imageUri": "https://cards.scryfall.io/small/front/5/3/5314a802-85d6-4d7b-ae9a-ca64eec652cf.jpg?1783944919",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Beast"
+       ],
+       "printedPower": 0,
+       "printedToughness": 3,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Halfdane",
+       "imageUri": "https://cards.scryfall.io/small/front/c/a/cac1e57a-0ef5-442b-a492-059fc6ff3dfc.jpg?1783942203",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [
+        "Legendary"
+       ],
+       "printedSubtypes": [
+        "Shapeshifter"
+       ],
+       "printedPower": 3,
+       "printedToughness": 3,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Sworn Defender",
+       "imageUri": "https://cards.scryfall.io/small/front/3/2/328e6ceb-30f7-415e-93b4-7075af0fed89.jpg?1783947198",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Human",
+        "Knight"
+       ],
+       "printedPower": 1,
+       "printedToughness": 3,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_5",
+       "name": "Gray Ogre",
+       "imageUri": "https://cards.scryfall.io/small/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Ogre"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 5
+      },
+      {
+       "id": "act_perm_2_0_6",
+       "name": "Riptide Mangler (activated)",
+       "imageUri": "https://cards.scryfall.io/small/front/5/3/5314a802-85d6-4d7b-ae9a-ca64eec652cf.jpg?1783944919",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": true,
+       "isActivatedAbility": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "abilitySourceId": "perm_2",
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 6
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    },
+    "primaryTarget": "perm_3",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 7,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": "perm_1",
+    "choices": null
+   },
+   {
+    "id": "act_perm_4_0_8",
+    "kind": "activated",
+    "pseudoKind": "ability",
+    "sourceId": "perm_4",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 0,
+    "timestamp": 8,
+    "effectText": "This creature's power becomes the toughness of target creature blocking or being blocked by this creature minus 1 until end of turn, and its toughness becomes 1 plus the power of that creature until end of turn.",
+    "fullText": "{1}: This creature's power becomes the toughness of target creature blocking or being blocked by this creature minus 1 until end of turn, and its toughness becomes 1 plus the power of that creature until end of turn.",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "guessedTargetSubjects": [],
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Craw Wurm",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Wurm"
+       ],
+       "power": 6,
+       "toughness": 4,
+       "abilities": [],
+       "colors": [
+        "G"
+       ],
+       "manaValue": 6,
+       "manaCost": "{4}{G}{G}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_2",
+      {
+       "name": "Riptide Mangler",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Beast"
+       ],
+       "power": 6,
+       "toughness": 3,
+       "abilities": [
+        "{1}{U}: This creature's base power becomes equal to target creature's power."
+       ],
+       "colors": [
+        "U"
+       ],
+       "manaValue": 2,
+       "manaCost": "{1}{U}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "{1}{U}: This creature's base power becomes equal to target creature's power.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "{1}{U}: This creature's base power becomes equal to target creature's power."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_3",
+      {
+       "name": "Halfdane",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [
+        "Legendary"
+       ],
+       "subtypes": [
+        "Shapeshifter"
+       ],
+       "power": 6,
+       "toughness": 4,
+       "abilities": [
+        "At the beginning of your upkeep, this card's base power and toughness become equal to the power and toughness of target creature other than this card until the end of your next upkeep."
+       ],
+       "colors": [
+        "B",
+        "U",
+        "W"
+       ],
+       "manaValue": 4,
+       "manaCost": "{1}{W}{U}{B}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "At the beginning of your upkeep, this card's base power and toughness become equal to the power and toughness of target creature other than this card until the end of your next upkeep.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "At the beginning of your upkeep, this card's base power and toughness become equal to the power and toughness of target creature other than this card until the end of your next upkeep."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_4",
+      {
+       "name": "Sworn Defender",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Human",
+        "Knight"
+       ],
+       "power": 1,
+       "toughness": 3,
+       "abilities": [
+        "{1}: This creature's power becomes the toughness of target creature blocking or being blocked by this creature minus 1 until end of turn, and its toughness becomes 1 plus the power of that creature until end of turn."
+       ],
+       "colors": [
+        "W"
+       ],
+       "manaValue": 4,
+       "manaCost": "{2}{W}{W}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "{1}: This creature's power becomes the toughness of target creature blocking or being blocked by this creature minus 1 until end of turn, and its toughness becomes 1 plus the power of that creature until end of turn.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "{1}: This creature's power becomes the toughness of target creature blocking or being blocked by this creature minus 1 until end of turn, and its toughness becomes 1 plus the power of that creature until end of turn."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_5",
+      {
+       "name": "Gray Ogre",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Ogre"
+       ],
+       "power": 2,
+       "toughness": 2,
+       "abilities": [],
+       "colors": [
+        "R"
+       ],
+       "manaValue": 3,
+       "manaCost": "{2}{R}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Craw Wurm",
+       "imageUri": "https://cards.scryfall.io/small/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.jpg?1783942364",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Wurm"
+       ],
+       "printedPower": 6,
+       "printedToughness": 4,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Riptide Mangler",
+       "imageUri": "https://cards.scryfall.io/small/front/5/3/5314a802-85d6-4d7b-ae9a-ca64eec652cf.jpg?1783944919",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Beast"
+       ],
+       "printedPower": 0,
+       "printedToughness": 3,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Halfdane",
+       "imageUri": "https://cards.scryfall.io/small/front/c/a/cac1e57a-0ef5-442b-a492-059fc6ff3dfc.jpg?1783942203",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [
+        "Legendary"
+       ],
+       "printedSubtypes": [
+        "Shapeshifter"
+       ],
+       "printedPower": 3,
+       "printedToughness": 3,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Sworn Defender",
+       "imageUri": "https://cards.scryfall.io/small/front/3/2/328e6ceb-30f7-415e-93b4-7075af0fed89.jpg?1783947198",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Human",
+        "Knight"
+       ],
+       "printedPower": 1,
+       "printedToughness": 3,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_5",
+       "name": "Gray Ogre",
+       "imageUri": "https://cards.scryfall.io/small/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Ogre"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 5
+      },
+      {
+       "id": "act_perm_2_0_6",
+       "name": "Riptide Mangler (activated)",
+       "imageUri": "https://cards.scryfall.io/small/front/5/3/5314a802-85d6-4d7b-ae9a-ca64eec652cf.jpg?1783944919",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": true,
+       "isActivatedAbility": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "abilitySourceId": "perm_2",
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 6
+      },
+      {
+       "id": "trig_perm_3_0_7",
+       "name": "Halfdane (trigger)",
+       "imageUri": "https://cards.scryfall.io/small/front/c/a/cac1e57a-0ef5-442b-a492-059fc6ff3dfc.jpg?1783942203",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": true,
+       "isTriggeredAbility": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "abilitySourceId": "perm_3",
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 7
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    },
+    "primaryTarget": "perm_4",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 8,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": "perm_1",
+    "choices": null
+   }
+  ],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Craw Wurm",
+    "final": {
+     "name": "Craw Wurm",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Wurm"
+     ],
+     "power": 7,
+     "toughness": 5,
+     "colors": [
+      "G"
+     ],
+     "abilities": []
+    },
+    "changedBy": {
+     "7c": [
+      "Glorious Anthem"
+     ]
+    }
+   },
+   {
+    "perm": "Riptide Mangler",
+    "final": {
+     "name": "Riptide Mangler",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Beast"
+     ],
+     "power": 7,
+     "toughness": 4,
+     "colors": [
+      "U"
+     ],
+     "abilities": [
+      "{1}{U}: This creature's base power becomes equal to target creature's power."
+     ]
+    },
+    "changedBy": {
+     "7b": [
+      "Riptide Mangler (activated)"
+     ],
+     "7c": [
+      "Glorious Anthem"
+     ]
+    }
+   },
+   {
+    "perm": "Halfdane",
+    "final": {
+     "name": "Halfdane",
+     "controller": "player_0",
+     "supertypes": [
+      "Legendary"
+     ],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Shapeshifter"
+     ],
+     "power": 7,
+     "toughness": 5,
+     "colors": [
+      "B",
+      "U",
+      "W"
+     ],
+     "abilities": [
+      "At the beginning of your upkeep, this card's base power and toughness become equal to the power and toughness of target creature other than this card until the end of your next upkeep."
+     ]
+    },
+    "changedBy": {
+     "7b": [
+      "Halfdane (trigger)"
+     ],
+     "7c": [
+      "Glorious Anthem"
+     ]
+    }
+   },
+   {
+    "perm": "Sworn Defender",
+    "final": {
+     "name": "Sworn Defender",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Human",
+      "Knight"
+     ],
+     "power": 4,
+     "toughness": 8,
+     "colors": [
+      "W"
+     ],
+     "abilities": [
+      "{1}: This creature's power becomes the toughness of target creature blocking or being blocked by this creature minus 1 until end of turn, and its toughness becomes 1 plus the power of that creature until end of turn."
+     ]
+    },
+    "changedBy": {
+     "7b": [
+      "Sworn Defender (activated)"
+     ],
+     "7c": [
+      "Glorious Anthem"
+     ]
+    }
+   },
+   {
+    "perm": "Gray Ogre",
+    "final": {
+     "name": "Gray Ogre",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Ogre"
+     ],
+     "power": 3,
+     "toughness": 3,
+     "colors": [
+      "R"
+     ],
+     "abilities": []
+    },
+    "changedBy": {
+     "7c": [
+      "Glorious Anthem"
+     ]
+    }
+   },
+   {
+    "perm": "Glorious Anthem",
+    "final": {
+     "name": "Glorious Anthem",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Enchantment"
+     ],
+     "subtypes": [],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "W"
+     ],
+     "abilities": [
+      "Creatures you control get +1/+1."
+     ]
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "7b": [
+    "Riptide Mangler (activated)",
+    "Halfdane (trigger)",
+    "Sworn Defender (activated)"
+   ],
+   "7c": [
+    "Glorious Anthem"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Glorious Anthem",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "global",
+    "params": {
+     "power": 1,
+     "toughness": 1
+    }
+   },
+   {
+    "source": "Riptide Mangler (activated)",
+    "layer": "7b",
+    "type": "set_pt",
+    "scope": "targeted",
+    "target": "Riptide Mangler",
+    "params": {
+     "power": 0,
+     "powerOnly": true,
+     "ptFromRef": {
+      "power": {
+       "add": 0,
+       "stat": "power"
+      },
+      "toughness": null
+     },
+     "refPermId": "@Craw Wurm"
+    }
+   },
+   {
+    "source": "Halfdane (trigger)",
+    "layer": "7b",
+    "type": "set_pt",
+    "scope": "targeted",
+    "target": "Halfdane",
+    "params": {
+     "power": 0,
+     "ptFromRef": {
+      "power": {
+       "add": 0,
+       "stat": "power"
+      },
+      "toughness": {
+       "add": 0,
+       "stat": "toughness"
+      }
+     },
+     "refPermId": "@Craw Wurm",
+     "toughness": 0
+    }
+   },
+   {
+    "source": "Sworn Defender (activated)",
+    "layer": "7b",
+    "type": "set_pt",
+    "scope": "targeted",
+    "target": "Sworn Defender",
+    "params": {
+     "power": 0,
+     "ptFromRef": {
+      "power": {
+       "add": -1,
+       "stat": "toughness"
+      },
+      "toughness": {
+       "add": 1,
+       "stat": "power"
+      }
+     },
+     "refPermId": "@Craw Wurm",
+     "toughness": 0
+    }
+   }
+  ]
+ }
+}

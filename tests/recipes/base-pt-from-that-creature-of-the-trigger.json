@@ -1,0 +1,22 @@
+{
+  "name": "Base P/T taken from \"that creature\" of the trigger — Belligerent Yearling, Eldrazi Mimic, Shape Stealer",
+  "notes": "Found by tests/sweep.py. 'Whenever another Dinosaur you control enters, you may have this creature's base power become equal to that creature's power': the creature is picked after firing (setRefPerm), the effect lands on the ability's source. Yearling takes only power (6/2 from Colossal Dreadmaw's 6/6); Mimic and Shape Stealer take both.",
+  "steps": [
+    { "add": "Belligerent Yearling", "as": "year" },
+    { "add": "Eldrazi Mimic", "as": "mimic" },
+    { "add": "Shape Stealer", "as": "steal" },
+    { "add": "Colossal Dreadmaw", "as": "maw" },
+    { "add": "Ornithopter", "as": "thopter" },
+    { "fire": "@year", "trigger": 1, "as": "t1" },
+    { "call": ["setRefPerm", "@t1", "@maw"] },
+    { "fire": "@mimic", "trigger": 0, "as": "t2" },
+    { "call": ["setRefPerm", "@t2", "@thopter"] },
+    { "fire": "@steal", "trigger": 0, "as": "t3" },
+    { "call": ["setRefPerm", "@t3", "@maw"] }
+  ],
+  "asserts": [
+    { "perm": "Belligerent Yearling", "final": { "power": 6, "toughness": 2 } },
+    { "perm": "Eldrazi Mimic", "final": { "power": 0, "toughness": 2 } },
+    { "perm": "Shape Stealer", "final": { "power": 6, "toughness": 6 } }
+  ]
+}
