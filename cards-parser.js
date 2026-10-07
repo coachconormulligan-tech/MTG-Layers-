@@ -5724,6 +5724,59 @@ function parseCardEffects(permanent, card, opts = {}) {
     }
   }
 
+  // --- "<this> has all activated abilities of the chosen permanent [except for loyalty
+  //     abilities]" (Layer 6) ---
+  // Covers Scheming Fence ("As this creature enters, you may choose a nonland permanent.").
+  // The chosen permanent is picked with the reference picker (permanent._refPick); unlike the
+  // fired-ability form (Quicksilver Elemental) it is read live, so params.refLive is set.
+  if (!effects.some(e => e.type === EFFECT_TYPE.GAIN_ACTIVATED_FROM_OTHERS)) {
+    const chosenMatch = /^(.+?)\s+has\s+all\s+activated\s+abilities\s+of\s+the\s+chosen\s+(?:permanent|creature|artifact|land|enchantment)(?:\s+except\s+(?:for\s+)?(mana|loyalty)\s+abilities)?(?=\s*(?:\.|$))/im.exec(oracleRaw);
+    const chooseLine = chosenMatch && /^as this \w+ enters, (?:you may )?choose an? ([^.\n]+?)\./im.exec(oracleRaw);
+    if (chosenMatch && chooseLine && _gainAbilitiesSelfSubject.test(chosenMatch[1].trim().toLowerCase())) {
+      const except = (chosenMatch[2] || '').toLowerCase();
+      const params = { requireType: null, includeTriggered: false, sameController: false, differentName: false,
+        abilitiesFromRef: true, refLive: true, refPermId: permanent._chosenRefPermId || null };
+      if (except === 'mana') params.excludeMana = true;
+      if (except === 'loyalty') params.excludeLoyalty = true;
+      permanent._refPick = { filter: chooseLine[1].trim().toLowerCase(), isTarget: false, excludeSource: true,
+        youControl: false, opponentControls: false, label: 'Abilities from' };
+      pushEff('6', EFFECT_TYPE.GAIN_ACTIVATED_FROM_OTHERS, params,
+        { appliesTo: null, scope: 'targeted', selfTarget: true, affectsSelf: true },
+        `This permanent has all activated abilities of the chosen permanent${except ? ` except ${except} abilities` : ''}.`);
+    }
+  }
+
+  // --- "As long as the top card of your library is a <type or subtype> card, <this> has all
+  //     activated abilities of that card" (Layer 6) ---
+  // Covers Conspicuous Snoop (a Goblin card) and Skill Borrower (an artifact or creature card).
+  // The card comes from the controller's "Top of library" slot (player.libraryTop); the
+  // condition and the card filter are the same test, so it rides on the effect's params.
+  if (!effects.some(e => e.type === EFFECT_TYPE.GAIN_ACTIVATED_FROM_GRAVEYARDS)) {
+    const libTopMatch = /^as long as the top card of your library is an? ([a-z]+(?: or [a-z]+)*) card,\s*(.+?)\s+has\s+all\s+activated\s+abilities\s+of\s+that\s+card(?=\s*(?:\.|$))/im.exec(oracleRaw);
+    if (libTopMatch && _gainAbilitiesSelfSubject.test(libTopMatch[2].trim().toLowerCase())) {
+      const words = libTopMatch[1].split(/\s+or\s+/i);
+      const types = words.map(w => normalizeTypeWord(w.toLowerCase()));
+      const params = { fromLibraryTop: true };
+      if (types.every(Boolean)) params.cardTypes = types.map(t => t.value);
+      else if (words.length === 1) params.cardSubtype = words[0].charAt(0).toUpperCase() + words[0].slice(1).toLowerCase();
+      if (params.cardTypes || params.cardSubtype) {
+        pushEff('6', EFFECT_TYPE.GAIN_ACTIVATED_FROM_GRAVEYARDS, params,
+          { appliesTo: null, scope: 'targeted', selfTarget: true, affectsSelf: true },
+          `This permanent has all activated abilities of the top card of your library while it is ${/^[aeiou]/i.test(libTopMatch[1]) ? 'an' : 'a'} ${libTopMatch[1]} card.`);
+        // The condition is the card filter above. The general "as long as" pass may have read
+        // "is an artifact or creature card" as a test of this permanent and filed the line as a
+        // conditional ability, which would hide it from the base state; it is always there.
+        if (permanent._conditionalAbilityIndices) {
+          (permanent.printedAbilities || []).forEach((ab, i) => {
+            if (!/has all activated abilities of that card/i.test(ab)) return;
+            permanent._conditionalAbilityIndices.delete(i);
+            if (permanent._conditionalAbilityConditions) permanent._conditionalAbilityConditions.delete(i);
+          });
+        }
+      }
+    }
+  }
+
   // --- "<this> has all activated abilities of all <type or subtype> cards in (all graveyards |
   //     your graveyard)" (Layer 6) ---
   // Covers Mirran Safehouse (land cards in all graveyards), Thranduil, the Elvenking (Elf cards
@@ -5742,6 +5795,24 @@ function parseCardEffects(permanent, card, opts = {}) {
       pushEff('6', EFFECT_TYPE.GAIN_ACTIVATED_FROM_GRAVEYARDS, params,
         { appliesTo: null, scope: 'targeted', selfTarget: true, affectsSelf: true },
         `This permanent has all activated abilities of all ${word} cards in ${ownGraveyardOnly ? 'your graveyard' : 'all graveyards'}.`);
+    }
+  }
+
+  // --- "<this> has all activated [and triggered] abilities of the last chosen card" (Layer 6) ---
+  // Covers Koh, the Face Stealer ("Pay 1 life: Choose a creature card exiled with Koh."). The
+  // card is picked among those exiled with the permanent (permanent._chosenExileId, set by
+  // Battlefield.setChosenExileCard); nothing is gained until one is chosen.
+  if (!effects.some(e => e.type === EFFECT_TYPE.GAIN_ACTIVATED_FROM_EXILE)) {
+    const lastChosenMatch = /^(.+?)\s+has\s+all\s+activated(\s+and\s+triggered)?\s+abilities\s+of\s+the\s+last\s+chosen\s+card(?=\s*(?:\.|$))/im.exec(oracleRaw);
+    const chooseExiled = lastChosenMatch && /\bchoose an? (creature )?card exiled with\b/i.exec(oracleRaw);
+    if (lastChosenMatch && chooseExiled && /^this\s+(?:card|creature|permanent)$/.test(lastChosenMatch[1].trim().toLowerCase())) {
+      const includeTriggered = !!lastChosenMatch[2];
+      permanent._needsChosenExileCard = { requireCreature: !!chooseExiled[1] };
+      pushEff('6', EFFECT_TYPE.GAIN_ACTIVATED_FROM_EXILE,
+        { filterCounter: null, filterTagToSource: true, requireOwnerMatch: false, includeTriggered,
+          requireCreature: !!chooseExiled[1], chosenExileOnly: true },
+        { appliesTo: null, scope: 'targeted', selfTarget: true, affectsSelf: true },
+        `This card has all ${includeTriggered ? 'activated and triggered abilities' : 'activated abilities'} of the last chosen card.`);
     }
   }
 

@@ -146,3 +146,10 @@ function additiveDeltaDiffers(before1, after1, before2, after2) {
   if (pDelta1 !== pDelta2 || tDelta1 !== tDelta2) return true;
   return false;
 }
+
+// Does this effect read something from an object picked after its ability was fired
+// (params.refPermId)? Base P/T from another creature (Belligerent Yearling) and activated
+// abilities of a target (Quicksilver Elemental). The effect itself stays on its own subject.
+function _takesFromRef(effect) {
+  return !!(effect && effect.params && (effect.params.ptFromRef || effect.params.abilitiesFromRef));
+}

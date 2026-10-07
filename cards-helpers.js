@@ -233,6 +233,24 @@ function _basePTFromOtherObject(text, fullText) {
   return { text: text.replace(m[0], plain), plain, original: m[0], ptFromRef, pick };
 }
 
+// "This creature gains all activated abilities of target creature until end of turn"
+// (Quicksilver Elemental) / "each Horror you control gains all activated abilities of target
+// artifact an opponent controls" (Grell Philosopher): what is affected is the subject; the
+// target only says where the abilities come from, so it is picked the same way as the
+// "value from" creature above. The sentence is rewritten to the static wording the parser
+// already reads, and _addAbilityPseudo marks the effect params.abilitiesFromRef.
+// Returns { text, plain, original, pick: { filter, isTarget, excludeSource, youControl, opponentControls, label } } or null.
+function _abilitiesFromOtherObject(text) {
+  const m = text.match(/(this (?:card|creature|permanent)|each [a-z][a-z' -]*? you control) gains? all activated abilities of target ([a-z]+)( an opponent controls| you don't control)?(\s+until end of turn)?/i);
+  if (!m || !normalizeTypeWord(m[2].toLowerCase())) return null;
+  const subj = m[1].charAt(0).toUpperCase() + m[1].slice(1);
+  const verb = /^this/i.test(m[1]) ? 'has' : 'have';
+  const plain = `${subj} ${verb} all activated abilities of all ${m[2].toLowerCase()}s on the battlefield${m[4] || ''}`;
+  const pick = { filter: m[2].toLowerCase(), isTarget: true, excludeSource: false, youControl: false,
+    opponentControls: !!m[3], label: 'Abilities from' };
+  return { text: text.replace(m[0], plain), plain, original: m[0], pick };
+}
+
 // Fire-time values for "base power/toughness becomes equal to …" abilities. The effect locks in
 // a number as the ability resolves (CR 608.2h), so the text is rewritten with that number from
 // the snapshot the ability was fired against and then parsed as a plain "has base power N".

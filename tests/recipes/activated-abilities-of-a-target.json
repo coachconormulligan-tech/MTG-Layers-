@@ -1,0 +1,25 @@
+{
+  "name": "Activated abilities of a target — Quicksilver Elemental, Grell Philosopher",
+  "notes": "Found by tests/sweep.py. The affected permanents are the ability's source (Quicksilver Elemental) or each Horror you control (Grell Philosopher); the target only says where the abilities come from (Battlefield.setRefPerm; the 'Abilities from' picker), so the effect is not moved onto the target. The abilities are locked in as the ability resolves: Prodigal Sorcerer loses its ability to Ovinize afterwards and Quicksilver Elemental keeps it. Gray Ogre is not a Horror and gains nothing.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Prodigal Sorcerer", "as": "tim" },
+    { "add": "Quicksilver Elemental", "as": "quick" },
+    { "add": "Grell Philosopher", "as": "grell" },
+    { "add": "Gray Ogre", "as": "ogre" },
+    { "add": "Aladdin's Ring", "as": "ring", "controller": "p2" },
+    { "fire": "@quick", "activated": 0, "as": "a1" },
+    { "call": ["setRefPerm", "@a1", "@tim"] },
+    { "fire": "@grell", "trigger": 0, "as": "a2" },
+    { "call": ["setRefPerm", "@a2", "@ring"] },
+    { "add": "Ovinize", "spell": true, "as": "ov" },
+    { "call": ["setTarget", "@ov", "@tim"] }
+  ],
+  "asserts": [
+    { "perm": "Quicksilver Elemental", "final": { "abilities": { "$includes": ["{T}: This creature deals 1 damage to any target."] } } },
+    { "perm": "Grell Philosopher", "final": { "abilities": { "$includes": ["{8}, {T}: This artifact deals 4 damage to any target."] } } },
+    { "perm": "Gray Ogre", "final": { "abilities": [] } },
+    { "perm": "Prodigal Sorcerer", "final": { "abilities": [], "power": 0, "toughness": 1 } },
+    { "effect": { "source": "Quicksilver Elemental (activated)", "layer": "6", "type": "gain_activated_from_others", "target": "Quicksilver Elemental" } }
+  ]
+}

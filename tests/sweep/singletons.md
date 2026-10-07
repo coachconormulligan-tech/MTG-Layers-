@@ -58,27 +58,21 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Song of Blood | gets +N/+N | spell | Whenever a creature attacks this turn, it gets +1/+0 until end of turn for each creature card put into your graveyard this way. |
 | Alpine Moon | has / gains | static | Lands your opponents control with the chosen name lose all land types and abilities, and they gain "{T}: Add one mana of any color." |
 | Cauldron Dance | has / gains | spell | That creature gains haste. |
-| Conspicuous Snoop | has / gains | static | As long as the top card of your library is a Goblin card, this creature has all activated abilities of that card. |
 | Dragonrage | has / gains | spell | Until end of turn, attacking creatures you control gain "{R}: This creature gets +1/+0 until end of turn." |
 | Dread Wight | has / gains | triggered | Each of those creatures gains "{4}: Remove a paralyzation counter from this creature." |
 | Energybending | has / gains | spell | Lands you control gain all basic land types until end of turn. |
 | Flash Conscription | has / gains | spell | If {W} was spent to cast this spell, the creature gains "Whenever this creature deals combat damage, you gain that much life" until end of turn. |
 | For the Common Good | has / gains | spell | Then tokens you control gain indestructible until your next turn. |
 | Galea, Kindler of Hope | has / gains | static | When you cast an Equipment spell this way, it gains "When this Equipment enters, attach it to target creature you control." |
-| Grell Philosopher | has / gains | triggered | Aberrant Tinkering — When this creature enters and at the beginning of your upkeep, each Horror you control gains all activated abilities of target artifact an opponent controls until end of turn. |
 | Greymond, Avacyn's Stalwart | has / gains | static | Humans you control have each of the chosen abilities. |
 | Havengul Lich | has / gains | activated | When you cast it this turn, this creature gains all activated abilities of that card until end of turn. |
-| Koh, the Face Stealer | has / gains | static | This card has all activated and triggered abilities of the last chosen card. |
 | Massimo, the Magician | has / gains | triggered | If a card is exiled this way, that creature gains "Whenever this creature deals combat damage to a player, copy the exiled card. You may cast the copy without paying its mana cost." |
 | Mizzix, Replica Rider | has / gains | triggered | If the copy is a permanent spell, it gains haste and "At the beginning of your end step, sacrifice this permanent." |
 | Ms. Marvel, Kamala Khan | has / gains | ability | Marvel gains "this card's base power is equal to the number of cards in your hand." |
 | Nalfeshnee | has / gains | triggered | If it's a permanent spell, the copy gains haste and "At the beginning of the end step, sacrifice this permanent." |
 | Omnipresent Impostor | has / gains | static | This card has all card names. |
 | Open into Wonder | has / gains | spell | Until end of turn, those creatures gain "Whenever this creature deals combat damage to a player, draw a card." |
-| Quicksilver Elemental | has / gains | activated | {U}: This creature gains all activated abilities of target creature until end of turn. |
 | Radiant Destiny | has / gains | static | As long as you have the city's blessing, they also have vigilance. |
-| Scheming Fence | has / gains | static | This creature has all activated abilities of the chosen permanent except for loyalty abilities. |
-| Skill Borrower | has / gains | static | As long as the top card of your library is an artifact or creature card, this creature has all activated abilities of that card. |
 | Spider-Verse | has / gains | triggered | If the copy is a permanent spell, it gains haste. |
 | Spirit-Sister's Call | has / gains | triggered | If you do, return the chosen card from your graveyard to the battlefield and it gains "If this permanent would leave the battlefield, exile it instead of putting it anywhere else." |
 | Summon: Brynhildr | has / gains | static | II, III — Gestalt Mode — When you next cast a creature spell this turn, it gains haste until end of turn. |

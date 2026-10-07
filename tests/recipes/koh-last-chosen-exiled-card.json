@@ -1,0 +1,18 @@
+{
+  "name": "Koh, the Face Stealer — abilities of the last chosen card exiled with it",
+  "notes": "Found by tests/sweep.py. Two creature cards are exiled with Koh; only the one chosen (Battlefield.setChosenExileCard, the 'choose card' picker) gives its abilities, triggered ones included. Soul Warden is chosen, so Koh has its trigger and not Prodigal Sorcerer's activated ability. The choice is saved by position in the exile list. NOTE: exile ids are literal; build in its own process.",
+  "steps": [
+    { "add": "Koh, the Face Stealer", "as": "koh" },
+    { "call": ["addToExile", "card:Prodigal Sorcerer"] },
+    { "call": ["addToExile", "card:Soul Warden"] },
+    { "call": ["setExileTag", "exile_1", "@koh"] },
+    { "call": ["setExileTag", "exile_2", "@koh"] },
+    { "call": ["setChosenExileCard", "@koh", "exile_2"] }
+  ],
+  "asserts": [
+    { "perm": "Koh, the Face Stealer", "final": { "abilities": {
+      "$includes": ["Whenever another creature enters, you gain 1 life."],
+      "$excludes": ["{T}: This card deals 1 damage to any target.", "{T}: This creature deals 1 damage to any target."] } } },
+    { "effect": { "source": "Koh, the Face Stealer", "layer": "6", "type": "gain_activated_from_exile", "params": { "chosenExileOnly": true, "includeTriggered": true, "requireCreature": true } } }
+  ]
+}

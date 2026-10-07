@@ -1,0 +1,980 @@
+{
+ "name": "Scheming Fence — activated abilities of the chosen permanent",
+ "notes": "Found by tests/sweep.py. The chosen permanent is picked with the reference picker (Battlefield.setRefPerm) and read live: Arcane Teachings is attached to the chosen Prodigal Sorcerer after the Fence entered, and the Fence has the granted ability too, applying after it (CR 613.8 dependency). Jace Beleren's loyalty abilities are excluded when it is the chosen permanent instead; here only the Sorcerer is chosen, and Gray Ogre gains nothing.",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Prodigal Sorcerer",
+    "as": "tim"
+   },
+   {
+    "add": "Gray Ogre",
+    "as": "ogre"
+   },
+   {
+    "add": "Scheming Fence",
+    "as": "fence"
+   },
+   {
+    "call": [
+     "setRefPerm",
+     "@fence",
+     "@tim"
+    ]
+   },
+   {
+    "add": "Arcane Teachings",
+    "as": "teach"
+   },
+   {
+    "call": [
+     "setTarget",
+     "@teach",
+     "@tim"
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Scheming Fence",
+   "final": {
+    "abilities": {
+     "$includes": [
+      "{T}: This creature deals 1 damage to any target."
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Gray Ogre",
+   "final": {
+    "abilities": []
+   }
+  },
+  {
+   "effect": {
+    "source": "Scheming Fence",
+    "layer": "6",
+    "type": "gain_activated_from_others",
+    "params": {
+     "abilitiesFromRef": true,
+     "refLive": true,
+     "excludeLoyalty": true
+    }
+   }
+  },
+  {
+   "order": {
+    "6": [
+     "Arcane Teachings",
+     "Scheming Fence"
+    ]
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "50aef269-55f9-4d84-8bc5-29e794297f11",
+     "oracle_id": "5e961d15-5972-4e4b-9385-1cd7cd7c6bbe",
+     "multiverse_ids": [
+      413609
+     ],
+     "mtgo_id": 60893,
+     "mtgo_foil_id": 60894,
+     "tcgplayer_id": 118449,
+     "cardmarket_id": 290208,
+     "name": "Prodigal Sorcerer",
+     "lang": "en",
+     "released_at": "2016-06-10",
+     "uri": "https://api.scryfall.com/cards/50aef269-55f9-4d84-8bc5-29e794297f11",
+     "scryfall_uri": "https://scryfall.com/card/ema/67/prodigal-sorcerer?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T10:13:27Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/5/0/50aef269-55f9-4d84-8bc5-29e794297f11.jpg?1783937607",
+      "normal": "https://cards.scryfall.io/normal/front/5/0/50aef269-55f9-4d84-8bc5-29e794297f11.jpg?1783937607",
+      "large": "https://cards.scryfall.io/large/front/5/0/50aef269-55f9-4d84-8bc5-29e794297f11.jpg?1783937607",
+      "png": "https://cards.scryfall.io/png/front/5/0/50aef269-55f9-4d84-8bc5-29e794297f11.png?1783937607",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/5/0/50aef269-55f9-4d84-8bc5-29e794297f11.jpg?1783937607",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/5/0/50aef269-55f9-4d84-8bc5-29e794297f11.jpg?1783937607",
+      "thumb": "https://cards.scryfall.io/thumb/front/5/0/50aef269-55f9-4d84-8bc5-29e794297f11.webp?1783937607",
+      "grid": "https://cards.scryfall.io/grid/front/5/0/50aef269-55f9-4d84-8bc5-29e794297f11.webp?1783937607",
+      "display": "https://cards.scryfall.io/display/front/5/0/50aef269-55f9-4d84-8bc5-29e794297f11.webp?1783937607",
+      "art": "https://cards.scryfall.io/art/front/5/0/50aef269-55f9-4d84-8bc5-29e794297f11.webp?1783937607",
+      "crop": "https://cards.scryfall.io/crop/front/5/0/50aef269-55f9-4d84-8bc5-29e794297f11.webp?1783937607"
+     },
+     "mana_cost": "{2}{U}",
+     "cmc": 3,
+     "type_line": "Creature — Human Wizard Sorcerer",
+     "oracle_text": "{T}: This creature deals 1 damage to any target.",
+     "power": "1",
+     "toughness": "1",
+     "colors": [
+      "U"
+     ],
+     "color_identity": [
+      "U"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "1f29f022-3ace-4c96-85e8-1f7b63aadf7e",
+     "set": "ema",
+     "set_name": "Eternal Masters",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/1f29f022-3ace-4c96-85e8-1f7b63aadf7e",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aema&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/ema?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/50aef269-55f9-4d84-8bc5-29e794297f11/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A5e961d15-5972-4e4b-9385-1cd7cd7c6bbe&unique=prints",
+     "collector_number": "67",
+     "digital": false,
+     "rarity": "uncommon",
+     "flavor_text": "\"You can't learn to enjoy life's amusements in the pages of books. You must seek them out in earnest.\"",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Eric Deschamps",
+     "artist_ids": [
+      "37970e22-9cee-44c1-af44-5ee27cf26b76"
+     ],
+     "illustration_id": "daf2b465-895a-4b2d-b7ab-2ebeb1af3131",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 11390,
+     "penny_rank": 12432,
+     "prices": {
+      "usd": "0.27",
+      "usd_foil": "0.38",
+      "usd_etched": null,
+      "eur": "0.07",
+      "eur_foil": "0.34",
+      "tix": "0.04"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=413609&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DProdigal%2BSorcerer",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DProdigal%2BSorcerer",
+      "edhrec": "https://edhrec.com/route/?cc=Prodigal+Sorcerer"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F118449%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=290208&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/60893?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "11bf2cc0-799f-4eb8-b338-ed7543f469e7",
+     "oracle_id": "83c8a3a6-2e1a-4e26-8847-6d066f42d906",
+     "multiverse_ids": [
+      2283
+     ],
+     "tcgplayer_id": 1777,
+     "cardmarket_id": 6053,
+     "name": "Gray Ogre",
+     "lang": "en",
+     "released_at": "1995-04-01",
+     "uri": "https://api.scryfall.com/cards/11bf2cc0-799f-4eb8-b338-ed7543f469e7",
+     "scryfall_uri": "https://scryfall.com/card/4ed/200/gray-ogre?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T13:03:48Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+      "normal": "https://cards.scryfall.io/normal/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+      "large": "https://cards.scryfall.io/large/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+      "png": "https://cards.scryfall.io/png/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.png?1783947828",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+      "thumb": "https://cards.scryfall.io/thumb/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.webp?1783947828",
+      "grid": "https://cards.scryfall.io/grid/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.webp?1783947828",
+      "display": "https://cards.scryfall.io/display/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.webp?1783947828",
+      "art": "https://cards.scryfall.io/art/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.webp?1783947828",
+      "crop": "https://cards.scryfall.io/crop/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.webp?1783947828"
+     },
+     "mana_cost": "{2}{R}",
+     "cmc": 3,
+     "type_line": "Creature — Ogre",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "R"
+     ],
+     "color_identity": [
+      "R"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "2dd259d4-dc13-4956-a2dc-3e1d70b4a743",
+     "set": "4ed",
+     "set_name": "Fourth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/2dd259d4-dc13-4956-a2dc-3e1d70b4a743",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A4ed&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/4ed?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/11bf2cc0-799f-4eb8-b338-ed7543f469e7/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A83c8a3a6-2e1a-4e26-8847-6d066f42d906&unique=prints",
+     "collector_number": "200",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "The Ogre philosopher Gnerdel believed the purpose of life was to live as high on the food chain as possible. She refused to eat vegetarians, preferring to live entirely on creatures that preyed on sentient beings.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Dan Frazier",
+     "artist_ids": [
+      "059bba56-5feb-42e4-8c2e-e2f1e6ba11f9"
+     ],
+     "illustration_id": "a7399345-c36e-4a91-a4f5-22a2a0eeffaa",
+     "border_color": "white",
+     "frame": "1993",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 30971,
+     "prices": {
+      "usd": "0.06",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.05",
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=2283&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGray%2BOgre",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGray%2BOgre",
+      "edhrec": "https://edhrec.com/route/?cc=Gray+Ogre"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F1777%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=6053&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Gray+Ogre&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "af7ef030-7bae-4820-b51a-8fad57a8ff2f",
+     "oracle_id": "cef87a98-61a0-4a88-950f-867144f685e3",
+     "multiverse_ids": [
+      555420
+     ],
+     "mtgo_id": 98657,
+     "arena_id": 80370,
+     "tcgplayer_id": 268807,
+     "cardmarket_id": 651863,
+     "name": "Scheming Fence",
+     "lang": "en",
+     "released_at": "2022-04-29",
+     "uri": "https://api.scryfall.com/cards/af7ef030-7bae-4820-b51a-8fad57a8ff2f",
+     "scryfall_uri": "https://scryfall.com/card/snc/219/scheming-fence?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T06:11:11Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/a/f/af7ef030-7bae-4820-b51a-8fad57a8ff2f.jpg?1783923071",
+      "normal": "https://cards.scryfall.io/normal/front/a/f/af7ef030-7bae-4820-b51a-8fad57a8ff2f.jpg?1783923071",
+      "large": "https://cards.scryfall.io/large/front/a/f/af7ef030-7bae-4820-b51a-8fad57a8ff2f.jpg?1783923071",
+      "png": "https://cards.scryfall.io/png/front/a/f/af7ef030-7bae-4820-b51a-8fad57a8ff2f.png?1783923071",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/a/f/af7ef030-7bae-4820-b51a-8fad57a8ff2f.jpg?1783923071",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/a/f/af7ef030-7bae-4820-b51a-8fad57a8ff2f.jpg?1783923071",
+      "thumb": "https://cards.scryfall.io/thumb/front/a/f/af7ef030-7bae-4820-b51a-8fad57a8ff2f.webp?1783923071",
+      "grid": "https://cards.scryfall.io/grid/front/a/f/af7ef030-7bae-4820-b51a-8fad57a8ff2f.webp?1783923071",
+      "display": "https://cards.scryfall.io/display/front/a/f/af7ef030-7bae-4820-b51a-8fad57a8ff2f.webp?1783923071",
+      "art": "https://cards.scryfall.io/art/front/a/f/af7ef030-7bae-4820-b51a-8fad57a8ff2f.webp?1783923071",
+      "crop": "https://cards.scryfall.io/crop/front/a/f/af7ef030-7bae-4820-b51a-8fad57a8ff2f.webp?1783923071"
+     },
+     "mana_cost": "{W}{U}",
+     "cmc": 2,
+     "type_line": "Creature — Human Citizen",
+     "oracle_text": "As this creature enters, you may choose a nonland permanent.\nActivated abilities of the chosen permanent can't be activated.\nThis creature has all activated abilities of the chosen permanent except for loyalty abilities. You may spend mana as though it were mana of any color to activate those abilities.",
+     "power": "2",
+     "toughness": "3",
+     "colors": [
+      "U",
+      "W"
+     ],
+     "color_identity": [
+      "U",
+      "W"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo",
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "df837242-8c15-42e4-b049-c933a02dc501",
+     "set": "snc",
+     "set_name": "Streets of New Capenna",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/df837242-8c15-42e4-b049-c933a02dc501",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Asnc&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/snc?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/af7ef030-7bae-4820-b51a-8fad57a8ff2f/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Acef87a98-61a0-4a88-950f-867144f685e3&unique=prints",
+     "collector_number": "219",
+     "digital": false,
+     "rarity": "rare",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Cristi Balanescu",
+     "artist_ids": [
+      "c09ede88-a1b5-4a18-9895-dc8a965d28a5"
+     ],
+     "illustration_id": "87050d01-2e5f-424a-9da3-ce3dae9cba61",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 12624,
+     "penny_rank": 8383,
+     "preview": {
+      "source": "Wizards of the Coast",
+      "source_uri": "https://www.youtube.com/watch?v=1ydLzF6QGbs",
+      "previewed_at": "2022-04-12"
+     },
+     "prices": {
+      "usd": "0.35",
+      "usd_foil": "0.38",
+      "usd_etched": null,
+      "eur": "0.19",
+      "eur_foil": "0.22",
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=555420&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DScheming%2BFence",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DScheming%2BFence",
+      "edhrec": "https://edhrec.com/route/?cc=Scheming+Fence"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F268807%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=651863&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/98657?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": "perm_1",
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "41764237-fa31-4b27-92ff-712a42d350b9",
+     "oracle_id": "0b633017-bfdf-47cd-a60f-c93816b47e9c",
+     "multiverse_ids": [
+      130530
+     ],
+     "mtgo_id": 27176,
+     "mtgo_foil_id": 27177,
+     "tcgplayer_id": 15038,
+     "cardmarket_id": 16352,
+     "name": "Arcane Teachings",
+     "lang": "en",
+     "released_at": "2007-07-13",
+     "uri": "https://api.scryfall.com/cards/41764237-fa31-4b27-92ff-712a42d350b9",
+     "scryfall_uri": "https://scryfall.com/card/10e/188/arcane-teachings?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:43:45Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/1/41764237-fa31-4b27-92ff-712a42d350b9.jpg?1783943025",
+      "normal": "https://cards.scryfall.io/normal/front/4/1/41764237-fa31-4b27-92ff-712a42d350b9.jpg?1783943025",
+      "large": "https://cards.scryfall.io/large/front/4/1/41764237-fa31-4b27-92ff-712a42d350b9.jpg?1783943025",
+      "png": "https://cards.scryfall.io/png/front/4/1/41764237-fa31-4b27-92ff-712a42d350b9.png?1783943025",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/1/41764237-fa31-4b27-92ff-712a42d350b9.jpg?1783943025",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/1/41764237-fa31-4b27-92ff-712a42d350b9.jpg?1783943025",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/1/41764237-fa31-4b27-92ff-712a42d350b9.webp?1783943025",
+      "grid": "https://cards.scryfall.io/grid/front/4/1/41764237-fa31-4b27-92ff-712a42d350b9.webp?1783943025",
+      "display": "https://cards.scryfall.io/display/front/4/1/41764237-fa31-4b27-92ff-712a42d350b9.webp?1783943025",
+      "art": "https://cards.scryfall.io/art/front/4/1/41764237-fa31-4b27-92ff-712a42d350b9.webp?1783943025",
+      "crop": "https://cards.scryfall.io/crop/front/4/1/41764237-fa31-4b27-92ff-712a42d350b9.webp?1783943025"
+     },
+     "mana_cost": "{2}{R}",
+     "cmc": 3,
+     "type_line": "Enchantment — Aura",
+     "oracle_text": "Enchant creature (Target a creature as you cast this. This card enters attached to that creature.)\nEnchanted creature gets +2/+2 and has \"{T}: This creature deals 1 damage to any target.\"",
+     "colors": [
+      "R"
+     ],
+     "color_identity": [
+      "R"
+     ],
+     "keywords": [
+      "Enchant"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set": "10e",
+     "set_name": "Tenth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/41764237-fa31-4b27-92ff-712a42d350b9/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A0b633017-bfdf-47cd-a60f-c93816b47e9c&unique=prints",
+     "collector_number": "188",
+     "digital": false,
+     "rarity": "uncommon",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Dan Dos Santos",
+     "artist_ids": [
+      "9b55c657-5b5b-4152-a6e2-51180517bfa9"
+     ],
+     "illustration_id": "57a0c557-91fd-4204-9c87-992d0b6bdad5",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 19499,
+     "penny_rank": 16494,
+     "prices": {
+      "usd": "0.37",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.15",
+      "eur_foil": null,
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=130530&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DArcane%2BTeachings",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DArcane%2BTeachings",
+      "edhrec": "https://edhrec.com/route/?cc=Arcane+Teachings"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15038%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16352&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27176?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 4,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": "perm_1",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 5,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Prodigal Sorcerer",
+    "final": {
+     "name": "Prodigal Sorcerer",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Human",
+      "Wizard",
+      "Sorcerer"
+     ],
+     "power": 3,
+     "toughness": 3,
+     "colors": [
+      "U"
+     ],
+     "abilities": [
+      "{T}: This creature deals 1 damage to any target.",
+      "{T}: This creature deals 1 damage to any target"
+     ],
+     "traits": [
+      "Enchanted"
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "Arcane Teachings"
+     ],
+     "7c": [
+      "Arcane Teachings"
+     ]
+    }
+   },
+   {
+    "perm": "Gray Ogre",
+    "final": {
+     "name": "Gray Ogre",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Ogre"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "R"
+     ],
+     "abilities": []
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Scheming Fence",
+    "final": {
+     "name": "Scheming Fence",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Human",
+      "Citizen"
+     ],
+     "power": 2,
+     "toughness": 3,
+     "colors": [
+      "U",
+      "W"
+     ],
+     "abilities": [
+      "As this creature enters, you may choose a nonland permanent.",
+      "Activated abilities of the chosen permanent can't be activated.",
+      "This creature has all activated abilities of the chosen permanent except for loyalty abilities. You may spend mana as though it were mana of any color to activate those abilities.",
+      "{T}: This creature deals 1 damage to any target.",
+      "{T}: This creature deals 1 damage to any target"
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "Scheming Fence"
+     ]
+    }
+   },
+   {
+    "perm": "Arcane Teachings",
+    "final": {
+     "name": "Arcane Teachings",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Enchantment"
+     ],
+     "subtypes": [
+      "Aura"
+     ],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "R"
+     ],
+     "abilities": [
+      "Enchant creature",
+      "Enchanted creature gets +2/+2 and has \"{T}: This creature deals 1 damage to any target.\""
+     ]
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "6": [
+    "Arcane Teachings",
+    "Scheming Fence"
+   ],
+   "7c": [
+    "Arcane Teachings"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Scheming Fence",
+    "layer": "6",
+    "type": "gain_activated_from_others",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "abilitiesFromRef": true,
+     "differentName": false,
+     "excludeLoyalty": true,
+     "includeTriggered": false,
+     "refLive": true,
+     "refPermId": "@Prodigal Sorcerer",
+     "requireType": null,
+     "sameController": false
+    }
+   },
+   {
+    "source": "Arcane Teachings",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "target": "Prodigal Sorcerer",
+    "params": {
+     "power": 2,
+     "toughness": 2
+    }
+   },
+   {
+    "source": "Arcane Teachings",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "target": "Prodigal Sorcerer",
+    "params": {
+     "ability": "{T}: This creature deals 1 damage to any target"
+    }
+   }
+  ]
+ }
+}
