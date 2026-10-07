@@ -1,0 +1,82 @@
+{
+  "name": "Mirrorweave — each other creature becomes a copy of the picked creature, lord abilities included",
+  "notes": "Sweep group 5, mass copies (2026-10-07). \"Each other creature becomes a copy of target nonlegendary creature until end of turn.\" gave a single-permanent copy effect that changed nothing. A mass copy is one layer 1 copy effect over the whole group; what is copied is picked with the copy picker and is never one of the copies. Lord of Atlantis picked: Grizzly Bears and Merfolk of the Pearl Trident are Lords of Atlantis, and with three lords each is 4/4 with islandwalk (the copied ability works from each copy). The Forest is no creature; a Hill Giant added after the spell is not affected.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "b"
+    },
+    {
+      "add": "Lord of Atlantis",
+      "as": "g"
+    },
+    {
+      "add": "Merfolk of the Pearl Trident",
+      "as": "m"
+    },
+    {
+      "add": "Forest",
+      "as": "f"
+    },
+    {
+      "add": "Mirrorweave",
+      "spell": true,
+      "as": "s"
+    },
+    {
+      "copy": [
+        "@s",
+        "@g"
+      ]
+    },
+    {
+      "add": "Hill Giant",
+      "as": "late"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "name": "Lord of Atlantis",
+        "power": 4,
+        "toughness": 4,
+        "abilities": {
+          "$includes": [
+            "Islandwalk"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Merfolk of the Pearl Trident",
+      "final": {
+        "name": "Lord of Atlantis",
+        "power": 4,
+        "toughness": 4
+      }
+    },
+    {
+      "perm": "Lord of Atlantis",
+      "final": {
+        "power": 4,
+        "toughness": 4
+      }
+    },
+    {
+      "perm": "Forest",
+      "final": {
+        "name": "Forest",
+        "types": [
+          "Land"
+        ]
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "name": "Hill Giant"
+      }
+    }
+  ]
+}

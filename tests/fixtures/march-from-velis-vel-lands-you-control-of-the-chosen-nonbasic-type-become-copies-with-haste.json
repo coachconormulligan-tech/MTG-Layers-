@@ -1,0 +1,1405 @@
+{
+ "name": "March from Velis Vel — lands you control of the chosen nonbasic type become copies with haste",
+ "notes": "Sweep group 5, mass copies (2026-10-07). \"Choose a nonbasic land type. Each land you control of that type becomes a copy of target creature you control until end of turn and gains haste until end of turn.\" A mass copy is one layer 1 copy effect over the whole group; what is copied is picked with the copy picker and is never one of the copies. The land type input offers the nonbasic land types; until one is chosen there is no group. Gate chosen after the creature was picked (the pick survives the choice): Azorius Guildgate is a Grizzly Bears with haste, the Forest is not.",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Grizzly Bears",
+    "as": "b"
+   },
+   {
+    "add": "Azorius Guildgate",
+    "as": "gate"
+   },
+   {
+    "add": "Forest",
+    "as": "f"
+   },
+   {
+    "add": "March from Velis Vel",
+    "spell": true,
+    "as": "s"
+   },
+   {
+    "copy": [
+     "@s",
+     "@b"
+    ]
+   },
+   {
+    "call": [
+     "setChosenLandType",
+     "@s",
+     "Gate"
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Azorius Guildgate",
+   "final": {
+    "name": "Grizzly Bears",
+    "types": [
+     "Creature"
+    ],
+    "power": 2,
+    "toughness": 2,
+    "abilities": {
+     "$includes": [
+      "Haste"
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Forest",
+   "final": {
+    "name": "Forest",
+    "types": [
+     "Land"
+    ]
+   }
+  },
+  {
+   "perm": "Grizzly Bears",
+   "final": {
+    "abilities": {
+     "$excludes": [
+      "Haste"
+     ]
+    }
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+     "multiverse_ids": [
+      129586
+     ],
+     "mtgo_id": 27400,
+     "mtgo_foil_id": 27401,
+     "tcgplayer_id": 15153,
+     "cardmarket_id": 16432,
+     "name": "Grizzly Bears",
+     "lang": "en",
+     "released_at": "2007-07-13",
+     "uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "scryfall_uri": "https://scryfall.com/card/10e/268/grizzly-bears?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:43:21Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "normal": "https://cards.scryfall.io/normal/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "large": "https://cards.scryfall.io/large/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "png": "https://cards.scryfall.io/png/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.png?1783943001",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "grid": "https://cards.scryfall.io/grid/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "display": "https://cards.scryfall.io/display/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "art": "https://cards.scryfall.io/art/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "crop": "https://cards.scryfall.io/crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001"
+     },
+     "mana_cost": "{1}{G}",
+     "cmc": 2,
+     "type_line": "Creature — Bear",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set": "10e",
+     "set_name": "Tenth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A14c8f55d-d177-4c25-a931-ebeb9e6062a0&unique=prints",
+     "collector_number": "268",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"We cannot forget that among all of Dominaria's wonders, a system of life exists, with prey and predators that will never fight wars nor vie for ancient power.\"\n—Jolrael, empress of beasts",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "D. J. Cleland-Hura",
+     "artist_ids": [
+      "87d21070-2432-4167-8aab-5968af1c14f3"
+     ],
+     "illustration_id": "066bfe81-0f53-43da-a074-b2ecc5dcda72",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 8114,
+     "penny_rank": 10982,
+     "prices": {
+      "usd": "0.22",
+      "usd_foil": "3.29",
+      "usd_etched": null,
+      "eur": "0.11",
+      "eur_foil": "1.97",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129586&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "edhrec": "https://edhrec.com/route/?cc=Grizzly+Bears"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15153%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16432&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27400?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "f98a7264-0a83-42c8-a94d-05ad4c234242",
+     "oracle_id": "ad1712d8-809f-410c-8b91-ffe6fb8a69a1",
+     "multiverse_ids": [
+      680822
+     ],
+     "mtgo_id": 134702,
+     "arena_id": 94111,
+     "tcgplayer_id": 591088,
+     "cardmarket_id": 796130,
+     "name": "Azorius Guildgate",
+     "lang": "en",
+     "released_at": "2024-11-15",
+     "uri": "https://api.scryfall.com/cards/f98a7264-0a83-42c8-a94d-05ad4c234242",
+     "scryfall_uri": "https://scryfall.com/card/fdn/683/azorius-guildgate?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T02:15:07Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/f/9/f98a7264-0a83-42c8-a94d-05ad4c234242.jpg?1783908907",
+      "normal": "https://cards.scryfall.io/normal/front/f/9/f98a7264-0a83-42c8-a94d-05ad4c234242.jpg?1783908907",
+      "large": "https://cards.scryfall.io/large/front/f/9/f98a7264-0a83-42c8-a94d-05ad4c234242.jpg?1783908907",
+      "png": "https://cards.scryfall.io/png/front/f/9/f98a7264-0a83-42c8-a94d-05ad4c234242.png?1783908907",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/f/9/f98a7264-0a83-42c8-a94d-05ad4c234242.jpg?1783908907",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/f/9/f98a7264-0a83-42c8-a94d-05ad4c234242.jpg?1783908907",
+      "thumb": "https://cards.scryfall.io/thumb/front/f/9/f98a7264-0a83-42c8-a94d-05ad4c234242.webp?1783908907",
+      "grid": "https://cards.scryfall.io/grid/front/f/9/f98a7264-0a83-42c8-a94d-05ad4c234242.webp?1783908907",
+      "display": "https://cards.scryfall.io/display/front/f/9/f98a7264-0a83-42c8-a94d-05ad4c234242.webp?1783908907",
+      "art": "https://cards.scryfall.io/art/front/f/9/f98a7264-0a83-42c8-a94d-05ad4c234242.webp?1783908907",
+      "crop": "https://cards.scryfall.io/crop/front/f/9/f98a7264-0a83-42c8-a94d-05ad4c234242.webp?1783908907"
+     },
+     "mana_cost": "",
+     "cmc": 0,
+     "type_line": "Land — Gate",
+     "oracle_text": "This land enters tapped.\n{T}: Add {W} or {U}.",
+     "colors": [],
+     "color_identity": [
+      "U",
+      "W"
+     ],
+     "keywords": [],
+     "produced_mana": [
+      "U",
+      "W"
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "arena",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a7ecb771-d1b6-4dec-8cf5-8d45179f21e0",
+     "set": "fdn",
+     "set_name": "Foundations",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a7ecb771-d1b6-4dec-8cf5-8d45179f21e0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Afdn&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/fdn?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/f98a7264-0a83-42c8-a94d-05ad4c234242/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aad1712d8-809f-410c-8b91-ffe6fb8a69a1&unique=prints",
+     "collector_number": "683",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "Enter the Senate, the seat of justice and the foundation of Ravnican society.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Drew Baker",
+     "artist_ids": [
+      "a8c4ef83-94ad-41c7-861f-95debea16868"
+     ],
+     "illustration_id": "98d1d930-416d-4df3-8217-e6d5c574a551",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "startercollection"
+     ],
+     "edhrec_rank": 2094,
+     "penny_rank": 1243,
+     "prices": {
+      "usd": "0.13",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.15",
+      "eur_foil": null,
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=680822&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DAzorius%2BGuildgate",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DAzorius%2BGuildgate",
+      "edhrec": "https://edhrec.com/route/?cc=Azorius+Guildgate"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F591088%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=796130&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/134702?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "dce15387-4114-4b3e-91aa-5b42b45c44ac",
+     "oracle_id": "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
+     "multiverse_ids": [],
+     "name": "Forest",
+     "lang": "en",
+     "released_at": "2026-11-13",
+     "uri": "https://api.scryfall.com/cards/dce15387-4114-4b3e-91aa-5b42b45c44ac",
+     "scryfall_uri": "https://scryfall.com/card/trk/325/forest?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-08-06T02:01:15Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+      "normal": "https://cards.scryfall.io/normal/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+      "large": "https://cards.scryfall.io/large/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+      "png": "https://cards.scryfall.io/png/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.png?1785981675",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+      "thumb": "https://cards.scryfall.io/thumb/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.webp?1785981675",
+      "grid": "https://cards.scryfall.io/grid/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.webp?1785981675",
+      "display": "https://cards.scryfall.io/display/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.webp?1785981675",
+      "art": "https://cards.scryfall.io/art/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.webp?1785981675",
+      "crop": "https://cards.scryfall.io/crop/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.webp?1785981675"
+     },
+     "mana_cost": "",
+     "cmc": 0,
+     "type_line": "Basic Land — Forest",
+     "oracle_text": "({T}: Add {G}.)",
+     "colors": [],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "produced_mana": [
+      "G"
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "4fae200d-5757-4924-8cf4-ab2a5ef2ccc0",
+       "component": "combo_piece",
+       "name": "Forest",
+       "type_line": "Basic Land — Forest",
+       "uri": "https://api.scryfall.com/cards/4fae200d-5757-4924-8cf4-ab2a5ef2ccc0"
+      },
+      {
+       "object": "related_card",
+       "id": "aed8ae06-ae54-4a16-8830-6547164ce6ae",
+       "component": "combo_piece",
+       "name": "Gilt-Leaf Alchemist",
+       "type_line": "Creature — Elf Druid",
+       "uri": "https://api.scryfall.com/cards/aed8ae06-ae54-4a16-8830-6547164ce6ae"
+      }
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo",
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "b47039dc-da5a-448c-8feb-e77d458108a6",
+     "set": "trk",
+     "set_name": "Star Trek",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/b47039dc-da5a-448c-8feb-e77d458108a6",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Atrk&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/trk?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/dce15387-4114-4b3e-91aa-5b42b45c44ac/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ab34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6&unique=prints",
+     "collector_number": "325",
+     "digital": false,
+     "rarity": "common",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Bastien Grivet",
+     "artist_ids": [
+      "434a6cf6-c6bf-4f87-84db-d0a902393b9e"
+     ],
+     "illustration_id": "5a6bbfa9-4075-48e4-b06a-78e31477bd3f",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "universesbeyond"
+     ],
+     "prices": {
+      "usd": null,
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DForest",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DForest",
+      "edhrec": "https://edhrec.com/route/?cc=Forest"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fmagic%2Fproduct%3FproductLineName%3Dmagic%26q%3DForest%26view%3Dgrid",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products/Search?referrer=scryfall&searchString=Forest&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Forest&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "32c2f269-e635-4459-a5a2-79e49c5401e5",
+     "oracle_id": "25ba6f57-3d50-4c3e-ab55-284e91d684a6",
+     "multiverse_ids": [
+      665058
+     ],
+     "mtgo_id": 126659,
+     "tcgplayer_id": 548609,
+     "cardmarket_id": 771321,
+     "name": "March from Velis Vel",
+     "lang": "en",
+     "released_at": "2024-06-14",
+     "uri": "https://api.scryfall.com/cards/32c2f269-e635-4459-a5a2-79e49c5401e5",
+     "scryfall_uri": "https://scryfall.com/card/m3c/48/march-from-velis-vel?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T02:57:04Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/3/2/32c2f269-e635-4459-a5a2-79e49c5401e5.jpg?1783911424",
+      "normal": "https://cards.scryfall.io/normal/front/3/2/32c2f269-e635-4459-a5a2-79e49c5401e5.jpg?1783911424",
+      "large": "https://cards.scryfall.io/large/front/3/2/32c2f269-e635-4459-a5a2-79e49c5401e5.jpg?1783911424",
+      "png": "https://cards.scryfall.io/png/front/3/2/32c2f269-e635-4459-a5a2-79e49c5401e5.png?1783911424",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/3/2/32c2f269-e635-4459-a5a2-79e49c5401e5.jpg?1783911424",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/3/2/32c2f269-e635-4459-a5a2-79e49c5401e5.jpg?1783911424",
+      "thumb": "https://cards.scryfall.io/thumb/front/3/2/32c2f269-e635-4459-a5a2-79e49c5401e5.webp?1783911424",
+      "grid": "https://cards.scryfall.io/grid/front/3/2/32c2f269-e635-4459-a5a2-79e49c5401e5.webp?1783911424",
+      "display": "https://cards.scryfall.io/display/front/3/2/32c2f269-e635-4459-a5a2-79e49c5401e5.webp?1783911424",
+      "art": "https://cards.scryfall.io/art/front/3/2/32c2f269-e635-4459-a5a2-79e49c5401e5.webp?1783911424",
+      "crop": "https://cards.scryfall.io/crop/front/3/2/32c2f269-e635-4459-a5a2-79e49c5401e5.webp?1783911424"
+     },
+     "mana_cost": "{2}{U}",
+     "cmc": 3,
+     "type_line": "Sorcery",
+     "oracle_text": "Choose a nonbasic land type. Each land you control of that type becomes a copy of target creature you control until end of turn and gains haste until end of turn.\nFlashback {4}{U} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+     "colors": [
+      "U"
+     ],
+     "color_identity": [
+      "U"
+     ],
+     "keywords": [
+      "Flashback"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "f5e00721-cf99-43ba-bf16-b22d56d12c73",
+     "set": "m3c",
+     "set_name": "Modern Horizons 3 Commander",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/f5e00721-cf99-43ba-bf16-b22d56d12c73",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Am3c&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/m3c?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/32c2f269-e635-4459-a5a2-79e49c5401e5/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A25ba6f57-3d50-4c3e-ab55-284e91d684a6&unique=prints",
+     "collector_number": "48",
+     "digital": false,
+     "rarity": "rare",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Carlos Palma Cruchaga",
+     "artist_ids": [
+      "f0c43e1b-1853-4abc-8a1b-d7dda6c1d592"
+     ],
+     "illustration_id": "8021cf22-b66c-4c6c-b8e6-18b0b6bbfda5",
+     "border_color": "black",
+     "frame": "2015",
+     "frame_effects": [
+      "extendedart"
+     ],
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "ripplefoil",
+      "boosterfun"
+     ],
+     "edhrec_rank": 12028,
+     "penny_rank": 11467,
+     "preview": {
+      "source": "Wizards of the Coast",
+      "source_uri": "https://magic.wizards.com/en/news/announcements/the-modern-horizons-3-leaks-nulldrifters-and-you",
+      "previewed_at": "2024-04-30"
+     },
+     "prices": {
+      "usd": "0.31",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.23",
+      "eur_foil": "3.52",
+      "tix": "0.44"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=665058&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DMarch%2Bfrom%2BVelis%2BVel",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DMarch%2Bfrom%2BVelis%2BVel",
+      "edhrec": "https://edhrec.com/route/?cc=March+from+Velis+Vel"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F548609%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=771321&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/126659?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": true,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 4,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": "Gate",
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": {
+     "object": "card",
+     "id": "409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+     "multiverse_ids": [
+      129586
+     ],
+     "mtgo_id": 27400,
+     "mtgo_foil_id": 27401,
+     "tcgplayer_id": 15153,
+     "cardmarket_id": 16432,
+     "name": "Grizzly Bears",
+     "lang": "en",
+     "released_at": "2007-07-13",
+     "uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "scryfall_uri": "https://scryfall.com/card/10e/268/grizzly-bears?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:43:21Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "normal": "https://cards.scryfall.io/normal/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "large": "https://cards.scryfall.io/large/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "png": "https://cards.scryfall.io/png/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.png?1783943001",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "grid": "https://cards.scryfall.io/grid/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "display": "https://cards.scryfall.io/display/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "art": "https://cards.scryfall.io/art/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "crop": "https://cards.scryfall.io/crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001"
+     },
+     "mana_cost": "{1}{G}",
+     "cmc": 2,
+     "type_line": "Creature — Bear",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set": "10e",
+     "set_name": "Tenth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A14c8f55d-d177-4c25-a931-ebeb9e6062a0&unique=prints",
+     "collector_number": "268",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"We cannot forget that among all of Dominaria's wonders, a system of life exists, with prey and predators that will never fight wars nor vie for ancient power.\"\n—Jolrael, empress of beasts",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "D. J. Cleland-Hura",
+     "artist_ids": [
+      "87d21070-2432-4167-8aab-5968af1c14f3"
+     ],
+     "illustration_id": "066bfe81-0f53-43da-a074-b2ecc5dcda72",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 8114,
+     "penny_rank": 10982,
+     "prices": {
+      "usd": "0.22",
+      "usd_foil": "3.29",
+      "usd_etched": null,
+      "eur": "0.11",
+      "eur_foil": "1.97",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129586&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "edhrec": "https://edhrec.com/route/?cc=Grizzly+Bears"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15153%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16432&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27400?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": "perm_1",
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": {
+     "states": [
+      [
+       "perm_1",
+       {
+        "name": "Grizzly Bears",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Bear"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "colors": [
+         "G"
+        ],
+        "abilities": [],
+        "oracleText": "",
+        "owner": "player_0",
+        "controller": "player_0"
+       }
+      ],
+      [
+       "perm_2",
+       {
+        "name": "Azorius Guildgate",
+        "types": [
+         "Land"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Gate"
+        ],
+        "power": null,
+        "toughness": null,
+        "colors": [],
+        "abilities": [
+         "This land enters tapped.",
+         "{T}: Add {W} or {U}."
+        ],
+        "oracleText": "This land enters tapped.\n{T}: Add {W} or {U}.",
+        "owner": "player_0",
+        "controller": "player_0"
+       }
+      ],
+      [
+       "perm_3",
+       {
+        "name": "Forest",
+        "types": [
+         "Land"
+        ],
+        "supertypes": [
+         "Basic"
+        ],
+        "subtypes": [
+         "Forest"
+        ],
+        "power": null,
+        "toughness": null,
+        "colors": [],
+        "abilities": [
+         "{T}: Add {G}."
+        ],
+        "oracleText": "",
+        "owner": "player_0",
+        "controller": "player_0"
+       }
+      ]
+     ],
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Azorius Guildgate",
+       "imageUri": "https://cards.scryfall.io/small/front/f/9/f98a7264-0a83-42c8-a94d-05ad4c234242.jpg?1783908907",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Land"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Gate"
+       ],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Forest",
+       "imageUri": "https://cards.scryfall.io/small/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Land"
+       ],
+       "printedSupertypes": [
+        "Basic"
+       ],
+       "printedSubtypes": [
+        "Forest"
+       ],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 3
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    }
+   }
+  ],
+  "firedAbilities": [],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Grizzly Bears",
+    "final": {
+     "name": "Grizzly Bears",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Bear"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "G"
+     ],
+     "abilities": []
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Azorius Guildgate",
+    "final": {
+     "name": "Grizzly Bears",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Bear"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "Haste"
+     ],
+     "oracleTextModified": true
+    },
+    "changedBy": {
+     "1": [
+      "March from Velis Vel"
+     ],
+     "6": [
+      "March from Velis Vel"
+     ]
+    }
+   },
+   {
+    "perm": "Forest",
+    "final": {
+     "name": "Forest",
+     "controller": "player_0",
+     "supertypes": [
+      "Basic"
+     ],
+     "types": [
+      "Land"
+     ],
+     "subtypes": [
+      "Forest"
+     ],
+     "power": null,
+     "toughness": null,
+     "colors": [],
+     "abilities": [
+      "{T}: Add {G}."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "March from Velis Vel",
+    "final": {
+     "name": "March from Velis Vel",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Sorcery"
+     ],
+     "subtypes": [],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "U"
+     ],
+     "abilities": [
+      "Choose a nonbasic land type. Each land you control of that type becomes a copy of target creature you control until end of turn and gains haste until end of turn.",
+      "Flashback {4}{U}"
+     ]
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "1": [
+    "March from Velis Vel"
+   ],
+   "6": [
+    "March from Velis Vel"
+   ]
+  },
+  "effects": [
+   {
+    "source": "March from Velis Vel",
+    "layer": "1",
+    "type": "copy",
+    "scope": "global",
+    "params": {
+     "_copyTargetPermId": "@Grizzly Bears",
+     "copySource": {
+      "artist": "D. J. Cleland-Hura",
+      "artist_ids": [
+       "87d21070-2432-4167-8aab-5968af1c14f3"
+      ],
+      "booster": true,
+      "border_color": "black",
+      "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+      "cardmarket_id": 16432,
+      "cmc": 2,
+      "collector_number": "268",
+      "color_identity": [
+       "G"
+      ],
+      "colors": [
+       "G"
+      ],
+      "digital": false,
+      "edhrec_rank": 8114,
+      "finishes": [
+       "nonfoil",
+       "foil"
+      ],
+      "flavor_text": "\"We cannot forget that among all of Dominaria's wonders, a system of life exists, with prey and predators that will never fight wars nor vie for ancient power.\"\n—Jolrael, empress of beasts",
+      "foil": true,
+      "frame": "2003",
+      "full_art": false,
+      "game_changer": false,
+      "games": [
+       "paper",
+       "mtgo"
+      ],
+      "highres_image": true,
+      "id": "409f9b88-f03e-40b6-9883-68c14c37c0de",
+      "illustration_id": "066bfe81-0f53-43da-a074-b2ecc5dcda72",
+      "image_status": "highres_scan",
+      "image_updated_at": "2026-07-13T11:43:21Z",
+      "image_uris": {
+       "art": "https://cards.scryfall.io/art/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+       "art_crop": "https://cards.scryfall.io/art_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "border_crop": "https://cards.scryfall.io/border_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "crop": "https://cards.scryfall.io/crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+       "display": "https://cards.scryfall.io/display/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+       "grid": "https://cards.scryfall.io/grid/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+       "large": "https://cards.scryfall.io/large/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "normal": "https://cards.scryfall.io/normal/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "png": "https://cards.scryfall.io/png/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.png?1783943001",
+       "small": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "thumb": "https://cards.scryfall.io/thumb/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001"
+      },
+      "keywords": [],
+      "lang": "en",
+      "layout": "normal",
+      "legalities": {
+       "alchemy": "not_legal",
+       "brawl": "legal",
+       "commander": "legal",
+       "competitivebrawl": "legal",
+       "duel": "legal",
+       "future": "not_legal",
+       "gladiator": "legal",
+       "historic": "legal",
+       "legacy": "legal",
+       "modern": "legal",
+       "oathbreaker": "legal",
+       "oldschool": "not_legal",
+       "pauper": "legal",
+       "paupercommander": "legal",
+       "penny": "legal",
+       "pioneer": "not_legal",
+       "predh": "legal",
+       "premodern": "legal",
+       "standard": "not_legal",
+       "standardbrawl": "not_legal",
+       "timeless": "legal",
+       "tlr": "legal",
+       "vintage": "legal"
+      },
+      "mana_cost": "{1}{G}",
+      "mtgo_foil_id": 27401,
+      "mtgo_id": 27400,
+      "multiverse_ids": [
+       129586
+      ],
+      "name": "Grizzly Bears",
+      "nonfoil": true,
+      "object": "card",
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "oracle_text": "",
+      "oversized": false,
+      "penny_rank": 10982,
+      "power": "2",
+      "prices": {
+       "eur": "0.11",
+       "eur_foil": "1.97",
+       "tix": "0.03",
+       "usd": "0.22",
+       "usd_etched": null,
+       "usd_foil": "3.29"
+      },
+      "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A14c8f55d-d177-4c25-a931-ebeb9e6062a0&unique=prints",
+      "promo": false,
+      "purchase_uris": {
+       "cardhoarder": "https://www.cardhoarder.com/cards/27400?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall",
+       "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16432&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+       "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15153%3Fpage%3D1"
+      },
+      "rarity": "common",
+      "related_uris": {
+       "edhrec": "https://edhrec.com/route/?cc=Grizzly+Bears",
+       "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129586&printed=false",
+       "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+       "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears"
+      },
+      "released_at": "2007-07-13",
+      "reprint": true,
+      "reserved": false,
+      "rulings_uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de/rulings",
+      "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+      "scryfall_uri": "https://scryfall.com/card/10e/268/grizzly-bears?utm_source=api",
+      "set": "10e",
+      "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+      "set_name": "Tenth Edition",
+      "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+      "set_type": "core",
+      "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+      "story_spotlight": false,
+      "tcgplayer_id": 15153,
+      "textless": false,
+      "toughness": "2",
+      "type_line": "Creature — Bear",
+      "uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de",
+      "variation": false
+     },
+     "massCopy": true,
+     "maxManaValue": null,
+     "restriction": "[fn]",
+     "sourceYouControl": true
+    }
+   },
+   {
+    "source": "March from Velis Vel",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "global",
+    "params": {
+     "ability": "Haste"
+    }
+   }
+  ]
+ }
+}

@@ -57,7 +57,9 @@ function renderCopyTargetSelect(sourceId) {
         ? { types: fs.types || [], supertypes: fs.supertypes || [], subtypes: fs.subtypes || [], colors: fs.colors || [], isAllCreatureTypes: fs.isAllCreatureTypes, isToken: t.isToken, counters: fs.counters || {} }
         : { types: t.printedTypes || [], supertypes: t.printedSupertypes || [], subtypes: t.printedSubtypes || [], colors: t.printedColors || [], isAllCreatureTypes: false, isToken: t.isToken, counters: t.counters || {} };
       const mvValid = spentToCast === null || (t.manaValue || 0) <= spentToCast;
-      const valid = mvValid && (!restriction || restriction(tState));
+      // "Choose target creature you control. Each other creature … becomes a copy of that creature".
+      const ctrlValid = !effect.params.sourceYouControl || !srcPermForSnap || (fs ? fs.controller : t.controller) === srcPermForSnap.controller;
+      const valid = mvValid && ctrlValid && (!restriction || restriction(tState));
       const tCopyName = (fs ? fs.name : t.name) + (fs?.copySource ? ' (copy)' : '');
       return valid ? `<option value="${t.id}" ${t.id === currentTargetId ? 'selected' : ''}>${escapeHtml(tCopyName)}</option>` : '';
     }).join('')}
@@ -125,8 +127,9 @@ function setCopyTargetFromBattlefield(sourceId, targetPermId) {
 
   Battlefield.setCopySource(sourceId, copyCard);
 
-  // Check if the copy source matches a known card and inject those effects
-  _injectKnownCardEffectsForCopy(sourceId, copyCard);
+  // Check if the copy source matches a known card and inject those effects.
+  // (Not for a mass copy: its row is a spell or fired ability, not one of the copies.)
+  if (!(eff && eff.params.massCopy)) _injectKnownCardEffectsForCopy(sourceId, copyCard);
 
   Battlefield.evaluate();
   renderAll();

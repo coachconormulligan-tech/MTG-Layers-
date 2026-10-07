@@ -1,0 +1,48 @@
+{
+  "name": "Niko, Light of Hope — Shards you control become copies of the exiled creature",
+  "notes": "Sweep group 5, mass copies (2026-10-07). \"Shards you control become copies of it until the next end step.\" parsed to nothing. A mass copy is one layer 1 copy effect over the whole group; what is copied is picked with the copy picker and is never one of the copies. \"It\" is the creature the ability exiled (the copy picker offers nonlegendary creatures you control). The Shard token becomes Grizzly Bears; Niko does not.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "b"
+    },
+    {
+      "add": "Niko, Light of Hope",
+      "as": "n"
+    },
+    {
+      "add": "Shard",
+      "as": "sh"
+    },
+    {
+      "fire": "@n",
+      "activated": 1,
+      "as": "t"
+    },
+    {
+      "copy": [
+        "@t",
+        "@b"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Shard",
+      "final": {
+        "name": "Grizzly Bears",
+        "types": [
+          "Creature"
+        ],
+        "power": 2,
+        "toughness": 2
+      }
+    },
+    {
+      "perm": "Niko, Light of Hope",
+      "final": {
+        "name": "Niko, Light of Hope"
+      }
+    }
+  ]
+}

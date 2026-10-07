@@ -1,0 +1,47 @@
+{
+  "name": "Deceiver of Form — your other creatures become copies of the linked revealed card",
+  "notes": "Sweep group 5, mass copies (2026-10-07). \"If a creature card is revealed this way, you may have creatures you control other than this creature become copies of that card until end of turn.\" parsed to nothing. The revealed card is linked to the fired trigger (\"Linked card\" button, slot \"Revealed card\"), not read off the Top of library slot, because the top card can change (Conor, 2026-10-07). Serra Angel linked: Grizzly Bears is a Serra Angel; Deceiver of Form itself is not.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "b"
+    },
+    {
+      "add": "Deceiver of Form",
+      "as": "d"
+    },
+    {
+      "fire": "@d",
+      "trigger": 0,
+      "as": "t"
+    },
+    {
+      "call": [
+        "addLinkedCard",
+        "@t",
+        "card:Serra Angel"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "name": "Serra Angel",
+        "power": 4,
+        "toughness": 4,
+        "subtypes": [
+          "Angel"
+        ]
+      }
+    },
+    {
+      "perm": "Deceiver of Form",
+      "final": {
+        "name": "Deceiver of Form",
+        "power": 8,
+        "toughness": 8
+      }
+    }
+  ]
+}

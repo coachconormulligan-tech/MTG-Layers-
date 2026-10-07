@@ -1,0 +1,73 @@
+{
+  "name": "March from Velis Vel — lands you control of the chosen nonbasic type become copies with haste",
+  "notes": "Sweep group 5, mass copies (2026-10-07). \"Choose a nonbasic land type. Each land you control of that type becomes a copy of target creature you control until end of turn and gains haste until end of turn.\" A mass copy is one layer 1 copy effect over the whole group; what is copied is picked with the copy picker and is never one of the copies. The land type input offers the nonbasic land types; until one is chosen there is no group. Gate chosen after the creature was picked (the pick survives the choice): Azorius Guildgate is a Grizzly Bears with haste, the Forest is not.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "b"
+    },
+    {
+      "add": "Azorius Guildgate",
+      "as": "gate"
+    },
+    {
+      "add": "Forest",
+      "as": "f"
+    },
+    {
+      "add": "March from Velis Vel",
+      "spell": true,
+      "as": "s"
+    },
+    {
+      "copy": [
+        "@s",
+        "@b"
+      ]
+    },
+    {
+      "call": [
+        "setChosenLandType",
+        "@s",
+        "Gate"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Azorius Guildgate",
+      "final": {
+        "name": "Grizzly Bears",
+        "types": [
+          "Creature"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "abilities": {
+          "$includes": [
+            "Haste"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Forest",
+      "final": {
+        "name": "Forest",
+        "types": [
+          "Land"
+        ]
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Haste"
+          ]
+        }
+      }
+    }
+  ]
+}

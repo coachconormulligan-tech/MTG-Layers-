@@ -154,6 +154,19 @@ function _takesFromRef(effect) {
   return !!(effect && effect.params && (effect.params.ptFromRef || effect.params.abilitiesFromRef));
 }
 
+// The card a mass copy reads off its fired ability's "Linked card" slot (Deceiver of Form:
+// "…become copies of that card"), or null when nothing usable is linked.
+function _massCopyLinkedCard(effect) {
+  const src = typeof Battlefield !== 'undefined' ? Battlefield.getPermById(effect.sourceId) : null;
+  const card = src && src.linkedCards && src.linkedCards[0];
+  if (!card) return null;
+  if (effect.params.linkedRequireCreature) {
+    const face = (card.card_faces && !card.type_line) ? card.card_faces[0] : card;
+    if (!/\bCreature\b/.test(face.type_line || '')) return null;
+  }
+  return card;
+}
+
 /* Power and toughness read off the cards linked to an effect's source (see
    Battlefield.addLinkedCard): the sum over all of them. Null when nothing is linked. */
 function _linkedCardsPT(sourceId) {

@@ -1,0 +1,69 @@
+{
+  "name": "Mirrorform — each nonland permanent you control becomes a copy of the picked permanent",
+  "notes": "Sweep group 5, mass copies (2026-10-07). \"Each nonland permanent you control becomes a copy of target non-Aura permanent.\" A mass copy is one layer 1 copy effect over the whole group; what is copied is picked with the copy picker and is never one of the copies. Hill Giant picked: Grizzly Bears and Sol Ring become Hill Giants, the Forest does not, and the spell's own row is untouched.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "b"
+    },
+    {
+      "add": "Sol Ring",
+      "as": "r"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "g"
+    },
+    {
+      "add": "Forest",
+      "as": "f"
+    },
+    {
+      "add": "Mirrorform",
+      "spell": true,
+      "as": "s"
+    },
+    {
+      "copy": [
+        "@s",
+        "@g"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "name": "Hill Giant",
+        "power": 3,
+        "toughness": 3,
+        "subtypes": [
+          "Giant"
+        ]
+      }
+    },
+    {
+      "perm": "Sol Ring",
+      "final": {
+        "name": "Hill Giant",
+        "power": 3,
+        "toughness": 3,
+        "subtypes": [
+          "Giant"
+        ]
+      }
+    },
+    {
+      "perm": "Forest",
+      "final": {
+        "name": "Forest"
+      }
+    },
+    {
+      "perm": "Mirrorform",
+      "final": {
+        "name": "Mirrorform"
+      }
+    }
+  ]
+}

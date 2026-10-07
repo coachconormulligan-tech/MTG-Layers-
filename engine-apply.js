@@ -714,6 +714,8 @@ function applyEffect(state, effect, context) {
         const last = entries.length ? entries[entries.length - 1] : null;
         if (last && last.card) src = last.card;
       }
+      // "…become copies of that card" (Deceiver of Form): the card linked to the fired ability.
+      if (!src && effect.params.copyFromLinkedCard) src = _massCopyLinkedCard(effect);
       // CR 707.2 (copy-of-a-copy): the copiable values of the permanent we're copying
       // are its characteristics at the END of Layer 1 — i.e. as modified by its own copy
       // effect — not its printed card. When the source permanent is itself a copy, read its

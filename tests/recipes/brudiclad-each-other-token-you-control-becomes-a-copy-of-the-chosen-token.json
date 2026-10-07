@@ -1,0 +1,70 @@
+{
+  "name": "Brudiclad, Telchor Engineer — each other token you control becomes a copy of the chosen token",
+  "notes": "Sweep group 5, mass copies (2026-10-07). \"If you do, each other token you control becomes a copy of that token.\" was pinned to Brudiclad itself. A mass copy is one layer 1 copy effect over the whole group; what is copied is picked with the copy picker and is never one of the copies. Thopter token chosen: the Shard and Servo tokens are Thopters; Grizzly Bears and Brudiclad are not tokens.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "b"
+    },
+    {
+      "add": "Shard",
+      "as": "sh"
+    },
+    {
+      "add": "Servo",
+      "as": "sv"
+    },
+    {
+      "add": "Thopter",
+      "as": "th"
+    },
+    {
+      "add": "Brudiclad, Telchor Engineer",
+      "as": "s"
+    },
+    {
+      "fire": "@s",
+      "trigger": 1,
+      "as": "t"
+    },
+    {
+      "copy": [
+        "@t",
+        "@th"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Shard",
+      "final": {
+        "name": "Thopter",
+        "power": 1,
+        "toughness": 1
+      }
+    },
+    {
+      "perm": "Servo",
+      "final": {
+        "name": "Thopter",
+        "abilities": {
+          "$includes": [
+            "Flying"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "name": "Grizzly Bears"
+      }
+    },
+    {
+      "perm": "Brudiclad, Telchor Engineer",
+      "final": {
+        "name": "Brudiclad, Telchor Engineer"
+      }
+    }
+  ]
+}

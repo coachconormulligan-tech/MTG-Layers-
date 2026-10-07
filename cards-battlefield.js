@@ -838,6 +838,13 @@ const Battlefield = {
         eff._excludeSourceId = sourcePermId;
       }
       if (abilityTargetRestriction) eff._abilityTargetRestriction = abilityTargetRestriction;
+      // "creatures you control other than this creature become copies of …" (Deceiver of Form).
+      // An ability used from the graveyard (Naga Fleshcrafter's renew) has no source on the
+      // battlefield to become a copy.
+      if (eff.type === EFFECT_TYPE.COPY && eff.params && eff.params.massCopy &&
+          (eff.affectsSelf === false || /\bexile this card from your graveyard\b/i.test(fullText || ''))) {
+        eff._excludeSourceId = sourcePermId;
+      }
       // Imprint copy from an activated ability (Dermotaxi): the imprinted exile entries are
       // tagged with the original source perm, not the pseudo-perm. Remap so the engine's
       // imprint lookup + selfTarget both resolve to the actual source.
@@ -911,6 +918,17 @@ const Battlefield = {
       const _attachedTargetId = this.effects.find(e =>
         e.sourceId === sourcePermId && e.scope === 'targeted' && e.targetId
       )?.targetId;
+      // "When this Aura enters attached to a creature, each other nontoken creature you control
+      // becomes a copy of that creature" (Infinite Reflection): what is copied is what it is on.
+      const _mcAttached = _attachedTargetId && /\benters attached to\b/i.test(fullText || '')
+        ? newEffects.find(e => e.type === EFFECT_TYPE.COPY && e.params && e.params.massCopy && !e.params.copySource) : null;
+      if (_mcAttached) {
+        const copiable = this.copiableCardOf(_attachedTargetId);
+        if (copiable) {
+          _mcAttached.params.copySource = copiable;
+          _mcAttached.params._copyTargetPermId = _attachedTargetId;
+        }
+      }
       if (_attachedTargetId) {
         const _attachmentWordRe = /\b(enchanted|equipped|fortified)\s+\w+/i;
         for (const eff of newEffects) {
@@ -1685,6 +1703,11 @@ const Battlefield = {
         oracleText = oracleText.replace(/\b(becomes?)\s+that\s+type\b/gi, `$1 a ${lt}`);
       }
       oracleText = oracleText.replace(/(?:as [^.]*)?choose a basic land type\.\s*/gi, '');
+      // "Choose a nonbasic land type. Each land you control of that type" → "Each Gate you control".
+      if (/\bchoose a nonbasic land type\b/i.test(oracleText)) {
+        oracleText = oracleText.replace(/\blands?( you control)? of that type\b/gi, `${lt}$1`);
+        oracleText = oracleText.replace(/choose a nonbasic land type\.\s*([a-z])?/gi, (m, c) => c ? c.toUpperCase() : '');
+      }
     }
     // Apply chosen color substitution
     if (perm.chosenColor) {
@@ -1725,6 +1748,13 @@ const Battlefield = {
       _pinAbilityEffectsToSource(newEffects, perm.abilitySourceId);
     } else if (perm.isSpell) {
       for (const eff of newEffects) eff.isSpellEffect = true;
+    }
+    // A mass copy keeps what it copies when another choice (a land type) is made afterwards.
+    const priorMassCopy = priorEffects.find(e => e.type === EFFECT_TYPE.COPY && e.params && e.params.massCopy && e.params.copySource);
+    const newMassCopy = priorMassCopy && newEffects.find(e => e.type === EFFECT_TYPE.COPY && e.params && e.params.massCopy);
+    if (newMassCopy) {
+      newMassCopy.params.copySource = priorMassCopy.params.copySource;
+      if (priorMassCopy.params._copyTargetPermId) newMassCopy.params._copyTargetPermId = priorMassCopy.params._copyTargetPermId;
     }
     // Inject SET_NAME / SET_TYPE effects for equipment that sets name and creature type
     // (e.g. Psychic Paper: "its name and creature type are [chosen name] and [chosen type]")
@@ -2199,11 +2229,16 @@ const Battlefield = {
   copiableCardOf(permId) {
     const perm = this.getPermById(permId);
     if (!perm) return null;
-    const isCopy = this.effects.some(e => e.type === EFFECT_TYPE.COPY && e.params.copySource &&
-      (e.sourceId === permId || (e.params.copiesAbilitySource && e.targetId === permId)));
+    const isCopy = this.effects.some(e => e.type === EFFECT_TYPE.COPY &&
+      ((e.params.copySource && (e.sourceId === permId || (e.params.copiesAbilitySource && e.targetId === permId))) ||
+       (e.params.massCopy && (e.params.copySource || e.params.copyFromLinkedCard))));
     const layer1State = isCopy ? this.getPostLayer1State(permId) : null;
     if (!layer1State || !(layer1State.copySource || this.effects.some(e => e.sourceId === permId && e.type === EFFECT_TYPE.COPY && e.params.copySource))) {
-      return perm.scryfallData || null;
+      // A multi-face card (a double-faced token such as Thopter // Thopter) is copied as the
+      // face it shows; the whole card has no type line or power of its own.
+      const sd = perm.scryfallData || null;
+      return (sd && sd.card_faces && sd.card_faces.length > 1 && !sd._isFaceResolved)
+        ? _resolveCardFace(sd, perm.activeFaceIndex || 0) : sd;
     }
     return {
       name: layer1State.name,
@@ -2872,6 +2907,8 @@ const Battlefield = {
       for (const [re, needsKey, valueKey] of [
         [/\bchoose a creature type\b[^.]*\.[^\n]*\bthat type\b|\bcreature type of your choice\b/i, 'needsChosenCreatureType', 'chosenCreatureType'],
         [/\bchoose a basic land type\b[^.]*\.[^\n]*\bthat type\b|\bbasic land type of your choice\b/i, 'needsChosenLandType', 'chosenLandType'],
+        // "Choose a nonbasic land type. Each land you control of that type …" (March from Velis Vel).
+        [/\bchoose a nonbasic land type\b[^.]*\.[^\n]*\bthat type\b/i, 'needsChosenLandType', 'chosenLandType'],
       ]) {
         if (!re.test(choiceText) || perm[needsKey]) continue;
         perm[needsKey] = true;
@@ -3178,7 +3215,9 @@ const Battlefield = {
         }
       }
       const modalEffs = this.effects.filter(e => e.sourceId === srcId && e.modalModeIndex !== undefined);
-      if (modalEffs.length && modalEffs.some(e => e.disabled)) {
+      // (Also when none is disabled: a mode that is off by default and is the only one with
+      // effects — Masterful Replication's copy mode — would come back switched off.)
+      if (modalEffs.length) {
         c.modalDisabled = {};
         for (const e of modalEffs) c.modalDisabled[e.modalModeIndex] = !!e.disabled;
       }
@@ -3528,7 +3567,7 @@ const Battlefield = {
         }
         // Not for a fired "<target> becomes a copy of this creature": its source is the
         // ability, which has none of the copied card's effects.
-        const isAbilityCopy = this.effects.some(e => e.sourceId === nsId && e.type === EFFECT_TYPE.COPY && e.params.copiesAbilitySource);
+        const isAbilityCopy = this.effects.some(e => e.sourceId === nsId && e.type === EFFECT_TYPE.COPY && (e.params.copiesAbilitySource || e.params.massCopy));
         if (!isAbilityCopy && typeof _injectKnownCardEffectsForCopy === 'function') {
           _injectKnownCardEffectsForCopy(nsId, r.copySource);
         }

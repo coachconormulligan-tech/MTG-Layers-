@@ -7,7 +7,7 @@ function _isNonTokenCopyCard(perm) {
   return Battlefield.effects.some(e =>
     e.sourceId === perm.id &&
     e.type === EFFECT_TYPE.COPY &&
-    !(e.params && (e.params.copyFromExiledCard || e.params.copiesAbilitySource))
+    !(e.params && (e.params.copyFromExiledCard || e.params.copiesAbilitySource || e.params.massCopy))
   );
 }
 
@@ -17,7 +17,8 @@ function getEffectInfo(permId, finalState) {
   const textEff = effs.find(e => e.type === EFFECT_TYPE.TEXT_CHANGE);
   // A copy-source picker only where the source picks what it copies; "<target> becomes a copy
   // of this creature" (The Flood of Mars) takes an ordinary target instead.
-  const copyEff = effs.find(e => e.type === EFFECT_TYPE.COPY && !(e.params && e.params.copiesAbilitySource));
+  // A mass copy whose source is a linked card (Deceiver of Form) has the "Linked card" button.
+  const copyEff = effs.find(e => e.type === EFFECT_TYPE.COPY && !(e.params && (e.params.copiesAbilitySource || e.params.copyFromLinkedCard)));
   // If this permanent has a text-change effect, the text-change modal handles
   // targeting for ALL targeted effects from the same source (via setTextChangeConfig
   // propagation). So suppress the generic target dropdown entirely for such sources.
@@ -262,12 +263,17 @@ function setChosenCreatureType(permId, type) {
 /* Render a basic land type dropdown for cards with "choose a basic land type" */
 function renderChosenLandTypeInput(perm) {
   const val = perm.chosenLandType || '';
-  const types = ['Plains', 'Island', 'Swamp', 'Mountain', 'Forest'];
+  const basics = ['Plains', 'Island', 'Swamp', 'Mountain', 'Forest'];
+  // "Choose a nonbasic land type" (March from Velis Vel): every land type but the five basics.
+  const nonbasic = /\bchoose a nonbasic land type\b/i.test(perm.originalOracleText || '');
+  const types = nonbasic
+    ? [...((typeof TypeCatalog !== 'undefined' && TypeCatalog.landTypes) || [])].filter(t => !basics.includes(t)).sort()
+    : basics;
   const options = types.map(t =>
     `<option value="${t}" ${val === t ? 'selected' : ''}>${t}</option>`
   ).join('');
   return `<div class="cda-counter-row chosen-color-row" onclick="event.stopPropagation()">
-    <span class="cda-label" title="Choose a basic land type">Land type:</span>
+    <span class="cda-label" title="Choose a ${nonbasic ? 'nonbasic' : 'basic'} land type">Land type:</span>
     <select class="chosen-color-select" onchange="setChosenLandType('${perm.id}', this.value)">
       <option value="">— pick —</option>
       ${options}

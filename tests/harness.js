@@ -174,7 +174,11 @@ function buildFromRecipe(recipe, cards) {
       const tp = Battlefield.getPermById(target);
       if (!eff || !tp) throw new Error('copy step: no COPY effect or no target');
       eff.params._copyTargetPermId = target;
-      Battlefield.setCopySource(copier, JSON.parse(JSON.stringify(tp.scryfallData)));
+      // A multi-face card (a double-faced token) is copied as the face it shows, as the site's
+      // copy picker does (copiableCardOf); anything else as its printed card.
+      const sd = tp.scryfallData;
+      const multiFace = sd && sd.card_faces && sd.card_faces.length > 1 && !sd._isFaceResolved;
+      Battlefield.setCopySource(copier, JSON.parse(JSON.stringify((multiFace && Battlefield.copiableCardOf(target)) || sd)));
     } else if (step.fire) {
       const id = arg(step.fire);
       const states = Battlefield.getAllFinalStates();

@@ -1,0 +1,53 @@
+{
+  "name": "Loki, Lord of Misrule — every creature you control but the chosen one becomes a copy of it, Loki included",
+  "notes": "Sweep group 5, mass copies (2026-10-07). \"Each creature you control other than the chosen creature becomes a copy of that creature until end of turn, except it isn't legendary.\" A mass copy is one layer 1 copy effect over the whole group; what is copied is picked with the copy picker and is never one of the copies. Niko (legendary) chosen: Grizzly Bears and Loki himself are Nikos that are not legendary; Niko keeps Legendary.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "b"
+    },
+    {
+      "add": "Niko, Light of Hope",
+      "as": "g"
+    },
+    {
+      "add": "Loki, Lord of Misrule",
+      "as": "s"
+    },
+    {
+      "fire": "@s",
+      "activated": 0,
+      "as": "t"
+    },
+    {
+      "copy": [
+        "@t",
+        "@g"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "name": "Niko, Light of Hope",
+        "supertypes": []
+      }
+    },
+    {
+      "perm": "Loki, Lord of Misrule",
+      "final": {
+        "name": "Niko, Light of Hope",
+        "supertypes": []
+      }
+    },
+    {
+      "perm": "Niko, Light of Hope",
+      "final": {
+        "supertypes": [
+          "Legendary"
+        ]
+      }
+    }
+  ]
+}

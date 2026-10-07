@@ -1,0 +1,44 @@
+{
+  "name": "Nanogene Conversion — each other creature becomes a copy that isn't legendary",
+  "notes": "Sweep group 5, mass copies (2026-10-07). \"Choose target creature you control. Each other creature becomes a copy of that creature until end of turn, except it isn't legendary.\" A mass copy is one layer 1 copy effect over the whole group; what is copied is picked with the copy picker and is never one of the copies. ",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "b"
+    },
+    {
+      "add": "Niko, Light of Hope",
+      "as": "g"
+    },
+    {
+      "add": "Nanogene Conversion",
+      "spell": true,
+      "as": "s"
+    },
+    {
+      "copy": [
+        "@s",
+        "@g"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "name": "Niko, Light of Hope",
+        "supertypes": [],
+        "power": 3,
+        "toughness": 4
+      }
+    },
+    {
+      "perm": "Niko, Light of Hope",
+      "final": {
+        "supertypes": [
+          "Legendary"
+        ]
+      }
+    }
+  ]
+}

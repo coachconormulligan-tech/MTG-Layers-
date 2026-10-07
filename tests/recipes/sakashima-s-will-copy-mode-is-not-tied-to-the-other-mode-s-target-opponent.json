@@ -1,0 +1,47 @@
+{
+  "name": "Sakashima's Will — the copy mode works without the other mode's target opponent",
+  "notes": "Sweep group 5, mass copies (2026-10-07). Mode 2: \"Choose a creature you control. Each other creature you control becomes a copy of that creature until end of turn.\" A mass copy is one layer 1 copy effect over the whole group; what is copied is picked with the copy picker and is never one of the copies. The spell's \"target opponent\" (mode 1) was stamped on every global effect, so the copy waited for an opponent that mode never picks.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "b"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "g"
+    },
+    {
+      "add": "Sakashima's Will",
+      "spell": true,
+      "as": "s"
+    },
+    {
+      "call": [
+        "setModalModeSelections",
+        "@s",
+        [
+          1
+        ]
+      ]
+    },
+    {
+      "copy": [
+        "@s",
+        "@g"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "name": "Hill Giant",
+        "power": 3,
+        "toughness": 3,
+        "subtypes": [
+          "Giant"
+        ]
+      }
+    }
+  ]
+}
