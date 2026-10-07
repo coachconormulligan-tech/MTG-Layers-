@@ -1,0 +1,61 @@
+{
+  "name": "Infinite Reflection — your other nontoken creatures become copies of the enchanted creature",
+  "notes": "Sweep group 5, mass copies (2026-10-07). \"When this Aura enters attached to a creature, each other nontoken creature you control becomes a copy of that creature.\" was pinned to the Aura. A mass copy is one layer 1 copy effect over the whole group; what is copied is picked with the copy picker and is never one of the copies. Fired while attached to Hill Giant, the trigger takes Hill Giant as what is copied without a pick. Grizzly Bears becomes Hill Giant; the Saproling token does not.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "b"
+    },
+    {
+      "add": "Saproling",
+      "as": "tok"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "g"
+    },
+    {
+      "add": "Infinite Reflection",
+      "as": "s"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@s",
+        "@g"
+      ]
+    },
+    {
+      "fire": "@s",
+      "trigger": 1,
+      "as": "t"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "name": "Hill Giant",
+        "power": 3,
+        "toughness": 3,
+        "subtypes": [
+          "Giant"
+        ]
+      }
+    },
+    {
+      "perm": "Saproling",
+      "final": {
+        "name": "Saproling",
+        "power": 1,
+        "toughness": 1
+      }
+    },
+    {
+      "perm": "Infinite Reflection",
+      "final": {
+        "name": "Infinite Reflection"
+      }
+    }
+  ]
+}

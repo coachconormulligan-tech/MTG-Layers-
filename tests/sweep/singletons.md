@@ -4,9 +4,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 
 | Card | Reads like | Where | Sentence |
 |---|---|---|---|
-| Absorb Identity | becomes | spell | You may have Shapeshifters you control become copies of that creature until end of turn. |
-| Deceiver of Form | becomes | triggered | If a creature card is revealed this way, you may have creatures you control other than this creature become copies of that card until end of turn. |
-| Niko, Light of Hope | becomes | activated | Shards you control become copies of it until the next end step. |
 | The Legend of Kyoshi | becomes | static | That land becomes an Island in addition to its other types. |
 | Ultron, Artificial Malevolence | becomes | triggered | If the token isn't a creature, it becomes a 2/2 Robot Villain creature in addition to its other types. |
 | Aminatou, the Fateshifter | gain control | activated | Each player gains control of all nonland permanents other than this card controlled by the next player in the chosen direction. |

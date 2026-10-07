@@ -1,0 +1,44 @@
+{
+  "name": "Deceiver of Form — a linked card that is not a creature card changes nothing",
+  "notes": "Sweep group 5, mass copies (2026-10-07). \"If a creature card is revealed this way\": with a Forest linked to the fired trigger, and with nothing linked at all (second firing), no creature changes.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "b"
+    },
+    {
+      "add": "Deceiver of Form",
+      "as": "d"
+    },
+    {
+      "fire": "@d",
+      "trigger": 0,
+      "as": "t"
+    },
+    {
+      "call": [
+        "addLinkedCard",
+        "@t",
+        "card:Forest"
+      ]
+    },
+    {
+      "fire": "@d",
+      "trigger": 0,
+      "as": "t2"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "name": "Grizzly Bears",
+        "power": 2,
+        "toughness": 2,
+        "types": [
+          "Creature"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "name": "Masterful Replication — each other artifact you control becomes a copy; the mode survives a save",
+  "notes": "Sweep group 5, mass copies (2026-10-07). Mode 2: \"Choose target artifact you control. Each other artifact you control becomes a copy of that artifact until end of turn.\" A mass copy is one layer 1 copy effect over the whole group; what is copied is picked with the copy picker and is never one of the copies. Save bug found on the way: mode choices were saved only when some mode's effect was switched off, so a spell whose only effect-bearing mode is off by default came back switched off. Sol Ring becomes Ornithopter; Grizzly Bears is no artifact.",
+  "steps": [
+    {
+      "add": "Sol Ring",
+      "as": "b"
+    },
+    {
+      "add": "Ornithopter",
+      "as": "g"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "x"
+    },
+    {
+      "add": "Masterful Replication",
+      "spell": true,
+      "as": "s"
+    },
+    {
+      "call": [
+        "setModalModeSelections",
+        "@s",
+        [
+          1
+        ]
+      ]
+    },
+    {
+      "copy": [
+        "@s",
+        "@g"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Sol Ring",
+      "final": {
+        "name": "Ornithopter",
+        "power": 0,
+        "toughness": 2
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "name": "Grizzly Bears"
+      }
+    }
+  ]
+}

@@ -142,7 +142,7 @@ function _permEffectiveBaseName(p) {
   if (!p) return '';
   if (typeof Battlefield !== 'undefined' && typeof EFFECT_TYPE !== 'undefined' && Array.isArray(Battlefield.effects)) {
     const copyEff = Battlefield.effects.find(e =>
-      e.sourceId === p.id && e.type === EFFECT_TYPE.COPY && e.params && e.params.copySource && e.params.copySource.name);
+      e.sourceId === p.id && e.type === EFFECT_TYPE.COPY && e.params && !e.params.massCopy && e.params.copySource && e.params.copySource.name);
     if (copyEff) return copyEff.params.copySource.name + ' (copy)';
   }
   return p.name;

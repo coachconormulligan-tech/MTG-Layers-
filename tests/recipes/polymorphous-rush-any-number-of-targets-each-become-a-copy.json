@@ -1,0 +1,79 @@
+{
+  "name": "Polymorphous Rush — any number of target creatures each become a copy of the chosen creature",
+  "notes": "Sweep group 5, mass copies (2026-10-07). \"Choose a creature on the battlefield. Any number of target creatures you control each become a copy of that creature until end of turn.\" took one target only. The copies are the targets (as many as picked); what is copied is picked with the copy picker. Two of three creatures targeted.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "b"
+    },
+    {
+      "add": "Silvercoat Lion",
+      "as": "l"
+    },
+    {
+      "add": "Serra Angel",
+      "as": "a"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "g"
+    },
+    {
+      "add": "Polymorphous Rush",
+      "spell": true,
+      "as": "s"
+    },
+    {
+      "copy": [
+        "@s",
+        "@g"
+      ]
+    },
+    {
+      "call": [
+        "setMultiTarget",
+        "@s",
+        0,
+        "@b"
+      ]
+    },
+    {
+      "call": [
+        "setMultiTarget",
+        "@s",
+        1,
+        "@l"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "name": "Hill Giant",
+        "power": 3,
+        "toughness": 3,
+        "subtypes": [
+          "Giant"
+        ]
+      }
+    },
+    {
+      "perm": "Silvercoat Lion",
+      "final": {
+        "name": "Hill Giant",
+        "power": 3,
+        "toughness": 3,
+        "subtypes": [
+          "Giant"
+        ]
+      }
+    },
+    {
+      "perm": "Serra Angel",
+      "final": {
+        "name": "Serra Angel"
+      }
+    }
+  ]
+}

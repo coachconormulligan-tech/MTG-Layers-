@@ -1778,8 +1778,40 @@ function parseCardEffects(permanent, card, opts = {}) {
   // copyClauseSpans tracks the matched span(s) so other regex parsers (setTypeRegex,
   // haveAbilityRegex, etc.) don't refire on the same text.
   const copyClauseSpans = [];
-  const copyRegex = /(enters?\s+(?:the battlefield\s+)?as|becomes?)\s+a\s+copy\s+of\s+(?:any\s+|a\s+|target\s+)?([^.]+?)(?:\s*,?\s*except\s+(.+?))?(?:\.|$)/i;
-  const copyMatch = oracleLower.match(copyRegex);
+  const copyRegex = /(enters?\s+(?:the battlefield\s+)?as|becomes?)\s+(?:a\s+copy|copies)\s+of\s+(?:any\s+|a\s+|target\s+)?([^.]+?)(?:\s*,?\s*except\s+(.+?))?(?:\.|$)/i;
+  let copyMatch = oracleLower.match(copyRegex);
+  // ("…they enter as copies of the chosen creature", Mystic Reflection, is about permanents
+  // still to come: the plural is read only after "become".)
+  if (copyMatch && !/^becomes?$/i.test(copyMatch[1]) && /\bcopies\s+of\b/.test(copyMatch[0])) copyMatch = null;
+  // Mass copies: "Each other creature becomes a copy of target nonlegendary creature"
+  // (Mirrorweave), "Shapeshifters you control become copies of that creature" (Absorb Identity),
+  // "creatures you control other than this creature become copies of that card" (Deceiver of
+  // Form). The subject is a group, so the effect is global over that group; what they copy is
+  // one object picked with the copy picker (or a linked card), and that object is never part
+  // of the group ("other", or it has left the battlefield).
+  let _massCopy = null;
+  if (copyMatch && /^becomes?$/i.test(copyMatch[1]) && !_isInTriggeredSentence(copyMatch.index) && !_isInActivatedEffect(copyMatch.index)) {
+    const _mcStart = Math.max(oracle.lastIndexOf('\n', copyMatch.index - 1), oracle.lastIndexOf('.', copyMatch.index - 1),
+      oracle.lastIndexOf('\u2022', copyMatch.index - 1)) + 1;
+    // The group stands after any leading clause ("If you do, …", "If a creature card is
+    // revealed this way, you may have …").
+    let _mcSubject = stripDurationPrefix(oracle.substring(_mcStart, copyMatch.index).trim())
+      .replace(/^.*,\s+/, '').replace(/^then\s+/i, '')
+      .replace(/^you may have\s+/i, '').trim();
+    const _mcExcludesSelf = /\bother than this (?:creature|card|permanent|token)\b/i.test(_mcSubject);
+    _mcSubject = _mcSubject.replace(/\s+other than (?:this|the chosen|that) (?:creature|card|permanent|token|artifact)\b/i, '')
+      .replace(/\bother\s+/i, '').trim();
+    if (_mcSubject && !/^(?:this|that|it|target|another)\b/i.test(_mcSubject) && !/\btarget\b/i.test(_mcSubject) &&
+        filterReferencesPermanents(_mcSubject)) {
+      const _mcApplies = buildAppliesToFromText(_mcSubject);
+      if (_mcApplies && _mcApplies.fn && !_mcApplies.isSelf && !_mcApplies.isTargeted && !_mcApplies.isSpellTarget) {
+        // "Each land you control of that type" (March from Velis Vel): no group until the land
+        // type is chosen; the choice is then written into the text ("Each Gate you control").
+        const _mcUnchosen = /\bof (?:that|the chosen) type\b/i.test(_mcSubject);
+        _massCopy = { subject: _mcSubject, fn: _mcUnchosen ? () => false : _mcApplies.fn, excludesSelf: _mcExcludesSelf, start: _mcStart };
+      }
+    }
+  }
   // "<another object> becomes a copy of this creature" (The Flood of Mars: "another target
   // creature or land. If it's a creature, it becomes a copy of this creature"; Permeating Mass:
   // "that creature becomes a copy of this creature") is the other direction: the permanent that
@@ -1788,7 +1820,7 @@ function parseCardEffects(permanent, card, opts = {}) {
   // pin the effect to its own source) and the line's condition; _addAbilityPseudo fills in the
   // copy source when the ability is fired (params.copiesAbilitySource).
   let _copyOfSourceHandled = false;
-  if (copyMatch && !_isInTriggeredSentence(copyMatch.index) && !_isInActivatedEffect(copyMatch.index) &&
+  if (copyMatch && !_massCopy && !_isInTriggeredSentence(copyMatch.index) && !_isInActivatedEffect(copyMatch.index) &&
       /^becomes?$/i.test(copyMatch[1]) && !copyMatch[3] &&
       /^this (?:creature|card|permanent|token)(?:\s+until end of turn)?$/.test(copyMatch[2].trim())) {
     const _cosStart = Math.max(oracle.lastIndexOf('\n', copyMatch.index - 1), oracle.lastIndexOf('.', copyMatch.index - 1)) + 1;
@@ -1809,8 +1841,33 @@ function parseCardEffects(permanent, card, opts = {}) {
     const isBecomesCopy = /^becomes?$/i.test(copyMatch[1]);
     copyClauseSpans.push({ start: copyMatch.index, end: copyMatch.index + copyMatch[0].length });
     // Determine restriction from what can be copied (e.g. "any creature", "a creature or artifact")
-    const targetDescRaw = copyMatch[2].trim();
+    let targetDescRaw = copyMatch[2].trim();
     const exceptClause = copyMatch[3] ? copyMatch[3].trim() : null;
+    // A mass copy naming what is copied by a pronoun ("that creature", "it", "that token"):
+    // the picker's restriction is read off the sentence that chose it ("Choose target creature
+    // you control.", "Exile target nonlegendary creature you control.").
+    let _mcSourceYouControl = false, _mcLinkedCard = false, _mcPrintedDesc = '', _mcGainedKeywords = [];
+    if (_massCopy) {
+      copyClauseSpans[copyClauseSpans.length - 1].start = _massCopy.start;
+      const _mcUntilRe = /\s+until\s+(?:end of turn|the next end step|your next turn)$/i;
+      targetDescRaw = targetDescRaw.replace(_mcUntilRe, '').trim();
+      // "… becomes a copy of target creature you control until end of turn and gains haste until
+      // end of turn" (March from Velis Vel): the same group gains the keywords.
+      const _mcGains = targetDescRaw.match(/\s+and\s+gains?\s+([a-z ,]+)$/);
+      if (_mcGains) {
+        targetDescRaw = targetDescRaw.slice(0, _mcGains.index).replace(_mcUntilRe, '').trim();
+        _mcGainedKeywords = _mcGains[1].split(/\s*,\s*(?:and\s+)?|\s+and\s+/).map(k => k.trim()).filter(Boolean);
+      }
+      _mcPrintedDesc = targetDescRaw;
+      if (/^that card$/.test(targetDescRaw)) {
+        _mcLinkedCard = true;
+      } else if (/^(?:it|that \w+|them)$/.test(targetDescRaw)) {
+        const _mcBefore = oracleLower.substring(0, _massCopy.start);
+        const _mcAnte = [..._mcBefore.matchAll(/\b(?:target|choose an?|chooses an?|on an?|attached to an?)\s+([^.,\n]+)/g)].pop();
+        if (_mcAnte) targetDescRaw = (_mcAnte[1] + ' ' + targetDescRaw.replace(/^(?:it|them|that)\s*/, '')).trim();
+      }
+      _mcSourceYouControl = /\byou control\b/.test(targetDescRaw);
+    }
     // Detect "mana value less than or equal to the amount of mana spent to cast" restriction.
     // Strip it from targetDesc so the type-restriction logic below isn't confused by it.
     let maxManaValueParam = null;
@@ -1854,7 +1911,13 @@ function parseCardEffects(permanent, card, opts = {}) {
       // A "permanent card" in a graveyard/exile zone can sit beside instants/sorceries,
       // so restrict to actual permanent card types rather than matching everything.
       const PERMANENT_CARD_TYPES = ['Creature', 'Land', 'Artifact', 'Enchantment', 'Planeswalker', 'Battle'];
-      restriction = (p) => (p.types || []).some(t => PERMANENT_CARD_TYPES.includes(t));
+      restriction = (p) => (p.types || []).some(t => PERMANENT_CARD_TYPES.includes(t)) &&
+        !(isNonAuraRestriction && (p.subtypes || []).includes('Aura'));
+    }
+    // "each other token you control becomes a copy of that token" (Brudiclad).
+    if (_massCopy && /\btoken\b/.test(targetDesc)) {
+      const _tokBase = restriction;
+      restriction = (p) => !!p.isToken && (!_tokBase || _tokBase(p));
     }
     // "target creature with a counter on it" (Volrath, the Shapestealer) / "with a +1/+1
     // counter on it" — restrict to permanents currently carrying a (or a specific) counter.
@@ -1872,6 +1935,17 @@ function parseCardEffects(permanent, card, opts = {}) {
     }
     // Parse "except" clause for copy modifications
     const copyParams = { copySource: null, restriction, maxManaValue: maxManaValueParam };
+    if (_massCopy) {
+      copyParams.massCopy = true;
+      if (_mcSourceYouControl) copyParams.sourceYouControl = true;
+      // "…become copies of that card" (Deceiver of Form): the revealed card is in no zone the
+      // site shows, so it is linked to the fired ability (the "Linked card" button).
+      if (_mcLinkedCard) {
+        copyParams.copyFromLinkedCard = true;
+        if (/\bif a creature card is revealed this way\b/.test(oracleLower)) copyParams.linkedRequireCreature = true;
+        permanent._linkedCardSlot = { label: 'Revealed card', max: 1 };
+      }
+    }
     if (copyTargetZone) { copyParams.copyTargetZone = copyTargetZone; copyParams.copyTargetZoneOwner = copyTargetZoneOwner; }
     // Imprint: "becomes a copy of the exiled card" — Dermotaxi.
     // The copy source is resolved at apply time from the most-recent imprinted exile entry.
@@ -2026,7 +2100,8 @@ function parseCardEffects(permanent, card, opts = {}) {
     }
     // Also check full oracle for "that copy/it isn't legendary" (Spark Double pattern)
     if (!copyParams.notLegendary) {
-      if (/(?:that copy|the copy|it(?:'s)?) (?:is not|isn'?t) legendary/i.test(oracle)) {
+      if (/(?:that copy|the copy|it(?:'s)?) (?:is not|isn'?t) legendary/i.test(oracle) ||
+          (_massCopy && /\bthose \w+ aren'?t legendary\b/i.test(oracle))) {
         copyParams.notLegendary = true;
       }
     }
@@ -2039,10 +2114,32 @@ function parseCardEffects(permanent, card, opts = {}) {
     // statically — it will be re-parsed when the activated ability fires, and remapped to
     // target the original source via _addAbilityPseudo. copyClauseSpans is still populated
     // above so other regex parsers (addTypeRegex etc.) don't refire on the "except" clause.
-    if (!_isInActivatedEffect(copyMatch.index)) {
+    if (_massCopy) {
+      const _mcSubj = _massCopy.subject.charAt(0).toUpperCase() + _massCopy.subject.slice(1);
       pushEff('1', EFFECT_TYPE.COPY, copyParams,
+        { appliesTo: _massCopy.fn, scope: 'global', selfTarget: false, affectsSelf: !_massCopy.excludesSelf },
+        `${_mcSubj}: each becomes a copy of ${_mcLinkedCard ? 'the revealed card' : _mcPrintedDesc}${exceptClause ? ', except ' + exceptClause : ''}.`,
+        { _oraclePos: copyMatch.index });
+      for (const kw of _mcGainedKeywords) {
+        const _kwCap = kw.charAt(0).toUpperCase() + kw.slice(1);
+        pushEff('6', EFFECT_TYPE.ADD_ABILITY, { ability: _kwCap },
+          { appliesTo: _massCopy.fn, scope: 'global', selfTarget: false, affectsSelf: !_massCopy.excludesSelf },
+          `${_mcSubj} gain ${kw}.`, { _oraclePos: copyMatch.index });
+      }
+    } else if (!_isInActivatedEffect(copyMatch.index)) {
+      const _cpEff = pushEff('1', EFFECT_TYPE.COPY, copyParams,
         { appliesTo: null, scope: 'targeted', selfTarget: !isBecomesCopy || _isExiledCardCopy },
         `${isBecomesCopy ? 'Becomes' : 'Enter as'} a copy of ${targetDesc}${exceptClause ? ', except ' + exceptClause : ''}.`);
+      // "Any number of target creatures you control each become a copy of that creature"
+      // (Polymorphous Rush): the copies are the targets, as many as were picked.
+      if (isBecomesCopy) {
+        const _cpStart = Math.max(oracle.lastIndexOf('\n', copyMatch.index - 1), oracle.lastIndexOf('.', copyMatch.index - 1)) + 1;
+        const _cpSubject = oracle.substring(_cpStart, copyMatch.index).trim();
+        if (/^(?:any number of|up to \w+) target\b/i.test(_cpSubject)) {
+          const _cpApplies = buildAppliesToFromText(_cpSubject);
+          if (_cpApplies && _cpApplies.isSpellTarget && _cpApplies.maxTargets > 1) _applyTargetInfo(_cpEff, _cpApplies, _cpApplies.fn);
+        }
+      }
     }
   }
 

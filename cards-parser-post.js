@@ -199,7 +199,8 @@ function _finalizeEffects(effects, isEquipmentSource, permanent, oracleText) {
     const chosen = permanent._targetOpponentPlayerId || null;
     let tagged = false;
     for (const eff of effects) {
-      if (eff.scope === 'global' && !(eff.params && (eff.params.mutualSwap || eff.params.opponentGetsControl))) {
+      // (Not a mass copy: Sakashima's Will's "target opponent" is its other mode.)
+      if (eff.scope === 'global' && !(eff.params && (eff.params.mutualSwap || eff.params.opponentGetsControl || eff.params.massCopy))) {
         eff._targetsOpponentPlayer = true;
         if (chosen) eff._targetOpponentPlayerId = chosen;
         tagged = true;

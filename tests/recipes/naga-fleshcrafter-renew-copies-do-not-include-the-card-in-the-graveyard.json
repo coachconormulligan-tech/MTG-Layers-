@@ -1,0 +1,48 @@
+{
+  "name": "Naga Fleshcrafter — renew makes your other creatures copies; the Fleshcrafter is not one of them",
+  "notes": "Sweep group 5, mass copies (2026-10-07). \"Renew — {2}{U}, Exile this card from your graveyard: Put a +1/+1 counter on target nonlegendary creature you control. Each other creature you control becomes a copy of that creature until end of turn.\" A mass copy is one layer 1 copy effect over the whole group; what is copied is picked with the copy picker and is never one of the copies. The ability is used from the graveyard, so its source on the board is left out.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "b"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "g"
+    },
+    {
+      "add": "Naga Fleshcrafter",
+      "as": "s"
+    },
+    {
+      "fire": "@s",
+      "activated": 1,
+      "as": "t"
+    },
+    {
+      "copy": [
+        "@t",
+        "@g"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "name": "Hill Giant",
+        "power": 3,
+        "toughness": 3,
+        "subtypes": [
+          "Giant"
+        ]
+      }
+    },
+    {
+      "perm": "Naga Fleshcrafter",
+      "final": {
+        "name": "Naga Fleshcrafter"
+      }
+    }
+  ]
+}

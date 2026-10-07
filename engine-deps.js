@@ -23,6 +23,11 @@ function _findRealPerm(realPerms, id) {
    the updated global state.
 */
 
+function _massCopyCastStates(effect) {
+  const src = typeof Battlefield !== 'undefined' ? Battlefield.getPermById(effect.sourceId) : null;
+  return (src && src._castStates && src._castStates.size) ? src._castStates : null;
+}
+
 /* Does an effect apply to a specific permanent given its current state?
    `permId` is the permanent being tested (not necessarily the inspected one). */
 function effectAppliesToPerm(effect, permState, permanent, permId, allStates, abilityGroupAffectedPerms) {
@@ -57,6 +62,14 @@ function effectAppliesToPerm(effect, permState, permanent, permId, allStates, ab
         ? parseTypeLine(last.card.type_line || '') : { types: [] };
       if (!parsed.types.includes('Creature')) return false;
     }
+  }
+
+  // Mass copy ("Each other creature becomes a copy of target creature"): nothing until what is
+  // copied is known, and that object is never one of the copies.
+  if (effect.type === EFFECT_TYPE.COPY && effect.params && effect.params.massCopy) {
+    if (permId === effect.params._copyTargetPermId) return false;
+    if (!(effect.params.copyFromLinkedCard ? _massCopyLinkedCard(effect) : effect.params.copySource)) return false;
+    if (permanent && (permanent.isManualEffect || permanent.isSpell || permanent.isZoneCard)) return false;
   }
 
   // "…base power becomes equal to that creature's power" / "gains all activated abilities of
@@ -310,6 +323,11 @@ function effectAppliesToPerm(effect, permState, permanent, permId, allStates, ab
           // determining which permanents qualify — live state only governs what happens to
           // them after the target set is locked in.
           const snapState = effect._firedAtStates.get(permId);
+          if (!snapState || !effect.appliesTo(snapState, allStates, ctrlForFilter)) return false;
+        } else if (effect.params && effect.params.massCopy && _massCopyCastStates(effect)) {
+          // A spell's mass copy: the group is read off the board the spell was cast into (an
+          // animated land is one of Mirrorweave's creatures; Layer 1 alone would miss it).
+          const snapState = _massCopyCastStates(effect).get(permId);
           if (!snapState || !effect.appliesTo(snapState, allStates, ctrlForFilter)) return false;
         } else {
         const hasPrintedChangeling = (permanent.printedAbilities || []).some(a => /\bchangeling\b/i.test(a));
