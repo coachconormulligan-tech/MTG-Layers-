@@ -449,6 +449,10 @@ const Battlefield = {
     }
 
     if (firedAtStates && sourcePermId) parsedEffectText = _lockFireTimeBasePT(parsedEffectText, firedAtStates, sourcePermId);
+    // "…base power becomes equal to that creature's power" (Belligerent Yearling): the number
+    // is another object's, picked after firing.
+    const refPT = _basePTFromOtherObject(parsedEffectText, kind === 'trigger' ? fullText : '');
+    if (refPT) parsedEffectText = refPT.text;
 
     // "where X is the number of [gameState desc]" — snapshot count at fire time so the
     // displayed effect text and the P/T boost are both frozen to the board state at resolution,
@@ -506,13 +510,13 @@ const Battlefield = {
         triggerIsSelf = true;
       }
       // "another [subtype/type]" — also marks that the source itself is excluded
-      const anotherMatch = condText.match(/\banother\s+([A-Za-z]\w*)/i);
+      const anotherMatch = condText.match(/\banother\s+((?:nontoken\s+)?[A-Za-z]\w*)/i);
       if (anotherMatch) {
         triggerHasAnother = true;
         triggerSubject = anotherMatch[1];
       } else {
         // "a/an [subtype/type] [action]" — e.g. "a creature attacks you"
-        const aMatch = condText.match(/\ban?\s+([A-Za-z]\w*)\s+(?:you\s+(?:control|own)\s+)?(?:attacks?|dies|enters|leaves|is\s+dealt|gains?|loses?)/i);
+        const aMatch = condText.match(/\ban?\s+((?:nontoken\s+)?[A-Za-z]\w*)\s+(?:you\s+(?:control|own)\s+)?(?:attacks?|dies|enters|leaves|is\s+dealt|gains?|loses?)/i);
         if (aMatch) triggerSubject = aMatch[1];
       }
       // "Whenever a player attacks, … that player chooses an attacking creature. It gets +2/+0"
@@ -636,7 +640,9 @@ const Battlefield = {
     if (didItConversion) pseudoPerm._nonTargetingSelection = true;
     pseudoPerm._guessedTargetSubjects = savedGuesses === null ? null : [...guessedSubjects];
     // Sync oracleText with the fully-processed parsedEffectText (X substituted, "if" stripped, etc.)
-    pseudoPerm.oracleText = parsedEffectText;
+    // (A "…becomes equal to that creature's power" sentence keeps its own words on display and
+    // in a save, which replays this text; only the parser sees the placeholder.)
+    pseudoPerm.oracleText = refPT ? parsedEffectText.replace(refPT.plain, refPT.original) : parsedEffectText;
     const fakeCard = { name: sourcePerm.name, oracle_text: parsedEffectText, type_line: 'Instant', colors: sourcePerm.printedColors, cmc: 0 };
     // Detect "basic land type of your choice" in the ability text so the land-type
     // dropdown appears on the activated-ability pseudo-permanent (not on the source card).
@@ -704,6 +710,14 @@ const Battlefield = {
         }
         // The source is never what becomes the copy; keep it out of the picker.
         pseudoPerm._excludeAbilitySource = true;
+      }
+    }
+    if (refPT) {
+      const ptEff = newEffects.find(e => e.type === EFFECT_TYPE.SET_PT);
+      if (ptEff) {
+        ptEff.params.ptFromRef = refPT.ptFromRef;
+        ptEff.params.refPermId = null;
+        pseudoPerm._refPick = refPT.pick;
       }
     }
     _pinAbilityEffectsToSource(newEffects, sourcePermId);
@@ -1804,6 +1818,15 @@ const Battlefield = {
     this._invalidate();
   },
 
+  /* Set the object a fired ability takes its numbers from ("…base power becomes equal to that
+     creature's power" — Belligerent Yearling). The effect itself stays on the ability's source. */
+  setRefPerm(effectSourceId, refPermId) {
+    this.effects.forEach(e => {
+      if (e.sourceId === effectSourceId && e.params && e.params.ptFromRef) e.params.refPermId = refPermId || null;
+    });
+    this._invalidate();
+  },
+
   /* Set the chosen opponent for a "target opponent" source (e.g. Curious Colossus).
      The selected player is recorded on the permanent and stamped onto every effect
      tagged with _targetsOpponentPlayer so the engine can restrict application to
@@ -2858,12 +2881,13 @@ const Battlefield = {
     // Capture target intents from a given source's effects (shared by real
     // permanents and fired ability pseudo-perms).
     const captureTargets = (srcId) => {
-      let primaryTarget = null, multiTarget = null, copySource = null, targetTs = null, copyTargetPermId = null;
+      let primaryTarget = null, multiTarget = null, copySource = null, targetTs = null, copyTargetPermId = null, refPermId = null;
       const slotTargets = {}, modalTargets = {}, slotTs = {};
       for (const e of this.effects) {
         if (e.sourceId !== srcId) continue;
         if (e.type === EFFECT_TYPE.COPY && e.params && e.params.copySource) copySource = e.params.copySource;
         if (e.type === EFFECT_TYPE.COPY && e.params && e.params._copyTargetPermId) copyTargetPermId = e.params._copyTargetPermId;
+        if (e.params && e.params.ptFromRef && e.params.refPermId) refPermId = e.params.refPermId;
         if (e.scope !== 'targeted' || e.selfTarget) continue;
         if (e.targetIds && e.targetIds.length) multiTarget = e.targetIds.slice();
         if (e._targetSlot !== undefined) { if (e.targetId) { slotTargets[e._targetSlot] = e.targetId; slotTs[e._targetSlot] = e.timestamp; } }
@@ -2874,7 +2898,7 @@ const Battlefield = {
       // effects (auras/equipment), which setTarget/setSlottedTarget bump independently of
       // the perm's own timestamp. Without these, restore would reconstruct the order from
       // array iteration and silently flip last-timestamp-wins effects (CR 613.7).
-      return { primaryTarget, multiTarget, slotTargets, modalTargets, copySource, targetTs, slotTs, copyTargetPermId };
+      return { primaryTarget, multiTarget, slotTargets, modalTargets, copySource, targetTs, slotTs, copyTargetPermId, refPermId };
     };
 
     // Capture per-effect user choices that re-parse alone won't reproduce: exchange
@@ -3228,6 +3252,7 @@ const Battlefield = {
         }
       }
       if (r.primaryTarget && idMap[r.primaryTarget]) this.setTarget(nsId, idMap[r.primaryTarget]);
+      if (r.refPermId && idMap[r.refPermId]) this.setRefPerm(nsId, idMap[r.refPermId]);
       if (r.multiTarget) r.multiTarget.forEach((tid, i) => { if (idMap[tid]) this.setMultiTarget(nsId, i, idMap[tid]); });
       for (const [slot, tid] of Object.entries(r.slotTargets || {})) { if (idMap[tid]) this.setSlottedTarget(nsId, Number(slot), idMap[tid]); }
       for (const [mi, tid] of Object.entries(r.modalTargets || {})) { if (idMap[tid]) this.setModalModeTarget(nsId, Number(mi), idMap[tid]); }

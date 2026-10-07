@@ -453,6 +453,23 @@ function applyEffect(state, effect, context) {
           changes.push(`Set P/T to ${state.power}/${state.toughness} from imprinted "${last.card.name}" (was ${oldP}/${oldT})`);
           break;
         }
+        // Numbers taken from another object as the ability resolved (Belligerent Yearling,
+        // Riptide Mangler): read from the snapshot the ability was fired against.
+        if (effect.params.ptFromRef) {
+          const refId = effect.params.refPermId;
+          let ref = refId && effect._firedAtStates && effect._firedAtStates.get(refId);
+          if (!ref && refId && typeof Battlefield !== 'undefined') {
+            const rp = Battlefield.getPermById(refId);
+            if (rp) ref = { power: rp.printedPower, toughness: rp.printedToughness };
+          }
+          if (!ref) break;
+          const val = (spec) => (parseInt(ref[spec.stat], 10) || 0) + spec.add;
+          const { power: ps, toughness: tsp } = effect.params.ptFromRef;
+          if (ps) state.power = val(ps);
+          if (tsp) state.toughness = val(tsp);
+          changes.push(`Set ${ps && tsp ? 'P/T' : ps ? 'power' : 'toughness'} to ${ps && tsp ? state.power + '/' + state.toughness : ps ? state.power : state.toughness} (was ${oldP}/${oldT})`);
+          break;
+        }
         if (effect.params.useMV) {
           state.power = state.manaValue;
           state.toughness = state.manaValue;

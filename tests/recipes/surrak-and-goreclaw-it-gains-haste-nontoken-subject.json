@@ -1,0 +1,14 @@
+{
+  "name": "Surrak and Goreclaw — \"It gains haste\" for \"another nontoken creature you control\"",
+  "notes": "The trigger subject was read as the single word after \"another\", so \"it\" became \"target nontoken\" and nothing parsed. The subject now keeps \"nontoken creature\".",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Surrak and Goreclaw", "as": "sg" },
+    { "fire": "@sg", "trigger": 2, "as": "trig" },
+    { "call": ["setTarget", "@trig", "@bears"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$includes": ["Haste", "Trample"] } } },
+    { "perm": "Surrak and Goreclaw", "final": { "abilities": { "$excludes": ["Haste"] } } }
+  ]
+}

@@ -59,6 +59,9 @@ function effectAppliesToPerm(effect, permState, permanent, permId, allStates, ab
     }
   }
 
+  // "…base power becomes equal to that creature's power": nothing until that creature is picked.
+  if (effect.params && effect.params.ptFromRef && !effect.params.refPermId) return false;
+
   // "For each" boosts whose count is currently 0 (e.g. Strata Scythe with no matching lands):
   // hide the layer row entirely rather than showing an inert +0/+0 entry. Only suppress when
   // the count is genuinely 0 — non-numeric / null falls through to the normal flow.

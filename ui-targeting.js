@@ -373,6 +373,53 @@ function renderTargetSelect(sourceId) {
   </select>`;
 }
 
+/* The creature a fired ability takes its numbers from ("…base power becomes equal to that
+   creature's power" — Belligerent Yearling; "… target creature's power" — Riptide Mangler).
+   The effect stays on the ability's source; this only picks where the numbers come from. */
+function renderRefPermSelect(sourceId) {
+  const sourcePerm = Battlefield.getPermById(sourceId);
+  const pick = sourcePerm && sourcePerm._refPick;
+  const eff = Battlefield.effects.find(e => e.sourceId === sourceId && e.params && e.params.ptFromRef);
+  if (!pick || !eff) return '';
+  const current = eff.params.refPermId || '';
+  const sourceCtrl = sourcePerm.controller || sourcePerm.owner || Battlefield.activePlayerId;
+  const applies = buildAppliesToFromText(pick.filter);
+  const finalStates = Battlefield.getAllFinalStates();
+  const snapStates = sourcePerm._firedAtStates || null;
+  const options = Battlefield.permanents.filter(p => {
+    if (p.isManualEffect || p.isSpell) return false;
+    if (pick.excludeSource && p.id === sourcePerm.abilitySourceId) return false;
+    if (p.timestamp >= sourcePerm.timestamp && p.id !== current) return false;
+    const stack = Battlefield.getStack(p.id);
+    if (stack && stack.length >= 2 && stack[0] !== p.id) return false;
+    const fs = (snapStates && snapStates.get(p.id)) || finalStates.get(p.id);
+    if (!fs) return false;
+    if (pick.youControl && (fs.controller || p.controller || p.owner || 'player_0') !== sourceCtrl) return false;
+    if (applies.fn && !applies.isSelf && !applies.fn(fs, finalStates, sourceCtrl)) return false;
+    if (pick.isTarget) {
+      const abilities = fs.abilities || [];
+      if (abilities.some(a => /\bshroud\b/i.test(a))) return false;
+      if ((p.controller || p.owner || 'player_0') !== sourceCtrl && abilities.some(a => /\bhexproof\b/i.test(a))) return false;
+    }
+    return true;
+  });
+  return `<select class="ts-target-select" onchange="setRefPerm('${sourceId}', this.value)" onclick="event.stopPropagation()">
+    <option value="">${pick.isTarget ? '\u2192 target\u2026' : '\u2192 choose\u2026'}</option>
+    ${options.map(t => `<option value="${t.id}" ${t.id === current ? 'selected' : ''}>${escapeHtml(_refPermDisplayName(t, finalStates))}</option>`).join('')}
+  </select>`;
+}
+function _refPermDisplayName(t, finalStates) {
+  const fs = finalStates.get(t.id);
+  let name = (fs && fs.copySource ? fs.name + ' (copy)' : t.name) + (t.label ? ' ' + t.label : '');
+  if (Battlefield.players.length > 1 && t.owner) name += ` [${Battlefield.getPlayerName(t.controller || t.owner)}]`;
+  return name;
+}
+function setRefPerm(sourceId, permId) {
+  Battlefield.setRefPerm(sourceId, permId || null);
+  Battlefield.evaluate();
+  renderAll();
+}
+
 /* "Target opponent" dropdown — pick a single opponent (any player who is NOT the
    controller of this source's spell/ability). Used by cards like Curious Colossus
    whose effect reads "each creature target opponent controls...". */

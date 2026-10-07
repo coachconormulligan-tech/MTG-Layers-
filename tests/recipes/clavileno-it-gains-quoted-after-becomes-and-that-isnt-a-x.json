@@ -1,0 +1,18 @@
+{
+  "name": "Clavileño — \"It gains QUOTED\" after \"becomes a Demon\"; \"that isn't a X\" is not a type removal",
+  "notes": "Fired trigger: the quoted grant in the second sentence was dropped because its match was measured from the line start, inside the add-type match. \"Vampire that isn't a Demon\" was also read as a board-wide \"isn't a Demon\" type removal (same on Rakdos, the Showstopper; Heliod, the Radiant Dawn; Wrathful Raptors).",
+  "steps": [
+    { "add": "Vampire Nighthawk", "as": "hawk" },
+    { "add": "Rakdos, the Showstopper", "as": "rakdos" },
+    { "add": "Clavileño, First of the Blessed", "as": "clav" },
+    { "call": ["toggleAttacking", "@hawk"] },
+    { "fire": "@clav", "trigger": 0, "as": "trig" },
+    { "call": ["setTarget", "@trig", "@hawk"] }
+  ],
+  "asserts": [
+    { "perm": "Vampire Nighthawk", "final": {
+        "subtypes": { "$includes": ["Vampire", "Demon"] },
+        "abilities": { "$includes": ["When this creature dies, draw a card and create a tapped 4/3 white and black Vampire Demon creature token with flying."] } } },
+    { "perm": "Rakdos, the Showstopper", "final": { "subtypes": { "$includes": ["Demon"] } } }
+  ]
+}

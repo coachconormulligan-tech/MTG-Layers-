@@ -7,16 +7,13 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Absorb Identity | becomes | spell | You may have Shapeshifters you control become copies of that creature until end of turn. |
 | Amplifire | becomes | triggered | Until your next turn, this creature's base power becomes twice that card's power and its base toughness becomes twice that card's toughness. |
 | Aquamorph Entity | becomes | static | As this creature enters or is turned face up, it becomes your choice of 5/1 or 1/5. |
-| Belligerent Yearling | becomes | triggered | Whenever another Dinosaur you control enters, you may have this creature's base power become equal to that creature's power until end of turn. |
 | Breach the Multiverse | becomes | spell | Then each creature you control becomes a Phyrexian in addition to its other types. |
 | Brine Hag | becomes | triggered | When this creature dies, the base power and toughness of each creature that dealt damage to it this turn become 0/2. |
 | Deceiver of Form | becomes | triggered | If a creature card is revealed this way, you may have creatures you control other than this creature become copies of that card until end of turn. |
 | Dimir Keyrune | becomes | activated | {U}{B}: This artifact becomes a 2/2 blue and black Horror artifact creature until end of turn and can't be blocked this turn. |
 | Dracoplasm | becomes | static | This creature's power becomes the total power of those creatures and its toughness becomes their total toughness. |
-| Eldrazi Mimic | becomes | triggered | Whenever another colorless creature you control enters, you may have this creature's base power and toughness become equal to that creature's power and toughness until end of turn. |
 | Fractalize | becomes | spell | Until end of turn, target creature becomes a green and blue Fractal with base power and toughness each equal to X plus 1. |
 | Gornog, the Red Reaper | becomes | triggered | Whenever one or more Warriors you control attack a player, target creature that player controls becomes a Coward. |
-| Halfdane | becomes | triggered | At the beginning of your upkeep, this card's base power and toughness become equal to the power and toughness of target creature other than this card until the end of your next upkeep. |
 | Kitesail Larcenist | becomes | triggered | For as long as this creature remains on the battlefield, the chosen permanents become Treasure artifacts with "{T}, Sacrifice this artifact: Add one mana of any color" and lose all other abilities. |
 | Lydari Druid | becomes | triggered | Those lands become the land types chosen this way. |
 | Master of Winds | becomes | triggered | Whenever you cast an instant, sorcery, or Wizard spell, you may have this creature's base power and toughness become 4/1 or 1/4 until end of turn. |
@@ -25,10 +22,7 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Primal Adversary | becomes | triggered | When you pay this cost one or more times, put that many +1/+1 counters on this creature, then up to that many target lands you control become 3/3 Wolf creatures with haste that are still lands. |
 | Prismatic Dragon | becomes | activated | {2}: this card becomes a random color permanently. |
 | Prismatic Dragon | becomes | static | During your upkeep, this card becomes a random color permanently. |
-| Riptide Mangler | becomes | activated | {1}{U}: This creature's base power becomes equal to target creature's power. |
-| Shape Stealer | becomes | triggered | Whenever this creature blocks or becomes blocked by a creature, this creature's base power and toughness become equal to that creature's power and toughness until end of turn. |
 | Slumbering Tora | becomes | activated | {2}, Discard a Spirit or Arcane card: This artifact becomes an X/X Cat artifact creature until end of turn, where X is the discarded card's mana value. |
-| Sworn Defender | becomes | activated | {1}: This creature's power becomes the toughness of target creature blocking or being blocked by this creature minus 1 until end of turn, and its toughness becomes 1 plus the power of that creature until end of turn. |
 | Tenth District Hero | becomes | activated | {2}{W}, Collect evidence 4: If this creature is a Detective, it becomes a legendary creature named Mileva, the Stalwart, it has base power and toughness 5/5, and it gains "Other creatures you control have indestructible." |
 | The Legend of Kyoshi | becomes | static | That land becomes an Island in addition to its other types. |
 | Ultron, Artificial Malevolence | becomes | triggered | If the token isn't a creature, it becomes a 2/2 Robot Villain creature in addition to its other types. |
@@ -64,13 +58,13 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Song of Blood | gets +N/+N | spell | Whenever a creature attacks this turn, it gets +1/+0 until end of turn for each creature card put into your graveyard this way. |
 | Alpine Moon | has / gains | static | Lands your opponents control with the chosen name lose all land types and abilities, and they gain "{T}: Add one mana of any color." |
 | Cauldron Dance | has / gains | spell | That creature gains haste. |
-| Cherished Hatchling | has / gains | triggered | When this creature dies, you may cast Dinosaur spells this turn as though they had flash, and whenever you cast a Dinosaur spell this turn, it gains "When this creature enters, you may have it fight another target creature." |
 | Conspicuous Snoop | has / gains | static | As long as the top card of your library is a Goblin card, this creature has all activated abilities of that card. |
 | Dragonrage | has / gains | spell | Until end of turn, attacking creatures you control gain "{R}: This creature gets +1/+0 until end of turn." |
 | Dread Wight | has / gains | triggered | Each of those creatures gains "{4}: Remove a paralyzation counter from this creature." |
 | Energybending | has / gains | spell | Lands you control gain all basic land types until end of turn. |
 | Flash Conscription | has / gains | spell | If {W} was spent to cast this spell, the creature gains "Whenever this creature deals combat damage, you gain that much life" until end of turn. |
 | For the Common Good | has / gains | spell | Then tokens you control gain indestructible until your next turn. |
+| Galea, Kindler of Hope | has / gains | static | When you cast an Equipment spell this way, it gains "When this Equipment enters, attach it to target creature you control." |
 | Grell Philosopher | has / gains | triggered | Aberrant Tinkering — When this creature enters and at the beginning of your upkeep, each Horror you control gains all activated abilities of target artifact an opponent controls until end of turn. |
 | Greymond, Avacyn's Stalwart | has / gains | static | Humans you control have each of the chosen abilities. |
 | Havengul Lich | has / gains | activated | When you cast it this turn, this creature gains all activated abilities of that card until end of turn. |
@@ -87,6 +81,7 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 | Skill Borrower | has / gains | static | As long as the top card of your library is an artifact or creature card, this creature has all activated abilities of that card. |
 | Spider-Verse | has / gains | triggered | If the copy is a permanent spell, it gains haste. |
 | Spirit-Sister's Call | has / gains | triggered | If you do, return the chosen card from your graveyard to the battlefield and it gains "If this permanent would leave the battlefield, exile it instead of putting it anywhere else." |
+| Summon: Brynhildr | has / gains | static | II, III — Gestalt Mode — When you next cast a creature spell this turn, it gains haste until end of turn. |
 | Teferi's Reproach | has / gains | spell | Until that player's next turn, they gain protection from everything and their life total can't change. |
 | The Fourteenth Doctor | has / gains | static | If you do, it gains haste until end of turn. |
 | Trench Gorger | has / gains | triggered | If you do, this creature has base power and base toughness each equal to the number of cards exiled this way. |
