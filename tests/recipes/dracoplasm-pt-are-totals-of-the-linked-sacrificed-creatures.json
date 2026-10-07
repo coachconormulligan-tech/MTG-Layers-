@@ -1,0 +1,33 @@
+{
+  "name": "Dracoplasm — power and toughness are the totals of the linked sacrificed creatures",
+  "notes": "Sweep group 4 (2026-10-07). Linked cards: a permanent or fired ability holds the cards it reads values from although they are in no zone the site shows (\"Linked card\" button on the timeline row; saved with the board). \"This creature's power becomes the total power of those creatures and its toughness becomes their total toughness.\" parsed to nothing. Dracoplasm has a \"Sacrificed creatures\" slot; the totals use the cards' printed values. Grizzly Bears (2/2) and Craw Wurm (6/4) linked: 8/6.",
+  "steps": [
+    {
+      "add": "Dracoplasm",
+      "as": "d"
+    },
+    {
+      "call": [
+        "addLinkedCard",
+        "@d",
+        "card:Grizzly Bears"
+      ]
+    },
+    {
+      "call": [
+        "addLinkedCard",
+        "@d",
+        "card:Craw Wurm"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Dracoplasm",
+      "final": {
+        "power": 8,
+        "toughness": 6
+      }
+    }
+  ]
+}

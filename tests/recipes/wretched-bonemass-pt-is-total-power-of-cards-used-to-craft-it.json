@@ -1,0 +1,63 @@
+{
+  "name": "Wretched Bonemass — power and toughness are the total power of the exiled cards used to craft it",
+  "notes": "Sweep group 4 (2026-10-07). \"This card's power and toughness are each equal to the total power of the exiled cards used to craft it.\" parsed to nothing. Now a characteristic-defining effect in layer 7a summing the power of the exile entries tagged to it. Serra Angel (4) and Grizzly Bears (2) tagged, Craw Wurm untagged: 6/6, with flying and vigilance from Serra Angel. NOTE: exile ids are literal; build in its own process.",
+  "steps": [
+    {
+      "add": "Altar of the Wretched // Wretched Bonemass",
+      "as": "wb",
+      "opts": {
+        "faceIndex": 1
+      }
+    },
+    {
+      "call": [
+        "addToExile",
+        "card:Serra Angel"
+      ]
+    },
+    {
+      "call": [
+        "addToExile",
+        "card:Grizzly Bears"
+      ]
+    },
+    {
+      "call": [
+        "addToExile",
+        "card:Craw Wurm"
+      ]
+    },
+    {
+      "call": [
+        "setExileTag",
+        "exile_1",
+        "@wb"
+      ]
+    },
+    {
+      "call": [
+        "setExileTag",
+        "exile_2",
+        "@wb"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Wretched Bonemass",
+      "final": {
+        "power": 6,
+        "toughness": 6,
+        "abilities": {
+          "$includes": [
+            "Flying",
+            "Vigilance"
+          ],
+          "$excludes": [
+            "Trample"
+          ]
+        }
+      }
+    }
+  ]
+}

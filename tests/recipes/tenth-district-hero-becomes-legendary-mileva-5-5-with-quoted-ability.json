@@ -1,0 +1,58 @@
+{
+  "name": "Tenth District Hero — second ability: legendary, named Mileva, the Stalwart, 5/5, other creatures indestructible",
+  "notes": "Sweep group 2 (2026-10-07). \"If this creature is a Detective, it becomes a legendary creature named Mileva, the Stalwart, it has base power and toughness 5/5, and it gains \"Other creatures you control have indestructible.\"\" parsed to nothing: only the first \"it\" was read as the Hero, and nothing read \"named\" or \"legendary\". The fired text is split into one sentence a clause about the source; \"becomes a legendary creature named N\" sets the name and adds Legendary and keeps the creature types (CR 205.1a).",
+  "steps": [
+    {
+      "add": "Tenth District Hero",
+      "as": "hero"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "fire": "@hero",
+      "activated": 0
+    },
+    {
+      "fire": "@hero",
+      "activated": 1
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Tenth District Hero",
+      "final": {
+        "name": "Mileva, the Stalwart",
+        "supertypes": [
+          "Legendary"
+        ],
+        "types": [
+          "Creature"
+        ],
+        "subtypes": [
+          "Human",
+          "Detective"
+        ],
+        "power": 5,
+        "toughness": 5,
+        "abilities": {
+          "$excludes": [
+            "Indestructible"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Indestructible"
+          ]
+        },
+        "supertypes": []
+      }
+    }
+  ]
+}

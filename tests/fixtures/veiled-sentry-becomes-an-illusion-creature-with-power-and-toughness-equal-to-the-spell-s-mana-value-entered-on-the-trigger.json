@@ -1,0 +1,413 @@
+{
+ "name": "Veiled Sentry — becomes an Illusion creature with power and toughness equal to the spell's mana value, entered on the trigger",
+ "notes": "Sweep group 4 (2026-10-07). A number read off a card that is not on the battlefield is asked for as X on the fired ability (the \"where X is …\" clause is cut from the fired text and the ability gets an X input, saved with the board). \"it becomes an Illusion creature with power and toughness each equal to that spell's mana value\" gave the types but no power or toughness. The fired text reads \"becomes an X/X Illusion creature\". X = 4: a 4/4 Illusion creature.",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Veiled Sentry",
+    "as": "vs"
+   },
+   {
+    "fire": "@vs",
+    "trigger": 0,
+    "as": "t"
+   },
+   {
+    "call": [
+     "setXValue",
+     "@t",
+     4
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Veiled Sentry",
+   "final": {
+    "power": 4,
+    "toughness": 4,
+    "types": [
+     "Creature"
+    ],
+    "subtypes": [
+     "Illusion"
+    ]
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "de458a9d-6c09-42bb-b470-c2691e95345a",
+     "oracle_id": "0b9b8e60-51eb-4d4a-95c1-48ca5b8153df",
+     "multiverse_ids": [
+      5793
+     ],
+     "mtgo_id": 11991,
+     "mtgo_foil_id": 11992,
+     "tcgplayer_id": 7088,
+     "cardmarket_id": 10316,
+     "name": "Veiled Sentry",
+     "lang": "en",
+     "released_at": "1998-10-12",
+     "uri": "https://api.scryfall.com/cards/de458a9d-6c09-42bb-b470-c2691e95345a",
+     "scryfall_uri": "https://scryfall.com/card/usg/109/veiled-sentry?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T12:39:12Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/d/e/de458a9d-6c09-42bb-b470-c2691e95345a.jpg?1783946352",
+      "normal": "https://cards.scryfall.io/normal/front/d/e/de458a9d-6c09-42bb-b470-c2691e95345a.jpg?1783946352",
+      "large": "https://cards.scryfall.io/large/front/d/e/de458a9d-6c09-42bb-b470-c2691e95345a.jpg?1783946352",
+      "png": "https://cards.scryfall.io/png/front/d/e/de458a9d-6c09-42bb-b470-c2691e95345a.png?1783946352",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/d/e/de458a9d-6c09-42bb-b470-c2691e95345a.jpg?1783946352",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/d/e/de458a9d-6c09-42bb-b470-c2691e95345a.jpg?1783946352",
+      "thumb": "https://cards.scryfall.io/thumb/front/d/e/de458a9d-6c09-42bb-b470-c2691e95345a.webp?1783946352",
+      "grid": "https://cards.scryfall.io/grid/front/d/e/de458a9d-6c09-42bb-b470-c2691e95345a.webp?1783946352",
+      "display": "https://cards.scryfall.io/display/front/d/e/de458a9d-6c09-42bb-b470-c2691e95345a.webp?1783946352",
+      "art": "https://cards.scryfall.io/art/front/d/e/de458a9d-6c09-42bb-b470-c2691e95345a.webp?1783946352",
+      "crop": "https://cards.scryfall.io/crop/front/d/e/de458a9d-6c09-42bb-b470-c2691e95345a.webp?1783946352"
+     },
+     "mana_cost": "{U}",
+     "cmc": 1,
+     "type_line": "Enchantment",
+     "oracle_text": "When an opponent casts a spell, if this permanent is an enchantment, it becomes an Illusion creature with power and toughness each equal to that spell's mana value.",
+     "colors": [
+      "U"
+     ],
+     "color_identity": [
+      "U"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "c330df40-51db-4caf-bde6-48df6c181001",
+     "set": "usg",
+     "set_name": "Urza's Saga",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/c330df40-51db-4caf-bde6-48df6c181001",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Ausg&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/usg?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/de458a9d-6c09-42bb-b470-c2691e95345a/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A0b9b8e60-51eb-4d4a-95c1-48ca5b8153df&unique=prints",
+     "collector_number": "109",
+     "digital": false,
+     "rarity": "uncommon",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Ron Spears",
+     "artist_ids": [
+      "fce9030b-86bd-4439-b06a-920a1eeb184c"
+     ],
+     "illustration_id": "f1888e4c-a114-49d1-b763-b09f75673dda",
+     "border_color": "black",
+     "frame": "1997",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 28668,
+     "penny_rank": 9046,
+     "prices": {
+      "usd": "0.24",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.27",
+      "eur_foil": null,
+      "tix": "0.04"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=5793&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DVeiled%2BSentry",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DVeiled%2BSentry",
+      "edhrec": "https://edhrec.com/route/?cc=Veiled+Sentry"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F7088%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=10316&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/11991?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [
+   {
+    "id": "trig_perm_1_0_2",
+    "kind": "trigger",
+    "pseudoKind": "ability",
+    "sourceId": "perm_1",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 0,
+    "timestamp": 2,
+    "effectText": "This permanent becomes an X/X Illusion creature.",
+    "xValue": 4,
+    "hasXValue": true,
+    "fullText": "When an opponent casts a spell, if this permanent is an enchantment, it becomes an Illusion creature with power and toughness each equal to that spell's mana value.",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "guessedTargetSubjects": [],
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Veiled Sentry",
+       "types": [
+        "Enchantment"
+       ],
+       "supertypes": [],
+       "subtypes": [],
+       "power": null,
+       "toughness": null,
+       "colors": [
+        "U"
+       ],
+       "abilities": [
+        "When an opponent casts a spell, if this permanent is an enchantment, it becomes an Illusion creature with power and toughness each equal to that spell's mana value."
+       ],
+       "oracleText": "When an opponent casts a spell, if this permanent is an enchantment, it becomes an Illusion creature with power and toughness each equal to that spell's mana value.",
+       "owner": "player_0",
+       "controller": "player_0"
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Veiled Sentry",
+       "imageUri": "https://cards.scryfall.io/small/front/d/e/de458a9d-6c09-42bb-b470-c2691e95345a.jpg?1783946352",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Enchantment"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 1
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    },
+    "primaryTarget": "perm_1",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 2,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null
+   }
+  ],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Veiled Sentry",
+    "final": {
+     "name": "Veiled Sentry",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Illusion"
+     ],
+     "power": 4,
+     "toughness": 4,
+     "colors": [
+      "U"
+     ],
+     "abilities": [
+      "When an opponent casts a spell, if this permanent is an enchantment, it becomes an Illusion creature with power and toughness each equal to that spell's mana value."
+     ]
+    },
+    "changedBy": {
+     "4": [
+      "Veiled Sentry (trigger)"
+     ],
+     "7b": [
+      "Veiled Sentry (trigger)"
+     ]
+    }
+   }
+  ],
+  "order": {
+   "4": [
+    "Veiled Sentry (trigger)"
+   ],
+   "7b": [
+    "Veiled Sentry (trigger)"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Veiled Sentry (trigger)",
+    "layer": "4",
+    "type": "set_types",
+    "scope": "targeted",
+    "target": "Veiled Sentry",
+    "params": {
+     "keepSupertypes": true,
+     "subtypes": [
+      "Illusion"
+     ],
+     "types": [
+      "Creature"
+     ]
+    }
+   },
+   {
+    "source": "Veiled Sentry (trigger)",
+    "layer": "7b",
+    "type": "set_pt",
+    "scope": "targeted",
+    "target": "Veiled Sentry",
+    "params": {
+     "power": 4,
+     "toughness": 4
+    }
+   }
+  ]
+ }
+}

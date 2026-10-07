@@ -107,6 +107,7 @@ function renderTimestampPanel() {
         ${showBestowBtn ? `<button class="ts-action-btn configure bestow-btn${isBestowActive ? ' bestow-active' : ''}" onclick="event.stopPropagation(); openBestowModal('${p.id}')" title="Bestow">Bestow</button>` : ''}
         ${isBestowActive ? `<button class="ts-action-btn remove-mutate-btn" onclick="event.stopPropagation(); removeBestow('${p.id}')" title="Remove bestow">✕</button>` : ''}
         ${showImprintBtn ? renderImprintButton(p.id) : ''}
+        ${p._linkedCardSlot ? renderLinkedCardButton(p.id) : ''}
         ${showAbilityRemove ? `<button class="ts-action-btn remove-mutate-btn" onclick="event.stopPropagation(); removeAbilityEffect('${p.id}')" title="Remove">✕</button>` : ''}
       </div>
       ${effInfo.hasCDA ? renderCDAInput(p) : ''}

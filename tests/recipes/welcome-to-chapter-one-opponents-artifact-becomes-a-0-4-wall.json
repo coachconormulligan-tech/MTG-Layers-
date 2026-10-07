@@ -1,0 +1,71 @@
+{
+  "name": "Welcome to . . . — chapter I makes an opponent's noncreature artifact a 0/4 Wall artifact creature with defender",
+  "notes": "Sweep group 2 (2026-10-07). \"For each opponent, up to one target noncreature artifact they control becomes a 0/4 Wall artifact creature with defender for as long as you control this Saga.\" parsed to nothing; without the \"for each opponent\" the trailing duration gave a junk ability \"Defender For\". The subject is rewritten to one target an opponent, and the duration is cut from the type text. Chapter II's \"It gains haste\" is about the Dinosaur token and must not give the Saga haste (two lore counters here).",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Sol Ring",
+      "as": "ring",
+      "controller": "p2"
+    },
+    {
+      "add": "Welcome to . . . // Jurassic Park",
+      "as": "saga"
+    },
+    {
+      "call": [
+        "addCounter",
+        "@saga",
+        "lore",
+        2
+      ]
+    },
+    {
+      "call": [
+        "setTarget",
+        "@saga",
+        "@ring"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Sol Ring",
+      "final": {
+        "power": 0,
+        "toughness": 4,
+        "types": {
+          "$includes": [
+            "Artifact",
+            "Creature"
+          ]
+        },
+        "subtypes": {
+          "$includes": [
+            "Wall"
+          ]
+        },
+        "abilities": {
+          "$includes": [
+            "Defender"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Welcome to . . .",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Haste"
+          ]
+        }
+      }
+    }
+  ]
+}

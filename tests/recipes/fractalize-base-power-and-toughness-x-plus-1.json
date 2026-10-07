@@ -1,0 +1,41 @@
+{
+  "name": "Fractalize — target creature becomes a green and blue Fractal with base power and toughness X plus 1",
+  "notes": "Sweep group 2 (2026-10-07). \"with base power and toughness each equal to 3 plus 1\" (X filled in) hit the set-type skip words and the whole sentence was dropped. That clause is now read as a base P/T. X = 3: Grizzly Bears is a 4/4 green and blue Fractal.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Fractalize",
+      "as": "f",
+      "spell": true,
+      "x": 3
+    },
+    {
+      "call": [
+        "setTarget",
+        "@f",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 4,
+        "toughness": 4,
+        "subtypes": [
+          "Fractal"
+        ],
+        "colors": {
+          "$includes": [
+            "U",
+            "G"
+          ]
+        }
+      }
+    }
+  ]
+}

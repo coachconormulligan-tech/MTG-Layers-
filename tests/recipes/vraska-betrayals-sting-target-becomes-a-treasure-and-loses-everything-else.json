@@ -1,0 +1,42 @@
+{
+  "name": "Vraska, Betrayal's Sting — −2 makes the target a Treasure artifact with the Treasure ability and nothing else",
+  "notes": "Sweep group 2 (2026-10-07). A quoted ability with no period in it was not lifted out of the \"becomes\" text, so \"Sacrifice\", \"mana\" and \"loses\" aborted the parse. Whole quotes are lifted now, and \"and loses all other card types and abilities\" removes the abilities on the same subject before the quoted one is granted. Serra Angel: Artifact — Treasure with only the Treasure ability.",
+  "steps": [
+    {
+      "add": "Serra Angel",
+      "as": "angel"
+    },
+    {
+      "add": "Vraska, Betrayal's Sting",
+      "as": "vraska"
+    },
+    {
+      "fire": "@vraska",
+      "activated": 2,
+      "as": "t"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@t",
+        "@angel"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Serra Angel",
+      "final": {
+        "types": [
+          "Artifact"
+        ],
+        "subtypes": [
+          "Treasure"
+        ],
+        "abilities": [
+          "{T}, Sacrifice this card: Add one mana of any color"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,663 @@
+{
+ "name": "Welcome to . . . — chapter I makes an opponent's noncreature artifact a 0/4 Wall artifact creature with defender",
+ "notes": "Sweep group 2 (2026-10-07). \"For each opponent, up to one target noncreature artifact they control becomes a 0/4 Wall artifact creature with defender for as long as you control this Saga.\" parsed to nothing; without the \"for each opponent\" the trailing duration gave a junk ability \"Defender For\". The subject is rewritten to one target an opponent, and the duration is cut from the type text. Chapter II's \"It gains haste\" is about the Dinosaur token and must not give the Saga haste (two lore counters here).",
+ "recipe": {
+  "steps": [
+   {
+    "call": [
+     "addPlayer",
+     "Opponent"
+    ]
+   },
+   {
+    "add": "Sol Ring",
+    "as": "ring",
+    "controller": "p2"
+   },
+   {
+    "add": "Welcome to . . . // Jurassic Park",
+    "as": "saga"
+   },
+   {
+    "call": [
+     "addCounter",
+     "@saga",
+     "lore",
+     2
+    ]
+   },
+   {
+    "call": [
+     "setTarget",
+     "@saga",
+     "@ring"
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Sol Ring",
+   "final": {
+    "power": 0,
+    "toughness": 4,
+    "types": {
+     "$includes": [
+      "Artifact",
+      "Creature"
+     ]
+    },
+    "subtypes": {
+     "$includes": [
+      "Wall"
+     ]
+    },
+    "abilities": {
+     "$includes": [
+      "Defender"
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Welcome to . . .",
+   "final": {
+    "abilities": {
+     "$excludes": [
+      "Haste"
+     ]
+    }
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "8ee443cc-e17a-493b-9c93-1f9e141a30e4",
+     "oracle_id": "6ad8011d-3471-4369-9d68-b264cc027487",
+     "multiverse_ids": [],
+     "resource_id": "B12151C9CD0511F86702A215428AAE1A3170DF60AA4DE769D4FA59EDC207CA20",
+     "mtgo_id": 156438,
+     "tcgplayer_id": 717788,
+     "cardmarket_id": 909814,
+     "name": "Sol Ring",
+     "lang": "en",
+     "released_at": "2026-10-02",
+     "uri": "https://api.scryfall.com/cards/8ee443cc-e17a-493b-9c93-1f9e141a30e4",
+     "scryfall_uri": "https://scryfall.com/card/frc/21/sol-ring?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-09-17T11:27:26Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.jpg?1789644446",
+      "normal": "https://cards.scryfall.io/normal/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.jpg?1789644446",
+      "large": "https://cards.scryfall.io/large/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.jpg?1789644446",
+      "png": "https://cards.scryfall.io/png/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.png?1789644446",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.jpg?1789644446",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.jpg?1789644446",
+      "thumb": "https://cards.scryfall.io/thumb/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.webp?1789644446",
+      "grid": "https://cards.scryfall.io/grid/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.webp?1789644446",
+      "display": "https://cards.scryfall.io/display/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.webp?1789644446",
+      "art": "https://cards.scryfall.io/art/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.webp?1789644446",
+      "crop": "https://cards.scryfall.io/crop/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.webp?1789644446"
+     },
+     "mana_cost": "{1}",
+     "cmc": 1,
+     "type_line": "Artifact",
+     "oracle_text": "{T}: Add {C}{C}.",
+     "colors": [],
+     "color_identity": [],
+     "keywords": [],
+     "produced_mana": [
+      "C"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "banned",
+      "pauper": "not_legal",
+      "vintage": "restricted",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "banned",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "banned",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "banned"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "cfd10490-7397-4143-bda7-d388b877636f",
+     "set": "frc",
+     "set_name": "Reality Fracture Commander",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/cfd10490-7397-4143-bda7-d388b877636f",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Afrc&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/frc?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/8ee443cc-e17a-493b-9c93-1f9e141a30e4/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A6ad8011d-3471-4369-9d68-b264cc027487&unique=prints",
+     "collector_number": "21",
+     "digital": false,
+     "rarity": "uncommon",
+     "flavor_text": "Jace could see the sunlight in his Multiverse, but somewhere along the way, he lost the feel of its warmth.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Titus Lunter",
+     "artist_ids": [
+      "b11e6b3a-f4ca-4cf1-8fd7-475696de5f5c"
+     ],
+     "illustration_id": "f142ba5f-999f-42f6-b56e-26164a3b6b87",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 1,
+     "preview": {
+      "source": "Wizards of the Coast",
+      "source_uri": "https://youtu.be/mvTyHbTbfBo",
+      "previewed_at": "2026-09-16"
+     },
+     "prices": {
+      "usd": "1.13",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "1.13",
+      "eur_foil": null,
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DSol%2BRing",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DSol%2BRing",
+      "edhrec": "https://edhrec.com/route/?cc=Sol+Ring"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F717788%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=909814&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/156438?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_1",
+    "controller": "player_1",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "6d84e2d4-38bf-4d46-99a6-37c2dda66b16",
+     "oracle_id": "a4b37d16-95b3-4143-a0b2-ad9f2aba91f8",
+     "multiverse_ids": [
+      642678,
+      642679
+     ],
+     "mtgo_id": 117420,
+     "tcgplayer_id": 517547,
+     "cardmarket_id": 740983,
+     "name": "Welcome to . . . // Jurassic Park",
+     "lang": "en",
+     "released_at": "2023-11-17",
+     "uri": "https://api.scryfall.com/cards/6d84e2d4-38bf-4d46-99a6-37c2dda66b16",
+     "scryfall_uri": "https://scryfall.com/card/rex/7/welcome-to-jurassic-park?utm_source=api",
+     "layout": "transform",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T03:34:04Z",
+     "cmc": 3,
+     "type_line": "Enchantment — Saga // Legendary Land",
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [
+      "Transform"
+     ],
+     "produced_mana": [
+      "G"
+     ],
+     "card_faces": [
+      {
+       "object": "card_face",
+       "name": "Welcome to . . .",
+       "mana_cost": "{1}{G}{G}",
+       "type_line": "Enchantment — Saga",
+       "oracle_text": "(As this Saga enters and after your draw step, add a lore counter.)\nI — For each opponent, up to one target noncreature artifact they control becomes a 0/4 Wall artifact creature with defender for as long as you control this Saga.\nII — Create a 3/3 green Dinosaur creature token with trample. It gains haste until end of turn.\nIII — Destroy all Walls. Exile this Saga, then return it to the battlefield transformed under your control.",
+       "colors": [
+        "G"
+       ],
+       "artist": "Villarrte",
+       "artist_id": "86e7f7ce-7a21-4f2d-9edd-28fa2a8d988b",
+       "illustration_id": "6a8add04-dc57-4b23-914d-e6f91ba498db",
+       "image_uris": {
+        "small": "https://cards.scryfall.io/small/front/6/d/6d84e2d4-38bf-4d46-99a6-37c2dda66b16.jpg?1783913644",
+        "normal": "https://cards.scryfall.io/normal/front/6/d/6d84e2d4-38bf-4d46-99a6-37c2dda66b16.jpg?1783913644",
+        "large": "https://cards.scryfall.io/large/front/6/d/6d84e2d4-38bf-4d46-99a6-37c2dda66b16.jpg?1783913644",
+        "png": "https://cards.scryfall.io/png/front/6/d/6d84e2d4-38bf-4d46-99a6-37c2dda66b16.png?1783913644",
+        "art_crop": "https://cards.scryfall.io/art_crop/front/6/d/6d84e2d4-38bf-4d46-99a6-37c2dda66b16.jpg?1783913644",
+        "border_crop": "https://cards.scryfall.io/border_crop/front/6/d/6d84e2d4-38bf-4d46-99a6-37c2dda66b16.jpg?1783913644",
+        "thumb": "https://cards.scryfall.io/thumb/front/6/d/6d84e2d4-38bf-4d46-99a6-37c2dda66b16.webp?1783913644",
+        "grid": "https://cards.scryfall.io/grid/front/6/d/6d84e2d4-38bf-4d46-99a6-37c2dda66b16.webp?1783913644",
+        "display": "https://cards.scryfall.io/display/front/6/d/6d84e2d4-38bf-4d46-99a6-37c2dda66b16.webp?1783913644",
+        "art": "https://cards.scryfall.io/art/front/6/d/6d84e2d4-38bf-4d46-99a6-37c2dda66b16.webp?1783913644",
+        "crop": "https://cards.scryfall.io/crop/front/6/d/6d84e2d4-38bf-4d46-99a6-37c2dda66b16.webp?1783913644"
+       }
+      },
+      {
+       "object": "card_face",
+       "name": "Jurassic Park",
+       "mana_cost": "",
+       "type_line": "Legendary Land",
+       "oracle_text": "(Transforms from Welcome to ....)\nEach Dinosaur card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard. (You may cast cards from your graveyard for their escape cost.)\n{T}: Add {G} for each Dinosaur you control.",
+       "colors": [],
+       "artist": "Villarrte",
+       "artist_id": "86e7f7ce-7a21-4f2d-9edd-28fa2a8d988b",
+       "illustration_id": "47c2fd81-5bdd-4822-87c4-f84465d43607",
+       "image_uris": {
+        "small": "https://cards.scryfall.io/small/back/6/d/6d84e2d4-38bf-4d46-99a6-37c2dda66b16.jpg?1783913644",
+        "normal": "https://cards.scryfall.io/normal/back/6/d/6d84e2d4-38bf-4d46-99a6-37c2dda66b16.jpg?1783913644",
+        "large": "https://cards.scryfall.io/large/back/6/d/6d84e2d4-38bf-4d46-99a6-37c2dda66b16.jpg?1783913644",
+        "png": "https://cards.scryfall.io/png/back/6/d/6d84e2d4-38bf-4d46-99a6-37c2dda66b16.png?1783913644",
+        "art_crop": "https://cards.scryfall.io/art_crop/back/6/d/6d84e2d4-38bf-4d46-99a6-37c2dda66b16.jpg?1783913644",
+        "border_crop": "https://cards.scryfall.io/border_crop/back/6/d/6d84e2d4-38bf-4d46-99a6-37c2dda66b16.jpg?1783913644",
+        "thumb": "https://cards.scryfall.io/thumb/back/6/d/6d84e2d4-38bf-4d46-99a6-37c2dda66b16.webp?1783913644",
+        "grid": "https://cards.scryfall.io/grid/back/6/d/6d84e2d4-38bf-4d46-99a6-37c2dda66b16.webp?1783913644",
+        "display": "https://cards.scryfall.io/display/back/6/d/6d84e2d4-38bf-4d46-99a6-37c2dda66b16.webp?1783913644",
+        "art": "https://cards.scryfall.io/art/back/6/d/6d84e2d4-38bf-4d46-99a6-37c2dda66b16.webp?1783913644",
+        "crop": "https://cards.scryfall.io/crop/back/6/d/6d84e2d4-38bf-4d46-99a6-37c2dda66b16.webp?1783913644"
+       }
+      }
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "20f22bef-e00f-461b-a75b-c5ad49865044",
+       "component": "token",
+       "name": "Dinosaur",
+       "type_line": "Token Creature — Dinosaur",
+       "uri": "https://api.scryfall.com/cards/20f22bef-e00f-461b-a75b-c5ad49865044"
+      },
+      {
+       "object": "related_card",
+       "id": "6d84e2d4-38bf-4d46-99a6-37c2dda66b16",
+       "component": "combo_piece",
+       "name": "Welcome to . . . // Jurassic Park",
+       "type_line": "Enchantment — Saga // Legendary Land",
+       "uri": "https://api.scryfall.com/cards/6d84e2d4-38bf-4d46-99a6-37c2dda66b16"
+      }
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "647b6fd3-6935-4b96-85a4-d0191487ea5a",
+     "set": "rex",
+     "set_name": "Jurassic World Collection",
+     "set_type": "eternal",
+     "set_uri": "https://api.scryfall.com/sets/647b6fd3-6935-4b96-85a4-d0191487ea5a",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Arex&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/rex?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/6d84e2d4-38bf-4d46-99a6-37c2dda66b16/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aa4b37d16-95b3-4143-a0b2-ad9f2aba91f8&unique=prints",
+     "collector_number": "7",
+     "digital": false,
+     "rarity": "rare",
+     "artist": "Villarrte",
+     "artist_ids": [
+      "86e7f7ce-7a21-4f2d-9edd-28fa2a8d988b"
+     ],
+     "border_color": "borderless",
+     "frame": "2015",
+     "frame_effects": [
+      "legendary",
+      "inverted"
+     ],
+     "security_stamp": "triangle",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "universesbeyond",
+      "boosterfun"
+     ],
+     "edhrec_rank": 5604,
+     "prices": {
+      "usd": "29.50",
+      "usd_foil": "38.68",
+      "usd_etched": null,
+      "eur": "22.21",
+      "eur_foil": "28.97",
+      "tix": "8.58"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=642678&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DWelcome%2Bto%2B.%2B.%2B.%2B%252F%252F%2BJurassic%2BPark",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DWelcome%2Bto%2B.%2B.%2B.%2B%252F%252F%2BJurassic%2BPark",
+      "edhrec": "https://edhrec.com/route/?cc=Welcome+to+.+.+."
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F517547%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=740983&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/117420?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {
+     "lore": 2
+    },
+    "counterTimestamps": {
+     "lore": 3
+    },
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": "perm_1",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 4,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   },
+   {
+    "id": "player_1",
+    "name": "Opponent",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": false,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 2,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Sol Ring",
+    "final": {
+     "name": "Sol Ring",
+     "controller": "player_1",
+     "supertypes": [],
+     "types": [
+      "Artifact",
+      "Creature"
+     ],
+     "subtypes": [
+      "Wall"
+     ],
+     "power": 0,
+     "toughness": 4,
+     "colors": [],
+     "abilities": [
+      "{T}: Add {C}{C}.",
+      "Defender"
+     ]
+    },
+    "changedBy": {
+     "4": [
+      "Welcome to . . ."
+     ],
+     "6": [
+      "Welcome to . . ."
+     ],
+     "7b": [
+      "Welcome to . . ."
+     ]
+    }
+   },
+   {
+    "perm": "Welcome to . . .",
+    "final": {
+     "name": "Welcome to . . .",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Enchantment"
+     ],
+     "subtypes": [
+      "Saga"
+     ],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "I — For each opponent, up to one target noncreature artifact they control becomes a 0/4 Wall artifact creature with defender for as long as you control this Saga.",
+      "II — Create a 3/3 green Dinosaur creature token with trample. It gains haste until end of turn.",
+      "III — Destroy all Walls. Exile this Saga, then return it to the battlefield transformed under your control."
+     ],
+     "counters": {
+      "lore": 2
+     }
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "4": [
+    "Welcome to . . ."
+   ],
+   "6": [
+    "Welcome to . . ."
+   ],
+   "7b": [
+    "Welcome to . . ."
+   ]
+  },
+  "effects": [
+   {
+    "source": "Welcome to . . .",
+    "layer": "4",
+    "type": "add_type",
+    "scope": "targeted",
+    "target": "Sol Ring",
+    "params": {
+     "subtypes": [
+      "Wall"
+     ],
+     "types": [
+      "Creature"
+     ]
+    }
+   },
+   {
+    "source": "Welcome to . . .",
+    "layer": "7b",
+    "type": "set_pt",
+    "scope": "targeted",
+    "target": "Sol Ring",
+    "params": {
+     "power": 0,
+     "toughness": 4
+    }
+   },
+   {
+    "source": "Welcome to . . .",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "target": "Sol Ring",
+    "params": {
+     "ability": "Defender"
+    }
+   }
+  ]
+ }
+}

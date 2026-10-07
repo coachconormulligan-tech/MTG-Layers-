@@ -1,0 +1,37 @@
+{
+  "name": "Veiled Sentry — becomes an Illusion creature with power and toughness equal to the spell's mana value, entered on the trigger",
+  "notes": "Sweep group 4 (2026-10-07). A number read off a card that is not on the battlefield is asked for as X on the fired ability (the \"where X is …\" clause is cut from the fired text and the ability gets an X input, saved with the board). \"it becomes an Illusion creature with power and toughness each equal to that spell's mana value\" gave the types but no power or toughness. The fired text reads \"becomes an X/X Illusion creature\". X = 4: a 4/4 Illusion creature.",
+  "steps": [
+    {
+      "add": "Veiled Sentry",
+      "as": "vs"
+    },
+    {
+      "fire": "@vs",
+      "trigger": 0,
+      "as": "t"
+    },
+    {
+      "call": [
+        "setXValue",
+        "@t",
+        4
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Veiled Sentry",
+      "final": {
+        "power": 4,
+        "toughness": 4,
+        "types": [
+          "Creature"
+        ],
+        "subtypes": [
+          "Illusion"
+        ]
+      }
+    }
+  ]
+}

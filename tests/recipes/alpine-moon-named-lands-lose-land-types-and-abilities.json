@@ -1,0 +1,69 @@
+{
+  "name": "Alpine Moon — an opponent's lands with the chosen name lose all land types and abilities and tap for any color",
+  "notes": "Sweep group 2 (2026-10-07). \"Lands your opponents control with the chosen name lose all land types and abilities, and they gain \"{T}: Add one mana of any color.\"\" parsed to nothing: no name prompt for \"choose a nonbasic land card name\", no filter by name, and nothing read \"lose all land types\". Chosen name Urza's Mine: the opponent's Urza's Mine loses its Urza's and Mine subtypes and its ability and has only the new one; the opponent's Forest and your own Urza's Tower are untouched.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Urza's Tower",
+      "as": "mine"
+    },
+    {
+      "add": "Urza's Mine",
+      "as": "theirs",
+      "controller": "p2"
+    },
+    {
+      "add": "Forest",
+      "as": "forest",
+      "controller": "p2"
+    },
+    {
+      "add": "Alpine Moon",
+      "as": "moon"
+    },
+    {
+      "call": [
+        "setChosenCardName",
+        "@moon",
+        "Urza's Mine"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Urza's Mine",
+      "final": {
+        "types": [
+          "Land"
+        ],
+        "subtypes": [],
+        "abilities": [
+          "{T}: Add one mana of any color."
+        ]
+      }
+    },
+    {
+      "perm": "Forest",
+      "final": {
+        "subtypes": [
+          "Forest"
+        ]
+      }
+    },
+    {
+      "perm": "Urza's Tower",
+      "final": {
+        "subtypes": {
+          "$includes": [
+            "Tower"
+          ]
+        }
+      }
+    }
+  ]
+}

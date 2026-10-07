@@ -1,0 +1,49 @@
+{
+  "name": "Cait Sith, Fortune Teller — target creature gets +X/+0, X = the exiled card's mana value, entered on the trigger",
+  "notes": "Sweep group 4 (2026-10-07). A number read off a card that is not on the battlefield is asked for as X on the fired ability (the \"where X is …\" clause is cut from the fired text and the ability gets an X input, saved with the board). \"When you exile a card this way, target creature you control gets +X/+0 until end of turn, where X is that card's mana value.\" parsed to nothing. X = 4: Grizzly Bears 6/2.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Cait Sith, Fortune Teller",
+      "as": "cs"
+    },
+    {
+      "fire": "@cs",
+      "trigger": 0,
+      "as": "t"
+    },
+    {
+      "call": [
+        "setXValue",
+        "@t",
+        4
+      ]
+    },
+    {
+      "call": [
+        "setTarget",
+        "@t",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 6,
+        "toughness": 2
+      }
+    },
+    {
+      "perm": "Cait Sith, Fortune Teller",
+      "final": {
+        "power": 3,
+        "toughness": 3
+      }
+    }
+  ]
+}

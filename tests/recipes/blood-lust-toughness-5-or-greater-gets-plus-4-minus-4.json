@@ -1,0 +1,31 @@
+{
+  "name": "Blood Lust — a creature with toughness 5 or greater gets +4/-4",
+  "notes": "Sweep group 4 (2026-10-07). \"If target creature has toughness 5 or greater, it gets +4/-4 until end of turn. Otherwise, it gets +4/-X until end of turn, where X is its toughness minus 1.\" only ever gave the first branch, and that with a condition nothing could read. The two branches are now tested once against the target as the spell resolved (cast-time states), and X is that toughness minus 1. Siege Mastodon 3/5: 7/1.",
+  "steps": [
+    {
+      "add": "Siege Mastodon",
+      "as": "m"
+    },
+    {
+      "add": "Blood Lust",
+      "as": "bl",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTarget",
+        "@bl",
+        "@m"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Siege Mastodon",
+      "final": {
+        "power": 7,
+        "toughness": 1
+      }
+    }
+  ]
+}

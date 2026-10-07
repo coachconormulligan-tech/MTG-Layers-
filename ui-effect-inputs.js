@@ -153,15 +153,16 @@ function setCDAValue(permId, value) {
   renderAll();
 }
 
-/* Render a card name text input for cards with "choose a creature card name" */
+/* Render a card name text input for cards with "choose a creature card name" (or, Alpine Moon,
+   "a nonbasic land card name") */
 function renderChosenCardNameInput(perm) {
   const val = perm.chosenCardName || '';
   return `<div class="cda-counter-row chosen-type-row" onclick="event.stopPropagation()">
-    <span class="cda-label" title="Choose a creature card name">Name:</span>
+    <span class="cda-label" title="Choose a card name">Name:</span>
     <div class="chosen-type-wrapper">
       <input type="text" class="chosen-type-input" value="${escapeAttr(val)}"
              placeholder="e.g. Grizzly Bears" autocomplete="off"
-             title="Choose a creature card name"
+             title="Choose a card name"
              id="chosen-name-${perm.id}"
              oninput="_cardNameAutocompleteForChosen('${perm.id}', this.value)"
              onchange="setChosenCardName('${perm.id}', this.value)"

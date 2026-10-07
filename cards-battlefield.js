@@ -521,7 +521,9 @@ const Battlefield = {
         if (_snapVal !== null && _snapVal !== undefined) {
           parsedEffectText = parsedEffectText
             .replace(_whereXMatch[0], _whereXMatch[0].replace(/where\s+X\s+is/i, `where ${_snapVal} is`))
-            .replace(/\bX\b/g, String(_snapVal));
+            .replace(/\bX\b/g, String(_snapVal))
+            // ("becomes an X/X Elemental" reads "a 3/3 Elemental".)
+            .replace(/\b(an?) (?=(\d+)\/\d)/gi, (m, art, n) => (/^(?:8\d*|11|18)$/.test(n) ? 'an ' : 'a '));
         }
       }
     }
@@ -539,6 +541,9 @@ const Battlefield = {
     // Biblioplex, Veiled Serpent): "it" is the permanent the condition just named.
     parsedEffectText = parsedEffectText.replace(/^if\s+this\s+(land|permanent|creature|artifact|enchantment)\s+[^,]+,\s*it\s+(?=becomes?\b)/i, 'This $1 ');
     parsedEffectText = parsedEffectText.replace(/^if\s+[^,]+,\s*/i, '');
+    parsedEffectText = _fireTimeBecomesRewrites(parsedEffectText, this.players.length);
+    const cardValueText = _fireTimeCardValueAsX(parsedEffectText);
+    if (cardValueText) parsedEffectText = cardValueText;
     // Strip "Activate only if/when/as …" restriction — already enforced at fire time, should not
     // become a continuous layer condition on the pseudo-perm's effects.
     parsedEffectText = parsedEffectText.replace(/\s*\.\s*Activate(?:\s+this\s+ability)?\s+only\s+[^.]+\.?\s*$/i, '');
@@ -773,6 +778,15 @@ const Battlefield = {
     if (/\bcreature type of your choice\b|\bchoose a creature type\b[^.]*\.[^\n]*\bbecomes? that type\b/i.test(parsedEffectText)) {
       pseudoPerm.needsChosenCreatureType = true;
       pseudoPerm.chosenCreatureType = null;
+      pseudoPerm.originalOracleText = parsedEffectText;
+      pseudoPerm.originalCard = fakeCard;
+    }
+    // "put that many +1/+1 counters …, then up to that many target lands …" (Primal Adversary):
+    // how many times the cost was paid is asked for like any other X.
+    // So is a number read off a card that is not on the battlefield (see _fireTimeCardValueAsX).
+    if (_PAID_TIMES_X_RE.test(parsedEffectText) || cardValueText) {
+      pseudoPerm.hasXValue = true;
+      pseudoPerm.xValue = null;
       pseudoPerm.originalOracleText = parsedEffectText;
       pseudoPerm.originalCard = fakeCard;
     }
@@ -1449,7 +1463,8 @@ const Battlefield = {
       perm.originalOracleText = perm.originalOracleText || card.oracle_text || '';
       perm.originalCard = perm.originalCard || card;
     }
-    if (/\bchoose a creature card name\b/i.test(resolvedOracleForChoice)) {
+    // (Alpine Moon: "choose a nonbasic land card name".)
+    if (/\bchoose a (?:creature|nonbasic land) card name\b/i.test(resolvedOracleForChoice)) {
       perm.needsChosenCardName = true;
       perm.chosenCardName = null;
       perm.originalOracleText = perm.originalOracleText || card.oracle_text || '';
@@ -1541,6 +1556,12 @@ const Battlefield = {
     const perm = this.getPermById(permId);
     if (!perm || !perm.hasXValue) return;
     perm.xValue = newX;
+    // A fired ability keeps its fire-time snapshot and its pin to the source.
+    if (perm.abilitySourceId) {
+      if (newX === null) perm.oracleText = perm.originalOracleText;
+      this._reparseWithChoices(perm);
+      return;
+    }
     // null means "X letter" — keep X as-is in oracle text; otherwise substitute the number
     const oracleBase = perm.originalOracleText || '';
     const newOracleText = newX !== null
@@ -1610,7 +1631,7 @@ const Battlefield = {
     let oracleText = perm.originalOracleText || perm.oracleText || '';
     // Apply X substitution if present
     if (perm.hasXValue && perm.xValue !== null) {
-      oracleText = oracleText.replace(/\bX\b/g, String(perm.xValue));
+      oracleText = _fixNumberArticle(oracleText.replace(/\bX\b/g, String(perm.xValue)));
     }
     // Apply chosen creature type substitution
     if (perm.chosenCreatureType) {
@@ -1648,6 +1669,9 @@ const Battlefield = {
     // Apply chosen card name substitution
     if (perm.chosenCardName) {
       const cn = perm.chosenCardName;
+      // "Lands your opponents control with the chosen name" (Alpine Moon) → "… named N".
+      oracleText = oracleText.replace(/\bwith the chosen name\b/gi, `named ${cn}`);
+      oracleText = oracleText.replace(/(?:as [^.]*)?choose a nonbasic land card name\.\s*/gi, '');
       oracleText = oracleText.replace(/\bthe (?:last )?chosen name\b/gi, cn);
       // Strip the "choose a creature card name" sentence
       oracleText = oracleText.replace(/(?:as [^.]*)?choose a creature card name(?:\s+and a creature type)?\.\s*/gi, '');
@@ -2162,8 +2186,10 @@ const Battlefield = {
   setModalModeSelections(permId, activeIndices) {
     this._invalidate();
     const effs = this.effects.filter(e => e.sourceId === permId && e.modalModeIndex !== undefined);
+    // (A Set from the site's pop-up; a list from a recipe.)
+    const active = new Set(activeIndices);
     for (const e of effs) {
-      e.disabled = !activeIndices.has(e.modalModeIndex);
+      e.disabled = !active.has(e.modalModeIndex);
     }
   },
 
@@ -2341,6 +2367,31 @@ const Battlefield = {
 
   /* The top card of a player's library, for cards that read it (Conspicuous Snoop, Skill
      Borrower). One card per player; null clears it. */
+  /* Linked cards: cards a permanent or a fired ability reads values from although they are in
+     no zone the site shows (the card Amplifire revealed, the creatures Dracoplasm had
+     sacrificed). The parser says what the slot is for (perm._linkedCardSlot = { label, max });
+     the cards themselves are kept on the permanent. */
+  addLinkedCard(permId, card) {
+    const perm = this.getPermById(permId);
+    if (!perm || !card) return;
+    const max = perm._linkedCardSlot && perm._linkedCardSlot.max;
+    perm.linkedCards = (perm.linkedCards || []).concat([card]);
+    if (max && perm.linkedCards.length > max) perm.linkedCards = perm.linkedCards.slice(-max);
+    this._invalidate();
+  },
+  removeLinkedCard(permId, index) {
+    const perm = this.getPermById(permId);
+    if (!perm || !perm.linkedCards) return;
+    perm.linkedCards = perm.linkedCards.filter((_, i) => i !== index);
+    this._invalidate();
+  },
+  clearLinkedCards(permId) {
+    const perm = this.getPermById(permId);
+    if (!perm) return;
+    perm.linkedCards = [];
+    this._invalidate();
+  },
+
   setLibraryTop(playerId, card) {
     this._invalidate();
     const player = this.getPlayer(playerId);
@@ -3167,6 +3218,7 @@ const Battlefield = {
         chosenLandType: p.chosenLandType || null,
         chosenCardType: p.chosenCardType || null,
         chosenAbilities: p.chosenAbilities || null,
+        linkedCards: (p.linkedCards && p.linkedCards.length) ? p.linkedCards : null,
         targetOpponentPlayerId: p._targetOpponentPlayerId || null,
         targetPlayerId: p._targetPlayerId || null,
         enchantedPlayerId: p._enchantedPlayerId || null,
@@ -3212,7 +3264,11 @@ const Battlefield = {
         commanderIdx: isCommandZone ? Number(String(p.abilitySourceId).slice('cmdzone_'.length)) : null,
         abilityIndex: p.abilityIndex,
         timestamp: p.timestamp,
-        effectText: p.oracleText || '',
+        // (With an X of its own, the text is saved with the letter and the value beside it.)
+        effectText: (p.hasXValue && p.originalOracleText) || p.oracleText || '',
+        xValue: p.hasXValue ? (p.xValue ?? null) : null,
+        hasXValue: !!p.hasXValue,
+        linkedCards: (p.linkedCards && p.linkedCards.length) ? p.linkedCards : null,
         fullText: p.abilityFullText || '',
         chosenColor: p.chosenColor || null,
         additionalCostPaid: !!p.additionalCostPaid,
@@ -3347,6 +3403,7 @@ const Battlefield = {
       if (r.chosenLandType) this.setChosenLandType(np.id, r.chosenLandType);
       if (r.chosenCardType) this.setChosenCardType(np.id, r.chosenCardType);
       if (r.chosenAbilities) this.setChosenAbilities(np.id, r.chosenAbilities);
+      for (const lc of r.linkedCards || []) this.addLinkedCard(np.id, lc);
       if (r.additionalCostPaid) this.setAdditionalCostPaid(np.id, true);
       if (r.additionalCostPaid2) this.setAdditionalCostPaid(np.id, true, 2);
       // Mutable runtime/display state.
@@ -3407,6 +3464,15 @@ const Battlefield = {
       idMap[f.id] = pseudo.id;
       pseudo.timestamp = f.timestamp;
       if (f.chosenColor) this.setChosenColor(pseudo.id, f.chosenColor);
+      // (The saved text already has its "where X is …" clause cut, so the flag is saved too.)
+      if (f.hasXValue && !pseudo.hasXValue) {
+        pseudo.hasXValue = true;
+        pseudo.xValue = null;
+        pseudo.originalOracleText = pseudo.oracleText;
+        pseudo.originalCard = { name: pseudo.name, oracle_text: pseudo.oracleText, type_line: 'Instant', colors: [], cmc: 0 };
+      }
+      if (f.xValue != null && pseudo.hasXValue) this.setXValue(pseudo.id, f.xValue);
+      for (const lc of f.linkedCards || []) this.addLinkedCard(pseudo.id, lc);
       if (f.additionalCostPaid) this.setAdditionalCostPaid(pseudo.id, true);
       if (f.additionalCostPaid2) this.setAdditionalCostPaid(pseudo.id, true, 2);
       // Re-stamp the ability's effects to its saved timestamp so layer ordering matches.
