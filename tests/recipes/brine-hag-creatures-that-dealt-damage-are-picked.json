@@ -1,0 +1,66 @@
+{
+  "name": "Brine Hag — the creatures that dealt damage to it are picked and become 0/2",
+  "notes": "Sweep singleton (2026-10-07). \"the base power and toughness of each creature that dealt damage to it this turn become 0/2\" produced nothing: damage history is not tracked. _addAbilityPseudo now reads the phrase as \"any number of target creatures\" (a non-targeting pick), which the base-P/T parser already understood. Two creatures picked become 0/2; the third is untouched.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre"
+    },
+    {
+      "add": "Brine Hag",
+      "as": "hag"
+    },
+    {
+      "fire": "@hag",
+      "trigger": 0,
+      "as": "t"
+    },
+    {
+      "call": [
+        "setMultiTarget",
+        "@t",
+        0,
+        "@bears"
+      ]
+    },
+    {
+      "call": [
+        "setMultiTarget",
+        "@t",
+        1,
+        "@giant"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 0,
+        "toughness": 2
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "power": 0,
+        "toughness": 2
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "power": 2,
+        "toughness": 2
+      }
+    }
+  ]
+}

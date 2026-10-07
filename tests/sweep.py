@@ -269,6 +269,16 @@ def classify(text, kw_re):
     if re.search(r'\bcast (?:an? )?[a-z ]*\bspell\b[^.]*, it gains\b', t) or \
             re.match(r'if you do, it gains "(?:when|if) this permanent\b', text.strip().lower()):
         return None
+    # "Those lands become the land types chosen this way" (Lydari Druid) acts on the lands on the
+    # battlefield when the trigger is fired; the sweep's board has none. A recipe covers it.
+    if re.search(r'\bbecome the land types chosen this way\b', t):
+        return None
+    # "If this spell's madness cost was paid, instead gain control of that creature if its
+    # toughness is X or less" (Welcome to the Fold) changes the threshold inside the condition of
+    # the control effect the sentence before it makes; effect signatures do not show conditions.
+    # Recipes cover it.
+    if re.search(r"\bcost was paid, instead gain control of that \w+ if its (?:power|toughness) is\b", t):
+        return None
     t = re.sub(r'\bcreates?\b.*', '', t)                                 # token descriptions are not effects
     if re.search(r'\bgains? control of\b|\bexchanges? control\b', t):
         return 'control'

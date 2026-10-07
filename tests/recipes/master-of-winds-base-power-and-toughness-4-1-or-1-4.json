@@ -1,0 +1,53 @@
+{
+  "name": "Master of Winds — you may have base power and toughness become 4/1 or 1/4 is a two-option trigger",
+  "notes": "Sweep singleton (2026-10-07). \"Whenever you cast …, you may have this creature's base power and toughness become 4/1 or 1/4 until end of turn\" produced nothing: the trigger was fired as one sentence holding both values. extractTriggeredAbilities now offers \"become N/N or N/N\" as two options (the same pop-up as a modal trigger), each a full sentence without \"you may have\". Mode 1 (1/4) is fired first, then mode 0 (4/1); the later one wins.",
+  "steps": [
+    {
+      "add": "Master of Winds",
+      "as": "m"
+    },
+    {
+      "fire": "@m",
+      "trigger": 2,
+      "mode": 1,
+      "as": "a"
+    },
+    {
+      "fire": "@m",
+      "trigger": 2,
+      "mode": 0,
+      "as": "b"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Master of Winds",
+      "final": {
+        "power": 4,
+        "toughness": 1
+      }
+    },
+    {
+      "effect": {
+        "source": "Master of Winds (trigger)",
+        "layer": "7b",
+        "type": "set_pt",
+        "params": {
+          "power": 1,
+          "toughness": 4
+        }
+      }
+    },
+    {
+      "effect": {
+        "source": "Master of Winds (trigger)",
+        "layer": "7b",
+        "type": "set_pt",
+        "params": {
+          "power": 4,
+          "toughness": 1
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "name": "Cauldron Dance — each \"That creature gains haste\" is its own pick",
+  "notes": "Sweep singleton (2026-10-07). \"Return target creature card from your graveyard to the battlefield. That creature gains haste. …\" and, on the next line, \"You may put a creature card from your hand onto the battlefield. That creature gains haste. …\" gave one haste effect: the keyword-grant parser dropped the second identical grant, and both sentences were pronouns for one target. A spell's identical grants on different lines are now kept apart, and \"That creature gains/gets/has …\" right after a sentence that puts a creature card onto the battlefield reads \"Target creature …\" (_resolveItPronoun), so each line is a target slot. Bears (slot 0) and Ogre (slot 1) have haste; Hill Giant does not.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Cauldron Dance",
+      "as": "dance",
+      "spell": true
+    },
+    {
+      "call": [
+        "setSlottedTarget",
+        "@dance",
+        0,
+        "@bears"
+      ]
+    },
+    {
+      "call": [
+        "setSlottedTarget",
+        "@dance",
+        1,
+        "@ogre"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Haste"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Haste"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Haste"
+          ]
+        }
+      }
+    }
+  ]
+}

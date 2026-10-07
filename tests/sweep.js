@@ -298,7 +298,8 @@ function sweepFace(card, faceIndex) {
         let optionHit = false;
         // A "choose one —" trigger's modes are whole effects of their own: judge each mode's
         // sentences by firing that mode.
-        if (kind === 'trigger' && ab.options) {
+        const bulletModes = kind === 'trigger' && ab.options && /\n\s*\u2022/.test(ab.fullText);
+        if (bulletModes) {
           ab.options.forEach((opt, oi) => {
             const optEffs = fireAbility(base, ab, kind, opt, states, check);
             const optSigs = effectSigs(optEffs);
@@ -311,9 +312,13 @@ function sweepFace(card, faceIndex) {
           });
           continue;
         }
-        for (const opt of ab.options || []) {
-          if (fireAbility(base, ab, kind, opt, states, check).length) optionHit = true;
-        }
+        (ab.options || []).forEach((opt, oi) => {
+          const optEffs = fireAbility(base, ab, kind, opt, states, check);
+          if (optEffs.length) optionHit = true;
+          // A trigger's one-line options ("become 4/1 or 1/4", Master of Winds) are recorded
+          // like modes, so a diff shows when one of them changes.
+          if (kind === 'trigger') for (const l of effectSigs(optEffs).split('\n').filter(Boolean)) rec.fx.push(kind + ' ' + ab.index + ' mode ' + oi + '|' + l);
+        });
         const sents = splitSentences(ab.effectText);
         for (const s of sents) {
           let covered = optionHit;
@@ -334,7 +339,7 @@ function sweepFace(card, faceIndex) {
     for (const a of Battlefield.extractTriggeredAbilities(lines)) {
       abilityLine.add(a.index);
       // The "• …" mode lines of a "choose one —" trigger belong to it.
-      (a.options || []).forEach((_, oi) => abilityLine.add(a.index + 1 + oi));
+      if (/\n\s*\u2022/.test(a.fullText)) a.options.forEach((_, oi) => abilityLine.add(a.index + 1 + oi));
     }
     for (const a of Battlefield.extractActivatedAbilities(lines)) abilityLine.add(a.index);
   } catch (e) { /* classification only */ }

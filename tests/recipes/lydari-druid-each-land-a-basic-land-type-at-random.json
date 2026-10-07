@@ -1,0 +1,99 @@
+{
+  "name": "Lydari Druid — each land becomes the basic land type rolled for it",
+  "notes": "Sweep singleton (2026-10-07). \"When this creature enters, for each land on the battlefield, choose a basic land type at random. Those lands become the land types chosen this way.\" produced nothing, and the card itself asked for a land type. Firing the trigger now rolls a type for each land on the battlefield and rewrites the effect to one line a land (\"Target land becomes a Swamp.\"), each line a target slot holding its land; a saved board replays the rolled text. queueRandomPicks fixes the rolls here: Forest → Swamp, Island → Mountain, Savannah → Island. Each land has only its new land type (Savannah loses Forest and Plains) and that type's mana ability; Grizzly Bears is untouched.",
+  "steps": [
+    {
+      "add": "Forest",
+      "as": "forest"
+    },
+    {
+      "add": "Island",
+      "as": "island"
+    },
+    {
+      "add": "Savannah",
+      "as": "savannah"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Lydari Druid",
+      "as": "druid"
+    },
+    {
+      "call": [
+        "queueRandomPicks",
+        "Swamp",
+        "Mountain",
+        "Island"
+      ]
+    },
+    {
+      "fire": "@druid",
+      "trigger": 0,
+      "as": "fired"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Forest",
+      "final": {
+        "subtypes": [
+          "Swamp"
+        ],
+        "abilities": {
+          "$includes": [
+            "{T}: Add {B}."
+          ],
+          "$excludes": [
+            "{T}: Add {G}."
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Island",
+      "final": {
+        "subtypes": [
+          "Mountain"
+        ],
+        "abilities": {
+          "$includes": [
+            "{T}: Add {R}."
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Savannah",
+      "final": {
+        "subtypes": [
+          "Island"
+        ],
+        "abilities": {
+          "$includes": [
+            "{T}: Add {U}."
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "subtypes": [
+          "Bear"
+        ]
+      }
+    },
+    {
+      "perm": "Lydari Druid",
+      "final": {
+        "subtypes": [
+          "Druid"
+        ]
+      }
+    }
+  ]
+}

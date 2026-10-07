@@ -1,0 +1,50 @@
+{
+  "name": "Unnerving Assault — only the half whose mana was spent applies",
+  "notes": "Sweep cast-condition leftovers (2026-10-06). \"Creatures your opponents control get -1/-0 until end of turn if {U} was spent to cast this spell, and creatures you control get +1/+0 until end of turn if {R} was spent to cast this spell.\" Both halves applied unconditionally. Each is now a branch line on its own toggle ({U} spent, {R} spent). With only {R} spent (the second toggle), your Grizzly Bears are 3/2 and the opponent's Hill Giant stays 3/3.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant",
+      "controller": "p2"
+    },
+    {
+      "add": "Unnerving Assault",
+      "as": "assault",
+      "spell": true
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@assault",
+        true,
+        2
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 3,
+        "toughness": 2
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "power": 3,
+        "toughness": 3
+      }
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "name": "Arm the Cathars — +3/+3, +2/+2 and +1/+1 on three targets, and all three gain vigilance",
+  "notes": "Open item from the demonstratives pass (2026-10-07). The middle clause \", up to one other target creature gets +2/+2,\" had no anchor in boostRegex (only line start, \".\" and \"and\"), and \"Those creatures gain vigilance\" was resolved to one garbage subject, so vigilance reached the first target only and the slots came out +3/+1/+2. boostRegex now also starts after a comma that opens another target's clause; _resolveTheyPronoun writes the sentence out once for each separately named target (_separateTargets), and _repeatedTargetSpans gives each copy the slot of the clause it repeats (_slotPos). Three slots in oracle order; the fourth creature is untouched.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Runeclaw Bear",
+      "as": "rune"
+    },
+    {
+      "add": "Arm the Cathars",
+      "as": "arm",
+      "spell": true
+    },
+    {
+      "call": [
+        "setSlottedTarget",
+        "@arm",
+        0,
+        "@bears"
+      ]
+    },
+    {
+      "call": [
+        "setSlottedTarget",
+        "@arm",
+        1,
+        "@ogre"
+      ]
+    },
+    {
+      "call": [
+        "setSlottedTarget",
+        "@arm",
+        2,
+        "@giant"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 5,
+        "toughness": 5,
+        "abilities": {
+          "$includes": [
+            "Vigilance"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "power": 4,
+        "toughness": 4,
+        "abilities": {
+          "$includes": [
+            "Vigilance"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "power": 4,
+        "toughness": 4,
+        "abilities": {
+          "$includes": [
+            "Vigilance"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Runeclaw Bear",
+      "final": {
+        "power": 2,
+        "toughness": 2,
+        "abilities": {
+          "$excludes": [
+            "Vigilance"
+          ]
+        }
+      }
+    }
+  ]
+}

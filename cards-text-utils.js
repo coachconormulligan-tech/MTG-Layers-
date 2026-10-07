@@ -351,10 +351,53 @@ function _theyMovedCardsSubject(prev, noun) {
   const kind = mixed ? 'permanent' : (noun || m[2]).toLowerCase().replace(/s$/, '');
   return `${count} target ${kind}s`;
 }
-const _THEY_TARGET_ANTECEDENT_RE = /\b(?:each of\s+)?((?:up to \w+|any number of|\w+ or \w+|two|three|four|five|six|seven|eight|nine|ten)\s+(?:other\s+)?target\s+[^.,]+?)(?=\s+until\b|\s+and\s+(?:gain|untap|put|you|they|it)\b|[.,]|$)/i;
+// (A count already substituted for X — "2 target creatures" — is a count like any other, and
+// the phrase ends where the sentence's own verb starts: "… can't be blocked this turn".)
+const _THEY_TARGET_ANTECEDENT_RE = /\b(?:each of\s+)?((?:up to \w+|any number of|\w+ or \w+|two|three|four|five|six|seven|eight|nine|ten|\d+)\s+(?:other\s+)?target\s+[^.,]+?)(?=\s+until\b|\s+and\s+(?:gain|untap|put|you|they|it)\b|\s+(?:can(?:'t|not)?|each|gets?|gains?|becomes?|loses?|don't|deals?|fights?|phases?)\b|[.,]|$)/i;
 const _THEY_GROUP_ANTECEDENT_RE = /\b(all|each)\s+(?!of\b|opponent\b|player\b|other player\b|(?:gain|get|untap|put|draw|lose|sacrifice|choose|discard)s?\b|secretly\b)([^.,]+?)(?=\s+until\b|\s+and\s+(?:gain|untap|put|you|they|it)\b|[.,]|$)/i;
 const _THEY_NEW_OBJECT_RE = /\bcreates?\b|\bonto the battlefield\b|\bto the battlefield\b|\breturn\b|\bmills?\b|\bexiles?\b|\bsearch\b/i;
 const _THEY_SINGULAR_VERB = { gain: 'gains', get: 'gets', have: 'has', become: 'becomes' };
+// Targets a sentence names one by one, each with its own verb: "target creature gets +3/+3, up
+// to one other target creature gets +2/+2, and up to one other target creature gets +1/+1"
+// (Arm the Cathars). Returns [{ phrase, index }] when every "target" in the sentence is one
+// of these and there are at least two, else null.
+const _SEPARATE_TARGET_RE = /((?:up to \w+\s+)?(?:(?:an)?other\s+)?target\s+[^.,]+?)(?=\s+(?:gets?|gains?|becomes?|loses?|has|have)\b)/gi;
+function _separateTargets(sentence) {
+  const found = [...sentence.matchAll(_SEPARATE_TARGET_RE)].map(x => ({ phrase: x[1], index: x.index }));
+  return found.length > 1 && found.length === (sentence.match(/\btarget\b/gi) || []).length ? found : null;
+}
+/* Sentences that say something more about targets an earlier sentence on the same line named
+   one by one, as _resolveTheyPronoun writes "Those creatures gain vigilance" out for Arm the
+   Cathars: "Target creature gains vigilance. Up to one other target creature gains vigilance. …"
+   Returns [{ from: [start, end], to: [start, end] }] character spans in text: the effects
+   parsed from `from` have the target chosen for the clause at `to`. */
+function _repeatedTargetSpans(text) {
+  const spans = [];
+  let lineStart = 0;
+  for (const line of text.split('\n')) {
+    const sentences = [...line.matchAll(/[^.]+(?:\.\s*|$)/g)].map(x => ({ text: x[0], start: lineStart + x.index }));
+    for (let i = 0; i < sentences.length; i++) {
+      const named = _separateTargets(sentences[i].text);
+      if (!named || i + named.length >= sentences.length) continue;
+      const repeats = named.every((n, k) => {
+        const s = sentences[i + 1 + k].text.replace(/^(?:until [^,.]+|if [^,.]+),\s*/i, '');
+        return s.toLowerCase().startsWith(n.phrase.toLowerCase() + ' ');
+      });
+      if (!repeats) continue;
+      // A clause runs from the comma before its target phrase to the comma before the next.
+      const starts = named.map((n, k) => k === 0 ? 0 : Math.max(sentences[i].text.lastIndexOf(',', n.index), 0) || n.index);
+      named.forEach((n, k) => {
+        const rep = sentences[i + 1 + k];
+        spans.push({
+          from: [rep.start, rep.start + rep.text.length],
+          to: [sentences[i].start + starts[k], sentences[i].start + (k + 1 < starts.length ? starts[k + 1] : sentences[i].text.length)],
+        });
+      });
+    }
+    lineStart += line.length + 1;
+  }
+  return spans;
+}
 function _resolveTheyPronoun(text) {
   if (!/\b(?:they|those|each of them)\b/i.test(text)) return text;
   return text.split('\n').map(line => {
@@ -377,7 +420,7 @@ function _resolveTheyPronoun(text) {
       const m = asThey.match(_THEY_SUBJECT_RE);
       if (!m || (/^are$/i.test(m[3]) && !/\bin addition to (?:its|their) other\b/i.test(asThey))) continue;
       const theySentence = asThey;
-      let subject = null, verb = m[3];
+      let subject = null, verb = m[3], separate = null;
       for (let j = i - 1; j >= 0 && !subject; j--) {
         const prev = sentences[j];
         const moved = _theyMovedCardsSubject(prev, demo && demo[1]);
@@ -389,7 +432,22 @@ function _resolveTheyPronoun(text) {
           sentences[j] = '';
           break;
         }
+        // "… on each creature blocking or blocked by this creature and tap those creatures.
+        // … Each of those creatures gains "…"" (Dread Wight): who fought whom is over by the
+        // time the effect matters, so the creatures are picked.
+        if (/\beach creature blocking or blocked by\b/i.test(prev)) { subject = 'any number of target creatures'; break; }
+        // A sentence naming several separate targets ("target creature gets +3/+3, up to one
+        // other target creature gets +2/+2, and …" — Arm the Cathars) has no one phrase "those
+        // creatures" stands for: the sentence is said once for each of them.
+        separate = _separateTargets(prev);
+        if (separate) break;
         const t = prev.match(_THEY_TARGET_ANTECEDENT_RE);
+        // Other sentences with more than one target keep their old reading: the phrase runs
+        // to the next comma.
+        if (t && (prev.match(/\btarget\b/gi) || []).length > 1) {
+          const whole = prev.slice(t.index).match(/^(?:each of\s+)?([^.,]+?)(?=\s+until\b|\s+and\s+(?:gain|untap|put|you|they|it)\b|[.,]|$)/i);
+          if (whole) t[1] = whole[1];
+        }
         if (t) {
           subject = t[1] + (m[2] ? ' each' : '');
           // "Choose any number of target creatures. Each of those creatures gains persist"
@@ -404,8 +462,17 @@ function _resolveTheyPronoun(text) {
           if (g[1].toLowerCase() === 'each') verb = _THEY_SINGULAR_VERB[verb.toLowerCase()];
         }
       }
-      if (!subject) continue;
       const lead = m[1] || '';
+      if (separate) {
+        const rest = theySentence.slice(m[0].length).replace(/\.?\s*$/, '.');
+        sentences[i] = separate.map(({ phrase }) => {
+          const single = /^(?:up to one\s+)?(?:(?:an)?other\s+)?target\b/i.test(phrase);
+          const v = single ? (_THEY_SINGULAR_VERB[verb.toLowerCase()] || verb) : verb;
+          return lead + (lead ? phrase : phrase.charAt(0).toUpperCase() + phrase.slice(1)) + ' ' + v + rest;
+        }).join(' ');
+        continue;
+      }
+      if (!subject) continue;
       if (!lead) subject = subject.charAt(0).toUpperCase() + subject.slice(1);
       sentences[i] = lead + subject + ' ' + verb + theySentence.slice(m[0].length);
     }
@@ -483,6 +550,14 @@ function _resolveItPronoun(text) {
       (all, head, verb) => /^(?:target|up to|any number)\b/i.test(head.trim()) ? all : `${head}. It ${verb} `);
     const sentences = _splitSentencesOutsideQuotes(line);
     for (let i = 1; i < sentences.length; i++) {
+      // "You may put a creature card from your hand onto the battlefield. That creature gains
+      // haste." (Cauldron Dance): the card just put there is a pick of its own.
+      const moved = sentences[i].match(/^that\s+(creature|land|artifact|enchantment|permanent)\s+(?=(?:gains?|gets?|has|loses?)\b)/i);
+      if (moved && !/\bcreates?\b|\btokens?\b/i.test(sentences[i - 1])
+          && new RegExp('\\b' + (moved[1].toLowerCase() === 'permanent' ? '\\w+' : moved[1]) + '\\s+card\\b[^.]*\\b(?:on)?to the battlefield\\b', 'i').test(sentences[i - 1])) {
+        sentences[i] = 'Target ' + moved[1].toLowerCase() + ' ' + sentences[i].slice(moved[0].length);
+        continue;
+      }
       const m = sentences[i].match(/^((?:until end of turn|if you do|when you do|then),?\s+)?(it's|it|(?:that|the)\s+(\w+))\s+([\s\S]*)$/i);
       if (!m) continue;
       const pron = m[2].toLowerCase();
@@ -537,7 +612,9 @@ function _resolveItPronoun(text) {
    whose condition it cannot read is left untouched rather than made unconditional.
    Returns { text, baseLineCount, branchLines: Map(appended line → original line),
              alwaysOnLines: Set(original lines whose two branches cover every case),
-             costLabel: 'Kicked' | 'Bargained' | '<Word> cost paid' | null }. */
+             ownSlotLines: Set(appended lines whose target is not their base sentence's),
+             costLabel: 'Kicked' | 'Bargained' | '<Word> cost paid' | null,
+             costLabel2: the second toggle of a spell with two cast conditions, or null }. */
 // A subject, then a continuous-effect verb, in the sentence's first clause — not an
 // imperative ("gain control of …", "you gain 3 life").
 const _BRANCH_CONTINUOUS_VERB_RE = /^[^,]+?\s(?:gets?|gains?|ha(?:s|ve)|becomes?|loses?)\b/i;
@@ -568,18 +645,39 @@ const _BRANCH_CAST_CONDITIONS = [
   // the vote is tied", which this does not match, so the spell still has a single toggle.
   [/^(\w+) gets more votes$/i, '$1 gets more votes'],
 ];
+// The toggle label for a cast condition ("{B} was spent to cast this spell" → "{B} spent"), or null.
+function _branchCastLabel(condText) {
+  for (const [re, label] of _BRANCH_CAST_CONDITIONS) {
+    const c = condText.match(re);
+    if (!c) continue;
+    const text = label.replace('$1', c[1] || '').replace('$2', c[2] || '');
+    return /^\{/.test(text) ? text : text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+  }
+  return null;
+}
 // "If <cast condition>, <body>" → { label, body }, or null.
 function _branchCastCondition(sentence) {
   // An ability word in front ("Adamant — If at least three green mana was spent …") is flavour.
   const m = sentence.match(/^(?:[A-Z][\w']*(?: [\w']+)* — )?If ([^,]+),\s+(.+?)\.?$/i);
-  if (!m) return null;
-  for (const [re, label] of _BRANCH_CAST_CONDITIONS) {
-    const c = m[1].match(re);
-    if (!c) continue;
-    const text = label.replace('$1', c[1] || '').replace('$2', c[2] || '');
-    return { label: /^\{/.test(text) ? text : text.charAt(0).toUpperCase() + text.slice(1).toLowerCase(), body: m[2] };
+  const label = m && _branchCastLabel(m[1]);
+  return label ? { label, body: m[2] } : null;
+}
+// Every cast-condition clause of a sentence, as [{ label, body }]: the leading form above, or
+// the condition after each clause — "Creatures your opponents control lose flying until end of
+// turn if {G} was spent to cast this spell, and creatures you control gain flying until end of
+// turn if {U} was spent to cast this spell." (Invert the Skies) is two. [] when there is none
+// or any clause has no cast condition.
+function _branchCastClauses(sentence) {
+  const lead = _branchCastCondition(sentence);
+  if (lead) return [lead];
+  const clauses = [];
+  for (const part of sentence.replace(/\.$/, '').split(/,\s+and\s+/)) {
+    const m = part.match(/^(.+?)\s+if\s+([^,]+)$/i);
+    const label = m && _branchCastLabel(m[2]);
+    if (!label) return [];
+    clauses.push({ label, body: m[1].charAt(0).toUpperCase() + m[1].slice(1), trailing: true });
   }
-  return null;
+  return clauses;
 }
 const _BRANCH_LEAD_COND_RE = /^(?:As long as|If)\s+([^,]+),\s+(.+)$/i;
 function _branchIsContinuous(body) {
@@ -593,7 +691,10 @@ function _branchAntecedent(sentences, i) {
   for (let j = i - 1; j >= 0; j--) {
     const s = sentences[j].replace(/^(?:(?:if|as long as) [^,]+|otherwise|until end of turn),\s+/i, '');
     if (_THEY_NEW_OBJECT_RE.test(s)) return null;
-    const subj = s.match(/^(.+?)\s+(?:each\s+)?(?:gets?|gains?|ha(?:s|ve)|becomes?|loses?|can't|doesn't|don't)\b/i);
+    let subj = s.match(/^(.+?)\s+(?:each\s+)?(?:gets?|gains?|ha(?:s|ve)|becomes?|loses?|can't|doesn't|don't)\b/i);
+    // "Untap target creature and gain control of it" (Flash Conscription): an instruction, whose
+    // target is read below.
+    if (subj && /\band$/i.test(subj[1])) subj = null;
     if (subj && !_BRANCH_PRONOUN_RE.test(subj[1])) {
       return /\btarget\b|\b(?:creature|permanent|artifact|land|enchantment|planeswalker)s?\b/i.test(subj[1]) && !/^you\b/i.test(subj[1])
         ? subj[1] : null;
@@ -613,6 +714,30 @@ function _branchMovedCardAntecedent(sentences, i) {
   const card = s.match(/\b(?:target|an?|that) (?:[\w'-]+ ){0,2}?(creature|permanent|artifact|land|enchantment|planeswalker) card\b/i);
   return card ? 'target ' + card[1].toLowerCase() : null;
 }
+// The antecedent of a spell's "it" / "that creature" / "those permanents" when it is something
+// the spell itself put onto the battlefield, picked out on the board by what it is:
+//   the card of the sentence before (above);
+//   "Return up to X target artifact and/or non-Aura enchantment cards … to the battlefield."
+//     (Dance of the Manse) → "up to X target artifacts and/or non-Aura enchantments";
+//   "Create a 7/1 red Elemental creature token …" (Elemental Appeal) → "target Elemental token".
+function _branchNewObjectAntecedent(sentences, i, pronoun) {
+  const plural = /^(?:those|they|any number)\b/i.test(pronoun);
+  if (!plural) {
+    const card = _branchMovedCardAntecedent(sentences, i);
+    if (card) return card;
+    for (let j = i - 1; j >= 0; j--) {
+      const token = sentences[j].match(/^Create an? (?:[\w\/-]+ )*?((?:[A-Z][\w'-]* )+)(?:artifact |enchantment )*creature token\b/);
+      if (token) return 'target ' + token[1].trim() + ' token';
+    }
+    return null;
+  }
+  const s = sentences[i - 1] || '';
+  if (/\bcreates?\b|\btokens?\b/i.test(s) || !/\b(?:on)?to the battlefield\b/i.test(s)) return null;
+  const cards = s.match(/\b((?:up to \w+ |any number of )?target) ((?:[\w'-]+ (?:and\/or |or )?)*?(?:creature|permanent|artifact|land|enchantment|planeswalker)) cards\b/i);
+  return cards
+    ? cards[1].toLowerCase() + ' ' + cards[2].replace(/\b(creature|permanent|artifact|land|enchantment|planeswalker)\b/gi, '$1s')
+    : null;
+}
 function _branchResolveSubject(body, sentences, i, isSpell) {
   // "Choose target creature you control and target creature you don't control. … the creature
   // you control gets +1/+1" (Tail Swipe): "the" picks out one of the targets just chosen.
@@ -629,25 +754,41 @@ function _branchResolveSubject(body, sentences, i, isSpell) {
 function _splitConditionalBranches(text, isSpell, canParse) {
   const lines = text.split('\n');
   const origLines = lines.slice();
-  const out = { text, baseLineCount: lines.length, branchLines: new Map(), alwaysOnLines: new Set(), costLabel: null };
-  if (!/\botherwise,|\bif this spell(?:'s \w+ cost)? was\b|\bto cast (?:this|that) spell,|\bif you cast this spell during\b|\bif evidence was collected\b|\bgets more votes,|\b(?:if|as long as) it(?:'s| is| isn't| doesn't have| has)\b/i.test(text)) return out;
-  // One toggle per spell: a card with two different cast conditions (Cankerous Thirst's {B}
-  // and {G}) cannot be told apart by it, so its branches are left where they are.
+  const out = { text, baseLineCount: lines.length, branchLines: new Map(), alwaysOnLines: new Set(), ownSlotLines: new Set(),
+                costLabel: null, costLabel2: null };
+  if (!/\botherwise,|\bif (?:x|\d+) is \d+ or\b|\bif this spell(?:'s \w+ cost)? was\b|\bto cast (?:this|that) spell[,.]|\bif you cast this spell during\b|\bif evidence was collected\b|\bgets more votes,|\b(?:if|as long as) it(?:'s| is| isn't| doesn't have| has)\b/i.test(text)) return out;
+  // A spell has at most two toggles (Cankerous Thirst's {B} and {G}): with more cast conditions
+  // than that, its branches are left where they are.
   const castLabels = new Set();
   for (const sentence of text.split(/\n|(?<=\.)\s+/)) {
-    const c = _branchCastCondition(sentence.trim());
-    if (c) castLabels.add(c.label);
+    for (const c of _branchCastClauses(sentence.trim())) castLabels.add(c.label);
   }
+  // Toggles are numbered in the order their branches are moved, so a condition whose effect is
+  // not a continuous one (Torrent of Souls' {B}: return a card) gets no toggle.
+  const usedLabels = [];
+  const costToken = (label, paid) => {
+    if (!usedLabels.includes(label)) usedLabels.push(label);
+    return `[additional cost ${usedLabels.indexOf(label) ? '2 ' : ''}${paid ? '' : 'not '}paid]`;
+  };
   const added = [];
-  const add = (lineText, li) => { out.branchLines.set(lines.length + added.length, li); added.push(lineText); };
+  // Quoted abilities are held out of a line while it is read, so a comma or full stop inside
+  // one is not taken for the line's own.
+  let unmask = (t) => t;
+  const add = (lineText, li) => { out.branchLines.set(lines.length + added.length, li); added.push(unmask(lineText)); };
   for (let li = 0; li < lines.length; li++) {
     const line = lines[li];
-    if (line.includes('"') || _isTriggeredSentence(line.trim()) || /^[^.]*:\s/.test(line)) continue;
-    const sentences = line.trim().split(/(?<=\.)\s+/);
+    if (_isTriggeredSentence(line.trim()) || /^[^.]*:\s/.test(line)) continue;
+    // A line that grants a quoted ability is read only for cast-condition branches ('If {W} was
+    // spent to cast this spell, the creature gains "…" until end of turn', Flash Conscription).
+    const quoted = line.includes('"');
+    const quotes = [];
+    unmask = (t) => t.replace(/\x05(\d+)\x05/g, (_, n) => quotes[n]);
+    const sentences = line.trim().replace(/"[^"]*"/g, (q) => `\x05${quotes.push(q) - 1}\x05`).split(/(?<=\.)\s+/);
+    if (quoted && !sentences.some(x => _branchCastClauses(x).length)) continue;
     const moved = new Set();
     for (let i = 0; i < sentences.length; i++) {
       const prev = i > 0 ? sentences[i - 1] : '';
-      const other = i > 0 && sentences[i].match(/^Otherwise,\s+(.+)$/i);
+      const other = !quoted && i > 0 && sentences[i].match(/^Otherwise,\s+(.+)$/i);
       if (other && !moved.has(i - 1)) {
         const lead = prev.match(_BRANCH_LEAD_COND_RE);
         const trail = lead ? null : prev.match(/^(.+?)\s+as long as\s+([^.,;]+)\.$/i);
@@ -669,7 +810,7 @@ function _splitConditionalBranches(text, isSpell, canParse) {
         moved.add(i);
         continue;
       }
-      const rider = i > 0 && sentences[i].match(_BRANCH_RIDER_RE);
+      const rider = !quoted && i > 0 && sentences[i].match(_BRANCH_RIDER_RE);
       // Not "If it's not your turn, …" (that "it" is no object), nor a rider about a card just
       // revealed or exiled ("If it's a land card, …").
       if (rider && !/\bturn\b|\bcards?$/i.test(rider[2])) {
@@ -706,25 +847,55 @@ function _splitConditionalBranches(text, isSpell, canParse) {
         moved.add(i);
         continue;
       }
-      const cost = castLabels.size === 1 ? _branchCastCondition(sentences[i]) : null;
-      if (cost) {
+      // "If X is 6 or more, those permanents are 4/4 creatures in addition to their other types."
+      // (Dance of the Manse): X is already a number here when the spell has been given one, so
+      // the condition is carried as written and read as simply true or false.
+      const xCond = isSpell && !quoted && i > 0 && sentences[i].match(/^If (X|\d+) is (\d+) or (more|greater|less|fewer),\s+(.+?)\.?$/i);
+      if (xCond && !/\binstead\b/i.test(xCond[4])) {
+        let body = xCond[4].replace(/\balso\s+/i, '');
+        const isAddition = /\s(?:is|are) [^.]*\bin addition to (?:its|their) other types\b/i.test(body);
+        if (!(isAddition || _branchIsContinuous(body))) continue;
+        // "those permanents" has by now been read as "any number of target permanents"; the
+        // cards the sentence before returned say which permanents more exactly.
+        const guessed = body.match(/^any number of target (?:permanents|creatures)\b/i);
+        const pronoun = guessed || body.match(_BRANCH_PRONOUN_RE);
+        const newObject = pronoun ? _branchNewObjectAntecedent(sentences, i, pronoun[0]) : null;
+        body = (guessed && newObject ? null : _branchResolveSubject(body, sentences, i, true)) ||
+          (newObject ? newObject + body.slice(pronoun[0].length) : null);
+        if (!body) continue;
+        add(`If [${xCond[1].toUpperCase()} is ${xCond[2]} or ${xCond[3].toLowerCase()}], ${body.charAt(0).toUpperCase() + body.slice(1)}.`, li);
+        moved.add(i);
+        continue;
+      }
+      const costs = castLabels.size <= 2 ? _branchCastClauses(sentences[i]) : [];
+      // Both halves of "A if {U} was spent …, and B if {R} was spent …" move, or neither.
+      const costLines = [];
+      for (const cost of costs) {
         let body = cost.body;
         const instead = /^instead\s+|\s+instead$/i.test(body);
         body = body.replace(/^instead\s+|\s+instead$/i, '').replace(/\balso\s+/i, '').replace(/\ban additional\s+/i, '');
-        if (!_branchIsContinuous(body)) continue;
+        // "you may have target creature get -3/-3" (Cankerous Thirst): the creature is the subject.
+        body = body.replace(/^you may have (target [^,]*?) (get|gain|become|lose|have)\b/i,
+          (_, subject, verb) => `Target${subject.slice(6)} ${verb.toLowerCase() === 'have' ? 'has' : verb + 's'}`);
+        if (!_branchIsContinuous(body)) { costLines.length = 0; break; }
         // A spell's "that creature" may be the target named on an earlier line (Arrester's
         // Zeal: the Addendum sentence is a line of its own).
         const prior = isSpell ? origLines.slice(0, li).flatMap(l => l.trim().split(/(?<=\.)\s+/)) : [];
+        // "the creature gains …" after "Untap target creature …" (Flash Conscription) is "that creature".
+        if (isSpell) body = body.replace(/^the (creature|permanent)\s+(?=(?:gets?|gains?|has|becomes?|loses?)\b)/i, 'that $1 ');
         const unresolved = body;
-        body = _branchResolveSubject(body, prior.concat(sentences), prior.length + i, isSpell);
-        if (!body) continue;
+        const pronoun = isSpell ? body.match(_BRANCH_PRONOUN_RE) : null;
+        const newObject = pronoun ? _branchNewObjectAntecedent(sentences, i, pronoun[0]) : null;
+        body = _branchResolveSubject(body, prior.concat(sentences), prior.length + i, isSpell) ||
+          (newObject ? newObject + body.slice(pronoun[0].length) : null);
+        if (!body) { costLines.length = 0; break; }
         // The branch shares the target slot of the line its target was named on.
         let baseLi = li;
         if (body !== unresolved && !sentences.slice(0, i).some(x => /\btarget\b/i.test(x))) {
           for (let j = li - 1; j >= 0; j--) if (/\btarget\b/i.test(origLines[j])) { baseLi = j; break; }
         }
         // "… instead" replaces the sentence before it, which then applies only unpaid.
-        let replaced = instead && i > 0 && !moved.has(i - 1) && !/^(?:if|otherwise|as long as)\b/i.test(prev) &&
+        let replaced = instead && !cost.trailing && i > 0 && !moved.has(i - 1) && !/^(?:if|otherwise|as long as)\b/i.test(prev) &&
           _branchIsContinuous(prev) ? _branchResolveSubject(prev, sentences, i - 1, isSpell) : null;
         if (replaced) {
           // "Until end of turn, X becomes …" reads the same with the duration at the end, where
@@ -739,15 +910,22 @@ function _splitConditionalBranches(text, isSpell, canParse) {
           if (newPT && oldPT.test(replaced) && !/\bha(?:s|ve) base power and toughness\b/i.test(replaced)) {
             body = replaced.replace(oldPT, 'base power and toughness ' + newPT[1]).replace(/\.$/, '');
           }
-          add(`If [additional cost not paid], ${replaced}`, li);
+          costLines.push([`If ${costToken(cost.label, false)}, ${replaced}`, li]);
           moved.add(i - 1);
         }
-        add(`If [additional cost paid], ${body}.`, baseLi);
-        moved.add(i);
-        out.costLabel = cost.label;
+        // With two cast conditions, a branch that names its own target ("If {G} was spent …,
+        // you may have target creature get +3/+3") is a target of its own, not the other's.
+        const ownSlot = castLabels.size === 2 && !replaced && body === unresolved && /\btarget\b/i.test(body);
+        costLines.push([`If ${costToken(cost.label, true)}, ${body.charAt(0).toUpperCase() + body.slice(1)}.`, baseLi, ownSlot]);
       }
+      for (const [lineText, baseLi, ownSlot] of costLines) {
+        if (ownSlot) out.ownSlotLines.add(lines.length + added.length);
+        add(lineText, baseLi);
+        moved.add(i);
+      }
+      if (usedLabels.length) [out.costLabel, out.costLabel2] = [usedLabels[0], usedLabels[1] || null];
     }
-    if (moved.size) lines[li] = sentences.filter((_, i) => !moved.has(i)).join(' ');
+    if (moved.size) lines[li] = unmask(sentences.filter((_, i) => !moved.has(i)).join(' '));
   }
   if (added.length) out.text = lines.concat(added).join('\n');
   return out;
@@ -790,10 +968,13 @@ function extractTargetInfo(filterText) {
   }
 
   // "N target [type]" — exact count multi-target (e.g. "two target creatures")
+  // (also a number an X has been replaced by: "2 target creatures" — Open into Wonder)
   const nTargetMatch = raw.match(/^(\w+)\s+target\s+/i);
-  if (nTargetMatch && _TARGET_NUMBER_WORDS[nTargetMatch[1].toLowerCase()]) {
+  const nTargetCount = nTargetMatch && (_TARGET_NUMBER_WORDS[nTargetMatch[1].toLowerCase()]
+    || (/^\d+$/.test(nTargetMatch[1]) ? Math.min(Math.max(parseInt(nTargetMatch[1], 10), 1), 10) : 0));
+  if (nTargetCount) {
     needsTargetSelection = true;
-    maxTargets = _TARGET_NUMBER_WORDS[nTargetMatch[1].toLowerCase()];
+    maxTargets = nTargetCount;
     cleaned = filterText.replace(/^\w+\s+target\s+/i, '').trim();
     return { cleaned, needsTargetSelection, maxTargets };
   }

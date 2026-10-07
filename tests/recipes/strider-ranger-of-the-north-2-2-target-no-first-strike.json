@@ -1,0 +1,48 @@
+{
+  "name": "Strider, Ranger of the North — a 2/2 target gets +1/+1 but no first strike",
+  "notes": "\"target creature gets +1/+1 until end of turn. Then if that creature has power 4 or greater, it gains first strike until end of turn.\" (2026-10-07) The \"Then if\" sentence is its own conditional line sharing the one target; the power test reads the target as the ability resolved (fire-time state plus this ability's own +1/+1), not the live value in layer 6. Grizzly Bears 2/2: 3/3, no first strike.",
+  "steps": [
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Craw Wurm",
+      "as": "wurm"
+    },
+    {
+      "add": "Strider, Ranger of the North",
+      "as": "s"
+    },
+    {
+      "fire": "@s",
+      "trigger": 0,
+      "as": "t"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@t",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 3,
+        "toughness": 3,
+        "abilities": {
+          "$excludes": [
+            "First strike"
+          ]
+        }
+      }
+    }
+  ]
+}

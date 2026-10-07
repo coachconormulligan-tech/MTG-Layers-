@@ -241,8 +241,25 @@ function effectAppliesToPerm(effect, permState, permanent, permId, allStates, ab
         && abilityGroupAffectedPerms.get(effect.abilityGroupId).has(permId);
       // A rider checked once as the ability resolves ("If it's a Vampire, it also gains
       // lifelink") reads the fire-time snapshot, not the board as it is now.
-      const snapState = effect.asLongAsCondition._onResolution && effect._firedAtStates
+      let snapState = effect.asLongAsCondition._onResolution && effect._firedAtStates
         ? effect._firedAtStates.get(permId) : null;
+      // A power/toughness test ("if its toughness is 2 or less") reads the object as the spell
+      // or ability resolved: a spell's cast-time states, plus what this same spell or ability
+      // gave the object earlier in its text ("gets +1/+1. Then if it has power 4 or greater, …").
+      if (effect.asLongAsCondition._finalPT) {
+        const src = typeof Battlefield !== 'undefined' ? Battlefield.getPermById(effect.sourceId) : null;
+        if (!snapState && src && src._castStates) snapState = src._castStates.get(permId) || null;
+        if (!snapState) return false;
+        let dp = 0, dt = 0;
+        for (const e of Battlefield.effects) {
+          if (e === effect || e.sourceId !== effect.sourceId || e.type !== EFFECT_TYPE.MODIFY_PT || e.asLongAsCondition || e.disabled) continue;
+          if (e.targetId !== permId && !(e.targetIds || []).includes(permId)) continue;
+          if (e._oraclePos !== undefined && effect._oraclePos !== undefined && e._oraclePos >= effect._oraclePos) continue;
+          if (e.params.forEachDesc !== undefined || e.params.doublePower || e.params.doubleToughness) continue;
+          dp += e.params.power || 0; dt += e.params.toughness || 0;
+        }
+        if (dp || dt) snapState = { ...snapState, power: (snapState.power || 0) + dp, toughness: (snapState.toughness || 0) + dt };
+      }
       if (snapState) {
         if (!effect.asLongAsCondition(snapState, effect._firedAtStates)) return false;
       } else if (!groupAlreadyAppliedTargeted) {

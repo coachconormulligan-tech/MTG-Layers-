@@ -1,0 +1,54 @@
+{
+  "name": "Griffin Canyon — \"If it's a creature, it gets +1/+1\" lands on the target Griffin",
+  "notes": "Was on the open list of demonstrative cards; the rider work of 2026-10-06 already covers it (\"{T}: Untap target Griffin. If it's a creature, it gets +1/+1 until end of turn.\" reads \"… target Griffin gets +1/+1\" with an on-resolution \"it is a creature\" condition). Locked in here: Griffin Sentinel 1/3 becomes 2/4; the Canyon and Grizzly Bears are unchanged.",
+  "steps": [
+    {
+      "add": "Griffin Sentinel",
+      "as": "griffin"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Griffin Canyon",
+      "as": "canyon"
+    },
+    {
+      "fire": "@canyon",
+      "activated": 1,
+      "as": "fired"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@fired",
+        "@griffin"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Griffin Sentinel",
+      "final": {
+        "power": 2,
+        "toughness": 4
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 2,
+        "toughness": 2
+      }
+    },
+    {
+      "perm": "Griffin Canyon",
+      "final": {
+        "types": [
+          "Land"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "name": "Dread Wight — \"Each of those creatures gains …\" goes to the creatures picked, for good",
+  "notes": "Sweep singleton (2026-10-07). \"At end of combat, put a paralyzation counter on each creature blocking or blocked by this creature and tap those creatures. Each of those creatures doesn't untap … for as long as it has a paralyzation counter on it. Each of those creatures gains \\\"{4}: Remove a paralyzation counter from this creature.\\\"\" produced nothing: the group antecedent ran on through \"and tap those creatures\". Who fought whom is over once the ability matters, so \"each creature blocking or blocked by\" is read as a pick of any number of creatures (_resolveTheyPronoun). Two things found on the way: the unfired card must not grant the ability (quoted grants on a permanent's trigger line are skipped in the static parse), and the untap sentence's \"for as long as it has a paralyzation counter\" is that sentence's own duration, not a condition on the grant. Bears and Ogre picked: both have the ability with no counter on them; Hill Giant and Dread Wight do not.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Dread Wight",
+      "as": "wight"
+    },
+    {
+      "fire": "@wight",
+      "trigger": 0,
+      "as": "fired"
+    },
+    {
+      "call": [
+        "setMultiTarget",
+        "@fired",
+        0,
+        "@bears"
+      ]
+    },
+    {
+      "call": [
+        "setMultiTarget",
+        "@fired",
+        1,
+        "@ogre"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "{4}: Remove a paralyzation counter from this creature."
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "{4}: Remove a paralyzation counter from this creature."
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "{4}: Remove a paralyzation counter from this creature."
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Dread Wight",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "{4}: Remove a paralyzation counter from this creature."
+          ]
+        }
+      }
+    }
+  ]
+}

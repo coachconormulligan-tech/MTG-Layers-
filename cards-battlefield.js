@@ -207,6 +207,15 @@ const Battlefield = {
       if (trigLimitMatch) {
         triggerLimit = _parseWordNumber(trigLimitMatch[1]);
       }
+      // "…, you may have this creature's base power and toughness become 4/1 or 1/4 until end
+      // of turn" (Master of Winds): one trigger, two outcomes to pick from when it is fired.
+      const eitherPT = effectText.match(/^(.*\bbecomes?\s+)(\d+\/\d+)\s+or\s+(\d+\/\d+)(\b.*)$/i);
+      if (eitherPT) {
+        result.push({ index: i, fullText: ab, effectText, triggerLimit,
+                      options: [2, 3].map(g => (eitherPT[1] + eitherPT[g] + eitherPT[4])
+                        .replace(/^you may have\s+/i, '').replace(/^./, c => c.toUpperCase())) });
+        continue;
+      }
       result.push({ index: i, fullText: ab, effectText, triggerLimit });
     }
     return result;
@@ -375,6 +384,15 @@ const Battlefield = {
     };
   },
 
+  /* One of options at random ("choose a basic land type at random" — Lydari Druid).
+     queueRandomPicks fixes the next outcomes, first queued first used, so a test or a worked
+     example can say how the dice fell. */
+  _randomPick(options) {
+    const queued = this._queuedRandomPicks && this._queuedRandomPicks.length ? this._queuedRandomPicks.shift() : null;
+    return options.includes(queued) ? queued : options[Math.floor(Math.random() * options.length)];
+  },
+  queueRandomPicks(...picks) { this._queuedRandomPicks = picks; },
+
   /* Shared: create a pseudo-permanent for a triggered/activated ability and parse its effects. */
   _addAbilityPseudo(sourcePermId, abilityIdx, effectText, fullText, kind, firedAtStates, savedGuesses) {
     const sourcePerm = this.getPermById(sourcePermId);
@@ -411,7 +429,8 @@ const Battlefield = {
     // targeted and require user selection.
     // IMPORTANT: This conversion is a UI convenience only — the original ability does NOT
     // actually target, so it bypasses shroud/hexproof. We flag this with _nonTargetingSelection.
-    let parsedEffectText = effectText;
+    // (A save replays the text as _THEN_IF_RE below left it; read it back as it was written.)
+    let parsedEffectText = effectText.replace(/\nIf (?:on resolution )?(?=[^,.\n]+,\s*[^.\n]*\b(?:gets?|gains?|has|have|becomes?|loses?)\b)/g, ' Then if ');
     // The subject of such a "target <trigger subject>" is a guess ("target Pirate" for the "it"
     // of Coercive Recruiter, which is whatever creature the ability took). Those subjects are
     // kept on the pseudo-permanent so the parser gives a restriction to every other "target X"
@@ -572,6 +591,13 @@ const Battlefield = {
       return built && built.isSpellTarget && built.fn ? phrase : null;
     };
     let didItConversion = false;
+    // "…the base power and toughness of each creature that dealt damage to it this turn become
+    // 0/2" (Brine Hag): who dealt damage is not tracked, so the creatures are picked.
+    {
+      const picked = parsedEffectText.replace(/\beach (creature|permanent) that dealt (?:combat )?damage to (?:it|this (?:creature|card|permanent)) this turn\b/gi,
+        (_, noun) => `any number of target ${noun.toLowerCase()}s`);
+      if (picked !== parsedEffectText) { parsedEffectText = picked; didItConversion = true; }
+    }
     // "It's a Spirit in addition to its other types" → "target creature is a Spirit in addition …"
     {
       // Not inside "create a token that's a copy …, except it's a …": that describes the token.
@@ -640,6 +666,39 @@ const Battlefield = {
       parsedEffectText = parsedEffectText.replace(/\bthat\s+creature\s+(get[s]?|gain[s]?|ha[s]|have|is|becomes?|loses?)\b/gi, pronounSubject('creature'));
       parsedEffectText = parsedEffectText.replace(/\bthat\s+permanent\s+(get[s]?|gain[s]?|ha[s]|have|is|becomes?|loses?)\b/gi, pronounSubject('permanent'));
     }
+    // "… Then if you control five or more Rats, each Rat you control gets +2/+0 until end of
+    // turn" (Ogre Chitterlord): a condition on that sentence alone, checked after the rest of
+    // the ability has happened, so it reads the board as it is and not the fire-time snapshot.
+    // It gets a line of its own so the sentence before it (a token with a quoted ability) does
+    // not hide it.
+    // A pronoun in it ("Then if that creature has power 4 or greater, it gains first strike" —
+    // Strider, Ranger of the North) is the target already chosen, not a second one to pick.
+    const thenIfAt = parsedEffectText.search(_THEN_IF_RE);
+    // (By now the pronoun reads "target creature", the same words as the target before it.)
+    const thenIfSameTarget = thenIfAt >= 0 && (parsedEffectText.slice(thenIfAt).match(/\btarget\s+\w+/gi) || [])
+      .every(phrase => parsedEffectText.slice(0, thenIfAt).toLowerCase().includes(phrase.toLowerCase()));
+    // A test of power or toughness is read as the ability resolves (see _finalPT).
+    parsedEffectText = parsedEffectText.replace(_THEN_IF_RE,
+      (_, cond) => `\nIf ${/\b(?:power|toughness)\b/i.test(cond) ? 'on resolution ' : ''}${cond}, `);
+    // "for each land on the battlefield, choose a basic land type at random. Those lands become
+    // the land types chosen this way." (Lydari Druid): rolled now, one line and one slot a land.
+    let rolledLandIds = null;
+    if (_RANDOM_LAND_TYPES_RE.test(parsedEffectText.trim())) {
+      const lands = this.permanents.filter(p => {
+        if (p === pseudoPerm || p.isManualEffect || p.isSpell) return false;
+        const st = firedAtStates && firedAtStates.get(p.id);
+        return ((st && st.types) || p.printedTypes || []).includes('Land');
+      });
+      if (lands.length) {
+        rolledLandIds = lands.map(p => p.id);
+        parsedEffectText = _rolledLandTypesText(lands.map(() => this._randomPick(_BASIC_LAND_TYPES)));
+      }
+    }
+    // (A saved board replays the rolled text; the rewrites above join its lines.)
+    if (!rolledLandIds && _ROLLED_LAND_TYPES_RE.test(parsedEffectText.trim())) parsedEffectText = parsedEffectText.trim().replace(/\.\s+/g, '.\n');
+    // Lands given a type at random are not targeted either.
+    const isRolledLandTypes = _ROLLED_LAND_TYPES_RE.test(parsedEffectText);
+    if (isRolledLandTypes) didItConversion = true;
     if (didItConversion) pseudoPerm._nonTargetingSelection = true;
     pseudoPerm._guessedTargetSubjects = savedGuesses === null ? null : [...guessedSubjects];
     // Sync oracleText with the fully-processed parsedEffectText (X substituted, "if" stripped, etc.)
@@ -668,6 +727,22 @@ const Battlefield = {
     pseudoPerm.printedTypes = ['Instant'];
     const newEffects = parseCardEffects(pseudoPerm, fakeCard);
     this._flagColorChoice(pseudoPerm, newEffects);
+    if (thenIfSameTarget) {
+      const slotted = newEffects.filter(e => e._targetSlot !== undefined);
+      // (A match can start on the "." that ends the sentence before it, hence the - 1.)
+      const before = slotted.filter(e => e._oraclePos < thenIfAt - 1).map(e => e._targetSlot);
+      if (before.length) {
+        const last = Math.max(...before);
+        for (const e of slotted) if (e._targetSlot > last) e._targetSlot = last;
+        if (last === 0) for (const e of slotted) delete e._targetSlot;
+      }
+    }
+    if (isRolledLandTypes) {
+      newEffects.filter(e => e.type === EFFECT_TYPE.SET_TYPE && e.scope === 'targeted').forEach((e, i) => {
+        e._targetSlot = i;
+        if (rolledLandIds) e.targetId = rolledLandIds[i] || null;
+      });
+    }
     // Determine the ability's overall target restriction from the earliest targeted effect
     // that specifies one. This is stamped on ALL effects so that the snapshot gate in
     // effectAppliesToPerm can uniformly block the ability when the target didn't qualify
@@ -1343,7 +1418,7 @@ const Battlefield = {
         perm.originalCard = perm.originalCard || card;
       }
     }
-    if (/\bchoose a basic land type\b/i.test(resolvedOracleForChoice)) {
+    if (/\bchoose a basic land type\b(?! at random)/i.test(resolvedOracleForChoice)) {
       perm.needsChosenLandType = true;
       perm.chosenLandType = null;
       perm.originalOracleText = perm.originalOracleText || card.oracle_text || '';
@@ -1384,11 +1459,13 @@ const Battlefield = {
   },
 
   /* Whether a spell's optional additional cost (kicker, bargain, …) was paid. The parsed
-     effects read it live through their conditions, so nothing is re-parsed. */
-  setAdditionalCostPaid(permId, paid) {
+     effects read it live through their conditions, so nothing is re-parsed. slot 2 is the
+     second toggle of a spell with two cast conditions (Cankerous Thirst: {B} spent, {G} spent). */
+  setAdditionalCostPaid(permId, paid, slot = 1) {
     const perm = this.getPermById(permId);
-    if (!perm || !perm.additionalCostLabel) return;
-    perm.additionalCostPaid = !!paid;
+    const suffix = slot === 2 ? '2' : '';
+    if (!perm || !perm['additionalCostLabel' + suffix]) return;
+    perm['additionalCostPaid' + suffix] = !!paid;
     this._invalidate();
   },
 
@@ -2654,6 +2731,9 @@ const Battlefield = {
     if (!perm.controller) perm.controller = opts.controller || this.activePlayerId;
     if (!perm.owner) perm.owner = opts.owner || this.activePlayerId;
     perm._firedAtSnapshot = firedAtSnapshot;
+    // The same states under live ids, for conditions read as the spell resolves (a restore
+    // keeps the snapshot's cast-time ids, so it translates this copy).
+    perm._castStates = firedAtSnapshot.states;
     this.permanents.push(perm);
     // Parse spell effects so the inspector can show a target picker (e.g. Viridescent Wisps, Oracle's Restoration)
     const resolvedForParse = _resolveCardFace(card, opts.faceIndex || 0);
@@ -3004,6 +3084,7 @@ const Battlefield = {
         hasXValue: !!p.hasXValue,
         xValue: p.xValue ?? null,
         additionalCostPaid: !!p.additionalCostPaid,
+        additionalCostPaid2: !!p.additionalCostPaid2,
         chosenCreatureType: p.chosenCreatureType || null,
         chosenColor: p.chosenColor || null,
         chosenCardName: p.chosenCardName || null,
@@ -3061,6 +3142,7 @@ const Battlefield = {
         fullText: p.abilityFullText || '',
         chosenColor: p.chosenColor || null,
         additionalCostPaid: !!p.additionalCostPaid,
+        additionalCostPaid2: !!p.additionalCostPaid2,
         // effectText above is already rewritten ("it" → "target Pirate"); which of its "target X"
         // subjects were such guesses cannot be read back from it (see _addAbilityPseudo).
         guessedTargetSubjects: p._guessedTargetSubjects || null,
@@ -3191,6 +3273,7 @@ const Battlefield = {
       if (r.chosenLandType) this.setChosenLandType(np.id, r.chosenLandType);
       if (r.chosenCardType) this.setChosenCardType(np.id, r.chosenCardType);
       if (r.additionalCostPaid) this.setAdditionalCostPaid(np.id, true);
+      if (r.additionalCostPaid2) this.setAdditionalCostPaid(np.id, true, 2);
       // Mutable runtime/display state.
       np.controller = r.controller || r.owner;
       np.tapped = !!r.tapped;
@@ -3250,6 +3333,7 @@ const Battlefield = {
       pseudo.timestamp = f.timestamp;
       if (f.chosenColor) this.setChosenColor(pseudo.id, f.chosenColor);
       if (f.additionalCostPaid) this.setAdditionalCostPaid(pseudo.id, true);
+      if (f.additionalCostPaid2) this.setAdditionalCostPaid(pseudo.id, true, 2);
       // Re-stamp the ability's effects to its saved timestamp so layer ordering matches.
       for (const e of this.effects) { if (e.sourceId === pseudo.id) e.timestamp = f.timestamp; }
     }
@@ -3411,6 +3495,7 @@ const Battlefield = {
       const nsId = idMap[r.id];
       const pseudo = nsId && this.getPermById(nsId);
       if (!pseudo) continue;
+      pseudo._castStates = new Map((r.firedAtSnapshot.states || []).filter(([oldId]) => idMap[oldId]).map(([oldId, st]) => [idMap[oldId], st]));
       pseudo._firedAtSnapshot = {
         states: new Map(r.firedAtSnapshot.states || []),
         perms: r.firedAtSnapshot.perms || [],

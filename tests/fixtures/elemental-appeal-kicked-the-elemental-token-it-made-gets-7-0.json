@@ -1,0 +1,1304 @@
+{
+ "name": "Elemental Appeal — kicked, the Elemental token it made gets +7/+0",
+ "notes": "Sweep cast-condition leftovers (2026-10-06). \"Create a 7/1 red Elemental creature token … If this spell was kicked, that creature gets +7/+0 until end of turn.\" produced nothing because \"that creature\" is a token the spell made, which the branch splitter refused to resolve. It now reads it as \"target Elemental token\", picked on the board, behind the Kicked toggle. Kicked on an Air Elemental token (4/4): 11/4. Not kicked on an Earth Elemental token (4/5): unchanged.",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Air Elemental",
+    "as": "air",
+    "opts": {
+     "isToken": true
+    }
+   },
+   {
+    "add": "Earth Elemental",
+    "as": "earth",
+    "opts": {
+     "isToken": true
+    }
+   },
+   {
+    "add": "Elemental Appeal",
+    "as": "kicked",
+    "spell": true
+   },
+   {
+    "call": [
+     "setTarget",
+     "@kicked",
+     "@air"
+    ]
+   },
+   {
+    "call": [
+     "setAdditionalCostPaid",
+     "@kicked",
+     true
+    ]
+   },
+   {
+    "add": "Elemental Appeal",
+    "as": "plain",
+    "spell": true
+   },
+   {
+    "call": [
+     "setTarget",
+     "@plain",
+     "@earth"
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Air Elemental",
+   "final": {
+    "power": 11,
+    "toughness": 4
+   }
+  },
+  {
+   "perm": "Earth Elemental",
+   "final": {
+    "power": 4,
+    "toughness": 5
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "a27efec0-40c4-48bc-a21a-3af28a6529b5",
+     "oracle_id": "7744bae4-a8b7-44a5-9b4c-0048ad4cc448",
+     "multiverse_ids": [
+      466798
+     ],
+     "mtgo_id": 72987,
+     "arena_id": 69829,
+     "tcgplayer_id": 192856,
+     "cardmarket_id": 379413,
+     "name": "Air Elemental",
+     "lang": "en",
+     "released_at": "2019-07-12",
+     "uri": "https://api.scryfall.com/cards/a27efec0-40c4-48bc-a21a-3af28a6529b5",
+     "scryfall_uri": "https://scryfall.com/card/m20/44/air-elemental?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T08:56:58Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/a/2/a27efec0-40c4-48bc-a21a-3af28a6529b5.jpg?1783933018",
+      "normal": "https://cards.scryfall.io/normal/front/a/2/a27efec0-40c4-48bc-a21a-3af28a6529b5.jpg?1783933018",
+      "large": "https://cards.scryfall.io/large/front/a/2/a27efec0-40c4-48bc-a21a-3af28a6529b5.jpg?1783933018",
+      "png": "https://cards.scryfall.io/png/front/a/2/a27efec0-40c4-48bc-a21a-3af28a6529b5.png?1783933018",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/a/2/a27efec0-40c4-48bc-a21a-3af28a6529b5.jpg?1783933018",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/a/2/a27efec0-40c4-48bc-a21a-3af28a6529b5.jpg?1783933018",
+      "thumb": "https://cards.scryfall.io/thumb/front/a/2/a27efec0-40c4-48bc-a21a-3af28a6529b5.webp?1783933018",
+      "grid": "https://cards.scryfall.io/grid/front/a/2/a27efec0-40c4-48bc-a21a-3af28a6529b5.webp?1783933018",
+      "display": "https://cards.scryfall.io/display/front/a/2/a27efec0-40c4-48bc-a21a-3af28a6529b5.webp?1783933018",
+      "art": "https://cards.scryfall.io/art/front/a/2/a27efec0-40c4-48bc-a21a-3af28a6529b5.webp?1783933018",
+      "crop": "https://cards.scryfall.io/crop/front/a/2/a27efec0-40c4-48bc-a21a-3af28a6529b5.webp?1783933018"
+     },
+     "mana_cost": "{3}{U}{U}",
+     "cmc": 5,
+     "type_line": "Creature — Elemental",
+     "oracle_text": "Flying",
+     "power": "4",
+     "toughness": "4",
+     "colors": [
+      "U"
+     ],
+     "color_identity": [
+      "U"
+     ],
+     "keywords": [
+      "Flying"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "arena",
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "4a787360-9767-4f44-80b1-2405dc5e39c7",
+     "set": "m20",
+     "set_name": "Core Set 2020",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/4a787360-9767-4f44-80b1-2405dc5e39c7",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Am20&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/m20?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/a27efec0-40c4-48bc-a21a-3af28a6529b5/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A7744bae4-a8b7-44a5-9b4c-0048ad4cc448&unique=prints",
+     "collector_number": "44",
+     "digital": false,
+     "rarity": "uncommon",
+     "flavor_text": "As the ship approached, the jade totem rose high overhead. Power rippled. Eyes of stone glowed and crackled. Out hissed a breath of the world, and a windstorm came alive.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Tomasz Jedruszek",
+     "artist_ids": [
+      "bba69285-2445-4a4b-a847-59397be972ea"
+     ],
+     "illustration_id": "843020fe-092f-47ab-a2e5-8a37065ff90d",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 24411,
+     "penny_rank": 14517,
+     "prices": {
+      "usd": "0.14",
+      "usd_foil": "0.25",
+      "usd_etched": null,
+      "eur": "0.09",
+      "eur_foil": "0.17",
+      "tix": "0.05"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=466798&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DAir%2BElemental",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DAir%2BElemental",
+      "edhrec": "https://edhrec.com/route/?cc=Air+Elemental"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F192856%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=379413&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/72987?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": true,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "659eeb25-b79b-4229-9d84-e28f6a636958",
+     "oracle_id": "3c97c311-7ad5-47ec-b421-f6c3bfbda9fb",
+     "multiverse_ids": [
+      446142
+     ],
+     "tcgplayer_id": 167909,
+     "cardmarket_id": 359001,
+     "name": "Earth Elemental",
+     "lang": "en",
+     "released_at": "2018-06-08",
+     "uri": "https://api.scryfall.com/cards/659eeb25-b79b-4229-9d84-e28f6a636958",
+     "scryfall_uri": "https://scryfall.com/card/bbd/174/earth-elemental?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T09:26:53Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/6/5/659eeb25-b79b-4229-9d84-e28f6a636958.jpg?1783934813",
+      "normal": "https://cards.scryfall.io/normal/front/6/5/659eeb25-b79b-4229-9d84-e28f6a636958.jpg?1783934813",
+      "large": "https://cards.scryfall.io/large/front/6/5/659eeb25-b79b-4229-9d84-e28f6a636958.jpg?1783934813",
+      "png": "https://cards.scryfall.io/png/front/6/5/659eeb25-b79b-4229-9d84-e28f6a636958.png?1783934813",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/6/5/659eeb25-b79b-4229-9d84-e28f6a636958.jpg?1783934813",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/6/5/659eeb25-b79b-4229-9d84-e28f6a636958.jpg?1783934813",
+      "thumb": "https://cards.scryfall.io/thumb/front/6/5/659eeb25-b79b-4229-9d84-e28f6a636958.webp?1783934813",
+      "grid": "https://cards.scryfall.io/grid/front/6/5/659eeb25-b79b-4229-9d84-e28f6a636958.webp?1783934813",
+      "display": "https://cards.scryfall.io/display/front/6/5/659eeb25-b79b-4229-9d84-e28f6a636958.webp?1783934813",
+      "art": "https://cards.scryfall.io/art/front/6/5/659eeb25-b79b-4229-9d84-e28f6a636958.webp?1783934813",
+      "crop": "https://cards.scryfall.io/crop/front/6/5/659eeb25-b79b-4229-9d84-e28f6a636958.webp?1783934813"
+     },
+     "mana_cost": "{3}{R}{R}",
+     "cmc": 5,
+     "type_line": "Creature — Elemental",
+     "oracle_text": "",
+     "power": "4",
+     "toughness": "5",
+     "colors": [
+      "R"
+     ],
+     "color_identity": [
+      "R"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "95f97fbc-58ef-4645-982e-43e2db6f1124",
+     "set": "bbd",
+     "set_name": "Battlebond",
+     "set_type": "draft_innovation",
+     "set_uri": "https://api.scryfall.com/sets/95f97fbc-58ef-4645-982e-43e2db6f1124",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Abbd&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/bbd?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/659eeb25-b79b-4229-9d84-e28f6a636958/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A3c97c311-7ad5-47ec-b421-f6c3bfbda9fb&unique=prints",
+     "collector_number": "174",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "Earth elementals have the eternal strength of stone and the endurance of mountains. Primordially connected to the land they inhabit, they take a long-term view of things, scorning the impetuous haste of short-lived mortal creatures.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Anthony S. Waters",
+     "artist_ids": [
+      "f009de11-3c8d-4663-b996-ca0c3e997fad"
+     ],
+     "illustration_id": "e4b3ca37-60e8-4910-8f2c-a3a307953e53",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 29992,
+     "prices": {
+      "usd": "0.03",
+      "usd_foil": "0.40",
+      "usd_etched": null,
+      "eur": "0.08",
+      "eur_foil": "0.11",
+      "tix": null
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=446142&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DEarth%2BElemental",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DEarth%2BElemental",
+      "edhrec": "https://edhrec.com/route/?cc=Earth+Elemental"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F167909%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=359001&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Earth+Elemental&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": true,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "3a583f30-a3e0-4c4f-81b3-01452edaf22c",
+     "oracle_id": "3bcfc82c-3523-40e3-b236-78ece8a8d69f",
+     "multiverse_ids": [
+      192221
+     ],
+     "mtgo_id": 34672,
+     "mtgo_foil_id": 34673,
+     "tcgplayer_id": 33290,
+     "cardmarket_id": 21735,
+     "name": "Elemental Appeal",
+     "lang": "en",
+     "released_at": "2009-10-02",
+     "uri": "https://api.scryfall.com/cards/3a583f30-a3e0-4c4f-81b3-01452edaf22c",
+     "scryfall_uri": "https://scryfall.com/card/zen/123/elemental-appeal?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:29:05Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/3/a/3a583f30-a3e0-4c4f-81b3-01452edaf22c.jpg?1783942145",
+      "normal": "https://cards.scryfall.io/normal/front/3/a/3a583f30-a3e0-4c4f-81b3-01452edaf22c.jpg?1783942145",
+      "large": "https://cards.scryfall.io/large/front/3/a/3a583f30-a3e0-4c4f-81b3-01452edaf22c.jpg?1783942145",
+      "png": "https://cards.scryfall.io/png/front/3/a/3a583f30-a3e0-4c4f-81b3-01452edaf22c.png?1783942145",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/3/a/3a583f30-a3e0-4c4f-81b3-01452edaf22c.jpg?1783942145",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/3/a/3a583f30-a3e0-4c4f-81b3-01452edaf22c.jpg?1783942145",
+      "thumb": "https://cards.scryfall.io/thumb/front/3/a/3a583f30-a3e0-4c4f-81b3-01452edaf22c.webp?1783942145",
+      "grid": "https://cards.scryfall.io/grid/front/3/a/3a583f30-a3e0-4c4f-81b3-01452edaf22c.webp?1783942145",
+      "display": "https://cards.scryfall.io/display/front/3/a/3a583f30-a3e0-4c4f-81b3-01452edaf22c.webp?1783942145",
+      "art": "https://cards.scryfall.io/art/front/3/a/3a583f30-a3e0-4c4f-81b3-01452edaf22c.webp?1783942145",
+      "crop": "https://cards.scryfall.io/crop/front/3/a/3a583f30-a3e0-4c4f-81b3-01452edaf22c.webp?1783942145"
+     },
+     "mana_cost": "{R}{R}{R}{R}",
+     "cmc": 4,
+     "type_line": "Sorcery",
+     "oracle_text": "Kicker {5} (You may pay an additional {5} as you cast this spell.)\nCreate a 7/1 red Elemental creature token with trample and haste. Exile it at the beginning of the next end step. If this spell was kicked, that creature gets +7/+0 until end of turn.",
+     "colors": [
+      "R"
+     ],
+     "color_identity": [
+      "R"
+     ],
+     "keywords": [
+      "Kicker"
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "3a583f30-a3e0-4c4f-81b3-01452edaf22c",
+       "component": "combo_piece",
+       "name": "Elemental Appeal",
+       "type_line": "Sorcery",
+       "uri": "https://api.scryfall.com/cards/3a583f30-a3e0-4c4f-81b3-01452edaf22c"
+      },
+      {
+       "object": "related_card",
+       "id": "f9e12780-9c25-4cb0-b1ff-a36ca50b19d8",
+       "component": "token",
+       "name": "Elemental",
+       "type_line": "Token Creature — Elemental",
+       "uri": "https://api.scryfall.com/cards/f9e12780-9c25-4cb0-b1ff-a36ca50b19d8"
+      }
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "eb16a2bd-a218-4e4e-8339-4aa1afc0c8d2",
+     "set": "zen",
+     "set_name": "Zendikar",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/eb16a2bd-a218-4e4e-8339-4aa1afc0c8d2",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Azen&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/zen?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/3a583f30-a3e0-4c4f-81b3-01452edaf22c/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A3bcfc82c-3523-40e3-b236-78ece8a8d69f&unique=prints",
+     "collector_number": "123",
+     "digital": false,
+     "rarity": "rare",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Anthony Francisco",
+     "artist_ids": [
+      "6ac24c4b-70e9-4286-8f4b-b40c92ab5847"
+     ],
+     "illustration_id": "7c1964f1-211b-4c5f-871e-aa34a5a59421",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 24232,
+     "penny_rank": 13033,
+     "prices": {
+      "usd": "0.35",
+      "usd_foil": "0.87",
+      "usd_etched": null,
+      "eur": "0.19",
+      "eur_foil": "0.60",
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=192221&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DElemental%2BAppeal",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DElemental%2BAppeal",
+      "edhrec": "https://edhrec.com/route/?cc=Elemental+Appeal"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F33290%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=21735&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/34672?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": true,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": true,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": "perm_1",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 4,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": {
+     "states": [
+      [
+       "perm_1",
+       {
+        "name": "Air Elemental",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Elemental"
+        ],
+        "power": 4,
+        "toughness": 4,
+        "colors": [
+         "U"
+        ],
+        "abilities": [
+         "Flying"
+        ],
+        "oracleText": "Flying",
+        "owner": "player_0",
+        "controller": "player_0"
+       }
+      ],
+      [
+       "perm_2",
+       {
+        "name": "Earth Elemental",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Elemental"
+        ],
+        "power": 4,
+        "toughness": 5,
+        "colors": [
+         "R"
+        ],
+        "abilities": [],
+        "oracleText": "",
+        "owner": "player_0",
+        "controller": "player_0"
+       }
+      ]
+     ],
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Air Elemental",
+       "imageUri": "https://cards.scryfall.io/small/front/a/2/a27efec0-40c4-48bc-a21a-3af28a6529b5.jpg?1783933018",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": true,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Elemental"
+       ],
+       "printedPower": 4,
+       "printedToughness": 4,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Earth Elemental",
+       "imageUri": "https://cards.scryfall.io/small/front/6/5/659eeb25-b79b-4229-9d84-e28f6a636958.jpg?1783934813",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": true,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Elemental"
+       ],
+       "printedPower": 4,
+       "printedToughness": 5,
+       "timestamp": 2
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    }
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "3a583f30-a3e0-4c4f-81b3-01452edaf22c",
+     "oracle_id": "3bcfc82c-3523-40e3-b236-78ece8a8d69f",
+     "multiverse_ids": [
+      192221
+     ],
+     "mtgo_id": 34672,
+     "mtgo_foil_id": 34673,
+     "tcgplayer_id": 33290,
+     "cardmarket_id": 21735,
+     "name": "Elemental Appeal",
+     "lang": "en",
+     "released_at": "2009-10-02",
+     "uri": "https://api.scryfall.com/cards/3a583f30-a3e0-4c4f-81b3-01452edaf22c",
+     "scryfall_uri": "https://scryfall.com/card/zen/123/elemental-appeal?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:29:05Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/3/a/3a583f30-a3e0-4c4f-81b3-01452edaf22c.jpg?1783942145",
+      "normal": "https://cards.scryfall.io/normal/front/3/a/3a583f30-a3e0-4c4f-81b3-01452edaf22c.jpg?1783942145",
+      "large": "https://cards.scryfall.io/large/front/3/a/3a583f30-a3e0-4c4f-81b3-01452edaf22c.jpg?1783942145",
+      "png": "https://cards.scryfall.io/png/front/3/a/3a583f30-a3e0-4c4f-81b3-01452edaf22c.png?1783942145",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/3/a/3a583f30-a3e0-4c4f-81b3-01452edaf22c.jpg?1783942145",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/3/a/3a583f30-a3e0-4c4f-81b3-01452edaf22c.jpg?1783942145",
+      "thumb": "https://cards.scryfall.io/thumb/front/3/a/3a583f30-a3e0-4c4f-81b3-01452edaf22c.webp?1783942145",
+      "grid": "https://cards.scryfall.io/grid/front/3/a/3a583f30-a3e0-4c4f-81b3-01452edaf22c.webp?1783942145",
+      "display": "https://cards.scryfall.io/display/front/3/a/3a583f30-a3e0-4c4f-81b3-01452edaf22c.webp?1783942145",
+      "art": "https://cards.scryfall.io/art/front/3/a/3a583f30-a3e0-4c4f-81b3-01452edaf22c.webp?1783942145",
+      "crop": "https://cards.scryfall.io/crop/front/3/a/3a583f30-a3e0-4c4f-81b3-01452edaf22c.webp?1783942145"
+     },
+     "mana_cost": "{R}{R}{R}{R}",
+     "cmc": 4,
+     "type_line": "Sorcery",
+     "oracle_text": "Kicker {5} (You may pay an additional {5} as you cast this spell.)\nCreate a 7/1 red Elemental creature token with trample and haste. Exile it at the beginning of the next end step. If this spell was kicked, that creature gets +7/+0 until end of turn.",
+     "colors": [
+      "R"
+     ],
+     "color_identity": [
+      "R"
+     ],
+     "keywords": [
+      "Kicker"
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "3a583f30-a3e0-4c4f-81b3-01452edaf22c",
+       "component": "combo_piece",
+       "name": "Elemental Appeal",
+       "type_line": "Sorcery",
+       "uri": "https://api.scryfall.com/cards/3a583f30-a3e0-4c4f-81b3-01452edaf22c"
+      },
+      {
+       "object": "related_card",
+       "id": "f9e12780-9c25-4cb0-b1ff-a36ca50b19d8",
+       "component": "token",
+       "name": "Elemental",
+       "type_line": "Token Creature — Elemental",
+       "uri": "https://api.scryfall.com/cards/f9e12780-9c25-4cb0-b1ff-a36ca50b19d8"
+      }
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "eb16a2bd-a218-4e4e-8339-4aa1afc0c8d2",
+     "set": "zen",
+     "set_name": "Zendikar",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/eb16a2bd-a218-4e4e-8339-4aa1afc0c8d2",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Azen&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/zen?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/3a583f30-a3e0-4c4f-81b3-01452edaf22c/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A3bcfc82c-3523-40e3-b236-78ece8a8d69f&unique=prints",
+     "collector_number": "123",
+     "digital": false,
+     "rarity": "rare",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Anthony Francisco",
+     "artist_ids": [
+      "6ac24c4b-70e9-4286-8f4b-b40c92ab5847"
+     ],
+     "illustration_id": "7c1964f1-211b-4c5f-871e-aa34a5a59421",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 24232,
+     "penny_rank": 13033,
+     "prices": {
+      "usd": "0.35",
+      "usd_foil": "0.87",
+      "usd_etched": null,
+      "eur": "0.19",
+      "eur_foil": "0.60",
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=192221&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DElemental%2BAppeal",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DElemental%2BAppeal",
+      "edhrec": "https://edhrec.com/route/?cc=Elemental+Appeal"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F33290%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=21735&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/34672?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": true,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 5,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": "perm_2",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 6,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": {
+     "states": [
+      [
+       "perm_1",
+       {
+        "name": "Air Elemental",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Elemental"
+        ],
+        "power": 11,
+        "toughness": 4,
+        "abilities": [
+         "Flying"
+        ],
+        "colors": [
+         "U"
+        ],
+        "manaValue": 5,
+        "manaCost": "{3}{U}{U}",
+        "isCreature": true,
+        "isToken": true,
+        "oracleText": "Flying",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [
+         "Flying"
+        ],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_2",
+       {
+        "name": "Earth Elemental",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Elemental"
+        ],
+        "power": 4,
+        "toughness": 5,
+        "abilities": [],
+        "colors": [
+         "R"
+        ],
+        "manaValue": 5,
+        "manaCost": "{3}{R}{R}",
+        "isCreature": true,
+        "isToken": true,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_3",
+       {
+        "name": "Elemental Appeal",
+        "types": [
+         "Sorcery"
+        ],
+        "supertypes": [],
+        "subtypes": [],
+        "power": null,
+        "toughness": null,
+        "abilities": [
+         "Kicker {5}",
+         "Create a 7/1 red Elemental creature token with trample and haste. Exile it at the beginning of the next end step. If this spell was kicked, that creature gets +7/+0 until end of turn."
+        ],
+        "colors": [
+         "R"
+        ],
+        "manaValue": 4,
+        "manaCost": "{R}{R}{R}{R}",
+        "isCreature": false,
+        "isToken": false,
+        "oracleText": "Kicker {5}\nCreate a 7/1 red Elemental creature token with trample and haste. Exile it at the beginning of the next end step. If this spell was kicked, that creature gets +7/+0 until end of turn.",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [
+         "Kicker {5}",
+         "Create a 7/1 red Elemental creature token with trample and haste. Exile it at the beginning of the next end step. If this spell was kicked, that creature gets +7/+0 until end of turn."
+        ],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ]
+     ],
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Air Elemental",
+       "imageUri": "https://cards.scryfall.io/small/front/a/2/a27efec0-40c4-48bc-a21a-3af28a6529b5.jpg?1783933018",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": true,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Elemental"
+       ],
+       "printedPower": 4,
+       "printedToughness": 4,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Earth Elemental",
+       "imageUri": "https://cards.scryfall.io/small/front/6/5/659eeb25-b79b-4229-9d84-e28f6a636958.jpg?1783934813",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": true,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Elemental"
+       ],
+       "printedPower": 4,
+       "printedToughness": 5,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Elemental Appeal",
+       "imageUri": "https://cards.scryfall.io/small/front/3/a/3a583f30-a3e0-4c4f-81b3-01452edaf22c.jpg?1783942145",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "isSpell": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Sorcery"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 3
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    }
+   }
+  ],
+  "firedAbilities": [],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Air Elemental",
+    "final": {
+     "name": "Air Elemental",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Elemental"
+     ],
+     "power": 11,
+     "toughness": 4,
+     "colors": [
+      "U"
+     ],
+     "abilities": [
+      "Flying"
+     ]
+    },
+    "changedBy": {
+     "7c": [
+      "Elemental Appeal"
+     ]
+    }
+   },
+   {
+    "perm": "Earth Elemental",
+    "final": {
+     "name": "Earth Elemental",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Elemental"
+     ],
+     "power": 4,
+     "toughness": 5,
+     "colors": [
+      "R"
+     ],
+     "abilities": []
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Elemental Appeal A",
+    "final": {
+     "name": "Elemental Appeal",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Sorcery"
+     ],
+     "subtypes": [],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "R"
+     ],
+     "abilities": [
+      "Kicker {5}",
+      "Create a 7/1 red Elemental creature token with trample and haste. Exile it at the beginning of the next end step. If this spell was kicked, that creature gets +7/+0 until end of turn."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Elemental Appeal B",
+    "final": {
+     "name": "Elemental Appeal",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Sorcery"
+     ],
+     "subtypes": [],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "R"
+     ],
+     "abilities": [
+      "Kicker {5}",
+      "Create a 7/1 red Elemental creature token with trample and haste. Exile it at the beginning of the next end step. If this spell was kicked, that creature gets +7/+0 until end of turn."
+     ]
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "7c": [
+    "Elemental Appeal",
+    "Elemental Appeal"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Elemental Appeal",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "target": "Air Elemental",
+    "params": {
+     "power": 7,
+     "toughness": 0
+    }
+   },
+   {
+    "source": "Elemental Appeal",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "target": "Earth Elemental",
+    "params": {
+     "power": 7,
+     "toughness": 0
+    }
+   }
+  ]
+ }
+}

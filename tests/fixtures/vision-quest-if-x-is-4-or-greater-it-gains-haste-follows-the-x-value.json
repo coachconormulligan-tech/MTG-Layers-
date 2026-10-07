@@ -1,0 +1,1263 @@
+{
+ "name": "Vision Quest — \"If X is 4 or greater, it gains haste\" follows the X value",
+ "notes": "Sweep cast-condition leftovers (2026-10-06). \"… put it onto the battlefield … If X is 4 or greater, it gains haste until end of turn.\" produced nothing. The sentence now moves to a branch line whose condition is the comparison itself (\"[4 is 4 or greater]\", true or false once X is substituted; false with no X), and \"it\" is the card just put onto the battlefield, picked on the board. X = 4 on Ornithopter: haste. X = 3 on Phyrexian Walker: none.",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Ornithopter",
+    "as": "thopter"
+   },
+   {
+    "add": "Phyrexian Walker",
+    "as": "walker"
+   },
+   {
+    "add": "Vision Quest",
+    "as": "four",
+    "spell": true,
+    "x": 4
+   },
+   {
+    "call": [
+     "setTarget",
+     "@four",
+     "@thopter"
+    ]
+   },
+   {
+    "add": "Vision Quest",
+    "as": "three",
+    "spell": true,
+    "x": 3
+   },
+   {
+    "call": [
+     "setTarget",
+     "@three",
+     "@walker"
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Ornithopter",
+   "final": {
+    "abilities": {
+     "$includes": [
+      "Haste"
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Phyrexian Walker",
+   "final": {
+    "abilities": {
+     "$excludes": [
+      "Haste"
+     ]
+    }
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "305078a5-ac18-4721-bba2-3434eba5b1cf",
+     "oracle_id": "a3a98bc9-caa0-49b7-951c-fe4e4f54e4ba",
+     "multiverse_ids": [
+      599107
+     ],
+     "mtgo_id": 107995,
+     "tcgplayer_id": 457188,
+     "cardmarket_id": 688483,
+     "name": "Ornithopter",
+     "lang": "en",
+     "released_at": "2023-01-13",
+     "uri": "https://api.scryfall.com/cards/305078a5-ac18-4721-bba2-3434eba5b1cf",
+     "scryfall_uri": "https://scryfall.com/card/dmr/233/ornithopter?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T04:53:30Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+      "normal": "https://cards.scryfall.io/normal/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+      "large": "https://cards.scryfall.io/large/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+      "png": "https://cards.scryfall.io/png/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.png?1783918410",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+      "thumb": "https://cards.scryfall.io/thumb/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.webp?1783918410",
+      "grid": "https://cards.scryfall.io/grid/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.webp?1783918410",
+      "display": "https://cards.scryfall.io/display/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.webp?1783918410",
+      "art": "https://cards.scryfall.io/art/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.webp?1783918410",
+      "crop": "https://cards.scryfall.io/crop/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.webp?1783918410"
+     },
+     "mana_cost": "{0}",
+     "cmc": 0,
+     "type_line": "Artifact Creature — Thopter",
+     "oracle_text": "Flying",
+     "power": "0",
+     "toughness": "2",
+     "colors": [],
+     "color_identity": [],
+     "keywords": [
+      "Flying"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "ca4c2884-e539-4b7f-980d-5d6a50220f2a",
+     "set": "dmr",
+     "set_name": "Dominaria Remastered",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/ca4c2884-e539-4b7f-980d-5d6a50220f2a",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Admr&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/dmr?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/305078a5-ac18-4721-bba2-3434eba5b1cf/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aa3a98bc9-caa0-49b7-951c-fe4e4f54e4ba&unique=prints",
+     "collector_number": "233",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"It has been my honor to improve on Thran's original design. Perhaps history will remember me in some small part for my work.\"\n—Urza, in his apprenticeship",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Franz Vohwinkel",
+     "artist_ids": [
+      "3a243c17-3baa-4b53-9599-645311cd7d3d"
+     ],
+     "illustration_id": "ba23fb60-f170-40cc-8d2e-fe88ba070269",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 783,
+     "penny_rank": 393,
+     "prices": {
+      "usd": "0.31",
+      "usd_foil": "0.38",
+      "usd_etched": null,
+      "eur": "0.24",
+      "eur_foil": "0.35",
+      "tix": "0.04"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=599107&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DOrnithopter",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DOrnithopter",
+      "edhrec": "https://edhrec.com/route/?cc=Ornithopter"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F457188%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=688483&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/107995?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "9f8a3979-2947-4692-8b2f-d4c07c534777",
+     "oracle_id": "7af75024-6c9b-4844-aeb6-81de25464822",
+     "multiverse_ids": [
+      3600
+     ],
+     "mtgo_id": 7667,
+     "mtgo_foil_id": 7668,
+     "tcgplayer_id": 5899,
+     "cardmarket_id": 8553,
+     "name": "Phyrexian Walker",
+     "lang": "en",
+     "released_at": "1997-02-03",
+     "uri": "https://api.scryfall.com/cards/9f8a3979-2947-4692-8b2f-d4c07c534777",
+     "scryfall_uri": "https://scryfall.com/card/vis/152/phyrexian-walker?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T12:49:33Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/9/f/9f8a3979-2947-4692-8b2f-d4c07c534777.jpg?1783946973",
+      "normal": "https://cards.scryfall.io/normal/front/9/f/9f8a3979-2947-4692-8b2f-d4c07c534777.jpg?1783946973",
+      "large": "https://cards.scryfall.io/large/front/9/f/9f8a3979-2947-4692-8b2f-d4c07c534777.jpg?1783946973",
+      "png": "https://cards.scryfall.io/png/front/9/f/9f8a3979-2947-4692-8b2f-d4c07c534777.png?1783946973",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/9/f/9f8a3979-2947-4692-8b2f-d4c07c534777.jpg?1783946973",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/9/f/9f8a3979-2947-4692-8b2f-d4c07c534777.jpg?1783946973",
+      "thumb": "https://cards.scryfall.io/thumb/front/9/f/9f8a3979-2947-4692-8b2f-d4c07c534777.webp?1783946973",
+      "grid": "https://cards.scryfall.io/grid/front/9/f/9f8a3979-2947-4692-8b2f-d4c07c534777.webp?1783946973",
+      "display": "https://cards.scryfall.io/display/front/9/f/9f8a3979-2947-4692-8b2f-d4c07c534777.webp?1783946973",
+      "art": "https://cards.scryfall.io/art/front/9/f/9f8a3979-2947-4692-8b2f-d4c07c534777.webp?1783946973",
+      "crop": "https://cards.scryfall.io/crop/front/9/f/9f8a3979-2947-4692-8b2f-d4c07c534777.webp?1783946973"
+     },
+     "mana_cost": "{0}",
+     "cmc": 0,
+     "type_line": "Artifact Creature — Phyrexian Construct",
+     "oracle_text": "",
+     "power": "0",
+     "toughness": "3",
+     "colors": [],
+     "color_identity": [],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "2c32f1a9-7921-4826-bea0-80bbac70532c",
+     "set": "vis",
+     "set_name": "Visions",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/2c32f1a9-7921-4826-bea0-80bbac70532c",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Avis&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/vis?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/9f8a3979-2947-4692-8b2f-d4c07c534777/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A7af75024-6c9b-4844-aeb6-81de25464822&unique=prints",
+     "collector_number": "152",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"I have heard terrible tales of black rains, ashen fields, and metal that screams. I have consoled myself that the tales were a myth of some fevered mind. But today I saw a walker—and now I fear the truth.\"\n—Kasib Ibn Naji, Letters",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Bryan Talbot",
+     "artist_ids": [
+      "76427e43-406f-43f9-bf47-14147f53cebb"
+     ],
+     "illustration_id": "859cdb95-59f2-4dfb-8d34-88d9844e0acf",
+     "border_color": "black",
+     "frame": "1997",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 2995,
+     "prices": {
+      "usd": "1.98",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "2.49",
+      "eur_foil": null,
+      "tix": "8.21"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=3600&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DPhyrexian%2BWalker",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DPhyrexian%2BWalker",
+      "edhrec": "https://edhrec.com/route/?cc=Phyrexian+Walker"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F5899%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=8553&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/7667?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "c01afea6-645d-4d4f-bdaa-90794a628bcd",
+     "oracle_id": "240410a0-3288-4336-b1ad-34936e64ccf2",
+     "multiverse_ids": [],
+     "resource_id": "64DEA650A298265E12FC68FC1310147C6F36ED0FBB21A89592FB5BE3E4A34D92",
+     "mtgo_id": 152663,
+     "arena_id": 105133,
+     "tcgplayer_id": 696864,
+     "cardmarket_id": 891599,
+     "name": "Vision Quest",
+     "lang": "en",
+     "released_at": "2026-06-26",
+     "uri": "https://api.scryfall.com/cards/c01afea6-645d-4d4f-bdaa-90794a628bcd",
+     "scryfall_uri": "https://scryfall.com/card/msh/237/vision-quest?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T00:34:55Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/c/0/c01afea6-645d-4d4f-bdaa-90794a628bcd.jpg?1783902895",
+      "normal": "https://cards.scryfall.io/normal/front/c/0/c01afea6-645d-4d4f-bdaa-90794a628bcd.jpg?1783902895",
+      "large": "https://cards.scryfall.io/large/front/c/0/c01afea6-645d-4d4f-bdaa-90794a628bcd.jpg?1783902895",
+      "png": "https://cards.scryfall.io/png/front/c/0/c01afea6-645d-4d4f-bdaa-90794a628bcd.png?1783902895",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/c/0/c01afea6-645d-4d4f-bdaa-90794a628bcd.jpg?1783902895",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/c/0/c01afea6-645d-4d4f-bdaa-90794a628bcd.jpg?1783902895",
+      "thumb": "https://cards.scryfall.io/thumb/front/c/0/c01afea6-645d-4d4f-bdaa-90794a628bcd.webp?1783902895",
+      "grid": "https://cards.scryfall.io/grid/front/c/0/c01afea6-645d-4d4f-bdaa-90794a628bcd.webp?1783902895",
+      "display": "https://cards.scryfall.io/display/front/c/0/c01afea6-645d-4d4f-bdaa-90794a628bcd.webp?1783902895",
+      "art": "https://cards.scryfall.io/art/front/c/0/c01afea6-645d-4d4f-bdaa-90794a628bcd.webp?1783902895",
+      "crop": "https://cards.scryfall.io/crop/front/c/0/c01afea6-645d-4d4f-bdaa-90794a628bcd.webp?1783902895"
+     },
+     "mana_cost": "{X}{U}{R}",
+     "cmc": 2,
+     "type_line": "Sorcery",
+     "oracle_text": "Search your library and/or graveyard for an artifact creature card with mana value X or less and put it onto the battlefield with X additional +1/+1 counters on it. If X is 4 or greater, it gains haste until end of turn. If you search your library this way, shuffle.",
+     "colors": [
+      "R",
+      "U"
+     ],
+     "color_identity": [
+      "R",
+      "U"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo",
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "ba9bf625-681c-4a4e-ab48-399b2fecac6b",
+     "set": "msh",
+     "set_name": "Marvel Super Heroes",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/ba9bf625-681c-4a4e-ab48-399b2fecac6b",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Amsh&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/msh?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/c01afea6-645d-4d4f-bdaa-90794a628bcd/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A240410a0-3288-4336-b1ad-34936e64ccf2&unique=prints",
+     "collector_number": "237",
+     "digital": false,
+     "rarity": "rare",
+     "flavor_text": "\"Is there a problem, Wanda?\"",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Eglė Mosakaitė",
+     "artist_ids": [
+      "75e4c1b9-5759-4335-8c9c-f8ea3857a8f5"
+     ],
+     "illustration_id": "8899aa3f-ebb7-47d0-9ffb-21bdaec7b193",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "universesbeyond"
+     ],
+     "edhrec_rank": 16090,
+     "prices": {
+      "usd": "0.30",
+      "usd_foil": "0.33",
+      "usd_etched": null,
+      "eur": "0.18",
+      "eur_foil": "0.46",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DVision%2BQuest",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DVision%2BQuest",
+      "edhrec": "https://edhrec.com/route/?cc=Vision+Quest"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F696864%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=891599&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/152663?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": true,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": true,
+    "xValue": 4,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": "perm_1",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 4,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": {
+     "states": [
+      [
+       "perm_1",
+       {
+        "name": "Ornithopter",
+        "types": [
+         "Artifact",
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Thopter"
+        ],
+        "power": 0,
+        "toughness": 2,
+        "colors": [],
+        "abilities": [
+         "Flying"
+        ],
+        "oracleText": "Flying",
+        "owner": "player_0",
+        "controller": "player_0"
+       }
+      ],
+      [
+       "perm_2",
+       {
+        "name": "Phyrexian Walker",
+        "types": [
+         "Artifact",
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Phyrexian",
+         "Construct"
+        ],
+        "power": 0,
+        "toughness": 3,
+        "colors": [],
+        "abilities": [],
+        "oracleText": "",
+        "owner": "player_0",
+        "controller": "player_0"
+       }
+      ]
+     ],
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Ornithopter",
+       "imageUri": "https://cards.scryfall.io/small/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Artifact",
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Thopter"
+       ],
+       "printedPower": 0,
+       "printedToughness": 2,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Phyrexian Walker",
+       "imageUri": "https://cards.scryfall.io/small/front/9/f/9f8a3979-2947-4692-8b2f-d4c07c534777.jpg?1783946973",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Artifact",
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Phyrexian",
+        "Construct"
+       ],
+       "printedPower": 0,
+       "printedToughness": 3,
+       "timestamp": 2
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    }
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "c01afea6-645d-4d4f-bdaa-90794a628bcd",
+     "oracle_id": "240410a0-3288-4336-b1ad-34936e64ccf2",
+     "multiverse_ids": [],
+     "resource_id": "64DEA650A298265E12FC68FC1310147C6F36ED0FBB21A89592FB5BE3E4A34D92",
+     "mtgo_id": 152663,
+     "arena_id": 105133,
+     "tcgplayer_id": 696864,
+     "cardmarket_id": 891599,
+     "name": "Vision Quest",
+     "lang": "en",
+     "released_at": "2026-06-26",
+     "uri": "https://api.scryfall.com/cards/c01afea6-645d-4d4f-bdaa-90794a628bcd",
+     "scryfall_uri": "https://scryfall.com/card/msh/237/vision-quest?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T00:34:55Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/c/0/c01afea6-645d-4d4f-bdaa-90794a628bcd.jpg?1783902895",
+      "normal": "https://cards.scryfall.io/normal/front/c/0/c01afea6-645d-4d4f-bdaa-90794a628bcd.jpg?1783902895",
+      "large": "https://cards.scryfall.io/large/front/c/0/c01afea6-645d-4d4f-bdaa-90794a628bcd.jpg?1783902895",
+      "png": "https://cards.scryfall.io/png/front/c/0/c01afea6-645d-4d4f-bdaa-90794a628bcd.png?1783902895",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/c/0/c01afea6-645d-4d4f-bdaa-90794a628bcd.jpg?1783902895",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/c/0/c01afea6-645d-4d4f-bdaa-90794a628bcd.jpg?1783902895",
+      "thumb": "https://cards.scryfall.io/thumb/front/c/0/c01afea6-645d-4d4f-bdaa-90794a628bcd.webp?1783902895",
+      "grid": "https://cards.scryfall.io/grid/front/c/0/c01afea6-645d-4d4f-bdaa-90794a628bcd.webp?1783902895",
+      "display": "https://cards.scryfall.io/display/front/c/0/c01afea6-645d-4d4f-bdaa-90794a628bcd.webp?1783902895",
+      "art": "https://cards.scryfall.io/art/front/c/0/c01afea6-645d-4d4f-bdaa-90794a628bcd.webp?1783902895",
+      "crop": "https://cards.scryfall.io/crop/front/c/0/c01afea6-645d-4d4f-bdaa-90794a628bcd.webp?1783902895"
+     },
+     "mana_cost": "{X}{U}{R}",
+     "cmc": 2,
+     "type_line": "Sorcery",
+     "oracle_text": "Search your library and/or graveyard for an artifact creature card with mana value X or less and put it onto the battlefield with X additional +1/+1 counters on it. If X is 4 or greater, it gains haste until end of turn. If you search your library this way, shuffle.",
+     "colors": [
+      "R",
+      "U"
+     ],
+     "color_identity": [
+      "R",
+      "U"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo",
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "ba9bf625-681c-4a4e-ab48-399b2fecac6b",
+     "set": "msh",
+     "set_name": "Marvel Super Heroes",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/ba9bf625-681c-4a4e-ab48-399b2fecac6b",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Amsh&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/msh?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/c01afea6-645d-4d4f-bdaa-90794a628bcd/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A240410a0-3288-4336-b1ad-34936e64ccf2&unique=prints",
+     "collector_number": "237",
+     "digital": false,
+     "rarity": "rare",
+     "flavor_text": "\"Is there a problem, Wanda?\"",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Eglė Mosakaitė",
+     "artist_ids": [
+      "75e4c1b9-5759-4335-8c9c-f8ea3857a8f5"
+     ],
+     "illustration_id": "8899aa3f-ebb7-47d0-9ffb-21bdaec7b193",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "universesbeyond"
+     ],
+     "edhrec_rank": 16090,
+     "prices": {
+      "usd": "0.30",
+      "usd_foil": "0.33",
+      "usd_etched": null,
+      "eur": "0.18",
+      "eur_foil": "0.46",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DVision%2BQuest",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DVision%2BQuest",
+      "edhrec": "https://edhrec.com/route/?cc=Vision+Quest"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F696864%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=891599&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/152663?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": true,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 5,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": true,
+    "xValue": 3,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": "perm_2",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 6,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": {
+     "states": [
+      [
+       "perm_1",
+       {
+        "name": "Ornithopter",
+        "types": [
+         "Artifact",
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Thopter"
+        ],
+        "power": 0,
+        "toughness": 2,
+        "abilities": [
+         "Flying",
+         "Haste"
+        ],
+        "colors": [],
+        "manaValue": 0,
+        "manaCost": "{0}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "Flying",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [
+         "Flying"
+        ],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_2",
+       {
+        "name": "Phyrexian Walker",
+        "types": [
+         "Artifact",
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Phyrexian",
+         "Construct"
+        ],
+        "power": 0,
+        "toughness": 3,
+        "abilities": [],
+        "colors": [],
+        "manaValue": 0,
+        "manaCost": "{0}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_3",
+       {
+        "name": "Vision Quest",
+        "types": [
+         "Sorcery"
+        ],
+        "supertypes": [],
+        "subtypes": [],
+        "power": null,
+        "toughness": null,
+        "abilities": [
+         "Search your library and/or graveyard for an artifact creature card with mana value X or less and put it onto the battlefield with X additional +1/+1 counters on it. If X is 4 or greater, it gains haste until end of turn. If you search your library this way, shuffle."
+        ],
+        "colors": [
+         "R",
+         "U"
+        ],
+        "manaValue": 2,
+        "manaCost": "{X}{U}{R}",
+        "isCreature": false,
+        "isToken": false,
+        "oracleText": "Search your library and/or graveyard for an artifact creature card with mana value 4 or less and put it onto the battlefield with 4 additional +1/+1 counters on it. If 4 is 4 or greater, it gains haste until end of turn. If you search your library this way, shuffle.",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [
+         "Search your library and/or graveyard for an artifact creature card with mana value X or less and put it onto the battlefield with X additional +1/+1 counters on it. If X is 4 or greater, it gains haste until end of turn. If you search your library this way, shuffle."
+        ],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ]
+     ],
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Ornithopter",
+       "imageUri": "https://cards.scryfall.io/small/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Artifact",
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Thopter"
+       ],
+       "printedPower": 0,
+       "printedToughness": 2,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Phyrexian Walker",
+       "imageUri": "https://cards.scryfall.io/small/front/9/f/9f8a3979-2947-4692-8b2f-d4c07c534777.jpg?1783946973",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Artifact",
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Phyrexian",
+        "Construct"
+       ],
+       "printedPower": 0,
+       "printedToughness": 3,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Vision Quest",
+       "imageUri": "https://cards.scryfall.io/small/front/c/0/c01afea6-645d-4d4f-bdaa-90794a628bcd.jpg?1783902895",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "isSpell": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Sorcery"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 3
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    }
+   }
+  ],
+  "firedAbilities": [],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Ornithopter",
+    "final": {
+     "name": "Ornithopter",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Artifact",
+      "Creature"
+     ],
+     "subtypes": [
+      "Thopter"
+     ],
+     "power": 0,
+     "toughness": 2,
+     "colors": [],
+     "abilities": [
+      "Flying",
+      "Haste"
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "Vision Quest"
+     ]
+    }
+   },
+   {
+    "perm": "Phyrexian Walker",
+    "final": {
+     "name": "Phyrexian Walker",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Artifact",
+      "Creature"
+     ],
+     "subtypes": [
+      "Phyrexian",
+      "Construct"
+     ],
+     "power": 0,
+     "toughness": 3,
+     "colors": [],
+     "abilities": []
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Vision Quest A",
+    "final": {
+     "name": "Vision Quest",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Sorcery"
+     ],
+     "subtypes": [],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "R",
+      "U"
+     ],
+     "abilities": [
+      "Search your library and/or graveyard for an artifact creature card with mana value X or less and put it onto the battlefield with X additional +1/+1 counters on it. If X is 4 or greater, it gains haste until end of turn. If you search your library this way, shuffle."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Vision Quest B",
+    "final": {
+     "name": "Vision Quest",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Sorcery"
+     ],
+     "subtypes": [],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "R",
+      "U"
+     ],
+     "abilities": [
+      "Search your library and/or graveyard for an artifact creature card with mana value X or less and put it onto the battlefield with X additional +1/+1 counters on it. If X is 4 or greater, it gains haste until end of turn. If you search your library this way, shuffle."
+     ]
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "6": [
+    "Vision Quest",
+    "Vision Quest"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Vision Quest",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "target": "Ornithopter",
+    "params": {
+     "ability": "Haste"
+    }
+   },
+   {
+    "source": "Vision Quest",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "target": "Phyrexian Walker",
+    "params": {
+     "ability": "Haste"
+    }
+   }
+  ]
+ }
+}

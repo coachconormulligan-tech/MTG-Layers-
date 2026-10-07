@@ -114,6 +114,19 @@ function _resolveRiderSubjectToTarget(text) {
   return sentences.join(' ');
 }
 
+/* "For each land on the battlefield, choose a basic land type at random. Those lands become the
+   land types chosen this way." (Lydari Druid). When the ability is fired each land is given a
+   type, and the effect text becomes one line a land in the order they were taken:
+     "Target land becomes a Swamp.\nTarget land becomes an Island."
+   Each line is a target slot of its own holding that land, so a saved board replays the rolled
+   text and its slot targets instead of rolling again. */
+const _RANDOM_LAND_TYPES_RE = /^for each land on the battlefield, choose a basic land type at random\.\s+those lands become the land types chosen this way\.?$/i;
+const _ROLLED_LAND_TYPES_RE = /^(?:Target land becomes an? (?:Plains|Island|Swamp|Mountain|Forest)\.(?:\s+|$))+$/;
+const _BASIC_LAND_TYPES = ['Plains', 'Island', 'Swamp', 'Mountain', 'Forest'];
+function _rolledLandTypesText(types) {
+  return types.map(t => `Target land becomes ${t === 'Island' ? 'an' : 'a'} ${t}.`).join('\n');
+}
+
 /* Returns the total mana spent to cast a permanent, accounting for X.
    For cards with {X} in their mana cost, xValue (the chosen X) is added to manaValue
    (which treats X as 0). For all other cards, equals manaValue. */
@@ -266,6 +279,13 @@ function _lockFireTimeBasePT(text, states, sourceId) {
   if (!src || !/\bbase (?:power|toughness)\b/i.test(text)) return text;
   const p = src.power || 0, t = src.toughness || 0;
   const SELF = "this (?:card|creature|permanent)'s";
+  // "…exile them, then shuffle. If you do, this creature has base power and base toughness each
+  // equal to the number of cards exiled this way" (Trench Gorger): the cards exiled with it.
+  text = text.replace(/\b(this (?:card|creature|permanent)) has base power and (?:base )?toughness each equal to the number of cards exiled this way\b/gi,
+    (_, subj) => {
+      const n = (Battlefield.exile || []).filter(e => e.exiledWithId === sourceId).length;
+      return `${subj} has base power and toughness ${n}/${n}`;
+    });
   text = text
     .replace(new RegExp("\\b(base power and toughness\\b[^.\\n]*?\\bbecomes?) equal to " + SELF + " power and toughness\\b", 'gi'), `$1 ${p}/${t}`)
     .replace(new RegExp("\\b(base power and toughness\\b[^.\\n]*?\\bbecomes?) equal to " + SELF + " power\\b", 'gi'), `$1 ${p}/${p}`)
@@ -294,3 +314,7 @@ function _lockFireTimeBasePT(text, states, sourceId) {
     return `${subj} has base ${stat.toLowerCase()} ${n + (plus ? parseInt(plus, 10) : 0)}`;
   });
 }
+
+/* "… Then if <condition>, <continuous effect>" inside a fired ability (Ogre Chitterlord, Strider,
+   Ranger of the North). Not "Then if you do, …". */
+const _THEN_IF_RE = /\s+Then if (?!you do\b)([^,.]+),\s*(?=[^.]*\b(?:gets?|gains?|has|have|becomes?|loses?)\b)/g;
