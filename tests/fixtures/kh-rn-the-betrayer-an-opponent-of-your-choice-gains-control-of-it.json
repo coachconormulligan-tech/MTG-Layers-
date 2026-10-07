@@ -1,0 +1,712 @@
+{
+ "name": "Khârn the Betrayer — an opponent of your choice gains control of it",
+ "notes": "Sweep group 6 (2026-10-07). \"If damage would be dealt to this card, prevent that damage and an opponent of your choice gains control of it.\" is a replacement effect on a static line, so nothing could fire it. It is now offered like a trigger (extractTriggeredAbilities) and \"an opponent of your choice\" is a player picked from the dropdown; the control is pinned to Khârn. Also: \"When you lose control of this card, draw two cards.\" behind its ability word used to parse as a static \"loses Control of this card, Draw two cards\" effect; a player losing control of something is no longer read as losing abilities (same for Seraph, Coffin Queen, Krovikan Vampire and four more).",
+ "recipe": {
+  "steps": [
+   {
+    "call": [
+     "addPlayer",
+     "Opponent"
+    ]
+   },
+   {
+    "add": "Grizzly Bears",
+    "as": "bears",
+    "controller": "p2"
+   },
+   {
+    "add": "Khârn the Betrayer",
+    "as": "kharn"
+   },
+   {
+    "fire": "@kharn",
+    "trigger": 2,
+    "as": "fired"
+   },
+   {
+    "call": [
+     "setTargetPlayer",
+     "@fired",
+     "p2"
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Khârn the Betrayer",
+   "final": {
+    "controller": "player_1",
+    "abilities": {
+     "$includes": [
+      "Sigil of Corruption — When you lose control of this card, draw two cards."
+     ]
+    }
+   }
+  },
+  {
+   "effect": {
+    "source": "Khârn the Betrayer (trigger)",
+    "layer": "2",
+    "type": "control"
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+     "multiverse_ids": [
+      129586
+     ],
+     "mtgo_id": 27400,
+     "mtgo_foil_id": 27401,
+     "tcgplayer_id": 15153,
+     "cardmarket_id": 16432,
+     "name": "Grizzly Bears",
+     "lang": "en",
+     "released_at": "2007-07-13",
+     "uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "scryfall_uri": "https://scryfall.com/card/10e/268/grizzly-bears?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:43:21Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "normal": "https://cards.scryfall.io/normal/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "large": "https://cards.scryfall.io/large/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "png": "https://cards.scryfall.io/png/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.png?1783943001",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "grid": "https://cards.scryfall.io/grid/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "display": "https://cards.scryfall.io/display/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "art": "https://cards.scryfall.io/art/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "crop": "https://cards.scryfall.io/crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001"
+     },
+     "mana_cost": "{1}{G}",
+     "cmc": 2,
+     "type_line": "Creature — Bear",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set": "10e",
+     "set_name": "Tenth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A14c8f55d-d177-4c25-a931-ebeb9e6062a0&unique=prints",
+     "collector_number": "268",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"We cannot forget that among all of Dominaria's wonders, a system of life exists, with prey and predators that will never fight wars nor vie for ancient power.\"\n—Jolrael, empress of beasts",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "D. J. Cleland-Hura",
+     "artist_ids": [
+      "87d21070-2432-4167-8aab-5968af1c14f3"
+     ],
+     "illustration_id": "066bfe81-0f53-43da-a074-b2ecc5dcda72",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 8114,
+     "penny_rank": 10982,
+     "prices": {
+      "usd": "0.22",
+      "usd_foil": "3.29",
+      "usd_etched": null,
+      "eur": "0.11",
+      "eur_foil": "1.97",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129586&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "edhrec": "https://edhrec.com/route/?cc=Grizzly+Bears"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15153%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16432&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27400?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_1",
+    "controller": "player_1",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "c29e6c69-7830-4898-9d1e-97dfc2e868d9",
+     "oracle_id": "3246eff5-8739-469f-a401-e5de927dd6bb",
+     "multiverse_ids": [
+      580901
+     ],
+     "mtgo_id": 108630,
+     "tcgplayer_id": 286162,
+     "cardmarket_id": 675244,
+     "name": "Khârn the Betrayer",
+     "lang": "en",
+     "released_at": "2022-10-07",
+     "uri": "https://api.scryfall.com/cards/c29e6c69-7830-4898-9d1e-97dfc2e868d9",
+     "scryfall_uri": "https://scryfall.com/card/40k/79/kh%C3%A2rn-the-betrayer?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T05:34:49Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/c/2/c29e6c69-7830-4898-9d1e-97dfc2e868d9.jpg?1783920889",
+      "normal": "https://cards.scryfall.io/normal/front/c/2/c29e6c69-7830-4898-9d1e-97dfc2e868d9.jpg?1783920889",
+      "large": "https://cards.scryfall.io/large/front/c/2/c29e6c69-7830-4898-9d1e-97dfc2e868d9.jpg?1783920889",
+      "png": "https://cards.scryfall.io/png/front/c/2/c29e6c69-7830-4898-9d1e-97dfc2e868d9.png?1783920889",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/c/2/c29e6c69-7830-4898-9d1e-97dfc2e868d9.jpg?1783920889",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/c/2/c29e6c69-7830-4898-9d1e-97dfc2e868d9.jpg?1783920889",
+      "thumb": "https://cards.scryfall.io/thumb/front/c/2/c29e6c69-7830-4898-9d1e-97dfc2e868d9.webp?1783920889",
+      "grid": "https://cards.scryfall.io/grid/front/c/2/c29e6c69-7830-4898-9d1e-97dfc2e868d9.webp?1783920889",
+      "display": "https://cards.scryfall.io/display/front/c/2/c29e6c69-7830-4898-9d1e-97dfc2e868d9.webp?1783920889",
+      "art": "https://cards.scryfall.io/art/front/c/2/c29e6c69-7830-4898-9d1e-97dfc2e868d9.webp?1783920889",
+      "crop": "https://cards.scryfall.io/crop/front/c/2/c29e6c69-7830-4898-9d1e-97dfc2e868d9.webp?1783920889"
+     },
+     "mana_cost": "{3}{R}",
+     "cmc": 4,
+     "type_line": "Legendary Creature — Astartes Berserker",
+     "oracle_text": "Berzerker — Khârn the Betrayer attacks or blocks each combat if able.\nSigil of Corruption — When you lose control of Khârn the Betrayer, draw two cards.\nThe Betrayer — If damage would be dealt to Khârn the Betrayer, prevent that damage and an opponent of your choice gains control of it.",
+     "power": "5",
+     "toughness": "1",
+     "colors": [
+      "R"
+     ],
+     "color_identity": [
+      "R"
+     ],
+     "keywords": [
+      "Berzerker",
+      "Sigil of Corruption",
+      "The Betrayer"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "f35f5dd8-5b95-4f52-bbe7-1c62909a8d08",
+     "set": "40k",
+     "set_name": "Warhammer 40,000 Commander",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/f35f5dd8-5b95-4f52-bbe7-1c62909a8d08",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A40k&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/40k?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/c29e6c69-7830-4898-9d1e-97dfc2e868d9/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A3246eff5-8739-469f-a401-e5de927dd6bb&unique=prints",
+     "collector_number": "79",
+     "digital": false,
+     "rarity": "rare",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Kekai Kotaki",
+     "artist_ids": [
+      "4b771085-c049-4308-930d-ec9665f803a4"
+     ],
+     "illustration_id": "3d4de7dc-2fc4-4f30-b15b-958771911f18",
+     "border_color": "black",
+     "frame": "2015",
+     "frame_effects": [
+      "legendary"
+     ],
+     "security_stamp": "triangle",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "universesbeyond"
+     ],
+     "edhrec_rank": 4644,
+     "preview": {
+      "source": "LoadingReadyRun",
+      "source_uri": "https://www.youtube.com/watch?v=Dghfv1yptDI",
+      "previewed_at": "2022-09-14"
+     },
+     "prices": {
+      "usd": "6.76",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "7.36",
+      "eur_foil": null,
+      "tix": "0.82"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=580901&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DKh%25C3%25A2rn%2Bthe%2BBetrayer",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DKh%25C3%25A2rn%2Bthe%2BBetrayer",
+      "edhrec": "https://edhrec.com/route/?cc=Kh%C3%A2rn+the+Betrayer"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F286162%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=675244&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/108630?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [
+   {
+    "id": "trig_perm_2_2_3",
+    "kind": "trigger",
+    "pseudoKind": "ability",
+    "sourceId": "perm_2",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 2,
+    "timestamp": 3,
+    "effectText": "an opponent of your choice gains control of it.",
+    "xValue": null,
+    "hasXValue": false,
+    "linkedCards": null,
+    "fullText": "The Betrayer — If damage would be dealt to this card, prevent that damage and an opponent of your choice gains control of it.",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "guessedTargetSubjects": [],
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": "player_1",
+    "enchantedPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Grizzly Bears",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Bear"
+       ],
+       "power": 2,
+       "toughness": 2,
+       "colors": [
+        "G"
+       ],
+       "abilities": [],
+       "oracleText": "",
+       "owner": "player_1",
+       "controller": "player_1"
+      }
+     ],
+     [
+      "perm_2",
+      {
+       "name": "Khârn the Betrayer",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [
+        "Legendary"
+       ],
+       "subtypes": [
+        "Astartes",
+        "Berserker"
+       ],
+       "power": 5,
+       "toughness": 1,
+       "colors": [
+        "R"
+       ],
+       "abilities": [
+        "Berzerker — this card attacks or blocks each combat if able.",
+        "Sigil of Corruption — When you lose control of this card, draw two cards.",
+        "The Betrayer — If damage would be dealt to this card, prevent that damage and an opponent of your choice gains control of it."
+       ],
+       "oracleText": "Berzerker — this card attacks or blocks each combat if able.\nSigil of Corruption — When you lose control of this card, draw two cards.\nThe Betrayer — If damage would be dealt to this card, prevent that damage and an opponent of your choice gains control of it.",
+       "owner": "player_0",
+       "controller": "player_0"
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Khârn the Betrayer",
+       "imageUri": "https://cards.scryfall.io/small/front/c/2/c29e6c69-7830-4898-9d1e-97dfc2e868d9.jpg?1783920889",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [
+        "Legendary"
+       ],
+       "printedSubtypes": [
+        "Astartes",
+        "Berserker"
+       ],
+       "printedPower": 5,
+       "printedToughness": 1,
+       "timestamp": 2
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      },
+      {
+       "id": "player_1",
+       "name": "Opponent"
+      }
+     ]
+    },
+    "primaryTarget": "perm_2",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 3,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null
+   }
+  ],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   },
+   {
+    "id": "player_1",
+    "name": "Opponent",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": false,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 2,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Grizzly Bears",
+    "final": {
+     "name": "Grizzly Bears",
+     "controller": "player_1",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Bear"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "G"
+     ],
+     "abilities": []
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Khârn the Betrayer",
+    "final": {
+     "name": "Khârn the Betrayer",
+     "controller": "player_1",
+     "supertypes": [
+      "Legendary"
+     ],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Astartes",
+      "Berserker"
+     ],
+     "power": 5,
+     "toughness": 1,
+     "colors": [
+      "R"
+     ],
+     "abilities": [
+      "Berzerker — this card attacks or blocks each combat if able.",
+      "Sigil of Corruption — When you lose control of this card, draw two cards.",
+      "The Betrayer — If damage would be dealt to this card, prevent that damage and an opponent of your choice gains control of it."
+     ]
+    },
+    "changedBy": {
+     "2": [
+      "Khârn the Betrayer (trigger)"
+     ]
+    }
+   }
+  ],
+  "order": {
+   "2": [
+    "Khârn the Betrayer (trigger)"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Khârn the Betrayer (trigger)",
+    "layer": "2",
+    "type": "control",
+    "scope": "targeted",
+    "target": "Khârn the Betrayer",
+    "params": {
+     "newController": "player_1",
+     "untilEndOfTurn": false
+    }
+   }
+  ]
+ }
+}

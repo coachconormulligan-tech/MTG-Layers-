@@ -1,0 +1,79 @@
+{
+  "name": "Aminatou, the Fateshifter — nonland permanents move one seat (left)",
+  "notes": "Sweep group 6 (2026-10-07). \"Choose left or right. Each player gains control of all nonland permanents other than this card controlled by the next player in the chosen direction.\" produced nothing. Left and right are now the ability's two options, and the effect is one global control (params.rotate) that moves each nonland permanent one seat along the player list from where it was as the ability fired; the next player in the list sits to the left. Three players, one creature each: with left chosen each creature goes to the player on the other side. The Forest and Aminatou herself stay.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "call": [
+        "addPlayer",
+        "Third"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant",
+      "controller": "p3"
+    },
+    {
+      "add": "Forest",
+      "as": "forest",
+      "controller": "p2"
+    },
+    {
+      "add": "Aminatou, the Fateshifter",
+      "as": "amin"
+    },
+    {
+      "fire": "@amin",
+      "activated": 2,
+      "mode": 0,
+      "as": "fired"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "controller": "player_2"
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "controller": "player_0"
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "controller": "player_1"
+      }
+    },
+    {
+      "perm": "Forest",
+      "final": {
+        "controller": "player_1"
+      }
+    },
+    {
+      "perm": "Aminatou, the Fateshifter",
+      "final": {
+        "controller": "player_0"
+      }
+    }
+  ]
+}

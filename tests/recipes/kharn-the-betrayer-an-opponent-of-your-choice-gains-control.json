@@ -1,0 +1,53 @@
+{
+  "name": "Khârn the Betrayer — an opponent of your choice gains control of it",
+  "notes": "Sweep group 6 (2026-10-07). \"If damage would be dealt to this card, prevent that damage and an opponent of your choice gains control of it.\" is a replacement effect on a static line, so nothing could fire it. It is now offered like a trigger (extractTriggeredAbilities) and \"an opponent of your choice\" is a player picked from the dropdown; the control is pinned to Khârn. Also: \"When you lose control of this card, draw two cards.\" behind its ability word used to parse as a static \"loses Control of this card, Draw two cards\" effect; a player losing control of something is no longer read as losing abilities (same for Seraph, Coffin Queen, Krovikan Vampire and four more).",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears",
+      "controller": "p2"
+    },
+    {
+      "add": "Khârn the Betrayer",
+      "as": "kharn"
+    },
+    {
+      "fire": "@kharn",
+      "trigger": 2,
+      "as": "fired"
+    },
+    {
+      "call": [
+        "setTargetPlayer",
+        "@fired",
+        "p2"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Khârn the Betrayer",
+      "final": {
+        "controller": "player_1",
+        "abilities": {
+          "$includes": [
+            "Sigil of Corruption — When you lose control of this card, draw two cards."
+          ]
+        }
+      }
+    },
+    {
+      "effect": {
+        "source": "Khârn the Betrayer (trigger)",
+        "layer": "2",
+        "type": "control"
+      }
+    }
+  ]
+}

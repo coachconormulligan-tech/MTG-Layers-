@@ -1,0 +1,76 @@
+{
+  "name": "Herald of Leshrac — each player gains control of each land they own that you control",
+  "notes": "Sweep group 6 (2026-10-07). The Homeward Path branch read only \"all X they own\"; \"each land they own that you control\" produced nothing. Now a toOwner control over lands the trigger's controller holds as it fires. Annex takes the opponent's Forest; the leaves-the-battlefield trigger, fired later, hands it back. The opponent's Mountain and your own Island do not move.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Forest",
+      "as": "forest",
+      "controller": "p2"
+    },
+    {
+      "add": "Mountain",
+      "as": "mountain",
+      "controller": "p2"
+    },
+    {
+      "add": "Island",
+      "as": "island"
+    },
+    {
+      "add": "Herald of Leshrac",
+      "as": "herald"
+    },
+    {
+      "add": "Annex",
+      "as": "annex"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@annex",
+        "@forest"
+      ]
+    },
+    {
+      "fire": "@herald",
+      "trigger": 3,
+      "as": "fired"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Forest",
+      "final": {
+        "controller": "player_1"
+      }
+    },
+    {
+      "perm": "Mountain",
+      "final": {
+        "controller": "player_1"
+      }
+    },
+    {
+      "perm": "Island",
+      "final": {
+        "controller": "player_0"
+      }
+    },
+    {
+      "effect": {
+        "source": "Herald of Leshrac (trigger)",
+        "layer": "2",
+        "type": "control",
+        "params": {
+          "toOwner": true
+        }
+      }
+    }
+  ]
+}

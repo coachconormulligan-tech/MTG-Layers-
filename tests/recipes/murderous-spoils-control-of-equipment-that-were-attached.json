@@ -1,0 +1,84 @@
+{
+  "name": "Murderous Spoils — gain control of what was attached to the target",
+  "notes": "Sweep group 6 (2026-10-07). \"Gain control of all … that were attached to it\" was skipped on purpose (a global control with no readable filter). The spell now takes its target, and setTarget notes what is attached to it (params.attachedIds, saved with the board); the control goes to those, only Equipment: Rancor, an Aura, stays, as does Loxodon Warhammer, which was not attached. The target is removed afterwards, as the spell would have it, and the control holds.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears",
+      "controller": "p2"
+    },
+    {
+      "add": "Bonesplitter",
+      "as": "splitter",
+      "controller": "p2"
+    },
+    {
+      "add": "Rancor",
+      "as": "rancor",
+      "controller": "p2"
+    },
+    {
+      "add": "Loxodon Warhammer",
+      "as": "hammer",
+      "controller": "p2"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@splitter",
+        "@bears"
+      ]
+    },
+    {
+      "call": [
+        "setTarget",
+        "@rancor",
+        "@bears"
+      ]
+    },
+    {
+      "add": "Murderous Spoils",
+      "as": "spell",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTarget",
+        "@spell",
+        "@bears"
+      ]
+    },
+    {
+      "call": [
+        "removePermanent",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Bonesplitter",
+      "final": {
+        "controller": "player_0"
+      }
+    },
+    {
+      "perm": "Rancor",
+      "final": {
+        "controller": "player_1"
+      }
+    },
+    {
+      "perm": "Loxodon Warhammer",
+      "final": {
+        "controller": "player_1"
+      }
+    }
+  ]
+}

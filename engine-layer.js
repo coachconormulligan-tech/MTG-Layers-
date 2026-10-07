@@ -207,7 +207,8 @@ function applyEffectGlobally(effect, allStates, realPerms, inspectedId, applicat
 
     // For "you control enchanted/equipped" aura effects, attach allStates so the handler
     // can resolve the current controller of the source dynamically (CR: "you" = current controller).
-    if (effect.type === EFFECT_TYPE.CONTROL && (effect.params.useSourceController || effect.params.mutualSwap)) {
+    if (effect.type === EFFECT_TYPE.CONTROL && (effect.params.useSourceController || effect.params.mutualSwap || effect.params.swapAmongTargets
+        || effect.params.rotate || effect.params.randomController)) {
       effect._allStates = allStates;
     }
 
