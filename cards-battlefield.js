@@ -453,6 +453,9 @@ const Battlefield = {
     // is another object's, picked after firing.
     const refPT = _basePTFromOtherObject(parsedEffectText, kind === 'trigger' ? fullText : '');
     if (refPT) parsedEffectText = refPT.text;
+    // "…gains all activated abilities of target creature" (Quicksilver Elemental): likewise.
+    const refAb = refPT ? null : _abilitiesFromOtherObject(parsedEffectText);
+    if (refAb) parsedEffectText = refAb.text;
 
     // "where X is the number of [gameState desc]" — snapshot count at fire time so the
     // displayed effect text and the P/T boost are both frozen to the board state at resolution,
@@ -642,7 +645,8 @@ const Battlefield = {
     // Sync oracleText with the fully-processed parsedEffectText (X substituted, "if" stripped, etc.)
     // (A "…becomes equal to that creature's power" sentence keeps its own words on display and
     // in a save, which replays this text; only the parser sees the placeholder.)
-    pseudoPerm.oracleText = refPT ? parsedEffectText.replace(refPT.plain, refPT.original) : parsedEffectText;
+    const refText = refPT || refAb;
+    pseudoPerm.oracleText = refText ? parsedEffectText.replace(refText.plain, refText.original) : parsedEffectText;
     const fakeCard = { name: sourcePerm.name, oracle_text: parsedEffectText, type_line: 'Instant', colors: sourcePerm.printedColors, cmc: 0 };
     // Detect "basic land type of your choice" in the ability text so the land-type
     // dropdown appears on the activated-ability pseudo-permanent (not on the source card).
@@ -718,6 +722,22 @@ const Battlefield = {
         ptEff.params.ptFromRef = refPT.ptFromRef;
         ptEff.params.refPermId = null;
         pseudoPerm._refPick = refPT.pick;
+      }
+    }
+    if (refAb) {
+      const abEff = newEffects.find(e => e.type === EFFECT_TYPE.GAIN_ACTIVATED_FROM_OTHERS);
+      if (abEff) {
+        abEff.params.abilitiesFromRef = true;
+        abEff.params.refPermId = null;
+        pseudoPerm._refPick = refAb.pick;
+        // The static wording parses as the card's own ability; here "this creature" is the
+        // ability's source, not the fired-ability row.
+        if (abEff.selfTarget) {
+          abEff.selfTarget = false;
+          abEff.affectsSelf = false;
+          abEff.targetId = sourcePermId;
+          abEff._autoTargetSource = true;
+        }
       }
     }
     _pinAbilityEffectsToSource(newEffects, sourcePermId);
@@ -1818,11 +1838,15 @@ const Battlefield = {
     this._invalidate();
   },
 
-  /* Set the object a fired ability takes its numbers from ("…base power becomes equal to that
-     creature's power" — Belligerent Yearling). The effect itself stays on the ability's source. */
+  /* Set the object a fired ability takes its numbers or abilities from ("…base power becomes
+     equal to that creature's power" — Belligerent Yearling; "gains all activated abilities of
+     target creature" — Quicksilver Elemental). The effect itself stays on its own subject. */
   setRefPerm(effectSourceId, refPermId) {
+    // Kept on the permanent too, so a re-parse of a static ability (Scheming Fence) keeps it.
+    const src = this.getPermById(effectSourceId);
+    if (src) src._chosenRefPermId = refPermId || null;
     this.effects.forEach(e => {
-      if (e.sourceId === effectSourceId && e.params && e.params.ptFromRef) e.params.refPermId = refPermId || null;
+      if (e.sourceId === effectSourceId && _takesFromRef(e)) e.params.refPermId = refPermId || null;
     });
     this._invalidate();
   },
@@ -2165,6 +2189,21 @@ const Battlefield = {
     this.evaluate();
   },
 
+  /* The top card of a player's library, for cards that read it (Conspicuous Snoop, Skill
+     Borrower). One card per player; null clears it. */
+  setLibraryTop(playerId, card) {
+    this._invalidate();
+    const player = this.getPlayer(playerId);
+    if (!player) return;
+    player.libraryTop = card || null;
+    this.evaluate();
+  },
+
+  getLibraryTop(playerId) {
+    const player = this.getPlayer(playerId);
+    return (player && player.libraryTop) || null;
+  },
+
   getGraveyardTop(playerId) {
     const player = this.getPlayer(playerId);
     if (!player || !player.graveyard || player.graveyard.length === 0) return null;
@@ -2202,6 +2241,15 @@ const Battlefield = {
   removeFromExile(entryId) {
     this._invalidate();
     this.exile = this.exile.filter(e => e.id !== entryId);
+    this.evaluate();
+  },
+
+  /* The card "last chosen" among those exiled with a permanent (Koh, the Face Stealer). */
+  setChosenExileCard(permId, entryId) {
+    const perm = this.getPermById(permId);
+    if (!perm) return;
+    this._invalidate();
+    perm._chosenExileId = entryId || null;
     this.evaluate();
   },
 
@@ -2887,7 +2935,7 @@ const Battlefield = {
         if (e.sourceId !== srcId) continue;
         if (e.type === EFFECT_TYPE.COPY && e.params && e.params.copySource) copySource = e.params.copySource;
         if (e.type === EFFECT_TYPE.COPY && e.params && e.params._copyTargetPermId) copyTargetPermId = e.params._copyTargetPermId;
-        if (e.params && e.params.ptFromRef && e.params.refPermId) refPermId = e.params.refPermId;
+        if (_takesFromRef(e) && e.params.refPermId) refPermId = e.params.refPermId;
         if (e.scope !== 'targeted' || e.selfTarget) continue;
         if (e.targetIds && e.targetIds.length) multiTarget = e.targetIds.slice();
         if (e._targetSlot !== undefined) { if (e.targetId) { slotTargets[e._targetSlot] = e.targetId; slotTs[e._targetSlot] = e.timestamp; } }
@@ -2934,7 +2982,7 @@ const Battlefield = {
     };
 
     const perms = this.permanents.filter(isRealPerm).map(p => {
-      const { primaryTarget, multiTarget, slotTargets, modalTargets, copySource, targetTs, slotTs, copyTargetPermId } = captureTargets(p.id);
+      const { primaryTarget, multiTarget, slotTargets, modalTargets, copySource, targetTs, slotTs, copyTargetPermId, refPermId } = captureTargets(p.id);
       return {
         id: p.id,
         scryfallData: p.scryfallData,
@@ -2959,13 +3007,16 @@ const Battlefield = {
         chosenCreatureType: p.chosenCreatureType || null,
         chosenColor: p.chosenColor || null,
         chosenCardName: p.chosenCardName || null,
+        // Exile ids are reassigned in order on restore, so the chosen entry is saved by position.
+        chosenExileIndex: p._chosenExileId && this.exile.some(e => e.id === p._chosenExileId)
+          ? this.exile.findIndex(e => e.id === p._chosenExileId) : null,
         chosenLandType: p.chosenLandType || null,
         chosenCardType: p.chosenCardType || null,
         targetOpponentPlayerId: p._targetOpponentPlayerId || null,
         targetPlayerId: p._targetPlayerId || null,
         enchantedPlayerId: p._enchantedPlayerId || null,
         modalModeCounts: p.modalModeCounts || null,
-        primaryTarget, multiTarget, slotTargets, modalTargets, copySource, targetTs, slotTs, copyTargetPermId,
+        primaryTarget, multiTarget, slotTargets, modalTargets, copySource, targetTs, slotTs, copyTargetPermId, refPermId,
         choices: captureChoices(p.id),
         // Camera/board-snapshot popup for a SPELL (instant/sorcery on the stack): the
         // cast-time board picture. Like fired abilities, addSpell rebuilds it from the
@@ -3052,6 +3103,7 @@ const Battlefield = {
       gameState: JSON.parse(JSON.stringify(pl.gameState || {})),
       commanders: (pl.commanders || []).map(c => ({ card: c.card, castCount: c.castCount || 0 })),
       graveyard: (pl.graveyard || []).slice(),
+      libraryTop: pl.libraryTop || null,
       emblems: (pl.emblems || []).map(em => ({ card: em.card })),
     }));
 
@@ -3103,6 +3155,7 @@ const Battlefield = {
         gameState: Object.assign(JSON.parse(JSON.stringify(DEFAULT_GAME_STATE)), JSON.parse(JSON.stringify(pl.gameState || {}))),
         commanders: cmds,
         graveyard: (pl.graveyard || []).slice(),
+        libraryTop: pl.libraryTop || null,
         emblems: [],   // re-added via addEmblem below
       };
     });
@@ -3215,6 +3268,10 @@ const Battlefield = {
       counters: { ...(e.counters || {}) }, isFaceDown: !!e.isFaceDown,
       timestamp: this.nextTimestamp++,
     }));
+    for (const r of data.perms || []) {
+      const chooser = r.chosenExileIndex != null ? this.getPermById(idMap[r.id]) : null;
+      if (chooser && this.exile[r.chosenExileIndex]) chooser._chosenExileId = this.exile[r.chosenExileIndex].id;
+    }
 
     // Rebuild mutate stacks (translate ids; drop any that no longer resolve).
     this.mutateStacks = (data.mutateStacks || [])

@@ -59,8 +59,9 @@ function effectAppliesToPerm(effect, permState, permanent, permId, allStates, ab
     }
   }
 
-  // "…base power becomes equal to that creature's power": nothing until that creature is picked.
-  if (effect.params && effect.params.ptFromRef && !effect.params.refPermId) return false;
+  // "…base power becomes equal to that creature's power" / "gains all activated abilities of
+  // target creature": nothing until that object is picked.
+  if (_takesFromRef(effect) && !effect.params.refPermId) return false;
 
   // "For each" boosts whose count is currently 0 (e.g. Strata Scythe with no matching lands):
   // hide the layer row entirely rather than showing an inert +0/+0 entry. Only suppress when
@@ -403,7 +404,7 @@ function _removesZoneCardAbilities(B, zone) {
 
 // Maps a GAIN_ACTIVATED_FROM_* effect type to the hidden zone it reads, or null.
 function _gainReadsZone(A) {
-  if (A.type === EFFECT_TYPE.GAIN_ACTIVATED_FROM_GRAVEYARDS) return 'graveyard';
+  if (A.type === EFFECT_TYPE.GAIN_ACTIVATED_FROM_GRAVEYARDS) return A.params && A.params.fromLibraryTop ? null : 'graveyard';
   if (A.type === EFFECT_TYPE.GAIN_ACTIVATED_FROM_EXILE) return 'exile';
   return null;
 }
@@ -416,6 +417,9 @@ function _gainReadsZone(A) {
 // SAME permanent, so it never sees this cross-permanent read.
 function _gatheredPermChangedByB(A, B, allStates, realPerms) {
   if (A.type !== EFFECT_TYPE.GAIN_ACTIVATED_FROM_OTHERS) return null;
+  // Abilities of a picked target were locked in as the ability resolved (Quicksilver Elemental).
+  // A chosen permanent read live (Scheming Fence) is the only one gathered from.
+  if (A.params.abilitiesFromRef && !A.params.refLive) return null;
   // B must be able to change a gathered permanent's abilities. Besides a direct grant/removal,
   // another ability-gathering effect qualifies: e.g. Sakashima the Impostor copies Marvin, so
   // both have "has all activated abilities of other creatures you control". Each one's gather
@@ -440,6 +444,7 @@ function _gatheredPermChangedByB(A, B, allStates, realPerms) {
   const selfController = srcState ? srcState.controller : null;
   for (const perm of realPerms) {
     if (perm.id === A.sourceId) continue;
+    if (A.params.refLive && perm.id !== A.params.refPermId) continue;
     const pState = allStates.get(perm.id);
     if (!pState) continue;
     if (reqType && !pState.types.includes(reqType)) continue;

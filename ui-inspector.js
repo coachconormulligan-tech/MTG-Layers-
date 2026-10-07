@@ -157,7 +157,7 @@ function renderInspector() {
         spellPrefix += `<div class="state-row"><span class="state-label">Target:</span> ${renderTargetSelect(inspPerm.id)}</div>`;
       }
       if (inspPerm._refPick) {
-        spellPrefix += `<div class="state-row"><span class="state-label">Value from:</span> ${renderRefPermSelect(inspPerm.id)}</div>`;
+        spellPrefix += `<div class="state-row"><span class="state-label">${inspPerm._refPick.label || 'Value from'}:</span> ${renderRefPermSelect(inspPerm.id)}</div>`;
       }
       for (const eff of spellEffects) {
         const layerName = LAYER_MAP[eff.layer]?.name || eff.layer;

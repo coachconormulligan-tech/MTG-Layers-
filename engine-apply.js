@@ -1176,8 +1176,24 @@ function applyEffect(state, effect, context) {
       const _isLoyaltyLine = (ab) => /^[+\-−–]?(?:\d+|X)\s*:/.test(ab.trim());
       // CR 605.1a: a mana ability has no target and could add mana.
       const _isManaLine = (ab) => /:.*\badd\b[^.]*(?:\{[^}]+\}|\bmana\b)/i.test(ab) && !/\btarget\b/i.test(ab) && !_isLoyaltyLine(ab);
-      if (!effect._allStates) break;
-      for (const [pid, otherState] of effect._allStates) {
+      // Abilities of one picked target (Quicksilver Elemental, Grell Philosopher): read from the
+      // snapshot the ability was fired against, since they are locked in as it resolves.
+      let _gatherFrom = effect._allStates;
+      if (effect.params.abilitiesFromRef) {
+        const refId = effect.params.refPermId;
+        // refLive (Scheming Fence's chosen permanent): a static ability reads it as it is now.
+        const _live = !!effect.params.refLive;
+        let ref = refId && (_live ? effect._allStates && effect._allStates.get(refId)
+          : effect._firedAtStates && effect._firedAtStates.get(refId));
+        if (!ref && refId && !_live && typeof Battlefield !== 'undefined') {
+          const rp = Battlefield.getPermById(refId);
+          if (rp) ref = { name: rp.name, types: rp.printedTypes || [], supertypes: rp.printedSupertypes || [],
+            abilities: rp.printedAbilities || [], controller: rp.controller || rp.owner, counters: rp.counters || {} };
+        }
+        _gatherFrom = ref ? [[refId, ref]] : [];
+      }
+      if (!_gatherFrom) break;
+      for (const [pid, otherState] of _gatherFrom) {
         if (pid === effect.sourceId) continue; // skip self
         if (_differentName && otherState.name === selfName) continue;
         if (_reqType && !otherState.types.includes(_reqType)) continue;
@@ -1218,7 +1234,11 @@ function applyEffect(state, effect, context) {
       // grant, so this effect produces nothing. The grant therefore depends on that removal
       // (CR 613.8) — see the matching dependency rule in engine-deps.js. The source must still
       // be on the battlefield for its zone effect to be live.
-      if (Array.isArray(Battlefield.effects) && Battlefield.effects.some(e =>
+      // params.fromLibraryTop (Conspicuous Snoop, Skill Borrower): the one card read is the top
+      // card of the controller's library (player.libraryTop) instead of the graveyards.
+      const _fromLibraryTop = !!effect.params.fromLibraryTop;
+      const _zoneLabel = _fromLibraryTop ? 'top of library' : 'graveyard';
+      if (!_fromLibraryTop && Array.isArray(Battlefield.effects) && Battlefield.effects.some(e =>
             e.type === EFFECT_TYPE.REMOVE_ABILITIES &&
             e.appliesToNonBattlefieldZones &&
             Array.isArray(e.nonBattlefieldZones) && e.nonBattlefieldZones.includes('graveyard') &&
@@ -1228,13 +1248,16 @@ function applyEffect(state, effect, context) {
       // Which cards count: creature cards in all graveyards by default (Necrotic Ooze); another
       // card type (Mirran Safehouse, Trazyn), a subtype (Thranduil's "Elf cards") or only the
       // controller's own graveyard when the effect says so.
-      const _gyCardType = effect.params.cardType || (effect.params.cardSubtype ? null : 'Creature');
+      // cardTypes lists alternatives ("an artifact or creature card" — Skill Borrower).
+      const _gyCardTypes = effect.params.cardTypes || null;
+      const _gyCardType = effect.params.cardType || ((effect.params.cardSubtype || _gyCardTypes) ? null : 'Creature');
       const _gyCardSubtype = effect.params.cardSubtype || null;
-      const _gyOwnOnly = !!effect.params.ownGraveyardOnly;
+      const _gyOwnOnly = !!effect.params.ownGraveyardOnly || _fromLibraryTop;
       for (const player of Battlefield.players) {
-        if (!player.graveyard || !player.graveyard.length) continue;
+        const _gyCards = _fromLibraryTop ? (player.libraryTop ? [player.libraryTop] : []) : (player.graveyard || []);
+        if (!_gyCards.length) continue;
         if (_gyOwnOnly && player.id !== (state.controller || 'player_0')) continue;
-        for (const card of player.graveyard) {
+        for (const card of _gyCards) {
           // Only process creature cards. Uses the COMPUTED zone state so a card that's a creature
           // only outside the battlefield (Grist, the Hunger Tide — a 1/1 Insect creature in the
           // graveyard via its own Layer 4 ability) qualifies. _isCreatureCardInZone short-circuits
@@ -1248,13 +1271,14 @@ function applyEffect(state, effect, context) {
           } else if (_gyCardType && !new RegExp('\\b' + _gyCardType + '\\b', 'i').test(_gyTypeLine.split('—')[0])) {
             continue;
           }
+          if (_gyCardTypes && !_gyCardTypes.some(t => new RegExp('\\b' + t + '\\b', 'i').test(_gyTypeLine.split('—')[0]))) continue;
           if (_gyCardSubtype && !new RegExp('\\b' + _gyCardSubtype + '\\b', 'i').test(_gyTypeLine.split('—')[1] || '')) continue;
           // CR 305.6: a basic land type carries its mana ability even with no rules text.
           if (_gyCardType === 'Land') {
             for (const sub of (_gyTypeLine.split('—')[1] || '').trim().split(/\s+/)) {
               if (BASIC_LAND_MANA[sub]) {
                 state.abilities.push(BASIC_LAND_MANA[sub]);
-                changes.push(`Gained activated ability from "${card.name}" (graveyard): "${BASIC_LAND_MANA[sub]}"`);
+                changes.push(`Gained activated ability from "${card.name}" (${_zoneLabel}): "${BASIC_LAND_MANA[sub]}"`);
               }
             }
           }
@@ -1279,7 +1303,7 @@ function applyEffect(state, effect, context) {
             // Catch any remaining full-name reference the proper-noun pass didn't cover.
             const normalizedAb = ab.replace(new RegExp('\\b' + card.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'gi'), 'this card');
             state.abilities.push(normalizedAb);
-            changes.push(`Gained activated ability from "${card.name}" (graveyard): "${normalizedAb}"`);
+            changes.push(`Gained activated ability from "${card.name}" (${_zoneLabel}): "${normalizedAb}"`);
           }
         }
       }
@@ -1310,7 +1334,12 @@ function applyEffect(state, effect, context) {
       const _exRequireCreature = !!effect.params.requireCreature;
       const _exRequireCardType = effect.params.requireCardType || null;
       const _exController = state.controller || 'player_0';
+      // "The last chosen card" (Koh, the Face Stealer): only the entry picked on the source.
+      const _exChosenOnly = !!effect.params.chosenExileOnly;
+      const _exChosenPerm = _exChosenOnly && typeof Battlefield.getPermById === 'function' ? Battlefield.getPermById(_exSourceId) : null;
+      const _exChosenId = _exChosenPerm ? _exChosenPerm._chosenExileId || null : null;
       for (const entry of Battlefield.exile) {
+        if (_exChosenOnly && entry.id !== _exChosenId) continue;
         if (_exFilterTag && entry.exiledWithId !== _exSourceId) continue;
         if (_exFilterCounter && !(entry.counters && entry.counters[_exFilterCounter] > 0)) continue;
         if (_exRequireOwner && entry.owner !== _exController) continue;

@@ -1,0 +1,21 @@
+{
+  "name": "Activated abilities of the top card of your library — Conspicuous Snoop, Skill Borrower",
+  "notes": "Found by tests/sweep.py. The card comes from the controller's 'Top of library' slot (Battlefield.setLibraryTop, player.libraryTop). Player 1's top card is Mogg Fanatic, a Goblin card, so Conspicuous Snoop has its ability. The opponent's top card is Prodigal Sorcerer, an artifact-or-creature card, so the opponent's Skill Borrower has its ability. Each reads only its own controller's library, and the 'As long as …' line itself stays in the ability list (the general condition pass used to file Skill Borrower's as a conditional ability).",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Conspicuous Snoop", "as": "snoop" },
+    { "add": "Skill Borrower", "as": "borrower", "controller": "p2" },
+    { "call": ["setLibraryTop", "p1", "card:Mogg Fanatic"] },
+    { "call": ["setLibraryTop", "p2", "card:Prodigal Sorcerer"] }
+  ],
+  "asserts": [
+    { "perm": "Conspicuous Snoop", "final": { "abilities": {
+      "$includes": ["As long as the top card of your library is a Goblin card, this creature has all activated abilities of that card.", "Sacrifice this creature: It deals 1 damage to any target."],
+      "$excludes": ["{T}: This creature deals 1 damage to any target."] } } },
+    { "perm": "Skill Borrower", "final": { "abilities": {
+      "$includes": ["As long as the top card of your library is an artifact or creature card, this creature has all activated abilities of that card.", "{T}: This creature deals 1 damage to any target."],
+      "$excludes": ["Sacrifice this creature: It deals 1 damage to any target."] } } },
+    { "effect": { "source": "Conspicuous Snoop", "layer": "6", "type": "gain_activated_from_graveyards", "params": { "fromLibraryTop": true, "cardSubtype": "Goblin" } } },
+    { "effect": { "source": "Skill Borrower", "layer": "6", "type": "gain_activated_from_graveyards", "params": { "fromLibraryTop": true, "cardTypes": ["Artifact", "Creature"] } } }
+  ]
+}

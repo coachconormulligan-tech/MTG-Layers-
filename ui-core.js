@@ -111,6 +111,7 @@ function _doRenderAll() {
   renderCommanderPanel();
   renderEmblemPanel();
   renderGraveyardPanel();
+  renderLibraryPanel();
   renderExilePanel();
   renderInspector();
 }
@@ -239,7 +240,7 @@ function _boardHasContent(data) {
   return data.perms.length > 0 ||
     data.players.length > 1 ||
     data.exile.length > 0 ||
-    data.players.some(p => (p.graveyard && p.graveyard.length) ||
+    data.players.some(p => (p.graveyard && p.graveyard.length) || p.libraryTop ||
                            (p.commanders && p.commanders.length) ||
                            (p.emblems && p.emblems.length));
 }
@@ -402,6 +403,8 @@ function _boardToLiteRecipe(data) {
     }
     for (const c of pl.commanders || []) { c.cardName = c.card && c.card.name; delete c.card; _stripDefaults(c); }
     for (const em of pl.emblems || []) { em.cardName = em.card && em.card.name; delete em.card; _stripDefaults(em); }
+    if (pl.libraryTop) pl.libraryTopName = pl.libraryTop.name;
+    delete pl.libraryTop;
     _stripDefaults(pl);
   }
   for (const e of lite.exile || []) { e.cardName = e.card && e.card.name; delete e.card; _stripDefaults(e); }
@@ -433,6 +436,7 @@ async function _hydrateLiteRecipe(lite) {
   for (const pl of lite.players || []) {
     for (const c of pl.commanders || []) jobs.push(getCard(c.cardName, false).then(card => { c.card = card; delete c.cardName; }));
     for (const em of pl.emblems || []) jobs.push(getCard(em.cardName, false).then(card => { em.card = card; delete em.cardName; }));
+    if (pl.libraryTopName) jobs.push(getCard(pl.libraryTopName, false).then(card => { pl.libraryTop = card || null; delete pl.libraryTopName; }));
   }
   for (const e of lite.exile || []) jobs.push(getCard(e.cardName, false).then(card => { e.card = card; delete e.cardName; }));
   await Promise.all(jobs);

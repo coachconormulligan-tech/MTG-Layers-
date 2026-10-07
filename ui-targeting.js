@@ -373,13 +373,14 @@ function renderTargetSelect(sourceId) {
   </select>`;
 }
 
-/* The creature a fired ability takes its numbers from ("…base power becomes equal to that
-   creature's power" — Belligerent Yearling; "… target creature's power" — Riptide Mangler).
-   The effect stays on the ability's source; this only picks where the numbers come from. */
+/* The object a fired ability takes its numbers or abilities from ("…base power becomes equal
+   to that creature's power" — Belligerent Yearling; "… target creature's power" — Riptide
+   Mangler; "gains all activated abilities of target creature" — Quicksilver Elemental).
+   The effect stays on its own subject; this only picks where the values come from. */
 function renderRefPermSelect(sourceId) {
   const sourcePerm = Battlefield.getPermById(sourceId);
   const pick = sourcePerm && sourcePerm._refPick;
-  const eff = Battlefield.effects.find(e => e.sourceId === sourceId && e.params && e.params.ptFromRef);
+  const eff = Battlefield.effects.find(e => e.sourceId === sourceId && _takesFromRef(e));
   if (!pick || !eff) return '';
   const current = eff.params.refPermId || '';
   const sourceCtrl = sourcePerm.controller || sourcePerm.owner || Battlefield.activePlayerId;
@@ -388,13 +389,14 @@ function renderRefPermSelect(sourceId) {
   const snapStates = sourcePerm._firedAtStates || null;
   const options = Battlefield.permanents.filter(p => {
     if (p.isManualEffect || p.isSpell) return false;
-    if (pick.excludeSource && p.id === sourcePerm.abilitySourceId) return false;
+    if (pick.excludeSource && p.id === (sourcePerm.abilitySourceId || sourcePerm.id)) return false;
     if (p.timestamp >= sourcePerm.timestamp && p.id !== current) return false;
     const stack = Battlefield.getStack(p.id);
     if (stack && stack.length >= 2 && stack[0] !== p.id) return false;
     const fs = (snapStates && snapStates.get(p.id)) || finalStates.get(p.id);
     if (!fs) return false;
     if (pick.youControl && (fs.controller || p.controller || p.owner || 'player_0') !== sourceCtrl) return false;
+    if (pick.opponentControls && (fs.controller || p.controller || p.owner || 'player_0') === sourceCtrl) return false;
     if (applies.fn && !applies.isSelf && !applies.fn(fs, finalStates, sourceCtrl)) return false;
     if (pick.isTarget) {
       const abilities = fs.abilities || [];
@@ -407,6 +409,27 @@ function renderRefPermSelect(sourceId) {
     <option value="">${pick.isTarget ? '\u2192 target\u2026' : '\u2192 choose\u2026'}</option>
     ${options.map(t => `<option value="${t.id}" ${t.id === current ? 'selected' : ''}>${escapeHtml(_refPermDisplayName(t, finalStates))}</option>`).join('')}
   </select>`;
+}
+/* The card "last chosen" among those exiled with a permanent (Koh, the Face Stealer). */
+function renderChosenExileSelect(permId) {
+  const perm = Battlefield.getPermById(permId);
+  const need = perm && perm._needsChosenExileCard;
+  if (!need) return '';
+  const current = perm._chosenExileId || '';
+  const options = Battlefield.exile.filter(e => {
+    if (e.exiledWithId !== permId || e.isFaceDown || !e.card) return false;
+    if (!need.requireCreature) return true;
+    return typeof _isCreatureCardInZone === 'function' ? _isCreatureCardInZone(e.card, 'exile')
+      : /creature/i.test(e.card.type_line || '');
+  });
+  return `<select class="ts-target-select" onchange="setChosenExileCard('${permId}', this.value)" onclick="event.stopPropagation()">
+    <option value="">\u2192 choose card\u2026</option>
+    ${options.map(e => `<option value="${e.id}" ${e.id === current ? 'selected' : ''}>${escapeHtml(e.card.name)}</option>`).join('')}
+  </select>`;
+}
+function setChosenExileCard(permId, entryId) {
+  Battlefield.setChosenExileCard(permId, entryId || null);
+  renderAll();
 }
 function _refPermDisplayName(t, finalStates) {
   const fs = finalStates.get(t.id);

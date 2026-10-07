@@ -1,0 +1,635 @@
+{
+ "name": "Koh, the Face Stealer — abilities of the last chosen card exiled with it",
+ "notes": "Found by tests/sweep.py. Two creature cards are exiled with Koh; only the one chosen (Battlefield.setChosenExileCard, the 'choose card' picker) gives its abilities, triggered ones included. Soul Warden is chosen, so Koh has its trigger and not Prodigal Sorcerer's activated ability. The choice is saved by position in the exile list. NOTE: exile ids are literal; build in its own process.",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Koh, the Face Stealer",
+    "as": "koh"
+   },
+   {
+    "call": [
+     "addToExile",
+     "card:Prodigal Sorcerer"
+    ]
+   },
+   {
+    "call": [
+     "addToExile",
+     "card:Soul Warden"
+    ]
+   },
+   {
+    "call": [
+     "setExileTag",
+     "exile_1",
+     "@koh"
+    ]
+   },
+   {
+    "call": [
+     "setExileTag",
+     "exile_2",
+     "@koh"
+    ]
+   },
+   {
+    "call": [
+     "setChosenExileCard",
+     "@koh",
+     "exile_2"
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Koh, the Face Stealer",
+   "final": {
+    "abilities": {
+     "$includes": [
+      "Whenever another creature enters, you gain 1 life."
+     ],
+     "$excludes": [
+      "{T}: This card deals 1 damage to any target.",
+      "{T}: This creature deals 1 damage to any target."
+     ]
+    }
+   }
+  },
+  {
+   "effect": {
+    "source": "Koh, the Face Stealer",
+    "layer": "6",
+    "type": "gain_activated_from_exile",
+    "params": {
+     "chosenExileOnly": true,
+     "includeTriggered": true,
+     "requireCreature": true
+    }
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "28f6fa32-5058-4c29-9ba8-9d8f2057eb6d",
+     "oracle_id": "2bbb33e3-7d03-457c-92bb-b0c943615fa1",
+     "multiverse_ids": [],
+     "resource_id": "C5EFDEFC787218029549ECAB1E290EBA677F721EE8CA9688F0523EB19830F9A1",
+     "mtgo_id": 144694,
+     "arena_id": 97382,
+     "tcgplayer_id": 662749,
+     "cardmarket_id": 858220,
+     "name": "Koh, the Face Stealer",
+     "lang": "en",
+     "released_at": "2025-11-21",
+     "uri": "https://api.scryfall.com/cards/28f6fa32-5058-4c29-9ba8-9d8f2057eb6d",
+     "scryfall_uri": "https://scryfall.com/card/tla/107/koh-the-face-stealer?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T01:09:29Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/2/8/28f6fa32-5058-4c29-9ba8-9d8f2057eb6d.jpg?1783904969",
+      "normal": "https://cards.scryfall.io/normal/front/2/8/28f6fa32-5058-4c29-9ba8-9d8f2057eb6d.jpg?1783904969",
+      "large": "https://cards.scryfall.io/large/front/2/8/28f6fa32-5058-4c29-9ba8-9d8f2057eb6d.jpg?1783904969",
+      "png": "https://cards.scryfall.io/png/front/2/8/28f6fa32-5058-4c29-9ba8-9d8f2057eb6d.png?1783904969",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/2/8/28f6fa32-5058-4c29-9ba8-9d8f2057eb6d.jpg?1783904969",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/2/8/28f6fa32-5058-4c29-9ba8-9d8f2057eb6d.jpg?1783904969",
+      "thumb": "https://cards.scryfall.io/thumb/front/2/8/28f6fa32-5058-4c29-9ba8-9d8f2057eb6d.webp?1783904969",
+      "grid": "https://cards.scryfall.io/grid/front/2/8/28f6fa32-5058-4c29-9ba8-9d8f2057eb6d.webp?1783904969",
+      "display": "https://cards.scryfall.io/display/front/2/8/28f6fa32-5058-4c29-9ba8-9d8f2057eb6d.webp?1783904969",
+      "art": "https://cards.scryfall.io/art/front/2/8/28f6fa32-5058-4c29-9ba8-9d8f2057eb6d.webp?1783904969",
+      "crop": "https://cards.scryfall.io/crop/front/2/8/28f6fa32-5058-4c29-9ba8-9d8f2057eb6d.webp?1783904969"
+     },
+     "mana_cost": "{4}{B}{B}",
+     "cmc": 6,
+     "type_line": "Legendary Creature — Shapeshifter Spirit",
+     "oracle_text": "When Koh enters, exile up to one other target creature.\nWhenever another nontoken creature dies, you may exile it.\nPay 1 life: Choose a creature card exiled with Koh.\nKoh has all activated and triggered abilities of the last chosen card.",
+     "power": "6",
+     "toughness": "6",
+     "colors": [
+      "B"
+     ],
+     "color_identity": [
+      "B"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "arena",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "118f7e64-5caa-4cb7-99a8-184f4d3a7422",
+     "set": "tla",
+     "set_name": "Avatar: The Last Airbender",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/118f7e64-5caa-4cb7-99a8-184f4d3a7422",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Atla&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/tla?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/28f6fa32-5058-4c29-9ba8-9d8f2057eb6d/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A2bbb33e3-7d03-457c-92bb-b0c943615fa1&unique=prints",
+     "collector_number": "107",
+     "digital": false,
+     "rarity": "mythic",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Eduardo Francisco",
+     "artist_ids": [
+      "8c0112e9-0605-4945-9f11-f0cd2adcf188"
+     ],
+     "illustration_id": "d17eb910-b0c2-433c-9d35-c4ae64a03b65",
+     "border_color": "black",
+     "frame": "2015",
+     "frame_effects": [
+      "legendary"
+     ],
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "promo_types": [
+      "universesbeyond"
+     ],
+     "edhrec_rank": 9513,
+     "preview": {
+      "source": "Good Time Society",
+      "source_uri": "https://www.youtube.com/watch?v=QpUUpSpoZ0k",
+      "previewed_at": "2025-11-06"
+     },
+     "prices": {
+      "usd": "0.39",
+      "usd_foil": "1.17",
+      "usd_etched": null,
+      "eur": "0.80",
+      "eur_foil": "1.28",
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DKoh%252C%2Bthe%2BFace%2BStealer",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DKoh%252C%2Bthe%2BFace%2BStealer",
+      "edhrec": "https://edhrec.com/route/?cc=Koh%2C+the+Face+Stealer"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F662749%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=858220&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/144694?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": 1,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [
+   {
+    "card": {
+     "object": "card",
+     "id": "50aef269-55f9-4d84-8bc5-29e794297f11",
+     "oracle_id": "5e961d15-5972-4e4b-9385-1cd7cd7c6bbe",
+     "multiverse_ids": [
+      413609
+     ],
+     "mtgo_id": 60893,
+     "mtgo_foil_id": 60894,
+     "tcgplayer_id": 118449,
+     "cardmarket_id": 290208,
+     "name": "Prodigal Sorcerer",
+     "lang": "en",
+     "released_at": "2016-06-10",
+     "uri": "https://api.scryfall.com/cards/50aef269-55f9-4d84-8bc5-29e794297f11",
+     "scryfall_uri": "https://scryfall.com/card/ema/67/prodigal-sorcerer?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T10:13:27Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/5/0/50aef269-55f9-4d84-8bc5-29e794297f11.jpg?1783937607",
+      "normal": "https://cards.scryfall.io/normal/front/5/0/50aef269-55f9-4d84-8bc5-29e794297f11.jpg?1783937607",
+      "large": "https://cards.scryfall.io/large/front/5/0/50aef269-55f9-4d84-8bc5-29e794297f11.jpg?1783937607",
+      "png": "https://cards.scryfall.io/png/front/5/0/50aef269-55f9-4d84-8bc5-29e794297f11.png?1783937607",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/5/0/50aef269-55f9-4d84-8bc5-29e794297f11.jpg?1783937607",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/5/0/50aef269-55f9-4d84-8bc5-29e794297f11.jpg?1783937607",
+      "thumb": "https://cards.scryfall.io/thumb/front/5/0/50aef269-55f9-4d84-8bc5-29e794297f11.webp?1783937607",
+      "grid": "https://cards.scryfall.io/grid/front/5/0/50aef269-55f9-4d84-8bc5-29e794297f11.webp?1783937607",
+      "display": "https://cards.scryfall.io/display/front/5/0/50aef269-55f9-4d84-8bc5-29e794297f11.webp?1783937607",
+      "art": "https://cards.scryfall.io/art/front/5/0/50aef269-55f9-4d84-8bc5-29e794297f11.webp?1783937607",
+      "crop": "https://cards.scryfall.io/crop/front/5/0/50aef269-55f9-4d84-8bc5-29e794297f11.webp?1783937607"
+     },
+     "mana_cost": "{2}{U}",
+     "cmc": 3,
+     "type_line": "Creature — Human Wizard Sorcerer",
+     "oracle_text": "{T}: This creature deals 1 damage to any target.",
+     "power": "1",
+     "toughness": "1",
+     "colors": [
+      "U"
+     ],
+     "color_identity": [
+      "U"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "1f29f022-3ace-4c96-85e8-1f7b63aadf7e",
+     "set": "ema",
+     "set_name": "Eternal Masters",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/1f29f022-3ace-4c96-85e8-1f7b63aadf7e",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aema&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/ema?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/50aef269-55f9-4d84-8bc5-29e794297f11/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A5e961d15-5972-4e4b-9385-1cd7cd7c6bbe&unique=prints",
+     "collector_number": "67",
+     "digital": false,
+     "rarity": "uncommon",
+     "flavor_text": "\"You can't learn to enjoy life's amusements in the pages of books. You must seek them out in earnest.\"",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Eric Deschamps",
+     "artist_ids": [
+      "37970e22-9cee-44c1-af44-5ee27cf26b76"
+     ],
+     "illustration_id": "daf2b465-895a-4b2d-b7ab-2ebeb1af3131",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 11390,
+     "penny_rank": 12432,
+     "prices": {
+      "usd": "0.27",
+      "usd_foil": "0.38",
+      "usd_etched": null,
+      "eur": "0.07",
+      "eur_foil": "0.34",
+      "tix": "0.04"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=413609&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DProdigal%2BSorcerer",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DProdigal%2BSorcerer",
+      "edhrec": "https://edhrec.com/route/?cc=Prodigal+Sorcerer"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F118449%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=290208&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/60893?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "owner": "player_0",
+    "exiledWithId": "perm_1",
+    "counters": {},
+    "isFaceDown": false
+   },
+   {
+    "card": {
+     "object": "card",
+     "id": "d96266b3-a7cb-40ce-a328-ac13719fe5f0",
+     "oracle_id": "f3fad295-1af2-4ecc-8546-b121ad6be27b",
+     "multiverse_ids": [
+      425849
+     ],
+     "mtgo_id": 63039,
+     "mtgo_foil_id": 63040,
+     "tcgplayer_id": 128953,
+     "cardmarket_id": 295917,
+     "name": "Soul Warden",
+     "lang": "en",
+     "released_at": "2017-03-17",
+     "uri": "https://api.scryfall.com/cards/d96266b3-a7cb-40ce-a328-ac13719fe5f0",
+     "scryfall_uri": "https://scryfall.com/card/mm3/24/soul-warden?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T09:57:57Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/d/9/d96266b3-a7cb-40ce-a328-ac13719fe5f0.jpg?1783936677",
+      "normal": "https://cards.scryfall.io/normal/front/d/9/d96266b3-a7cb-40ce-a328-ac13719fe5f0.jpg?1783936677",
+      "large": "https://cards.scryfall.io/large/front/d/9/d96266b3-a7cb-40ce-a328-ac13719fe5f0.jpg?1783936677",
+      "png": "https://cards.scryfall.io/png/front/d/9/d96266b3-a7cb-40ce-a328-ac13719fe5f0.png?1783936677",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/d/9/d96266b3-a7cb-40ce-a328-ac13719fe5f0.jpg?1783936677",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/d/9/d96266b3-a7cb-40ce-a328-ac13719fe5f0.jpg?1783936677",
+      "thumb": "https://cards.scryfall.io/thumb/front/d/9/d96266b3-a7cb-40ce-a328-ac13719fe5f0.webp?1783936677",
+      "grid": "https://cards.scryfall.io/grid/front/d/9/d96266b3-a7cb-40ce-a328-ac13719fe5f0.webp?1783936677",
+      "display": "https://cards.scryfall.io/display/front/d/9/d96266b3-a7cb-40ce-a328-ac13719fe5f0.webp?1783936677",
+      "art": "https://cards.scryfall.io/art/front/d/9/d96266b3-a7cb-40ce-a328-ac13719fe5f0.webp?1783936677",
+      "crop": "https://cards.scryfall.io/crop/front/d/9/d96266b3-a7cb-40ce-a328-ac13719fe5f0.webp?1783936677"
+     },
+     "mana_cost": "{W}",
+     "cmc": 1,
+     "type_line": "Creature — Human Cleric",
+     "oracle_text": "Whenever another creature enters, you gain 1 life.",
+     "power": "1",
+     "toughness": "1",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "02624962-f727-4c31-bbf2-a94fa6c5b653",
+     "set": "mm3",
+     "set_name": "Modern Masters 2017",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/02624962-f727-4c31-bbf2-a94fa6c5b653",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Amm3&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/mm3?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/d96266b3-a7cb-40ce-a328-ac13719fe5f0/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Af3fad295-1af2-4ecc-8546-b121ad6be27b&unique=prints",
+     "collector_number": "24",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"One does not question the size or shape of the grains of sand in an hourglass. Nor do I question the temperament of the souls under my guidance.\"",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Randy Gallegos",
+     "artist_ids": [
+      "a5048cc7-438a-4378-98e4-da99b78e1db0"
+     ],
+     "illustration_id": "c59983d5-da9e-4f54-aef7-ec8742c1f355",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 471,
+     "penny_rank": 1763,
+     "prices": {
+      "usd": "3.02",
+      "usd_foil": "6.36",
+      "usd_etched": null,
+      "eur": "2.19",
+      "eur_foil": "3.74",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=425849&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DSoul%2BWarden",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DSoul%2BWarden",
+      "edhrec": "https://edhrec.com/route/?cc=Soul+Warden"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F128953%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=295917&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/63039?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "owner": "player_0",
+    "exiledWithId": "perm_1",
+    "counters": {},
+    "isFaceDown": false
+   }
+  ],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Koh, the Face Stealer",
+    "final": {
+     "name": "Koh, the Face Stealer",
+     "controller": "player_0",
+     "supertypes": [
+      "Legendary"
+     ],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Shapeshifter",
+      "Spirit"
+     ],
+     "power": 6,
+     "toughness": 6,
+     "colors": [
+      "B"
+     ],
+     "abilities": [
+      "When this card enters, exile up to one other target creature.",
+      "Whenever another nontoken creature dies, you may exile it.",
+      "Pay 1 life: Choose a creature card exiled with this card.",
+      "This card has all activated and triggered abilities of the last chosen card.",
+      "Whenever another creature enters, you gain 1 life."
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "Koh, the Face Stealer"
+     ]
+    }
+   }
+  ],
+  "order": {
+   "6": [
+    "Koh, the Face Stealer"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Koh, the Face Stealer",
+    "layer": "6",
+    "type": "gain_activated_from_exile",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "chosenExileOnly": true,
+     "filterCounter": null,
+     "filterTagToSource": true,
+     "includeTriggered": true,
+     "requireCreature": true,
+     "requireOwnerMatch": false
+    }
+   }
+  ]
+ }
+}

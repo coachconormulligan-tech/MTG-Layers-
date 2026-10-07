@@ -472,6 +472,138 @@ function closeGraveyardModal() {
   _graveyardModalPlayerId = null;
 }
 
+/* ===== Library Panel & Modal (top card only) ===== */
+/* Cards that read the top card of a library (Conspicuous Snoop, Skill Borrower) take it from
+   player.libraryTop. One card per player. */
+
+function renderLibraryPanel() {
+  const panel = document.getElementById('library-panel');
+  if (!panel) return;
+  let html = '';
+  for (const player of Battlefield.players) {
+    const top = player.libraryTop || null;
+    const label = Battlefield.players.length > 1
+      ? 'Top of ' + escapeHtml(player.name) + "'s library"
+      : 'Top of library';
+    html += `<div class="graveyard-row" onclick="openLibraryModal('${player.id}')">
+      <span class="graveyard-label">${label}</span>
+      ${top
+        ? `<span class="graveyard-top-name dim">${escapeHtml(top.name)}</span>`
+        : '<span class="graveyard-empty dim">Not set</span>'}
+    </div>`;
+  }
+  panel.innerHTML = html || '<div class="dim" style="font-size:11px;padding:4px 0;">No players</div>';
+}
+
+let _libraryModalPlayerId = null;
+let _librarySearchResults = [];
+
+function openLibraryModal(playerId) {
+  const player = Battlefield.getPlayer(playerId);
+  if (!player) return;
+  _libraryModalPlayerId = playerId;
+  const title = Battlefield.players.length > 1
+    ? 'Top of ' + escapeHtml(player.name) + "'s library"
+    : 'Top of library';
+  const overlay = _createModalOverlay('library-modal-overlay', closeLibraryModal);
+  overlay.innerHTML = `
+    <div class="modal modal-graveyard">
+      <div class="modal-header">
+        <h3>${title}</h3>
+        <button class="modal-close" onclick="closeLibraryModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-section-title">Set the top card:</div>
+        <div class="modal-search-bar">
+          <input type="text" id="library-search-input" placeholder="Search for a card\u2026" autocomplete="off">
+        </div>
+        <div class="modal-search-results" id="library-search-results"></div>
+        <div class="graveyard-divider"></div>
+        <div class="modal-section-title">Current top card:</div>
+        <div id="library-top-card">${_renderLibraryTop(player)}</div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-sm" onclick="closeLibraryModal()">Close</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+  const input = document.getElementById('library-search-input');
+  let timer = null;
+  input.addEventListener('input', () => {
+    clearTimeout(timer);
+    timer = setTimeout(async () => {
+      const q = input.value.trim();
+      const results = document.getElementById('library-search-results');
+      if (!results) return;
+      if (q.length < 2) { results.innerHTML = ''; return; }
+      results.innerHTML = '<div class="search-loading">Searching\u2026</div>';
+      _librarySearchResults = await searchScryfall(q);
+      const box = document.getElementById('library-search-results');
+      if (!box) return;
+      box.innerHTML = _librarySearchResults.length
+        ? _librarySearchResults.slice(0, 20).map((c, i) => {
+            const imgUrl = c.image_uris?.small || c.card_faces?.[0]?.image_uris?.small || '';
+            return `<div class="modal-perm-item" onclick="librarySetTop(${i})">
+              ${imgUrl ? `<img src="${imgUrl}" alt="" onerror="this.style.display='none'">` : ''}
+              <div class="perm-info">
+                <div class="perm-name">${escapeHtml(c.name)}</div>
+                <div class="perm-type">${escapeHtml(c.type_line || '')}</div>
+              </div>
+            </div>`;
+          }).join('')
+        : '<div class="search-empty">No results</div>';
+    }, 300);
+  });
+  input.focus();
+}
+
+function _renderLibraryTop(player) {
+  const card = player.libraryTop;
+  if (!card) return '<div class="graveyard-empty-msg">No top card set.</div>';
+  const imgUrl = card.image_uris?.small || card.card_faces?.[0]?.image_uris?.small || '';
+  return `<div class="graveyard-list"><div class="graveyard-card-item graveyard-top-card">
+    ${imgUrl
+      ? `<img src="${imgUrl}" alt="" onerror="this.style.display='none'" class="graveyard-card-img">`
+      : '<div class="graveyard-card-img-placeholder"></div>'}
+    <div>
+      <div class="perm-name">${escapeHtml(card.name)}</div>
+      <div class="perm-type">${escapeHtml(card.type_line || '')}</div>
+    </div>
+    <button class="graveyard-remove-btn" onclick="libraryClearTop()" title="Remove">&times;</button>
+  </div></div>`;
+}
+
+function _refreshLibraryModal() {
+  const player = Battlefield.getPlayer(_libraryModalPlayerId);
+  const el = document.getElementById('library-top-card');
+  if (player && el) el.innerHTML = _renderLibraryTop(player);
+}
+
+function librarySetTop(idx) {
+  const card = _librarySearchResults[idx];
+  if (!card || !_libraryModalPlayerId) return;
+  Battlefield.setLibraryTop(_libraryModalPlayerId, card);
+  renderAll();
+  _refreshLibraryModal();
+  const input = document.getElementById('library-search-input');
+  if (input) input.value = '';
+  const results = document.getElementById('library-search-results');
+  if (results) results.innerHTML = '';
+}
+
+function libraryClearTop() {
+  if (!_libraryModalPlayerId) return;
+  Battlefield.setLibraryTop(_libraryModalPlayerId, null);
+  renderAll();
+  _refreshLibraryModal();
+}
+
+function closeLibraryModal() {
+  const overlay = document.getElementById('library-modal-overlay');
+  if (overlay) overlay.remove();
+  _libraryModalPlayerId = null;
+}
+
 /* ─── Exile Zone ──────────────────────────────────────────────────────────── */
 /* [KEY: EXILE-UI] */
 

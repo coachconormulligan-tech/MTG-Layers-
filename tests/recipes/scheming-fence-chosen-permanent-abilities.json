@@ -1,0 +1,18 @@
+{
+  "name": "Scheming Fence — activated abilities of the chosen permanent",
+  "notes": "Found by tests/sweep.py. The chosen permanent is picked with the reference picker (Battlefield.setRefPerm) and read live: Arcane Teachings is attached to the chosen Prodigal Sorcerer after the Fence entered, and the Fence has the granted ability too, applying after it (CR 613.8 dependency). Jace Beleren's loyalty abilities are excluded when it is the chosen permanent instead; here only the Sorcerer is chosen, and Gray Ogre gains nothing.",
+  "steps": [
+    { "add": "Prodigal Sorcerer", "as": "tim" },
+    { "add": "Gray Ogre", "as": "ogre" },
+    { "add": "Scheming Fence", "as": "fence" },
+    { "call": ["setRefPerm", "@fence", "@tim"] },
+    { "add": "Arcane Teachings", "as": "teach" },
+    { "call": ["setTarget", "@teach", "@tim"] }
+  ],
+  "asserts": [
+    { "perm": "Scheming Fence", "final": { "abilities": { "$includes": ["{T}: This creature deals 1 damage to any target."] } } },
+    { "perm": "Gray Ogre", "final": { "abilities": [] } },
+    { "effect": { "source": "Scheming Fence", "layer": "6", "type": "gain_activated_from_others", "params": { "abilitiesFromRef": true, "refLive": true, "excludeLoyalty": true } } },
+    { "order": { "6": ["Arcane Teachings", "Scheming Fence"] } }
+  ]
+}
