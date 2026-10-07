@@ -1,0 +1,45 @@
+{
+  "name": "Living Lore — power and toughness are the mana value of the card exiled with it",
+  "notes": "Sweep group 4 (2026-10-07). \"This card's power and toughness are each equal to the exiled card's mana value.\" parsed to nothing. Now a characteristic-defining effect in layer 7a reading the exile entry tagged to Living Lore (it has no Imprint keyword and no Imprint button; the card is tagged in the exile zone). Time Stretch (mana value 10) exiled with it: 10/10; an untagged card in exile is ignored. NOTE: exile ids are literal; build in its own process.",
+  "steps": [
+    {
+      "add": "Living Lore",
+      "as": "ll"
+    },
+    {
+      "call": [
+        "addToExile",
+        "card:Lightning Bolt"
+      ]
+    },
+    {
+      "call": [
+        "addToExile",
+        "card:Time Stretch"
+      ]
+    },
+    {
+      "call": [
+        "setExileTag",
+        "exile_2",
+        "@ll"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Living Lore",
+      "final": {
+        "power": 10,
+        "toughness": 10
+      }
+    },
+    {
+      "effect": {
+        "source": "Living Lore",
+        "layer": "7a",
+        "type": "cda_pt"
+      }
+    }
+  ]
+}

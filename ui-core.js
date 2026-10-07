@@ -390,6 +390,11 @@ function _boardToLiteRecipe(data) {
     delete p.scryfallData;
     _stripDefaults(p);
   }
+  // Linked cards travel as names, like every other card in a link.
+  for (const o of [...(lite.perms || []), ...(lite.firedAbilities || [])]) {
+    if (o.linkedCards && o.linkedCards.length) o.linkedCardNames = o.linkedCards.map(c => c.name);
+    delete o.linkedCards;
+  }
   for (const f of lite.firedAbilities || []) _stripDefaults(f);
   for (const pl of lite.players || []) {
     // Drop gameState keys still at their default (restore backfills from DEFAULT_GAME_STATE).
@@ -439,6 +444,12 @@ async function _hydrateLiteRecipe(lite) {
     if (pl.libraryTopName) jobs.push(getCard(pl.libraryTopName, false).then(card => { pl.libraryTop = card || null; delete pl.libraryTopName; }));
   }
   for (const e of lite.exile || []) jobs.push(getCard(e.cardName, false).then(card => { e.card = card; delete e.cardName; }));
+  for (const o of [...(lite.perms || []), ...(lite.firedAbilities || [])]) {
+    if (!o.linkedCardNames) continue;
+    const names = o.linkedCardNames;
+    delete o.linkedCardNames;
+    jobs.push(Promise.all(names.map(n => getCard(n, false))).then(cards => { o.linkedCards = cards.filter(Boolean); }));
+  }
   await Promise.all(jobs);
 
   // Drop anything whose card could not be resolved.

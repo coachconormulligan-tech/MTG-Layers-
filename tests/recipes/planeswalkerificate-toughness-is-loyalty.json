@@ -1,0 +1,44 @@
+{
+  "name": "Planeswalkerificate — enchanted creature is also a planeswalker and its toughness is its loyalty",
+  "notes": "Sweep group 4 (2026-10-07). \"Its toughness becomes its loyalty.\" parsed to nothing. Now a layer 7b effect on the enchanted creature that reads its loyalty counters live. Grizzly Bears with four loyalty counters: 2/4, Creature and Planeswalker.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Planeswalkerificate",
+      "as": "p"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@p",
+        "@bears"
+      ]
+    },
+    {
+      "call": [
+        "addCounter",
+        "@bears",
+        "loyalty",
+        4
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 2,
+        "toughness": 4,
+        "types": {
+          "$includes": [
+            "Creature",
+            "Planeswalker"
+          ]
+        }
+      }
+    }
+  ]
+}

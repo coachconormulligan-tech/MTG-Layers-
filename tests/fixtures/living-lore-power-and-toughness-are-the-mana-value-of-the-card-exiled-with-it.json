@@ -1,0 +1,622 @@
+{
+ "name": "Living Lore — power and toughness are the mana value of the card exiled with it",
+ "notes": "Sweep group 4 (2026-10-07). \"This card's power and toughness are each equal to the exiled card's mana value.\" parsed to nothing. Now a characteristic-defining effect in layer 7a reading the exile entry tagged to Living Lore (it has no Imprint keyword and no Imprint button; the card is tagged in the exile zone). Time Stretch (mana value 10) exiled with it: 10/10; an untagged card in exile is ignored. NOTE: exile ids are literal; build in its own process.",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Living Lore",
+    "as": "ll"
+   },
+   {
+    "call": [
+     "addToExile",
+     "card:Lightning Bolt"
+    ]
+   },
+   {
+    "call": [
+     "addToExile",
+     "card:Time Stretch"
+    ]
+   },
+   {
+    "call": [
+     "setExileTag",
+     "exile_2",
+     "@ll"
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Living Lore",
+   "final": {
+    "power": 10,
+    "toughness": 10
+   }
+  },
+  {
+   "effect": {
+    "source": "Living Lore",
+    "layer": "7a",
+    "type": "cda_pt"
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "15b137fb-3f90-4a44-a225-cff5ca153190",
+     "oracle_id": "7c48c341-1d56-4210-9d86-181ebb206098",
+     "multiverse_ids": [
+      519156
+     ],
+     "mtgo_id": 89343,
+     "tcgplayer_id": 236185,
+     "cardmarket_id": 558771,
+     "name": "Living Lore",
+     "lang": "en",
+     "released_at": "2021-04-23",
+     "uri": "https://api.scryfall.com/cards/15b137fb-3f90-4a44-a225-cff5ca153190",
+     "scryfall_uri": "https://scryfall.com/card/c21/121/living-lore?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T07:26:04Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/1/5/15b137fb-3f90-4a44-a225-cff5ca153190.jpg?1783927564",
+      "normal": "https://cards.scryfall.io/normal/front/1/5/15b137fb-3f90-4a44-a225-cff5ca153190.jpg?1783927564",
+      "large": "https://cards.scryfall.io/large/front/1/5/15b137fb-3f90-4a44-a225-cff5ca153190.jpg?1783927564",
+      "png": "https://cards.scryfall.io/png/front/1/5/15b137fb-3f90-4a44-a225-cff5ca153190.png?1783927564",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/1/5/15b137fb-3f90-4a44-a225-cff5ca153190.jpg?1783927564",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/1/5/15b137fb-3f90-4a44-a225-cff5ca153190.jpg?1783927564",
+      "thumb": "https://cards.scryfall.io/thumb/front/1/5/15b137fb-3f90-4a44-a225-cff5ca153190.webp?1783927564",
+      "grid": "https://cards.scryfall.io/grid/front/1/5/15b137fb-3f90-4a44-a225-cff5ca153190.webp?1783927564",
+      "display": "https://cards.scryfall.io/display/front/1/5/15b137fb-3f90-4a44-a225-cff5ca153190.webp?1783927564",
+      "art": "https://cards.scryfall.io/art/front/1/5/15b137fb-3f90-4a44-a225-cff5ca153190.webp?1783927564",
+      "crop": "https://cards.scryfall.io/crop/front/1/5/15b137fb-3f90-4a44-a225-cff5ca153190.webp?1783927564"
+     },
+     "mana_cost": "{3}{U}",
+     "cmc": 4,
+     "type_line": "Creature — Avatar",
+     "oracle_text": "As this creature enters, exile an instant or sorcery card from your graveyard.\nLiving Lore's power and toughness are each equal to the exiled card's mana value.\nWhenever this creature deals combat damage, you may sacrifice it. If you do, you may cast the exiled card without paying its mana cost.",
+     "power": "*",
+     "toughness": "*",
+     "colors": [
+      "U"
+     ],
+     "color_identity": [
+      "U"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "27bf6dbd-a9e1-4904-afa7-d28fc7745c4f",
+     "set": "c21",
+     "set_name": "Commander 2021",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/27bf6dbd-a9e1-4904-afa7-d28fc7745c4f",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Ac21&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/c21?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/15b137fb-3f90-4a44-a225-cff5ca153190/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A7c48c341-1d56-4210-9d86-181ebb206098&unique=prints",
+     "collector_number": "121",
+     "digital": false,
+     "rarity": "uncommon",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Jason Felix",
+     "artist_ids": [
+      "af42a44c-8ec3-47a7-9047-5d29ddad186d"
+     ],
+     "illustration_id": "0f5e5ef2-e707-49d6-bcc5-3bdfd65c2684",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 23852,
+     "penny_rank": 4539,
+     "prices": {
+      "usd": "0.19",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.11",
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=519156&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DLiving%2BLore",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DLiving%2BLore",
+      "edhrec": "https://edhrec.com/route/?cc=Living+Lore"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F236185%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=558771&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/89343?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [
+   {
+    "card": {
+     "object": "card",
+     "id": "7673784e-db4b-43a1-8d55-1bb9fc1e284f",
+     "oracle_id": "4457ed35-7c10-48c8-9776-456485fdf070",
+     "multiverse_ids": [],
+     "resource_id": "A59396A4D646C69A1DD41F9906BE9A9CDECE83F18DC5C53501DD7BAE50511DBB",
+     "mtgo_id": 152037,
+     "arena_id": 105816,
+     "tcgplayer_id": 697344,
+     "cardmarket_id": 892161,
+     "name": "Lightning Bolt",
+     "lang": "en",
+     "released_at": "2026-06-26",
+     "uri": "https://api.scryfall.com/cards/7673784e-db4b-43a1-8d55-1bb9fc1e284f",
+     "scryfall_uri": "https://scryfall.com/card/msc/806/lightning-bolt?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T00:36:48Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/7/6/7673784e-db4b-43a1-8d55-1bb9fc1e284f.jpg?1783903008",
+      "normal": "https://cards.scryfall.io/normal/front/7/6/7673784e-db4b-43a1-8d55-1bb9fc1e284f.jpg?1783903008",
+      "large": "https://cards.scryfall.io/large/front/7/6/7673784e-db4b-43a1-8d55-1bb9fc1e284f.jpg?1783903008",
+      "png": "https://cards.scryfall.io/png/front/7/6/7673784e-db4b-43a1-8d55-1bb9fc1e284f.png?1783903008",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/7/6/7673784e-db4b-43a1-8d55-1bb9fc1e284f.jpg?1783903008",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/7/6/7673784e-db4b-43a1-8d55-1bb9fc1e284f.jpg?1783903008",
+      "thumb": "https://cards.scryfall.io/thumb/front/7/6/7673784e-db4b-43a1-8d55-1bb9fc1e284f.webp?1783903008",
+      "grid": "https://cards.scryfall.io/grid/front/7/6/7673784e-db4b-43a1-8d55-1bb9fc1e284f.webp?1783903008",
+      "display": "https://cards.scryfall.io/display/front/7/6/7673784e-db4b-43a1-8d55-1bb9fc1e284f.webp?1783903008",
+      "art": "https://cards.scryfall.io/art/front/7/6/7673784e-db4b-43a1-8d55-1bb9fc1e284f.webp?1783903008",
+      "crop": "https://cards.scryfall.io/crop/front/7/6/7673784e-db4b-43a1-8d55-1bb9fc1e284f.webp?1783903008"
+     },
+     "mana_cost": "{R}",
+     "cmc": 1,
+     "type_line": "Instant",
+     "oracle_text": "Lightning Bolt deals 3 damage to any target.",
+     "colors": [
+      "R"
+     ],
+     "color_identity": [
+      "R"
+     ],
+     "keywords": [],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "7673784e-db4b-43a1-8d55-1bb9fc1e284f",
+       "component": "combo_piece",
+       "name": "Lightning Bolt",
+       "type_line": "Instant",
+       "uri": "https://api.scryfall.com/cards/7673784e-db4b-43a1-8d55-1bb9fc1e284f"
+      },
+      {
+       "object": "related_card",
+       "id": "4f095067-cf24-4061-8626-dc68a66a0b36",
+       "component": "combo_piece",
+       "name": "Toralf's Disciple",
+       "type_line": "Creature — Human Warrior",
+       "uri": "https://api.scryfall.com/cards/4f095067-cf24-4061-8626-dc68a66a0b36"
+      },
+      {
+       "object": "related_card",
+       "id": "69b51576-532b-450e-a8bf-0482cac04618",
+       "component": "combo_piece",
+       "name": "Thayan Evokers",
+       "type_line": "Creature — Human Wizard",
+       "uri": "https://api.scryfall.com/cards/69b51576-532b-450e-a8bf-0482cac04618"
+      },
+      {
+       "object": "related_card",
+       "id": "618806ea-7ea8-4cfb-a8c1-c3defa34e7dd",
+       "component": "combo_piece",
+       "name": "Indris, the Hydrostatic Surge",
+       "type_line": "Legendary Creature — Otter Incarnation",
+       "uri": "https://api.scryfall.com/cards/618806ea-7ea8-4cfb-a8c1-c3defa34e7dd"
+      }
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "banned",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo",
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "9d739461-c5ac-43a1-af41-3d5a585b5c8d",
+     "set": "msc",
+     "set_name": "Marvel Super Heroes Commander",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/9d739461-c5ac-43a1-af41-3d5a585b5c8d",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Amsc&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/msc?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/7673784e-db4b-43a1-8d55-1bb9fc1e284f/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A4457ed35-7c10-48c8-9776-456485fdf070&unique=prints",
+     "collector_number": "806",
+     "digital": false,
+     "rarity": "uncommon",
+     "flavor_text": "\"I am the god of thunder, the lord of the savage lightning, and the very skies must tremble when speaks The Mighty Thor!\"",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Milivoj Ćeran",
+     "artist_ids": [
+      "1eced451-4da5-42bc-b49d-70c41246581f"
+     ],
+     "illustration_id": "58884d99-ed2d-4efd-b192-b1eb6f87c39f",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "universesbeyond"
+     ],
+     "edhrec_rank": 157,
+     "prices": {
+      "usd": "0.83",
+      "usd_foil": "3.02",
+      "usd_etched": null,
+      "eur": "1.98",
+      "eur_foil": "2.02",
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DLightning%2BBolt",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DLightning%2BBolt",
+      "edhrec": "https://edhrec.com/route/?cc=Lightning+Bolt"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F697344%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=892161&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/152037?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "owner": "player_0",
+    "exiledWithId": null,
+    "counters": {},
+    "isFaceDown": false
+   },
+   {
+    "card": {
+     "object": "card",
+     "id": "9dc791fd-d49c-4c66-b8fb-6b54ce842e90",
+     "oracle_id": "72e56963-a9dd-44dc-a4d3-992b4d89dd28",
+     "multiverse_ids": [
+      598943
+     ],
+     "mtgo_id": 107627,
+     "tcgplayer_id": 449586,
+     "cardmarket_id": 688548,
+     "name": "Time Stretch",
+     "lang": "en",
+     "released_at": "2023-01-13",
+     "uri": "https://api.scryfall.com/cards/9dc791fd-d49c-4c66-b8fb-6b54ce842e90",
+     "scryfall_uri": "https://scryfall.com/card/dmr/69/time-stretch?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T04:54:46Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/9/d/9dc791fd-d49c-4c66-b8fb-6b54ce842e90.jpg?1783918486",
+      "normal": "https://cards.scryfall.io/normal/front/9/d/9dc791fd-d49c-4c66-b8fb-6b54ce842e90.jpg?1783918486",
+      "large": "https://cards.scryfall.io/large/front/9/d/9dc791fd-d49c-4c66-b8fb-6b54ce842e90.jpg?1783918486",
+      "png": "https://cards.scryfall.io/png/front/9/d/9dc791fd-d49c-4c66-b8fb-6b54ce842e90.png?1783918486",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/9/d/9dc791fd-d49c-4c66-b8fb-6b54ce842e90.jpg?1783918486",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/9/d/9dc791fd-d49c-4c66-b8fb-6b54ce842e90.jpg?1783918486",
+      "thumb": "https://cards.scryfall.io/thumb/front/9/d/9dc791fd-d49c-4c66-b8fb-6b54ce842e90.webp?1783918486",
+      "grid": "https://cards.scryfall.io/grid/front/9/d/9dc791fd-d49c-4c66-b8fb-6b54ce842e90.webp?1783918486",
+      "display": "https://cards.scryfall.io/display/front/9/d/9dc791fd-d49c-4c66-b8fb-6b54ce842e90.webp?1783918486",
+      "art": "https://cards.scryfall.io/art/front/9/d/9dc791fd-d49c-4c66-b8fb-6b54ce842e90.webp?1783918486",
+      "crop": "https://cards.scryfall.io/crop/front/9/d/9dc791fd-d49c-4c66-b8fb-6b54ce842e90.webp?1783918486"
+     },
+     "mana_cost": "{8}{U}{U}",
+     "cmc": 10,
+     "type_line": "Sorcery",
+     "oracle_text": "Target player takes two extra turns after this one.",
+     "colors": [
+      "U"
+     ],
+     "color_identity": [
+      "U"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "ca4c2884-e539-4b7f-980d-5d6a50220f2a",
+     "set": "dmr",
+     "set_name": "Dominaria Remastered",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/ca4c2884-e539-4b7f-980d-5d6a50220f2a",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Admr&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/dmr?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/9dc791fd-d49c-4c66-b8fb-6b54ce842e90/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A72e56963-a9dd-44dc-a4d3-992b4d89dd28&unique=prints",
+     "collector_number": "69",
+     "digital": false,
+     "rarity": "mythic",
+     "flavor_text": "\"I swear, I just wanted a few extra hours to do my homework!\"\n—Petra, novice chronomancer",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Dominik Mayer",
+     "artist_ids": [
+      "c3439c4a-1fee-4e33-9b89-18dac27ac927"
+     ],
+     "illustration_id": "91d44d14-8438-4044-909e-83ea33c9ecfc",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 3038,
+     "penny_rank": 3491,
+     "prices": {
+      "usd": "5.62",
+      "usd_foil": "5.53",
+      "usd_etched": null,
+      "eur": "3.95",
+      "eur_foil": "4.02",
+      "tix": "0.37"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=598943&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DTime%2BStretch",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DTime%2BStretch",
+      "edhrec": "https://edhrec.com/route/?cc=Time+Stretch"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F449586%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=688548&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/107627?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "owner": "player_0",
+    "exiledWithId": "perm_1",
+    "counters": {},
+    "isFaceDown": false
+   }
+  ],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Living Lore",
+    "final": {
+     "name": "Living Lore",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Avatar"
+     ],
+     "power": 10,
+     "toughness": 10,
+     "colors": [
+      "U"
+     ],
+     "abilities": [
+      "As this creature enters, exile an instant or sorcery card from your graveyard.",
+      "This card's power and toughness are each equal to the exiled card's mana value.",
+      "Whenever this creature deals combat damage, you may sacrifice it. If you do, you may cast the exiled card without paying its mana cost."
+     ]
+    },
+    "changedBy": {
+     "7a": [
+      "Living Lore"
+     ]
+    }
+   }
+  ],
+  "order": {
+   "7a": [
+    "Living Lore"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Living Lore",
+    "layer": "7a",
+    "type": "cda_pt",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "compute": "[fn]",
+     "exiledCardMV": true
+    }
+   }
+  ]
+ }
+}

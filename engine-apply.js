@@ -124,6 +124,18 @@ function applyEffect(state, effect, context) {
         changes.push('Lost all creature types');
         break;
       }
+      // "loses all land types" (Alpine Moon): every land subtype, and with a basic land type
+      // goes the mana ability that type gave (CR 305.6).
+      if (effect.params.losesAllLandTypesOnly) {
+        state.isAllLandTypes = false;
+        const _ltSet = typeof TypeCatalog !== 'undefined' ? TypeCatalog.getSubtypeCategory('land') : new Set();
+        const lost = state.subtypes.filter(s => _ltSet.has(s));
+        state.subtypes = state.subtypes.filter(s => !_ltSet.has(s));
+        const lostMana = lost.map(s => BASIC_LAND_MANA[s]).filter(Boolean);
+        if (lostMana.length) state.abilities = state.abilities.filter(a => !lostMana.includes(a));
+        changes.push(lost.length ? `Lost all land types (${lost.join(', ')})` : 'Lost all land types');
+        break;
+      }
       // Devotion condition: skip removal if devotion meets threshold.
       // Primary gate is in effectAppliesToPerm; this is a safety fallback.
       if (effect.params.devotionCondition && effect._allStates) {
@@ -474,6 +486,24 @@ function applyEffect(state, effect, context) {
           changes.push(`Set ${ps && tsp ? 'P/T' : ps ? 'power' : 'toughness'} to ${ps && tsp ? state.power + '/' + state.toughness : ps ? state.power : state.toughness} (was ${oldP}/${oldT})`);
           break;
         }
+        // Numbers off the cards linked to the source (Amplifire's revealed card, the creatures
+        // Dracoplasm had sacrificed). A total with nothing linked is 0/0; an effect that needs
+        // its card (linkedRequired) changes nothing until one is linked.
+        if (effect.params.fromLinkedCards) {
+          const linked = _linkedCardsPT(effect.sourceId);
+          if (!linked && effect.params.linkedRequired) break;
+          const k = effect.params.linkedMultiplier || 1;
+          state.power = (linked ? linked.power : 0) * k;
+          state.toughness = (linked ? linked.toughness : 0) * k;
+          changes.push(`Set P/T to ${state.power}/${state.toughness} from the linked cards (was ${oldP}/${oldT})`);
+          break;
+        }
+        // "Its toughness becomes its loyalty" (Planeswalkerificate): its loyalty counters now.
+        if (effect.params.toughnessFromCounter) {
+          state.toughness = (state.counters && state.counters[effect.params.toughnessFromCounter]) || 0;
+          changes.push(`Set toughness to ${state.toughness}, its ${effect.params.toughnessFromCounter} (was ${oldT})`);
+          break;
+        }
         if (effect.params.useMV) {
           state.power = state.manaValue;
           state.toughness = state.manaValue;
@@ -530,6 +560,15 @@ function applyEffect(state, effect, context) {
           }
           if (effect.params.charPowerDim) modPow = xVal;
           if (effect.params.charToughDim) modTou = xVal;
+        }
+        // "+4/-X, where X is its toughness minus 1" (Blood Lust): the toughness the target had as
+        // the spell or ability resolved; failing a snapshot, what it has now.
+        if (effect.params.toughnessLessOwn !== undefined) {
+          const src = typeof Battlefield !== 'undefined' ? Battlefield.getPermById(effect.sourceId) : null;
+          const snaps = effect._firedAtStates || (src && src._castStates) || null;
+          const snap = snaps && effect.targetId ? snaps.get(effect.targetId) : null;
+          const tough = snap && typeof snap.toughness === 'number' ? snap.toughness : (state.toughness || 0);
+          modTou = -(tough - effect.params.toughnessLessOwn);
         }
         // Runtime-gained Equipment: read actual boost from source's computed abilities
         // (e.g. Armed with Proof grants "Equipped creature gets +2/+0" to a Clue/Equipment;

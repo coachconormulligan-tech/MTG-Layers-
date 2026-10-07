@@ -161,6 +161,126 @@ function closeImprintModal() {
   _imprintScryfallResults = [];
 }
 
+/* ---- Linked card Modal ---- */
+/* "Linked card" button on the timestamp row of a permanent or fired ability that reads values
+   off cards in no zone the site shows (perm._linkedCardSlot). Same pop-up as Imprint, but the
+   cards are kept on the permanent itself, not in exile. */
+function renderLinkedCardButton(permId) {
+  const perm = Battlefield.getPermById(permId);
+  if (!perm || !perm._linkedCardSlot) return '';
+  const cards = perm.linkedCards || [];
+  const slot = perm._linkedCardSlot;
+  const label = cards.length > 1 ? 'Linked cards (' + cards.length + ')' : 'Linked card';
+  const title = cards.length ? slot.label + ': ' + cards.map(c => c.name || 'card').join(', ') : slot.label + ': none yet';
+  const removeBtn = cards.length
+    ? `<button class="ts-action-btn remove-mutate-btn" onclick="event.stopPropagation(); clearLinkedCards('${escapeAttr(permId)}')" title="Remove linked card${cards.length > 1 ? 's' : ''}">✕</button>`
+    : '';
+  return `<button class="ts-action-btn configure imprint-btn${cards.length ? ' imprint-btn-active' : ''}" onclick="event.stopPropagation(); openLinkedCardModal('${escapeAttr(permId)}')" title="${escapeAttr(title)}">${escapeHtml(label)}</button>${removeBtn}`;
+}
+
+function clearLinkedCards(permId) {
+  Battlefield.clearLinkedCards(permId);
+  Battlefield.evaluate();
+  renderAll();
+}
+
+let _linkedModalPermId = null;
+let _linkedScryfallResults = [];
+
+function openLinkedCardModal(permId) {
+  const perm = Battlefield.getPermById(permId);
+  if (!perm || !perm._linkedCardSlot) return;
+  _linkedModalPermId = permId;
+  const slot = perm._linkedCardSlot;
+  const overlay = _createModalOverlay('linked-card-modal-overlay', closeLinkedCardModal);
+  const permName = perm.label ? perm.name + ' ' + perm.label : perm.name;
+  overlay.innerHTML = _modalShell({
+    title: escapeHtml(slot.label + ' — ' + permName),
+    closeFn: 'closeLinkedCardModal',
+    body: `
+      <div class="modal-section-title">${slot.max === 1 ? 'Search for the card:' : 'Search for a card to add:'}</div>
+      <div class="modal-search-bar">
+        <input type="text" id="linked-search-input" placeholder="Search for a card…" autocomplete="off">
+      </div>
+      <div class="modal-search-results" id="linked-search-results"></div>
+      <div class="graveyard-divider"></div>
+      <div class="modal-section-title">${escapeHtml(slot.label)}:</div>
+      <div id="linked-current-list">${_renderLinkedCurrentList(permId)}</div>`,
+    footer: `<button class="btn btn-sm" onclick="closeLinkedCardModal()">Close</button>`,
+  });
+  document.body.appendChild(overlay);
+
+  const input = document.getElementById('linked-search-input');
+  let debounce = null;
+  input.addEventListener('input', () => {
+    clearTimeout(debounce);
+    debounce = setTimeout(async () => {
+      const q = input.value.trim();
+      if (q.length < 2) { document.getElementById('linked-search-results').innerHTML = ''; return; }
+      document.getElementById('linked-search-results').innerHTML = '<div class="search-loading">Searching…</div>';
+      const cards = await searchScryfall(q);
+      _linkedScryfallResults = cards || [];
+      const container = document.getElementById('linked-search-results');
+      if (!container) return;
+      container.innerHTML = _linkedScryfallResults.length
+        ? _linkedScryfallResults.slice(0, 20).map((card, i) => _renderLinkedCardItem(card, `onclick="linkedAddCard(${i})"`, '')).join('')
+        : '<div class="search-empty">No results</div>';
+    }, 350);
+  });
+  input.focus();
+}
+
+function _renderLinkedCardItem(card, attrs, trailing) {
+  const imgUrl = card.image_uris?.small || card.card_faces?.[0]?.image_uris?.small || '';
+  const pt = card.power !== undefined && card.toughness !== undefined ? ' — ' + card.power + '/' + card.toughness : '';
+  return `<div class="modal-perm-item" ${attrs}>
+    ${imgUrl ? `<img src="${imgUrl}" alt="" onerror="this.style.display='none'">` : ''}
+    <div class="perm-info">
+      <div class="perm-name">${escapeHtml(card.name || '')}</div>
+      <div class="perm-type">${escapeHtml((card.type_line || '') + pt)}</div>
+    </div>${trailing}
+  </div>`;
+}
+
+function _renderLinkedCurrentList(permId) {
+  const perm = Battlefield.getPermById(permId);
+  const cards = (perm && perm.linkedCards) || [];
+  if (!cards.length) return '<div class="exile-empty-msg">No card linked yet.</div>';
+  return cards.map((card, i) => _renderLinkedCardItem(card, '',
+    `<button class="exile-remove-btn" onclick="linkedRemoveCard(${i})" title="Remove">&times;</button>`)).join('');
+}
+
+function _refreshLinkedModal() {
+  Battlefield.evaluate();
+  renderAll();
+  const listEl = document.getElementById('linked-current-list');
+  if (listEl && _linkedModalPermId) listEl.innerHTML = _renderLinkedCurrentList(_linkedModalPermId);
+}
+
+function linkedAddCard(idx) {
+  const card = _linkedScryfallResults[idx];
+  if (!card || !_linkedModalPermId) return;
+  Battlefield.addLinkedCard(_linkedModalPermId, card);
+  _refreshLinkedModal();
+  const input = document.getElementById('linked-search-input');
+  if (input) input.value = '';
+  const results = document.getElementById('linked-search-results');
+  if (results) results.innerHTML = '';
+}
+
+function linkedRemoveCard(idx) {
+  if (!_linkedModalPermId) return;
+  Battlefield.removeLinkedCard(_linkedModalPermId, idx);
+  _refreshLinkedModal();
+}
+
+function closeLinkedCardModal() {
+  const overlay = document.getElementById('linked-card-modal-overlay');
+  if (overlay) overlay.remove();
+  _linkedModalPermId = null;
+  _linkedScryfallResults = [];
+}
+
 function clearEquipTarget(permId) {
   Battlefield.setTarget(permId, null);
   const synth = Battlefield.effects.find(e => e.sourceId === permId && e._isEquipTargetEff);

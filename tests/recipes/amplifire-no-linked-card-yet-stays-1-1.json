@@ -1,0 +1,24 @@
+{
+  "name": "Amplifire — with no card linked yet the fired trigger changes nothing",
+  "notes": "Sweep group 4 (2026-10-07). Linked cards: a permanent or fired ability holds the cards it reads values from although they are in no zone the site shows (\"Linked card\" button on the timeline row; saved with the board). Until a revealed card is linked, the fired trigger leaves Amplifire at its printed 1/1 rather than 0/0.",
+  "steps": [
+    {
+      "add": "Amplifire",
+      "as": "a"
+    },
+    {
+      "fire": "@a",
+      "trigger": 0,
+      "as": "t"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Amplifire",
+      "final": {
+        "power": 1,
+        "toughness": 1
+      }
+    }
+  ]
+}

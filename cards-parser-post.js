@@ -119,6 +119,20 @@ function _parseGrantedGlobalAbilities(permanent, effects) {
       const kwText = haveInAbility[2].replace(/[,.]$/, '').trim();
       const grantedKws = _parseSimpleKeywordList(kwText);
       if (grantedKws.length === 0) continue;
+      // A fired ability that gives one permanent the quoted ability ('This creature gains "Other
+      // creatures you control have indestructible."' — Tenth District Hero): it works for as
+      // long as that permanent has it, and "other" leaves that permanent out.
+      const _firedGrant = !!permanent.abilitySourceId && eff.scope === 'targeted' && !_filterGatesAttachment;
+      let _firedCond;
+      if (_firedGrant) {
+        const recipient = (allStates) => (allStates && eff.targetId) ? allStates.get(eff.targetId) : null;
+        const innerFn = fn, isOther = /^(?:each\s+)?other\b/i.test(filterText);
+        fn = (p, allStates, effectCtrl) => innerFn(p, allStates, effectCtrl) && !(isOther && recipient(allStates) === p);
+        _firedCond = (state, allStates) => {
+          const r = recipient(allStates);
+          return !!(r && (r.abilities || []).includes(abilityText));
+        };
+      }
       for (const kw of grantedKws) {
         toAdd.push({
           id: `${sid}_eff_granted_${toAdd.length}c`,
@@ -126,7 +140,7 @@ function _parseGrantedGlobalAbilities(permanent, effects) {
           params: { ability: kw }, appliesTo: fn, scope: 'global', affectsSelf: false,
           sourceId: sid, sourceName: cardName, timestamp: ts,
           desc: `${filterText} have ${kw} (from granted ability). ${desc}`,
-          asLongAsCondition: _filterGatesAttachment ? undefined : _equippedToCarrier,
+          asLongAsCondition: _firedGrant ? _firedCond : _filterGatesAttachment ? undefined : _equippedToCarrier,
         });
       }
     }
@@ -170,6 +184,17 @@ function _parseSimpleKeywordList(text) {
    and propagate auraRestriction to all targeted effects */
 function _finalizeEffects(effects, isEquipmentSource, permanent, oracleText) {
   const _oracle = (oracleText || '').toLowerCase();
+  // "…, loses all abilities, and gains flying" (Dance of the Skywise, Dragonshift): effects of
+  // one source apply in list order, so the loss must stand before the grant it leaves alone.
+  if (permanent && (permanent.isSpell || permanent.abilitySourceId) &&
+      /\bloses? all (?:other )?abilities,? and (?:gains?|ha(?:s|ve))\b/.test(_oracle)) {
+    const isLoss = (e) => e.type === EFFECT_TYPE.REMOVE_ABILITIES && e.layer === '6' && !(e.params && e.params.specificAbilities);
+    const firstGrant = effects.findIndex(e => e.type === EFFECT_TYPE.ADD_ABILITY && e.layer === '6' && e.scope === 'targeted');
+    const loss = effects.findIndex(isLoss);
+    if (firstGrant >= 0 && loss > firstGrant && effects[loss].scope === 'targeted') {
+      effects.splice(firstGrant, 0, effects.splice(loss, 1)[0]);
+    }
+  }
   if (/\btarget\s+opponent\b/.test(_oracle) && permanent) {
     const chosen = permanent._targetOpponentPlayerId || null;
     let tagged = false;

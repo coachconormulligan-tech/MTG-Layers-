@@ -153,3 +153,15 @@ function additiveDeltaDiffers(before1, after1, before2, after2) {
 function _takesFromRef(effect) {
   return !!(effect && effect.params && (effect.params.ptFromRef || effect.params.abilitiesFromRef));
 }
+
+/* Power and toughness read off the cards linked to an effect's source (see
+   Battlefield.addLinkedCard): the sum over all of them. Null when nothing is linked. */
+function _linkedCardsPT(sourceId) {
+  const src = typeof Battlefield !== 'undefined' ? Battlefield.getPermById(sourceId) : null;
+  const cards = (src && src.linkedCards) || [];
+  if (!cards.length) return null;
+  const num = (v) => parseInt(v, 10) || 0;
+  const face = (c) => (c.power === undefined && c.card_faces && c.card_faces[0]) ? c.card_faces[0] : c;
+  return cards.reduce((t, c) => ({ power: t.power + num(face(c).power), toughness: t.toughness + num(face(c).toughness) }),
+    { power: 0, toughness: 0 });
+}

@@ -329,3 +329,50 @@ function _lockFireTimeBasePT(text, states, sourceId) {
 /* "… Then if <condition>, <continuous effect>" inside a fired ability (Ogre Chitterlord, Strider,
    Ranger of the North). Not "Then if you do, …". */
 const _THEN_IF_RE = /\s+Then if (?!you do\b)([^,.]+),\s*(?=[^.]*\b(?:gets?|gains?|has|have|becomes?|loses?)\b)/g;
+
+/* Fire-time rewrites of "becomes" abilities whose wording hides the subject or the number.
+   Each result no longer matches its own pattern, so a saved board replays it unchanged. */
+// "Put X +1/+1 counters on this creature. Up to X target lands …": X is the times a cost was paid.
+const _PAID_TIMES_X_RE = /^put X [^.]*\bcounters? on this \w+\.\s+Up to X target\b/i;
+/* A number a fired ability takes from a card that is not on the battlefield (the card just
+   exiled, discarded or revealed, the spell just cast) is asked for as X. Returns the text with
+   X left in it and the "where X is …" clause gone, or null when the text has no such number. */
+function _fireTimeCardValueAsX(text) {
+  const before = text;
+  // "… with power and toughness each equal to that spell's mana value" (Veiled Sentry).
+  text = text.replace(/\b(becomes?) an? ([^.]*?) with power and toughness each equal to that (?:spell|card)'s mana value/gi, '$1 an X/X $2');
+  const where = /,?\s+where X is (?:that (?:card|spell)|the (?:discarded|exiled|revealed) card)'s mana value/i;
+  if (where.test(text) && /[+-]X\/|\bX\/X\b/.test(text)) text = text.replace(where, '');
+  if (text === before) return null;
+  // "When you exile a card this way, target creature …" / "When you cast that spell, this
+  // creature …" (Cait Sith, Ogre Battlecaster): the next thing that happens.
+  return text.replace(/(^|\.\s+)when you (?:exile a card this way|cast that spell),\s*(\w)/gi, (_, pre, ch) => pre + ch.toUpperCase());
+}
+// ("becomes an X/X Cat" reads "a 2/2 Cat" once X is a number.)
+function _fixNumberArticle(text) {
+  return text.replace(/\b(an?) (?=(\d+)\/\d)/gi, (m, art, n) => (/^(?:8\d*|11|18)$/.test(n) ? 'an ' : 'a '));
+}
+function _fireTimeBecomesRewrites(text, playerCount) {
+  // "for each player, choose up to one other target artifact or creature that player controls.
+  // For as long as this creature remains on the battlefield, the chosen permanents become …"
+  // (Kitesail Larcenist): as many targets as there are players.
+  text = text.replace(/^for each player, choose up to one (other )?target ([^.]+?) that player controls\.\s+For as long as ([^,]+), the chosen permanents (become\b[^]*?)\.?\s*$/i,
+    (_, other, kinds, lasts, rest) => `Up to ${playerCount} ${other || ''}target ` +
+      kinds.replace(/\b(artifact|creature|land|enchantment|planeswalker|permanent)\b/gi, '$1s') + ` ${rest} for as long as ${lasts}.`);
+  // "you may pay {1}{G} any number of times. When you pay this cost one or more times, put that
+  // many +1/+1 counters on this creature, then up to that many target lands you control become …"
+  // (Primal Adversary).
+  text = text.replace(/^you may pay [^.]+ any number of times\.\s+When you pay this cost one or more times,\s*(put that many [^.]*?),\s+then (up to that many target\b[^]*)$/i,
+    (_, counters, rest) => (counters.charAt(0).toUpperCase() + counters.slice(1) + '. ' + rest.charAt(0).toUpperCase() + rest.slice(1)).replace(/\bthat many\b/gi, 'X'));
+  // "This creature becomes a legendary creature named Mileva, the Stalwart, it has base power
+  // and toughness 5/5, and it gains "…"" (Tenth District Hero): one sentence a clause, each
+  // about the source.
+  // "you may have this card become a legendary Equipment artifact named …" (The Irencrag): done.
+  text = text.replace(/^you may have (this \w+) become\b/i, (_, subject) => 'T' + subject.slice(1) + ' becomes');
+  const self = text.match(/^this (creature|land|permanent|artifact|enchantment) becomes?\b/i);
+  if (self) {
+    text = text.replace(/,\s+(?:and\s+)?it\s+(has|gains?|gets|loses|is)\b/gi, (m, verb, offset, whole) =>
+      (whole.slice(0, offset).match(/"/g) || []).length % 2 ? m : `. This ${self[1].toLowerCase()} ${verb}`);
+  }
+  return text;
+}

@@ -1,0 +1,53 @@
+{
+  "name": "Vastwood Animist — target land becomes an X/X Elemental, X = Allies you control when the ability is fired",
+  "notes": "Sweep group 2 (2026-10-07). Firing wrote \"becomes an 3/3 Elemental creature until end of turn, where 3 is the number of Allies you control\" and the leftover \"where\" clause (number, control) made the set-type parser skip the sentence. The clause is now cut from the type text and the article reads \"a 3/3\". Three Allies: the Forest is a 3/3 Elemental creature land.",
+  "steps": [
+    {
+      "add": "Vastwood Animist",
+      "as": "animist"
+    },
+    {
+      "add": "Kazandu Blademaster"
+    },
+    {
+      "add": "Oran-Rief Survivalist"
+    },
+    {
+      "add": "Forest",
+      "as": "forest"
+    },
+    {
+      "fire": "@animist",
+      "activated": 0,
+      "as": "t"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@t",
+        "@forest"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Forest",
+      "final": {
+        "power": 3,
+        "toughness": 3,
+        "types": {
+          "$includes": [
+            "Creature",
+            "Land"
+          ]
+        },
+        "subtypes": {
+          "$includes": [
+            "Elemental",
+            "Forest"
+          ]
+        }
+      }
+    }
+  ]
+}

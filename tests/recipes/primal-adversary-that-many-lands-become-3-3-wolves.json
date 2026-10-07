@@ -1,0 +1,96 @@
+{
+  "name": "Primal Adversary — paid twice: two lands become 3/3 Wolf creature lands with haste",
+  "notes": "Sweep group 2 (2026-10-07). \"you may pay {1}{G} any number of times. When you pay this cost one or more times, put that many +1/+1 counters on this creature, then up to that many target lands you control become 3/3 Wolf creatures with haste that are still lands.\" parsed to nothing. The fired text reads \"Put X +1/+1 counters on this creature. Up to X target lands …\" and the fired ability takes an X value (times paid), saved with the board. The plural \"that are still lands\" no longer becomes an ability \"Haste That Are Still Lands\".",
+  "steps": [
+    {
+      "add": "Forest",
+      "as": "forest"
+    },
+    {
+      "add": "Mountain",
+      "as": "mountain"
+    },
+    {
+      "add": "Primal Adversary",
+      "as": "pa"
+    },
+    {
+      "fire": "@pa",
+      "trigger": 1,
+      "as": "t"
+    },
+    {
+      "call": [
+        "setXValue",
+        "@t",
+        2
+      ]
+    },
+    {
+      "call": [
+        "setMultiTarget",
+        "@t",
+        0,
+        "@forest"
+      ]
+    },
+    {
+      "call": [
+        "setMultiTarget",
+        "@t",
+        1,
+        "@mountain"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Forest",
+      "final": {
+        "power": 3,
+        "toughness": 3,
+        "types": {
+          "$includes": [
+            "Creature",
+            "Land"
+          ]
+        },
+        "subtypes": {
+          "$includes": [
+            "Wolf",
+            "Forest"
+          ]
+        },
+        "abilities": {
+          "$includes": [
+            "Haste"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Mountain",
+      "final": {
+        "power": 3,
+        "toughness": 3,
+        "types": {
+          "$includes": [
+            "Creature",
+            "Land"
+          ]
+        },
+        "subtypes": {
+          "$includes": [
+            "Wolf",
+            "Mountain"
+          ]
+        },
+        "abilities": {
+          "$includes": [
+            "Haste"
+          ]
+        }
+      }
+    }
+  ]
+}

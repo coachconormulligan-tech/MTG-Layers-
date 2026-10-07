@@ -1,0 +1,53 @@
+{
+  "name": "Wild Shape — each mode is a whole effect: the Spider mode makes the target a 1/5 Spider with reach",
+  "notes": "Sweep group 4 (2026-10-07). \"Choose one. Until end of turn, target creature you control has that base power and toughness, becomes that creature type, and gains that ability. • 1/3 Turtle with hexproof. • 1/5 Spider with reach. • 3/3 Elephant with trample.\" parsed to nothing: the modes only name the values. Each mode is now written out as \"Until end of turn, target … becomes a Spider with base power and toughness 1/5 and gains reach.\" Mode 2 chosen: Grizzly Bears is a 1/5 Spider with reach, not a Turtle or an Elephant.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Wild Shape",
+      "as": "ws",
+      "spell": true
+    },
+    {
+      "call": [
+        "setModalModeSelections",
+        "@ws",
+        [
+          1
+        ]
+      ]
+    },
+    {
+      "call": [
+        "setModalModeTarget",
+        "@ws",
+        1,
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 1,
+        "toughness": 5,
+        "subtypes": [
+          "Spider"
+        ],
+        "abilities": {
+          "$includes": [
+            "Reach"
+          ],
+          "$excludes": [
+            "Hexproof",
+            "Trample"
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "name": "Blood Lust — toughness 6: +4/-4, not down to 1",
+  "notes": "Sweep group 4 (2026-10-07). \"If target creature has toughness 5 or greater, it gets +4/-4 until end of turn. Otherwise, it gets +4/-X until end of turn, where X is its toughness minus 1.\" only ever gave the first branch, and that with a condition nothing could read. The two branches are now tested once against the target as the spell resolved (cast-time states), and X is that toughness minus 1. Colossal Dreadmaw 6/6 is toughness 6: 10/2 (the Otherwise branch would have made it 10/1).",
+  "steps": [
+    {
+      "add": "Colossal Dreadmaw",
+      "as": "m"
+    },
+    {
+      "add": "Blood Lust",
+      "as": "bl",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTarget",
+        "@bl",
+        "@m"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Colossal Dreadmaw",
+      "final": {
+        "power": 10,
+        "toughness": 2
+      }
+    }
+  ]
+}

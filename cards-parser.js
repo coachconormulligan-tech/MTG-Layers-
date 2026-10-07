@@ -91,7 +91,8 @@ const CONDITION_PARSERS = [
   // --- Imprint / exile-with (Death-Mask Duplicant) ---
   // "a card exiled with this <ref> has <ability>" — scan imprinted exile entries.
   (ct, srcId) => {
-    const m = ct.match(/^a\s+card\s+exiled\s+with\s+this\s+(?:card|creature|permanent|token|artifact)\s+has\s+(.+)$/i);
+    // (Also "an exiled card used to craft it has <ability>" — Wretched Bonemass.)
+    const m = ct.match(/^(?:a\s+card\s+exiled\s+with\s+this\s+(?:card|creature|permanent|token|artifact)|an\s+exiled\s+card\s+used\s+to\s+craft\s+it)\s+has\s+(.+)$/i);
     if (!m) return null;
     const abText = m[1].toLowerCase().trim().replace(/\s+/g, ' ');
     return () => {
@@ -546,6 +547,18 @@ function _allXAreAutoComputable(oracleText) {
   text = text.replace(
     /,?\s*where\s+X\s+is\s+(?:this\s+(?:creature|permanent|card)'?s?\s+)?(?:power|toughness|mana\s+value)/gi, ''
   );
+  // Strip a sentence whose X is a number off a card that is not on the battlefield ("… gets
+  // +X/+0 until end of turn, where X is that card's mana value" — Cait Sith): that X is asked
+  // for on the fired ability (_fireTimeCardValueAsX), not when the permanent is added.
+  // Only on a triggered or activated line: a spell's own X of this kind is still asked for as it
+  // is cast (Erratic Mutation, Induce Despair, Surge to Victory).
+  text = text.split('\n').map(line =>
+    (/^(?:[^\u2014\n"]*\u2014\s*)?(?:when|whenever|at)\b/i.test(line.trim()) || /^[^."]*:\s/.test(line))
+      ? line.replace(/[^.\n]*\bwhere\s+X\s+is\s+(?:that\s+(?:card|spell)|the\s+(?:discarded|exiled|revealed)\s+card)['’]s\s+mana\s+value/gi, '')
+      : line).join('\n');
+  // Strip "+4/-X until end of turn, where X is its toughness minus 1" (Blood Lust): read off the
+  // target as the spell resolves.
+  text = text.replace(/[+-]\d+\/-X(?:\s+until\s+[^,.;\n]+)?,?\s+where\s+X\s+is\s+its\s+toughness\s+minus\s+\d+/gi, '');
   // Strip "where X is the exiled (creature) card's power/toughness/mana value, and Y is …" — Phyrexian Ingester pattern
   text = text.replace(
     /,?\s*where\s+X\s+is\s+the\s+(?:exiled|imprinted)\s+(?:creature\s+)?card['’]?s?\s+(?:power|toughness|mana\s+value)(?:[^.\n]*?\bY\s+is[^.\n]*)?/gi, ''
@@ -665,7 +678,36 @@ function parseCardEffects(permanent, card, opts = {}) {
   // the reflexive trigger is simply the next thing that happens as it resolves.
   if (/\b(?:instant|sorcery)\b/i.test(card.type_line || '')) {
     oracleRaw = oracleRaw.replace(/(\.\s+)when you do,\s*(\w)/gi, (_, pre, ch) => pre + ch.toUpperCase());
+    // "Choose one. Until end of turn, target creature you control has that base power and
+    // toughness, becomes that creature type, and gains that ability. • 1/3 Turtle with hexproof.
+    // • …" (Wild Shape): each mode written out as the whole effect.
+    oracleRaw = oracleRaw.replace(
+      /^Choose one\. Until end of turn, (target [^,.]+?) has that base power and toughness, becomes that creature type, and gains that ability\.\n((?:\u2022 [^\n]+\n?)+)/i,
+      (whole, target, modes) => {
+        const lines = modes.trim().split('\n').map(l => l.match(/^\u2022 (\d+\/\d+) ([\w-]+) with ([\w ]+)\.$/));
+        if (lines.some(m => !m)) return whole;
+        return 'Choose one \u2014\n' + lines.map(m =>
+          `\u2022 Until end of turn, ${target} becomes ${/^[aeiou]/i.test(m[2]) ? 'an' : 'a'} ${m[2]} with base power and toughness ${m[1]} and gains ${m[3]}.`).join('\n');
+      });
+    // "If target creature has toughness 5 or greater, it gets +4/-4 until end of turn. Otherwise,
+    // it gets +4/-X until end of turn, where X is its toughness minus 1." (Blood Lust): two
+    // branches, each tested once against the target as the spell resolves.
+    oracleRaw = oracleRaw.replace(
+      /\bIf (target [^,.]+?) has toughness (\d+) or greater, it gets (\+\d+\/-\d+) until end of turn\. Otherwise, it gets (\+\d+)\/-(?:X|\d+) until end of turn, where (?:X|\d+) is its toughness minus (\d+)\./i,
+      (_, target, n, boost, power, less) =>
+        `If on resolution ${target} has toughness ${n} or greater, ${target} gets ${boost} until end of turn.\n` +
+        `If on resolution ${target} has toughness ${parseInt(n) - 1} or less, ${target} gets ${power}/-X until end of turn, where X is its toughness minus ${less}.`);
   }
+
+  // "For each opponent, up to one target noncreature artifact they control becomes …" (Welcome
+  // to . . .): one pick an opponent, written as that many targets among their permanents.
+  oracleRaw = oracleRaw.replace(/\bfor each opponent, up to one target ([^.,]+?) they control\b/gi, (_, kind) => {
+    const opponents = Math.max(1, ((typeof Battlefield !== 'undefined' && Battlefield.players) || []).length - 1);
+    return opponents === 1 ? `up to one target ${kind} an opponent controls` : `up to ${opponents} target ${kind}s your opponents control`;
+  });
+  // "… for as long as you control this Saga": read as a condition it would replace the
+  // chapter's own lore-counter condition, and the effect already ends when the Saga is removed.
+  oracleRaw = oracleRaw.replace(/\s+for as long as you control this saga\b/gi, '');
 
   // "Nonland permanents you control and permanent spells you control are enchantments …"
   // (Secret Arcade): spells on the stack are not on the board, so the permanents half is the
@@ -2193,6 +2235,77 @@ function parseCardEffects(permanent, card, opts = {}) {
   // skip-ranges merged with copyClauseSpans so other regex parsers don't refire
   // on already-consumed copy/except text.
   const addTypeMatchRanges = copyClauseSpans.slice();
+
+  // ---- "[subject] lose[s] all land types [and abilities][, and they gain "…" / and has "…"]" ----
+  // Alpine Moon ("Lands your opponents control named N lose …", once the name is chosen) and
+  // Ultima, Origin of Oblivion ("For as long as that land has a blight counter on it, it loses …").
+  {
+    const loseLandTypesRegex = /(?:^|[.;])\s*([^;\n"]+?)\s+loses?\s+all\s+land\s+types(\s+and\s+abilities)?(?:,?\s+and\s+(?:(?:they|it)\s+)?(?:gains?|ha(?:s|ve))\s+"([^"]+)")?/gmi;
+    let llMatch;
+    while ((llMatch = loseLandTypesRegex.exec(oracle)) !== null) {
+      const llPos = _getMatchContentPos(llMatch.index);
+      if (_isInActivatedEffect(llPos)) continue;
+      if (!permanent.isSpell && !permanent.isManualEffect && _isInTriggeredSentence(llPos)) continue;
+      let llSubject = llMatch[1].trim().split(/\.\s+/).pop().trim();
+      // "For as long as target land has a blight counter on it, target land …": true of the
+      // land itself, and read from it as it is now.
+      let llCond = null;
+      const llLasts = llSubject.match(/^for as long as .+? has an? ([\w+/]+) counter on it,\s*(.+)$/i);
+      if (llLasts) {
+        const counterType = llLasts[1];
+        llSubject = llLasts[2].trim();
+        llCond = (s) => ((s.counters && s.counters[counterType]) || 0) > 0;
+      }
+      // (The line-condition pass may already have taken "as long as … on it" out, leaving "For,".)
+      llSubject = stripDurationPrefix(llSubject).replace(/^for,\s*/i, '');
+      // Nothing happens until the name is chosen.
+      if (/\bthe chosen name\b/i.test(llSubject)) continue;
+      let llName = null;
+      const llNamed = llSubject.match(/^(.+?)\s+named\s+(.+)$/i);
+      if (llNamed) { llSubject = llNamed[1].trim(); llName = llNamed[2].trim().toLowerCase(); }
+      // An Aura's "Enchanted land loses all land types and abilities and has "…" and "…""
+      // (Lithoform Blight): the Aura parser reads the abilities; only the land types are lost here.
+      if (/^(?:enchanted|equipped|fortified)\s/i.test(llSubject)) {
+        const e = pushEff('4', EFFECT_TYPE.REMOVE_TYPE, { losesAllLandTypesOnly: true }, { appliesTo: null, scope: 'targeted' },
+          `${llSubject} loses all land types.`);
+        const c = _getConditionForPos(llMatch.index);
+        if (c) e.asLongAsCondition = c;
+        continue;
+      }
+      if (!filterReferencesPermanents(llSubject)) continue;
+      const llBuilt = buildAppliesToFromText(llSubject);
+      let llFn = llBuilt.fn;
+      if (llName) {
+        const inner = llFn;
+        llFn = (p, allStates, effectCtrl) => inner(p, allStates, effectCtrl) && String(p.name || '').toLowerCase() === llName;
+      }
+      const llCtx = { isSelf: llBuilt.isSelf, isTargeted: llBuilt.isTargeted, fn: llFn,
+                      selfAffect: llBuilt.isSelf ? true : detectSelfAffect(llSubject) };
+      const llWho = llName ? `${llSubject} named ${llNamed[2].trim()}` : llSubject;
+      const llStart = effects.length;
+      pushEff('4', EFFECT_TYPE.REMOVE_TYPE, { losesAllLandTypesOnly: true }, llCtx,
+        `${llWho} lose all land types. ${llBuilt.desc}`);
+      if (llMatch[2]) {
+        pushEff('6', EFFECT_TYPE.REMOVE_ABILITIES, {}, llCtx, `${llWho} lose all abilities. ${llBuilt.desc}`);
+      }
+      if (llMatch[3]) {
+        const llAbility = llMatch[3].trim();
+        pushEff('6', EFFECT_TYPE.ADD_ABILITY, { ability: llAbility }, llCtx, `${llWho} gain "${llAbility}". ${llBuilt.desc}`);
+      }
+      llCond = llCond || _getConditionForPos(llMatch.index);
+      // A counter the same spell or ability puts there ("put a blight counter on target land. For
+      // as long as that land has a blight counter on it, …") says how long the effect lasts; the
+      // site does not place that counter, so it is not asked for.
+      if ((permanent.isSpell || permanent.abilitySourceId) && /\bput an? [\w+/]+ counter on\b/i.test(oracle)) llCond = null;
+      for (let ei = llStart; ei < effects.length; ei++) {
+        effects[ei].abilityGroupId = `${permanent.id}_loseLandTypes_${llStart}`;
+        effects[ei]._oraclePos = llMatch.index;
+        if (llCond) effects[ei].asLongAsCondition = llCond;
+        _applyTargetInfo(effects[ei], llBuilt, llFn);
+      }
+      addTypeMatchRanges.push({ start: llMatch.index, end: llMatch.index + llMatch[0].length });
+    }
+  }
   let addTypeMatch;
   while ((addTypeMatch = addTypeRegex.exec(oracle)) !== null) {
     // Skip matches that overlap a copy clause already consumed by copyRegex
@@ -2477,6 +2590,45 @@ function parseCardEffects(permanent, card, opts = {}) {
       }
     }
 
+    // A quote with no period in it arrives whole: 'becomes a Treasure artifact with "{T},
+    // Sacrifice this artifact: Add one mana of any color" and loses all other card types and
+    // abilities' (Vraska, Betrayal's Sting).
+    if (!_stQuotedAbility) {
+      const _qWhole = becomesText.match(/\s+with\s+"([^"]+)"/);
+      if (_qWhole) {
+        _stQuotedAbility = _qWhole[1].trim().replace(/\.$/, '');
+        becomesText = (becomesText.slice(0, _qWhole.index) + becomesText.slice(_qWhole.index + _qWhole[0].length)).trim();
+      }
+    }
+    // "… for as long as you control this Saga" (Welcome to . . .): how long, not what it becomes.
+    becomesText = becomesText.replace(/\s+for(?:\s+as\s+long\s+as\b.*)?$/i, '').trim();
+    // "… and loses all other [card types and] abilities": the same subject loses its abilities.
+    // (loseAllAbilitiesRegex, further down, sees that effect and does not make a second one.)
+    let _stLosesAllAbilities = false;
+    {
+      const _la = becomesText.match(/,?\s+and\s+loses?\s+all\s+(?:other\s+)?(?:card\s+types\s+and\s+)?abilities$/i);
+      if (_la) {
+        _stLosesAllAbilities = true;
+        becomesText = becomesText.slice(0, _la.index).trim();
+      }
+    }
+    // "becomes a 3/3 Elemental creature until end of turn, where 3 is the number of Allies you
+    // control" (Vastwood Animist, fired): the count is already written in.
+    becomesText = becomesText.replace(/,?\s+where\s+\d+\s+is\s+the\s+number\s+of\b.*$/i, '').trim();
+
+    // "becomes a legendary creature named Mileva, the Stalwart" (Tenth District Hero).
+    let _stNewName = null, _stLegendary = false;
+    {
+      // (Also "a legendary 0/0 Elemental creature with haste named Vitu-Ghazi", "a 6/6 legendary
+      // Horror creature named Fenric".)
+      const _nm = becomesText.match(/^(an?\s+[\w\s/-]+?)\s+named\s+([A-Z][^"]*)$/);
+      if (_nm) { _stNewName = _nm[2].trim(); becomesText = _nm[1].trim(); }
+      if (/^an?\s+(?:\d+\/\d+\s+)?legendary\s/i.test(becomesText)) {
+        _stLegendary = true;
+        becomesText = becomesText.replace(/\blegendary\s+/i, '');
+      }
+    }
+
     // Fix: Extract trailing "and have base power and toughness X/Y" before skipWords check.
     // Cards like Kudo: "Other creatures you control are Bears and have base power and toughness 2/2."
     let trailingBasePT = null;
@@ -2491,6 +2643,15 @@ function parseCardEffects(permanent, card, opts = {}) {
       if (withPTSplit) {
         becomesText = withPTSplit[1].trim();
         trailingBasePT = { power: parseInt(withPTSplit[2]), toughness: parseInt(withPTSplit[3]) };
+      }
+    }
+    // "with base power and toughness each equal to 2 plus 1" (Fractalize, X already a number).
+    if (!trailingBasePT) {
+      const eqPTSplit = becomesText.match(/^(.+?)\s+with\s+base\s+power\s+and\s+toughness\s+each\s+equal\s+to\s+(\d+)(?:\s+plus\s+(\d+))?$/i);
+      if (eqPTSplit) {
+        becomesText = eqPTSplit[1].trim();
+        const n = parseInt(eqPTSplit[2]) + (eqPTSplit[3] ? parseInt(eqPTSplit[3]) : 0);
+        trailingBasePT = { power: n, toughness: n };
       }
     }
     // Fix: Extract "with power and toughness each equal to its mana value/converted mana cost"
@@ -2527,7 +2688,7 @@ function parseCardEffects(permanent, card, opts = {}) {
     // Extract "that's still a [type]" / "that is still a [type]" clauses (Gideon Blackblade pattern)
     // These indicate types to preserve (ADD_TYPE rather than losing them)
     const _stKeepTypes = [];
-    const stillMatch = becomesText.match(/\s+that(?:'s| is)\s+still\s+(?:a\s+|an\s+)?(.+)$/i);
+    const stillMatch = becomesText.match(/\s+that(?:'s| is| are)\s+still\s+(?:a\s+|an\s+)?(.+)$/i);
     if (stillMatch) {
       becomesText = becomesText.slice(0, becomesText.length - stillMatch[0].length).trim();
       const stillTypes = parseBecomesType(stillMatch[1]);
@@ -2622,6 +2783,9 @@ function parseCardEffects(permanent, card, opts = {}) {
         fLower.includes('equipped') || _fNoCtrl.includes('opponent') || _fNoCtrl.includes('player') ||
         fLower.includes('hand') || fLower.includes('library') || fLower.includes('graveyard') ||
         fLower.includes('life') || fLower.includes('spell') || fLower.length > 80) continue;
+    // "the chosen permanents become …" (Kitesail Larcenist) says nothing until they are chosen;
+    // the fired ability names them as targets.
+    if (/\bthe chosen (?:permanents?|creatures?|artifacts?|lands?)\b/i.test(fLower)) continue;
 
     // Skip if filterText doesn't reference permanents (e.g. "hand size", "life total")
     if (!filterReferencesPermanents(filterText)) continue;
@@ -2757,8 +2921,17 @@ function parseCardEffects(permanent, card, opts = {}) {
       }
     }
 
+    if (_stNewName) {
+      pushEff('3', EFFECT_TYPE.SET_NAME, { name: _stNewName }, _stCtx,
+        `${filterText} is named "${_stNewName}". ${desc}`);
+    }
+    if (_stLegendary) {
+      pushEff('4', EFFECT_TYPE.ADD_TYPE, { supertypes: ['Legendary'] }, _stCtx,
+        `${filterText} are Legendary. ${desc}`);
+    }
+
     // "loses all [its] abilities and is ..." → Layer 6 REMOVE_ABILITIES on the same subject.
-    if (losesAbilitiesAndMatch) {
+    if (losesAbilitiesAndMatch || _stLosesAllAbilities) {
       pushEff('6', EFFECT_TYPE.REMOVE_ABILITIES, {}, _stCtx,
         `${_stSubjectText} loses all abilities. ${desc}`);
     }
@@ -3149,6 +3322,28 @@ function parseCardEffects(permanent, card, opts = {}) {
   // The power dimension always gets +X; the toughness dimension gets +X only for "+X/+X".
   // Triggered/activated sentences are skipped — the trigger's fire-time path substitutes X
   // numerically (cards-battlefield.js) so the boost is re-parsed as a plain +N/+N later.
+  // "<target> gets +4/-X until end of turn, where X is its toughness minus 1" (Blood Lust): the
+  // toughness is the target's as the spell resolved.
+  {
+    const toughLessRegex = /(?:^|\.|,)\s*([^.,\n]+?)\s+gets?\s+([+-]\d+)\/-X(?:\s+until\s+[^,.;\n]+)?,?\s+where\s+X\s+is\s+its\s+toughness\s+minus\s+(\d+)/gmi;
+    let tlMatch;
+    while ((tlMatch = toughLessRegex.exec(oracle)) !== null) {
+      const tlFilter = tlMatch[1].trim();
+      if (!filterReferencesPermanents(tlFilter)) continue;
+      const built = buildAppliesToFromText(tlFilter);
+      // It shares the target of the branch before it, not a second pick.
+      const earlier = effects.find(e => e.scope === 'targeted' && !e.selfTarget && e._oraclePos !== undefined);
+      const tlEff = pushEff('7c', EFFECT_TYPE.MODIFY_PT,
+        { power: parseInt(tlMatch[2]), toughness: 0, toughnessLessOwn: parseInt(tlMatch[3]) },
+        { isSelf: built.isSelf, isTargeted: built.isTargeted, fn: built.fn, selfAffect: built.isSelf ? true : detectSelfAffect(tlFilter) },
+        `Gets ${tlMatch[2]}/-X, where X is its toughness minus ${tlMatch[3]}. ${built.desc}`,
+        { _oraclePos: tlMatch.index });
+      if (earlier) tlEff._slotPos = earlier._slotPos ?? earlier._oraclePos;
+      const tlCond = _getConditionForPos(tlMatch.index);
+      if (tlCond) tlEff.asLongAsCondition = tlCond;
+      _applyTargetInfo(tlEff, { isSpellTarget: !!built.needsTargetSelection, maxTargets: built.maxTargets || 1 }, built.fn);
+    }
+  }
   const charBoostRegex = /(?:^|\.|,?\s+and\s+)\s*(.+?)\s+get[s]?\s+[+-]X\/[+-](X|0)(?:\s+until\s+[^,.;\n]+)?,?\s+where\s+X\s+is\s+(its|this\s+(?:creature|permanent|card)['’]?s?)\s+(power|toughness)\b/gmi;
   let charBoostMatch;
   while ((charBoostMatch = charBoostRegex.exec(oracle)) !== null) {
@@ -3630,6 +3825,52 @@ function parseCardEffects(permanent, card, opts = {}) {
       `P/T equal to the total mana value of ${mvTarget}.`);
   }
 
+  // Values read off linked cards (Battlefield.addLinkedCard; the "Linked card" button).
+  // "As this creature enters, sacrifice any number of creatures. This creature's power becomes
+  // the total power of those creatures and its toughness becomes their total toughness."
+  // (Dracoplasm): the sacrificed creatures are linked to it.
+  if (!permanent.isManualEffect && /\bsacrifice any number of creatures\.\s+this (?:creature|card)'s power becomes the total power of those creatures and its toughness becomes their total toughness/i.test(oracle)) {
+    permanent._linkedCardSlot = { label: 'Sacrificed creatures', max: null };
+    pushEff('7b', EFFECT_TYPE.SET_PT, { fromLinkedCards: true }, _cdaSelfCtx,
+      `Power and toughness are the total power and total toughness of the creatures sacrificed as it entered.`);
+  }
+  // "… until you reveal a creature card. Until your next turn, this creature's base power becomes
+  // twice that card's power and its base toughness becomes twice that card's toughness."
+  // (Amplifire, fired): the revealed card is linked to the fired trigger.
+  if (permanent.abilitySourceId && /\bthis (?:creature|card)'s base power becomes twice that card's power and its base toughness becomes twice that card's toughness/i.test(oracle)) {
+    permanent._linkedCardSlot = { label: 'Revealed card', max: 1 };
+    pushEff('7b', EFFECT_TYPE.SET_PT, { fromLinkedCards: true, linkedMultiplier: 2, linkedRequired: true },
+      // (Not selfTarget: that would be the fired-ability row; it is pinned to the source.)
+      { appliesTo: null, scope: 'targeted', selfTarget: false },
+      `Base power and toughness become twice the revealed card's power and toughness.`);
+  }
+
+  // "power and toughness are each equal to the total power of the exiled cards used to craft
+  // it" (Wretched Bonemass): the cards tagged to it in the exile zone.
+  if (/(?:power and toughness|power\/toughness)\s+are\s+each\s+equal\s+to\s+the\s+total\s+power\s+of\s+the\s+exiled\s+cards\s+used\s+to\s+craft\s+it/i.test(oracle)) {
+    const craftedPower = () => (typeof _getImprintedExileEntries === 'function' ? _getImprintedExileEntries(permanent.id) : [])
+      .reduce((sum, e) => sum + (parseInt(e.card && e.card.power, 10) || 0), 0);
+    pushEff('7a', EFFECT_TYPE.CDA_PT, { craftedTotalPower: true, compute: craftedPower }, _cdaSelfCtx,
+      `P/T equal to the total power of the exiled cards used to craft it.`, { isCDA: true });
+  }
+  // "Enchanted creature is a planeswalker …. Its toughness becomes its loyalty." (Planeswalkerificate)
+  if (/\bits toughness becomes its loyalty\b/i.test(oracle) && (permanent.printedSubtypes || []).includes('Aura')) {
+    pushEff('7b', EFFECT_TYPE.SET_PT, { toughnessFromCounter: 'loyalty' }, { appliesTo: null, scope: 'targeted' },
+      `Enchanted creature's toughness becomes its loyalty.`);
+  }
+
+  // "power and toughness are each equal to the exiled card's mana value" (Living Lore): the
+  // card exiled with it, as tagged in the exile zone.
+  if (/(?:power and toughness|power\/toughness)\s+are\s+each\s+equal\s+to\s+the\s+exiled\s+card['’]s\s+mana\s+value/i.test(oracle)) {
+    const exiledMV = () => {
+      const entries = typeof _getImprintedExileEntries === 'function' ? _getImprintedExileEntries(permanent.id) : [];
+      const last = entries.length ? entries[entries.length - 1] : null;
+      return last && last.card ? (last.card.cmc ?? _cmcFromManaCost(last.card.mana_cost) ?? 0) : 0;
+    };
+    pushEff('7a', EFFECT_TYPE.CDA_PT, { exiledCardMV: true, compute: exiledMV }, _cdaSelfCtx,
+      `P/T equal to the exiled card's mana value.`, { isCDA: true });
+  }
+
   // CDA "power and toughness equal to the number of [thing]" (Nighthowler, etc).
   // "twice the number of [thing]" (Masumaro, Majestic Myriarch) doubles the count.
   const cdaEqualRegex = /(?:power and toughness|power\/toughness)\s+(?:are|is)\s+(?:each\s+)?equal\s+to\s+(twice\s+)?(?:the\s+)?(?:number|total number|amount)\s+of\s+(.+?)(?:\.|$)/gmi;
@@ -3831,6 +4072,12 @@ function parseCardEffects(permanent, card, opts = {}) {
       }
       if (!filterText) continue;
     }
+    // "This creature becomes a Human Detective with base power and toughness 4/4 and gains
+    // vigilance" (Tenth District Hero): the subject is what stands before "becomes".
+    {
+      const _becomesAnd = stripDurationPrefix(filterText).match(/^(this (?:card|creature|permanent|land|artifact|enchantment)|(?:up to \w+ |another )?target [^,.]+?)\s+becomes?\s+[^"]*\band$/i);
+      if (_becomesAnd) filterText = _becomesAnd[1];
+    }
     // "Create a token that's a copy of …, except … it has flying and haste" and "That token
     // gains haste" describe a token the ability makes; the token's own card carries them.
     if (/\bcreates?\b/i.test(filterText) || /^(?:that|the|those)\s+tokens?$/i.test(filterText)) continue;
@@ -3857,6 +4104,12 @@ function parseCardEffects(permanent, card, opts = {}) {
       // "Choose a [type] [restriction]. It gains [keyword]" — resolve "It" to the chosen type.
       // Handles Spree / modal-spell modes like "Choose a creature you control. It gains indestructible."
       const lastSentence = textBefore.split(/[.\n]/).map(s => s.trim()).filter(Boolean).pop() || '';
+      // "II — Create a 3/3 green Dinosaur creature token with trample. It gains haste" (Welcome
+      // to . . .): on a permanent's own line "it" is the token just made, not the permanent.
+      // (The lazy capture may hold that sentence itself, or the text before the match may.)
+      if (!permanent.isSpell && !permanent.isManualEffect &&
+          (/\bcreates?\b[^.]*\btokens?\b[^.]*\.\s+it$/i.test(haveMatch[1].trim()) ||
+           /\bcreates?\b[^.\n]*\btokens?\b[^.\n]*\.\s*$/i.test(textBefore))) continue;
       const chooseItMatch = lastSentence.match(/^(?:choose\s+(?:a|an|one)|target)\s+([\w][\w\s]*?)(?:\s+you\s+(?:control|own))?$/i);
       if (chooseItMatch) filterText = 'target ' + chooseItMatch[1].trim();
     }
@@ -4151,6 +4404,11 @@ function parseCardEffects(permanent, card, opts = {}) {
     const _ftEnd = ftMatch.index + ftMatch[0].length;
     if (addTypeMatchRanges.some(r => (copyClauseSpans.includes(r) ? ftMatch.index : _ftStart) < r.end && _ftEnd > r.start)) continue;
     let filterText = _lastSentenceTargetSubject(ftMatch[1].trim());
+    // "…. This creature gains "…"" in a fired ability (Tenth District Hero): the source alone.
+    if ((permanent.isTriggeredAbility || permanent.isActivatedAbility) && /\.\s/.test(filterText)) {
+      const _ftSelf = filterText.split(/\.\s+/).pop().trim();
+      if (/^this (?:card|creature|permanent|land|artifact|enchantment)$/i.test(_ftSelf)) filterText = _ftSelf;
+    }
     // "Add {R} for each attacking creature you control. Attacking creatures you control gain "…""
     // (Dragonrage): a spell's sentence about a kind of permanent you control, after sentences
     // that name nothing it could be about, is its own subject.
@@ -4405,6 +4663,16 @@ function parseCardEffects(permanent, card, opts = {}) {
     // controls" has been read as "you control") does not reach every creature.
     if (/\byou (?:control|own)\s+loses?\s+all\b/i.test(loseAllMatch[0]) && !/\byou (?:control|own)\b/i.test(filterSubject)) {
       filterSubject += ' you control';
+    }
+    // The effect of an activated ability ("Discard a card: Until end of turn, this card becomes
+    // a Human …, loses all abilities, and gains hexproof" — Chromium, the Mutable) waits for the
+    // ability to be fired.
+    if (_isInActivatedEffect(_getMatchContentPos(loseAllMatch.index))) continue;
+    // "… this card becomes a Human with base power and toughness 1/1, loses all abilities, …":
+    // the subject is what stands before "becomes" (also Dance of the Skywise, Dragonshift).
+    {
+      const _becomesList = stripDurationPrefix(filterSubject).match(/^(this (?:card|creature|permanent)|(?:up to \w+ |another )?target [^,.]+?)\s+becomes?\s+[^"]*,$/i);
+      if (_becomesList) filterSubject = _becomesList[1];
     }
     // Skip enchanted/equipped — handled below
     if (/enchanted|equipped/i.test(filterSubject)) continue;

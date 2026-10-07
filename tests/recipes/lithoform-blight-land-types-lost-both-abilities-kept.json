@@ -1,0 +1,36 @@
+{
+  "name": "Lithoform Blight — enchanted land loses its land types and abilities and has the two granted abilities",
+  "notes": "Collateral of the Alpine Moon / Ultima fix (2026-10-07). The new \"lose all land types\" reader first took this Aura's sentence away from the Aura parser and dropped the second quoted ability. An Aura's sentence now only gets the land-type loss from it; the abilities stay with the Aura parser. Forest: no Forest subtype, exactly the two granted abilities.",
+  "steps": [
+    {
+      "add": "Forest",
+      "as": "forest"
+    },
+    {
+      "add": "Lithoform Blight",
+      "as": "lb"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@lb",
+        "@forest"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Forest",
+      "final": {
+        "types": [
+          "Land"
+        ],
+        "subtypes": [],
+        "abilities": [
+          "{T}: Add {C}",
+          "{T}, Pay 1 life: Add one mana of any color"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "name": "Awakening of Vitu-Ghazi — the land becomes legendary and is named Vitu-Ghazi",
+  "notes": "Collateral of the Tenth District Hero fix (2026-10-07). \"It becomes a legendary 0/0 Elemental creature with haste named Vitu-Ghazi\" dropped \"legendary\" and granted a junk ability \"Haste Named Vitu-Ghazi\".",
+  "steps": [
+    {
+      "add": "Forest",
+      "as": "forest"
+    },
+    {
+      "add": "Awakening of Vitu-Ghazi",
+      "as": "a",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTarget",
+        "@a",
+        "@forest"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Forest",
+      "final": {
+        "name": "Vitu-Ghazi",
+        "supertypes": {
+          "$includes": [
+            "Legendary"
+          ]
+        },
+        "types": {
+          "$includes": [
+            "Creature",
+            "Land"
+          ]
+        },
+        "abilities": {
+          "$includes": [
+            "Haste"
+          ],
+          "$excludes": [
+            "Haste Named Vitu-Ghazi"
+          ]
+        }
+      }
+    }
+  ]
+}

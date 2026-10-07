@@ -1,0 +1,91 @@
+{
+  "name": "Kitesail Larcenist — one pick a player; the picks become Treasure artifacts and lose all other abilities",
+  "notes": "Sweep group 2 (2026-10-07). \"for each player, choose up to one other target artifact or creature that player controls. For as long as this creature remains on the battlefield, the chosen permanents become Treasure artifacts with \"…\" and lose all other abilities.\" parsed to nothing. The fired text now reads \"Up to N other target artifacts or creatures become …\" (N = players; one a player is not enforced). Two players: Serra Angel and Sol Ring are Treasures with only the Treasure ability; the unpicked Grizzly Bears is untouched. The unfired card must have no static effect of its own.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Serra Angel",
+      "as": "angel",
+      "controller": "p2"
+    },
+    {
+      "add": "Sol Ring",
+      "as": "ring"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Kitesail Larcenist",
+      "as": "kl"
+    },
+    {
+      "fire": "@kl",
+      "trigger": 1,
+      "as": "t"
+    },
+    {
+      "call": [
+        "setMultiTarget",
+        "@t",
+        0,
+        "@angel"
+      ]
+    },
+    {
+      "call": [
+        "setMultiTarget",
+        "@t",
+        1,
+        "@ring"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Serra Angel",
+      "final": {
+        "types": [
+          "Artifact"
+        ],
+        "subtypes": [
+          "Treasure"
+        ],
+        "abilities": [
+          "{T}, Sacrifice this card: Add one mana of any color"
+        ]
+      }
+    },
+    {
+      "perm": "Sol Ring",
+      "final": {
+        "types": [
+          "Artifact"
+        ],
+        "subtypes": [
+          "Treasure"
+        ],
+        "abilities": [
+          "{T}, Sacrifice this card: Add one mana of any color"
+        ]
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "types": [
+          "Creature"
+        ],
+        "subtypes": [
+          "Bear"
+        ]
+      }
+    }
+  ]
+}

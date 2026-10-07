@@ -216,6 +216,9 @@ function fireAbility(perm, ab, kind, effectText, states, check) {
     const pseudo = kind === 'trigger'
       ? Battlefield.addTriggeredAbility(perm.id, ab.index, text, ab.fullText, states)
       : Battlefield.addActivatedAbility(perm.id, ab.index, text, ab.fullText, states);
+    // A fired ability that asks for its own X (times a cost was paid, a number off a card that
+    // is not on the battlefield) gets the same value a card's X does.
+    if (pseudo && pseudo.hasXValue) Battlefield.setXValue(pseudo.id, X_VALUE);
     if (pseudo && pseudo.needsChosenColor) Battlefield.setChosenColor(pseudo.id, 'red');
     if (pseudo && pseudo.needsChosenCreatureType) Battlefield.setChosenCreatureType(pseudo.id, 'Goblin');
     if (pseudo && pseudo.needsChosenLandType) Battlefield.setChosenLandType(pseudo.id, 'Forest');

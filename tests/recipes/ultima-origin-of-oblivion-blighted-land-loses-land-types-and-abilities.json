@@ -1,0 +1,40 @@
+{
+  "name": "Ultima, Origin of Oblivion — the land with a blight counter loses all land types and abilities and has \"{T}: Add {C}.\"",
+  "notes": "Sweep group 2 (2026-10-07). \"For as long as that land has a blight counter on it, it loses all land types and abilities and has \"{T}: Add {C}.\"\" parsed to nothing. Read now as three effects on the target land. The blight counter is put there by the same trigger, so the clause says how long the effect lasts and is not a condition the site checks (it does not place the counter). Forest: no Forest subtype, only \"{T}: Add {C}.\"",
+  "steps": [
+    {
+      "add": "Forest",
+      "as": "forest"
+    },
+    {
+      "add": "Ultima, Origin of Oblivion",
+      "as": "ultima"
+    },
+    {
+      "fire": "@ultima",
+      "trigger": 1,
+      "as": "t"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@t",
+        "@forest"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Forest",
+      "final": {
+        "types": [
+          "Land"
+        ],
+        "subtypes": [],
+        "abilities": [
+          "{T}: Add {C}."
+        ]
+      }
+    }
+  ]
+}
