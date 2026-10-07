@@ -178,3 +178,22 @@ function _linkedCardsPT(sourceId) {
   return cards.reduce((t, c) => ({ power: t.power + num(face(c).power), toughness: t.toughness + num(face(c).toughness) }),
     { power: 0, toughness: 0 });
 }
+
+/* Who controlled a permanent as the spell or ability behind this effect resolved: the board
+   kept when it was added to the timeline, failing that the permanent's own controller. */
+function _controllerAtResolution(effect, permId) {
+  const src = typeof Battlefield !== 'undefined' ? Battlefield.getPermById(effect.sourceId) : null;
+  const snaps = effect._firedAtStates || (src && src._castStates) || null;
+  const snap = snaps && snaps.get ? snaps.get(permId) : null;
+  if (snap && snap.controller) return snap.controller;
+  const perm = typeof Battlefield !== 'undefined' ? Battlefield.getPermById(permId) : null;
+  return perm ? (perm.controller || perm.owner || null) : null;
+}
+
+/* The id of the permanent a state object belongs to (states carry no id of their own). */
+function _permIdOfState(allStates, state) {
+  if (!allStates) return null;
+  for (const [id, st] of allStates) if (st === state) return id;
+  return null;
+}
+

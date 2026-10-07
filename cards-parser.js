@@ -1180,7 +1180,9 @@ function parseCardEffects(permanent, card, opts = {}) {
     let didRewrite = false;
     for (const line of oLines) {
       const m = line.trim().match(inlineChoiceRegex);
-      if (m) {
+      // "choose a player or planeswalker that opponent is attacking. …" (Tahngarth, First Mate)
+      // picks a player or an object, not one of several abilities.
+      if (m && !/^an?\s+(?:player|opponent)\b/i.test(m[2].trim())) {
         // m[1] = prefix ending with "choose "
         // m[2] = "first strike, vigilance, or lifelink"
         // m[3] = ". "
@@ -1226,7 +1228,9 @@ function parseCardEffects(permanent, card, opts = {}) {
     // Detect modal header: "Choose one/two/three/N", "Choose one or both", "Spree", "Tiered", or pawprint "Choose up to N {P}"
     // "Choose up to one other target creature. …" (Glamer Gifter) picks objects, not modes.
     const isModalHeader = (l) => /^(?:choose\s+(?:one|two|three|four|five|six|any number|up to\b|one or (?:both|more)\b)|spree\b|tiered\b)/i.test(l.trim())
-      && !/^choose\s+(?:up to\s+)?(?:\w+|any number of)\s+(?:(?:other|another)\s+)?target\b/i.test(l.trim());
+      && !/^choose\s+(?:up to\s+)?(?:\w+|any number of)\s+(?:(?:other|another)\s+)?target\b/i.test(l.trim())
+      // "Choose any number of creatures target player controls. …" (Cultural Exchange) likewise.
+      && !/^choose\s+(?:up to\s+)?(?:\w+|any number of)\s+(?:(?:other|another)\s+)?(?:[\w-]+\s+)?(?:creatures?|permanents?|lands?|artifacts?|enchantments?|planeswalkers?|players?|opponents?)\b/i.test(l.trim());
     const hasModalHeader = oLines.some(l => isModalHeader(l));
     // Also detect by bullet/mode prefix patterns even without explicit header
     const hasModePrefixes = oLines.some(l => /^\s*(?:\u2022|(?:\+\s*)?{[^}]*}\s*[\u2014—])/m.test(l));
@@ -4674,7 +4678,8 @@ function parseCardEffects(permanent, card, opts = {}) {
     // A quoted ability is handled by losesQuotedRegex below.
     if (lostText.startsWith('"')) continue;
     // "target opponent loses 1 life", "loses the game": a player losing something, not an ability.
-    if (/\blife\b|\bthe game\b/.test(lostText)) continue;
+    // "When you lose control of this card" (Khârn the Betrayer) likewise.
+    if (/\blife\b|\bthe game\b|^control of\b/.test(lostText)) continue;
     // Skip "loses the type [X]" / "loses the subtype [X]" — handled by losesTypeRegex above
     if (/^the\s+(?:type|subtype)\b/.test(lostText)) continue;
     // Skip non-permanent filters
@@ -5627,7 +5632,7 @@ function parseCardEffects(permanent, card, opts = {}) {
     const _isSpellLike = permanent.isManualEffect || permanent.isSpell;
     // A player other than "you" as the subject: "target opponent gains control of …",
     // "you may have that player gain control of …", "they gain control of …".
-    const otherPlayerSubjectRe = /(?:^|[\s,])((?:(?:target|that|an|each|another|the chosen)\s+(?:opponent|player)|the\s+player(?:\s+(?:to your (?:left|right)|with the most life))?|they|its\s+(?:owner|controller))(?:\s+each)?)\s+(?:may\s+)?$/i;
+    const otherPlayerSubjectRe = /(?:^|[\s,])((?:(?:target|that|an|each|another|the chosen)\s+(?:opponent|player)(?:\s+of your choice)?|the\s+player(?:\s+(?:to your (?:left|right)|with the most life))?|they|its\s+(?:owner|controller))(?:\s+each)?)\s+(?:may\s+)?$/i;
     let gcMatch;
     let emittedControl = false;
     while ((gcMatch = gainControlRegex.exec(oracle)) !== null) {
@@ -5698,13 +5703,43 @@ function parseCardEffects(permanent, card, opts = {}) {
       if (otherSubject) {
         const who = otherSubject[1].toLowerCase().replace(/\s+each$/, '');
         // "Each player gains control of all creatures they own" (Homeward Path).
-        const ownM = /^each player$/.test(who) && objectText.match(/^all\s+(.+?)\s+they own$/i);
+        // "Each player gains control of all nonland permanents other than this card controlled
+        // by the next player to the left" (Aminatou, the Fateshifter, once left or right is
+        // chosen): everything moves one seat, read off the board as the ability resolved.
+        const rotateM = _isSpellLike && /^each player$/.test(who)
+          && objectText.match(/^all\s+(.+?)(\s+other than this \w+)?\s+controlled by the next player to the (left|right)$/i);
+        if (rotateM) {
+          const rotResult = buildAppliesToFromText(rotateM[1]);
+          if (rotResult.fn) {
+            pushEff('2', EFFECT_TYPE.CONTROL, { rotate: rotateM[3].toLowerCase(), rotateExcludesSource: !!rotateM[2] },
+              { appliesTo: rotResult.fn, scope: 'global', selfTarget: false, affectsSelf: !rotateM[2] },
+              `Each player gains control of ${objectText}.`);
+            emittedControl = true;
+          }
+          continue;
+        }
+        // "For each nonland permanent, choose a player at random. Then each player gains control
+        // of each permanent for which they were chosen." (Scrambleverse): the players are rolled
+        // as the spell is cast and kept on it (Battlefield.addSpell).
+        if (permanent.isSpell && /^each player$/.test(who) && /^each permanent for which they were chosen$/i.test(objectText)
+            && /\bfor each nonland permanent, choose a player at random\b/i.test(oracle)) {
+          pushEff('2', EFFECT_TYPE.CONTROL, { randomController: true },
+            { appliesTo: (st) => !(st.types || []).includes('Land'), scope: 'global', selfTarget: false },
+            'Each player gains control of each permanent for which they were chosen.');
+          emittedControl = true;
+          continue;
+        }
+        // "… of each land they own that you control" (Herald of Leshrac): only what the
+        // ability's controller holds.
+        const ownM = /^each player$/.test(who) && objectText.match(/^(?:all|each)\s+(.+?)\s+they own(\s+that you control)?$/i);
         if (ownM) {
           const ownResult = buildAppliesToFromText(ownM[1]);
           if (ownResult.fn) {
+            const you = permanent.controller || permanent.owner || 'player_0';
             pushEff('2', EFFECT_TYPE.CONTROL, { toOwner: true },
-              { appliesTo: ownResult.fn, scope: 'global', selfTarget: false },
-              `Each player gains control of all ${ownM[1]} they own.`);
+              { appliesTo: ownM[2] ? (st, ...rest) => st.controller === you && ownResult.fn(st, ...rest) : ownResult.fn,
+                scope: 'global', selfTarget: false },
+              `Each player gains control of ${objectText}.`);
             emittedControl = true;
           }
           continue;
@@ -5750,7 +5785,7 @@ function parseCardEffects(permanent, card, opts = {}) {
         permanent._targetsChosenPlayer = true;
         if (objYouControl) permanent._youControlRequired = true;
         const eff = pushEff('2', EFFECT_TYPE.CONTROL,
-          { newController: permanent._targetPlayerId || null, untilEndOfTurn: /until end of turn/i.test(fullSentence) },
+          { newController: permanent._targetPlayerId || null, untilEndOfTurn: /until end of (?:turn|combat)/i.test(fullSentence) },
           { appliesTo: null, scope: 'targeted', selfTarget: false },
           `${otherSubject[1].charAt(0).toUpperCase() + otherSubject[1].slice(1)} gains control of ${objectText}.`,
           { _targetPlayerControl: true, targetRestriction: objRestriction, youControlRequired: objYouControl || undefined });
@@ -5843,6 +5878,26 @@ function parseCardEffects(permanent, card, opts = {}) {
 
       // A global control effect with no readable filter would take every permanent on the
       // battlefield ("all Equipment that were attached to it"); emit nothing instead.
+      // "Gain control of all Auras and Equipment that were attached to it" (Fumble, Murderous
+      // Spoils): "it" is the spell's target, which leaves the battlefield. The spell takes that
+      // target, and the control goes to what was attached to it when it was picked.
+      const attachedM = _isSpellLike && effectScope === 'global'
+        && objectText.match(/^all\s+(.+?)\s+that were attached to (?:it|that \w+)$/i);
+      const attachedTargetM = attachedM && oracle.slice(0, gcMatch.index).match(/\btarget\s+([^.,]+?)(?=\s+to\b|[.,])/i);
+      if (attachedTargetM) {
+        const kindFns = attachedM[1].split(/\s*,\s*|\s+and\s+/i)
+          .map(k => buildAppliesToFromText(k.trim()).fn).filter(Boolean);
+        if (kindFns.length) {
+          pushEff('2', EFFECT_TYPE.CONTROL,
+            { newController: permanent.owner || 'player_0', attachedToTarget: true, attachedIds: [] },
+            { appliesTo: null, scope: 'targeted', selfTarget: false },
+            `Gain control of ${objectText}.`,
+            { targetRestriction: buildAppliesToFromText(attachedTargetM[1].trim()).fn || null,
+              attachedFilter: (st) => kindFns.some(fn => fn(st)) });
+          emittedControl = true;
+        }
+        continue;
+      }
       if (effectScope === 'global' && (!appliesToFn || /\bthat (?:was|were)\b/i.test(objectText))) continue;
 
       const controlEff = pushEff('2', EFFECT_TYPE.CONTROL,
@@ -5888,7 +5943,7 @@ function parseCardEffects(permanent, card, opts = {}) {
   }
 
   // --- "exchange control of ..." → Layer 2 CONTROL exchange effect ---
-  if (!effects.some(e => e.type === EFFECT_TYPE.CONTROL && e.params.exchangeControl)) {
+  if (!effects.some(e => e.type === EFFECT_TYPE.CONTROL && (e.params.exchangeControl || e.params.swapAmongTargets))) {
     const exchangeControlRegex = /\bexchange control of\s+(.+?)(?:\.\s*|$)/gi;
     let exchMatch;
     while ((exchMatch = exchangeControlRegex.exec(oracle)) !== null) {
@@ -5899,6 +5954,23 @@ function parseCardEffects(permanent, card, opts = {}) {
 
       const captured = exchMatch[1].trim();
       const capLower = captured.toLowerCase();
+
+      // "Choose any number of creatures target player controls. Choose the same number of
+      // creatures another target player controls. Those players exchange control of those
+      // creatures." (Cultural Exchange): any number of picks; each goes to the other of the two
+      // players who controlled them as the spell resolved.
+      const groupSwapM = /^those\s+/i.test(captured) && oracle.slice(0, exchMatch.index)
+        .match(/\bchoose any number of (\w+) target player controls\.\s+choose the same number of \w+ another target player controls\./i);
+      if (groupSwapM) {
+        const swapEff = pushEff('2', EFFECT_TYPE.CONTROL, { swapAmongTargets: true },
+          { appliesTo: null, scope: 'targeted', selfTarget: false },
+          `Two players exchange control of the chosen ${groupSwapM[1].toLowerCase()}.`,
+          { targetRestriction: buildAppliesToFromText(groupSwapM[1]).fn || null });
+        swapEff.maxTargets = _ANY_NUMBER_TARGET_SLOTS;
+        swapEff.targetIds = [];
+        permanent._nonTargetingSelection = true;
+        continue;
+      }
 
       // Classify the pattern
       let exchangeMode = 'two_targets';

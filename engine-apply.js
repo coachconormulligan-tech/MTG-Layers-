@@ -1524,6 +1524,53 @@ function applyEffect(state, effect, context) {
       // "Each player gains control of all creatures they own" (Homeward Path): back to the owner.
       // "You and target opponent each gain control of all creatures the other controls"
       // (Reins of Power): the source's controller and the chosen player trade every match.
+      // "Those players exchange control of those creatures" (Cultural Exchange): each pick goes
+      // to the other of the two players who controlled the picks as the spell resolved. Nothing
+      // moves unless the picks belonged to exactly two players, the same number each.
+      if (effect.params.swapAmongTargets) {
+        const picks = (effect.targetIds || []).filter(Boolean);
+        const byPlayer = new Map();
+        for (const id of picks) {
+          const c = _controllerAtResolution(effect, id);
+          byPlayer.set(c, (byPlayer.get(c) || 0) + 1);
+        }
+        const pair = [...byPlayer.keys()];
+        if (pair.length !== 2 || pair.includes(null) || byPlayer.get(pair[0]) !== byPlayer.get(pair[1])) break;
+        const was = _controllerAtResolution(effect, _permIdOfState(effect._allStates, state));
+        const swapTo = was === pair[0] ? pair[1] : was === pair[1] ? pair[0] : null;
+        if (swapTo && state.controller !== swapTo) {
+          state.controller = swapTo;
+          const playerName = (typeof Battlefield !== 'undefined' && Battlefield.getPlayerName)
+            ? Battlefield.getPlayerName(swapTo) : swapTo;
+          changes.push(`Controller changed to ${playerName}`);
+        }
+        break;
+      }
+      // "Each player gains control of all nonland permanents … controlled by the next player to
+      // the left" (Aminatou): one seat along the player list, from where each permanent was as
+      // the ability resolved. The next player in the list sits to the left.
+      // "Each permanent for which they were chosen" (Scrambleverse): the player rolled for it.
+      if (effect.params.rotate || effect.params.randomController) {
+        const permId = _permIdOfState(effect._allStates, state);
+        const src = typeof Battlefield !== 'undefined' ? Battlefield.getPermById(effect.sourceId) : null;
+        let to = null;
+        if (effect.params.randomController) {
+          to = (src && src._rolledControllers && src._rolledControllers[permId]) || null;
+        } else {
+          const seats = (typeof Battlefield !== 'undefined' ? Battlefield.players || [] : []).map(pl => pl.id);
+          const at = seats.indexOf(_controllerAtResolution(effect, permId));
+          if (at !== -1 && seats.length > 1) {
+            to = seats[(at + (effect.params.rotate === 'left' ? seats.length - 1 : 1)) % seats.length];
+          }
+        }
+        if (to && state.controller !== to) {
+          state.controller = to;
+          const playerName = (typeof Battlefield !== 'undefined' && Battlefield.getPlayerName)
+            ? Battlefield.getPlayerName(to) : to;
+          changes.push(`Controller changed to ${playerName}`);
+        }
+        break;
+      }
       if (effect.params.mutualSwap) {
         const you = effect._allStates ? getEffectControllerId(effect, effect._allStates) : null;
         const other = effect.params.newController;

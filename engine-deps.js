@@ -158,6 +158,24 @@ function effectAppliesToPerm(effect, permState, permanent, permId, allStates, ab
       return true;
     }
 
+    // "All Equipment that were attached to it" (Murderous Spoils): what was attached to the
+    // spell's target when it was picked, whether or not the target is still there.
+    if (effect.type === EFFECT_TYPE.CONTROL && effect.params.attachedToTarget) {
+      return (effect.params.attachedIds || []).includes(permId)
+        && (!effect.attachedFilter || effect.attachedFilter(permState));
+    }
+    // "Each permanent for which they were chosen" (Scrambleverse): those a player was rolled for.
+    if (effect.type === EFFECT_TYPE.CONTROL && effect.params.randomController) {
+      const src = typeof Battlefield !== 'undefined' ? Battlefield.getPermById(effect.sourceId) : null;
+      return !!(src && src._rolledControllers && src._rolledControllers[permId]);
+    }
+    // "Controlled by the next player to the left" (Aminatou): never the ability's own source
+    // when the text sets it aside, and never a spell or ability row.
+    if (effect.type === EFFECT_TYPE.CONTROL && effect.params.rotate) {
+      const src = typeof Battlefield !== 'undefined' ? Battlefield.getPermById(effect.sourceId) : null;
+      if (effect.params.rotateExcludesSource && src && src.abilitySourceId === permId) return false;
+      if (permanent && (permanent.isSpell || permanent.isManualEffect || permanent.isTriggeredAbility || permanent.isActivatedAbility)) return false;
+    }
     // Exchange control effects apply to both exchange targets (not through normal targeting)
     if (effect.type === EFFECT_TYPE.CONTROL && effect.params.exchangeControl) {
       const { exchangeTargetA, exchangeTargetB } = effect.params;

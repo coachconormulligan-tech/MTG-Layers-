@@ -206,6 +206,14 @@ const Battlefield = {
         result.push({ index: i, fullText: ab, effectText: options[0], triggerLimit: null, options });
         continue;
       }
+      // "If damage would be dealt to this card, prevent that damage and an opponent of your
+      // choice gains control of it." (Khârn the Betrayer): a replacement effect, offered like a
+      // trigger and fired each time damage would be dealt.
+      const dmgPrevent = stripped.match(/^If damage would be dealt to [^,]+, prevent that damage and (.+\bgains? control of .+)$/i);
+      if (dmgPrevent) {
+        result.push({ index: i, fullText: ab, effectText: dmgPrevent[1].trim(), triggerLimit: null });
+        continue;
+      }
       // "During your upkeep, this card becomes a random color permanently." (Prismatic Dragon):
       // a trigger in wording older than "At the beginning of your upkeep".
       const oldUpkeep = stripped.match(/^During your upkeep,\s*(.*\bbecomes a random color\b.*)$/i);
@@ -360,6 +368,10 @@ const Battlefield = {
           }
         }
       }
+      // "Choose left or right. Each player gains control of … the next player in the chosen
+      // direction." (Aminatou, the Fateshifter): the direction is the option.
+      const directionM = effectForSplit.match(/^Choose left or right\.\s+(.*\bin the chosen direction\b.*)$/i);
+      if (directionM) options = ['left', 'right'].map(d => directionM[1].replace(/\bin the chosen direction\b/i, `to the ${d}`));
       // "{4}, Sacrifice this artifact: Roll a d20." with result rows below (Treasure Chest).
       const d20Rows = /\broll a d20\b/i.test(effectText) ? _d20Rows(abilities, i) : [];
       if (d20Rows.length >= 2) {
@@ -2037,9 +2049,59 @@ const Battlefield = {
         e.timestamp = newTs;
       }
     });
+    // "All Equipment that were attached to it" (Murderous Spoils): note what is attached to the
+    // target now; the target itself is about to leave.
+    if (targetPermId) {
+      for (const e of this.effects) {
+        if (e.sourceId === effectSourceId && e.params && e.params.attachedToTarget) e.params.attachedIds = this._attachedTo(targetPermId);
+      }
+    }
     // The validation above called getAllFinalStates() which re-cached state with the old
     // targetId. Re-invalidate now so callers get a fresh evaluation after the mutation.
     this._invalidate();
+  },
+
+  /* Ids of the permanents attached to this one: Auras, Equipment and bestowed cards whose own
+     target it is. */
+  _attachedTo(permId) {
+    const ids = new Set();
+    for (const e of this.effects) {
+      if (e.scope !== 'targeted' || e.selfTarget || e.targetId !== permId || e.sourceId === permId) continue;
+      const src = this.getPermById(e.sourceId);
+      if (src && !src.isSpell && !src.isManualEffect && !src.isTriggeredAbility && !src.isActivatedAbility) ids.add(e.sourceId);
+    }
+    if (this.bestowTargets) for (const [bestowId, tid] of this.bestowTargets) if (tid === permId) ids.add(bestowId);
+    return [...ids];
+  },
+
+  /* "For each nonland permanent, choose a player at random" (Scrambleverse): one player rolled
+     for each nonland permanent on the board the spell was cast into, kept on the spell and
+     written into its effect's description. */
+  _rollControllers(spell) {
+    const rolled = {};
+    const seats = (this.players || []).map(pl => pl.id);
+    for (const p of this.permanents) {
+      if (p === spell || p.isSpell || p.isManualEffect || p.isTriggeredAbility || p.isActivatedAbility) continue;
+      const st = spell._castStates && spell._castStates.get(p.id);
+      if (((st && st.types) || p.printedTypes || []).includes('Land')) continue;
+      rolled[p.id] = this._randomPick(seats);
+    }
+    spell._rolledControllers = rolled;
+    this._describeRolledControllers(spell);
+  },
+  _describeRolledControllers(spell) {
+    const rolled = spell._rolledControllers || {};
+    const lines = (this.players || []).map(pl => {
+      const names = Object.keys(rolled).filter(id => rolled[id] === pl.id)
+        .map(id => { const p = this.getPermById(id); return p ? p.name + (p.label ? ' ' + p.label : '') : null; }).filter(Boolean);
+      return names.length ? `${pl.name}: ${names.join(', ')}` : null;
+    }).filter(Boolean);
+    for (const e of this.effects) {
+      if (e.sourceId === spell.id && e.params && e.params.randomController) {
+        e.desc = 'Each player gains control of each permanent for which they were chosen.'
+          + (lines.length ? ' Chosen at random. ' + lines.join('. ') + '.' : '');
+      }
+    }
   },
 
   /* Set the object a fired ability takes its numbers or abilities from ("…base power becomes
@@ -2900,6 +2962,7 @@ const Battlefield = {
     for (const eff of newEffects) eff.isSpellEffect = true;
     this._flagColorChoice(perm, newEffects);
     this.effects.push(...newEffects);
+    if (newEffects.some(e => e.params && e.params.randomController)) this._rollControllers(perm);
     // "Choose a creature type other than Wall. Each creature becomes that type" (Standardize):
     // the type is chosen from the spell's own input and written into the text before re-parsing.
     {
@@ -3212,8 +3275,12 @@ const Battlefield = {
           }
         } else if (e.type === EFFECT_TYPE.CONTROL && p.exchangeControl) {
           if (p.exchangeTargetA && p.exchangeTargetB) c.exchangeControl = { a: p.exchangeTargetA, b: p.exchangeTargetB };
+        } else if (e.type === EFFECT_TYPE.CONTROL && p.attachedToTarget) {
+          if (p.attachedIds && p.attachedIds.length) c.attachedIds = p.attachedIds.slice();
         }
       }
+      const rolledFor = this.getPermById(srcId);
+      if (rolledFor && rolledFor._rolledControllers) c.rolledControllers = { ...rolledFor._rolledControllers };
       const modalEffs = this.effects.filter(e => e.sourceId === srcId && e.modalModeIndex !== undefined);
       // (Also when none is disabled: a mode that is off by default and is the only one with
       // effects — Masterful Replication's copy mode — would come back switched off.)
@@ -3594,6 +3661,18 @@ const Battlefield = {
       if (c.exchangeText) { const a = tr(c.exchangeText.a), b = tr(c.exchangeText.b); if (a && b) this.setExchangeTargets(nsId, a, b); }
       if (c.deadpool) { const t = tr(c.deadpool); if (t) this.setDeadpoolTarget(nsId, t); }
       if (c.exchangeControl) { const a = tr(c.exchangeControl.a), b = tr(c.exchangeControl.b); if (a && b) this.setExchangeControlTargets(nsId, a, b); }
+      if (c.attachedIds) {
+        const ids = c.attachedIds.map(tr).filter(Boolean);
+        this.effects.forEach(e => { if (e.sourceId === nsId && e.params && e.params.attachedToTarget) e.params.attachedIds = ids; });
+      }
+      if (c.rolledControllers) {
+        const spell = this.getPermById(nsId);
+        if (spell) {
+          spell._rolledControllers = {};
+          for (const [oldId, playerId] of Object.entries(c.rolledControllers)) { if (tr(oldId)) spell._rolledControllers[tr(oldId)] = playerId; }
+          this._describeRolledControllers(spell);
+        }
+      }
       if (c.swirlColor) this.setSwirlColor(nsId, c.swirlColor);
       if (c.textChange) this.setTextChangeConfig(nsId, c.textChange.targetId ? tr(c.textChange.targetId) : undefined, c.textChange.replacements);
       if (c.volrathCard) this.setVolrathGraveyardCard(nsId, c.volrathCard);

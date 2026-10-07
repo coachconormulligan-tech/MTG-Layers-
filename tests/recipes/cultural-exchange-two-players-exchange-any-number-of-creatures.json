@@ -1,0 +1,111 @@
+{
+  "name": "Cultural Exchange — two players exchange control of the chosen creatures",
+  "notes": "Sweep group 6 (2026-10-07). \"Choose any number of creatures target player controls.\" was read as a modal header (\"choose any number\") and the whole one-line spell was dropped. A \"Choose\" sentence that names permanents or players is no longer a mode header, and the exchange is one control effect over any number of picks (params.swapAmongTargets): each pick goes to the other of the two players who controlled the picks as the spell was cast. Two creatures a side are picked here; Runeclaw Bear, not picked, stays.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant",
+      "controller": "p2"
+    },
+    {
+      "add": "Goblin Piker",
+      "as": "piker",
+      "controller": "p2"
+    },
+    {
+      "add": "Runeclaw Bear",
+      "as": "rune",
+      "controller": "p2"
+    },
+    {
+      "add": "Cultural Exchange",
+      "as": "spell",
+      "spell": true
+    },
+    {
+      "call": [
+        "setMultiTarget",
+        "@spell",
+        0,
+        "@bears"
+      ]
+    },
+    {
+      "call": [
+        "setMultiTarget",
+        "@spell",
+        1,
+        "@giant"
+      ]
+    },
+    {
+      "call": [
+        "setMultiTarget",
+        "@spell",
+        2,
+        "@ogre"
+      ]
+    },
+    {
+      "call": [
+        "setMultiTarget",
+        "@spell",
+        3,
+        "@piker"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "controller": "player_1"
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "controller": "player_1"
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "controller": "player_0"
+      }
+    },
+    {
+      "perm": "Goblin Piker",
+      "final": {
+        "controller": "player_0"
+      }
+    },
+    {
+      "perm": "Runeclaw Bear",
+      "final": {
+        "controller": "player_1"
+      }
+    },
+    {
+      "effect": {
+        "source": "Cultural Exchange",
+        "layer": "2",
+        "type": "control"
+      }
+    }
+  ]
+}

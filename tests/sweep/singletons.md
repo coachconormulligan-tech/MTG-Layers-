@@ -6,15 +6,6 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 |---|---|---|---|
 | The Legend of Kyoshi | becomes | static | That land becomes an Island in addition to its other types. |
 | Ultron, Artificial Malevolence | becomes | triggered | If the token isn't a creature, it becomes a 2/2 Robot Villain creature in addition to its other types. |
-| Aminatou, the Fateshifter | gain control | activated | Each player gains control of all nonland permanents other than this card controlled by the next player in the chosen direction. |
-| Cultural Exchange | gain control | spell | Those players exchange control of those creatures. |
-| Fumble | gain control | spell | Gain control of all Auras and Equipment that were attached to it, then attach them to another creature. |
-| Herald of Leshrac | gain control | triggered | When this creature leaves the battlefield, each player gains control of each land they own that you control. |
-| Khârn the Betrayer | gain control | static | The Betrayer — If damage would be dealt to this card, prevent that damage and an opponent of your choice gains control of it. |
-| Murderous Spoils | gain control | spell | You gain control of all Equipment that were attached to it. |
-| Power Struggle | gain control | static | During each player's upkeep, that player exchanges control of random target artifact, creature or land he or she controls, for control of random target permanent of the same type that a random opponent controls. |
-| Scrambleverse | gain control | spell | Then each player gains control of each permanent for which they were chosen. |
-| Tahngarth, First Mate | gain control | triggered | Whenever an opponent attacks with one or more creatures, if this card is tapped, you may have that opponent gain control of this card until end of combat. |
 | Barreling Attack | gets +N/+N | spell | When that creature becomes blocked this turn, it gets +1/+1 until end of turn for each creature blocking it. |
 | Song of Blood | gets +N/+N | spell | Whenever a creature attacks this turn, it gets +1/+0 until end of turn for each creature card put into your graveyard this way. |
 | Massimo, the Magician | has / gains | triggered | If a card is exiled this way, that creature gains "Whenever this creature deals combat damage to a player, copy the exiled card. You may cast the copy without paying its mana cost." |

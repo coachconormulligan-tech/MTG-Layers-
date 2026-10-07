@@ -1,0 +1,57 @@
+{
+  "name": "Tahngarth, First Mate — that opponent gains control of it until end of combat",
+  "notes": "Sweep group 6 (2026-10-07). \"If you do, choose a player or planeswalker that opponent is attacking. …\" was rewritten by the inline-choice step into a \"choose one\" of two modes (\"a player\", \"planeswalker that opponent is attacking\"), which dropped the control effect. A choice of a player is no longer read as modes. The trigger gives Tahngarth to the player picked in the dropdown; \"until end of combat\" counts as a temporary duration.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears",
+      "controller": "p2"
+    },
+    {
+      "add": "Tahngarth, First Mate",
+      "as": "tahn"
+    },
+    {
+      "fire": "@tahn",
+      "trigger": 1,
+      "as": "fired"
+    },
+    {
+      "call": [
+        "setTargetPlayer",
+        "@fired",
+        "p2"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Tahngarth, First Mate",
+      "final": {
+        "controller": "player_1"
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "controller": "player_1"
+      }
+    },
+    {
+      "effect": {
+        "source": "Tahngarth, First Mate (trigger)",
+        "layer": "2",
+        "type": "control",
+        "params": {
+          "untilEndOfTurn": true
+        }
+      }
+    }
+  ]
+}

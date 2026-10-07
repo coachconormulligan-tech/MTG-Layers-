@@ -1,0 +1,74 @@
+{
+  "name": "Cultural Exchange — unequal picks exchange nothing",
+  "notes": "Sweep group 6 (2026-10-07). The spell has each player give up the same number of creatures; with two picks on one side and one on the other nothing changes hands.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant",
+      "controller": "p2"
+    },
+    {
+      "add": "Cultural Exchange",
+      "as": "spell",
+      "spell": true
+    },
+    {
+      "call": [
+        "setMultiTarget",
+        "@spell",
+        0,
+        "@bears"
+      ]
+    },
+    {
+      "call": [
+        "setMultiTarget",
+        "@spell",
+        1,
+        "@giant"
+      ]
+    },
+    {
+      "call": [
+        "setMultiTarget",
+        "@spell",
+        2,
+        "@ogre"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "controller": "player_0"
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "controller": "player_0"
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "controller": "player_1"
+      }
+    }
+  ]
+}

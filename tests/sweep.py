@@ -269,6 +269,8 @@ OUT_OF_SCOPE = {
     'Omnipresent Impostor': 'has all card names',
     "Teferi's Reproach": 'they gain protection from everything',
     'Two by Four': 'base power 4 counter',
+    # Not legal in any format (an Astral card from the 1997 computer game).
+    'Power Struggle': 'exchanges control of random target',
     # Two land types chosen in order by one spell.
     'Vision Charm': 'Each land of the first chosen type',
 }
