@@ -248,6 +248,29 @@ VERIFIED_BY_RECIPE = {
     'Rune of Mortality': 'As long as enchanted permanent is a creature',
     'Rune of Speed': 'As long as enchanted permanent is a creature',
     'Rune of Sustenance': 'As long as enchanted permanent is a creature',
+    # A delayed trigger with the same effect as the enters trigger: firing that again is each death.
+    'Massacre Girl': 'Whenever a creature dies this turn',
+    # Offered as two options of a trigger-like choice, each a sentence written for it.
+    'Aquamorph Entity': 'As this creature enters or is turned face up',
+}
+
+# Sentences about something the site has no object or step for. Card name -> words of the sentence.
+OUT_OF_SCOPE = {
+    # A spell, or a copy of one, gaining an ability while it is on the stack.
+    'Mizzix, Replica Rider': 'If the copy is a permanent spell',
+    'Nalfeshnee': 'the copy gains haste',
+    'Spider-Verse': 'If the copy is a permanent spell',
+    'Galea, Kindler of Hope': 'When you cast an Equipment spell this way',
+    'Summon: Brynhildr': 'When you next cast a creature spell this turn',
+    'The Fourteenth Doctor': 'If you do, it gains haste',
+    # A reflexive trigger on casting a card out of a graveyard.
+    'Havengul Lich': 'When you cast it this turn',
+    # A name, a player and a counter the engine has no characteristic for.
+    'Omnipresent Impostor': 'has all card names',
+    "Teferi's Reproach": 'they gain protection from everything',
+    'Two by Four': 'base power 4 counter',
+    # Two land types chosen in order by one spell.
+    'Vision Charm': 'Each land of the first chosen type',
 }
 
 
@@ -416,6 +439,9 @@ def analyse(records, keywords):
                 continue
             if s['text'].startswith(VERIFIED_BY_RECIPE.get(r['name'], '\0')):
                 continue
+            if OUT_OF_SCOPE.get(r['name'], '\0') in s['text']:
+                totals['out_of_scope'] += 1
+                continue
             totals['candidates'] += 1
             if s['covered']:
                 totals['candidates_covered'] += 1
@@ -445,6 +471,7 @@ def write_report(records, keywords, meta):
     L.append('| ...of which produced an effect | %d (%.1f%%) |' % (totals['candidates_covered'], 100.0 * totals['candidates_covered'] / max(1, totals['candidates'])))
     L.append('| ...of which produced nothing | %d, on %d cards |' % (totals['candidates'] - totals['candidates_covered'], flagged_cards))
     L.append('| Not counted: "they" / "those tokens" / "it" meaning objects the ability just made | %d |' % totals['new_objects'])
+    L.append('| Not counted: listed as out of scope (spells on the stack, players, names) | %d |' % totals['out_of_scope'])
     L.append('| Clusters shared by 2 or more cards | %d |' % len(shared))
     L.append('| Single-card clusters | %d (listed in [singletons.md](singletons.md)) |' % len(single))
     L.append('| Distinct crashes | %d, on %d card faces |' % (len(crashes), totals['faces_with_errors']))

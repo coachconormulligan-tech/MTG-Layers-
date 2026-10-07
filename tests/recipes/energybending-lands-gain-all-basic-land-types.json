@@ -1,0 +1,30 @@
+{
+  "name": "Energybending — \"Lands you control gain all basic land types\"",
+  "notes": "Sweep singleton (2026-10-07). Only \"are every basic land type in addition to their other types\" was read. \"gain all basic land types\" is rewritten to that. The Forest is also a Plains, Island, Swamp and Mountain.",
+  "steps": [
+    {
+      "add": "Forest",
+      "as": "f"
+    },
+    {
+      "add": "Energybending",
+      "spell": true
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Forest",
+      "final": {
+        "subtypes": {
+          "$includes": [
+            "Forest",
+            "Plains",
+            "Island",
+            "Swamp",
+            "Mountain"
+          ]
+        }
+      }
+    }
+  ]
+}

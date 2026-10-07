@@ -1,0 +1,34 @@
+{
+  "name": "Angry Mob — on your turn, 2 plus the Swamps your opponents control",
+  "notes": "Sweep singleton (2026-10-07). The \"During your turn\" half was unconditional and the \"During turns other than yours … are each 2\" half produced nothing. The two sentences get a line and a condition each. Your turn, opponent has two Swamps: 4/4.",
+  "steps": [
+    {
+      "add": "Angry Mob"
+    },
+    {
+      "call": [
+        "addPlayer",
+        "Player 2"
+      ]
+    },
+    {
+      "add": "Swamp",
+      "as": "s1",
+      "controller": "p2"
+    },
+    {
+      "add": "Swamp",
+      "as": "s2",
+      "controller": "p2"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Angry Mob",
+      "final": {
+        "power": 4,
+        "toughness": 4
+      }
+    }
+  ]
+}

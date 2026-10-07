@@ -312,6 +312,35 @@ function renderChosenCardTypeInput(perm) {
   </div>`;
 }
 
+/* Render a dropdown for "choose two abilities from among …" (Greymond, Avacyn's Stalwart):
+   every way of choosing that many of the listed abilities. */
+function renderChosenAbilitiesInput(perm) {
+  const val = perm.chosenAbilities || '';
+  const picks = [];
+  const walk = (start, taken) => {
+    if (taken.length === (perm.abilityChoiceCount || 2)) { picks.push(taken); return; }
+    for (let i = start; i < (perm.abilityChoices || []).length; i++) walk(i + 1, [...taken, perm.abilityChoices[i]]);
+  };
+  walk(0, []);
+  const options = picks.map(p => {
+    const text = p.length > 2 ? p.slice(0, -1).join(', ') + ', and ' + p[p.length - 1] : p.join(' and ');
+    return `<option value="${escapeAttr(text)}" ${val === text ? 'selected' : ''}>${escapeHtml(text.charAt(0).toUpperCase() + text.slice(1))}</option>`;
+  }).join('');
+  return `<div class="cda-counter-row chosen-color-row" onclick="event.stopPropagation()">
+    <span class="cda-label" title="Choose abilities">Abilities:</span>
+    <select class="chosen-color-select" onchange="setChosenAbilities('${perm.id}', this.value)">
+      <option value="">— pick —</option>
+      ${options}
+    </select>
+  </div>`;
+}
+
+function setChosenAbilities(permId, abilities) {
+  Battlefield.setChosenAbilities(permId, abilities || null);
+  Battlefield.evaluate();
+  renderAll();
+}
+
 function setChosenCardType(permId, type) {
   Battlefield.setChosenCardType(permId, type || null);
   Battlefield.evaluate();

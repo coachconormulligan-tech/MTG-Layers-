@@ -107,7 +107,7 @@ function modifyClassLevel(permId, delta) {
 /* [END: COUNTER-UI] */
 
 /* [KEY: GAME-STATE-UI] */
-// Niche game-state stats (Monarch, Initiative, Starting Life, Poison,
+// Niche game-state stats (Monarch, Initiative, City's Blessing, Starting Life, Poison,
 // Experience, Draws) are tucked behind a "More" expander to keep the panel
 // quiet by default. The common three (Your Turn, Current Life, Cards in Hand)
 // are always shown.
@@ -179,6 +179,15 @@ function toggleInitiative() {
   renderAll();
 }
 
+// The city's blessing (Ascend) is kept for the rest of the game, and any number of players can have it.
+function toggleCityBlessing() {
+  const gs = Battlefield.gameState;
+  gs.hasCityBlessing = !gs.hasCityBlessing;
+  Battlefield._invalidate();
+  Battlefield.evaluate();
+  renderAll();
+}
+
 function renderGameStatePanel() {
   const panel = document.getElementById('game-state-panel');
   if (!panel) return;
@@ -228,6 +237,7 @@ function renderGameStatePanel() {
   html += `<div class="game-state-grid gs-advanced"${_gsShowAdvanced ? '' : ' style="display:none"'}>`;
   html += toggleRow('Monarch', gs.isMonarch, 'toggleMonarch();');
   html += toggleRow('Have Initiative', gs.hasInitiative, 'toggleInitiative();');
+  html += toggleRow("City's Blessing", gs.hasCityBlessing, 'toggleCityBlessing();');
   html += startingLifeRow;
   html += statRow('Poison Counters', 'poisonCounters');
   html += statRow('Experience Counters', 'experienceCounters');

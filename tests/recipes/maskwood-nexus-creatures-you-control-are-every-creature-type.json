@@ -1,0 +1,51 @@
+{
+  "name": "Maskwood Nexus — creatures you control are every creature type, the Nexus is not",
+  "notes": "Sweep singleton (2026-10-07). The changeling test matched \"create a 2/2 blue Shapeshifter creature token with changeling\", so the Nexus itself became every creature type and the real sentence was then skipped as a duplicate. The keyword is now read only on a keyword line. Your Bears are every creature type; the opponent's Bears are only a Bear.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "mine"
+    },
+    {
+      "call": [
+        "addPlayer",
+        "Player 2"
+      ]
+    },
+    {
+      "add": "Runeclaw Bear",
+      "as": "theirs",
+      "controller": "p2"
+    },
+    {
+      "add": "Maskwood Nexus"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "isAllCreatureTypes": true
+      }
+    },
+    {
+      "perm": "Runeclaw Bear",
+      "final": {
+        "subtypes": [
+          "Bear"
+        ]
+      }
+    },
+    {
+      "effect": {
+        "source": "Maskwood Nexus",
+        "layer": "4",
+        "type": "add_type",
+        "scope": "global",
+        "params": {
+          "gainsAllCreatureTypes": true
+        }
+      }
+    }
+  ]
+}

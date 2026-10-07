@@ -1,0 +1,40 @@
+{
+  "name": "Delina, Wild Mage — \"except it's not legendary\" describes the token",
+  "notes": "Sweep singleton (2026-10-07). Found while probing the d20 cards: the token description \"a copy of that creature, except it's not legendary\" was read as \"every permanent is not legendary\" (about 25 token-copy cards did this, statically or when fired). Isamaru stays legendary, with Delina on the battlefield and with the 1—14 result fired.",
+  "steps": [
+    {
+      "add": "Isamaru, Hound of Konda"
+    },
+    {
+      "add": "Delina, Wild Mage",
+      "as": "d"
+    },
+    {
+      "fire": "@d",
+      "trigger": 0,
+      "mode": 0
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Isamaru, Hound of Konda",
+      "final": {
+        "supertypes": {
+          "$includes": [
+            "Legendary"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Delina, Wild Mage",
+      "final": {
+        "supertypes": {
+          "$includes": [
+            "Legendary"
+          ]
+        }
+      }
+    }
+  ]
+}

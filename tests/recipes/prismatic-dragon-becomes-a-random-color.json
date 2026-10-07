@@ -1,0 +1,30 @@
+{
+  "name": "Prismatic Dragon — \"becomes a random color permanently\" is rolled when fired",
+  "notes": "Sweep singleton (2026-10-07). Produced nothing. The colour is picked at random when the ability is fired and written into the effect text (a save replays that text). queueRandomPicks fixes the roll: blue.",
+  "steps": [
+    {
+      "add": "Prismatic Dragon",
+      "as": "d"
+    },
+    {
+      "call": [
+        "queueRandomPicks",
+        "blue"
+      ]
+    },
+    {
+      "fire": "@d",
+      "activated": 2
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Prismatic Dragon",
+      "final": {
+        "colors": [
+          "U"
+        ]
+      }
+    }
+  ]
+}

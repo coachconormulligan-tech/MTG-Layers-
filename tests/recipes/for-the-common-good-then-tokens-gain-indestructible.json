@@ -1,0 +1,44 @@
+{
+  "name": "For the Common Good — \"Then tokens you control gain indestructible until your next turn\"",
+  "notes": "Sweep singleton (2026-10-07). The sentence-opening \"Then\" kept the subject from being read. The token Bears are indestructible; the card Bears are not.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "tok",
+      "opts": {
+        "isToken": true
+      }
+    },
+    {
+      "add": "Runeclaw Bear",
+      "as": "card"
+    },
+    {
+      "add": "For the Common Good",
+      "spell": true,
+      "x": 1
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Indestructible"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Runeclaw Bear",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Indestructible"
+          ]
+        }
+      }
+    }
+  ]
+}

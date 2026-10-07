@@ -1,0 +1,26 @@
+{
+  "name": "Spectacular Pileup — \"lose indestructible until end of turn, then destroy all …\"",
+  "notes": "Sweep singleton (2026-10-07). The words after \", then\" were read as part of what is lost, and \"all\" in them made the parser skip the sentence. What follows \", then\" is cut off. Darksteel Myr loses indestructible.",
+  "steps": [
+    {
+      "add": "Darksteel Myr",
+      "as": "m"
+    },
+    {
+      "add": "Spectacular Pileup",
+      "spell": true
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Darksteel Myr",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Indestructible"
+          ]
+        }
+      }
+    }
+  ]
+}

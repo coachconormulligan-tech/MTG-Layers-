@@ -1,0 +1,38 @@
+{
+  "name": "Massacre Girl — each death is another -1/-1 to every other creature",
+  "notes": "Sweep singleton (2026-10-07). \"Whenever a creature dies this turn, each creature other than this card gets -1/-1\" is a delayed trigger with the same effect as the enters trigger, so each death is modelled by firing that trigger again (the sweep lists the sentence as verified by this recipe). Fired twice: the 4/4 Giant is 2/2, Massacre Girl stays 4/4.",
+  "steps": [
+    {
+      "add": "Hill Giant",
+      "as": "g"
+    },
+    {
+      "add": "Massacre Girl",
+      "as": "m"
+    },
+    {
+      "fire": "@m",
+      "trigger": 1
+    },
+    {
+      "fire": "@m",
+      "trigger": 1
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "power": 1,
+        "toughness": 1
+      }
+    },
+    {
+      "perm": "Massacre Girl",
+      "final": {
+        "power": 4,
+        "toughness": 4
+      }
+    }
+  ]
+}

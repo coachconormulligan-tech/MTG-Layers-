@@ -1,0 +1,51 @@
+{
+  "name": "Tolaria — \"loses banding and all \"bands with other\" abilities\" takes banding",
+  "notes": "Sweep singleton (2026-10-07). Same family case as Hammerheim: the sentence was skipped for containing \"all\". Benalish Hero loses banding. Shelkin Brownie (\"loses all \"bands with other\" abilities\") takes the same path.",
+  "steps": [
+    {
+      "add": "Benalish Hero",
+      "as": "hero"
+    },
+    {
+      "add": "Tolaria",
+      "as": "t"
+    },
+    {
+      "fire": "@t",
+      "activated": 1,
+      "as": "a"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@a",
+        "@hero"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Benalish Hero",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Banding"
+          ]
+        }
+      }
+    },
+    {
+      "effect": {
+        "source": "Tolaria (activated)",
+        "layer": "6",
+        "type": "remove_abilities",
+        "params": {
+          "specificAbilities": [
+            "Banding",
+            "Bands with other"
+          ]
+        }
+      }
+    }
+  ]
+}

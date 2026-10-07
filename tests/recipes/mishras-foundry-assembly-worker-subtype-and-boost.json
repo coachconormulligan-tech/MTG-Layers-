@@ -1,0 +1,57 @@
+{
+  "name": "Mishra's Foundry — becomes an Assembly-Worker, and \"target attacking Assembly-Worker gets +2/+2\" works",
+  "notes": "Sweep singleton (2026-10-07). The hyphenated type was written \"Assembly-worker\", which no type catalog knows, so the Foundry (and Mishra's Factory) became a creature with no subtype and \"target attacking Assembly-Worker\" was no subject at all. singularizeCreatureType capitalises each hyphenated part. Foundry A animates and is pumped by Foundry B: a 4/4 Assembly-Worker.",
+  "steps": [
+    {
+      "add": "Mishra's Foundry",
+      "as": "a"
+    },
+    {
+      "add": "Mishra's Foundry",
+      "as": "b"
+    },
+    {
+      "fire": "@a",
+      "activated": 1
+    },
+    {
+      "call": [
+        "toggleAttacking",
+        "@a"
+      ]
+    },
+    {
+      "fire": "@b",
+      "activated": 2,
+      "as": "pump"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@pump",
+        "@a"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Mishra's Foundry A",
+      "final": {
+        "power": 4,
+        "toughness": 4,
+        "subtypes": {
+          "$includes": [
+            "Assembly-Worker"
+          ]
+        },
+        "types": {
+          "$includes": [
+            "Land",
+            "Artifact",
+            "Creature"
+          ]
+        }
+      }
+    }
+  ]
+}

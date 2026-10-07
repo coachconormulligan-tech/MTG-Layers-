@@ -1,0 +1,46 @@
+{
+  "name": "Breach the Multiverse — \"Then each creature you control becomes a Phyrexian in addition to its other types\"",
+  "notes": "Sweep singleton (2026-10-07). Two gaps: \"Then\" opened the sentence, and the lazy subject capture ran from the start of the spell. A sentence-opening \"Then\" is dropped, and a spell's last sentence \"each X you control\" is taken as the subject. Your Bears are a Phyrexian Bear; the opponent's are not.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "mine"
+    },
+    {
+      "call": [
+        "addPlayer",
+        "Player 2"
+      ]
+    },
+    {
+      "add": "Runeclaw Bear",
+      "as": "theirs",
+      "controller": "p2"
+    },
+    {
+      "add": "Breach the Multiverse",
+      "spell": true
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "subtypes": {
+          "$includes": [
+            "Bear",
+            "Phyrexian"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Runeclaw Bear",
+      "final": {
+        "subtypes": [
+          "Bear"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "name": "Greymond, Avacyn's Stalwart — Humans have the two chosen abilities",
+  "notes": "Sweep singleton (2026-10-07). \"Humans you control have each of the chosen abilities\" produced nothing. \"Choose two abilities from among …\" is a choice like a chosen colour (setChosenAbilities, a dropdown of the pairs); the chosen pair is written into the sentence. First strike and lifelink chosen: the Human has both and not vigilance.",
+  "steps": [
+    {
+      "add": "Elite Vanguard"
+    },
+    {
+      "add": "Greymond, Avacyn's Stalwart",
+      "as": "g"
+    },
+    {
+      "call": [
+        "setChosenAbilities",
+        "@g",
+        "first strike and lifelink"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Elite Vanguard",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "First strike",
+            "Lifelink"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Elite Vanguard",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Vigilance"
+          ]
+        }
+      }
+    }
+  ]
+}

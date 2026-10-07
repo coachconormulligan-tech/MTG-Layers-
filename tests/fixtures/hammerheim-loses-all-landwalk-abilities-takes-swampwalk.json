@@ -1,0 +1,653 @@
+{
+ "name": "Hammerheim — \"loses all landwalk abilities\" takes swampwalk",
+ "notes": "Sweep singleton (2026-10-07). \"Target creature loses all landwalk abilities\" produced nothing (the keyword-loss parser skips anything with \"all\"). A family of keywords is now its own case: specificAbilities [\"Landwalk\"], which the engine matches against every \"<land>walk\" keyword. Bog Wraith loses swampwalk.",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Bog Wraith",
+    "as": "w"
+   },
+   {
+    "add": "Hammerheim",
+    "as": "h"
+   },
+   {
+    "fire": "@h",
+    "activated": 1,
+    "as": "a"
+   },
+   {
+    "call": [
+     "setTarget",
+     "@a",
+     "@w"
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Bog Wraith",
+   "final": {
+    "abilities": {
+     "$excludes": [
+      "Swampwalk"
+     ]
+    }
+   }
+  },
+  {
+   "effect": {
+    "source": "Hammerheim (activated)",
+    "layer": "6",
+    "type": "remove_abilities",
+    "params": {
+     "specificAbilities": [
+      "Landwalk"
+     ]
+    }
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "5d17210c-be39-4abc-9d4d-4f2eca9573bd",
+     "oracle_id": "508248d1-09a4-4e41-a4c9-286618e5061e",
+     "multiverse_ids": [
+      190165
+     ],
+     "mtgo_id": 32679,
+     "mtgo_foil_id": 32680,
+     "tcgplayer_id": 32558,
+     "cardmarket_id": 21132,
+     "name": "Bog Wraith",
+     "lang": "en",
+     "released_at": "2009-07-17",
+     "uri": "https://api.scryfall.com/cards/5d17210c-be39-4abc-9d4d-4f2eca9573bd",
+     "scryfall_uri": "https://scryfall.com/card/m10/86/bog-wraith?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:33:06Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/5/d/5d17210c-be39-4abc-9d4d-4f2eca9573bd.jpg?1783942386",
+      "normal": "https://cards.scryfall.io/normal/front/5/d/5d17210c-be39-4abc-9d4d-4f2eca9573bd.jpg?1783942386",
+      "large": "https://cards.scryfall.io/large/front/5/d/5d17210c-be39-4abc-9d4d-4f2eca9573bd.jpg?1783942386",
+      "png": "https://cards.scryfall.io/png/front/5/d/5d17210c-be39-4abc-9d4d-4f2eca9573bd.png?1783942386",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/5/d/5d17210c-be39-4abc-9d4d-4f2eca9573bd.jpg?1783942386",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/5/d/5d17210c-be39-4abc-9d4d-4f2eca9573bd.jpg?1783942386",
+      "thumb": "https://cards.scryfall.io/thumb/front/5/d/5d17210c-be39-4abc-9d4d-4f2eca9573bd.webp?1783942386",
+      "grid": "https://cards.scryfall.io/grid/front/5/d/5d17210c-be39-4abc-9d4d-4f2eca9573bd.webp?1783942386",
+      "display": "https://cards.scryfall.io/display/front/5/d/5d17210c-be39-4abc-9d4d-4f2eca9573bd.webp?1783942386",
+      "art": "https://cards.scryfall.io/art/front/5/d/5d17210c-be39-4abc-9d4d-4f2eca9573bd.webp?1783942386",
+      "crop": "https://cards.scryfall.io/crop/front/5/d/5d17210c-be39-4abc-9d4d-4f2eca9573bd.webp?1783942386"
+     },
+     "mana_cost": "{3}{B}",
+     "cmc": 4,
+     "type_line": "Creature — Wraith",
+     "oracle_text": "Swampwalk (This creature can't be blocked as long as defending player controls a Swamp.)",
+     "power": "3",
+     "toughness": "3",
+     "colors": [
+      "B"
+     ],
+     "color_identity": [
+      "B"
+     ],
+     "keywords": [
+      "Landwalk",
+      "Swampwalk"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "0dba38a9-6b9d-4768-9831-4e03e8970a0b",
+     "set": "m10",
+     "set_name": "Magic 2010",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/0dba38a9-6b9d-4768-9831-4e03e8970a0b",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Am10&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/m10?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/5d17210c-be39-4abc-9d4d-4f2eca9573bd/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A508248d1-09a4-4e41-a4c9-286618e5061e&unique=prints",
+     "collector_number": "86",
+     "digital": false,
+     "rarity": "uncommon",
+     "flavor_text": "She died in this swamp, and so will you.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Daarken",
+     "artist_ids": [
+      "e607a0d4-fc12-4c01-9e3f-501f5269b9cb"
+     ],
+     "illustration_id": "f020f4cd-c88c-49bd-9dad-ea016e3712f1",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 21200,
+     "penny_rank": 16579,
+     "prices": {
+      "usd": "0.13",
+      "usd_foil": "0.50",
+      "usd_etched": null,
+      "eur": "0.15",
+      "eur_foil": "0.34",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=190165&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DBog%2BWraith",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DBog%2BWraith",
+      "edhrec": "https://edhrec.com/route/?cc=Bog+Wraith"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F32558%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=21132&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/32679?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "773acde9-504c-4065-95e0-f96428f05a7d",
+     "oracle_id": "c7476beb-7923-4994-8476-bc69187ecb72",
+     "multiverse_ids": [
+      201242
+     ],
+     "mtgo_id": 33528,
+     "mtgo_foil_id": 33529,
+     "name": "Hammerheim",
+     "lang": "en",
+     "released_at": "2009-09-07",
+     "uri": "https://api.scryfall.com/cards/773acde9-504c-4065-95e0-f96428f05a7d",
+     "scryfall_uri": "https://scryfall.com/card/me3/207/hammerheim?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:29:49Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/7/7/773acde9-504c-4065-95e0-f96428f05a7d.jpg?1783942189",
+      "normal": "https://cards.scryfall.io/normal/front/7/7/773acde9-504c-4065-95e0-f96428f05a7d.jpg?1783942189",
+      "large": "https://cards.scryfall.io/large/front/7/7/773acde9-504c-4065-95e0-f96428f05a7d.jpg?1783942189",
+      "png": "https://cards.scryfall.io/png/front/7/7/773acde9-504c-4065-95e0-f96428f05a7d.png?1783942189",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/7/7/773acde9-504c-4065-95e0-f96428f05a7d.jpg?1783942189",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/7/7/773acde9-504c-4065-95e0-f96428f05a7d.jpg?1783942189",
+      "thumb": "https://cards.scryfall.io/thumb/front/7/7/773acde9-504c-4065-95e0-f96428f05a7d.webp?1783942189",
+      "grid": "https://cards.scryfall.io/grid/front/7/7/773acde9-504c-4065-95e0-f96428f05a7d.webp?1783942189",
+      "display": "https://cards.scryfall.io/display/front/7/7/773acde9-504c-4065-95e0-f96428f05a7d.webp?1783942189",
+      "art": "https://cards.scryfall.io/art/front/7/7/773acde9-504c-4065-95e0-f96428f05a7d.webp?1783942189",
+      "crop": "https://cards.scryfall.io/crop/front/7/7/773acde9-504c-4065-95e0-f96428f05a7d.webp?1783942189"
+     },
+     "mana_cost": "",
+     "cmc": 0,
+     "type_line": "Legendary Land",
+     "oracle_text": "{T}: Add {R}.\n{T}: Target creature loses all landwalk abilities until end of turn.",
+     "colors": [],
+     "color_identity": [
+      "R"
+     ],
+     "keywords": [],
+     "produced_mana": [
+      "R"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "b65fb1f2-4768-4c70-8fdf-30a069ad592e",
+     "set": "me3",
+     "set_name": "Masters Edition III",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/b65fb1f2-4768-4c70-8fdf-30a069ad592e",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Ame3&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/me3?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/773acde9-504c-4065-95e0-f96428f05a7d/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ac7476beb-7923-4994-8476-bc69187ecb72&unique=prints",
+     "collector_number": "207",
+     "digital": true,
+     "rarity": "uncommon",
+     "flavor_text": "\"'Tis distance lends enchantment to the view,/ And robes the mountain in its azure hue.\"\n—Thomas Campbell, \"Pleasures of Hope\"",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Bryon Wackwitz",
+     "artist_ids": [
+      "c99a114b-c679-47df-a6e9-4f9d3ad5b114"
+     ],
+     "illustration_id": "6650c074-ccc4-405a-9967-55d56b56add7",
+     "border_color": "black",
+     "frame": "1997",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 9677,
+     "penny_rank": 2135,
+     "prices": {
+      "usd": null,
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": null,
+      "tix": "0.05"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=201242&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DHammerheim",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DHammerheim",
+      "edhrec": "https://edhrec.com/route/?cc=Hammerheim"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fmagic%2Fproduct%3FproductLineName%3Dmagic%26q%3DHammerheim%26view%3Dgrid",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products/Search?referrer=scryfall&searchString=Hammerheim&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/33528?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [
+   {
+    "id": "act_perm_2_1_3",
+    "kind": "activated",
+    "pseudoKind": "ability",
+    "sourceId": "perm_2",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 1,
+    "timestamp": 3,
+    "effectText": "Target creature loses all landwalk abilities until end of turn.",
+    "fullText": "{T}: Target creature loses all landwalk abilities until end of turn.",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "guessedTargetSubjects": [],
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Bog Wraith",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Wraith"
+       ],
+       "power": 3,
+       "toughness": 3,
+       "colors": [
+        "B"
+       ],
+       "abilities": [
+        "Swampwalk"
+       ],
+       "oracleText": "Swampwalk",
+       "owner": "player_0",
+       "controller": "player_0"
+      }
+     ],
+     [
+      "perm_2",
+      {
+       "name": "Hammerheim",
+       "types": [
+        "Land"
+       ],
+       "supertypes": [
+        "Legendary"
+       ],
+       "subtypes": [],
+       "power": null,
+       "toughness": null,
+       "colors": [],
+       "abilities": [
+        "{T}: Add {R}.",
+        "{T}: Target creature loses all landwalk abilities until end of turn."
+       ],
+       "oracleText": "{T}: Add {R}.\n{T}: Target creature loses all landwalk abilities until end of turn.",
+       "owner": "player_0",
+       "controller": "player_0"
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Bog Wraith",
+       "imageUri": "https://cards.scryfall.io/small/front/5/d/5d17210c-be39-4abc-9d4d-4f2eca9573bd.jpg?1783942386",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Wraith"
+       ],
+       "printedPower": 3,
+       "printedToughness": 3,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Hammerheim",
+       "imageUri": "https://cards.scryfall.io/small/front/7/7/773acde9-504c-4065-95e0-f96428f05a7d.jpg?1783942189",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Land"
+       ],
+       "printedSupertypes": [
+        "Legendary"
+       ],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 2
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    },
+    "primaryTarget": "perm_1",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 4,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null
+   }
+  ],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Bog Wraith",
+    "final": {
+     "name": "Bog Wraith",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Wraith"
+     ],
+     "power": 3,
+     "toughness": 3,
+     "colors": [
+      "B"
+     ],
+     "abilities": []
+    },
+    "changedBy": {
+     "6": [
+      "Hammerheim (activated)"
+     ]
+    }
+   },
+   {
+    "perm": "Hammerheim",
+    "final": {
+     "name": "Hammerheim",
+     "controller": "player_0",
+     "supertypes": [
+      "Legendary"
+     ],
+     "types": [
+      "Land"
+     ],
+     "subtypes": [],
+     "power": null,
+     "toughness": null,
+     "colors": [],
+     "abilities": [
+      "{T}: Add {R}.",
+      "{T}: Target creature loses all landwalk abilities until end of turn."
+     ]
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "6": [
+    "Hammerheim (activated)"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Hammerheim (activated)",
+    "layer": "6",
+    "type": "remove_abilities",
+    "scope": "targeted",
+    "target": "Bog Wraith",
+    "params": {
+     "specificAbilities": [
+      "Landwalk"
+     ]
+    }
+   }
+  ]
+ }
+}

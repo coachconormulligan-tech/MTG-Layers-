@@ -1,0 +1,42 @@
+{
+  "name": "Radiant Destiny — with the city's blessing, creatures of the chosen type also have vigilance",
+  "notes": "Sweep singleton (2026-10-07). \"As long as you have the city's blessing, they also have vigilance\" produced nothing, and no Ascend card read its blessing condition (the effect was always on). Game State has a City's Blessing toggle (hasCityBlessing); \"they\" is the subject of the sentence before, written out on a line of its own so the condition covers only the vigilance. Blessing on: Bears are 3/3 with vigilance.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "b"
+    },
+    {
+      "add": "Radiant Destiny",
+      "as": "d"
+    },
+    {
+      "call": [
+        "setChosenCreatureType",
+        "@d",
+        "Bear"
+      ]
+    },
+    {
+      "call": [
+        "updateGameState",
+        "hasCityBlessing",
+        true
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 3,
+        "toughness": 3,
+        "abilities": {
+          "$includes": [
+            "Vigilance"
+          ]
+        }
+      }
+    }
+  ]
+}

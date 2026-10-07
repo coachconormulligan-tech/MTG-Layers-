@@ -1,0 +1,46 @@
+{
+  "name": "Dragonrage — \"Until end of turn, attacking creatures you control gain \"{R}: …\"\"",
+  "notes": "Sweep singleton (2026-10-07). The duration prefix was only stripped at the start of a line; here it opens the second sentence. For spells it is now stripped there too (not before a pronoun). The attacking Bears have the firebreathing ability; the Bears at home do not.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "atk"
+    },
+    {
+      "add": "Runeclaw Bear",
+      "as": "home"
+    },
+    {
+      "call": [
+        "toggleAttacking",
+        "@atk"
+      ]
+    },
+    {
+      "add": "Dragonrage",
+      "spell": true
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "{R}: This creature gets +1/+0 until end of turn."
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Runeclaw Bear",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "{R}: This creature gets +1/+0 until end of turn."
+          ]
+        }
+      }
+    }
+  ]
+}

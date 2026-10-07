@@ -218,9 +218,9 @@ const CONDITION_PARSERS = [
   (ct) => (/\bhas\s+a\s+counter\b/.test(ct) && !/has\s+a\s+[\w+/]+\s+counter/.test(ct))
     ? (s) => Object.values(s.counters || {}).some(v => v > 0)
     : null,
-  // "has a [type] counter on it".
+  // "has a [type] counter on it" ("an ice counter" — Woolly Razorback).
   (ct) => {
-    const m = ct.match(/has\s+a\s+([\w+/]+)\s+counter\b/);
+    const m = ct.match(/has\s+an?\s+([\w+/]+)\s+counter\b/);
     if (!m) return null;
     const counterType = m[1];
     return (s) => ((s.counters && s.counters[counterType]) || 0) > 0;
@@ -259,6 +259,10 @@ const CONDITION_PARSERS = [
     : null,
   (ct) => /\b(?:it(?:'s| is)\s+not\s+your\s+turn|not\s+your\s+turn|during\s+(?:an?\s+)?opponent'?s?\s+turn)\b/.test(ct)
     ? () => { const gs = _gsGet(); return gs ? !gs.isYourTurn : true; }
+    : null,
+  // "you have the city's blessing" (Ascend): the City's Blessing toggle in Game State.
+  (ct) => /\byou have the city's blessing\b/.test(ct)
+    ? () => { const gs = _gsGet(); return gs ? !!gs.hasCityBlessing : false; }
     : null,
   (ct) => /\bno cards in hand\b/.test(ct)
     ? () => { const gs = _gsGet(); return gs ? gs.handSize === 0 : true; }
@@ -641,6 +645,14 @@ function parseCardEffects(permanent, card, opts = {}) {
   const isTokenCard = permanent.isToken || false;
   let oracleRaw = _replaceProperNounSelfRef(card.name, _stripReminderText(card.oracle_text || ''), isTokenCard);
 
+  // The result rows of a permanent's d20 table ("10—19 | It gets +1/+0 and gains deathtouch
+  // until end of turn" — Lightfoot Rogue) belong to the ability that rolls; they are parsed when
+  // it is fired with a result (see _d20Rows). Read as static text they gave every creature
+  // deathtouch, and Delina, Wild Mage made everything nonlegendary. (The lines stay, emptied.)
+  if (!/\b(?:instant|sorcery)\b/i.test(card.type_line || '')) {
+    oracleRaw = oracleRaw.split('\n').map(l => _D20_ROW_RE.test(l) ? '' : l).join('\n');
+  }
+
   // "Enchant player" cards: treat "enchanted player controls" as "you control"
   // since we assume the user is the enchanted player.
   if (/\benchant player\b/i.test(oracleRaw)) {
@@ -882,6 +894,27 @@ function parseCardEffects(permanent, card, opts = {}) {
   // Without this, the setTypeRegex captures "Until end of turn, target X" as the filter,
   // and extractTargetInfo() fails to detect "target" (it only checks at the string start).
   oracle = oracle.replace(/^Until end of turn,\s*/gim, '');
+  // The same at the start of a later sentence on the line ("Add {R} for each attacking creature
+  // you control. Until end of turn, attacking creatures you control gain "…"" — Dragonrage).
+  // Spells only, and not before a pronoun: on a permanent the sentence belongs to an ability
+  // that is parsed when it is fired, and a pronoun's sentence is resolved with the duration on.
+  if (permanent.isSpell) {
+    oracle = oracle.replace(/(\.\s+)Until end of turn,\s*(?!(?:it|they|that|those|this|target)\b)(\w)/g, (_, pre, ch) => pre + ch.toUpperCase());
+  }
+  // "Then" opening a sentence only orders it after the one before ("Create a Heartwood token.
+  // Then this card gets +X/+0 …", "Then each creature you control becomes a Phyrexian …" —
+  // Breach the Multiverse). "Then if" is a condition and is left for its own handling.
+  // (Not inside a quoted ability, whose words are granted as written.)
+  oracle = oracle.replace(/(^|\.\s+)Then\s+(?!if\b)(\w)/gm, (whole, pre, ch, offset, full) =>
+    (full.slice(full.lastIndexOf('\n', offset) + 1, offset + 1).split('"').length - 1) % 2 ? whole : pre + ch.toUpperCase());
+
+  // "Lands you control gain all basic land types until end of turn" (Energybending) is the
+  // "are every basic land type in addition to their other types" of Prismatic Omen.
+  oracle = oracle.replace(/\b(gains?|ha(?:s|ve)) all basic land types\b/gi,
+    (_, verb) => `${/s$/i.test(verb) ? 'is' : 'are'} every basic land type in addition to ${/s$/i.test(verb) ? 'its' : 'their'} other types`);
+  // "As long as this creature has an ice counter on it, prevent all combat damage it would deal
+  // and it has defender" (Woolly Razorback): the prevention is not a characteristic.
+  oracle = oracle.replace(/^(As long as [^,\n]+,)\s*prevent all (?:combat )?damage (?:it|this (?:creature|card|permanent)) would deal and (?=it (?:has|gets)\b)/gim, '$1 ');
 
   // Normalize "this [card-type]" to "this card" so self-reference detection works for all card types.
   // e.g. "this enchantment becomes..." (Daxos' Torment), "this artifact gains...", etc.
@@ -895,6 +928,12 @@ function parseCardEffects(permanent, card, opts = {}) {
   oracle = oracle.replace(/\bwhat's\b/gi, 'what is');
   oracle = oracle.replace(/\bhere's\b/gi, 'here is');
   oracle = oracle.replace(/\bthere's\b/gi, 'there is');
+
+  // "Creatures you control of the chosen type get +1/+1. As long as you have the city's blessing,
+  // they also have vigilance." (Radiant Destiny): "they" are the subject of the sentence before.
+  oracle = oracle.replace(/(^|\n)([^.\n]+?)(\s+gets?\s+[+-]\d+\/[+-]\d+\.\s+)As long as ([^,.\n]+), they also (have|gain) ([^.\n]+)\./gi,
+    // (On a line of its own: a condition belongs to every effect of its line.)
+    (_, pre, subject, boost, cond, verb, what) => `${pre}${subject}${boost.trimEnd()}\n${subject} ${verb} ${what} as long as ${cond}.`);
 
   // "Untap all attacking creatures. They gain trample …" → "All attacking creatures gain trample …"
   oracle = _resolveTheyPronoun(oracle);
@@ -1258,6 +1297,9 @@ function parseCardEffects(permanent, card, opts = {}) {
   // "As long as" patterns handle it uniformly. Scryfall uses "During your turn" for many cards
   // (e.g. Ahn-Crop Invader, Bilbo's Ring, Cloud). Handles compound forms like
   // "During your turn, as long as [X], [effect]" → "As long as it is your turn and [X], [effect]"
+  // "During your turn, <A>. During turns other than yours, <B>." (Angry Mob): two conditions,
+  // so two lines — a condition belongs to every effect of its line.
+  oracle = oracle.replace(/^(During your turn,[^.\n]*\.)[ \t]+(?=During turns other than yours,)/gim, '$1\n');
   oracle = oracle.replace(/^During your turn,\s*as long as\s+/gim, 'As long as it is your turn and ');
   oracle = oracle.replace(/^During your turn,\s*/gim, 'As long as it is your turn, ');
   oracle = oracle.replace(/^During turns other than yours,\s*/gim, 'As long as it is not your turn, ');
@@ -2003,6 +2045,15 @@ function parseCardEffects(permanent, card, opts = {}) {
     if (copyClauseSpans.some(r => _rsStart < r.end && _rsEnd > r.start)) continue;
     const filterText = removeSupertypeMatch[1].trim();
     if (!filterText || !filterReferencesPermanents(filterText)) continue;
+    // "Create a … token that's a copy of that creature, except it's not legendary" (Delina, Wild
+    // Mage) describes the token, not anything on the battlefield.
+    // The rest of that sentence ("…, is a Reflection in addition to its other types, and has
+    // haste" — The Apprentice's Folly) is about the token too.
+    if (/\bcreates?\b[^.]*\btokens?\b/i.test(filterText)) {
+      const _sentenceEnd = oracle.indexOf('.', _rsEnd);
+      copyClauseSpans.push({ start: _rsStart, end: _sentenceEnd < 0 ? oracle.length : _sentenceEnd });
+      continue;
+    }
     const parsedSupertype = SUPERTYPE_BY_WORD[removeSupertypeMatch[2].toLowerCase()];
     const bResult = buildAppliesToFromText(filterText);
     const { fn, desc, isSelf, isTargeted, needsTargetSelection, maxTargets } = bResult;
@@ -2085,7 +2136,9 @@ function parseCardEffects(permanent, card, opts = {}) {
   }
 
   // Changeling keyword ability → Layer 4 self-effect granting all creature types.
-  if (/\bchangeling\b/i.test(oracle) &&
+  // (The keyword on a line of its own or in a keyword list — not "create a … token with
+  // changeling", which left Maskwood Nexus itself every creature type and its creatures not.)
+  if (/^(?:[a-z ]+,\s*)*changeling\s*(?:,|$)/im.test(oracle) &&
       !effects.some(e => e.type === EFFECT_TYPE.ADD_TYPE && e.params.gainsAllCreatureTypes && e.selfTarget && e.sourceId === permanent.id)) {
     pushEff('4', EFFECT_TYPE.ADD_TYPE, { gainsAllCreatureTypes: true },
       { appliesTo: null, scope: 'targeted', selfTarget: true },
@@ -2186,6 +2239,11 @@ function parseCardEffects(permanent, card, opts = {}) {
       // read as part of the whole card; that sentence is parsed when the ability fires.
       else if (lastSentence !== filterText && /^this (?:card|creature|permanent|token|artifact|land|enchantment|vehicle|equipment)$/i.test(lastSentence) &&
                !_isInTriggeredSentence(_atStart + addTypeMatch[0].search(/\S/)) && !_isInActivatedEffect(_atStart)) filterText = lastSentence;
+      // "…Put those cards onto the battlefield under your control. Then each creature you control
+      // becomes a Phyrexian in addition …" (Breach the Multiverse): a spell's last sentence about
+      // everything of one kind you control.
+      else if (lastSentence !== filterText && permanent.isSpell && /^(?:each|all)\s+[\w-]+$/i.test(lastSentence) &&
+               /\byou control\s+(?:are|is|becomes?)\b/i.test(addTypeMatch[0])) filterText = lastSentence.replace(/^(?:each|all)\s+/i, '');
     }
     // Skip triggered/activated ability text that matched the regex
     const _atFLower = filterText.toLowerCase();
@@ -2457,6 +2515,10 @@ function parseCardEffects(permanent, card, opts = {}) {
     // Strip "until end of turn" / "until your next turn" duration clauses from becomesText.
     // Without this, "creature until end of turn" adds "Until", "End", "Turn" as fake subtypes.
     becomesText = becomesText.replace(/\s+until\s+(?:end\s+of\s+(?:turn|combat|your\s+next\s+turn)|your\s+next\s+turn|the\s+end\s+of\s+(?:turn|combat)|beginning\s+of\s+(?:your|their)\s+next\s+\w+|this\s+(?:creature|card|permanent)\s+leaves\s+the\s+battlefield|its\s+controller's\s+next\s+untap\s+step|the\s+next\s+end\s+step)/i, '').trim();
+
+    // "…becomes a 2/2 blue and black Horror artifact creature until end of turn and can't be
+    // blocked this turn" (Dimir Keyrune): the evasion is not a characteristic.
+    becomesText = becomesText.replace(/\s+and\s+can't\s+be\s+blocked(?:\s+this\s+turn)?$/i, '').trim();
 
     // Strip trailing "and gets +X/+Y" (e.g. "becomes green and gets +1/+0") so the "get" skip-word
     // doesn't abort the whole match. The boost itself is handled separately by boostRegex.
@@ -3503,11 +3565,27 @@ function parseCardEffects(permanent, card, opts = {}) {
     let countTarget = cdaPlusMatch[3].trim().replace(/\.$/, '');
     const isGraveyard = countTarget.toLowerCase().includes('graveyard') || countTarget.toLowerCase().includes('exile');
     const cleanTarget = countTarget.replace(/\s+you control$/i, '').replace(/\s+in your graveyard$/i, '').replace(/\s+in all graveyards$/i, '');
+    const cdaPlusCond = _getConditionForPos(cdaPlusMatch.index);
     pushEff('7a', EFFECT_TYPE.CDA_PT,
       { userAdjustable: isGraveyard, isGraveyardCount: isGraveyard, forEachDesc: cleanTarget, compute: null, cdaBaseValue: baseVal,
         ...(cdaPlusMatch[2] ? { cdaMultiplier: 2 } : {}) },
       _cdaSelfCtx,
-      `P/T equal to ${baseVal} plus ${cdaPlusMatch[2] ? 'twice ' : ''}the number of ${countTarget}.`);
+      `P/T equal to ${baseVal} plus ${cdaPlusMatch[2] ? 'twice ' : ''}the number of ${countTarget}.`,
+      // "During your turn, …" (Angry Mob).
+      cdaPlusCond ? { asLongAsCondition: cdaPlusCond } : {});
+  }
+
+  // "During turns other than yours, this card's power and toughness are each 2." (Angry Mob):
+  // the other half of that characteristic-defining ability, a plain number.
+  const cdaFixedRegex = /(?:^|\.|\n)\s*(?:\x04\d+\x04)?this (?:card|creature|permanent)'s power and toughness are each (\d+)\s*(?:\.|$)/gmi;
+  let cdaFixedMatch;
+  while ((cdaFixedMatch = cdaFixedRegex.exec(oracle)) !== null) {
+    if (_cdaIsQuoted(cdaFixedMatch.index)) continue;
+    const n = parseInt(cdaFixedMatch[1]);
+    const cdaFixedCond = _getConditionForPos(cdaFixedMatch.index);
+    pushEff('7a', EFFECT_TYPE.SET_PT, { power: n, toughness: n }, _cdaSelfCtx,
+      `Power and toughness are each ${n}.`,
+      { isCDA: true, ...(cdaFixedCond ? { asLongAsCondition: cdaFixedCond } : {}) });
   }
 
   // Asymmetric CDA: "power is equal to N of X and its toughness is that plus M" (Tarmogoyf-like).
@@ -4073,6 +4151,15 @@ function parseCardEffects(permanent, card, opts = {}) {
     const _ftEnd = ftMatch.index + ftMatch[0].length;
     if (addTypeMatchRanges.some(r => (copyClauseSpans.includes(r) ? ftMatch.index : _ftStart) < r.end && _ftEnd > r.start)) continue;
     let filterText = _lastSentenceTargetSubject(ftMatch[1].trim());
+    // "Add {R} for each attacking creature you control. Attacking creatures you control gain "…""
+    // (Dragonrage): a spell's sentence about a kind of permanent you control, after sentences
+    // that name nothing it could be about, is its own subject.
+    if (permanent.isSpell && /\.\s/.test(filterText) && /\byou control\s+(?:have|gain)\s+"/i.test(ftMatch[0])) {
+      const _ftLast = filterText.split(/\.\s+/).pop().trim();
+      const _ftEarlier = filterText.slice(0, filterText.length - _ftLast.length);
+      if (/^(?:(?:attacking|blocking|other|tapped|untapped)\s+)*[\w-]+$/i.test(_ftLast) && filterReferencesPermanents(_ftLast) &&
+          !/\b(?:target|creates?|tokens?|cards?|choose)\b/i.test(_ftEarlier)) filterText = _ftLast;
+    }
     const abilityText = ftMatch[2].trim().replace(/,$/, '').trim();
     // A grant made by a permanent's triggered ability ('At end of combat, … Each of those
     // creatures gains "…"' — Dread Wight) happens when the trigger is fired, not statically.
@@ -4220,9 +4307,15 @@ function parseCardEffects(permanent, card, opts = {}) {
   while ((losesSpecificMatch = losesSpecificRegex.exec(oracle)) !== null) {
     const filterText = losesSpecificMatch[1].trim();
     const lostText = losesSpecificMatch[2].trim().toLowerCase()
+      // "…lose indestructible until end of turn, then destroy all creatures and Vehicles"
+      // (Spectacular Pileup): what happens next is not part of what is lost.
+      .replace(/,\s+then\s+.*$/, '')
       .replace(/\s+(?:until end of turn|until your next turn|for as long as[^.]*)\s*$/, '');
     // Skip if this looks like "loses all abilities" or "loses all creature types"
     if (lostText.includes('all ')) continue;
+    // 'has "… you don't lose this mana as steps and phases end."' (Mark of Sakiko): words of a
+    // quoted ability, and a player not losing something.
+    if ((filterText.split('"').length - 1) % 2 || /\b(?:don't|doesn't|can't)$/i.test(filterText)) continue;
     // A quoted ability is handled by losesQuotedRegex below.
     if (lostText.startsWith('"')) continue;
     // "target opponent loses 1 life", "loses the game": a player losing something, not an ability.
@@ -4252,6 +4345,28 @@ function parseCardEffects(permanent, card, opts = {}) {
       if (matchCond) eff.asLongAsCondition = matchCond;
       _applyTargetInfo(eff, _lsBResult, fn);
     }
+  }
+
+  // ---- A family of keywords lost at once: "loses all landwalk abilities" (Hammerheim),
+  // "loses all "bands with other" abilities" (Shelkin Brownie), "loses banding and all "bands
+  // with other" abilities" (Tolaria). ----
+  const losesFamilyRegex = /(?:^|[.;])\s*([^.;\n"]+?)\s+loses?\s+(banding\s+and\s+)?all\s+(landwalk|"bands with other")\s+abilities/gmi;
+  let losesFamilyMatch;
+  while ((losesFamilyMatch = losesFamilyRegex.exec(oracle)) !== null) {
+    if (_isInActivatedEffect(losesFamilyMatch.index) || _isInTriggeredSentence(losesFamilyMatch.index)) continue;
+    const filterText = stripDurationPrefix(losesFamilyMatch[1].trim());
+    if (!filterReferencesPermanents(filterText)) continue;
+    const abilities = [];
+    if (losesFamilyMatch[2]) abilities.push('Banding');
+    abilities.push(/landwalk/i.test(losesFamilyMatch[3]) ? 'Landwalk' : 'Bands with other');
+    const _lfResult = buildAppliesToFromText(filterText);
+    const { fn, desc, isSelf, isTargeted } = _lfResult;
+    const eff = pushEff('6', EFFECT_TYPE.REMOVE_ABILITIES, { specificAbilities: abilities },
+      { isSelf, isTargeted, fn, selfAffect: isSelf ? true : detectSelfAffect(filterText) },
+      `${filterText} loses ${abilities.join(', ')}. ${desc}`);
+    const matchCond = _getConditionForPos(losesFamilyMatch.index);
+    if (matchCond) eff.asLongAsCondition = matchCond;
+    _applyTargetInfo(eff, _lfResult, fn);
   }
 
   // ---- 'loses "[quoted ability]"' (Glittering Lion: this creature loses "Prevent all damage

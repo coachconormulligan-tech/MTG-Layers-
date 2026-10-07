@@ -1,0 +1,30 @@
+{
+  "name": "Woolly Razorback — has defender only while it has an ice counter",
+  "notes": "Sweep singleton (2026-10-07). \"As long as this creature has an ice counter on it, prevent all combat damage it would deal and it has defender\" produced nothing; and the condition table only read \"a … counter\", so \"an ice counter\" was no condition. With one ice counter it has defender.",
+  "steps": [
+    {
+      "add": "Woolly Razorback",
+      "as": "r"
+    },
+    {
+      "call": [
+        "addCounter",
+        "@r",
+        "ice",
+        1
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Woolly Razorback",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Defender"
+          ]
+        }
+      }
+    }
+  ]
+}
