@@ -1,0 +1,1697 @@
+{
+ "name": "Earthbend — a fired trigger makes the picked land a 0/0 creature with haste; unfired lines do nothing",
+ "notes": "Sweep group 7 (2026-10-07). Earthbend on all 37 cards (Conor approved the wide version). Badgermole's enters trigger, fired, takes the Forest: a 0/0 land creature with haste (counters by hand). Toph, the First Metalbender (\"At the beginning of your end step, earthbend 2\") and Rootwise Survivor are on the board unfired and must not animate anything: the set-type parser skipped trigger lines only by the words \"when\" / \"whenever\", so an \"At the beginning of …\" line leaked a static global effect (also removed from Iron Man, Futurist Paragon; Jolrael, Voice of Zhalfir; Living Brain; Obuun), and the add-type sentence split must not read a trigger line's last sentence on its own.",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Forest",
+    "as": "forest"
+   },
+   {
+    "add": "Mountain",
+    "as": "mountain"
+   },
+   {
+    "add": "Toph, the First Metalbender",
+    "as": "toph"
+   },
+   {
+    "add": "Rootwise Survivor",
+    "as": "root"
+   },
+   {
+    "add": "Badgermole",
+    "as": "mole"
+   },
+   {
+    "fire": "@mole",
+    "trigger": 0,
+    "as": "t"
+   },
+   {
+    "call": [
+     "setTarget",
+     "@t",
+     "@forest"
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Forest",
+   "final": {
+    "types": {
+     "$includes": [
+      "Land",
+      "Creature"
+     ]
+    },
+    "power": 0,
+    "toughness": 0,
+    "abilities": {
+     "$includes": [
+      "Haste"
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Mountain",
+   "final": {
+    "types": [
+     "Land"
+    ]
+   }
+  },
+  {
+   "noEffect": {
+    "source": "Toph, the First Metalbender",
+    "type": "set_pt"
+   }
+  },
+  {
+   "noEffect": {
+    "source": "Rootwise Survivor",
+    "type": "set_pt"
+   }
+  },
+  {
+   "noEffect": {
+    "source": "Rootwise Survivor",
+    "type": "add_type"
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "dce15387-4114-4b3e-91aa-5b42b45c44ac",
+     "oracle_id": "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
+     "multiverse_ids": [],
+     "name": "Forest",
+     "lang": "en",
+     "released_at": "2026-11-13",
+     "uri": "https://api.scryfall.com/cards/dce15387-4114-4b3e-91aa-5b42b45c44ac",
+     "scryfall_uri": "https://scryfall.com/card/trk/325/forest?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-08-06T02:01:15Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+      "normal": "https://cards.scryfall.io/normal/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+      "large": "https://cards.scryfall.io/large/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+      "png": "https://cards.scryfall.io/png/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.png?1785981675",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+      "thumb": "https://cards.scryfall.io/thumb/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.webp?1785981675",
+      "grid": "https://cards.scryfall.io/grid/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.webp?1785981675",
+      "display": "https://cards.scryfall.io/display/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.webp?1785981675",
+      "art": "https://cards.scryfall.io/art/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.webp?1785981675",
+      "crop": "https://cards.scryfall.io/crop/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.webp?1785981675"
+     },
+     "mana_cost": "",
+     "cmc": 0,
+     "type_line": "Basic Land — Forest",
+     "oracle_text": "({T}: Add {G}.)",
+     "colors": [],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "produced_mana": [
+      "G"
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "4fae200d-5757-4924-8cf4-ab2a5ef2ccc0",
+       "component": "combo_piece",
+       "name": "Forest",
+       "type_line": "Basic Land — Forest",
+       "uri": "https://api.scryfall.com/cards/4fae200d-5757-4924-8cf4-ab2a5ef2ccc0"
+      },
+      {
+       "object": "related_card",
+       "id": "aed8ae06-ae54-4a16-8830-6547164ce6ae",
+       "component": "combo_piece",
+       "name": "Gilt-Leaf Alchemist",
+       "type_line": "Creature — Elf Druid",
+       "uri": "https://api.scryfall.com/cards/aed8ae06-ae54-4a16-8830-6547164ce6ae"
+      }
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo",
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "b47039dc-da5a-448c-8feb-e77d458108a6",
+     "set": "trk",
+     "set_name": "Star Trek",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/b47039dc-da5a-448c-8feb-e77d458108a6",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Atrk&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/trk?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/dce15387-4114-4b3e-91aa-5b42b45c44ac/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ab34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6&unique=prints",
+     "collector_number": "325",
+     "digital": false,
+     "rarity": "common",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Bastien Grivet",
+     "artist_ids": [
+      "434a6cf6-c6bf-4f87-84db-d0a902393b9e"
+     ],
+     "illustration_id": "5a6bbfa9-4075-48e4-b06a-78e31477bd3f",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "universesbeyond"
+     ],
+     "prices": {
+      "usd": null,
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DForest",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DForest",
+      "edhrec": "https://edhrec.com/route/?cc=Forest"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fmagic%2Fproduct%3FproductLineName%3Dmagic%26q%3DForest%26view%3Dgrid",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products/Search?referrer=scryfall&searchString=Forest&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Forest&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "2a844b96-6616-4c39-8f4f-5d14a3b2bd55",
+     "oracle_id": "a3fb7228-e76b-4e96-a40e-20b5fed75685",
+     "multiverse_ids": [],
+     "name": "Mountain",
+     "lang": "en",
+     "released_at": "2026-11-13",
+     "uri": "https://api.scryfall.com/cards/2a844b96-6616-4c39-8f4f-5d14a3b2bd55",
+     "scryfall_uri": "https://scryfall.com/card/trk/323/mountain?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-08-06T02:01:06Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/2/a/2a844b96-6616-4c39-8f4f-5d14a3b2bd55.jpg?1785981666",
+      "normal": "https://cards.scryfall.io/normal/front/2/a/2a844b96-6616-4c39-8f4f-5d14a3b2bd55.jpg?1785981666",
+      "large": "https://cards.scryfall.io/large/front/2/a/2a844b96-6616-4c39-8f4f-5d14a3b2bd55.jpg?1785981666",
+      "png": "https://cards.scryfall.io/png/front/2/a/2a844b96-6616-4c39-8f4f-5d14a3b2bd55.png?1785981666",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/2/a/2a844b96-6616-4c39-8f4f-5d14a3b2bd55.jpg?1785981666",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/2/a/2a844b96-6616-4c39-8f4f-5d14a3b2bd55.jpg?1785981666",
+      "thumb": "https://cards.scryfall.io/thumb/front/2/a/2a844b96-6616-4c39-8f4f-5d14a3b2bd55.webp?1785981666",
+      "grid": "https://cards.scryfall.io/grid/front/2/a/2a844b96-6616-4c39-8f4f-5d14a3b2bd55.webp?1785981666",
+      "display": "https://cards.scryfall.io/display/front/2/a/2a844b96-6616-4c39-8f4f-5d14a3b2bd55.webp?1785981666",
+      "art": "https://cards.scryfall.io/art/front/2/a/2a844b96-6616-4c39-8f4f-5d14a3b2bd55.webp?1785981666",
+      "crop": "https://cards.scryfall.io/crop/front/2/a/2a844b96-6616-4c39-8f4f-5d14a3b2bd55.webp?1785981666"
+     },
+     "mana_cost": "",
+     "cmc": 0,
+     "type_line": "Basic Land — Mountain",
+     "oracle_text": "({T}: Add {R}.)",
+     "colors": [],
+     "color_identity": [
+      "R"
+     ],
+     "keywords": [],
+     "produced_mana": [
+      "R"
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo",
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "b47039dc-da5a-448c-8feb-e77d458108a6",
+     "set": "trk",
+     "set_name": "Star Trek",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/b47039dc-da5a-448c-8feb-e77d458108a6",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Atrk&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/trk?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/2a844b96-6616-4c39-8f4f-5d14a3b2bd55/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aa3fb7228-e76b-4e96-a40e-20b5fed75685&unique=prints",
+     "collector_number": "323",
+     "digital": false,
+     "rarity": "common",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Bastien Grivet",
+     "artist_ids": [
+      "434a6cf6-c6bf-4f87-84db-d0a902393b9e"
+     ],
+     "illustration_id": "5f46014a-fd97-4fb0-a7d4-de58c9e63f18",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "universesbeyond"
+     ],
+     "prices": {
+      "usd": null,
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DMountain",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DMountain",
+      "edhrec": "https://edhrec.com/route/?cc=Mountain"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fmagic%2Fproduct%3FproductLineName%3Dmagic%26q%3DMountain%26view%3Dgrid",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products/Search?referrer=scryfall&searchString=Mountain&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Mountain&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "70b6670f-a9fa-4d75-b0a7-c01b5071a514",
+     "oracle_id": "fbfef028-b10c-4ade-9503-d9af5b0c211b",
+     "multiverse_ids": [],
+     "resource_id": "86E925F4C27D07C82D79457D6A825F6A1C41B51A9A84A02F69A4C2FF942FC058",
+     "mtgo_id": 144986,
+     "arena_id": 97528,
+     "tcgplayer_id": 648738,
+     "cardmarket_id": 842861,
+     "name": "Toph, the First Metalbender",
+     "lang": "en",
+     "released_at": "2025-11-21",
+     "uri": "https://api.scryfall.com/cards/70b6670f-a9fa-4d75-b0a7-c01b5071a514",
+     "scryfall_uri": "https://scryfall.com/card/tla/247/toph-the-first-metalbender?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T01:08:40Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/7/0/70b6670f-a9fa-4d75-b0a7-c01b5071a514.jpg?1783904920",
+      "normal": "https://cards.scryfall.io/normal/front/7/0/70b6670f-a9fa-4d75-b0a7-c01b5071a514.jpg?1783904920",
+      "large": "https://cards.scryfall.io/large/front/7/0/70b6670f-a9fa-4d75-b0a7-c01b5071a514.jpg?1783904920",
+      "png": "https://cards.scryfall.io/png/front/7/0/70b6670f-a9fa-4d75-b0a7-c01b5071a514.png?1783904920",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/7/0/70b6670f-a9fa-4d75-b0a7-c01b5071a514.jpg?1783904920",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/7/0/70b6670f-a9fa-4d75-b0a7-c01b5071a514.jpg?1783904920",
+      "thumb": "https://cards.scryfall.io/thumb/front/7/0/70b6670f-a9fa-4d75-b0a7-c01b5071a514.webp?1783904920",
+      "grid": "https://cards.scryfall.io/grid/front/7/0/70b6670f-a9fa-4d75-b0a7-c01b5071a514.webp?1783904920",
+      "display": "https://cards.scryfall.io/display/front/7/0/70b6670f-a9fa-4d75-b0a7-c01b5071a514.webp?1783904920",
+      "art": "https://cards.scryfall.io/art/front/7/0/70b6670f-a9fa-4d75-b0a7-c01b5071a514.webp?1783904920",
+      "crop": "https://cards.scryfall.io/crop/front/7/0/70b6670f-a9fa-4d75-b0a7-c01b5071a514.webp?1783904920"
+     },
+     "mana_cost": "{1}{R}{G}{W}",
+     "cmc": 4,
+     "type_line": "Legendary Creature — Human Warrior Ally",
+     "oracle_text": "Nontoken artifacts you control are lands in addition to their other types. (They don't gain the ability to {T} for mana.)\nAt the beginning of your end step, earthbend 2. (Target land you control becomes a 0/0 creature with haste that's still a land. Put two +1/+1 counters on it. When it dies or is exiled, return it to the battlefield tapped.)",
+     "power": "3",
+     "toughness": "3",
+     "colors": [
+      "G",
+      "R",
+      "W"
+     ],
+     "color_identity": [
+      "G",
+      "R",
+      "W"
+     ],
+     "keywords": [
+      "Earthbend"
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "arena",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "118f7e64-5caa-4cb7-99a8-184f4d3a7422",
+     "set": "tla",
+     "set_name": "Avatar: The Last Airbender",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/118f7e64-5caa-4cb7-99a8-184f4d3a7422",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Atla&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/tla?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/70b6670f-a9fa-4d75-b0a7-c01b5071a514/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Afbfef028-b10c-4ade-9503-d9af5b0c211b&unique=prints",
+     "collector_number": "247",
+     "digital": false,
+     "rarity": "rare",
+     "watermark": "earthkingdom",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Eilene Cherie",
+     "artist_ids": [
+      "9f1739c4-f188-4c36-b95d-c66f0047b434"
+     ],
+     "illustration_id": "036b9e74-4046-4434-bc04-e219e6fbc692",
+     "border_color": "black",
+     "frame": "2015",
+     "frame_effects": [
+      "legendary"
+     ],
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "promo_types": [
+      "universesbeyond"
+     ],
+     "edhrec_rank": 3286,
+     "prices": {
+      "usd": "1.15",
+      "usd_foil": "1.96",
+      "usd_etched": null,
+      "eur": "0.75",
+      "eur_foil": "1.74",
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DToph%252C%2Bthe%2BFirst%2BMetalbender",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DToph%252C%2Bthe%2BFirst%2BMetalbender",
+      "edhrec": "https://edhrec.com/route/?cc=Toph%2C+the+First+Metalbender"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F648738%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=842861&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/144986?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "d843c242-088f-4131-9e52-7ee2d0db5e20",
+     "oracle_id": "e42a6880-7ca6-498d-abc9-fb7ccd08b111",
+     "multiverse_ids": [
+      673601
+     ],
+     "mtgo_id": 130523,
+     "arena_id": 92288,
+     "tcgplayer_id": 578067,
+     "cardmarket_id": 788250,
+     "name": "Rootwise Survivor",
+     "lang": "en",
+     "released_at": "2024-09-27",
+     "uri": "https://api.scryfall.com/cards/d843c242-088f-4131-9e52-7ee2d0db5e20",
+     "scryfall_uri": "https://scryfall.com/card/dsk/196/rootwise-survivor?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T02:24:09Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/d/8/d843c242-088f-4131-9e52-7ee2d0db5e20.jpg?1783909449",
+      "normal": "https://cards.scryfall.io/normal/front/d/8/d843c242-088f-4131-9e52-7ee2d0db5e20.jpg?1783909449",
+      "large": "https://cards.scryfall.io/large/front/d/8/d843c242-088f-4131-9e52-7ee2d0db5e20.jpg?1783909449",
+      "png": "https://cards.scryfall.io/png/front/d/8/d843c242-088f-4131-9e52-7ee2d0db5e20.png?1783909449",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/d/8/d843c242-088f-4131-9e52-7ee2d0db5e20.jpg?1783909449",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/d/8/d843c242-088f-4131-9e52-7ee2d0db5e20.jpg?1783909449",
+      "thumb": "https://cards.scryfall.io/thumb/front/d/8/d843c242-088f-4131-9e52-7ee2d0db5e20.webp?1783909449",
+      "grid": "https://cards.scryfall.io/grid/front/d/8/d843c242-088f-4131-9e52-7ee2d0db5e20.webp?1783909449",
+      "display": "https://cards.scryfall.io/display/front/d/8/d843c242-088f-4131-9e52-7ee2d0db5e20.webp?1783909449",
+      "art": "https://cards.scryfall.io/art/front/d/8/d843c242-088f-4131-9e52-7ee2d0db5e20.webp?1783909449",
+      "crop": "https://cards.scryfall.io/crop/front/d/8/d843c242-088f-4131-9e52-7ee2d0db5e20.webp?1783909449"
+     },
+     "mana_cost": "{3}{G}{G}",
+     "cmc": 5,
+     "type_line": "Creature — Human Survivor",
+     "oracle_text": "Haste\nSurvival — At the beginning of your second main phase, if this creature is tapped, put three +1/+1 counters on up to one target land you control. That land becomes a 0/0 Elemental creature in addition to its other types. It gains haste until your next turn.",
+     "power": "3",
+     "toughness": "4",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [
+      "Haste",
+      "Survival"
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo",
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "a111d8a9-b647-48ec-afab-2b78f92173f5",
+     "set": "dsk",
+     "set_name": "Duskmourn: House of Horror",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/a111d8a9-b647-48ec-afab-2b78f92173f5",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Adsk&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/dsk?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/d843c242-088f-4131-9e52-7ee2d0db5e20/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ae42a6880-7ca6-498d-abc9-fb7ccd08b111&unique=prints",
+     "collector_number": "196",
+     "digital": false,
+     "rarity": "uncommon",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Joseph Weston",
+     "artist_ids": [
+      "50365a81-fa9f-4fcf-aa83-6a57c63ad43e"
+     ],
+     "illustration_id": "8409fe20-e675-4758-aaf7-0bf908adb599",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 23552,
+     "preview": {
+      "source": "ZMainCharacter",
+      "source_uri": "https://twitter.com/zmaincharacter/status/1833175587135050044?s=46",
+      "previewed_at": "2024-09-09"
+     },
+     "prices": {
+      "usd": "0.12",
+      "usd_foil": "0.17",
+      "usd_etched": null,
+      "eur": "0.09",
+      "eur_foil": "0.06",
+      "tix": "0.05"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=673601&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DRootwise%2BSurvivor",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DRootwise%2BSurvivor",
+      "edhrec": "https://edhrec.com/route/?cc=Rootwise+Survivor"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F578067%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=788250&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/130523?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 4,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_5",
+    "scryfallData": {
+     "object": "card",
+     "id": "aabbd420-b7fc-496f-9168-bad823d51d9e",
+     "oracle_id": "2084a7f6-226b-4fb4-a30e-703f674d33b4",
+     "multiverse_ids": [],
+     "resource_id": "01C56BECDA1200E2E275CD7395CBF240114DD14F64FBD08BFDDDB521150F640A",
+     "mtgo_id": 144816,
+     "arena_id": 97443,
+     "tcgplayer_id": 649607,
+     "cardmarket_id": 844427,
+     "name": "Badgermole",
+     "lang": "en",
+     "released_at": "2025-11-21",
+     "uri": "https://api.scryfall.com/cards/aabbd420-b7fc-496f-9168-bad823d51d9e",
+     "scryfall_uri": "https://scryfall.com/card/tla/166/badgermole?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T01:09:08Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/a/a/aabbd420-b7fc-496f-9168-bad823d51d9e.jpg?1783904948",
+      "normal": "https://cards.scryfall.io/normal/front/a/a/aabbd420-b7fc-496f-9168-bad823d51d9e.jpg?1783904948",
+      "large": "https://cards.scryfall.io/large/front/a/a/aabbd420-b7fc-496f-9168-bad823d51d9e.jpg?1783904948",
+      "png": "https://cards.scryfall.io/png/front/a/a/aabbd420-b7fc-496f-9168-bad823d51d9e.png?1783904948",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/a/a/aabbd420-b7fc-496f-9168-bad823d51d9e.jpg?1783904948",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/a/a/aabbd420-b7fc-496f-9168-bad823d51d9e.jpg?1783904948",
+      "thumb": "https://cards.scryfall.io/thumb/front/a/a/aabbd420-b7fc-496f-9168-bad823d51d9e.webp?1783904948",
+      "grid": "https://cards.scryfall.io/grid/front/a/a/aabbd420-b7fc-496f-9168-bad823d51d9e.webp?1783904948",
+      "display": "https://cards.scryfall.io/display/front/a/a/aabbd420-b7fc-496f-9168-bad823d51d9e.webp?1783904948",
+      "art": "https://cards.scryfall.io/art/front/a/a/aabbd420-b7fc-496f-9168-bad823d51d9e.webp?1783904948",
+      "crop": "https://cards.scryfall.io/crop/front/a/a/aabbd420-b7fc-496f-9168-bad823d51d9e.webp?1783904948"
+     },
+     "mana_cost": "{4}{G}",
+     "cmc": 5,
+     "type_line": "Creature — Badger Mole",
+     "oracle_text": "When this creature enters, earthbend 2. (Target land you control becomes a 0/0 creature with haste that's still a land. Put two +1/+1 counters on it. When it dies or is exiled, return it to the battlefield tapped.)\nCreatures you control with +1/+1 counters on them have trample.",
+     "power": "4",
+     "toughness": "4",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [
+      "Earthbend"
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "arena",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "118f7e64-5caa-4cb7-99a8-184f4d3a7422",
+     "set": "tla",
+     "set_name": "Avatar: The Last Airbender",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/118f7e64-5caa-4cb7-99a8-184f4d3a7422",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Atla&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/tla?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/aabbd420-b7fc-496f-9168-bad823d51d9e/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A2084a7f6-226b-4fb4-a30e-703f674d33b4&unique=prints",
+     "collector_number": "166",
+     "digital": false,
+     "rarity": "common",
+     "watermark": "earthkingdom",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Matteo Bassini",
+     "artist_ids": [
+      "f7183a8d-4833-4a89-8da9-f6024851982b"
+     ],
+     "illustration_id": "aa8ab23f-a957-4a26-bd0e-e569fdcb56b4",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "promo_types": [
+      "universesbeyond"
+     ],
+     "edhrec_rank": 4068,
+     "prices": {
+      "usd": "0.17",
+      "usd_foil": "0.27",
+      "usd_etched": null,
+      "eur": "0.04",
+      "eur_foil": "0.06",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DBadgermole",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DBadgermole",
+      "edhrec": "https://edhrec.com/route/?cc=Badgermole"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F649607%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=844427&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/144816?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 5,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [
+   {
+    "id": "trig_perm_5_0_6",
+    "kind": "trigger",
+    "pseudoKind": "ability",
+    "sourceId": "perm_5",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 0,
+    "timestamp": 6,
+    "effectText": "Target land you control becomes a 0/0 creature with haste that's still a land.",
+    "xValue": null,
+    "hasXValue": false,
+    "linkedCards": null,
+    "fullText": "When this creature enters, earthbend 2.",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "guessedTargetSubjects": [],
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Forest",
+       "types": [
+        "Land"
+       ],
+       "supertypes": [
+        "Basic"
+       ],
+       "subtypes": [
+        "Forest"
+       ],
+       "power": null,
+       "toughness": null,
+       "abilities": [
+        "{T}: Add {G}."
+       ],
+       "colors": [],
+       "manaValue": 0,
+       "manaCost": "",
+       "isCreature": false,
+       "isToken": false,
+       "oracleText": "",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "{T}: Add {G}."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_2",
+      {
+       "name": "Mountain",
+       "types": [
+        "Land"
+       ],
+       "supertypes": [
+        "Basic"
+       ],
+       "subtypes": [
+        "Mountain"
+       ],
+       "power": null,
+       "toughness": null,
+       "abilities": [
+        "{T}: Add {R}."
+       ],
+       "colors": [],
+       "manaValue": 0,
+       "manaCost": "",
+       "isCreature": false,
+       "isToken": false,
+       "oracleText": "",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "{T}: Add {R}."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_3",
+      {
+       "name": "Toph, the First Metalbender",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [
+        "Legendary"
+       ],
+       "subtypes": [
+        "Human",
+        "Warrior",
+        "Ally"
+       ],
+       "power": 3,
+       "toughness": 3,
+       "abilities": [
+        "Nontoken artifacts you control are lands in addition to their other types.",
+        "At the beginning of your end step, earthbend 2."
+       ],
+       "colors": [
+        "G",
+        "R",
+        "W"
+       ],
+       "manaValue": 4,
+       "manaCost": "{1}{R}{G}{W}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "Nontoken artifacts you control are lands in addition to their other types.\nAt the beginning of your end step, earthbend 2.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "Nontoken artifacts you control are lands in addition to their other types.",
+        "At the beginning of your end step, earthbend 2."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_4",
+      {
+       "name": "Rootwise Survivor",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Human",
+        "Survivor"
+       ],
+       "power": 3,
+       "toughness": 4,
+       "abilities": [
+        "Haste",
+        "Survival — At the beginning of your second main phase, if this creature is tapped, put three +1/+1 counters on up to one target land you control. That land becomes a 0/0 Elemental creature in addition to its other types. It gains haste until your next turn."
+       ],
+       "colors": [
+        "G"
+       ],
+       "manaValue": 5,
+       "manaCost": "{3}{G}{G}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "Haste\nSurvival — At the beginning of your second main phase, if this creature is tapped, put three +1/+1 counters on up to one target land you control. That land becomes a 0/0 Elemental creature in addition to its other types. It gains haste until your next turn.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "Haste",
+        "Survival — At the beginning of your second main phase, if this creature is tapped, put three +1/+1 counters on up to one target land you control. That land becomes a 0/0 Elemental creature in addition to its other types. It gains haste until your next turn."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_5",
+      {
+       "name": "Badgermole",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Badger",
+        "Mole"
+       ],
+       "power": 4,
+       "toughness": 4,
+       "abilities": [
+        "When this creature enters, earthbend 2.",
+        "Creatures you control with +1/+1 counters on them have trample."
+       ],
+       "colors": [
+        "G"
+       ],
+       "manaValue": 5,
+       "manaCost": "{4}{G}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "When this creature enters, earthbend 2.\nCreatures you control with +1/+1 counters on them have trample.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "When this creature enters, earthbend 2.",
+        "Creatures you control with +1/+1 counters on them have trample."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Forest",
+       "imageUri": "https://cards.scryfall.io/small/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Land"
+       ],
+       "printedSupertypes": [
+        "Basic"
+       ],
+       "printedSubtypes": [
+        "Forest"
+       ],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Mountain",
+       "imageUri": "https://cards.scryfall.io/small/front/2/a/2a844b96-6616-4c39-8f4f-5d14a3b2bd55.jpg?1785981666",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Land"
+       ],
+       "printedSupertypes": [
+        "Basic"
+       ],
+       "printedSubtypes": [
+        "Mountain"
+       ],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Toph, the First Metalbender",
+       "imageUri": "https://cards.scryfall.io/small/front/7/0/70b6670f-a9fa-4d75-b0a7-c01b5071a514.jpg?1783904920",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [
+        "Legendary"
+       ],
+       "printedSubtypes": [
+        "Human",
+        "Warrior",
+        "Ally"
+       ],
+       "printedPower": 3,
+       "printedToughness": 3,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Rootwise Survivor",
+       "imageUri": "https://cards.scryfall.io/small/front/d/8/d843c242-088f-4131-9e52-7ee2d0db5e20.jpg?1783909449",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Human",
+        "Survivor"
+       ],
+       "printedPower": 3,
+       "printedToughness": 4,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_5",
+       "name": "Badgermole",
+       "imageUri": "https://cards.scryfall.io/small/front/a/a/aabbd420-b7fc-496f-9168-bad823d51d9e.jpg?1783904948",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Badger",
+        "Mole"
+       ],
+       "printedPower": 4,
+       "printedToughness": 4,
+       "timestamp": 5
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    },
+    "primaryTarget": "perm_1",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 7,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null
+   }
+  ],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Forest",
+    "final": {
+     "name": "Forest",
+     "controller": "player_0",
+     "supertypes": [
+      "Basic"
+     ],
+     "types": [
+      "Land",
+      "Creature"
+     ],
+     "subtypes": [
+      "Forest"
+     ],
+     "power": 0,
+     "toughness": 0,
+     "colors": [],
+     "abilities": [
+      "{T}: Add {G}.",
+      "Haste"
+     ]
+    },
+    "changedBy": {
+     "4": [
+      "Badgermole (trigger)"
+     ],
+     "6": [
+      "Badgermole (trigger)"
+     ],
+     "7b": [
+      "Badgermole (trigger)"
+     ]
+    }
+   },
+   {
+    "perm": "Mountain",
+    "final": {
+     "name": "Mountain",
+     "controller": "player_0",
+     "supertypes": [
+      "Basic"
+     ],
+     "types": [
+      "Land"
+     ],
+     "subtypes": [
+      "Mountain"
+     ],
+     "power": null,
+     "toughness": null,
+     "colors": [],
+     "abilities": [
+      "{T}: Add {R}."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Toph, the First Metalbender",
+    "final": {
+     "name": "Toph, the First Metalbender",
+     "controller": "player_0",
+     "supertypes": [
+      "Legendary"
+     ],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Human",
+      "Warrior",
+      "Ally"
+     ],
+     "power": 3,
+     "toughness": 3,
+     "colors": [
+      "G",
+      "R",
+      "W"
+     ],
+     "abilities": [
+      "Nontoken artifacts you control are lands in addition to their other types.",
+      "At the beginning of your end step, earthbend 2."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Rootwise Survivor",
+    "final": {
+     "name": "Rootwise Survivor",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Human",
+      "Survivor"
+     ],
+     "power": 3,
+     "toughness": 4,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "Haste",
+      "Survival — At the beginning of your second main phase, if this creature is tapped, put three +1/+1 counters on up to one target land you control. That land becomes a 0/0 Elemental creature in addition to its other types. It gains haste until your next turn."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Badgermole",
+    "final": {
+     "name": "Badgermole",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Badger",
+      "Mole"
+     ],
+     "power": 4,
+     "toughness": 4,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "When this creature enters, earthbend 2.",
+      "Creatures you control with +1/+1 counters on them have trample."
+     ]
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "4": [
+    "Toph, the First Metalbender",
+    "Badgermole (trigger)"
+   ],
+   "6": [
+    "Badgermole",
+    "Badgermole (trigger)"
+   ],
+   "7b": [
+    "Badgermole (trigger)"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Toph, the First Metalbender",
+    "layer": "4",
+    "type": "add_type",
+    "scope": "global",
+    "params": {
+     "subtypes": [],
+     "supertypes": [],
+     "types": [
+      "Land"
+     ]
+    }
+   },
+   {
+    "source": "Badgermole",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "global",
+    "params": {
+     "ability": "Trample"
+    }
+   },
+   {
+    "source": "Badgermole (trigger)",
+    "layer": "4",
+    "type": "add_type",
+    "scope": "targeted",
+    "target": "Forest",
+    "params": {
+     "subtypes": [],
+     "types": [
+      "Creature",
+      "Land"
+     ]
+    }
+   },
+   {
+    "source": "Badgermole (trigger)",
+    "layer": "7b",
+    "type": "set_pt",
+    "scope": "targeted",
+    "target": "Forest",
+    "params": {
+     "power": 0,
+     "toughness": 0
+    }
+   },
+   {
+    "source": "Badgermole (trigger)",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "target": "Forest",
+    "params": {
+     "ability": "Haste"
+    }
+   }
+  ]
+ }
+}

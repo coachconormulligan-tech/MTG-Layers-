@@ -1,0 +1,84 @@
+{
+  "name": "Earthbend — a fired trigger makes the picked land a 0/0 creature with haste; unfired lines do nothing",
+  "notes": "Sweep group 7 (2026-10-07). Earthbend on all 37 cards (Conor approved the wide version). Badgermole's enters trigger, fired, takes the Forest: a 0/0 land creature with haste (counters by hand). Toph, the First Metalbender (\"At the beginning of your end step, earthbend 2\") and Rootwise Survivor are on the board unfired and must not animate anything: the set-type parser skipped trigger lines only by the words \"when\" / \"whenever\", so an \"At the beginning of …\" line leaked a static global effect (also removed from Iron Man, Futurist Paragon; Jolrael, Voice of Zhalfir; Living Brain; Obuun), and the add-type sentence split must not read a trigger line's last sentence on its own.",
+  "steps": [
+    {
+      "add": "Forest",
+      "as": "forest"
+    },
+    {
+      "add": "Mountain",
+      "as": "mountain"
+    },
+    {
+      "add": "Toph, the First Metalbender",
+      "as": "toph"
+    },
+    {
+      "add": "Rootwise Survivor",
+      "as": "root"
+    },
+    {
+      "add": "Badgermole",
+      "as": "mole"
+    },
+    {
+      "fire": "@mole",
+      "trigger": 0,
+      "as": "t"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@t",
+        "@forest"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Forest",
+      "final": {
+        "types": {
+          "$includes": [
+            "Land",
+            "Creature"
+          ]
+        },
+        "power": 0,
+        "toughness": 0,
+        "abilities": {
+          "$includes": [
+            "Haste"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Mountain",
+      "final": {
+        "types": [
+          "Land"
+        ]
+      }
+    },
+    {
+      "noEffect": {
+        "source": "Toph, the First Metalbender",
+        "type": "set_pt"
+      }
+    },
+    {
+      "noEffect": {
+        "source": "Rootwise Survivor",
+        "type": "set_pt"
+      }
+    },
+    {
+      "noEffect": {
+        "source": "Rootwise Survivor",
+        "type": "add_type"
+      }
+    }
+  ]
+}

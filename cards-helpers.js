@@ -348,6 +348,43 @@ function _fireTimeCardValueAsX(text) {
   // creature …" (Cait Sith, Ogre Battlecaster): the next thing that happens.
   return text.replace(/(^|\.\s+)when you (?:exile a card this way|cast that spell),\s*(\w)/gi, (_, pre, ch) => pre + ch.toUpperCase());
 }
+/* Fire-time rewrites for an object the ability itself has just moved or made, which the
+   effect then speaks of as "that creature", "it" or "the token". The object is added to the
+   battlefield by hand and picked. Each result no longer matches its own pattern. */
+function _fireTimeNewObjectRewrites(text) {
+  // "exile up to one target instant or sorcery card …. If a card is exiled this way, that
+  // creature gains "…"" (Massimo, the Magician): assumed done, as "if you do" is.
+  text = text.replace(/(^|\.\s+)if a card is exiled this way,\s*(\w)/gi, (_, pre, ch) => pre + ch.toUpperCase());
+  // "choose target permanent card in your graveyard. … If you do, return the chosen card from
+  // your graveyard to the battlefield and it gains "…"" (Spirit-Sister's Call).
+  text = text.replace(/^choose target (creature|land|artifact|enchantment|planeswalker|permanent) card in your graveyard\.[^"]*?\breturn the chosen card from your graveyard to the battlefield and it (gains?|gets|has)\b/i,
+    (_, kind, verb) => `Target ${kind.toLowerCase()} ${verb}`);
+  // "create a token that's a copy of it. If the token isn't a creature, it becomes a 2/2 Robot
+  // Villain creature in addition to its other types." (Ultron, Artificial Malevolence).
+  text = text.replace(/\bcreate a token that's a copy of [^.]+\.\s+If (?:the|that) token (isn't an? \w+), it (becomes?)\b/i,
+    (_, cond, verb) => `Choose target token. If it ${cond}, it ${verb}`);
+  return text;
+}
+/* "Earthbend N" written out as what it does to the land: "Target land you control becomes a 0/0
+   creature with haste that's still a land." (the keyword's reminder text, which is stripped
+   before parsing). The +1/+1 counters are put on by hand, as for any other spell or ability,
+   so the number and its "where X is …" clause are dropped. Run on a card's text and on a fired
+   ability's; the result holds no "earthbend N", so running it twice changes nothing. */
+function _writeOutEarthbend(text) {
+  if (!/\bearthbend\s+(?:\d+|X)\b/i.test(text)) return text;
+  text = text
+    // Counters and untapping are not characteristics (Toph, Hardheaded Teacher; Avatar Kyoshi, Earthbender).
+    .replace(/\s*If [^,.]+, put an additional \+1\/\+1 counter on that land\./gi, '')
+    .replace(/(\bearthbend\s+(?:\d+|X)),\s*then untap that land\b/gi, '$1')
+    // "earthbend 1, then earthbend 1" (Dai Li Agents): one land a firing.
+    .replace(/(\bearthbend\s+(?:\d+|X)),\s*then earthbend\s+(?:\d+|X)\b/gi, '$1');
+  // Not "When that creature dies this turn, you earthbend 4" (Fatal Fissure): that happens later, if at all.
+  return text.replace(/(,\s*then\s+|\bthen\s+)?(?<!\byou\s)\bearthbend\s+(?:\d+|X)\b(?:,\s*where X is [^.\n]*)?/gi, (m, then, offset, whole) => {
+    const midSentence = then && then.startsWith(',');
+    const opens = midSentence || /(?:^|[.\n\u2022\u2014:])\s*$/.test(whole.slice(0, offset));
+    return (midSentence ? '. ' : '') + (opens ? 'T' : 't') + "arget land you control becomes a 0/0 creature with haste that's still a land";
+  });
+}
 // ("becomes an X/X Cat" reads "a 2/2 Cat" once X is a number.)
 function _fixNumberArticle(text) {
   return text.replace(/\b(an?) (?=(\d+)\/\d)/gi, (m, art, n) => (/^(?:8\d*|11|18)$/.test(n) ? 'an ' : 'a '));

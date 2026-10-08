@@ -1,0 +1,48 @@
+{
+  "name": "Massimo, the Magician — \"If a card is exiled this way, that creature gains\" is the creature that entered",
+  "notes": "Sweep group 7 (2026-10-07). The lead \"If a card is exiled this way,\" kept \"that creature\" from being read, so the fired trigger did nothing. The lead is dropped in the fired text (assumed done, as \"if you do\" is); the trigger takes the creature that entered as its pick and gives it the quoted ability. Massimo itself gains nothing.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Massimo, the Magician",
+      "as": "m"
+    },
+    {
+      "fire": "@m",
+      "trigger": 0,
+      "as": "t"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@t",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Whenever this creature deals combat damage to a player, copy the exiled card. You may cast the copy without paying its mana cost."
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Massimo, the Magician",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Whenever this creature deals combat damage to a player, copy the exiled card. You may cast the copy without paying its mana cost."
+          ]
+        }
+      }
+    }
+  ]
+}

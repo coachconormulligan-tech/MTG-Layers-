@@ -1,0 +1,58 @@
+{
+  "name": "Barreling Attack — +1/+1 for each creature blocking it, the number entered by hand",
+  "notes": "Sweep group 7 (2026-10-07). \"When that creature becomes blocked this turn, it gets +1/+1 until end of turn for each creature blocking it\" opened with \"When\", so on a spell it was skipped as a trigger. It is now read as the next thing that happens to the spell's target. Who blocks whom is not recorded, so the count is a number typed on the spell's row (params.byHandCount, kept as the row's cdaUserValue and saved with the board). Two blockers: the Bears are 4/4 with trample.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre"
+    },
+    {
+      "add": "Barreling Attack",
+      "as": "spell",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTarget",
+        "@spell",
+        "@bears"
+      ]
+    },
+    {
+      "call": [
+        "setCDAValue",
+        "@spell",
+        2
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 4,
+        "toughness": 4,
+        "abilities": {
+          "$includes": [
+            "Trample"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "power": 3,
+        "toughness": 3
+      }
+    }
+  ]
+}

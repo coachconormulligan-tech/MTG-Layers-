@@ -1,0 +1,94 @@
+{
+  "name": "Ondu Rising and Battle Cry — \"Whenever a creature attacks / blocks this turn, it …\" on the picked creatures",
+  "notes": "Sweep group 7 (2026-10-07). Same unread wording as Song of Blood; neither spell did anything. Ondu Rising gives the picked attacker lifelink; Battle Cry gives the picked blocker +0/+1.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre"
+    },
+    {
+      "call": [
+        "toggleAttacking",
+        "@bears"
+      ]
+    },
+    {
+      "call": [
+        "toggleBlocking",
+        "@ogre"
+      ]
+    },
+    {
+      "add": "Ondu Rising",
+      "as": "ondu",
+      "spell": true
+    },
+    {
+      "call": [
+        "setMultiTarget",
+        "@ondu",
+        0,
+        "@bears"
+      ]
+    },
+    {
+      "add": "Battle Cry",
+      "as": "cry",
+      "spell": true
+    },
+    {
+      "call": [
+        "setMultiTarget",
+        "@cry",
+        0,
+        "@ogre"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 2,
+        "toughness": 2,
+        "abilities": {
+          "$includes": [
+            "Lifelink"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "power": 2,
+        "toughness": 3,
+        "abilities": {
+          "$excludes": [
+            "Lifelink"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "power": 3,
+        "toughness": 3,
+        "abilities": {
+          "$excludes": [
+            "Lifelink"
+          ]
+        }
+      }
+    }
+  ]
+}

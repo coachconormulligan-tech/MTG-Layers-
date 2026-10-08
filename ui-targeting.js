@@ -522,14 +522,18 @@ function renderMultiTargetSelect(sourceId, maxTargets) {
     // Spell effects only affect permanents that existed before the spell (earlier timestamp),
     // but always include permanents that are already current targets — targeting persists
     // even if the card is later moved to a timestamp after the spell.
-    if (sourcePerm && sourcePerm.isManualEffect && p.timestamp >= sourcePerm.timestamp && !currentTargetIds.includes(p.id)) return false;
+    // (Not for a pick made from the board as it is now — _pickFromLiveBoard, below.)
+    if (sourcePerm && sourcePerm.isManualEffect && !sourcePerm._pickFromLiveBoard && p.timestamp >= sourcePerm.timestamp && !currentTargetIds.includes(p.id)) return false;
     return true;
   });
   const spellRestriction = effs.find(e => e.targetRestriction)?.targetRestriction;
 
   const finalStates = Battlefield.getAllFinalStates();
   const snapStates = sourcePerm?._firedAtStates || sourcePerm?._firedAtSnapshot?.states || null;
-  const lookupState = (id) => (snapStates && snapStates.has(id)) ? snapStates.get(id) : finalStates.get(id);
+  // "Whenever a creature attacks this turn, it gets …" (Song of Blood): the creatures attack
+  // after the spell has resolved, so they are picked from those marked attacking now.
+  const liveBoard = !!(sourcePerm && sourcePerm._pickFromLiveBoard);
+  const lookupState = (id) => (!liveBoard && snapStates && snapStates.has(id)) ? snapStates.get(id) : finalStates.get(id);
   const isNonTargeting = sourcePerm && sourcePerm._nonTargetingSelection;
   const sourceCtrl = sourcePerm?.controller || sourcePerm?.owner || Battlefield.activePlayerId;
 
@@ -541,8 +545,8 @@ function renderMultiTargetSelect(sourceId, maxTargets) {
       ${targets.map(t => {
         const fs = lookupState(t.id);
         const tState = fs
-          ? { types: fs.types || [], supertypes: fs.supertypes || [], subtypes: fs.subtypes || [], colors: fs.colors || [], isAllCreatureTypes: fs.isAllCreatureTypes }
-          : { types: t.printedTypes || [], supertypes: t.printedSupertypes || [], subtypes: t.printedSubtypes || [], colors: t.printedColors || [], isAllCreatureTypes: false };
+          ? { types: fs.types || [], supertypes: fs.supertypes || [], subtypes: fs.subtypes || [], colors: fs.colors || [], isAllCreatureTypes: fs.isAllCreatureTypes, ...(liveBoard ? { traits: fs.traits || t.traits || [] } : {}) }
+          : { types: t.printedTypes || [], supertypes: t.printedSupertypes || [], subtypes: t.printedSubtypes || [], colors: t.printedColors || [], isAllCreatureTypes: false, ...(liveBoard ? { traits: t.traits || [] } : {}) };
         const valid = t.id === currentVal || !spellRestriction || spellRestriction(tState);
         const tAbilities = !isNonTargeting && fs ? (fs.abilities || []) : [];
         const hasShroud = tAbilities.some(a => /\bshroud\b/i.test(a));

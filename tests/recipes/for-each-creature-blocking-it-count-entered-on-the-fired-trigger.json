@@ -1,0 +1,54 @@
+{
+  "name": "\"For each creature blocking it\" — the count is entered on the fired trigger",
+  "notes": "Sweep group 7 (2026-10-07). \"Whenever this creature becomes blocked, it gets +2/+2 until end of turn for each creature blocking it\" emitted a boost that always added 0: nothing counts blockers and there was nowhere to enter the number (the engine read the modified creature's own count box, the row showed none). The number now belongs to the fired trigger's row. Rabid Elephant (3/4) blocked by two is 7/8; Jungle Wurm (5/5), one blocker beyond the first, is 4/4.",
+  "steps": [
+    {
+      "add": "Rabid Elephant",
+      "as": "elephant"
+    },
+    {
+      "add": "Jungle Wurm",
+      "as": "wurm"
+    },
+    {
+      "fire": "@elephant",
+      "trigger": 0,
+      "as": "t1"
+    },
+    {
+      "call": [
+        "setCDAValue",
+        "@t1",
+        2
+      ]
+    },
+    {
+      "fire": "@wurm",
+      "trigger": 0,
+      "as": "t2"
+    },
+    {
+      "call": [
+        "setCDAValue",
+        "@t2",
+        1
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Rabid Elephant",
+      "final": {
+        "power": 7,
+        "toughness": 8
+      }
+    },
+    {
+      "perm": "Jungle Wurm",
+      "final": {
+        "power": 4,
+        "toughness": 4
+      }
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "name": "Ascent of the Worthy — chapter III makes the returned creature an Angel Warrior",
+  "notes": "Sweep group 7 (2026-10-07). \"That creature is an Angel Warrior in addition to its other types\" after \"Return target creature card … to the battlefield\" produced nothing on a Saga: the pronoun step that reads it (as on Rise from the Grave) ran for spells only. It now runs on Saga chapter lines. The returned creature is added by hand and picked; the effect waits for the third lore counter. Also moved Origin of Spider-Man, Phyrexian Scriptures and Vault 87: Forced Evolution from a global add-type to a pick.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Ascent of the Worthy",
+      "as": "saga"
+    },
+    {
+      "call": [
+        "addCounter",
+        "@saga",
+        "lore",
+        3
+      ]
+    },
+    {
+      "call": [
+        "setTarget",
+        "@saga",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "subtypes": {
+          "$includes": [
+            "Bear",
+            "Angel",
+            "Warrior"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "subtypes": [
+          "Giant"
+        ]
+      }
+    },
+    {
+      "effect": {
+        "source": "Ascent of the Worthy",
+        "type": "add_type",
+        "scope": "targeted"
+      }
+    }
+  ]
+}

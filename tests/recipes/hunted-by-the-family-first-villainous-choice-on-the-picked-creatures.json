@@ -1,0 +1,87 @@
+{
+  "name": "Hunted by The Family — picked creatures become 1/1 white Humans with no abilities",
+  "notes": "Sweep group 7 (2026-10-07). The spell was skipped on purpose as one branch of a villainous choice. It is now read as \"Up to four target creatures you don't control each become a 1/1 white Human creature and lose all abilities\": the creatures picked are those whose controllers took the first choice (Conor approved). Hill Giant and Elvish Mystic are picked; Gray Ogre, whose controller took the token, is not.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant",
+      "controller": "p2"
+    },
+    {
+      "add": "Elvish Mystic",
+      "as": "mystic",
+      "controller": "p2"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Hunted by The Family",
+      "as": "spell",
+      "spell": true
+    },
+    {
+      "call": [
+        "setMultiTarget",
+        "@spell",
+        0,
+        "@giant"
+      ]
+    },
+    {
+      "call": [
+        "setMultiTarget",
+        "@spell",
+        1,
+        "@mystic"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "subtypes": [
+          "Human"
+        ],
+        "power": 1,
+        "toughness": 1,
+        "colors": [
+          "W"
+        ]
+      }
+    },
+    {
+      "perm": "Elvish Mystic",
+      "final": {
+        "subtypes": [
+          "Human"
+        ],
+        "power": 1,
+        "toughness": 1,
+        "colors": [
+          "W"
+        ],
+        "abilities": []
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "subtypes": [
+          "Ogre"
+        ],
+        "power": 2,
+        "toughness": 2
+      }
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "name": "Ultron, Artificial Malevolence — the token becomes a 2/2 Robot Villain only if it isn't a creature",
+  "notes": "Sweep group 7 (2026-10-07). \"If the token isn't a creature, it becomes a 2/2 Robot Villain creature in addition to its other types\" produced nothing: tokens just made are not read as antecedents. The fired text now takes the token as a pick (restricted to tokens) and checks \"isn't a creature\" as the trigger resolves. A Sol Ring token becomes a 2/2 Robot Villain artifact creature; a Grizzly Bears token, already a creature, is left alone. Also locks in a state bug found on the way: on a board with no effects the fire-time snapshot lost isToken (getAllFinalStates fallback), so no token could be picked.",
+  "steps": [
+    {
+      "add": "Ultron, Artificial Malevolence",
+      "as": "u"
+    },
+    {
+      "add": "Sol Ring",
+      "as": "ring",
+      "opts": {
+        "isToken": true
+      }
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears",
+      "opts": {
+        "isToken": true
+      }
+    },
+    {
+      "fire": "@u",
+      "trigger": 0,
+      "as": "t1"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@t1",
+        "@ring"
+      ]
+    },
+    {
+      "fire": "@u",
+      "trigger": 0,
+      "as": "t2"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@t2",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Sol Ring",
+      "final": {
+        "types": {
+          "$includes": [
+            "Artifact",
+            "Creature"
+          ]
+        },
+        "subtypes": {
+          "$includes": [
+            "Robot",
+            "Villain"
+          ]
+        },
+        "power": 2,
+        "toughness": 2
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "subtypes": [
+          "Bear"
+        ],
+        "power": 2,
+        "toughness": 2
+      }
+    }
+  ]
+}
