@@ -174,7 +174,10 @@ const Battlefield = {
       // Strip ability word prefix (e.g. "Eminence — ") ALWAYS before any parsing.
       // All words before an em dash are flavor/ability words with no rules meaning.
       const modalHead = _modalTriggerHeader(ab);
-      const stripped = (modalHead || ab.trim()).replace(/^[^{\n.;"—\u2014]+[\u2014—]\s*/g, '');
+      const stripped = (modalHead || ab.trim()).replace(/^[^{\n.;"—\u2014]+[\u2014—]\s*/g, '')
+        // A Spacecraft's station line ("2+ | At the beginning of combat on your turn, …" —
+        // Synthesizer Labship) is the ability after its "N+ | " label.
+        .replace(/^\d+\+\s*\|\s*/, '');
       // "Whenever this card becomes blocked, choose one —" followed by "• …" lines (Bill Ferny,
       // Bree Swindler): one trigger whose modes are offered as options, each fired on its own.
       if (modalHead) {
@@ -554,6 +557,8 @@ const Battlefield = {
     parsedEffectText = parsedEffectText.replace(/^if\s+this\s+(land|permanent|creature|artifact|enchantment)\s+[^,]+,\s*it\s+(?=becomes?\b)/i, 'This $1 ');
     parsedEffectText = parsedEffectText.replace(/^if\s+[^,]+,\s*/i, '');
     parsedEffectText = _fireTimeBecomesRewrites(parsedEffectText, this.players.length);
+    parsedEffectText = _writeOutEarthbend(parsedEffectText);
+    parsedEffectText = _fireTimeNewObjectRewrites(parsedEffectText);
     const cardValueText = _fireTimeCardValueAsX(parsedEffectText);
     if (cardValueText) parsedEffectText = cardValueText;
     // Strip "Activate only if/when/as …" restriction — already enforced at fire time, should not
@@ -2886,7 +2891,7 @@ const Battlefield = {
     const _fallback = (p) => ({ name: p.name, types: p.printedTypes, supertypes: p.printedSupertypes,
       subtypes: p.printedSubtypes || [], power: p.printedPower, toughness: p.printedToughness,
       colors: p.printedColors || [], abilities: p.printedAbilities || [], oracleText: p.oracleText || '',
-      owner: p.owner || 'player_0', controller: p.owner || 'player_0' });
+      owner: p.owner || 'player_0', controller: p.owner || 'player_0', isToken: !!p.isToken });
     const hasTraits = realPerms.some(rp => rp.traits && rp.traits.length > 0);
     if (realPerms.length === 0) { this._cachedFinalStates = new Map(); this._cachedFinalStatesVersion = this._cacheVersion; return this._cachedFinalStates; }
     if (this.effects.length === 0 && !hasTraits) {
@@ -3374,6 +3379,7 @@ const Battlefield = {
         effectText: (p.hasXValue && p.originalOracleText) || p.oracleText || '',
         xValue: p.hasXValue ? (p.xValue ?? null) : null,
         hasXValue: !!p.hasXValue,
+        cdaUserValue: p.cdaUserValue ?? null,
         linkedCards: (p.linkedCards && p.linkedCards.length) ? p.linkedCards : null,
         fullText: p.abilityFullText || '',
         chosenColor: p.chosenColor || null,
@@ -3578,6 +3584,7 @@ const Battlefield = {
         pseudo.originalCard = { name: pseudo.name, oracle_text: pseudo.oracleText, type_line: 'Instant', colors: [], cmc: 0 };
       }
       if (f.xValue != null && pseudo.hasXValue) this.setXValue(pseudo.id, f.xValue);
+      if (f.cdaUserValue != null) pseudo.cdaUserValue = f.cdaUserValue;
       for (const lc of f.linkedCards || []) this.addLinkedCard(pseudo.id, lc);
       if (f.additionalCostPaid) this.setAdditionalCostPaid(pseudo.id, true);
       if (f.additionalCostPaid2) this.setAdditionalCostPaid(pseudo.id, true, 2);

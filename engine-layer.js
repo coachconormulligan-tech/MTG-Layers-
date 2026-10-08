@@ -246,6 +246,11 @@ function applyEffectGlobally(effect, allStates, realPerms, inspectedId, applicat
     // For MODIFY_PT with "for each" variable boost, attach allStates
     if (effect.type === EFFECT_TYPE.MODIFY_PT && effect.params.forEachDesc !== undefined) {
       effect._allStates = allStates;
+      // A count entered by hand is kept on the row it was typed on: the effect's source.
+      if (effect.params.byHandCount) {
+        const holder = typeof Battlefield !== 'undefined' ? Battlefield.getPermById(effect.sourceId) : null;
+        effect._byHandCount = (holder && holder.cdaUserValue) || 0;
+      }
       const permObj = realPerms.find(p => p.id === perm.id);
       if (permObj && permObj.cdaUserValue !== undefined) {
         state.cdaUserValue = permObj.cdaUserValue;

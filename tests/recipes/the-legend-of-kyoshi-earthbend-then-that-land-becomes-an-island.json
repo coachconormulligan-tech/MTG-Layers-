@@ -1,0 +1,71 @@
+{
+  "name": "The Legend of Kyoshi — chapter II earthbends a land and makes it an Island as well",
+  "notes": "Sweep group 7 (2026-10-07). Earthbend was not modelled (its reminder text is stripped), so \"That land becomes an Island in addition to its other types\" had nothing to refer to. \"Earthbend N\" is now written out as \"Target land you control becomes a 0/0 creature with haste that's still a land\" (_writeOutEarthbend); the +1/+1 counters are put on by hand. The add-type parser used to run from the first sentence's \"becomes\" to \"in addition\" across the full stop (ability \"Haste That Is Still A Land. That Land Becomes An Island\"); it now keeps to the last sentence. The Forest becomes a 0/0 land creature with haste that is also an Island and taps for blue; the Mountain is untouched.",
+  "steps": [
+    {
+      "add": "Forest",
+      "as": "forest"
+    },
+    {
+      "add": "Mountain",
+      "as": "mountain"
+    },
+    {
+      "add": "The Legend of Kyoshi",
+      "as": "saga"
+    },
+    {
+      "call": [
+        "addCounter",
+        "@saga",
+        "lore",
+        2
+      ]
+    },
+    {
+      "call": [
+        "setTarget",
+        "@saga",
+        "@forest"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Forest",
+      "final": {
+        "types": {
+          "$includes": [
+            "Land",
+            "Creature"
+          ]
+        },
+        "subtypes": {
+          "$includes": [
+            "Forest",
+            "Island"
+          ]
+        },
+        "power": 0,
+        "toughness": 0,
+        "abilities": {
+          "$includes": [
+            "Haste",
+            "{T}: Add {U}."
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Mountain",
+      "final": {
+        "types": [
+          "Land"
+        ],
+        "subtypes": [
+          "Mountain"
+        ]
+      }
+    }
+  ]
+}

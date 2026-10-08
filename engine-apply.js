@@ -637,14 +637,18 @@ function applyEffect(state, effect, context) {
         let forEachCount = null;
         if (effect.params.forEachDesc !== undefined) {
           let val = null;
-          if (effect._allStates) {
-            val = _computeForEachCount(effect.params.forEachDesc, effect._allStates, state, effect);
-          }
-          if (val === null || val === undefined) {
-            val = state.cdaUserValue ?? 0;
-          }
-          if (effect.params.userAdjustable && state.cdaUserValue !== null && state.cdaUserValue !== undefined) {
-            val = state.cdaUserValue;
+          if (effect.params.byHandCount) {
+            val = effect._byHandCount || 0;
+          } else {
+            if (effect._allStates) {
+              val = _computeForEachCount(effect.params.forEachDesc, effect._allStates, state, effect);
+            }
+            if (val === null || val === undefined) {
+              val = state.cdaUserValue ?? 0;
+            }
+            if (effect.params.userAdjustable && state.cdaUserValue !== null && state.cdaUserValue !== undefined) {
+              val = state.cdaUserValue;
+            }
           }
           if (effect.params.maxCount !== undefined && val > effect.params.maxCount) {
             val = effect.params.maxCount;

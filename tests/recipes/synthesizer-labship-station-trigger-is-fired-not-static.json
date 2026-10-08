@@ -1,0 +1,72 @@
+{
+  "name": "Synthesizer Labship — the station line's trigger is fired, not a static effect",
+  "notes": "Sweep group 7 (2026-10-07). \"2+ | At the beginning of combat on your turn, up to one other target artifact you control becomes an artifact creature with base power and toughness 2/2 and gains flying\" was read as a static global effect with a garbage filter, and could not be fired: extractTriggeredAbilities did not look past the \"N+ | \" station label. It now does. Fired at two charge counters and pointed at Sol Ring, Sol Ring is a 2/2 flying artifact creature; Mind Stone is left alone.",
+  "steps": [
+    {
+      "add": "Sol Ring",
+      "as": "ring"
+    },
+    {
+      "add": "Mind Stone",
+      "as": "stone"
+    },
+    {
+      "add": "Synthesizer Labship",
+      "as": "ship"
+    },
+    {
+      "call": [
+        "addCounter",
+        "@ship",
+        "charge",
+        2
+      ]
+    },
+    {
+      "fire": "@ship",
+      "trigger": 1,
+      "as": "t"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@t",
+        "@ring"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Sol Ring",
+      "final": {
+        "types": {
+          "$includes": [
+            "Artifact",
+            "Creature"
+          ]
+        },
+        "power": 2,
+        "toughness": 2,
+        "abilities": {
+          "$includes": [
+            "Flying"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Mind Stone",
+      "final": {
+        "types": [
+          "Artifact"
+        ]
+      }
+    },
+    {
+      "noEffect": {
+        "source": "Synthesizer Labship",
+        "scope": "global"
+      }
+    }
+  ]
+}

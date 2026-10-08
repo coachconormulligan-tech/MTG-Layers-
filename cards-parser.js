@@ -678,6 +678,19 @@ function parseCardEffects(permanent, card, opts = {}) {
   // the reflexive trigger is simply the next thing that happens as it resolves.
   if (/\b(?:instant|sorcery)\b/i.test(card.type_line || '')) {
     oracleRaw = oracleRaw.replace(/(\.\s+)when you do,\s*(\w)/gi, (_, pre, ch) => pre + ch.toUpperCase());
+    // "Target creature gains trample until end of turn. When that creature becomes blocked this
+    // turn, it gets +1/+1 until end of turn for each creature blocking it." (Barreling Attack):
+    // a delayed trigger about the spell's own target, read as the next thing that happens to it.
+    oracleRaw = oracleRaw.replace(/(\.\s+)When(?:ever)? that (creature|permanent) (?:becomes blocked|attacks|blocks)\b[^,.]*\bthis turn, (?:it|that \2) (gets|gains)\b/gi,
+      (_, pre, noun, verb) => `${pre}It ${verb}`);
+    // "Whenever a creature attacks this turn, it gets +1/+0 until end of turn for each creature
+    // card put into your graveyard this way." (Song of Blood; Ondu Rising; Battle Cry for
+    // blockers): the creatures that attacked are picked, from those marked attacking on the
+    // board as it is now (_pickFromLiveBoard), since they attack after the spell has resolved.
+    oracleRaw = oracleRaw.replace(/(^|\n|\.\s+)Whenever a creature (attacks|blocks) this turn, it (gets|gains)\b/gi, (_, pre, how, verb) => {
+      permanent._pickFromLiveBoard = permanent._nonTargetingSelection = true;
+      return `${pre}Any number of target ${how.toLowerCase() === 'attacks' ? 'attacking' : 'blocking'} creatures each ${verb.replace(/s$/, '')}`;
+    });
     // "Choose one. Until end of turn, target creature you control has that base power and
     // toughness, becomes that creature type, and gains that ability. • 1/3 Turtle with hexproof.
     // • …" (Wild Shape): each mode written out as the whole effect.
@@ -708,6 +721,14 @@ function parseCardEffects(permanent, card, opts = {}) {
   // "… for as long as you control this Saga": read as a condition it would replace the
   // chapter's own lore-counter condition, and the effect already ends when the Saga is removed.
   oracleRaw = oracleRaw.replace(/\s+for as long as you control this saga\b/gi, '');
+  // "Earthbend N" is written out as what it does to the land (see _writeOutEarthbend).
+  oracleRaw = _writeOutEarthbend(oracleRaw);
+  // "Choose up to four target creatures you don't control. For each of them, that creature's
+  // controller faces a villainous choice — That creature becomes a 1/1 white Human creature and
+  // loses all abilities, or you create a token that's a copy of it." (Hunted by The Family):
+  // the targets picked are the creatures whose controllers took the first choice.
+  oracleRaw = oracleRaw.replace(/\bChoose ((?:up to \w+|any number of) target [^.]+)\.\s+For each of them, that (\w+)'s controller faces a villainous choice \u2014 That \2 becomes ([^.]+?) and loses all abilities, or [^.]+\./gi,
+    (_, targets, noun, what) => `${targets.charAt(0).toUpperCase() + targets.slice(1)} each become ${what} and lose all abilities.`);
 
   // "Nonland permanents you control and permanent spells you control are enchantments …"
   // (Secret Arcade): spells on the stack are not on the board, so the permanents half is the
@@ -980,6 +1001,12 @@ function parseCardEffects(permanent, card, opts = {}) {
   // "Untap all attacking creatures. They gain trample …" → "All attacking creatures gain trample …"
   oracle = _resolveTheyPronoun(oracle);
   if (permanent.isSpell) oracle = _resolveItPronoun(oracle);
+  // A Saga chapter happens once, as a spell does: "III — Return target creature card from your
+  // graveyard to the battlefield …. That creature is an Angel Warrior in addition to its other
+  // types." (Ascent of the Worthy) is about the creature just returned.
+  else if (permanent._sagaChapterThresholds && permanent._sagaChapterThresholds.size > 0) {
+    oracle = oracle.split('\n').map(line => /^[IVXLC]+(?:\s*,\s*[IVXLC]+)*\s*\u2014/.test(line) ? _resolveItPronoun(line) : line).join('\n');
+  }
 
   // Normalize gendered pronouns to "this card" for cards that self-reference with he/she/him/her.
   // "he's a" → "this card is a", "she's a" → "this card is a"
@@ -2418,6 +2445,23 @@ function parseCardEffects(permanent, card, opts = {}) {
     if (copyClauseSpans.some(r => _atStart < r.end && _atEnd > r.start)) continue;
     let filterText = addTypeMatch[1].trim();
     let becomesText = addTypeMatch[2].trim();
+    // "Target land you control becomes a 0/0 creature with haste that's still a land. That land
+    // becomes an Island in addition to its other types" (earthbend on The Legend of Kyoshi): the
+    // lazy capture took the first sentence's verb. The sentence that says "in addition" is the
+    // last one, and the sentences before it are left for the other parsers.
+    let _atRangeStart = addTypeMatch.index;
+    if (!becomesText.includes('"') && /\.\s/.test(becomesText)) {
+      const tail = becomesText.split(/\.\s+/).pop();
+      const own = tail.match(/^(.+?)\s+(?:you (?:control|own)\s+)?(?:are|is|have|has|becomes?)\s+(.+)$/i);
+      if (own) {
+        // On an ability line read as part of the whole card, that sentence waits for the ability to fire.
+        const tailPos = addTypeMatch.index + addTypeMatch[0].lastIndexOf(tail);
+        if (!permanent.isSpell && !permanent.isManualEffect && (_isInTriggeredSentence(tailPos) || _isInActivatedEffect(tailPos))) continue;
+        filterText = own[1].trim();
+        becomesText = own[2].trim();
+        _atRangeStart = addTypeMatch.index + addTypeMatch[0].lastIndexOf(tail);
+      }
+    }
     // "Target creature has flying and is an Angel in addition …" (Valkyrie's Call): the lazy
     // capture took "has" as the verb, leaving the keywords at the front of the type text.
     let _addTypeFrontKeywords = [];
@@ -2502,7 +2546,7 @@ function parseCardEffects(permanent, card, opts = {}) {
     // -> 'lifelink and  and is a Performer' -> parseBecomesType only sees type words
     const cleanedBecomesText = becomesText.replace(/"(?:[^"\\]|\\.)*"/g, '').replace(/\s{2,}/g, ' ').trim();
     const parsed = parseBecomesType(cleanedBecomesText);
-    addTypeMatchRanges.push({ start: addTypeMatch.index, end: addTypeMatch.index + addTypeMatch[0].length });
+    addTypeMatchRanges.push({ start: _atRangeStart, end: addTypeMatch.index + addTypeMatch[0].length });
     const addTypeCond = _getConditionForPos(addTypeMatch.index);
     const addTypeEffCountBefore = effects.length;
 
@@ -2879,7 +2923,8 @@ function parseCardEffects(permanent, card, opts = {}) {
     // A closing "… an opponent controls" only says whose permanents (Kukemssa Serpent: "Target
     // land an opponent controls becomes an Island"); players anywhere else are not a subject.
     const _fNoCtrl = fLower.replace(/\s+(?:an opponent|your opponents|target opponent|target player) controls?$/, '');
-    if (fLower.includes('if ') || fLower.includes('when ') || fLower.includes('whenever ') ||
+    // ("At the beginning of your end step, target land you control becomes …" is a trigger too.)
+    if (fLower.includes('if ') || fLower.includes('when ') || fLower.includes('whenever ') || fLower.startsWith('at the beginning of ') ||
         fLower.includes('that ') || (fLower.includes('with ') && !/\bwith\s+(?:a|an)?\s*[\w+/]+\s+counters?\s+on\b/i.test(fLower)) || fLower.includes('enchanted') ||
         fLower.includes('equipped') || _fNoCtrl.includes('opponent') || _fNoCtrl.includes('player') ||
         fLower.includes('hand') || fLower.includes('library') || fLower.includes('graveyard') ||
@@ -3338,11 +3383,17 @@ function parseCardEffects(permanent, card, opts = {}) {
         }
         // Keep "you control" in forEachDesc so _computeForEachCount filters by controller.
         const cleanTarget = countTarget.replace(/\s+in your graveyard$/i, '');
-        const isGraveyard = countTarget.toLowerCase().includes('graveyard');
+        // A count the board cannot give is entered by hand on the row of the spell or ability:
+        // who blocks whom is not recorded ("for each creature blocking it [beyond the first]" —
+        // Rabid Elephant, Barreling Attack), nor which cards a spell just milled ("for each
+        // creature card put into your graveyard this way" — Song of Blood).
+        const byHand = /\bblocking (?:it|this creature|that creature)\b|\bthis way$/i.test(countTarget);
+        const isGraveyard = !byHand && countTarget.toLowerCase().includes('graveyard');
         const _effFe = pushEff('7c', EFFECT_TYPE.MODIFY_PT, {
             power: parseInt(boostMatch[2]),
             toughness: parseInt(boostMatch[3]),
-            userAdjustable: isGraveyard,
+            userAdjustable: isGraveyard || byHand,
+            ...(byHand ? { byHandCount: true } : {}),
             isGraveyardCount: isGraveyard,
             basePower: parseInt(boostMatch[2]),
             baseToughness: parseInt(boostMatch[3]),

@@ -1,0 +1,915 @@
+{
+ "name": "\"For each creature blocking it\" — the count is entered on the fired trigger",
+ "notes": "Sweep group 7 (2026-10-07). \"Whenever this creature becomes blocked, it gets +2/+2 until end of turn for each creature blocking it\" emitted a boost that always added 0: nothing counts blockers and there was nowhere to enter the number (the engine read the modified creature's own count box, the row showed none). The number now belongs to the fired trigger's row. Rabid Elephant (3/4) blocked by two is 7/8; Jungle Wurm (5/5), one blocker beyond the first, is 4/4.",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Rabid Elephant",
+    "as": "elephant"
+   },
+   {
+    "add": "Jungle Wurm",
+    "as": "wurm"
+   },
+   {
+    "fire": "@elephant",
+    "trigger": 0,
+    "as": "t1"
+   },
+   {
+    "call": [
+     "setCDAValue",
+     "@t1",
+     2
+    ]
+   },
+   {
+    "fire": "@wurm",
+    "trigger": 0,
+    "as": "t2"
+   },
+   {
+    "call": [
+     "setCDAValue",
+     "@t2",
+     1
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Rabid Elephant",
+   "final": {
+    "power": 7,
+    "toughness": 8
+   }
+  },
+  {
+   "perm": "Jungle Wurm",
+   "final": {
+    "power": 4,
+    "toughness": 4
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "fe394a38-ee44-4342-adcf-8c65d14f4978",
+     "oracle_id": "9daed342-e773-43ec-a8e2-98126b505e8a",
+     "multiverse_ids": [
+      29781
+     ],
+     "mtgo_id": 16579,
+     "mtgo_foil_id": 16580,
+     "tcgplayer_id": 9538,
+     "cardmarket_id": 2675,
+     "name": "Rabid Elephant",
+     "lang": "en",
+     "released_at": "2001-10-01",
+     "uri": "https://api.scryfall.com/cards/fe394a38-ee44-4342-adcf-8c65d14f4978",
+     "scryfall_uri": "https://scryfall.com/card/ody/263/rabid-elephant?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T12:20:12Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/f/e/fe394a38-ee44-4342-adcf-8c65d14f4978.jpg?1783945212",
+      "normal": "https://cards.scryfall.io/normal/front/f/e/fe394a38-ee44-4342-adcf-8c65d14f4978.jpg?1783945212",
+      "large": "https://cards.scryfall.io/large/front/f/e/fe394a38-ee44-4342-adcf-8c65d14f4978.jpg?1783945212",
+      "png": "https://cards.scryfall.io/png/front/f/e/fe394a38-ee44-4342-adcf-8c65d14f4978.png?1783945212",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/f/e/fe394a38-ee44-4342-adcf-8c65d14f4978.jpg?1783945212",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/f/e/fe394a38-ee44-4342-adcf-8c65d14f4978.jpg?1783945212",
+      "thumb": "https://cards.scryfall.io/thumb/front/f/e/fe394a38-ee44-4342-adcf-8c65d14f4978.webp?1783945212",
+      "grid": "https://cards.scryfall.io/grid/front/f/e/fe394a38-ee44-4342-adcf-8c65d14f4978.webp?1783945212",
+      "display": "https://cards.scryfall.io/display/front/f/e/fe394a38-ee44-4342-adcf-8c65d14f4978.webp?1783945212",
+      "art": "https://cards.scryfall.io/art/front/f/e/fe394a38-ee44-4342-adcf-8c65d14f4978.webp?1783945212",
+      "crop": "https://cards.scryfall.io/crop/front/f/e/fe394a38-ee44-4342-adcf-8c65d14f4978.webp?1783945212"
+     },
+     "mana_cost": "{4}{G}",
+     "cmc": 5,
+     "type_line": "Creature — Elephant",
+     "oracle_text": "Whenever this creature becomes blocked, it gets +2/+2 until end of turn for each creature blocking it.",
+     "power": "3",
+     "toughness": "4",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "b0d90d2d-494a-4224-bfa0-36ce5ee281b1",
+     "set": "ody",
+     "set_name": "Odyssey",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/b0d90d2d-494a-4224-bfa0-36ce5ee281b1",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aody&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/ody?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/fe394a38-ee44-4342-adcf-8c65d14f4978/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A9daed342-e773-43ec-a8e2-98126b505e8a&unique=prints",
+     "collector_number": "263",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "When in doubt, stomp.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Dave Dorman",
+     "artist_ids": [
+      "9235458b-ce92-45bd-a430-a72ecd8e6176"
+     ],
+     "illustration_id": "639d4b77-88c9-4536-bc0e-490a2e1ee1b4",
+     "border_color": "black",
+     "frame": "1997",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 29245,
+     "prices": {
+      "usd": "0.12",
+      "usd_foil": "0.73",
+      "usd_etched": null,
+      "eur": "0.08",
+      "eur_foil": "0.59",
+      "tix": "0.06"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=29781&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DRabid%2BElephant",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DRabid%2BElephant",
+      "edhrec": "https://edhrec.com/route/?cc=Rabid+Elephant"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F9538%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=2675&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/16579?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "f646c83f-e804-4878-9160-8f2059dba496",
+     "oracle_id": "457705c9-5b0c-4c3a-89dd-80286fac6a6c",
+     "multiverse_ids": [
+      382981
+     ],
+     "mtgo_id": 52613,
+     "mtgo_foil_id": 52614,
+     "name": "Jungle Wurm",
+     "lang": "en",
+     "released_at": "2014-06-16",
+     "uri": "https://api.scryfall.com/cards/f646c83f-e804-4878-9160-8f2059dba496",
+     "scryfall_uri": "https://scryfall.com/card/vma/217/jungle-wurm?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T10:40:59Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/f/6/f646c83f-e804-4878-9160-8f2059dba496.jpg?1783939259",
+      "normal": "https://cards.scryfall.io/normal/front/f/6/f646c83f-e804-4878-9160-8f2059dba496.jpg?1783939259",
+      "large": "https://cards.scryfall.io/large/front/f/6/f646c83f-e804-4878-9160-8f2059dba496.jpg?1783939259",
+      "png": "https://cards.scryfall.io/png/front/f/6/f646c83f-e804-4878-9160-8f2059dba496.png?1783939259",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/f/6/f646c83f-e804-4878-9160-8f2059dba496.jpg?1783939259",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/f/6/f646c83f-e804-4878-9160-8f2059dba496.jpg?1783939259",
+      "thumb": "https://cards.scryfall.io/thumb/front/f/6/f646c83f-e804-4878-9160-8f2059dba496.webp?1783939259",
+      "grid": "https://cards.scryfall.io/grid/front/f/6/f646c83f-e804-4878-9160-8f2059dba496.webp?1783939259",
+      "display": "https://cards.scryfall.io/display/front/f/6/f646c83f-e804-4878-9160-8f2059dba496.webp?1783939259",
+      "art": "https://cards.scryfall.io/art/front/f/6/f646c83f-e804-4878-9160-8f2059dba496.webp?1783939259",
+      "crop": "https://cards.scryfall.io/crop/front/f/6/f646c83f-e804-4878-9160-8f2059dba496.webp?1783939259"
+     },
+     "mana_cost": "{3}{G}{G}",
+     "cmc": 5,
+     "type_line": "Creature — Wurm",
+     "oracle_text": "Whenever this creature becomes blocked, it gets -1/-1 until end of turn for each creature blocking it beyond the first.",
+     "power": "5",
+     "toughness": "5",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a944551a-73fa-41cd-9159-e8d0e4674403",
+     "set": "vma",
+     "set_name": "Vintage Masters",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/a944551a-73fa-41cd-9159-e8d0e4674403",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Avma&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/vma?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/f646c83f-e804-4878-9160-8f2059dba496/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A457705c9-5b0c-4c3a-89dd-80286fac6a6c&unique=prints",
+     "collector_number": "217",
+     "digital": true,
+     "rarity": "common",
+     "flavor_text": "Broad as a baobab—and about as smart.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Tom Kyffin",
+     "artist_ids": [
+      "8f43afbf-ce7e-4c01-8815-6d51eaa801cd"
+     ],
+     "illustration_id": "fc8b536a-4885-454e-9a57-0807d7f78187",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 31582,
+     "prices": {
+      "usd": null,
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": null,
+      "tix": "0.05"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=382981&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DJungle%2BWurm",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DJungle%2BWurm",
+      "edhrec": "https://edhrec.com/route/?cc=Jungle+Wurm"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fmagic%2Fproduct%3FproductLineName%3Dmagic%26q%3DJungle%2BWurm%26view%3Dgrid",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products/Search?referrer=scryfall&searchString=Jungle+Wurm&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/52613?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [
+   {
+    "id": "trig_perm_1_0_3",
+    "kind": "trigger",
+    "pseudoKind": "ability",
+    "sourceId": "perm_1",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 0,
+    "timestamp": 3,
+    "effectText": "target creature gets +2/+2 until end of turn for each creature blocking it.",
+    "xValue": null,
+    "hasXValue": false,
+    "cdaUserValue": 2,
+    "linkedCards": null,
+    "fullText": "Whenever this creature becomes blocked, it gets +2/+2 until end of turn for each creature blocking it.",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "guessedTargetSubjects": [
+     "creature"
+    ],
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Rabid Elephant",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Elephant"
+       ],
+       "power": 3,
+       "toughness": 4,
+       "colors": [
+        "G"
+       ],
+       "abilities": [
+        "Whenever this creature becomes blocked, it gets +2/+2 until end of turn for each creature blocking it."
+       ],
+       "oracleText": "Whenever this creature becomes blocked, it gets +2/+2 until end of turn for each creature blocking it.",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false
+      }
+     ],
+     [
+      "perm_2",
+      {
+       "name": "Jungle Wurm",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Wurm"
+       ],
+       "power": 5,
+       "toughness": 5,
+       "colors": [
+        "G"
+       ],
+       "abilities": [
+        "Whenever this creature becomes blocked, it gets -1/-1 until end of turn for each creature blocking it beyond the first."
+       ],
+       "oracleText": "Whenever this creature becomes blocked, it gets -1/-1 until end of turn for each creature blocking it beyond the first.",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Rabid Elephant",
+       "imageUri": "https://cards.scryfall.io/small/front/f/e/fe394a38-ee44-4342-adcf-8c65d14f4978.jpg?1783945212",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Elephant"
+       ],
+       "printedPower": 3,
+       "printedToughness": 4,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Jungle Wurm",
+       "imageUri": "https://cards.scryfall.io/small/front/f/6/f646c83f-e804-4878-9160-8f2059dba496.jpg?1783939259",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Wurm"
+       ],
+       "printedPower": 5,
+       "printedToughness": 5,
+       "timestamp": 2
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    },
+    "primaryTarget": "perm_1",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 3,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null
+   },
+   {
+    "id": "trig_perm_2_0_4",
+    "kind": "trigger",
+    "pseudoKind": "ability",
+    "sourceId": "perm_2",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 0,
+    "timestamp": 4,
+    "effectText": "target creature gets -1/-1 until end of turn for each creature blocking it beyond the first.",
+    "xValue": null,
+    "hasXValue": false,
+    "cdaUserValue": 1,
+    "linkedCards": null,
+    "fullText": "Whenever this creature becomes blocked, it gets -1/-1 until end of turn for each creature blocking it beyond the first.",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "guessedTargetSubjects": [
+     "creature"
+    ],
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Rabid Elephant",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Elephant"
+       ],
+       "power": 7,
+       "toughness": 8,
+       "abilities": [
+        "Whenever this creature becomes blocked, it gets +2/+2 until end of turn for each creature blocking it."
+       ],
+       "colors": [
+        "G"
+       ],
+       "manaValue": 5,
+       "manaCost": "{4}{G}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "Whenever this creature becomes blocked, it gets +2/+2 until end of turn for each creature blocking it.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "Whenever this creature becomes blocked, it gets +2/+2 until end of turn for each creature blocking it."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_2",
+      {
+       "name": "Jungle Wurm",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Wurm"
+       ],
+       "power": 5,
+       "toughness": 5,
+       "abilities": [
+        "Whenever this creature becomes blocked, it gets -1/-1 until end of turn for each creature blocking it beyond the first."
+       ],
+       "colors": [
+        "G"
+       ],
+       "manaValue": 5,
+       "manaCost": "{3}{G}{G}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "Whenever this creature becomes blocked, it gets -1/-1 until end of turn for each creature blocking it beyond the first.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "Whenever this creature becomes blocked, it gets -1/-1 until end of turn for each creature blocking it beyond the first."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Rabid Elephant",
+       "imageUri": "https://cards.scryfall.io/small/front/f/e/fe394a38-ee44-4342-adcf-8c65d14f4978.jpg?1783945212",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Elephant"
+       ],
+       "printedPower": 3,
+       "printedToughness": 4,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Jungle Wurm",
+       "imageUri": "https://cards.scryfall.io/small/front/f/6/f646c83f-e804-4878-9160-8f2059dba496.jpg?1783939259",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Wurm"
+       ],
+       "printedPower": 5,
+       "printedToughness": 5,
+       "timestamp": 2
+      },
+      {
+       "id": "trig_perm_1_0_3",
+       "name": "Rabid Elephant (trigger)",
+       "imageUri": "https://cards.scryfall.io/small/front/f/e/fe394a38-ee44-4342-adcf-8c65d14f4978.jpg?1783945212",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": true,
+       "isTriggeredAbility": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "abilitySourceId": "perm_1",
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 3
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    },
+    "primaryTarget": "perm_2",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 4,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null
+   }
+  ],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Rabid Elephant",
+    "final": {
+     "name": "Rabid Elephant",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Elephant"
+     ],
+     "power": 7,
+     "toughness": 8,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "Whenever this creature becomes blocked, it gets +2/+2 until end of turn for each creature blocking it."
+     ]
+    },
+    "changedBy": {
+     "7c": [
+      "Rabid Elephant (trigger)"
+     ]
+    }
+   },
+   {
+    "perm": "Jungle Wurm",
+    "final": {
+     "name": "Jungle Wurm",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Wurm"
+     ],
+     "power": 4,
+     "toughness": 4,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "Whenever this creature becomes blocked, it gets -1/-1 until end of turn for each creature blocking it beyond the first."
+     ]
+    },
+    "changedBy": {
+     "7c": [
+      "Jungle Wurm (trigger)"
+     ]
+    }
+   }
+  ],
+  "order": {
+   "7c": [
+    "Rabid Elephant (trigger)",
+    "Jungle Wurm (trigger)"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Rabid Elephant (trigger)",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "target": "Rabid Elephant",
+    "params": {
+     "basePower": 2,
+     "baseToughness": 2,
+     "byHandCount": true,
+     "forEachDesc": "creature blocking it",
+     "isGraveyardCount": false,
+     "power": 2,
+     "toughness": 2,
+     "userAdjustable": true
+    }
+   },
+   {
+    "source": "Jungle Wurm (trigger)",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "target": "Jungle Wurm",
+    "params": {
+     "basePower": -1,
+     "baseToughness": -1,
+     "byHandCount": true,
+     "forEachDesc": "creature blocking it beyond the first",
+     "isGraveyardCount": false,
+     "power": -1,
+     "toughness": -1,
+     "userAdjustable": true
+    }
+   }
+  ]
+ }
+}

@@ -1,0 +1,81 @@
+{
+  "name": "Song of Blood — the creatures that attacked are picked; +1/+0 for each creature card milled, entered by hand",
+  "notes": "Sweep group 7 (2026-10-07). A spell's delayed trigger \"Whenever a creature attacks this turn, it gets …\" was not read at all. It is now \"Any number of target attacking creatures each get …\": the attackers are picked, and the site's picker offers only creatures marked attacking on the board as it is now (Conor's suggestion; perm._pickFromLiveBoard, since they attack after the spell resolved). The number of creature cards milled is typed on the spell's row. Bears and Hill Giant attacked, three creature cards were milled: 5/2 and 6/3. Gray Ogre did not attack.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre"
+    },
+    {
+      "call": [
+        "toggleAttacking",
+        "@bears"
+      ]
+    },
+    {
+      "call": [
+        "toggleAttacking",
+        "@giant"
+      ]
+    },
+    {
+      "add": "Song of Blood",
+      "as": "spell",
+      "spell": true
+    },
+    {
+      "call": [
+        "setMultiTarget",
+        "@spell",
+        0,
+        "@bears"
+      ]
+    },
+    {
+      "call": [
+        "setMultiTarget",
+        "@spell",
+        1,
+        "@giant"
+      ]
+    },
+    {
+      "call": [
+        "setCDAValue",
+        "@spell",
+        3
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 5,
+        "toughness": 2
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "power": 6,
+        "toughness": 3
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "power": 2,
+        "toughness": 2
+      }
+    }
+  ]
+}

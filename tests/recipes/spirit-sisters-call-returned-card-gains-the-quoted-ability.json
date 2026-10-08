@@ -1,0 +1,62 @@
+{
+  "name": "Spirit-Sister's Call — the returned card gains the quoted ability",
+  "notes": "Sweep group 7 (2026-10-07). \"… return the chosen card from your graveyard to the battlefield and it gains \"…\"\" produced nothing: \"the chosen card\" was not read as a card being moved. The fired text now reads \"Target permanent gains \"…\"\"; the returned card is added by hand and picked (here an artifact, since any permanent card can be chosen).",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Sol Ring",
+      "as": "ring"
+    },
+    {
+      "add": "Spirit-Sister's Call",
+      "as": "c"
+    },
+    {
+      "fire": "@c",
+      "trigger": 0,
+      "as": "t"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@t",
+        "@ring"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Sol Ring",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "If this permanent would leave the battlefield, exile it instead of putting it anywhere else."
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "If this permanent would leave the battlefield, exile it instead of putting it anywhere else."
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Spirit-Sister's Call",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "If this permanent would leave the battlefield, exile it instead of putting it anywhere else."
+          ]
+        }
+      }
+    }
+  ]
+}

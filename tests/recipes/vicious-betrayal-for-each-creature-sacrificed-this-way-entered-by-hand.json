@@ -1,0 +1,53 @@
+{
+  "name": "Vicious Betrayal — \"for each creature sacrificed this way\" is entered by hand",
+  "notes": "Sweep group 7 (2026-10-07). Counts of things done \"this way\" (sacrificed, discarded, revealed, tapped, exiled, paid) cannot be read off the board; such boosts always added 0. They take the same hand-entered number as the blocker counts (about two dozen cards). Two creatures sacrificed: the Bears are 6/6.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre"
+    },
+    {
+      "add": "Vicious Betrayal",
+      "as": "spell",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTarget",
+        "@spell",
+        "@bears"
+      ]
+    },
+    {
+      "call": [
+        "setCDAValue",
+        "@spell",
+        2
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 6,
+        "toughness": 6
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "power": 3,
+        "toughness": 3
+      }
+    }
+  ]
+}
