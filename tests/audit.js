@@ -238,7 +238,21 @@ function classifyUnitText(text) {
   // "Target creature can't be blocked this turn" / "can't be regenerated" / "can attack as though
   // it didn't have defender": a rule about the target, not a change to what it is. The site does
   // not model these, so there is no targeted effect to expect.
-  if (/^(?:can|can't|cannot)\b/.test(verbAfter) && !/\b(?:gets?|gains?|has|have|becomes?|loses?)\b/.test(verbAfter)) return { skip: 'not-a-layer-effect' };
+  // Judged on the target's own sentence ("as though it didn't have defender" is not a "have"), plus any
+  // later sentence that gives the target something through a pronoun ("It gains haste").
+  {
+    const ownSentence = verbAfter.split('.')[0].replace(/\bas though it (?:didn't|doesn't|did not) have \w+/, '');
+    const later = verbAfter.slice(verbAfter.split('.')[0].length);
+    const pronounGrant = /\b(?:it|that (?:creature|permanent|land|artifact))\s+(?:also\s+)?(?:gets?|gains?|has|becomes?|loses?)\b/.test(later);
+    if (/^(?:can|can't|cannot)\b/.test(verbAfter) && !/\b(?:gets?|gains?|has|have|becomes?|loses?)\b/.test(ownSentence) && !pronounGrant) return { skip: 'not-a-layer-effect' };
+  }
+  // Likewise: "target unblocked creature becomes blocked", damage "… by target creature is dealt to
+  // its controller instead", "which player … target attacking creature is attacking", "When target
+  // creature is put into your graveyard …", "If target Plains is tapped for mana, …".
+  if (/^(?:becomes? blocked|is (?:dealt|attacking|put into|tapped for mana))\b/.test(verbAfter)) return { skip: 'not-a-layer-effect' };
+  // A spell's own text followed by its cycling trigger ("When you cycle this card, you may have target
+  // creature gain fear" — Dirge of Dread) is not something the spell does.
+  if (/\bwhen you cycle\b/.test(clauseBefore)) return { skip: 'cycling-trigger' };
   if (/'s\b/.test(phrase)) return { skip: 'possessive-target' };
   // "creature or player", "target opponent", "creature card in a graveyard", "spell". ("creature that
   // player controls" and "this card creature" are permanents; the interpreter reports what it cannot read.)
@@ -506,8 +520,12 @@ function activatedPlans(permId, a) {
   // fireActivatedAbility: "or" options -> openActivateOptionsPopup -> _chooseActivateOption, which calls
   // addActivatedAbility(permId, idx, option, a.fullText, finalStates) with freshly read final states.
   if (a.options && a.options.length >= 2) {
-    return a.options.map((opt, i) => ({ label: 'option ' + (i + 1), text: opt,
-      fire: () => Battlefield.addActivatedAbility(permId, a.index, opt, a.fullText, Battlefield.getAllFinalStates()) }));
+    // (_chooseActivateOption: an option that still says "the color of your choice" -> openColorChoicePopup; red.)
+    return a.options.map((opt, i) => {
+      const text = PROTECTION_CHOICE.test(opt) ? opt.replace(/the\s+color\s+of\s+your\s+choice/i, COLOR_NAME.R) : opt;
+      return { label: 'option ' + (i + 1), text,
+        fire: () => Battlefield.addActivatedAbility(permId, a.index, text, a.fullText, Battlefield.getAllFinalStates()) };
+    });
   }
   // fireActivatedAbility: "gains protection from the color of your choice" -> openColorChoicePopup. Red is chosen.
   // NOTE the site calls addActivatedAbility with NO final states here (the other branches pass them).

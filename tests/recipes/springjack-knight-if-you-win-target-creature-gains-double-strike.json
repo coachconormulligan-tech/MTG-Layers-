@@ -1,0 +1,52 @@
+{
+  "name": "Springjack Knight — \"If you win, target creature gains double strike\" is targeted",
+  "notes": "Memory: project_audit_small_clusters_round_eight_2026-10-11. \"If you win, target creature\" was read as a list of two filters and matched nothing. A clause before a target phrase is now dropped from the filter.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre"
+    },
+    {
+      "add": "Springjack Knight",
+      "as": "knight"
+    },
+    {
+      "fire": "@knight",
+      "trigger": 0,
+      "as": "fired"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@fired",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Double strike"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Double strike"
+          ]
+        }
+      }
+    }
+  ]
+}

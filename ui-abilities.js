@@ -287,9 +287,21 @@ function _chooseActivateOption(permId, abilityIdx, optionIdx) {
   const a = activated.find(ac => ac.index === abilityIdx);
   if (!a || !a.options) return;
   const chosen = a.options[optionIdx];
-  Battlefield.addActivatedAbility(permId, abilityIdx, chosen, a.fullText, finalStates);
   const _ovl = document.getElementById('activate-options-overlay');
   if (_ovl) _ovl.style.display = 'none';
+  // "…gains protection from colorless or from the color of your choice" (Giver of Runes): the
+  // second option still needs its color.
+  if (/gains?\s+protection\s+from\s+the\s+color\s+of\s+your\s+choice/i.test(chosen)) {
+    openColorChoicePopup(a.fullText, (color) => {
+      const colorName = { W: 'white', U: 'blue', B: 'black', R: 'red', G: 'green' }[color] || color.toLowerCase();
+      Battlefield.addActivatedAbility(permId, abilityIdx, chosen.replace(/the\s+color\s+of\s+your\s+choice/i, colorName), a.fullText, finalStates);
+      if (_abilityPopupPermId) _updateAbilityPopupContent();
+      Battlefield.evaluate();
+      renderAll();
+    });
+    return;
+  }
+  Battlefield.addActivatedAbility(permId, abilityIdx, chosen, a.fullText, finalStates);
   // Also refresh the parent ability popup if open.
   if (_abilityPopupPermId) _updateAbilityPopupContent();
   Battlefield.evaluate();

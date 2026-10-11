@@ -69,6 +69,7 @@ const KEYWORD_LIST = [
   'backup', 'bargain', 'craft', 'descend', 'discover',
   'plot', 'saddle', 'offspring', 'impending',
   'myriad', 'changeling', 'delve', 'equip', 'fortify',
+  'melee', 'firebending',
 ];
 const KEYWORD_SET = new Set(KEYWORD_LIST);
 const PARAMETERIZED_KEYWORDS = new Set([
@@ -76,7 +77,7 @@ const PARAMETERIZED_KEYWORDS = new Set([
   'annihilator', 'modular', 'dredge', 'casualty', 'toxic', 'backup',
   'ravenous', 'squad', 'afterlife', 'tribute', 'rampage', 'flanking',
   'sunburst', 'storm', 'cascade', 'exalted', 'battle cry',
-  'exploit', 'skulk', 'enlist',
+  'exploit', 'skulk', 'enlist', 'firebending',
 ]);
 
 /* Shared helpers used by _parseCondition's branch table below. */
@@ -1043,6 +1044,11 @@ function parseCardEffects(permanent, card, opts = {}) {
   oracle = oracle.replace(/(^|\n)([^.\n]+?)(\s+gets?\s+[+-]\d+\/[+-]\d+\.\s+)As long as ([^,.\n]+), they also (have|gain) ([^.\n]+)\./gi,
     // (On a line of its own: a condition belongs to every effect of its line.)
     (_, pre, subject, boost, cond, verb, what) => `${pre}${subject}${boost.trimEnd()}\n${subject} ${verb} ${what} as long as ${cond}.`);
+
+  // "You may sacrifice a Food. If you do, target creature gets +4/+4 until end of turn. Otherwise,
+  // that creature gets +2/+2 until end of turn." (Pippin's Bravery): the optional part is assumed
+  // done, as it is for a fired ability, so the "Otherwise" sentence does not happen.
+  oracle = oracle.replace(/(\bIf you do, [^.\n]+\.)\s+Otherwise, [^.\n]+\./gi, '$1');
 
   // "Ferocious — That creature also gains trample …" (Temur Battle Rage): "that creature also"
   // is the pronoun "that creature"; with "also" left in it read as every creature.
@@ -3404,6 +3410,12 @@ function parseCardEffects(permanent, card, opts = {}) {
           { isSelf: true, isTargeted: false, fn: _selfPart.fn, selfAffect: true,
             build: { isSpellTarget: false, maxTargets: 1 }, desc: _selfPart.desc },
         ];
+        // "This creature and another target creature each get +1/+0" (Deadly Dancer): a chosen
+        // target is a second recipient, with a picker of its own.
+        if (_enchPart.needsTargetSelection && _enchPart.fn) {
+          recipients.push({ isSelf: false, isTargeted: true, fn: _enchPart.fn, selfAffect: false,
+            build: { isSpellTarget: true, maxTargets: _enchPart.maxTargets || 1 }, desc: _enchPart.desc });
+        }
       }
     }
 
@@ -3476,7 +3488,13 @@ function parseCardEffects(permanent, card, opts = {}) {
         { _oraclePos: boostMatch.index });
       _applyTargetInfo(_effBoost, rcpt.build, rcpt.fn);
     };
-    for (const rcpt of recipients) _emitBoostFor(rcpt);
+    for (const rcpt of recipients) {
+      const _rcptStart = effects.length;
+      _emitBoostFor(rcpt);
+      // The source's half of "this creature and another target creature each get …" keeps to the
+      // source when the other half's target is chosen (Battlefield.setTarget).
+      if (recipients.length > 1 && rcpt.isSelf) for (let ei = _rcptStart; ei < effects.length; ei++) effects[ei]._sourceHalf = true;
+    }
     // Apply "as long as" condition to newly generated effects
     if (boostMatchCond) {
       for (let ei = boostEffCountBefore; ei < effects.length; ei++) {
@@ -4380,7 +4398,9 @@ function parseCardEffects(permanent, card, opts = {}) {
     // Multiplayer: restore "you control" stripped by optional regex group
     // (Not the "you control" of a count: "target creature gets +1/+1 for each creature you control
     // and gains reach" — Get a Leg Up — targets any creature.)
-    const _haveMatchNoCount = haveMatch[0].replace(/\bfor each\b.*?(?=\s+and\s+(?:have|has|gains?)\b)/i, '');
+    // Nor one in an earlier sentence: "you may tap two untapped creatures you control. When you
+    // do, target creature that player controls gets +2/+2 and gains trample" (Kitt Kanto).
+    const _haveMatchNoCount = haveMatch[0].split(/\.\s+/).pop().replace(/\bfor each\b.*?(?=\s+and\s+(?:have|has|gains?)\b)/i, '');
     if (/\byou (?:control|own)\b/i.test(_haveMatchNoCount) && !/\byou (?:control|own)\b/i.test(filterText)) {
       filterText += ' you control';
     }
@@ -5707,8 +5727,20 @@ function parseCardEffects(permanent, card, opts = {}) {
     const verb = traitVerbMatch[1].toLowerCase();
     const traitName = TRAIT_KEYWORDS[verb];
     if (!traitName) continue;
+    // 'gains "When this creature dies, return it … and suspect it."' (Presumed Dead): the verb
+    // belongs to the ability being granted.
+    if ((oracle.slice(0, traitVerbMatch.index).match(/"/g) || []).length % 2) continue;
     const targetText = traitVerbMatch[2].trim();
     const { fn, desc: filterDesc, isSpellTarget } = buildAppliesToFromText(targetText);
+    // A pronoun in a permanent's own triggered or activated ability is goaded when the ability
+    // is fired, not statically ("At the beginning of combat …, … Goad that creature." — Kitt
+    // Kanto, Mayhem Diva — goaded every creature while she was on the battlefield).
+    // ("When this creature enters, suspect it." — Barbed Servitor — is about the permanent itself
+    // and stays: it is suspected from the moment it is added.)
+    const _traitLine = oracle.slice(oracle.lastIndexOf('\n', traitVerbMatch.index) + 1).split('\n')[0];
+    if (!isSpellTarget && !permanent.isSpell && !permanent.isManualEffect && /^(?:it|them|(?:that|those)\s+\w+)$/i.test(targetText) &&
+        !/^when this \w+ enters,\s*(?:goad|suspect) it\b/i.test(_traitLine.trim()) &&
+        (_isInTriggeredSentence(traitVerbMatch.index) || _isInActivatedEffect(traitVerbMatch.index))) continue;
     const eff = pushEff('6', EFFECT_TYPE.ADD_ABILITY,
       { ability: traitName, isTrait: true },
       { appliesTo: fn, scope: fn ? 'global' : 'targeted', selfTarget: false },
@@ -5722,6 +5754,7 @@ function parseCardEffects(permanent, card, opts = {}) {
       eff.scope = 'targeted';
       eff.appliesTo = null;
       eff.targetRestriction = fn || null;
+      eff._pronounTarget = true; // never a target slot of its own (Kitt Kanto, Mayhem Diva)
     }
   }
 
@@ -6232,6 +6265,23 @@ function parseCardEffects(permanent, card, opts = {}) {
         eff.selfTarget = false;
         eff._pronounTarget = true; // same target as the sentence before, never a slot of its own
         eff.appliesTo = null;
+      }
+    }
+    // The same in a fired ability, where the pronoun was already written out as the target: "If a
+    // creature died this turn, target creature gets -13/-13 until end of turn instead" (Tragic
+    // Banshee) is left out rather than given a second target slot beside the -1/-1 it replaces.
+    if (permanent.isManualEffect && !permanent.isSpell) {
+      for (let i = effects.length - 1; i >= 0; i--) {
+        const eff = effects[i];
+        if (eff.scope !== 'targeted' || eff.selfTarget || eff._oraclePos === undefined) continue;
+        let sStart = eff._oraclePos;
+        while (sStart < oracle.length && /[.\s;]/.test(oracle[sStart])) sStart++;
+        const sEnd = oracle.indexOf('.', sStart);
+        const sentence = oracle.slice(sStart, sEnd === -1 ? oracle.length : sEnd);
+        if (/^if\b[^,]*,\s*target\b/i.test(sentence) && /\binstead$/i.test(sentence.trim()) &&
+            effects.some(o => o !== eff && o.scope === 'targeted' && !o.selfTarget && o._oraclePos !== undefined && o._oraclePos < eff._oraclePos)) {
+          effects.splice(i, 1);
+        }
       }
     }
     for (const eff of effects) {

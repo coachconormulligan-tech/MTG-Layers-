@@ -161,7 +161,10 @@ function getTargetCandidates(sourceId, opts) {
    Auras and Equipment, and "choose" selections that do not target. */
 function _singleTargetCandidates(sourceId) {
   const sourcePerm = Battlefield.getPermById(sourceId);
-  const current = Battlefield.effects.find(e => e.sourceId === sourceId && e.scope === 'targeted' && !e.selfTarget && !e._isCounterEffect && !e.disabled)
+  // (An effect pinned to the ability's own source is not the one the picker sets: "This creature
+  // and another target creature each get +1/+0" — Deadly Dancer.)
+  const current = Battlefield.effects.find(e => e.sourceId === sourceId && e.scope === 'targeted' && !e.selfTarget && !e._isCounterEffect && !e.disabled && !e._sourceHalf)
+    || Battlefield.effects.find(e => e.sourceId === sourceId && e.scope === 'targeted' && !e.selfTarget && !e._isCounterEffect && !e.disabled)
     || Battlefield.effects.find(e => e.sourceId === sourceId && e.scope === 'targeted' && !e.selfTarget && !e._isCounterEffect);
   const currentTarget = current?.targetId || '';
   // If ANY targeted effect from this source requires an opponent's permanent, apply that filter.

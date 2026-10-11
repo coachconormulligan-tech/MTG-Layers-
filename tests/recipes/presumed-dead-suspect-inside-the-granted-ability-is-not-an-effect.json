@@ -1,0 +1,36 @@
+{
+  "name": "Presumed Dead — \"suspect it\" inside the granted ability does not suspect the target",
+  "notes": "Memory: project_audit_small_clusters_round_eight_2026-10-11. The trait parser matched \"suspect it\" inside the quoted ability the spell grants, so the target was suspected at once and the spell showed two target slots.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Presumed Dead",
+      "as": "spell",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTarget",
+        "@spell",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 4,
+        "toughness": 2,
+        "abilities": {
+          "$excludes": [
+            "Suspected"
+          ]
+        }
+      }
+    }
+  ]
+}

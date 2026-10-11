@@ -381,9 +381,15 @@ const Battlefield = {
             tail = ' ' + tailMatch[1].trim();
           }
           const parts = core.split(/\s+or\s+/i);
-          if (parts.length === 2) {
+          // Not a choice between two outcomes: an "or" inside a quoted ability ('gains "{T}: Add
+          // {U}, {B}, or {R}."' — Glamorous Outlaw), "can't attack or block" (Immovable Rod),
+          // "the color or colors of your choice" (Scuttlemutt).
+          const orIsNoChoice = parts.length === 2 && ((parts[0].match(/"/g) || []).length % 2 === 1 ||
+            /\b(?:attack|block|color)$/i.test(parts[0].trim()));
+          if (parts.length === 2 && !orIsNoChoice) {
             const opt1 = `${subj}${verb} ${parts[0].trim()}${tail}`.replace(/\s+/g, ' ').trim();
-            const opt2Raw = parts[1].trim();
+            // "protection from colorless or from the color of your choice" (Giver of Runes).
+            const opt2Raw = (/^from\b/i.test(parts[1].trim()) && /\bprotection from\b/i.test(parts[0]) ? 'protection ' : '') + parts[1].trim();
             const opt2 = /^(gets?|gains?|has|have|deals?|becomes?|loses?|target|enchanted|equipped|this|each|all)\b/i.test(opt2Raw)
               ? `${opt2Raw}${tail}`
               : `${subj}${verb} ${opt2Raw}${tail}`.replace(/\s+/g, ' ').trim();
@@ -514,7 +520,9 @@ const Battlefield = {
     // "You may have target creature get -1/-1 until end of turn" (Fourth Bridge Prowler), "you may
     // have target creature get +2/+2 and gain haste" (Painsmith): the target is the subject.
     parsedEffectText = parsedEffectText.replace(
-      /\byou may have ((?:another |up to \w+ )?target [^.,]*?) (get|gain|become|lose|have)\b([^.]*)/gi,
+      // ("That creature's controller may have target creature of their choice get -3/-3" — Death
+      // Match — likewise; whose choice it is does not change what is chosen.)
+      /\b(?:you|that (?:creature|permanent|player)(?:'s controller)?|its controller|they) may have ((?:another |up to \w+ )?target [^.,]*?)(?: of (?:their|your|his or her) choice)? (get|gain|become|lose|have)\b([^.]*)/gi,
       (_, subject, verb, rest) => {
         const s3 = (v) => v.toLowerCase() === 'have' ? 'has' : v.toLowerCase() + 's';
         return subject + ' ' + s3(verb) + rest.replace(/\b(and|,) (get|gain|become|lose|have)\b/gi, (m, j, v) => j + ' ' + s3(v));
@@ -826,7 +834,8 @@ const Battlefield = {
     // (A saved board replays the rolled text; the rewrites above join its lines.)
     if (!rolledLandIds && _ROLLED_LAND_TYPES_RE.test(parsedEffectText.trim())) parsedEffectText = parsedEffectText.trim().replace(/\.\s+/g, '.\n');
     // Lands given a type at random are not targeted either.
-    const isRolledLandTypes = _ROLLED_LAND_TYPES_RE.test(parsedEffectText);
+    // (Thelonite Monk's own "Target land becomes a Forest." is a target, not a roll.)
+    const isRolledLandTypes = _ROLLED_LAND_TYPES_RE.test(parsedEffectText) && (!!rolledLandIds || /\bat random\b/i.test(fullText || ''));
     if (isRolledLandTypes) didItConversion = true;
     if (didItConversion) pseudoPerm._nonTargetingSelection = true;
     pseudoPerm._guessedTargetSubjects = savedGuesses === null ? null : [...guessedSubjects];
@@ -2100,10 +2109,13 @@ const Battlefield = {
     }
     const newTs = this.nextTimestamp++;
     const hasModalTargets = this.effects.some(e => e.sourceId === effectSourceId && e.modalModeIndex !== undefined);
+    // "This creature and another target creature each get +1/+0" (Deadly Dancer): the half pinned
+    // to the ability's source (_sourceHalf) stays there; only the other half follows the choice.
     this.effects.forEach(e => {
       if (e.sourceId === effectSourceId && e.scope === 'targeted') {
         if (hasModalTargets && e.modalModeIndex !== undefined && e.disabled) return;
         if (e._targetSlot !== undefined) return; // slotted effects use setSlottedTarget
+        if (e._sourceHalf && e._autoTargetSource) return;
         e.targetId = targetPermId;
         e.timestamp = newTs;
       }
@@ -3303,7 +3315,8 @@ const Battlefield = {
         if (e.targetIds && e.targetIds.length) multiTarget = e.targetIds.slice();
         if (e._targetSlot !== undefined) { if (e.targetId) { slotTargets[e._targetSlot] = e.targetId; slotTs[e._targetSlot] = e.timestamp; } }
         else if (e.modalModeIndex !== undefined) { if (e.targetId) modalTargets[e.modalModeIndex] = e.targetId; }
-        else if (e.targetId && primaryTarget === null) { primaryTarget = e.targetId; targetTs = e.timestamp; }
+        // (Not the half pinned to the ability's own source — Deadly Dancer: the picked half is the target.)
+        else if (e.targetId && primaryTarget === null && !(e._sourceHalf && e._autoTargetSource)) { primaryTarget = e.targetId; targetTs = e.timestamp; }
       }
       // targetTs / slotTs preserve the ACTUAL layer-ordering timestamp of targeted
       // effects (auras/equipment), which setTarget/setSlottedTarget bump independently of

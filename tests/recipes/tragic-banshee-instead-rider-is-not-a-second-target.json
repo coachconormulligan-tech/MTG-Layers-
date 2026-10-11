@@ -1,0 +1,42 @@
+{
+  "name": "Tragic Banshee — the \"-13/-13 instead\" rider is not stacked on the -1/-1",
+  "notes": "Memory: project_audit_small_clusters_round_eight_2026-10-11. Once a clause before a target phrase was dropped from filters, \"If a creature died this turn, target creature gets -13/-13 until end of turn instead\" became a second targeted effect in its own slot. Such a rider in a fired ability is left out, as Tragic Slip's is for a spell.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Tragic Banshee",
+      "as": "banshee"
+    },
+    {
+      "fire": "@banshee",
+      "trigger": 0,
+      "as": "fired"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@fired",
+        "@ogre"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "power": 1,
+        "toughness": 1
+      }
+    }
+  ]
+}
