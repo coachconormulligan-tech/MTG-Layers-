@@ -92,7 +92,7 @@ function renderTimestampPanel() {
       ${mutateBadge}
       ${bestowBadge}
       ${effInfo.hasCopyCard ? renderCopyTargetSelect(p.id) : ''}
-      ${effInfo.targetSlotCount > 0 ? Array.from({length: effInfo.targetSlotCount}, (_, i) => renderSlottedTargetSelect(p.id, i)).join('') : effInfo.hasModalTargets ? renderModalModeTargets(p.id, effInfo.activeModalTargetedModes) : effInfo.hasTargeted ? (effInfo.maxTargets > 1 ? renderMultiTargetSelect(p.id, effInfo.maxTargets) : renderTargetSelect(p.id)) : ''}
+      ${renderTargetPickers(p.id, getTargetPickerKind(p.id, finalStates.get(p.id), effInfo))}
       ${p._refPick ? renderRefPermSelect(p.id) : ''}
       ${p._needsChosenExileCard ? renderChosenExileSelect(p.id) : ''}
       ${p._targetsOpponentPlayer ? renderTargetOpponentSelect(p.id) : ''}

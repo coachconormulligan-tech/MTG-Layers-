@@ -268,111 +268,23 @@ function _injectKnownCardEffectsForCopy(sourceId, copyCard) {
   }
 }
 
+/* The target picker(s) the timestamp panel shows for a source, given getTargetPickerKind's answer. */
+function renderTargetPickers(sourceId, picker) {
+  if (picker.kind === 'slotted') return Array.from({length: picker.slots}, (_, i) => renderSlottedTargetSelect(sourceId, i)).join('');
+  if (picker.kind === 'modal') return renderModalModeTargets(sourceId, picker.modes);
+  if (picker.kind === 'multi') return renderMultiTargetSelect(sourceId, picker.maxTargets);
+  if (picker.kind === 'single') return renderTargetSelect(sourceId);
+  return '';
+}
+
 function renderTargetSelect(sourceId) {
-  const sourcePerm = Battlefield.getPermById(sourceId);
-  const current = Battlefield.effects.find(e => e.sourceId === sourceId && e.scope === 'targeted' && !e.selfTarget && !e._isCounterEffect && !e.disabled)
-    || Battlefield.effects.find(e => e.sourceId === sourceId && e.scope === 'targeted' && !e.selfTarget && !e._isCounterEffect);
-  const currentTarget = current?.targetId || '';
-  // If ANY targeted effect from this source requires an opponent's permanent, apply that filter.
-  // We scan all effects (not just `current`) because haste/untap effects parsed before the
-  // CONTROL effect may be found first by the `current` finder, hiding the flag.
-  const opponentControlRequired = Battlefield.effects.some(e =>
-    e.sourceId === sourceId && e.scope === 'targeted' && !e.selfTarget && e.opponentControlRequired)
-    || !!(sourcePerm?._opponentControlRequired);
-  const youControlRequired = Battlefield.effects.some(e =>
-    e.sourceId === sourceId && e.scope === 'targeted' && !e.selfTarget && e.youControlRequired)
-    || !!(sourcePerm?._youControlRequired);
-  const sourceCtrl = sourcePerm?.controller || sourcePerm?.owner || Battlefield.activePlayerId;
-  // Exclude non-top mutate stack members — a stack is one target (only the top is selectable)
-  const targets = Battlefield.permanents.filter(p => {
-    if (p.isManualEffect || p.id === sourceId) return false;
-    // "another" restriction: exclude the ability's source permanent itself (e.g. Arahbo can't target itself)
-    if (sourcePerm?._excludeAbilitySource && sourcePerm.abilitySourceId && p.id === sourcePerm.abilitySourceId) return false;
-    const stack = Battlefield.getStack(p.id);
-    if (stack && stack.length >= 2 && stack[0] !== p.id) return false;
-    // Spell effects only affect permanents that existed before the spell (earlier timestamp),
-    // but always include a permanent that is already the current target — targeting persists
-    // even if the card is later moved to a timestamp after the spell.
-    if (sourcePerm && (sourcePerm.isManualEffect || sourcePerm.isSpell) && p.timestamp >= sourcePerm.timestamp && p.id !== currentTarget) return false;
-    // "target creature an opponent controls" — exclude permanents the source's controller controls
-    if (opponentControlRequired && (p.controller || p.owner || 'player_0') === sourceCtrl) return false;
-    // "enchant creature you control" — exclude permanents controlled by opponents
-    if (youControlRequired && (p.controller || p.owner || 'player_0') !== sourceCtrl) return false;
-    return true;
-  });
-
-  // Get aura restriction from the source's effects (parsed from "Enchant [type]")
-  const auraRestriction = current?.auraRestriction
-    || Battlefield.effects.find(e => e.sourceId === sourceId && e.auraRestriction)?.auraRestriction
-    || Battlefield.getPermById(sourceId)?._auraRestriction;
-
-  // Get spell target restriction (from "target creature" parsing)
-  const spellRestriction = current?.targetRestriction
-    || Battlefield.effects.find(e => e.sourceId === sourceId && e.targetRestriction && !e.disabled)?.targetRestriction
-    || Battlefield.effects.find(e => e.sourceId === sourceId && e.targetRestriction)?.targetRestriction;
-
-  // Check if this is an equipment source (requires creature target)
-  const isEquipment = Battlefield.effects.some(e => e.sourceId === sourceId && e.requiresCreatureTarget);
-
-  // Use final computed states for validation so copies/tokens show correctly
-  const finalStates = Battlefield.getAllFinalStates();
-  // For spells / triggered / activated abilities, prefer the snapshot captured at fire/cast time
-  // so target restrictions are checked against what each candidate WAS, not what it is now.
-  const snapStates = sourcePerm?._firedAtStates || sourcePerm?._firedAtSnapshot?.states || null;
-  const lookupState = (id) => (snapStates && snapStates.has(id)) ? snapStates.get(id) : finalStates.get(id);
-
-  // CR 704.5p: If this equipment is currently a creature, it can't equip
-  // (unless it has reconfigure, which makes it lose creature type upon equipping).
-  if (isEquipment) {
-    const sourceFs = finalStates.get(sourceId);
-    const sourceTypes = sourceFs ? (sourceFs.types || []) : (sourcePerm?.printedTypes || []);
-    if (sourceTypes.includes('Creature')) {
-      const sourceAbilities = sourceFs ? (sourceFs.abilities || []) : [];
-      const hasReconfigure = sourceAbilities.some(a => /\breconfigure\b/i.test(a));
-      if (!hasReconfigure) {
-        return `<div class="ts-equip-blocked" style="color:#c44;font-size:0.85em;padding:2px 6px;">This Equipment is currently a creature and cannot equip. (Rule 704.5p)</div>`;
-      }
-    }
+  const r = getTargetCandidates(sourceId, { kind: 'single' });
+  if (r.blocked) {
+    return `<div class="ts-equip-blocked" style="color:#c44;font-size:0.85em;padding:2px 6px;">${r.blocked}</div>`;
   }
-
-  // Check if this is a non-targeting selection (from "it" pronoun conversion).
-  // These abilities don't actually target, so they bypass shroud/hexproof.
-  const isNonTargeting = sourcePerm && sourcePerm._nonTargetingSelection;
-
-  // Check if this is a reconfigure card that currently has a target (is attached)
-  const isReconfigure = isEquipment && sourcePerm && (sourcePerm.oracleText || '').toLowerCase().includes('reconfigure');
-  const isAttached = isReconfigure && currentTarget;
-
   return `<select class="ts-target-select" onchange="setEffectTarget('${sourceId}', this.value)" onclick="event.stopPropagation()">
-    <option value="">${isAttached ? '\u2192 Unattach' : isNonTargeting ? '\u2192 choose\u2026' : '\u2192 target\u2026'}</option>
-    ${targets.map(t => {
-      const fs = lookupState(t.id);
-      const tState = fs
-        ? { types: fs.types || [], supertypes: fs.supertypes || [], subtypes: fs.subtypes || [], colors: fs.colors || [], isAllCreatureTypes: fs.isAllCreatureTypes }
-        : { types: t.printedTypes || [], supertypes: t.printedSupertypes || [], subtypes: t.printedSubtypes || [], colors: t.printedColors || [], isAllCreatureTypes: false };
-      const validAura = !auraRestriction || auraRestriction(tState);
-      const tCtrlForEquip = t.controller || t.owner || 'player_0';
-      const validEquip = !isEquipment || (tState.types.includes('Creature') && tCtrlForEquip === sourceCtrl);
-      const validSpell = !spellRestriction || spellRestriction(tState);
-      // Shroud/hexproof prevent being targeted — but non-targeting selections bypass them
-      const tAbilities = !isNonTargeting && fs ? (fs.abilities || []) : [];
-      const hasShroud = tAbilities.some(a => /\bshroud\b/i.test(a));
-      const tCtrl = t.controller || t.owner || 'player_0';
-      const hasHexproof = tCtrl !== sourceCtrl && tAbilities.some(a => /\bhexproof\b/i.test(a));
-      // CR 702.16 — protection: skip if target is protected from this source.
-      // Auras/equipment ALWAYS check (attachment counts); other non-targeting selections bypass.
-      const isAttachment = !!auraRestriction || isEquipment;
-      const checkProtection = !isNonTargeting || isAttachment;
-      const sourceFs = finalStates.get(sourceId);
-      const isProtected = checkProtection && (typeof _isProtectedFromSource === 'function')
-        ? !!_isProtectedFromSource(fs || tState, sourceFs, sourcePerm, t)
-        : false;
-      let tDisplayName = (fs?.copySource ? fs.name + ' (copy)' : t.name) + (t.label ? ' ' + t.label : '');
-      if (Battlefield.players.length > 1 && t.owner) tDisplayName += ` [${Battlefield.getPlayerName(t.controller || t.owner)}]`;
-      // Dual Aura+Equipment: accept if valid for either attachment type; otherwise AND both.
-      const validAttach = (auraRestriction && isEquipment) ? (validAura || validEquip) : (validAura && validEquip);
-      return (validAttach && validSpell && !hasShroud && !hasHexproof && !isProtected) ? `<option value="${t.id}" ${t.id === currentTarget ? 'selected' : ''}>${escapeHtml(tDisplayName)}</option>` : '';
-    }).join('')}
+    <option value="">${r.isAttached ? '\u2192 Unattach' : r.isNonTargeting ? '\u2192 choose\u2026' : '\u2192 target\u2026'}</option>
+    ${r.candidates.map(c => `<option value="${c.id}" ${c.id === r.currentTarget ? 'selected' : ''}>${escapeHtml(c.displayName)}</option>`).join('')}
   </select>`;
 }
 
@@ -511,51 +423,12 @@ function setEnchantedPlayer(sourceId, playerId) {
 
 /* Render multiple target dropdowns for "up to N target" effects */
 function renderMultiTargetSelect(sourceId, maxTargets) {
-  const sourcePerm = Battlefield.getPermById(sourceId);
-  const effs = Battlefield.effects.filter(e => e.sourceId === sourceId && e.scope === 'targeted' && !e.selfTarget);
-  const currentTargetIds = effs[0]?.targetIds || [];
-  const targets = Battlefield.permanents.filter(p => {
-    if (p.isManualEffect || p.id === sourceId) return false;
-    if (sourcePerm?._excludeAbilitySource && sourcePerm.abilitySourceId && p.id === sourcePerm.abilitySourceId) return false;
-    const stack = Battlefield.getStack(p.id);
-    if (stack && stack.length >= 2 && stack[0] !== p.id) return false;
-    // Spell effects only affect permanents that existed before the spell (earlier timestamp),
-    // but always include permanents that are already current targets — targeting persists
-    // even if the card is later moved to a timestamp after the spell.
-    // (Not for a pick made from the board as it is now — _pickFromLiveBoard, below.)
-    if (sourcePerm && sourcePerm.isManualEffect && !sourcePerm._pickFromLiveBoard && p.timestamp >= sourcePerm.timestamp && !currentTargetIds.includes(p.id)) return false;
-    return true;
-  });
-  const spellRestriction = effs.find(e => e.targetRestriction)?.targetRestriction;
-
-  const finalStates = Battlefield.getAllFinalStates();
-  const snapStates = sourcePerm?._firedAtStates || sourcePerm?._firedAtSnapshot?.states || null;
-  // "Whenever a creature attacks this turn, it gets …" (Song of Blood): the creatures attack
-  // after the spell has resolved, so they are picked from those marked attacking now.
-  const liveBoard = !!(sourcePerm && sourcePerm._pickFromLiveBoard);
-  const lookupState = (id) => (!liveBoard && snapStates && snapStates.has(id)) ? snapStates.get(id) : finalStates.get(id);
-  const isNonTargeting = sourcePerm && sourcePerm._nonTargetingSelection;
-  const sourceCtrl = sourcePerm?.controller || sourcePerm?.owner || Battlefield.activePlayerId;
-
   let html = '<div class="multi-target-group" onclick="event.stopPropagation()">';
   for (let i = 0; i < maxTargets; i++) {
-    const currentVal = currentTargetIds[i] || '';
+    const r = getTargetCandidates(sourceId, { kind: 'multi', slotIndex: i });
     html += `<select class="ts-target-select ts-target-multi" onchange="setMultiTarget('${sourceId}', ${i}, this.value)">
-      <option value="">${isNonTargeting ? '\u2192 choose' : '\u2192 target'} ${i + 1}\u2026</option>
-      ${targets.map(t => {
-        const fs = lookupState(t.id);
-        const tState = fs
-          ? { types: fs.types || [], supertypes: fs.supertypes || [], subtypes: fs.subtypes || [], colors: fs.colors || [], isAllCreatureTypes: fs.isAllCreatureTypes, ...(liveBoard ? { traits: fs.traits || t.traits || [] } : {}) }
-          : { types: t.printedTypes || [], supertypes: t.printedSupertypes || [], subtypes: t.printedSubtypes || [], colors: t.printedColors || [], isAllCreatureTypes: false, ...(liveBoard ? { traits: t.traits || [] } : {}) };
-        const valid = t.id === currentVal || !spellRestriction || spellRestriction(tState);
-        const tAbilities = !isNonTargeting && fs ? (fs.abilities || []) : [];
-        const hasShroud = tAbilities.some(a => /\bshroud\b/i.test(a));
-        const tCtrl = t.controller || t.owner || 'player_0';
-        const hasHexproof = tCtrl !== sourceCtrl && tAbilities.some(a => /\bhexproof\b/i.test(a));
-        let tDisplayName = (fs?.copySource ? fs.name + ' (copy)' : t.name) + (t.label ? ' ' + t.label : '');
-        if (Battlefield.players.length > 1 && t.owner) tDisplayName += ` [${Battlefield.getPlayerName(t.controller || t.owner)}]`;
-        return (valid && !hasShroud && !hasHexproof) ? `<option value="${t.id}" ${t.id === currentVal ? 'selected' : ''}>${escapeHtml(tDisplayName)}</option>` : '';
-      }).join('')}
+      <option value="">${r.isNonTargeting ? '\u2192 choose' : '\u2192 target'} ${i + 1}\u2026</option>
+      ${r.candidates.map(c => `<option value="${c.id}" ${c.id === r.currentTarget ? 'selected' : ''}>${escapeHtml(c.displayName)}</option>`).join('')}
     </select>`;
   }
   html += '</div>';
@@ -585,49 +458,10 @@ function setSlottedTarget(sourceId, slot, targetId) {
 /* Render a target dropdown for one slot of a multi-sentence spell. Each slot tracks its own
    targetId and restriction independently. */
 function renderSlottedTargetSelect(sourceId, slot) {
-  const sourcePerm = Battlefield.getPermById(sourceId);
-  const slotEff = Battlefield.effects.find(e =>
-    e.sourceId === sourceId && e.scope === 'targeted' && !e.selfTarget &&
-    e._targetSlot === slot && !e.disabled
-  );
-  const currentTarget = slotEff?.targetId || '';
-  const sourceCtrl = sourcePerm?.controller || sourcePerm?.owner || Battlefield.activePlayerId;
-
-  const targets = Battlefield.permanents.filter(p => {
-    if (p.isManualEffect || p.id === sourceId) return false;
-    const stack = Battlefield.getStack(p.id);
-    if (stack && stack.length >= 2 && stack[0] !== p.id) return false;
-    if (sourcePerm && (sourcePerm.isManualEffect || sourcePerm.isSpell) && p.timestamp >= sourcePerm.timestamp && p.id !== currentTarget) return false;
-    return true;
-  });
-
-  const spellRestriction = slotEff?.targetRestriction || null;
-  const finalStates = Battlefield.getAllFinalStates();
-  const snapStates = sourcePerm?._firedAtStates || sourcePerm?._firedAtSnapshot?.states || null;
-  const lookupState = (id) => (snapStates && snapStates.has(id)) ? snapStates.get(id) : finalStates.get(id);
-
+  const r = getTargetCandidates(sourceId, { kind: 'slotted', slot });
   return `<select class="ts-target-select" onchange="setSlottedTarget('${sourceId}', ${slot}, this.value)" onclick="event.stopPropagation()">
     <option value="">→ target ${slot + 1}…</option>
-    ${targets.map(t => {
-      const fs = lookupState(t.id);
-      const tState = fs
-        ? { types: fs.types || [], supertypes: fs.supertypes || [], subtypes: fs.subtypes || [], colors: fs.colors || [], isAllCreatureTypes: fs.isAllCreatureTypes }
-        : { types: t.printedTypes || [], supertypes: t.printedSupertypes || [], subtypes: t.printedSubtypes || [], colors: t.printedColors || [], isAllCreatureTypes: false };
-      const validSpell = !spellRestriction || spellRestriction(tState);
-      const tAbilities = fs ? (fs.abilities || []) : [];
-      const hasShroud = tAbilities.some(a => /\bshroud\b/i.test(a));
-      const tCtrl = t.controller || t.owner || 'player_0';
-      const hasHexproof = tCtrl !== sourceCtrl && tAbilities.some(a => /\bhexproof\b/i.test(a));
-      const sourceFs = finalStates.get(sourceId);
-      const isProtected = (typeof _isProtectedFromSource === 'function')
-        ? !!_isProtectedFromSource(fs || tState, sourceFs, sourcePerm, t)
-        : false;
-      let tDisplayName = (fs?.copySource ? fs.name + ' (copy)' : t.name) + (t.label ? ' ' + t.label : '');
-      if (Battlefield.players.length > 1 && t.owner) tDisplayName += ` [${Battlefield.getPlayerName(t.controller || t.owner)}]`;
-      return (validSpell && !hasShroud && !hasHexproof && !isProtected)
-        ? `<option value="${t.id}" ${t.id === currentTarget ? 'selected' : ''}>${escapeHtml(tDisplayName)}</option>`
-        : '';
-    }).join('')}
+    ${r.candidates.map(c => `<option value="${c.id}" ${c.id === r.currentTarget ? 'selected' : ''}>${escapeHtml(c.displayName)}</option>`).join('')}
   </select>`;
 }
 
@@ -636,46 +470,18 @@ function renderSlottedTargetSelect(sourceId, slot) {
    mode 1 targets another). One labeled dropdown per active targeted modal mode. */
 function renderModalModeTargets(sourceId, activeModeIndices) {
   const sourcePerm = Battlefield.getPermById(sourceId);
-  const allEffs = Battlefield.effects.filter(e => e.sourceId === sourceId && e.scope === 'targeted' && !e.selfTarget);
-  const finalStates = Battlefield.getAllFinalStates();
-  const snapStates = sourcePerm?._firedAtStates || sourcePerm?._firedAtSnapshot?.states || null;
-  const lookupState = (id) => (snapStates && snapStates.has(id)) ? snapStates.get(id) : finalStates.get(id);
-  const isNonTargeting = sourcePerm && sourcePerm._nonTargetingSelection;
-  const sourceCtrl = sourcePerm?.controller || sourcePerm?.owner || Battlefield.activePlayerId;
-  const targets = Battlefield.permanents.filter(p => {
-    if (p.isManualEffect || p.id === sourceId) return false;
-    if (sourcePerm?._excludeAbilitySource && sourcePerm.abilitySourceId && p.id === sourcePerm.abilitySourceId) return false;
-    const stack = Battlefield.getStack(p.id);
-    if (stack && stack.length >= 2 && stack[0] !== p.id) return false;
-    return true;
-  });
-
   const modeTexts = sourcePerm && sourcePerm.modalModeTexts ? sourcePerm.modalModeTexts : [];
   let html = '<div class="multi-target-group" onclick="event.stopPropagation()">';
   for (const modeIdx of activeModeIndices) {
-    const modeEff = allEffs.find(e => e.modalModeIndex === modeIdx);
-    if (!modeEff) continue;
-    const currentTarget = modeEff.targetId || '';
-    const spellRestriction = modeEff.targetRestriction || null;
+    const r = getTargetCandidates(sourceId, { kind: 'modal', modeIndex: modeIdx });
+    if (r.noEffect) continue;
     const modeLabel = modeTexts[modeIdx]
       ? (modeTexts[modeIdx].length > 40 ? modeTexts[modeIdx].substring(0, 37) + '...' : modeTexts[modeIdx])
       : `Mode ${modeIdx + 1}`;
     html += `<select class="ts-target-select ts-target-multi" title="${escapeAttr(modeTexts[modeIdx] || '')}"
         onchange="setModalModeTarget('${escapeAttr(sourceId)}', ${modeIdx}, this.value)">
-      <option value="">${isNonTargeting ? '\u2192 choose' : '\u2192 target'} (${escapeHtml(modeLabel)})\u2026</option>
-      ${targets.map(t => {
-        const fs = lookupState(t.id);
-        const tState = fs
-          ? { types: fs.types || [], supertypes: fs.supertypes || [], subtypes: fs.subtypes || [], colors: fs.colors || [], isAllCreatureTypes: fs.isAllCreatureTypes }
-          : { types: t.printedTypes || [], supertypes: t.printedSupertypes || [], subtypes: t.printedSubtypes || [], colors: t.printedColors || [], isAllCreatureTypes: false };
-        const valid = t.id === currentTarget || !spellRestriction || spellRestriction(tState);
-        const tAbilities = !isNonTargeting && fs ? (fs.abilities || []) : [];
-        const hasShroud = tAbilities.some(a => /\bshroud\b/i.test(a));
-        const tCtrl = t.controller || t.owner || 'player_0';
-        const hasHexproof = tCtrl !== sourceCtrl && tAbilities.some(a => /\bhexproof\b/i.test(a));
-        let tDisplayName = (fs?.copySource ? fs.name + ' (copy)' : t.name) + (t.label ? ' ' + t.label : '');
-        return (valid && !hasShroud && !hasHexproof) ? `<option value="${t.id}" ${t.id === currentTarget ? 'selected' : ''}>${escapeHtml(tDisplayName)}</option>` : '';
-      }).join('')}
+      <option value="">${r.isNonTargeting ? '\u2192 choose' : '\u2192 target'} (${escapeHtml(modeLabel)})\u2026</option>
+      ${r.candidates.map(c => `<option value="${c.id}" ${c.id === r.currentTarget ? 'selected' : ''}>${escapeHtml(c.displayName)}</option>`).join('')}
     </select>`;
   }
   html += '</div>';

@@ -66,14 +66,14 @@ def app_scripts():
     return [s for s in srcs if not s.startswith('ui-')] + ['ui-helpers.js']
 
 
-def slim(card):
-    c = {k: card[k] for k in CARD_FIELDS if k in card}
+def slim(card, fields=CARD_FIELDS):
+    c = {k: card[k] for k in fields if k in card}
     if card.get('card_faces'):
-        c['card_faces'] = [{k: f[k] for k in CARD_FIELDS if k in f} for f in card['card_faces']]
+        c['card_faces'] = [{k: f[k] for k in fields if k in f} for f in card['card_faces']]
     return c
 
 
-def load_cards(only=None, limit=None):
+def load_cards(only=None, limit=None, fields=CARD_FIELDS):
     if not os.path.exists(CARD_CACHE):
         sys.exit('No card file at %s (see "Regression Tests" in CLAUDE.md).' % CARD_CACHE)
     cards, skipped = [], collections.Counter()
@@ -84,7 +84,7 @@ def load_cards(only=None, limit=None):
             c = json.loads(line)
             if only is not None:
                 if c['name'] in only or c['name'].split(' // ')[0] in only:
-                    cards.append(slim(c))
+                    cards.append(slim(c, fields))
                 continue
             if c.get('layout') in SKIP_LAYOUTS:
                 skipped['layout ' + c['layout']] += 1
@@ -93,7 +93,7 @@ def load_cards(only=None, limit=None):
             elif c['name'].startswith('A-'):
                 skipped['alchemy rebalance'] += 1
             else:
-                cards.append(slim(c))
+                cards.append(slim(c, fields))
     cards.sort(key=lambda c: c['name'])
     if limit:
         cards = cards[:limit]
