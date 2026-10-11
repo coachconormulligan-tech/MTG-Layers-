@@ -198,9 +198,19 @@ function _singleTargetCandidates(sourceId) {
     || Battlefield.getPermById(sourceId)?._auraRestriction;
 
   // Get spell target restriction (from "target creature" parsing)
-  const spellRestriction = current?.targetRestriction
+  const firstRestriction = current?.targetRestriction
     || Battlefield.effects.find(e => e.sourceId === sourceId && e.targetRestriction && !e.disabled)?.targetRestriction
     || Battlefield.effects.find(e => e.sourceId === sourceId && e.targetRestriction)?.targetRestriction;
+  // Every targeted effect of a one-target source is about that same target, so each one's
+  // restriction applies. "Gain control of target creature with power 3 or less … It gains haste"
+  // (Smelt-Ward Ignus): the haste effect, found first, only knows "creature".
+  const sharedRestrictions = [...new Set(Battlefield.effects
+    .filter(e => e.sourceId === sourceId && e.scope === 'targeted' && !e.selfTarget && !e._isCounterEffect &&
+      !e.disabled && e.targetRestriction)
+    .map(e => e.targetRestriction))];
+  const spellRestriction = sharedRestrictions.length >= 2
+    ? (st, states, ctrl) => sharedRestrictions.every(r => r(st, states, ctrl))
+    : firstRestriction;
 
   // Check if this is an equipment source (requires creature target)
   const isEquipment = Battlefield.effects.some(e => e.sourceId === sourceId && e.requiresCreatureTarget);

@@ -584,6 +584,17 @@ const Battlefield = {
     // "If this land isn't a creature, it becomes a 2/4 Wizard creature …" (Great Hall of the
     // Biblioplex, Veiled Serpent): "it" is the permanent the condition just named.
     parsedEffectText = parsedEffectText.replace(/^if\s+this\s+(land|permanent|creature|artifact|enchantment)\s+[^,]+,\s*it\s+(?=becomes?\b)/i, 'This $1 ');
+    // A target named only in that condition is still what "it" means afterwards: "If target
+    // attacking creature token is the chosen type, put three +1/+1 counters on it and it gains
+    // deathtouch" (A Killer Among Us).
+    {
+      const _ifClause = parsedEffectText.match(/^if\s+[^,]+,\s*/i);
+      const _ifTarget = _ifClause && /\btarget\b/i.test(_ifClause[0]) ? _abilityTargetBefore(_ifClause[0], _ifClause[0].length) : null;
+      if (_ifTarget && !/\btarget\b/i.test(parsedEffectText.slice(_ifClause[0].length))) {
+        parsedEffectText = _ifClause[0] + parsedEffectText.slice(_ifClause[0].length)
+          .replace(/\bit\s+(gets?|gains?|has|becomes?|loses?)\b/i, _ifTarget + ' $1');
+      }
+    }
     parsedEffectText = parsedEffectText.replace(/^if\s+[^,]+,\s*/i, '');
     parsedEffectText = _fireTimeBecomesRewrites(parsedEffectText, this.players.length);
     parsedEffectText = _writeOutEarthbend(parsedEffectText);
@@ -643,8 +654,9 @@ const Battlefield = {
     }
     // "another" or "other [thing]" in the effectText also excludes the source
     // (e.g. "another target creature", "each other creature you control").
-    // ("In addition to its other types" — Liquimetal Coating — is not that "other".)
-    const _effectTextForOther = parsedEffectText.replace(/\b(?:its|their|his|her|the|any)\s+other\b/gi, '');
+    // ("In addition to its other types" — Liquimetal Coating — is not that "other", nor is
+    // "a creature type other than Wall" — Imagecrafter.)
+    const _effectTextForOther = parsedEffectText.replace(/\b(?:its|their|his|her|the|any)\s+other\b|\btypes?\s+other\s+than\b/gi, '');
     const effectHasAnother = /\banother\s+(?:target\s+)?[A-Za-z]/i.test(_effectTextForOther) || /\bother\s+[A-Za-z]/i.test(_effectTextForOther);
     // "Another" in the trigger condition says who caused the trigger, not who may be targeted:
     // "Whenever this creature or another Human you control enters, target creature gains double
@@ -748,6 +760,10 @@ const Battlefield = {
     }
     // "…untap this creature. It gains protection …" (Pristine Skywise): the effect itself names
     // the source before the pronoun, so "it" is the source, whatever the trigger condition says.
+    // "…put a +1/+1 counter on this Vehicle and it gains menace" (Mukotai Soulripper): likewise.
+    parsedEffectText = parsedEffectText.replace(
+      /\b(on|untap|tap) (this (?:creature|vehicle|permanent|artifact|land|enchantment|card)) and it (?=(?:gains?|gets?|has|becomes?|loses?)\b)/gi,
+      '$1 $2 and $2 ');
     parsedEffectText = _resolveItToAbilitySource(parsedEffectText);
     // "Target creature …. If it's a Vampire, it also gains lifelink": the rider is about that target.
     parsedEffectText = _resolveRiderSubjectToTarget(parsedEffectText);

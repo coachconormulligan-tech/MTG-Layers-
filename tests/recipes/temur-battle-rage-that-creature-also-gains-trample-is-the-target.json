@@ -1,0 +1,65 @@
+{
+  "name": "Temur Battle Rage — \"That creature also gains trample\" is the target only",
+  "notes": "Memory: project_audit_list_mismatch_round_seven_2026-10-11. \"Ferocious — That creature also gains trample … if you control a creature with power 4 or greater\" read \"That creature also\" as a filter for every creature, so the whole board gained trample with no target chosen. \"that creature also gains\" is now the pronoun \"that creature\".",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre"
+    },
+    {
+      "add": "Craw Wurm",
+      "as": "wurm"
+    },
+    {
+      "add": "Temur Battle Rage",
+      "as": "spell",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTarget",
+        "@spell",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Double strike",
+            "Trample"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Trample",
+            "Double strike"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Craw Wurm",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Trample",
+            "Double strike"
+          ]
+        }
+      }
+    }
+  ]
+}
