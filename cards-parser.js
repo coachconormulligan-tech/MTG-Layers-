@@ -765,13 +765,21 @@ function parseCardEffects(permanent, card, opts = {}) {
   // "become 4/1 or 1/4" (Master of Winds) is a choice and is left alone, and so is
   // "become X/X …, where X is this creature's power" (Unruly Krasis): a typed-in X is not that.
   if (/\bbase power and toughness\b[^.\n]*\bbecomes?\s+\d/i.test(oracleRaw)) {
+    // An offer that follows something else the spell or ability does ("Put X +1/+1 counters on
+    // this card. Then you may have the base power and toughness of each other creature you
+    // control become …" — Sita Varma, Masked Racer) keeps its "you may have": that sentence is
+    // asked with a toggle by _splitConditionalBranches.
+    const _basePTForm = (m, may, subject, pt, offset, whole) =>
+      may && (permanent.isSpell || permanent.isManualEffect) && /\.\s+(?:then\s+)?$/i.test(whole.slice(0, offset))
+        ? `${may}${subject} have base power and toughness ${pt}`
+        : `${subject} has base power and toughness ${pt}`;
     oracleRaw = oracleRaw
       // Not "each creature that dealt damage to it this turn" (Brine Hag): the site keeps no
       // damage history, so that group cannot be worked out.
-      .replace(/\b(?:you may have )?the base power and toughness of ((?:(?!\bthat\s+dealt\b)[^.,\n])+?) becomes? (\d+\/\d+)(?!\s+or\s+\d)(?![^.\n]*\bwhere\b)/gi,
-        '$1 has base power and toughness $2')
-      .replace(/\b(?:you may have )?([^.,\n]+?)'s base power and toughness becomes? (\d+\/\d+)(?!\s+or\s+\d)(?![^.\n]*\bwhere\b)/gi,
-        '$1 has base power and toughness $2')
+      .replace(/\b(you may have )?the base power and toughness of ((?:(?!\bthat\s+dealt\b)[^.,\n])+?) becomes? (\d+\/\d+)(?!\s+or\s+\d)(?![^.\n]*\bwhere\b)/gi,
+        _basePTForm)
+      .replace(/\b(you may have )?([^.,\n]+?)'s base power and toughness becomes? (\d+\/\d+)(?!\s+or\s+\d)(?![^.\n]*\bwhere\b)/gi,
+        _basePTForm)
       // "…become 6/6 and they gain trample" (Moon Girl and Devil Dinosaur): "they" is the
       // two-in-one card itself.
       .replace(/(\bthis (?:card|creature) has base power and toughness \d+\/\d+) and they (?:gain|have)\b/gi, '$1 and gains');
