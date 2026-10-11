@@ -1,0 +1,29 @@
+{
+  "name": "Sita Varma, Masked Racer — \"Then you may have the base power and toughness … become\" toggle at No",
+  "notes": "Memory: project_may_action_behind_toggle_2026-10-11 (third follow-up). \"Put X +1/+1 counters on Sita Varma. Then you may have the base power and toughness of each other creature you control become equal to Sita Varma's power until end of turn.\" The parser's base-P/T rewrite removed \"you may have\" before the branch splitter saw the sentence, so the offer had no toggle and always applied. A later-sentence offer now keeps its words through that rewrite. At No the other creature keeps its own base power and toughness.",
+  "steps": [
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Sita Varma, Masked Racer",
+      "as": "sita",
+      "x": 2
+    },
+    {
+      "fire": "@sita",
+      "activated": 0,
+      "as": "fired"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "power": 3,
+        "toughness": 3
+      }
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "name": "Sita Varma, Masked Racer — toggle at Yes: each other creature has base P/T equal to her power",
+  "notes": "Memory: project_may_action_behind_toggle_2026-10-11 (third follow-up). Companion to sita-varma-you-may-set-base-pt-toggle-no: at Yes Hill Giant is 2/2 (Sita Varma's power when the ability was fired) and Sita Varma herself is unchanged.",
+  "steps": [
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Sita Varma, Masked Racer",
+      "as": "sita",
+      "x": 2
+    },
+    {
+      "fire": "@sita",
+      "activated": 0,
+      "as": "fired"
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@fired",
+        true
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "power": 2,
+        "toughness": 2
+      }
+    },
+    {
+      "perm": "Sita Varma, Masked Racer",
+      "final": {
+        "power": 2,
+        "toughness": 3
+      }
+    }
+  ]
+}

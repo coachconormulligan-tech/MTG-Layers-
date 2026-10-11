@@ -978,7 +978,10 @@ function _splitConditionalBranches(text, isSpell, canParse) {
           ? (/\b(?:it|them|that (?:creature|permanent|card)|those \w+)\b/i.test(offered) ? null
             : (/^have\s/i.test(offered) ? 'You may ' : '') + offered)
           : _branchResolveSubject(offered, sentences, i, true);
-        const label = body && askLabel(sentences[i].replace(/^(?:(?:Then|Until end of turn,)\s+)?you may\s+/i, '').replace(/\.$/, ''), sentences, i);
+        // (The parser has by now written "have the base power and toughness of X become 2/2" as
+        // "have X have base power and toughness 2/2" — Sita Varma: a shorter label for that.)
+        const label = body && askLabel(sentences[i].replace(/^(?:(?:Then|Until end of turn,)\s+)?you may\s+/i, '').replace(/\.$/, '')
+          .replace(/^have (.+?) have base power and toughness (\d+\/\d+).*$/i, 'Base P/T $2 for $1'), sentences, i);
         if (label) {
           // "It's still a land." (Nissa of Shadowed Boughs) belongs to the sentence it follows.
           const still = /^(?:it|they)(?:'s|'re| is| are) still\b/i.test(sentences[i + 1] || '') ? ' ' + sentences[i + 1] : '';
