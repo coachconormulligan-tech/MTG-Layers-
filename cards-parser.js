@@ -867,6 +867,41 @@ function parseCardEffects(permanent, card, opts = {}) {
       const inner = _parseCondition(notMatch[1]);
       return inner ? (state, allStates) => !inner(state, allStates) : null;
     }
+    // "you control creatures named Mine Worker and Tower Worker" (Power Plant Worker), "a
+    // creature named Bogbrew Witch" (Festering Newt), "four or more creatures named
+    // Biovisionary", "exactly two permanents named Mothers Yamazaki": permanents by name.
+    // "an enchantment named A and a land named B" (High Marshal Arguel) is both.
+    const namedParts = ct.split(/\s+and\s+(?=an?\s+[\w-]+\s+named\s)/);
+    if (namedParts.length > 1 && /^you control\b/.test(ct)) {
+      const subs = namedParts.map((part, k) => _parseCondition(k ? `you control ${part}` : part));
+      return subs.every(Boolean) ? (state, allStates) => subs.every(c => c(state, allStates)) : null;
+    }
+    const named = ct.match(/^you control (an? |another |exactly (\w+) |(\w+) or more |(\w+) )?(?:legendary )?(creature|artifact|enchantment|land|planeswalker|permanent|equipment)s? named (.+)$/);
+    if (named) {
+      const countWord = named[2] || named[3] || named[4];
+      const count = countWord ? ({ one: 1, two: 2 }[countWord] || _parseWordNumber(countWord)) : 0;
+      const exactly = !!named[2], another = named[1] === 'another ';
+      const kind = named[5], kindName = kind.charAt(0).toUpperCase() + kind.slice(1);
+      // Without a number, "creatures named A and B" asks for one of each.
+      const names = !named[1] ? named[6].split(/\s+and\s+/) : [named[6]];
+      const srcId = permanent.id;
+      return (state, allStates) => {
+        if (!allStates) return false;
+        // "You" is whoever controls this spell or ability, not the creature it targets
+        // (Festering Newt's target is an opponent's).
+        const you = (allStates.get(srcId) || {}).controller || permanent.controller || state.controller;
+        return names.every(name => {
+          let n = 0;
+          for (const [id, s] of allStates) {
+            if (s.controller !== you || (another && id === srcId)) continue;
+            if (String(s.name || '').toLowerCase() !== name) continue;
+            if (kind === 'equipment' ? !(s.subtypes || []).includes('Equipment') : kind !== 'permanent' && !(s.types || []).includes(kindName)) continue;
+            n++;
+          }
+          return count ? (exactly ? n === count : n >= count) : n >= 1;
+        });
+      };
+    }
     // "an opponent controls a [type]" — multiplayer: any permanent controlled by a
     // different player matches the (optional) type filter. Kept inline above compound
     // preprocessing to preserve historical precedence: mixed text like "opponent

@@ -1,0 +1,13 @@
+{
+  "name": "Power Plant Worker — \"If you control creatures named Mine Worker and Tower Worker\" is read by name",
+  "notes": "Memory: project_audit_target_changes_nothing_2026-10-11. \"This creature gets +2/+2 until end of turn. If you control creatures named Mine Worker and Tower Worker, put two +1/+1 counters on this creature instead.\" The condition was read as merely \"you control creatures\". _parseCondition now reads \"you control [a / N or more / exactly N] <type>(s) named A [and B]\" by name, so with both other Workers out the +2/+2 does not apply (the counters are the player's to add); alone it does (see the instead-with-counters recipe).",
+  "steps": [
+    { "add": "Mine Worker", "as": "mine" },
+    { "add": "Tower Worker", "as": "tower" },
+    { "add": "Power Plant Worker", "as": "worker" },
+    { "fire": "@worker", "activated": 0, "as": "fired" }
+  ],
+  "asserts": [
+    { "perm": "Power Plant Worker", "final": { "power": 4, "toughness": 4 } }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "name": "Festering Newt — \"-4/-4 instead if you control a creature named Bogbrew Witch\" looks at your board, not the target's controller's",
+  "notes": "Memory: project_audit_target_changes_nothing_2026-10-11. The trailing \"… instead if you control a creature named Bogbrew Witch\" is a branch of its own (-1/-1 without the Witch, -4/-4 with her). A condition is tested against the affected permanent's state, whose controller here is the opponent; the by-name condition takes \"you\" from the ability's own controller instead.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Hill Giant", "as": "giant", "controller": "p2" },
+    { "add": "Bogbrew Witch", "as": "witch" },
+    { "add": "Festering Newt", "as": "newt" },
+    { "fire": "@newt", "trigger": 0, "as": "fired" },
+    { "call": ["setTarget", "@fired", "@giant"] }
+  ],
+  "asserts": [
+    { "perm": "Hill Giant", "final": { "power": -1, "toughness": -1 } }
+  ]
+}
