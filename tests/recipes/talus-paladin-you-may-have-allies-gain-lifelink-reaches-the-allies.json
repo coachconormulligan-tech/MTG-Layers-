@@ -1,0 +1,41 @@
+{
+  "name": "Talus Paladin — \"you may have Allies you control gain lifelink\" reaches the Allies",
+  "notes": "Memory: project_may_action_behind_toggle_2026-10-11 (second follow-up). Fired, \"you may have Allies you control gain lifelink until end of turn, and you may put a +1/+1 counter on this creature.\" kept \"you may have\" in front of its subject, which was read as the filter \"You May Ally\" and matched nothing (the same for Highland Berserker, Joraga Bard, Seascape Aerialist, Akoum Battlesinger). In a spell or fired ability \"you may have <permanents> gain / get / become …\" is now read with the permanents as the subject. A lone \"you may\" trigger gets no toggle: firing it is the choice.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Talus Paladin",
+      "as": "paladin"
+    },
+    {
+      "fire": "@paladin",
+      "trigger": 0,
+      "as": "fired"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Talus Paladin",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Lifelink"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Lifelink"
+          ]
+        }
+      }
+    }
+  ]
+}

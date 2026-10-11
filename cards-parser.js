@@ -857,8 +857,13 @@ function parseCardEffects(permanent, card, opts = {}) {
   // whatever creature the ability took) whose restriction would turn the real target away.
   // The pseudo-permanent lists the subjects it guessed; a subject that starts with one is left
   // without a restriction, as is every subject on a board saved before the list was kept.
-  function _isGuessedTargetSubject(subjectText) {
+  // (A guess that opens the effect has no real target before it to turn away — "you may have it
+  // become a red Dragon …", Shadow Puppeteers, whose "it" is the creature that attacked — so it
+  // keeps its restriction and is picked, as "it gains haste" is for Dragon Tempest. `matchIndex`
+  // is where the subject's sentence was matched.)
+  function _isGuessedTargetSubject(subjectText, matchIndex) {
     if (!permanent.isTriggeredAbility && !permanent.isActivatedAbility) return false;
+    if (matchIndex != null && permanent._guessedTargetSubjects && !/\btarget\b/i.test(oracle.slice(0, _getMatchContentPos(matchIndex)))) return false;
     const guessed = permanent._guessedTargetSubjects;
     if (!guessed) return true;
     const m = stripDurationPrefix(subjectText.trim()).toLowerCase().match(/^target\s+(.+)$/);
@@ -1559,6 +1564,20 @@ function parseCardEffects(permanent, card, opts = {}) {
     if (permanent.isSpell || permanent.isManualEffect) {
       oracle = oracle.replace(/(^|\.\s+|\n)(?:if|when) you do,\s*(?!if\b)(\w)/gi, (_, pre, ch) => pre + ch.toUpperCase());
     }
+  }
+  // "You may have Allies you control gain lifelink until end of turn" (Talus Paladin, Highland
+  // Berserker): the permanents are the subject. Left in front, "you may have" was read as part
+  // of the filter ("You May Ally") and the effect reached nothing. After the splitter, which
+  // asks about some of these offers. (Not a player: "you may have that player gain control of …".)
+  if (permanent.isSpell || permanent.isManualEffect) {
+    // A single permanent takes the singular verb the effect parsers look for ("you may have it
+    // become a red Dragon …" — Shadow Puppeteers — reads "Target creature becomes …").
+    oracle = oracle.replace(/(^|\.\s+|\n|\],\s+|\x04\d+\x04)you may have\s+(?!(?:that|target|an|each|the) (?:player|opponent)\b)([^.\n"]*?)\s(get|gain|become|lose|have|gets|gains|becomes|loses|has)\b/gi,
+      (_, pre, subject, verb) => {
+        const singular = /^(?:it|this|that|another target|target|enchanted|equipped)\b/i.test(subject) && !/'s base (?:power|toughness)\b/i.test(subject) && !/s$/i.test(verb);
+        const v = !singular ? verb : verb.toLowerCase() === 'have' ? 'has' : verb + 's';
+        return `${pre}${subject.charAt(0).toUpperCase()}${subject.slice(1)} ${v}`;
+      });
   }
 
   // Pattern A: "As long as [condition], it [effect]" at start of line
@@ -2781,7 +2800,7 @@ function parseCardEffects(permanent, card, opts = {}) {
     // that is a guess for a pronoun, unless it is a rider resolved to its target or names
     // several targets ("Up to two target creatures each are …"), which a guess never does.
     if (_addTypeApplies.isSpellTarget) {
-      const _atGuessed = _isGuessedTargetSubject(addTypeFilterText);
+      const _atGuessed = _isGuessedTargetSubject(addTypeFilterText, addTypeMatch.index);
       for (let ei = addTypeEffCountBefore; ei < effects.length; ei++) {
         if (effects[ei].scope === 'targeted' && !effects[ei].selfTarget && !effects[ei].targetRestriction &&
             (!_atGuessed || _isRiderEffect(effects[ei]) || _addTypeApplies.maxTargets > 1)) _applyTargetInfo(effects[ei], _addTypeApplies, fn);
@@ -3949,7 +3968,7 @@ function parseCardEffects(permanent, card, opts = {}) {
     }
     // A "target X" subject keeps its restriction (Gigantomancer), as in addTypeRegex above.
     if (gbpApplies.isSpellTarget) {
-      const _gbpGuessed = _isGuessedTargetSubject(gbpSubjectText);
+      const _gbpGuessed = _isGuessedTargetSubject(gbpSubjectText, generalBasePTMatch.index);
       for (let ei = _gbpEffCountBefore; ei < effects.length; ei++) {
         if (effects[ei].scope === 'targeted' && !effects[ei].selfTarget && !effects[ei].targetRestriction &&
             (!_gbpGuessed || _isRiderEffect(effects[ei]))) _applyTargetInfo(effects[ei], gbpApplies, gbpApplies.fn);
