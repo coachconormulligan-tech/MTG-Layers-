@@ -4507,6 +4507,13 @@ function parseCardEffects(permanent, card, opts = {}) {
     if (/^you\s+and\s+/i.test(filterText) && /\byou (?:control|own)\b/i.test(protMatch[0])) {
       filterText = filterText.replace(/^you\s+and\s+/i, '') + ' you control';
     }
+    // The regex takes "you control" out of the subject ("Target creature you control gains
+    // protection from …" — Mother of Runes); put it back so the filter keeps the controller.
+    const _protAfterSubject = protMatch[0].slice(protMatch[0].indexOf(protMatch[1]) + protMatch[1].length);
+    if (/^\s+you (?:control|own)\s/i.test(_protAfterSubject) && protMatch[1].trim().endsWith(filterText)
+        && !/\byou (?:control|own)\b/i.test(filterText)) {
+      filterText += ' you control';
+    }
     if (!filterReferencesPermanents(filterText)) continue;
     const splitAbilities = _splitProtectionAbilities(rawAbility);
     const { fn, desc, isSelf, isTargeted: _protBuiltTargeted } = buildAppliesToFromText(filterText);

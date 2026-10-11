@@ -1026,14 +1026,16 @@ function buildAppliesToFromText(filterText) {
   // For "you control", wrap the type filter so it only matches permanents
   // controlled by the effect's source controller (passed as 3rd arg by engine.js).
   const rawLower = filterText.toLowerCase();
-  if (!_result.isOpponentsControl && !_result.isSelf && !_result.isTargeted &&
+  // ("Target creature you control" is wrapped too: its fn is the target restriction, asked of
+  // each candidate by the target pickers and of the fire-time snapshot by the engine.)
+  if (!_result.isOpponentsControl && !_result.isSelf &&
       /\byou (?:control|own)\b/.test(rawLower) && _result.fn) {
     const innerFn = _result.fn;
     _result.fn = (p, allStates, effectCtrl) => {
       if (effectCtrl && p.controller !== effectCtrl) return false;
       return innerFn(p, allStates, effectCtrl);
     };
-    _result.isYouControl = true;
+    if (!_result.isTargeted) _result.isYouControl = true;
   }
   // Multiplayer: "[type] target player controls" scopes to permanents controlled by a
   // user-chosen player. The engine passes the chosen player as the 3rd arg (effectCtrl)
@@ -1062,6 +1064,7 @@ function _buildAppliesToFromTextInner(filterText) {
     .replace(/\s+you (?:control|own)(?=\s|$)/g, '')
     .replace(/\s+your opponents control(?=\s|$)/g, '')
     .replace(/\s+opponents control(?=\s|$)/g, '')
+    .replace(/\s+an opponent controls(?=\s|$)/g, '')
     .replace(/\s+target\s+opponent\s+controls?(?=\s|$)/g, '')
     .replace(/\s+target\s+player\s+controls?(?=\s|$)/g, '')
     .replace(/^(?:other|another)\s+/, '')
@@ -1132,6 +1135,19 @@ function _buildAppliesToFromTextInner(filterText) {
         desc: `Applies to: ${oppTypeInfo.value.toLowerCase()}s opponents control`,
         isOpponentsControl: true,
       };
+    }
+    // Anything longer ("creature with flying", "nonland permanent") is read by the ordinary
+    // filter rules once the controller words are gone.
+    if (f && !/\bopponent/.test(f) && !/^permanents?$/.test(f)) {
+      const inner = _buildAppliesToFromTextInner(f);
+      if (inner && inner.fn && !inner.isSelf && !inner.isTargeted) {
+        return {
+          fn: (p, allStates, effectCtrl) =>
+            p.controller !== (effectCtrl || p.controller) && inner.fn(p, allStates, effectCtrl),
+          desc: `Applies to: ${f} opponents control`,
+          isOpponentsControl: true,
+        };
+      }
     }
     return {
       fn: (p, allStates, effectCtrl) => p.controller !== (effectCtrl || p.controller),
