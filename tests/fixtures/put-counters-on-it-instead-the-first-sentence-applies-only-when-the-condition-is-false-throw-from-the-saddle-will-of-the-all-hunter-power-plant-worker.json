@@ -1,0 +1,4449 @@
+{
+ "name": "\"… put counters on it instead\" — the first sentence applies only when the condition is false (Throw from the Saddle, Will of the All-Hunter, Power Plant Worker)",
+ "notes": "Memory: project_audit_target_changes_nothing_2026-10-11. \"Target creature you control gets +1/+1 until end of turn. Put a +1/+1 counter on it instead if it's a Mount.\" gave the +1/+1 to a Mount as well (and, before that, only to a Mount). When an \"instead\" sentence replaces the one before it with something that is not a continuous effect, _splitConditionalBranches (insteadOfNothing) now gives the sentence before the negated condition and drops the replacement; the counters are left to the player. Bears get the boost, the Mount and the blocking Giant do not; Power Plant Worker without the other two Workers gets +2/+2. Not for \"If a creature … would die this turn, exile it instead\" (Malicious Eclipse), which replaces an event.",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Grizzly Bears",
+    "as": "bears"
+   },
+   {
+    "add": "Bridled Bighorn",
+    "as": "mount"
+   },
+   {
+    "add": "Hill Giant",
+    "as": "giant"
+   },
+   {
+    "add": "Runeclaw Bear",
+    "as": "other"
+   },
+   {
+    "call": [
+     "toggleBlocking",
+     "@giant"
+    ]
+   },
+   {
+    "add": "Throw from the Saddle",
+    "as": "throw1",
+    "spell": true
+   },
+   {
+    "call": [
+     "setTarget",
+     "@throw1",
+     "@bears"
+    ]
+   },
+   {
+    "add": "Throw from the Saddle",
+    "as": "throw2",
+    "spell": true
+   },
+   {
+    "call": [
+     "setTarget",
+     "@throw2",
+     "@mount"
+    ]
+   },
+   {
+    "add": "Will of the All-Hunter",
+    "as": "will1",
+    "spell": true
+   },
+   {
+    "call": [
+     "setTarget",
+     "@will1",
+     "@giant"
+    ]
+   },
+   {
+    "add": "Will of the All-Hunter",
+    "as": "will2",
+    "spell": true
+   },
+   {
+    "call": [
+     "setTarget",
+     "@will2",
+     "@other"
+    ]
+   },
+   {
+    "add": "Power Plant Worker",
+    "as": "worker"
+   },
+   {
+    "fire": "@worker",
+    "activated": 0,
+    "as": "firedWorker"
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Grizzly Bears",
+   "final": {
+    "power": 3,
+    "toughness": 3
+   }
+  },
+  {
+   "perm": "Bridled Bighorn",
+   "final": {
+    "power": 3,
+    "toughness": 4
+   }
+  },
+  {
+   "perm": "Hill Giant",
+   "final": {
+    "power": 3,
+    "toughness": 3
+   }
+  },
+  {
+   "perm": "Runeclaw Bear",
+   "final": {
+    "power": 4,
+    "toughness": 4
+   }
+  },
+  {
+   "perm": "Power Plant Worker",
+   "final": {
+    "power": 6,
+    "toughness": 6
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+     "multiverse_ids": [
+      129586
+     ],
+     "mtgo_id": 27400,
+     "mtgo_foil_id": 27401,
+     "tcgplayer_id": 15153,
+     "cardmarket_id": 16432,
+     "name": "Grizzly Bears",
+     "lang": "en",
+     "released_at": "2007-07-13",
+     "uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "scryfall_uri": "https://scryfall.com/card/10e/268/grizzly-bears?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:43:21Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "normal": "https://cards.scryfall.io/normal/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "large": "https://cards.scryfall.io/large/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "png": "https://cards.scryfall.io/png/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.png?1783943001",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "grid": "https://cards.scryfall.io/grid/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "display": "https://cards.scryfall.io/display/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "art": "https://cards.scryfall.io/art/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "crop": "https://cards.scryfall.io/crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001"
+     },
+     "mana_cost": "{1}{G}",
+     "cmc": 2,
+     "type_line": "Creature — Bear",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set": "10e",
+     "set_name": "Tenth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A14c8f55d-d177-4c25-a931-ebeb9e6062a0&unique=prints",
+     "collector_number": "268",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"We cannot forget that among all of Dominaria's wonders, a system of life exists, with prey and predators that will never fight wars nor vie for ancient power.\"\n—Jolrael, empress of beasts",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "D. J. Cleland-Hura",
+     "artist_ids": [
+      "87d21070-2432-4167-8aab-5968af1c14f3"
+     ],
+     "illustration_id": "066bfe81-0f53-43da-a074-b2ecc5dcda72",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 8114,
+     "penny_rank": 10982,
+     "prices": {
+      "usd": "0.22",
+      "usd_foil": "3.29",
+      "usd_etched": null,
+      "eur": "0.11",
+      "eur_foil": "1.97",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129586&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "edhrec": "https://edhrec.com/route/?cc=Grizzly+Bears"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15153%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16432&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27400?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "fa7bf089-fa9b-4ffc-bf84-45cd51c76463",
+     "oracle_id": "6a1ad848-6fda-46dd-aad8-2f6a5c71a696",
+     "multiverse_ids": [
+      654948
+     ],
+     "mtgo_id": 123925,
+     "arena_id": 90353,
+     "tcgplayer_id": 544470,
+     "cardmarket_id": 764242,
+     "name": "Bridled Bighorn",
+     "lang": "en",
+     "released_at": "2024-04-19",
+     "uri": "https://api.scryfall.com/cards/fa7bf089-fa9b-4ffc-bf84-45cd51c76463",
+     "scryfall_uri": "https://scryfall.com/card/otj/7/bridled-bighorn?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T03:04:19Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/f/a/fa7bf089-fa9b-4ffc-bf84-45cd51c76463.jpg?1783911859",
+      "normal": "https://cards.scryfall.io/normal/front/f/a/fa7bf089-fa9b-4ffc-bf84-45cd51c76463.jpg?1783911859",
+      "large": "https://cards.scryfall.io/large/front/f/a/fa7bf089-fa9b-4ffc-bf84-45cd51c76463.jpg?1783911859",
+      "png": "https://cards.scryfall.io/png/front/f/a/fa7bf089-fa9b-4ffc-bf84-45cd51c76463.png?1783911859",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/f/a/fa7bf089-fa9b-4ffc-bf84-45cd51c76463.jpg?1783911859",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/f/a/fa7bf089-fa9b-4ffc-bf84-45cd51c76463.jpg?1783911859",
+      "thumb": "https://cards.scryfall.io/thumb/front/f/a/fa7bf089-fa9b-4ffc-bf84-45cd51c76463.webp?1783911859",
+      "grid": "https://cards.scryfall.io/grid/front/f/a/fa7bf089-fa9b-4ffc-bf84-45cd51c76463.webp?1783911859",
+      "display": "https://cards.scryfall.io/display/front/f/a/fa7bf089-fa9b-4ffc-bf84-45cd51c76463.webp?1783911859",
+      "art": "https://cards.scryfall.io/art/front/f/a/fa7bf089-fa9b-4ffc-bf84-45cd51c76463.webp?1783911859",
+      "crop": "https://cards.scryfall.io/crop/front/f/a/fa7bf089-fa9b-4ffc-bf84-45cd51c76463.webp?1783911859"
+     },
+     "mana_cost": "{3}{W}",
+     "cmc": 4,
+     "type_line": "Creature — Sheep Mount",
+     "oracle_text": "Vigilance\nWhenever this creature attacks while saddled, create a 1/1 white Sheep creature token.\nSaddle 2 (Tap any number of other creatures you control with total power 2 or more: This Mount becomes saddled until end of turn. Saddle only as a sorcery.)",
+     "power": "3",
+     "toughness": "4",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [
+      "Saddle",
+      "Vigilance"
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "dccb30d0-b491-43be-8aa0-2ee7da86343e",
+       "component": "token",
+       "name": "Sheep",
+       "type_line": "Token Creature — Sheep",
+       "uri": "https://api.scryfall.com/cards/dccb30d0-b491-43be-8aa0-2ee7da86343e"
+      },
+      {
+       "object": "related_card",
+       "id": "fa7bf089-fa9b-4ffc-bf84-45cd51c76463",
+       "component": "combo_piece",
+       "name": "Bridled Bighorn",
+       "type_line": "Creature — Sheep Mount",
+       "uri": "https://api.scryfall.com/cards/fa7bf089-fa9b-4ffc-bf84-45cd51c76463"
+      }
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo",
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "55a85ebe-644e-4bef-8be8-5290408be3d1",
+     "set": "otj",
+     "set_name": "Outlaws of Thunder Junction",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/55a85ebe-644e-4bef-8be8-5290408be3d1",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aotj&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/otj?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/fa7bf089-fa9b-4ffc-bf84-45cd51c76463/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A6a1ad848-6fda-46dd-aad8-2f6a5c71a696&unique=prints",
+     "collector_number": "7",
+     "digital": false,
+     "rarity": "common",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Edgar Sánchez Hidalgo",
+     "artist_ids": [
+      "cd897b75-a7b0-4902-8dc4-b1fda5303ec8"
+     ],
+     "illustration_id": "f1ea4206-8206-49da-ab2d-5b015e6211b3",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 18485,
+     "prices": {
+      "usd": "0.15",
+      "usd_foil": "0.23",
+      "usd_etched": null,
+      "eur": "0.04",
+      "eur_foil": "0.07",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=654948&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DBridled%2BBighorn",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DBridled%2BBighorn",
+      "edhrec": "https://edhrec.com/route/?cc=Bridled+Bighorn"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F544470%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=764242&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/123925?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8",
+     "oracle_id": "342199e0-15b6-4824-83da-25caef2592b3",
+     "multiverse_ids": [
+      129591
+     ],
+     "mtgo_id": 27040,
+     "mtgo_foil_id": 27041,
+     "tcgplayer_id": 15162,
+     "cardmarket_id": 16376,
+     "name": "Hill Giant",
+     "lang": "en",
+     "released_at": "2007-07-13",
+     "uri": "https://api.scryfall.com/cards/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8",
+     "scryfall_uri": "https://scryfall.com/card/10e/212/hill-giant?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:43:38Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+      "normal": "https://cards.scryfall.io/normal/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+      "large": "https://cards.scryfall.io/large/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+      "png": "https://cards.scryfall.io/png/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.png?1783943018",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+      "thumb": "https://cards.scryfall.io/thumb/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018",
+      "grid": "https://cards.scryfall.io/grid/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018",
+      "display": "https://cards.scryfall.io/display/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018",
+      "art": "https://cards.scryfall.io/art/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018",
+      "crop": "https://cards.scryfall.io/crop/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018"
+     },
+     "mana_cost": "{3}{R}",
+     "cmc": 4,
+     "type_line": "Creature — Giant",
+     "oracle_text": "",
+     "power": "3",
+     "toughness": "3",
+     "colors": [
+      "R"
+     ],
+     "color_identity": [
+      "R"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set": "10e",
+     "set_name": "Tenth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A342199e0-15b6-4824-83da-25caef2592b3&unique=prints",
+     "collector_number": "212",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "Fortunately, hill giants have large blind spots in which a human can easily hide. Unfortunately, these blind spots are beneath the bottoms of their feet.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Kev Walker",
+     "artist_ids": [
+      "f366a0ee-a0cd-466d-ba6a-90058c7a31a6"
+     ],
+     "illustration_id": "fd46160d-4dd0-4ab6-b452-cff004f5e6f2",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 29148,
+     "prices": {
+      "usd": "0.04",
+      "usd_foil": "0.83",
+      "usd_etched": null,
+      "eur": "0.02",
+      "eur_foil": "0.28",
+      "tix": "0.04"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129591&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DHill%2BGiant",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DHill%2BGiant",
+      "edhrec": "https://edhrec.com/route/?cc=Hill+Giant"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15162%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16376&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27040?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [
+     "Blocking"
+    ],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "d1995238-79cc-4381-9595-71ef11ea1e36",
+     "oracle_id": "ec49dfcf-d16d-4621-af4b-4a6f09043221",
+     "multiverse_ids": [
+      383368
+     ],
+     "mtgo_id": 53290,
+     "mtgo_foil_id": 53291,
+     "tcgplayer_id": 90949,
+     "cardmarket_id": 267595,
+     "name": "Runeclaw Bear",
+     "lang": "en",
+     "released_at": "2014-07-18",
+     "uri": "https://api.scryfall.com/cards/d1995238-79cc-4381-9595-71ef11ea1e36",
+     "scryfall_uri": "https://scryfall.com/card/m15/197/runeclaw-bear?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T10:39:22Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
+      "normal": "https://cards.scryfall.io/normal/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
+      "large": "https://cards.scryfall.io/large/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
+      "png": "https://cards.scryfall.io/png/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.png?1783939162",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
+      "thumb": "https://cards.scryfall.io/thumb/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.webp?1783939162",
+      "grid": "https://cards.scryfall.io/grid/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.webp?1783939162",
+      "display": "https://cards.scryfall.io/display/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.webp?1783939162",
+      "art": "https://cards.scryfall.io/art/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.webp?1783939162",
+      "crop": "https://cards.scryfall.io/crop/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.webp?1783939162"
+     },
+     "mana_cost": "{1}{G}",
+     "cmc": 2,
+     "type_line": "Creature — Bear",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "6ce49890-3b37-42a5-8932-dbeef1d7b62c",
+     "set": "m15",
+     "set_name": "Magic 2015",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/6ce49890-3b37-42a5-8932-dbeef1d7b62c",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Am15&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/m15?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/d1995238-79cc-4381-9595-71ef11ea1e36/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aec49dfcf-d16d-4621-af4b-4a6f09043221&unique=prints",
+     "collector_number": "197",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "The magic of the elves leaves its mark on the forest. The magic of the forest leaves its mark on the animals who live there. The animals of the forest leave their mark on all who trespass.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Jesper Ejsing",
+     "artist_ids": [
+      "a5f8354a-8b51-4e59-96b2-0e3aeae4fa1d"
+     ],
+     "illustration_id": "0bb0db79-2039-4f8b-a8ac-d7c952f07ba5",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 9229,
+     "penny_rank": 10859,
+     "prices": {
+      "usd": "0.14",
+      "usd_foil": "0.51",
+      "usd_etched": null,
+      "eur": "0.11",
+      "eur_foil": "0.36",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=383368&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DRuneclaw%2BBear",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DRuneclaw%2BBear",
+      "edhrec": "https://edhrec.com/route/?cc=Runeclaw+Bear"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F90949%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=267595&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/53290?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 4,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_5",
+    "scryfallData": {
+     "object": "card",
+     "id": "775874cc-4b78-4904-9c97-431c2e400c64",
+     "oracle_id": "d6780d29-0dd7-4f04-95b8-4ca6a55308f2",
+     "multiverse_ids": [
+      655126
+     ],
+     "mtgo_id": 124281,
+     "arena_id": 90531,
+     "tcgplayer_id": 544630,
+     "cardmarket_id": 764045,
+     "name": "Throw from the Saddle",
+     "lang": "en",
+     "released_at": "2024-04-19",
+     "uri": "https://api.scryfall.com/cards/775874cc-4b78-4904-9c97-431c2e400c64",
+     "scryfall_uri": "https://scryfall.com/card/otj/185/throw-from-the-saddle?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T03:03:20Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/7/7/775874cc-4b78-4904-9c97-431c2e400c64.jpg?1783911800",
+      "normal": "https://cards.scryfall.io/normal/front/7/7/775874cc-4b78-4904-9c97-431c2e400c64.jpg?1783911800",
+      "large": "https://cards.scryfall.io/large/front/7/7/775874cc-4b78-4904-9c97-431c2e400c64.jpg?1783911800",
+      "png": "https://cards.scryfall.io/png/front/7/7/775874cc-4b78-4904-9c97-431c2e400c64.png?1783911800",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/7/7/775874cc-4b78-4904-9c97-431c2e400c64.jpg?1783911800",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/7/7/775874cc-4b78-4904-9c97-431c2e400c64.jpg?1783911800",
+      "thumb": "https://cards.scryfall.io/thumb/front/7/7/775874cc-4b78-4904-9c97-431c2e400c64.webp?1783911800",
+      "grid": "https://cards.scryfall.io/grid/front/7/7/775874cc-4b78-4904-9c97-431c2e400c64.webp?1783911800",
+      "display": "https://cards.scryfall.io/display/front/7/7/775874cc-4b78-4904-9c97-431c2e400c64.webp?1783911800",
+      "art": "https://cards.scryfall.io/art/front/7/7/775874cc-4b78-4904-9c97-431c2e400c64.webp?1783911800",
+      "crop": "https://cards.scryfall.io/crop/front/7/7/775874cc-4b78-4904-9c97-431c2e400c64.webp?1783911800"
+     },
+     "mana_cost": "{1}{G}",
+     "cmc": 2,
+     "type_line": "Sorcery",
+     "oracle_text": "Target creature you control gets +1/+1 until end of turn. Put a +1/+1 counter on it instead if it's a Mount. Then it deals damage equal to its power to target creature you don't control.",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo",
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "55a85ebe-644e-4bef-8be8-5290408be3d1",
+     "set": "otj",
+     "set_name": "Outlaws of Thunder Junction",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/55a85ebe-644e-4bef-8be8-5290408be3d1",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aotj&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/otj?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/775874cc-4b78-4904-9c97-431c2e400c64/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ad6780d29-0dd7-4f04-95b8-4ca6a55308f2&unique=prints",
+     "collector_number": "185",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"A little kindness would've carried you a lot farther than those spurs.\"\n—Miriam, herd whisperer",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Eilene Cherie",
+     "artist_ids": [
+      "9f1739c4-f188-4c36-b95d-c66f0047b434"
+     ],
+     "illustration_id": "c4c69095-2863-460d-8ffc-a0ce6379b9b8",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 18936,
+     "penny_rank": 16318,
+     "prices": {
+      "usd": "0.17",
+      "usd_foil": "0.28",
+      "usd_etched": null,
+      "eur": "0.11",
+      "eur_foil": "0.08",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=655126&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DThrow%2Bfrom%2Bthe%2BSaddle",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DThrow%2Bfrom%2Bthe%2BSaddle",
+      "edhrec": "https://edhrec.com/route/?cc=Throw+from+the+Saddle"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F544630%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=764045&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/124281?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": true,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 5,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": "perm_1",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 6,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": {
+     "states": [
+      [
+       "perm_1",
+       {
+        "name": "Grizzly Bears",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Bear"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "abilities": [],
+        "colors": [
+         "G"
+        ],
+        "manaValue": 2,
+        "manaCost": "{1}{G}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_2",
+       {
+        "name": "Bridled Bighorn",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Sheep",
+         "Mount"
+        ],
+        "power": 3,
+        "toughness": 4,
+        "abilities": [
+         "Vigilance",
+         "Whenever this creature attacks while saddled, create a 1/1 white Sheep creature token.",
+         "Saddle 2"
+        ],
+        "colors": [
+         "W"
+        ],
+        "manaValue": 4,
+        "manaCost": "{3}{W}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "Vigilance\nWhenever this creature attacks while saddled, create a 1/1 white Sheep creature token.\nSaddle 2",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [
+         "Vigilance",
+         "Whenever this creature attacks while saddled, create a 1/1 white Sheep creature token.",
+         "Saddle 2"
+        ],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_3",
+       {
+        "name": "Hill Giant",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Giant"
+        ],
+        "power": 3,
+        "toughness": 3,
+        "abilities": [],
+        "colors": [
+         "R"
+        ],
+        "manaValue": 4,
+        "manaCost": "{3}{R}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [
+         "Blocking"
+        ],
+        "allPrintedAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_4",
+       {
+        "name": "Runeclaw Bear",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Bear"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "abilities": [],
+        "colors": [
+         "G"
+        ],
+        "manaValue": 2,
+        "manaCost": "{1}{G}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ]
+     ],
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Bridled Bighorn",
+       "imageUri": "https://cards.scryfall.io/small/front/f/a/fa7bf089-fa9b-4ffc-bf84-45cd51c76463.jpg?1783911859",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Sheep",
+        "Mount"
+       ],
+       "printedPower": 3,
+       "printedToughness": 4,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Hill Giant",
+       "imageUri": "https://cards.scryfall.io/small/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [
+        "Blocking"
+       ],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Giant"
+       ],
+       "printedPower": 3,
+       "printedToughness": 3,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Runeclaw Bear",
+       "imageUri": "https://cards.scryfall.io/small/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 4
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    }
+   },
+   {
+    "id": "perm_6",
+    "scryfallData": {
+     "object": "card",
+     "id": "775874cc-4b78-4904-9c97-431c2e400c64",
+     "oracle_id": "d6780d29-0dd7-4f04-95b8-4ca6a55308f2",
+     "multiverse_ids": [
+      655126
+     ],
+     "mtgo_id": 124281,
+     "arena_id": 90531,
+     "tcgplayer_id": 544630,
+     "cardmarket_id": 764045,
+     "name": "Throw from the Saddle",
+     "lang": "en",
+     "released_at": "2024-04-19",
+     "uri": "https://api.scryfall.com/cards/775874cc-4b78-4904-9c97-431c2e400c64",
+     "scryfall_uri": "https://scryfall.com/card/otj/185/throw-from-the-saddle?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T03:03:20Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/7/7/775874cc-4b78-4904-9c97-431c2e400c64.jpg?1783911800",
+      "normal": "https://cards.scryfall.io/normal/front/7/7/775874cc-4b78-4904-9c97-431c2e400c64.jpg?1783911800",
+      "large": "https://cards.scryfall.io/large/front/7/7/775874cc-4b78-4904-9c97-431c2e400c64.jpg?1783911800",
+      "png": "https://cards.scryfall.io/png/front/7/7/775874cc-4b78-4904-9c97-431c2e400c64.png?1783911800",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/7/7/775874cc-4b78-4904-9c97-431c2e400c64.jpg?1783911800",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/7/7/775874cc-4b78-4904-9c97-431c2e400c64.jpg?1783911800",
+      "thumb": "https://cards.scryfall.io/thumb/front/7/7/775874cc-4b78-4904-9c97-431c2e400c64.webp?1783911800",
+      "grid": "https://cards.scryfall.io/grid/front/7/7/775874cc-4b78-4904-9c97-431c2e400c64.webp?1783911800",
+      "display": "https://cards.scryfall.io/display/front/7/7/775874cc-4b78-4904-9c97-431c2e400c64.webp?1783911800",
+      "art": "https://cards.scryfall.io/art/front/7/7/775874cc-4b78-4904-9c97-431c2e400c64.webp?1783911800",
+      "crop": "https://cards.scryfall.io/crop/front/7/7/775874cc-4b78-4904-9c97-431c2e400c64.webp?1783911800"
+     },
+     "mana_cost": "{1}{G}",
+     "cmc": 2,
+     "type_line": "Sorcery",
+     "oracle_text": "Target creature you control gets +1/+1 until end of turn. Put a +1/+1 counter on it instead if it's a Mount. Then it deals damage equal to its power to target creature you don't control.",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo",
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "55a85ebe-644e-4bef-8be8-5290408be3d1",
+     "set": "otj",
+     "set_name": "Outlaws of Thunder Junction",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/55a85ebe-644e-4bef-8be8-5290408be3d1",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aotj&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/otj?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/775874cc-4b78-4904-9c97-431c2e400c64/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ad6780d29-0dd7-4f04-95b8-4ca6a55308f2&unique=prints",
+     "collector_number": "185",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"A little kindness would've carried you a lot farther than those spurs.\"\n—Miriam, herd whisperer",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Eilene Cherie",
+     "artist_ids": [
+      "9f1739c4-f188-4c36-b95d-c66f0047b434"
+     ],
+     "illustration_id": "c4c69095-2863-460d-8ffc-a0ce6379b9b8",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 18936,
+     "penny_rank": 16318,
+     "prices": {
+      "usd": "0.17",
+      "usd_foil": "0.28",
+      "usd_etched": null,
+      "eur": "0.11",
+      "eur_foil": "0.08",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=655126&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DThrow%2Bfrom%2Bthe%2BSaddle",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DThrow%2Bfrom%2Bthe%2BSaddle",
+      "edhrec": "https://edhrec.com/route/?cc=Throw+from+the+Saddle"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F544630%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=764045&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/124281?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": true,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 7,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": "perm_2",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 8,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": {
+     "states": [
+      [
+       "perm_1",
+       {
+        "name": "Grizzly Bears",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Bear"
+        ],
+        "power": 3,
+        "toughness": 3,
+        "abilities": [],
+        "colors": [
+         "G"
+        ],
+        "manaValue": 2,
+        "manaCost": "{1}{G}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_2",
+       {
+        "name": "Bridled Bighorn",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Sheep",
+         "Mount"
+        ],
+        "power": 3,
+        "toughness": 4,
+        "abilities": [
+         "Vigilance",
+         "Whenever this creature attacks while saddled, create a 1/1 white Sheep creature token.",
+         "Saddle 2"
+        ],
+        "colors": [
+         "W"
+        ],
+        "manaValue": 4,
+        "manaCost": "{3}{W}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "Vigilance\nWhenever this creature attacks while saddled, create a 1/1 white Sheep creature token.\nSaddle 2",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [
+         "Vigilance",
+         "Whenever this creature attacks while saddled, create a 1/1 white Sheep creature token.",
+         "Saddle 2"
+        ],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_3",
+       {
+        "name": "Hill Giant",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Giant"
+        ],
+        "power": 3,
+        "toughness": 3,
+        "abilities": [],
+        "colors": [
+         "R"
+        ],
+        "manaValue": 4,
+        "manaCost": "{3}{R}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [
+         "Blocking"
+        ],
+        "allPrintedAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_4",
+       {
+        "name": "Runeclaw Bear",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Bear"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "abilities": [],
+        "colors": [
+         "G"
+        ],
+        "manaValue": 2,
+        "manaCost": "{1}{G}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_5",
+       {
+        "name": "Throw from the Saddle",
+        "types": [
+         "Sorcery"
+        ],
+        "supertypes": [],
+        "subtypes": [],
+        "power": null,
+        "toughness": null,
+        "abilities": [
+         "Target creature you control gets +1/+1 until end of turn. Put a +1/+1 counter on it instead if it's a Mount. Then it deals damage equal to its power to target creature you don't control."
+        ],
+        "colors": [
+         "G"
+        ],
+        "manaValue": 2,
+        "manaCost": "{1}{G}",
+        "isCreature": false,
+        "isToken": false,
+        "oracleText": "Target creature you control gets +1/+1 until end of turn. Put a +1/+1 counter on it instead if it's a Mount. Then it deals damage equal to its power to target creature you don't control.",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [
+         "Target creature you control gets +1/+1 until end of turn. Put a +1/+1 counter on it instead if it's a Mount. Then it deals damage equal to its power to target creature you don't control."
+        ],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ]
+     ],
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Bridled Bighorn",
+       "imageUri": "https://cards.scryfall.io/small/front/f/a/fa7bf089-fa9b-4ffc-bf84-45cd51c76463.jpg?1783911859",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Sheep",
+        "Mount"
+       ],
+       "printedPower": 3,
+       "printedToughness": 4,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Hill Giant",
+       "imageUri": "https://cards.scryfall.io/small/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [
+        "Blocking"
+       ],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Giant"
+       ],
+       "printedPower": 3,
+       "printedToughness": 3,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Runeclaw Bear",
+       "imageUri": "https://cards.scryfall.io/small/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_5",
+       "name": "Throw from the Saddle",
+       "imageUri": "https://cards.scryfall.io/small/front/7/7/775874cc-4b78-4904-9c97-431c2e400c64.jpg?1783911800",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "isSpell": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Sorcery"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 5
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    }
+   },
+   {
+    "id": "perm_7",
+    "scryfallData": {
+     "object": "card",
+     "id": "aa7acbfa-ce3b-424d-886d-6865bc5fc085",
+     "oracle_id": "dec281b4-e6d6-4b78-b755-358e07eb7c06",
+     "multiverse_ids": [
+      479558
+     ],
+     "mtgo_id": 80085,
+     "arena_id": 71105,
+     "tcgplayer_id": 212257,
+     "cardmarket_id": 452933,
+     "name": "Will of the All-Hunter",
+     "lang": "en",
+     "released_at": "2020-04-24",
+     "uri": "https://api.scryfall.com/cards/aa7acbfa-ce3b-424d-886d-6865bc5fc085",
+     "scryfall_uri": "https://scryfall.com/card/iko/38/will-of-the-all-hunter?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T08:24:40Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/a/a/aa7acbfa-ce3b-424d-886d-6865bc5fc085.jpg?1783931080",
+      "normal": "https://cards.scryfall.io/normal/front/a/a/aa7acbfa-ce3b-424d-886d-6865bc5fc085.jpg?1783931080",
+      "large": "https://cards.scryfall.io/large/front/a/a/aa7acbfa-ce3b-424d-886d-6865bc5fc085.jpg?1783931080",
+      "png": "https://cards.scryfall.io/png/front/a/a/aa7acbfa-ce3b-424d-886d-6865bc5fc085.png?1783931080",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/a/a/aa7acbfa-ce3b-424d-886d-6865bc5fc085.jpg?1783931080",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/a/a/aa7acbfa-ce3b-424d-886d-6865bc5fc085.jpg?1783931080",
+      "thumb": "https://cards.scryfall.io/thumb/front/a/a/aa7acbfa-ce3b-424d-886d-6865bc5fc085.webp?1783931080",
+      "grid": "https://cards.scryfall.io/grid/front/a/a/aa7acbfa-ce3b-424d-886d-6865bc5fc085.webp?1783931080",
+      "display": "https://cards.scryfall.io/display/front/a/a/aa7acbfa-ce3b-424d-886d-6865bc5fc085.webp?1783931080",
+      "art": "https://cards.scryfall.io/art/front/a/a/aa7acbfa-ce3b-424d-886d-6865bc5fc085.webp?1783931080",
+      "crop": "https://cards.scryfall.io/crop/front/a/a/aa7acbfa-ce3b-424d-886d-6865bc5fc085.webp?1783931080"
+     },
+     "mana_cost": "{1}{W}",
+     "cmc": 2,
+     "type_line": "Instant",
+     "oracle_text": "Target creature gets +2/+2 until end of turn. If it's blocking, instead put two +1/+1 counters on it.\nCycling {2} ({2}, Discard this card: Draw a card.)",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [
+      "Cycling"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "arena",
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "19feda43-15ab-427e-a0e4-148a4bf2b03a",
+     "set": "iko",
+     "set_name": "Ikoria: Lair of Behemoths",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/19feda43-15ab-427e-a0e4-148a4bf2b03a",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aiko&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/iko?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/aa7acbfa-ce3b-424d-886d-6865bc5fc085/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Adec281b4-e6d6-4b78-b755-358e07eb7c06&unique=prints",
+     "collector_number": "38",
+     "digital": false,
+     "rarity": "uncommon",
+     "flavor_text": "\"It's Snapdax. You'd have a better chance of breaching a wall with a slice of bread.\"\n—Krek, daysquad captain",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Viktor Titov",
+     "artist_ids": [
+      "2270c0b0-afb4-42b0-bcb6-25fe4ad6eef2"
+     ],
+     "illustration_id": "96d4503d-1ec7-4b05-af09-bae67f225097",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 25213,
+     "penny_rank": 15301,
+     "preview": {
+      "source": "Wizards of the Coast",
+      "source_uri": "https://www.facebook.com/MagicTheGathering.ct/photos/a.1580720992154464/2891522634407620/",
+      "previewed_at": "2020-04-03"
+     },
+     "prices": {
+      "usd": "0.11",
+      "usd_foil": "0.14",
+      "usd_etched": null,
+      "eur": "0.08",
+      "eur_foil": "0.19",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=479558&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DWill%2Bof%2Bthe%2BAll-Hunter",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DWill%2Bof%2Bthe%2BAll-Hunter",
+      "edhrec": "https://edhrec.com/route/?cc=Will+of+the+All-Hunter"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F212257%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=452933&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/80085?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": true,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 9,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": "perm_3",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 10,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": {
+     "states": [
+      [
+       "perm_1",
+       {
+        "name": "Grizzly Bears",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Bear"
+        ],
+        "power": 3,
+        "toughness": 3,
+        "abilities": [],
+        "colors": [
+         "G"
+        ],
+        "manaValue": 2,
+        "manaCost": "{1}{G}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_2",
+       {
+        "name": "Bridled Bighorn",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Sheep",
+         "Mount"
+        ],
+        "power": 3,
+        "toughness": 4,
+        "abilities": [
+         "Vigilance",
+         "Whenever this creature attacks while saddled, create a 1/1 white Sheep creature token.",
+         "Saddle 2"
+        ],
+        "colors": [
+         "W"
+        ],
+        "manaValue": 4,
+        "manaCost": "{3}{W}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "Vigilance\nWhenever this creature attacks while saddled, create a 1/1 white Sheep creature token.\nSaddle 2",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [
+         "Vigilance",
+         "Whenever this creature attacks while saddled, create a 1/1 white Sheep creature token.",
+         "Saddle 2"
+        ],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_3",
+       {
+        "name": "Hill Giant",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Giant"
+        ],
+        "power": 3,
+        "toughness": 3,
+        "abilities": [],
+        "colors": [
+         "R"
+        ],
+        "manaValue": 4,
+        "manaCost": "{3}{R}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [
+         "Blocking"
+        ],
+        "allPrintedAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_4",
+       {
+        "name": "Runeclaw Bear",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Bear"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "abilities": [],
+        "colors": [
+         "G"
+        ],
+        "manaValue": 2,
+        "manaCost": "{1}{G}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_5",
+       {
+        "name": "Throw from the Saddle",
+        "types": [
+         "Sorcery"
+        ],
+        "supertypes": [],
+        "subtypes": [],
+        "power": null,
+        "toughness": null,
+        "abilities": [
+         "Target creature you control gets +1/+1 until end of turn. Put a +1/+1 counter on it instead if it's a Mount. Then it deals damage equal to its power to target creature you don't control."
+        ],
+        "colors": [
+         "G"
+        ],
+        "manaValue": 2,
+        "manaCost": "{1}{G}",
+        "isCreature": false,
+        "isToken": false,
+        "oracleText": "Target creature you control gets +1/+1 until end of turn. Put a +1/+1 counter on it instead if it's a Mount. Then it deals damage equal to its power to target creature you don't control.",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [
+         "Target creature you control gets +1/+1 until end of turn. Put a +1/+1 counter on it instead if it's a Mount. Then it deals damage equal to its power to target creature you don't control."
+        ],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_6",
+       {
+        "name": "Throw from the Saddle",
+        "types": [
+         "Sorcery"
+        ],
+        "supertypes": [],
+        "subtypes": [],
+        "power": null,
+        "toughness": null,
+        "abilities": [
+         "Target creature you control gets +1/+1 until end of turn. Put a +1/+1 counter on it instead if it's a Mount. Then it deals damage equal to its power to target creature you don't control."
+        ],
+        "colors": [
+         "G"
+        ],
+        "manaValue": 2,
+        "manaCost": "{1}{G}",
+        "isCreature": false,
+        "isToken": false,
+        "oracleText": "Target creature you control gets +1/+1 until end of turn. Put a +1/+1 counter on it instead if it's a Mount. Then it deals damage equal to its power to target creature you don't control.",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [
+         "Target creature you control gets +1/+1 until end of turn. Put a +1/+1 counter on it instead if it's a Mount. Then it deals damage equal to its power to target creature you don't control."
+        ],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ]
+     ],
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Bridled Bighorn",
+       "imageUri": "https://cards.scryfall.io/small/front/f/a/fa7bf089-fa9b-4ffc-bf84-45cd51c76463.jpg?1783911859",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Sheep",
+        "Mount"
+       ],
+       "printedPower": 3,
+       "printedToughness": 4,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Hill Giant",
+       "imageUri": "https://cards.scryfall.io/small/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [
+        "Blocking"
+       ],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Giant"
+       ],
+       "printedPower": 3,
+       "printedToughness": 3,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Runeclaw Bear",
+       "imageUri": "https://cards.scryfall.io/small/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_5",
+       "name": "Throw from the Saddle",
+       "imageUri": "https://cards.scryfall.io/small/front/7/7/775874cc-4b78-4904-9c97-431c2e400c64.jpg?1783911800",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "isSpell": true,
+       "label": "A",
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Sorcery"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 5
+      },
+      {
+       "id": "perm_6",
+       "name": "Throw from the Saddle",
+       "imageUri": "https://cards.scryfall.io/small/front/7/7/775874cc-4b78-4904-9c97-431c2e400c64.jpg?1783911800",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "isSpell": true,
+       "label": "B",
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Sorcery"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 7
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    }
+   },
+   {
+    "id": "perm_8",
+    "scryfallData": {
+     "object": "card",
+     "id": "aa7acbfa-ce3b-424d-886d-6865bc5fc085",
+     "oracle_id": "dec281b4-e6d6-4b78-b755-358e07eb7c06",
+     "multiverse_ids": [
+      479558
+     ],
+     "mtgo_id": 80085,
+     "arena_id": 71105,
+     "tcgplayer_id": 212257,
+     "cardmarket_id": 452933,
+     "name": "Will of the All-Hunter",
+     "lang": "en",
+     "released_at": "2020-04-24",
+     "uri": "https://api.scryfall.com/cards/aa7acbfa-ce3b-424d-886d-6865bc5fc085",
+     "scryfall_uri": "https://scryfall.com/card/iko/38/will-of-the-all-hunter?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T08:24:40Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/a/a/aa7acbfa-ce3b-424d-886d-6865bc5fc085.jpg?1783931080",
+      "normal": "https://cards.scryfall.io/normal/front/a/a/aa7acbfa-ce3b-424d-886d-6865bc5fc085.jpg?1783931080",
+      "large": "https://cards.scryfall.io/large/front/a/a/aa7acbfa-ce3b-424d-886d-6865bc5fc085.jpg?1783931080",
+      "png": "https://cards.scryfall.io/png/front/a/a/aa7acbfa-ce3b-424d-886d-6865bc5fc085.png?1783931080",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/a/a/aa7acbfa-ce3b-424d-886d-6865bc5fc085.jpg?1783931080",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/a/a/aa7acbfa-ce3b-424d-886d-6865bc5fc085.jpg?1783931080",
+      "thumb": "https://cards.scryfall.io/thumb/front/a/a/aa7acbfa-ce3b-424d-886d-6865bc5fc085.webp?1783931080",
+      "grid": "https://cards.scryfall.io/grid/front/a/a/aa7acbfa-ce3b-424d-886d-6865bc5fc085.webp?1783931080",
+      "display": "https://cards.scryfall.io/display/front/a/a/aa7acbfa-ce3b-424d-886d-6865bc5fc085.webp?1783931080",
+      "art": "https://cards.scryfall.io/art/front/a/a/aa7acbfa-ce3b-424d-886d-6865bc5fc085.webp?1783931080",
+      "crop": "https://cards.scryfall.io/crop/front/a/a/aa7acbfa-ce3b-424d-886d-6865bc5fc085.webp?1783931080"
+     },
+     "mana_cost": "{1}{W}",
+     "cmc": 2,
+     "type_line": "Instant",
+     "oracle_text": "Target creature gets +2/+2 until end of turn. If it's blocking, instead put two +1/+1 counters on it.\nCycling {2} ({2}, Discard this card: Draw a card.)",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [
+      "Cycling"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "arena",
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "19feda43-15ab-427e-a0e4-148a4bf2b03a",
+     "set": "iko",
+     "set_name": "Ikoria: Lair of Behemoths",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/19feda43-15ab-427e-a0e4-148a4bf2b03a",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aiko&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/iko?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/aa7acbfa-ce3b-424d-886d-6865bc5fc085/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Adec281b4-e6d6-4b78-b755-358e07eb7c06&unique=prints",
+     "collector_number": "38",
+     "digital": false,
+     "rarity": "uncommon",
+     "flavor_text": "\"It's Snapdax. You'd have a better chance of breaching a wall with a slice of bread.\"\n—Krek, daysquad captain",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Viktor Titov",
+     "artist_ids": [
+      "2270c0b0-afb4-42b0-bcb6-25fe4ad6eef2"
+     ],
+     "illustration_id": "96d4503d-1ec7-4b05-af09-bae67f225097",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 25213,
+     "penny_rank": 15301,
+     "preview": {
+      "source": "Wizards of the Coast",
+      "source_uri": "https://www.facebook.com/MagicTheGathering.ct/photos/a.1580720992154464/2891522634407620/",
+      "previewed_at": "2020-04-03"
+     },
+     "prices": {
+      "usd": "0.11",
+      "usd_foil": "0.14",
+      "usd_etched": null,
+      "eur": "0.08",
+      "eur_foil": "0.19",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=479558&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DWill%2Bof%2Bthe%2BAll-Hunter",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DWill%2Bof%2Bthe%2BAll-Hunter",
+      "edhrec": "https://edhrec.com/route/?cc=Will+of+the+All-Hunter"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F212257%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=452933&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/80085?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": true,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 11,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": "perm_4",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 12,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": {
+     "states": [
+      [
+       "perm_1",
+       {
+        "name": "Grizzly Bears",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Bear"
+        ],
+        "power": 3,
+        "toughness": 3,
+        "abilities": [],
+        "colors": [
+         "G"
+        ],
+        "manaValue": 2,
+        "manaCost": "{1}{G}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_2",
+       {
+        "name": "Bridled Bighorn",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Sheep",
+         "Mount"
+        ],
+        "power": 3,
+        "toughness": 4,
+        "abilities": [
+         "Vigilance",
+         "Whenever this creature attacks while saddled, create a 1/1 white Sheep creature token.",
+         "Saddle 2"
+        ],
+        "colors": [
+         "W"
+        ],
+        "manaValue": 4,
+        "manaCost": "{3}{W}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "Vigilance\nWhenever this creature attacks while saddled, create a 1/1 white Sheep creature token.\nSaddle 2",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [
+         "Vigilance",
+         "Whenever this creature attacks while saddled, create a 1/1 white Sheep creature token.",
+         "Saddle 2"
+        ],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_3",
+       {
+        "name": "Hill Giant",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Giant"
+        ],
+        "power": 3,
+        "toughness": 3,
+        "abilities": [],
+        "colors": [
+         "R"
+        ],
+        "manaValue": 4,
+        "manaCost": "{3}{R}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [
+         "Blocking"
+        ],
+        "allPrintedAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_4",
+       {
+        "name": "Runeclaw Bear",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Bear"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "abilities": [],
+        "colors": [
+         "G"
+        ],
+        "manaValue": 2,
+        "manaCost": "{1}{G}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_5",
+       {
+        "name": "Throw from the Saddle",
+        "types": [
+         "Sorcery"
+        ],
+        "supertypes": [],
+        "subtypes": [],
+        "power": null,
+        "toughness": null,
+        "abilities": [
+         "Target creature you control gets +1/+1 until end of turn. Put a +1/+1 counter on it instead if it's a Mount. Then it deals damage equal to its power to target creature you don't control."
+        ],
+        "colors": [
+         "G"
+        ],
+        "manaValue": 2,
+        "manaCost": "{1}{G}",
+        "isCreature": false,
+        "isToken": false,
+        "oracleText": "Target creature you control gets +1/+1 until end of turn. Put a +1/+1 counter on it instead if it's a Mount. Then it deals damage equal to its power to target creature you don't control.",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [
+         "Target creature you control gets +1/+1 until end of turn. Put a +1/+1 counter on it instead if it's a Mount. Then it deals damage equal to its power to target creature you don't control."
+        ],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_6",
+       {
+        "name": "Throw from the Saddle",
+        "types": [
+         "Sorcery"
+        ],
+        "supertypes": [],
+        "subtypes": [],
+        "power": null,
+        "toughness": null,
+        "abilities": [
+         "Target creature you control gets +1/+1 until end of turn. Put a +1/+1 counter on it instead if it's a Mount. Then it deals damage equal to its power to target creature you don't control."
+        ],
+        "colors": [
+         "G"
+        ],
+        "manaValue": 2,
+        "manaCost": "{1}{G}",
+        "isCreature": false,
+        "isToken": false,
+        "oracleText": "Target creature you control gets +1/+1 until end of turn. Put a +1/+1 counter on it instead if it's a Mount. Then it deals damage equal to its power to target creature you don't control.",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [
+         "Target creature you control gets +1/+1 until end of turn. Put a +1/+1 counter on it instead if it's a Mount. Then it deals damage equal to its power to target creature you don't control."
+        ],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_7",
+       {
+        "name": "Will of the All-Hunter",
+        "types": [
+         "Instant"
+        ],
+        "supertypes": [],
+        "subtypes": [],
+        "power": null,
+        "toughness": null,
+        "abilities": [
+         "Target creature gets +2/+2 until end of turn. If it's blocking, instead put two +1/+1 counters on it.",
+         "Cycling {2}"
+        ],
+        "colors": [
+         "W"
+        ],
+        "manaValue": 2,
+        "manaCost": "{1}{W}",
+        "isCreature": false,
+        "isToken": false,
+        "oracleText": "Target creature gets +2/+2 until end of turn. If it's blocking, instead put two +1/+1 counters on it.\nCycling {2}",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [
+         "Target creature gets +2/+2 until end of turn. If it's blocking, instead put two +1/+1 counters on it.",
+         "Cycling {2}"
+        ],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ]
+     ],
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Bridled Bighorn",
+       "imageUri": "https://cards.scryfall.io/small/front/f/a/fa7bf089-fa9b-4ffc-bf84-45cd51c76463.jpg?1783911859",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Sheep",
+        "Mount"
+       ],
+       "printedPower": 3,
+       "printedToughness": 4,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Hill Giant",
+       "imageUri": "https://cards.scryfall.io/small/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [
+        "Blocking"
+       ],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Giant"
+       ],
+       "printedPower": 3,
+       "printedToughness": 3,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Runeclaw Bear",
+       "imageUri": "https://cards.scryfall.io/small/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_5",
+       "name": "Throw from the Saddle",
+       "imageUri": "https://cards.scryfall.io/small/front/7/7/775874cc-4b78-4904-9c97-431c2e400c64.jpg?1783911800",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "isSpell": true,
+       "label": "A",
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Sorcery"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 5
+      },
+      {
+       "id": "perm_6",
+       "name": "Throw from the Saddle",
+       "imageUri": "https://cards.scryfall.io/small/front/7/7/775874cc-4b78-4904-9c97-431c2e400c64.jpg?1783911800",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "isSpell": true,
+       "label": "B",
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Sorcery"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 7
+      },
+      {
+       "id": "perm_7",
+       "name": "Will of the All-Hunter",
+       "imageUri": "https://cards.scryfall.io/small/front/a/a/aa7acbfa-ce3b-424d-886d-6865bc5fc085.jpg?1783931080",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "isSpell": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 9
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    }
+   },
+   {
+    "id": "perm_9",
+    "scryfallData": {
+     "object": "card",
+     "id": "99965310-e4bd-40d9-80f5-3fd1754c61c5",
+     "oracle_id": "054c6250-ac96-42f6-931d-925761ab7764",
+     "multiverse_ids": [
+      583821
+     ],
+     "mtgo_id": 105106,
+     "arena_id": 82727,
+     "tcgplayer_id": 452531,
+     "cardmarket_id": 683342,
+     "name": "Power Plant Worker",
+     "lang": "en",
+     "released_at": "2022-11-18",
+     "uri": "https://api.scryfall.com/cards/99965310-e4bd-40d9-80f5-3fd1754c61c5",
+     "scryfall_uri": "https://scryfall.com/card/bro/241/power-plant-worker?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T05:20:16Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/9/9/99965310-e4bd-40d9-80f5-3fd1754c61c5.jpg?1783920016",
+      "normal": "https://cards.scryfall.io/normal/front/9/9/99965310-e4bd-40d9-80f5-3fd1754c61c5.jpg?1783920016",
+      "large": "https://cards.scryfall.io/large/front/9/9/99965310-e4bd-40d9-80f5-3fd1754c61c5.jpg?1783920016",
+      "png": "https://cards.scryfall.io/png/front/9/9/99965310-e4bd-40d9-80f5-3fd1754c61c5.png?1783920016",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/9/9/99965310-e4bd-40d9-80f5-3fd1754c61c5.jpg?1783920016",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/9/9/99965310-e4bd-40d9-80f5-3fd1754c61c5.jpg?1783920016",
+      "thumb": "https://cards.scryfall.io/thumb/front/9/9/99965310-e4bd-40d9-80f5-3fd1754c61c5.webp?1783920016",
+      "grid": "https://cards.scryfall.io/grid/front/9/9/99965310-e4bd-40d9-80f5-3fd1754c61c5.webp?1783920016",
+      "display": "https://cards.scryfall.io/display/front/9/9/99965310-e4bd-40d9-80f5-3fd1754c61c5.webp?1783920016",
+      "art": "https://cards.scryfall.io/art/front/9/9/99965310-e4bd-40d9-80f5-3fd1754c61c5.webp?1783920016",
+      "crop": "https://cards.scryfall.io/crop/front/9/9/99965310-e4bd-40d9-80f5-3fd1754c61c5.webp?1783920016"
+     },
+     "mana_cost": "{5}",
+     "cmc": 5,
+     "type_line": "Artifact Creature — Assembly-Worker",
+     "oracle_text": "{3}: This creature gets +2/+2 until end of turn. If you control creatures named Mine Worker and Tower Worker, put two +1/+1 counters on this creature instead. Activate only once each turn.",
+     "power": "4",
+     "toughness": "4",
+     "colors": [],
+     "color_identity": [],
+     "keywords": [],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "99965310-e4bd-40d9-80f5-3fd1754c61c5",
+       "component": "combo_piece",
+       "name": "Power Plant Worker",
+       "type_line": "Artifact Creature — Assembly-Worker",
+       "uri": "https://api.scryfall.com/cards/99965310-e4bd-40d9-80f5-3fd1754c61c5"
+      },
+      {
+       "object": "related_card",
+       "id": "f31bd134-22c8-4031-8f85-ac0855914d11",
+       "component": "combo_piece",
+       "name": "Tower Worker",
+       "type_line": "Artifact Creature — Assembly-Worker",
+       "uri": "https://api.scryfall.com/cards/f31bd134-22c8-4031-8f85-ac0855914d11"
+      },
+      {
+       "object": "related_card",
+       "id": "5aa63321-aa28-449d-a31f-869a98c5a6be",
+       "component": "combo_piece",
+       "name": "Mine Worker",
+       "type_line": "Artifact Creature — Assembly-Worker",
+       "uri": "https://api.scryfall.com/cards/5aa63321-aa28-449d-a31f-869a98c5a6be"
+      }
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "arena",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "4219a14e-6701-4ddd-a185-21dc054ab19b",
+     "set": "bro",
+     "set_name": "The Brothers' War",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/4219a14e-6701-4ddd-a185-21dc054ab19b",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Abro&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/bro?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/99965310-e4bd-40d9-80f5-3fd1754c61c5/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A054c6250-ac96-42f6-931d-925761ab7764&unique=prints",
+     "collector_number": "241",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "Mechanical workers toiled away, tirelessly fueling the impossible.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Aaron Miller",
+     "artist_ids": [
+      "fc021f3d-773a-4706-bbe7-f602324f511f"
+     ],
+     "illustration_id": "5e3dd300-a197-45ca-bc87-6bf4bc8d4566",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 19679,
+     "preview": {
+      "source": "Yahoo!",
+      "source_uri": "https://sg.news.yahoo.com/mtg-the-brothers-war-preview-card-power-plant-worker-070724543.html",
+      "previewed_at": "2022-11-02"
+     },
+     "prices": {
+      "usd": "0.21",
+      "usd_foil": "0.21",
+      "usd_etched": null,
+      "eur": "0.16",
+      "eur_foil": "0.09",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=583821&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DPower%2BPlant%2BWorker",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DPower%2BPlant%2BWorker",
+      "edhrec": "https://edhrec.com/route/?cc=Power+Plant+Worker"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F452531%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=683342&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/105106?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 13,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [
+   {
+    "id": "act_perm_9_0_14",
+    "kind": "activated",
+    "pseudoKind": "ability",
+    "sourceId": "perm_9",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 0,
+    "timestamp": 14,
+    "effectText": "This creature gets +2/+2 until end of turn. If you control creatures named Mine Worker and Tower Worker, put two +1/+1 counters on this creature instead",
+    "xValue": null,
+    "hasXValue": false,
+    "cdaUserValue": null,
+    "linkedCards": null,
+    "fullText": "{3}: This creature gets +2/+2 until end of turn. If you control creatures named Mine Worker and Tower Worker, put two +1/+1 counters on this creature instead. Activate only once each turn.",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "guessedTargetSubjects": [],
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Grizzly Bears",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Bear"
+       ],
+       "power": 3,
+       "toughness": 3,
+       "abilities": [],
+       "colors": [
+        "G"
+       ],
+       "manaValue": 2,
+       "manaCost": "{1}{G}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_2",
+      {
+       "name": "Bridled Bighorn",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Sheep",
+        "Mount"
+       ],
+       "power": 3,
+       "toughness": 4,
+       "abilities": [
+        "Vigilance",
+        "Whenever this creature attacks while saddled, create a 1/1 white Sheep creature token.",
+        "Saddle 2"
+       ],
+       "colors": [
+        "W"
+       ],
+       "manaValue": 4,
+       "manaCost": "{3}{W}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "Vigilance\nWhenever this creature attacks while saddled, create a 1/1 white Sheep creature token.\nSaddle 2",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "Vigilance",
+        "Whenever this creature attacks while saddled, create a 1/1 white Sheep creature token.",
+        "Saddle 2"
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_3",
+      {
+       "name": "Hill Giant",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Giant"
+       ],
+       "power": 3,
+       "toughness": 3,
+       "abilities": [],
+       "colors": [
+        "R"
+       ],
+       "manaValue": 4,
+       "manaCost": "{3}{R}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [
+        "Blocking"
+       ],
+       "allPrintedAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_4",
+      {
+       "name": "Runeclaw Bear",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Bear"
+       ],
+       "power": 4,
+       "toughness": 4,
+       "abilities": [],
+       "colors": [
+        "G"
+       ],
+       "manaValue": 2,
+       "manaCost": "{1}{G}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_5",
+      {
+       "name": "Throw from the Saddle",
+       "types": [
+        "Sorcery"
+       ],
+       "supertypes": [],
+       "subtypes": [],
+       "power": null,
+       "toughness": null,
+       "abilities": [
+        "Target creature you control gets +1/+1 until end of turn. Put a +1/+1 counter on it instead if it's a Mount. Then it deals damage equal to its power to target creature you don't control."
+       ],
+       "colors": [
+        "G"
+       ],
+       "manaValue": 2,
+       "manaCost": "{1}{G}",
+       "isCreature": false,
+       "isToken": false,
+       "oracleText": "Target creature you control gets +1/+1 until end of turn. Put a +1/+1 counter on it instead if it's a Mount. Then it deals damage equal to its power to target creature you don't control.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "Target creature you control gets +1/+1 until end of turn. Put a +1/+1 counter on it instead if it's a Mount. Then it deals damage equal to its power to target creature you don't control."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_6",
+      {
+       "name": "Throw from the Saddle",
+       "types": [
+        "Sorcery"
+       ],
+       "supertypes": [],
+       "subtypes": [],
+       "power": null,
+       "toughness": null,
+       "abilities": [
+        "Target creature you control gets +1/+1 until end of turn. Put a +1/+1 counter on it instead if it's a Mount. Then it deals damage equal to its power to target creature you don't control."
+       ],
+       "colors": [
+        "G"
+       ],
+       "manaValue": 2,
+       "manaCost": "{1}{G}",
+       "isCreature": false,
+       "isToken": false,
+       "oracleText": "Target creature you control gets +1/+1 until end of turn. Put a +1/+1 counter on it instead if it's a Mount. Then it deals damage equal to its power to target creature you don't control.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "Target creature you control gets +1/+1 until end of turn. Put a +1/+1 counter on it instead if it's a Mount. Then it deals damage equal to its power to target creature you don't control."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_7",
+      {
+       "name": "Will of the All-Hunter",
+       "types": [
+        "Instant"
+       ],
+       "supertypes": [],
+       "subtypes": [],
+       "power": null,
+       "toughness": null,
+       "abilities": [
+        "Target creature gets +2/+2 until end of turn. If it's blocking, instead put two +1/+1 counters on it.",
+        "Cycling {2}"
+       ],
+       "colors": [
+        "W"
+       ],
+       "manaValue": 2,
+       "manaCost": "{1}{W}",
+       "isCreature": false,
+       "isToken": false,
+       "oracleText": "Target creature gets +2/+2 until end of turn. If it's blocking, instead put two +1/+1 counters on it.\nCycling {2}",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "Target creature gets +2/+2 until end of turn. If it's blocking, instead put two +1/+1 counters on it.",
+        "Cycling {2}"
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_8",
+      {
+       "name": "Will of the All-Hunter",
+       "types": [
+        "Instant"
+       ],
+       "supertypes": [],
+       "subtypes": [],
+       "power": null,
+       "toughness": null,
+       "abilities": [
+        "Target creature gets +2/+2 until end of turn. If it's blocking, instead put two +1/+1 counters on it.",
+        "Cycling {2}"
+       ],
+       "colors": [
+        "W"
+       ],
+       "manaValue": 2,
+       "manaCost": "{1}{W}",
+       "isCreature": false,
+       "isToken": false,
+       "oracleText": "Target creature gets +2/+2 until end of turn. If it's blocking, instead put two +1/+1 counters on it.\nCycling {2}",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "Target creature gets +2/+2 until end of turn. If it's blocking, instead put two +1/+1 counters on it.",
+        "Cycling {2}"
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_9",
+      {
+       "name": "Power Plant Worker",
+       "types": [
+        "Artifact",
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Assembly-Worker"
+       ],
+       "power": 4,
+       "toughness": 4,
+       "abilities": [
+        "{3}: This creature gets +2/+2 until end of turn. If you control creatures named Mine Worker and Tower Worker, put two +1/+1 counters on this creature instead. Activate only once each turn."
+       ],
+       "colors": [],
+       "manaValue": 5,
+       "manaCost": "{5}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "{3}: This creature gets +2/+2 until end of turn. If you control creatures named Mine Worker and Tower Worker, put two +1/+1 counters on this creature instead. Activate only once each turn.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "{3}: This creature gets +2/+2 until end of turn. If you control creatures named Mine Worker and Tower Worker, put two +1/+1 counters on this creature instead. Activate only once each turn."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Bridled Bighorn",
+       "imageUri": "https://cards.scryfall.io/small/front/f/a/fa7bf089-fa9b-4ffc-bf84-45cd51c76463.jpg?1783911859",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Sheep",
+        "Mount"
+       ],
+       "printedPower": 3,
+       "printedToughness": 4,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Hill Giant",
+       "imageUri": "https://cards.scryfall.io/small/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [
+        "Blocking"
+       ],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Giant"
+       ],
+       "printedPower": 3,
+       "printedToughness": 3,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Runeclaw Bear",
+       "imageUri": "https://cards.scryfall.io/small/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_5",
+       "name": "Throw from the Saddle",
+       "imageUri": "https://cards.scryfall.io/small/front/7/7/775874cc-4b78-4904-9c97-431c2e400c64.jpg?1783911800",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "isSpell": true,
+       "label": "A",
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Sorcery"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 5
+      },
+      {
+       "id": "perm_6",
+       "name": "Throw from the Saddle",
+       "imageUri": "https://cards.scryfall.io/small/front/7/7/775874cc-4b78-4904-9c97-431c2e400c64.jpg?1783911800",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "isSpell": true,
+       "label": "B",
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Sorcery"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 7
+      },
+      {
+       "id": "perm_7",
+       "name": "Will of the All-Hunter",
+       "imageUri": "https://cards.scryfall.io/small/front/a/a/aa7acbfa-ce3b-424d-886d-6865bc5fc085.jpg?1783931080",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "isSpell": true,
+       "label": "A",
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 9
+      },
+      {
+       "id": "perm_8",
+       "name": "Will of the All-Hunter",
+       "imageUri": "https://cards.scryfall.io/small/front/a/a/aa7acbfa-ce3b-424d-886d-6865bc5fc085.jpg?1783931080",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "isSpell": true,
+       "label": "B",
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 11
+      },
+      {
+       "id": "perm_9",
+       "name": "Power Plant Worker",
+       "imageUri": "https://cards.scryfall.io/small/front/9/9/99965310-e4bd-40d9-80f5-3fd1754c61c5.jpg?1783920016",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Artifact",
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Assembly-Worker"
+       ],
+       "printedPower": 4,
+       "printedToughness": 4,
+       "timestamp": 13
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    },
+    "primaryTarget": "perm_9",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 14,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null
+   }
+  ],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Grizzly Bears",
+    "final": {
+     "name": "Grizzly Bears",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Bear"
+     ],
+     "power": 3,
+     "toughness": 3,
+     "colors": [
+      "G"
+     ],
+     "abilities": []
+    },
+    "changedBy": {
+     "7c": [
+      "Throw from the Saddle"
+     ]
+    }
+   },
+   {
+    "perm": "Bridled Bighorn",
+    "final": {
+     "name": "Bridled Bighorn",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Sheep",
+      "Mount"
+     ],
+     "power": 3,
+     "toughness": 4,
+     "colors": [
+      "W"
+     ],
+     "abilities": [
+      "Vigilance",
+      "Whenever this creature attacks while saddled, create a 1/1 white Sheep creature token.",
+      "Saddle 2"
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Hill Giant",
+    "final": {
+     "name": "Hill Giant",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Giant"
+     ],
+     "power": 3,
+     "toughness": 3,
+     "colors": [
+      "R"
+     ],
+     "abilities": [],
+     "traits": [
+      "Blocking"
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Runeclaw Bear",
+    "final": {
+     "name": "Runeclaw Bear",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Bear"
+     ],
+     "power": 4,
+     "toughness": 4,
+     "colors": [
+      "G"
+     ],
+     "abilities": []
+    },
+    "changedBy": {
+     "7c": [
+      "Will of the All-Hunter"
+     ]
+    }
+   },
+   {
+    "perm": "Throw from the Saddle A",
+    "final": {
+     "name": "Throw from the Saddle",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Sorcery"
+     ],
+     "subtypes": [],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "Target creature you control gets +1/+1 until end of turn. Put a +1/+1 counter on it instead if it's a Mount. Then it deals damage equal to its power to target creature you don't control."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Throw from the Saddle B",
+    "final": {
+     "name": "Throw from the Saddle",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Sorcery"
+     ],
+     "subtypes": [],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "Target creature you control gets +1/+1 until end of turn. Put a +1/+1 counter on it instead if it's a Mount. Then it deals damage equal to its power to target creature you don't control."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Will of the All-Hunter A",
+    "final": {
+     "name": "Will of the All-Hunter",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Instant"
+     ],
+     "subtypes": [],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "W"
+     ],
+     "abilities": [
+      "Target creature gets +2/+2 until end of turn. If it's blocking, instead put two +1/+1 counters on it.",
+      "Cycling {2}"
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Will of the All-Hunter B",
+    "final": {
+     "name": "Will of the All-Hunter",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Instant"
+     ],
+     "subtypes": [],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "W"
+     ],
+     "abilities": [
+      "Target creature gets +2/+2 until end of turn. If it's blocking, instead put two +1/+1 counters on it.",
+      "Cycling {2}"
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Power Plant Worker",
+    "final": {
+     "name": "Power Plant Worker",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Artifact",
+      "Creature"
+     ],
+     "subtypes": [
+      "Assembly-Worker"
+     ],
+     "power": 6,
+     "toughness": 6,
+     "colors": [],
+     "abilities": [
+      "{3}: This creature gets +2/+2 until end of turn. If you control creatures named Mine Worker and Tower Worker, put two +1/+1 counters on this creature instead. Activate only once each turn."
+     ]
+    },
+    "changedBy": {
+     "7c": [
+      "Power Plant Worker (activated)"
+     ]
+    }
+   }
+  ],
+  "order": {
+   "7c": [
+    "Throw from the Saddle",
+    "Throw from the Saddle",
+    "Will of the All-Hunter",
+    "Will of the All-Hunter",
+    "Power Plant Worker (activated)"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Throw from the Saddle",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "target": "Grizzly Bears",
+    "params": {
+     "power": 1,
+     "toughness": 1
+    }
+   },
+   {
+    "source": "Throw from the Saddle",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "target": "Bridled Bighorn",
+    "params": {
+     "power": 1,
+     "toughness": 1
+    }
+   },
+   {
+    "source": "Will of the All-Hunter",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "target": "Hill Giant",
+    "params": {
+     "power": 2,
+     "toughness": 2
+    }
+   },
+   {
+    "source": "Will of the All-Hunter",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "target": "Runeclaw Bear",
+    "params": {
+     "power": 2,
+     "toughness": 2
+    }
+   },
+   {
+    "source": "Power Plant Worker (activated)",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "target": "Power Plant Worker",
+    "params": {
+     "power": 2,
+     "toughness": 2
+    }
+   }
+  ]
+ }
+}

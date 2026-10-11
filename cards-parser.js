@@ -31,6 +31,9 @@ const SIMPLE_TRAIT_CONDITIONS = [
   { re: /\bisn'?t saddled\b|\bis not saddled\b/, fn: s => !(s.traits || []).includes('Saddled') },
   { re: /\bis crewed\b/, fn: s => (s.traits || []).includes('Crewed') },
   { re: /\bisn'?t crewed\b|\bis not crewed\b/, fn: s => !(s.traits || []).includes('Crewed') },
+  // "If it's blocking, …" (Will of the All-Hunter): the Attacking / Blocking toggles.
+  { re: /^it is attacking$/, fn: s => (s.traits || []).includes('Attacking') },
+  { re: /^it is blocking$/, fn: s => (s.traits || []).includes('Blocking') },
 ];
 
 /* Shared lookup tables hoisted to module scope (were duplicated inline in 5+ sections). */

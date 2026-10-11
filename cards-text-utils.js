@@ -821,6 +821,22 @@ function _splitConditionalBranches(text, isSpell, canParse) {
         if (durationLead) replaced = durationLead[1].charAt(0).toUpperCase() + durationLead[1].slice(1) + ' until end of turn.';
         return replaced;
       };
+      // "… gets +2/+2 until end of turn. If it's blocking, instead put two +1/+1 counters on it."
+      // (Will of the All-Hunter), "Put a +1/+1 counter on it instead if it's a Mount." (Throw
+      // from the Saddle): the replacement is nothing continuous, so all that is left to say is
+      // that the sentence before applies only when the condition is false. True when done.
+      const insteadOfNothing = (cond) => {
+        // (Not "If a creature … would die this turn, exile it instead": that replaces an event.)
+        // Nor a condition on permanents by name ("If you control creatures named Mine Worker and
+        // Tower Worker" — Power Plant Worker), which the condition parser reads as less than it says.
+        if (!isSpell || /\bwould\b|\bnamed\b/i.test(cond) || !canParse(cond)) return false;
+        const replaced = replacedPrev();
+        if (!replaced) return false;
+        add(`If on resolution it is not true that ${cond}, ${replaced}`, li);
+        moved.add(i - 1);
+        moved.add(i);
+        return true;
+      };
       // "If that creature is an Ally, it also gains flying" (Yip Yip!) and, in a fired ability
       // whose "it" has been spelled out, "If target creature is equipped, target creature gains …"
       // (Éowyn, Lady of Rohan) are riders about "it".
@@ -837,6 +853,7 @@ function _splitConditionalBranches(text, isSpell, canParse) {
         const instead = /^instead\s+|\s+instead$/i.test(body);
         body = body.replace(/^instead\s+|\s+instead$/i, '');
         const isAddition = /^(?:it|that \w+|target [^,]+?) is an?\s[^.]*\bin addition to its other\b/i.test(body);
+        if (instead && !_branchIsContinuous(body) && insteadOfNothing(cond)) continue;
         // The condition's "it" must be what the rider changes: a pronoun, the target, or this permanent.
         if (!/^(?:it|that (?:creature|permanent)|(?:another )?target|this)\s/i.test(body)) continue;
         if (!canParse(cond) || !(isAddition || _branchIsContinuous(body))) continue;
@@ -873,10 +890,13 @@ function _splitConditionalBranches(text, isSpell, canParse) {
       const trailIf = plain && !leadIf && (sentences[i].match(/\bif\b/gi) || []).length === 1 &&
         sentences[i].match(/^(?:Then\s+)?(.+?)\s+if\s+([^.,;]+)\.$/i);
       if (leadIf || trailIf) {
-        const cond = leadIf ? leadIf[1] : trailIf[2];
+        let cond = leadIf ? leadIf[1] : trailIf[2];
+        // (A trailing "… if it's a Mount" is a condition about "it", like a rider's.)
+        if (/^it(?:'s|\s)/i.test(cond)) cond = _branchRiderCondition(cond);
         let body = (leadIf ? leadIf[2] : trailIf[1]).replace(/\balso\s+/i, '').replace(/\ban additional\s+/i, '');
         const instead = /^instead\s+|\s+instead$/i.test(body);
         body = body.replace(/^instead\s+|\s+instead$/i, '');
+        if (instead && !_branchIsContinuous(body) && insteadOfNothing(cond)) continue;
         body = canParse(cond) && _branchIsContinuous(body) ? _branchResolveSubject(body, sentences, i, true) : null;
         const replaced = body && instead ? replacedPrev() : null;
         if (body && (!instead || replaced)) {
