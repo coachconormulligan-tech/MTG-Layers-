@@ -1,0 +1,6065 @@
+{
+ "name": "\"… instead\" riders — each branch on its own condition (For the Family, Ray of Enfeeblement, Éowyn, Might of the Meek); \"with toxic\" lists Toxic 2",
+ "notes": "Memory: project_audit_target_changes_nothing_2026-10-11. Found by tests/audit.py. With four or more creatures For the Family gives +4/+4 and not +2/+2 as well. Ray of Enfeeblement (\"If that creature is white, it gets -4/-4 … instead\") is a rider about \"it\" written as \"that creature\": -4/-4 on the white Lions, -4/-1 on the green Bears. Éowyn, Lady of Rohan's fired option reads \"If target creature is equipped, target creature gains first strike and vigilance … instead\": an unequipped target gets first strike alone (it used to get nothing, and the equipped branch lost its duplicate first strike to the keyword de-duplication). Might of the Meek's \"It also gets +1/+0 … if you control a Mouse\" no longer gates the trample or reaches every creature. Necrogen Rotpriest's \"target creature you control with toxic\" lists itself (Toxic 2) — the keyword filter compared whole lines.",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Grizzly Bears",
+    "as": "bears"
+   },
+   {
+    "add": "Hill Giant",
+    "as": "giant"
+   },
+   {
+    "add": "Savannah Lions",
+    "as": "lions"
+   },
+   {
+    "add": "Runeclaw Bear",
+    "as": "other"
+   },
+   {
+    "add": "Éowyn, Lady of Rohan",
+    "as": "eowyn"
+   },
+   {
+    "add": "Necrogen Rotpriest",
+    "as": "priest"
+   },
+   {
+    "add": "For the Family",
+    "as": "family",
+    "spell": true
+   },
+   {
+    "call": [
+     "setTarget",
+     "@family",
+     "@giant"
+    ]
+   },
+   {
+    "add": "Ray of Enfeeblement",
+    "as": "ray1",
+    "spell": true
+   },
+   {
+    "call": [
+     "setTarget",
+     "@ray1",
+     "@lions"
+    ]
+   },
+   {
+    "add": "Ray of Enfeeblement",
+    "as": "ray2",
+    "spell": true
+   },
+   {
+    "call": [
+     "setTarget",
+     "@ray2",
+     "@bears"
+    ]
+   },
+   {
+    "fire": "@eowyn",
+    "trigger": 0,
+    "mode": 0,
+    "as": "firedEowyn"
+   },
+   {
+    "call": [
+     "setTarget",
+     "@firedEowyn",
+     "@giant"
+    ]
+   },
+   {
+    "add": "Might of the Meek",
+    "as": "might",
+    "spell": true
+   },
+   {
+    "call": [
+     "setTarget",
+     "@might",
+     "@other"
+    ]
+   },
+   {
+    "fire": "@priest",
+    "activated": 2,
+    "as": "firedPriest"
+   },
+   {
+    "call": [
+     "setTarget",
+     "@firedPriest",
+     "@priest"
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Hill Giant",
+   "final": {
+    "power": 7,
+    "toughness": 7,
+    "abilities": {
+     "$includes": [
+      "First strike"
+     ],
+     "$excludes": [
+      "Vigilance"
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Savannah Lions",
+   "final": {
+    "power": -2,
+    "toughness": -3
+   }
+  },
+  {
+   "perm": "Grizzly Bears",
+   "final": {
+    "power": -2,
+    "toughness": 1
+   }
+  },
+  {
+   "perm": "Runeclaw Bear",
+   "final": {
+    "power": 2,
+    "toughness": 2,
+    "abilities": [
+     "Trample"
+    ]
+   }
+  },
+  {
+   "perm": "Necrogen Rotpriest",
+   "final": {
+    "abilities": {
+     "$includes": [
+      "Deathtouch"
+     ]
+    }
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+     "multiverse_ids": [
+      129586
+     ],
+     "mtgo_id": 27400,
+     "mtgo_foil_id": 27401,
+     "tcgplayer_id": 15153,
+     "cardmarket_id": 16432,
+     "name": "Grizzly Bears",
+     "lang": "en",
+     "released_at": "2007-07-13",
+     "uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "scryfall_uri": "https://scryfall.com/card/10e/268/grizzly-bears?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:43:21Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "normal": "https://cards.scryfall.io/normal/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "large": "https://cards.scryfall.io/large/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "png": "https://cards.scryfall.io/png/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.png?1783943001",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "grid": "https://cards.scryfall.io/grid/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "display": "https://cards.scryfall.io/display/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "art": "https://cards.scryfall.io/art/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "crop": "https://cards.scryfall.io/crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001"
+     },
+     "mana_cost": "{1}{G}",
+     "cmc": 2,
+     "type_line": "Creature — Bear",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set": "10e",
+     "set_name": "Tenth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A14c8f55d-d177-4c25-a931-ebeb9e6062a0&unique=prints",
+     "collector_number": "268",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"We cannot forget that among all of Dominaria's wonders, a system of life exists, with prey and predators that will never fight wars nor vie for ancient power.\"\n—Jolrael, empress of beasts",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "D. J. Cleland-Hura",
+     "artist_ids": [
+      "87d21070-2432-4167-8aab-5968af1c14f3"
+     ],
+     "illustration_id": "066bfe81-0f53-43da-a074-b2ecc5dcda72",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 8114,
+     "penny_rank": 10982,
+     "prices": {
+      "usd": "0.22",
+      "usd_foil": "3.29",
+      "usd_etched": null,
+      "eur": "0.11",
+      "eur_foil": "1.97",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129586&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "edhrec": "https://edhrec.com/route/?cc=Grizzly+Bears"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15153%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16432&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27400?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8",
+     "oracle_id": "342199e0-15b6-4824-83da-25caef2592b3",
+     "multiverse_ids": [
+      129591
+     ],
+     "mtgo_id": 27040,
+     "mtgo_foil_id": 27041,
+     "tcgplayer_id": 15162,
+     "cardmarket_id": 16376,
+     "name": "Hill Giant",
+     "lang": "en",
+     "released_at": "2007-07-13",
+     "uri": "https://api.scryfall.com/cards/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8",
+     "scryfall_uri": "https://scryfall.com/card/10e/212/hill-giant?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:43:38Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+      "normal": "https://cards.scryfall.io/normal/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+      "large": "https://cards.scryfall.io/large/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+      "png": "https://cards.scryfall.io/png/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.png?1783943018",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+      "thumb": "https://cards.scryfall.io/thumb/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018",
+      "grid": "https://cards.scryfall.io/grid/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018",
+      "display": "https://cards.scryfall.io/display/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018",
+      "art": "https://cards.scryfall.io/art/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018",
+      "crop": "https://cards.scryfall.io/crop/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018"
+     },
+     "mana_cost": "{3}{R}",
+     "cmc": 4,
+     "type_line": "Creature — Giant",
+     "oracle_text": "",
+     "power": "3",
+     "toughness": "3",
+     "colors": [
+      "R"
+     ],
+     "color_identity": [
+      "R"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set": "10e",
+     "set_name": "Tenth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A342199e0-15b6-4824-83da-25caef2592b3&unique=prints",
+     "collector_number": "212",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "Fortunately, hill giants have large blind spots in which a human can easily hide. Unfortunately, these blind spots are beneath the bottoms of their feet.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Kev Walker",
+     "artist_ids": [
+      "f366a0ee-a0cd-466d-ba6a-90058c7a31a6"
+     ],
+     "illustration_id": "fd46160d-4dd0-4ab6-b452-cff004f5e6f2",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 29148,
+     "prices": {
+      "usd": "0.04",
+      "usd_foil": "0.83",
+      "usd_etched": null,
+      "eur": "0.02",
+      "eur_foil": "0.28",
+      "tix": "0.04"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129591&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DHill%2BGiant",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DHill%2BGiant",
+      "edhrec": "https://edhrec.com/route/?cc=Hill+Giant"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15162%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16376&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27040?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "9c9ac1bc-cdf3-4fa6-8319-a7ea164e9e47",
+     "oracle_id": "60ba93eb-39e6-4af2-9c66-cd38f72daff2",
+     "multiverse_ids": [
+      679888
+     ],
+     "mtgo_id": 133318,
+     "arena_id": 93859,
+     "tcgplayer_id": 563879,
+     "cardmarket_id": 795120,
+     "name": "Savannah Lions",
+     "lang": "en",
+     "released_at": "2024-11-15",
+     "uri": "https://api.scryfall.com/cards/9c9ac1bc-cdf3-4fa6-8319-a7ea164e9e47",
+     "scryfall_uri": "https://scryfall.com/card/fdn/146/savannah-lions?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T02:18:03Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/9/c/9c9ac1bc-cdf3-4fa6-8319-a7ea164e9e47.jpg?1783909083",
+      "normal": "https://cards.scryfall.io/normal/front/9/c/9c9ac1bc-cdf3-4fa6-8319-a7ea164e9e47.jpg?1783909083",
+      "large": "https://cards.scryfall.io/large/front/9/c/9c9ac1bc-cdf3-4fa6-8319-a7ea164e9e47.jpg?1783909083",
+      "png": "https://cards.scryfall.io/png/front/9/c/9c9ac1bc-cdf3-4fa6-8319-a7ea164e9e47.png?1783909083",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/9/c/9c9ac1bc-cdf3-4fa6-8319-a7ea164e9e47.jpg?1783909083",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/9/c/9c9ac1bc-cdf3-4fa6-8319-a7ea164e9e47.jpg?1783909083",
+      "thumb": "https://cards.scryfall.io/thumb/front/9/c/9c9ac1bc-cdf3-4fa6-8319-a7ea164e9e47.webp?1783909083",
+      "grid": "https://cards.scryfall.io/grid/front/9/c/9c9ac1bc-cdf3-4fa6-8319-a7ea164e9e47.webp?1783909083",
+      "display": "https://cards.scryfall.io/display/front/9/c/9c9ac1bc-cdf3-4fa6-8319-a7ea164e9e47.webp?1783909083",
+      "art": "https://cards.scryfall.io/art/front/9/c/9c9ac1bc-cdf3-4fa6-8319-a7ea164e9e47.webp?1783909083",
+      "crop": "https://cards.scryfall.io/crop/front/9/c/9c9ac1bc-cdf3-4fa6-8319-a7ea164e9e47.webp?1783909083"
+     },
+     "mana_cost": "{W}",
+     "cmc": 1,
+     "type_line": "Creature — Cat",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "1",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "arena",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a7ecb771-d1b6-4dec-8cf5-8d45179f21e0",
+     "set": "fdn",
+     "set_name": "Foundations",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a7ecb771-d1b6-4dec-8cf5-8d45179f21e0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Afdn&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/fdn?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/9c9ac1bc-cdf3-4fa6-8319-a7ea164e9e47/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A60ba93eb-39e6-4af2-9c66-cd38f72daff2&unique=prints",
+     "collector_number": "146",
+     "digital": false,
+     "rarity": "uncommon",
+     "flavor_text": "\"One alone is fearsome; one among many is unstoppable.\"\n—Benalish proverb",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Winona Nelson",
+     "artist_ids": [
+      "e45fe8d3-75d6-42c9-a2df-e945ad81ea27"
+     ],
+     "illustration_id": "e9c4e60a-a4e0-4715-9d07-0120d4d135a2",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "promo_types": [
+      "beginnerbox",
+      "startercollection"
+     ],
+     "edhrec_rank": 10738,
+     "penny_rank": 4603,
+     "preview": {
+      "source": "Gamingtrend",
+      "source_uri": "https://gamingtrend.com/news/peak-inside-the-foundations-beginner-box-for-magic-the-gathering/",
+      "previewed_at": "2024-08-15"
+     },
+     "prices": {
+      "usd": "0.16",
+      "usd_foil": "0.28",
+      "usd_etched": null,
+      "eur": "0.11",
+      "eur_foil": "0.21",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=679888&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DSavannah%2BLions",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DSavannah%2BLions",
+      "edhrec": "https://edhrec.com/route/?cc=Savannah+Lions"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F563879%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=795120&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/133318?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "d1995238-79cc-4381-9595-71ef11ea1e36",
+     "oracle_id": "ec49dfcf-d16d-4621-af4b-4a6f09043221",
+     "multiverse_ids": [
+      383368
+     ],
+     "mtgo_id": 53290,
+     "mtgo_foil_id": 53291,
+     "tcgplayer_id": 90949,
+     "cardmarket_id": 267595,
+     "name": "Runeclaw Bear",
+     "lang": "en",
+     "released_at": "2014-07-18",
+     "uri": "https://api.scryfall.com/cards/d1995238-79cc-4381-9595-71ef11ea1e36",
+     "scryfall_uri": "https://scryfall.com/card/m15/197/runeclaw-bear?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T10:39:22Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
+      "normal": "https://cards.scryfall.io/normal/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
+      "large": "https://cards.scryfall.io/large/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
+      "png": "https://cards.scryfall.io/png/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.png?1783939162",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
+      "thumb": "https://cards.scryfall.io/thumb/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.webp?1783939162",
+      "grid": "https://cards.scryfall.io/grid/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.webp?1783939162",
+      "display": "https://cards.scryfall.io/display/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.webp?1783939162",
+      "art": "https://cards.scryfall.io/art/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.webp?1783939162",
+      "crop": "https://cards.scryfall.io/crop/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.webp?1783939162"
+     },
+     "mana_cost": "{1}{G}",
+     "cmc": 2,
+     "type_line": "Creature — Bear",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "6ce49890-3b37-42a5-8932-dbeef1d7b62c",
+     "set": "m15",
+     "set_name": "Magic 2015",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/6ce49890-3b37-42a5-8932-dbeef1d7b62c",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Am15&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/m15?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/d1995238-79cc-4381-9595-71ef11ea1e36/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aec49dfcf-d16d-4621-af4b-4a6f09043221&unique=prints",
+     "collector_number": "197",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "The magic of the elves leaves its mark on the forest. The magic of the forest leaves its mark on the animals who live there. The animals of the forest leave their mark on all who trespass.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Jesper Ejsing",
+     "artist_ids": [
+      "a5f8354a-8b51-4e59-96b2-0e3aeae4fa1d"
+     ],
+     "illustration_id": "0bb0db79-2039-4f8b-a8ac-d7c952f07ba5",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 9229,
+     "penny_rank": 10859,
+     "prices": {
+      "usd": "0.14",
+      "usd_foil": "0.51",
+      "usd_etched": null,
+      "eur": "0.11",
+      "eur_foil": "0.36",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=383368&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DRuneclaw%2BBear",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DRuneclaw%2BBear",
+      "edhrec": "https://edhrec.com/route/?cc=Runeclaw+Bear"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F90949%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=267595&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/53290?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 4,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_5",
+    "scryfallData": {
+     "object": "card",
+     "id": "e59710c4-24de-419e-a8a0-e8392d450c23",
+     "oracle_id": "1ee3753c-3b6e-4182-9305-2ab757f485f0",
+     "multiverse_ids": [
+      616840
+     ],
+     "mtgo_id": 111930,
+     "arena_id": 84702,
+     "tcgplayer_id": 499200,
+     "cardmarket_id": 717016,
+     "name": "Éowyn, Lady of Rohan",
+     "lang": "en",
+     "released_at": "2023-06-23",
+     "uri": "https://api.scryfall.com/cards/e59710c4-24de-419e-a8a0-e8392d450c23",
+     "scryfall_uri": "https://scryfall.com/card/ltr/10/%C3%A9owyn-lady-of-rohan?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T04:18:53Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/e/5/e59710c4-24de-419e-a8a0-e8392d450c23.jpg?1783916333",
+      "normal": "https://cards.scryfall.io/normal/front/e/5/e59710c4-24de-419e-a8a0-e8392d450c23.jpg?1783916333",
+      "large": "https://cards.scryfall.io/large/front/e/5/e59710c4-24de-419e-a8a0-e8392d450c23.jpg?1783916333",
+      "png": "https://cards.scryfall.io/png/front/e/5/e59710c4-24de-419e-a8a0-e8392d450c23.png?1783916333",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/e/5/e59710c4-24de-419e-a8a0-e8392d450c23.jpg?1783916333",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/e/5/e59710c4-24de-419e-a8a0-e8392d450c23.jpg?1783916333",
+      "thumb": "https://cards.scryfall.io/thumb/front/e/5/e59710c4-24de-419e-a8a0-e8392d450c23.webp?1783916333",
+      "grid": "https://cards.scryfall.io/grid/front/e/5/e59710c4-24de-419e-a8a0-e8392d450c23.webp?1783916333",
+      "display": "https://cards.scryfall.io/display/front/e/5/e59710c4-24de-419e-a8a0-e8392d450c23.webp?1783916333",
+      "art": "https://cards.scryfall.io/art/front/e/5/e59710c4-24de-419e-a8a0-e8392d450c23.webp?1783916333",
+      "crop": "https://cards.scryfall.io/crop/front/e/5/e59710c4-24de-419e-a8a0-e8392d450c23.webp?1783916333"
+     },
+     "mana_cost": "{2}{W}",
+     "cmc": 3,
+     "type_line": "Legendary Creature — Human Noble",
+     "oracle_text": "At the beginning of combat on your turn, target creature gains your choice of first strike or vigilance until end of turn. If that creature is equipped, it gains first strike and vigilance until end of turn instead.\nEquip abilities you activate cost {1} less to activate.",
+     "power": "2",
+     "toughness": "4",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo",
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "08078706-ac5d-439b-8f01-894d38751367",
+     "set": "ltr",
+     "set_name": "The Lord of the Rings: Tales of Middle-earth",
+     "set_type": "draft_innovation",
+     "set_uri": "https://api.scryfall.com/sets/08078706-ac5d-439b-8f01-894d38751367",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Altr&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/ltr?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/e59710c4-24de-419e-a8a0-e8392d450c23/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A1ee3753c-3b6e-4182-9305-2ab757f485f0&unique=prints",
+     "collector_number": "10",
+     "digital": false,
+     "rarity": "uncommon",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Sean Vo",
+     "artist_ids": [
+      "a6fe588c-5328-4703-8f61-4c6d0e56592d"
+     ],
+     "illustration_id": "ee7af6b8-c6f7-485e-848a-9e3b91778694",
+     "border_color": "black",
+     "frame": "2015",
+     "frame_effects": [
+      "legendary"
+     ],
+     "security_stamp": "triangle",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "promo_types": [
+      "universesbeyond"
+     ],
+     "edhrec_rank": 7412,
+     "penny_rank": 6449,
+     "preview": {
+      "source": "Scrybabies",
+      "source_uri": "https://twitter.com/ScrybabiesMTG/status/1665742348750397441",
+      "previewed_at": "2023-06-05"
+     },
+     "prices": {
+      "usd": "0.25",
+      "usd_foil": "0.37",
+      "usd_etched": null,
+      "eur": "0.09",
+      "eur_foil": "0.17",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=616840&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3D%25C3%2589owyn%252C%2BLady%2Bof%2BRohan",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3D%25C3%2589owyn%252C%2BLady%2Bof%2BRohan",
+      "edhrec": "https://edhrec.com/route/?cc=%C3%89owyn%2C+Lady+of+Rohan"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F499200%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=717016&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/111930?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 5,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_6",
+    "scryfallData": {
+     "object": "card",
+     "id": "87519b36-1d95-4020-a61d-6afb75555e3e",
+     "oracle_id": "7d9a424e-cab1-410f-9c04-ee0025d04169",
+     "multiverse_ids": [
+      602742
+     ],
+     "mtgo_id": 106639,
+     "arena_id": 83912,
+     "tcgplayer_id": 478386,
+     "cardmarket_id": 692849,
+     "name": "Necrogen Rotpriest",
+     "lang": "en",
+     "released_at": "2023-02-10",
+     "uri": "https://api.scryfall.com/cards/87519b36-1d95-4020-a61d-6afb75555e3e",
+     "scryfall_uri": "https://scryfall.com/card/one/212/necrogen-rotpriest?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T04:46:38Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/8/7/87519b36-1d95-4020-a61d-6afb75555e3e.jpg?1783917998",
+      "normal": "https://cards.scryfall.io/normal/front/8/7/87519b36-1d95-4020-a61d-6afb75555e3e.jpg?1783917998",
+      "large": "https://cards.scryfall.io/large/front/8/7/87519b36-1d95-4020-a61d-6afb75555e3e.jpg?1783917998",
+      "png": "https://cards.scryfall.io/png/front/8/7/87519b36-1d95-4020-a61d-6afb75555e3e.png?1783917998",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/8/7/87519b36-1d95-4020-a61d-6afb75555e3e.jpg?1783917998",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/8/7/87519b36-1d95-4020-a61d-6afb75555e3e.jpg?1783917998",
+      "thumb": "https://cards.scryfall.io/thumb/front/8/7/87519b36-1d95-4020-a61d-6afb75555e3e.webp?1783917998",
+      "grid": "https://cards.scryfall.io/grid/front/8/7/87519b36-1d95-4020-a61d-6afb75555e3e.webp?1783917998",
+      "display": "https://cards.scryfall.io/display/front/8/7/87519b36-1d95-4020-a61d-6afb75555e3e.webp?1783917998",
+      "art": "https://cards.scryfall.io/art/front/8/7/87519b36-1d95-4020-a61d-6afb75555e3e.webp?1783917998",
+      "crop": "https://cards.scryfall.io/crop/front/8/7/87519b36-1d95-4020-a61d-6afb75555e3e.webp?1783917998"
+     },
+     "mana_cost": "{2}{B}{G}",
+     "cmc": 4,
+     "type_line": "Creature — Phyrexian Zombie Cleric",
+     "oracle_text": "Toxic 2 (Players dealt combat damage by this creature also get two poison counters.)\nWhenever a creature you control with toxic deals combat damage to a player, that player gets an additional poison counter.\n{1}{B}{G}: Target creature you control with toxic gains deathtouch until end of turn.",
+     "power": "1",
+     "toughness": "5",
+     "colors": [
+      "B",
+      "G"
+     ],
+     "color_identity": [
+      "B",
+      "G"
+     ],
+     "keywords": [
+      "Toxic"
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "40255bfa-0004-45f1-a31b-17d385f09a95",
+       "component": "combo_piece",
+       "name": "Poison Counter",
+       "type_line": "Card",
+       "uri": "https://api.scryfall.com/cards/40255bfa-0004-45f1-a31b-17d385f09a95"
+      },
+      {
+       "object": "related_card",
+       "id": "2a0ffea1-e103-4f06-b652-7b9f37de8754",
+       "component": "combo_piece",
+       "name": "Necrogen Rotpriest",
+       "type_line": "Creature — Phyrexian Zombie Cleric",
+       "uri": "https://api.scryfall.com/cards/2a0ffea1-e103-4f06-b652-7b9f37de8754"
+      }
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo",
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "04bef644-343f-4230-95ee-255f29aa67a2",
+     "set": "one",
+     "set_name": "Phyrexia: All Will Be One",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/04bef644-343f-4230-95ee-255f29aa67a2",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aone&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/one?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/87519b36-1d95-4020-a61d-6afb75555e3e/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A7d9a424e-cab1-410f-9c04-ee0025d04169&unique=prints",
+     "collector_number": "212",
+     "digital": false,
+     "rarity": "uncommon",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Igor Krstic",
+     "artist_ids": [
+      "44cdd332-50f6-4cab-b606-c4565fc5efeb"
+     ],
+     "illustration_id": "37331cca-4d30-4092-8da4-97da64eac90a",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 6989,
+     "preview": {
+      "source": "Gamerbraves",
+      "source_uri": "https://www.gamerbraves.com/necrogen-rotpriest-gets-you-to-your-victory-faster-in-mtg-phyrexia-all-will-be-one/",
+      "previewed_at": "2023-01-18"
+     },
+     "prices": {
+      "usd": "0.27",
+      "usd_foil": "0.32",
+      "usd_etched": null,
+      "eur": "0.10",
+      "eur_foil": "0.21",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=602742&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DNecrogen%2BRotpriest",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DNecrogen%2BRotpriest",
+      "edhrec": "https://edhrec.com/route/?cc=Necrogen+Rotpriest"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F478386%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=692849&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/106639?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 6,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_7",
+    "scryfallData": {
+     "object": "card",
+     "id": "052be93c-1970-4d05-a3d1-e87a6e51c423",
+     "oracle_id": "f6abd7e5-8c52-4b36-98c5-a4df8b5b6863",
+     "multiverse_ids": [
+      555347
+     ],
+     "mtgo_id": 98511,
+     "arena_id": 80297,
+     "tcgplayer_id": 269106,
+     "cardmarket_id": 652195,
+     "name": "For the Family",
+     "lang": "en",
+     "released_at": "2022-04-29",
+     "uri": "https://api.scryfall.com/cards/052be93c-1970-4d05-a3d1-e87a6e51c423",
+     "scryfall_uri": "https://scryfall.com/card/snc/146/for-the-family?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T06:11:43Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/0/5/052be93c-1970-4d05-a3d1-e87a6e51c423.jpg?1783923103",
+      "normal": "https://cards.scryfall.io/normal/front/0/5/052be93c-1970-4d05-a3d1-e87a6e51c423.jpg?1783923103",
+      "large": "https://cards.scryfall.io/large/front/0/5/052be93c-1970-4d05-a3d1-e87a6e51c423.jpg?1783923103",
+      "png": "https://cards.scryfall.io/png/front/0/5/052be93c-1970-4d05-a3d1-e87a6e51c423.png?1783923103",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/0/5/052be93c-1970-4d05-a3d1-e87a6e51c423.jpg?1783923103",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/0/5/052be93c-1970-4d05-a3d1-e87a6e51c423.jpg?1783923103",
+      "thumb": "https://cards.scryfall.io/thumb/front/0/5/052be93c-1970-4d05-a3d1-e87a6e51c423.webp?1783923103",
+      "grid": "https://cards.scryfall.io/grid/front/0/5/052be93c-1970-4d05-a3d1-e87a6e51c423.webp?1783923103",
+      "display": "https://cards.scryfall.io/display/front/0/5/052be93c-1970-4d05-a3d1-e87a6e51c423.webp?1783923103",
+      "art": "https://cards.scryfall.io/art/front/0/5/052be93c-1970-4d05-a3d1-e87a6e51c423.webp?1783923103",
+      "crop": "https://cards.scryfall.io/crop/front/0/5/052be93c-1970-4d05-a3d1-e87a6e51c423.webp?1783923103"
+     },
+     "mana_cost": "{G}",
+     "cmc": 1,
+     "type_line": "Instant",
+     "oracle_text": "Target creature gets +2/+2 until end of turn. If you control four or more creatures, that creature gets +4/+4 until end of turn instead.",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo",
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "df837242-8c15-42e4-b049-c933a02dc501",
+     "set": "snc",
+     "set_name": "Streets of New Capenna",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/df837242-8c15-42e4-b049-c933a02dc501",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Asnc&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/snc?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/052be93c-1970-4d05-a3d1-e87a6e51c423/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Af6abd7e5-8c52-4b36-98c5-a4df8b5b6863&unique=prints",
+     "collector_number": "146",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "The Cabaretti cultivate an image of harmless hedonism, happy for the other families to underestimate their formidable firepower.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Kieran Yanner",
+     "artist_ids": [
+      "aa7e89ed-d294-4633-9057-ce04dacfcfa4"
+     ],
+     "illustration_id": "1b95a7a8-98f9-416d-879a-fcee0139caea",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 18311,
+     "prices": {
+      "usd": "0.18",
+      "usd_foil": "0.11",
+      "usd_etched": null,
+      "eur": "0.04",
+      "eur_foil": "0.16",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=555347&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DFor%2Bthe%2BFamily",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DFor%2Bthe%2BFamily",
+      "edhrec": "https://edhrec.com/route/?cc=For+the+Family"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F269106%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=652195&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/98511?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": true,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 7,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": "perm_2",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 8,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": {
+     "states": [
+      [
+       "perm_1",
+       {
+        "name": "Grizzly Bears",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Bear"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "colors": [
+         "G"
+        ],
+        "abilities": [],
+        "oracleText": "",
+        "owner": "player_0",
+        "controller": "player_0",
+        "isToken": false
+       }
+      ],
+      [
+       "perm_2",
+       {
+        "name": "Hill Giant",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Giant"
+        ],
+        "power": 3,
+        "toughness": 3,
+        "colors": [
+         "R"
+        ],
+        "abilities": [],
+        "oracleText": "",
+        "owner": "player_0",
+        "controller": "player_0",
+        "isToken": false
+       }
+      ],
+      [
+       "perm_3",
+       {
+        "name": "Savannah Lions",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Cat"
+        ],
+        "power": 2,
+        "toughness": 1,
+        "colors": [
+         "W"
+        ],
+        "abilities": [],
+        "oracleText": "",
+        "owner": "player_0",
+        "controller": "player_0",
+        "isToken": false
+       }
+      ],
+      [
+       "perm_4",
+       {
+        "name": "Runeclaw Bear",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Bear"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "colors": [
+         "G"
+        ],
+        "abilities": [],
+        "oracleText": "",
+        "owner": "player_0",
+        "controller": "player_0",
+        "isToken": false
+       }
+      ],
+      [
+       "perm_5",
+       {
+        "name": "Éowyn, Lady of Rohan",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [
+         "Legendary"
+        ],
+        "subtypes": [
+         "Human",
+         "Noble"
+        ],
+        "power": 2,
+        "toughness": 4,
+        "colors": [
+         "W"
+        ],
+        "abilities": [
+         "At the beginning of combat on your turn, target creature gains your choice of first strike or vigilance until end of turn. If that creature is equipped, it gains first strike and vigilance until end of turn instead.",
+         "Equip abilities you activate cost {1} less to activate."
+        ],
+        "oracleText": "At the beginning of combat on your turn, target creature gains your choice of first strike or vigilance until end of turn. If that creature is equipped, it gains first strike and vigilance until end of turn instead.\nEquip abilities you activate cost {1} less to activate.",
+        "owner": "player_0",
+        "controller": "player_0",
+        "isToken": false
+       }
+      ],
+      [
+       "perm_6",
+       {
+        "name": "Necrogen Rotpriest",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Phyrexian",
+         "Zombie",
+         "Cleric"
+        ],
+        "power": 1,
+        "toughness": 5,
+        "colors": [
+         "B",
+         "G"
+        ],
+        "abilities": [
+         "Toxic 2",
+         "Whenever a creature you control with toxic deals combat damage to a player, that player gets an additional poison counter.",
+         "{1}{B}{G}: Target creature you control with toxic gains deathtouch until end of turn."
+        ],
+        "oracleText": "Toxic 2\nWhenever a creature you control with toxic deals combat damage to a player, that player gets an additional poison counter.\n{1}{B}{G}: Target creature you control with toxic gains deathtouch until end of turn.",
+        "owner": "player_0",
+        "controller": "player_0",
+        "isToken": false
+       }
+      ]
+     ],
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Hill Giant",
+       "imageUri": "https://cards.scryfall.io/small/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Giant"
+       ],
+       "printedPower": 3,
+       "printedToughness": 3,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Savannah Lions",
+       "imageUri": "https://cards.scryfall.io/small/front/9/c/9c9ac1bc-cdf3-4fa6-8319-a7ea164e9e47.jpg?1783909083",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Cat"
+       ],
+       "printedPower": 2,
+       "printedToughness": 1,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Runeclaw Bear",
+       "imageUri": "https://cards.scryfall.io/small/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_5",
+       "name": "Éowyn, Lady of Rohan",
+       "imageUri": "https://cards.scryfall.io/small/front/e/5/e59710c4-24de-419e-a8a0-e8392d450c23.jpg?1783916333",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [
+        "Legendary"
+       ],
+       "printedSubtypes": [
+        "Human",
+        "Noble"
+       ],
+       "printedPower": 2,
+       "printedToughness": 4,
+       "timestamp": 5
+      },
+      {
+       "id": "perm_6",
+       "name": "Necrogen Rotpriest",
+       "imageUri": "https://cards.scryfall.io/small/front/8/7/87519b36-1d95-4020-a61d-6afb75555e3e.jpg?1783917998",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Phyrexian",
+        "Zombie",
+        "Cleric"
+       ],
+       "printedPower": 1,
+       "printedToughness": 5,
+       "timestamp": 6
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    }
+   },
+   {
+    "id": "perm_8",
+    "scryfallData": {
+     "object": "card",
+     "id": "ff5d948b-fd89-4b90-9b63-ad7da13b5f0e",
+     "oracle_id": "647e5639-6339-48af-af96-e48729e1cad3",
+     "multiverse_ids": [
+      527403
+     ],
+     "mtgo_id": 91734,
+     "arena_id": 77221,
+     "tcgplayer_id": 243400,
+     "cardmarket_id": 571729,
+     "name": "Ray of Enfeeblement",
+     "lang": "en",
+     "released_at": "2021-07-23",
+     "uri": "https://api.scryfall.com/cards/ff5d948b-fd89-4b90-9b63-ad7da13b5f0e",
+     "scryfall_uri": "https://scryfall.com/card/afr/116/ray-of-enfeeblement?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T07:08:10Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/f/f/ff5d948b-fd89-4b90-9b63-ad7da13b5f0e.jpg?1783926490",
+      "normal": "https://cards.scryfall.io/normal/front/f/f/ff5d948b-fd89-4b90-9b63-ad7da13b5f0e.jpg?1783926490",
+      "large": "https://cards.scryfall.io/large/front/f/f/ff5d948b-fd89-4b90-9b63-ad7da13b5f0e.jpg?1783926490",
+      "png": "https://cards.scryfall.io/png/front/f/f/ff5d948b-fd89-4b90-9b63-ad7da13b5f0e.png?1783926490",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/f/f/ff5d948b-fd89-4b90-9b63-ad7da13b5f0e.jpg?1783926490",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/f/f/ff5d948b-fd89-4b90-9b63-ad7da13b5f0e.jpg?1783926490",
+      "thumb": "https://cards.scryfall.io/thumb/front/f/f/ff5d948b-fd89-4b90-9b63-ad7da13b5f0e.webp?1783926490",
+      "grid": "https://cards.scryfall.io/grid/front/f/f/ff5d948b-fd89-4b90-9b63-ad7da13b5f0e.webp?1783926490",
+      "display": "https://cards.scryfall.io/display/front/f/f/ff5d948b-fd89-4b90-9b63-ad7da13b5f0e.webp?1783926490",
+      "art": "https://cards.scryfall.io/art/front/f/f/ff5d948b-fd89-4b90-9b63-ad7da13b5f0e.webp?1783926490",
+      "crop": "https://cards.scryfall.io/crop/front/f/f/ff5d948b-fd89-4b90-9b63-ad7da13b5f0e.webp?1783926490"
+     },
+     "mana_cost": "{B}",
+     "cmc": 1,
+     "type_line": "Instant",
+     "oracle_text": "Target creature gets -4/-1 until end of turn. If that creature is white, it gets -4/-4 until end of turn instead.",
+     "colors": [
+      "B"
+     ],
+     "color_identity": [
+      "B"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "arena",
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "e1ef87ba-ba92-4573-817f-543b996d2851",
+     "set": "afr",
+     "set_name": "Adventures in the Forgotten Realms",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/e1ef87ba-ba92-4573-817f-543b996d2851",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aafr&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/afr?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/ff5d948b-fd89-4b90-9b63-ad7da13b5f0e/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A647e5639-6339-48af-af96-e48729e1cad3&unique=prints",
+     "collector_number": "116",
+     "digital": false,
+     "rarity": "uncommon",
+     "flavor_text": "Erigan cried out in pain as a hideous weakness settled into his bones.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Campbell White",
+     "artist_ids": [
+      "d281eab4-463a-4ba8-9039-8943737960a0"
+     ],
+     "illustration_id": "44dbe89d-cbff-468d-9e48-9e900723a48a",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 23926,
+     "penny_rank": 17602,
+     "preview": {
+      "source": "Lords of Limited",
+      "source_uri": "https://twitter.com/LordsofLimited/status/1412053276950990854",
+      "previewed_at": "2021-07-05"
+     },
+     "prices": {
+      "usd": "0.12",
+      "usd_foil": "0.28",
+      "usd_etched": null,
+      "eur": "0.22",
+      "eur_foil": "0.38",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=527403&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DRay%2Bof%2BEnfeeblement",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DRay%2Bof%2BEnfeeblement",
+      "edhrec": "https://edhrec.com/route/?cc=Ray+of+Enfeeblement"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F243400%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=571729&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/91734?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": true,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 9,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": "perm_3",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 10,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": {
+     "states": [
+      [
+       "perm_1",
+       {
+        "name": "Grizzly Bears",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Bear"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "abilities": [],
+        "colors": [
+         "G"
+        ],
+        "manaValue": 2,
+        "manaCost": "{1}{G}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_2",
+       {
+        "name": "Hill Giant",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Giant"
+        ],
+        "power": 7,
+        "toughness": 7,
+        "abilities": [],
+        "colors": [
+         "R"
+        ],
+        "manaValue": 4,
+        "manaCost": "{3}{R}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_3",
+       {
+        "name": "Savannah Lions",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Cat"
+        ],
+        "power": 2,
+        "toughness": 1,
+        "abilities": [],
+        "colors": [
+         "W"
+        ],
+        "manaValue": 1,
+        "manaCost": "{W}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_4",
+       {
+        "name": "Runeclaw Bear",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Bear"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "abilities": [],
+        "colors": [
+         "G"
+        ],
+        "manaValue": 2,
+        "manaCost": "{1}{G}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_5",
+       {
+        "name": "Éowyn, Lady of Rohan",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [
+         "Legendary"
+        ],
+        "subtypes": [
+         "Human",
+         "Noble"
+        ],
+        "power": 2,
+        "toughness": 4,
+        "abilities": [
+         "At the beginning of combat on your turn, target creature gains your choice of first strike or vigilance until end of turn. If that creature is equipped, it gains first strike and vigilance until end of turn instead.",
+         "Equip abilities you activate cost {1} less to activate."
+        ],
+        "colors": [
+         "W"
+        ],
+        "manaValue": 3,
+        "manaCost": "{2}{W}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "At the beginning of combat on your turn, target creature gains your choice of first strike or vigilance until end of turn. If that creature is equipped, it gains first strike and vigilance until end of turn instead.\nEquip abilities you activate cost {1} less to activate.",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [
+         "At the beginning of combat on your turn, target creature gains your choice of first strike or vigilance until end of turn. If that creature is equipped, it gains first strike and vigilance until end of turn instead.",
+         "Equip abilities you activate cost {1} less to activate."
+        ],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_6",
+       {
+        "name": "Necrogen Rotpriest",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Phyrexian",
+         "Zombie",
+         "Cleric"
+        ],
+        "power": 1,
+        "toughness": 5,
+        "abilities": [
+         "Toxic 2",
+         "Whenever a creature you control with toxic deals combat damage to a player, that player gets an additional poison counter.",
+         "{1}{B}{G}: Target creature you control with toxic gains deathtouch until end of turn."
+        ],
+        "colors": [
+         "B",
+         "G"
+        ],
+        "manaValue": 4,
+        "manaCost": "{2}{B}{G}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "Toxic 2\nWhenever a creature you control with toxic deals combat damage to a player, that player gets an additional poison counter.\n{1}{B}{G}: Target creature you control with toxic gains deathtouch until end of turn.",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [
+         "Toxic 2",
+         "Whenever a creature you control with toxic deals combat damage to a player, that player gets an additional poison counter.",
+         "{1}{B}{G}: Target creature you control with toxic gains deathtouch until end of turn."
+        ],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_7",
+       {
+        "name": "For the Family",
+        "types": [
+         "Instant"
+        ],
+        "supertypes": [],
+        "subtypes": [],
+        "power": null,
+        "toughness": null,
+        "abilities": [
+         "Target creature gets +2/+2 until end of turn. If you control four or more creatures, that creature gets +4/+4 until end of turn instead."
+        ],
+        "colors": [
+         "G"
+        ],
+        "manaValue": 1,
+        "manaCost": "{G}",
+        "isCreature": false,
+        "isToken": false,
+        "oracleText": "Target creature gets +2/+2 until end of turn. If you control four or more creatures, that creature gets +4/+4 until end of turn instead.",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [
+         "Target creature gets +2/+2 until end of turn. If you control four or more creatures, that creature gets +4/+4 until end of turn instead."
+        ],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ]
+     ],
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Hill Giant",
+       "imageUri": "https://cards.scryfall.io/small/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Giant"
+       ],
+       "printedPower": 3,
+       "printedToughness": 3,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Savannah Lions",
+       "imageUri": "https://cards.scryfall.io/small/front/9/c/9c9ac1bc-cdf3-4fa6-8319-a7ea164e9e47.jpg?1783909083",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Cat"
+       ],
+       "printedPower": 2,
+       "printedToughness": 1,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Runeclaw Bear",
+       "imageUri": "https://cards.scryfall.io/small/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_5",
+       "name": "Éowyn, Lady of Rohan",
+       "imageUri": "https://cards.scryfall.io/small/front/e/5/e59710c4-24de-419e-a8a0-e8392d450c23.jpg?1783916333",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [
+        "Legendary"
+       ],
+       "printedSubtypes": [
+        "Human",
+        "Noble"
+       ],
+       "printedPower": 2,
+       "printedToughness": 4,
+       "timestamp": 5
+      },
+      {
+       "id": "perm_6",
+       "name": "Necrogen Rotpriest",
+       "imageUri": "https://cards.scryfall.io/small/front/8/7/87519b36-1d95-4020-a61d-6afb75555e3e.jpg?1783917998",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Phyrexian",
+        "Zombie",
+        "Cleric"
+       ],
+       "printedPower": 1,
+       "printedToughness": 5,
+       "timestamp": 6
+      },
+      {
+       "id": "perm_7",
+       "name": "For the Family",
+       "imageUri": "https://cards.scryfall.io/small/front/0/5/052be93c-1970-4d05-a3d1-e87a6e51c423.jpg?1783923103",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "isSpell": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 7
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    }
+   },
+   {
+    "id": "perm_9",
+    "scryfallData": {
+     "object": "card",
+     "id": "ff5d948b-fd89-4b90-9b63-ad7da13b5f0e",
+     "oracle_id": "647e5639-6339-48af-af96-e48729e1cad3",
+     "multiverse_ids": [
+      527403
+     ],
+     "mtgo_id": 91734,
+     "arena_id": 77221,
+     "tcgplayer_id": 243400,
+     "cardmarket_id": 571729,
+     "name": "Ray of Enfeeblement",
+     "lang": "en",
+     "released_at": "2021-07-23",
+     "uri": "https://api.scryfall.com/cards/ff5d948b-fd89-4b90-9b63-ad7da13b5f0e",
+     "scryfall_uri": "https://scryfall.com/card/afr/116/ray-of-enfeeblement?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T07:08:10Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/f/f/ff5d948b-fd89-4b90-9b63-ad7da13b5f0e.jpg?1783926490",
+      "normal": "https://cards.scryfall.io/normal/front/f/f/ff5d948b-fd89-4b90-9b63-ad7da13b5f0e.jpg?1783926490",
+      "large": "https://cards.scryfall.io/large/front/f/f/ff5d948b-fd89-4b90-9b63-ad7da13b5f0e.jpg?1783926490",
+      "png": "https://cards.scryfall.io/png/front/f/f/ff5d948b-fd89-4b90-9b63-ad7da13b5f0e.png?1783926490",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/f/f/ff5d948b-fd89-4b90-9b63-ad7da13b5f0e.jpg?1783926490",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/f/f/ff5d948b-fd89-4b90-9b63-ad7da13b5f0e.jpg?1783926490",
+      "thumb": "https://cards.scryfall.io/thumb/front/f/f/ff5d948b-fd89-4b90-9b63-ad7da13b5f0e.webp?1783926490",
+      "grid": "https://cards.scryfall.io/grid/front/f/f/ff5d948b-fd89-4b90-9b63-ad7da13b5f0e.webp?1783926490",
+      "display": "https://cards.scryfall.io/display/front/f/f/ff5d948b-fd89-4b90-9b63-ad7da13b5f0e.webp?1783926490",
+      "art": "https://cards.scryfall.io/art/front/f/f/ff5d948b-fd89-4b90-9b63-ad7da13b5f0e.webp?1783926490",
+      "crop": "https://cards.scryfall.io/crop/front/f/f/ff5d948b-fd89-4b90-9b63-ad7da13b5f0e.webp?1783926490"
+     },
+     "mana_cost": "{B}",
+     "cmc": 1,
+     "type_line": "Instant",
+     "oracle_text": "Target creature gets -4/-1 until end of turn. If that creature is white, it gets -4/-4 until end of turn instead.",
+     "colors": [
+      "B"
+     ],
+     "color_identity": [
+      "B"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "arena",
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "e1ef87ba-ba92-4573-817f-543b996d2851",
+     "set": "afr",
+     "set_name": "Adventures in the Forgotten Realms",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/e1ef87ba-ba92-4573-817f-543b996d2851",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aafr&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/afr?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/ff5d948b-fd89-4b90-9b63-ad7da13b5f0e/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A647e5639-6339-48af-af96-e48729e1cad3&unique=prints",
+     "collector_number": "116",
+     "digital": false,
+     "rarity": "uncommon",
+     "flavor_text": "Erigan cried out in pain as a hideous weakness settled into his bones.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Campbell White",
+     "artist_ids": [
+      "d281eab4-463a-4ba8-9039-8943737960a0"
+     ],
+     "illustration_id": "44dbe89d-cbff-468d-9e48-9e900723a48a",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 23926,
+     "penny_rank": 17602,
+     "preview": {
+      "source": "Lords of Limited",
+      "source_uri": "https://twitter.com/LordsofLimited/status/1412053276950990854",
+      "previewed_at": "2021-07-05"
+     },
+     "prices": {
+      "usd": "0.12",
+      "usd_foil": "0.28",
+      "usd_etched": null,
+      "eur": "0.22",
+      "eur_foil": "0.38",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=527403&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DRay%2Bof%2BEnfeeblement",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DRay%2Bof%2BEnfeeblement",
+      "edhrec": "https://edhrec.com/route/?cc=Ray+of+Enfeeblement"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F243400%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=571729&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/91734?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": true,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 11,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": "perm_1",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 12,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": {
+     "states": [
+      [
+       "perm_1",
+       {
+        "name": "Grizzly Bears",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Bear"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "abilities": [],
+        "colors": [
+         "G"
+        ],
+        "manaValue": 2,
+        "manaCost": "{1}{G}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_2",
+       {
+        "name": "Hill Giant",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Giant"
+        ],
+        "power": 7,
+        "toughness": 7,
+        "abilities": [],
+        "colors": [
+         "R"
+        ],
+        "manaValue": 4,
+        "manaCost": "{3}{R}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_3",
+       {
+        "name": "Savannah Lions",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Cat"
+        ],
+        "power": -2,
+        "toughness": -3,
+        "abilities": [],
+        "colors": [
+         "W"
+        ],
+        "manaValue": 1,
+        "manaCost": "{W}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_4",
+       {
+        "name": "Runeclaw Bear",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Bear"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "abilities": [],
+        "colors": [
+         "G"
+        ],
+        "manaValue": 2,
+        "manaCost": "{1}{G}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_5",
+       {
+        "name": "Éowyn, Lady of Rohan",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [
+         "Legendary"
+        ],
+        "subtypes": [
+         "Human",
+         "Noble"
+        ],
+        "power": 2,
+        "toughness": 4,
+        "abilities": [
+         "At the beginning of combat on your turn, target creature gains your choice of first strike or vigilance until end of turn. If that creature is equipped, it gains first strike and vigilance until end of turn instead.",
+         "Equip abilities you activate cost {1} less to activate."
+        ],
+        "colors": [
+         "W"
+        ],
+        "manaValue": 3,
+        "manaCost": "{2}{W}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "At the beginning of combat on your turn, target creature gains your choice of first strike or vigilance until end of turn. If that creature is equipped, it gains first strike and vigilance until end of turn instead.\nEquip abilities you activate cost {1} less to activate.",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [
+         "At the beginning of combat on your turn, target creature gains your choice of first strike or vigilance until end of turn. If that creature is equipped, it gains first strike and vigilance until end of turn instead.",
+         "Equip abilities you activate cost {1} less to activate."
+        ],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_6",
+       {
+        "name": "Necrogen Rotpriest",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Phyrexian",
+         "Zombie",
+         "Cleric"
+        ],
+        "power": 1,
+        "toughness": 5,
+        "abilities": [
+         "Toxic 2",
+         "Whenever a creature you control with toxic deals combat damage to a player, that player gets an additional poison counter.",
+         "{1}{B}{G}: Target creature you control with toxic gains deathtouch until end of turn."
+        ],
+        "colors": [
+         "B",
+         "G"
+        ],
+        "manaValue": 4,
+        "manaCost": "{2}{B}{G}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "Toxic 2\nWhenever a creature you control with toxic deals combat damage to a player, that player gets an additional poison counter.\n{1}{B}{G}: Target creature you control with toxic gains deathtouch until end of turn.",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [
+         "Toxic 2",
+         "Whenever a creature you control with toxic deals combat damage to a player, that player gets an additional poison counter.",
+         "{1}{B}{G}: Target creature you control with toxic gains deathtouch until end of turn."
+        ],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_7",
+       {
+        "name": "For the Family",
+        "types": [
+         "Instant"
+        ],
+        "supertypes": [],
+        "subtypes": [],
+        "power": null,
+        "toughness": null,
+        "abilities": [
+         "Target creature gets +2/+2 until end of turn. If you control four or more creatures, that creature gets +4/+4 until end of turn instead."
+        ],
+        "colors": [
+         "G"
+        ],
+        "manaValue": 1,
+        "manaCost": "{G}",
+        "isCreature": false,
+        "isToken": false,
+        "oracleText": "Target creature gets +2/+2 until end of turn. If you control four or more creatures, that creature gets +4/+4 until end of turn instead.",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [
+         "Target creature gets +2/+2 until end of turn. If you control four or more creatures, that creature gets +4/+4 until end of turn instead."
+        ],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_8",
+       {
+        "name": "Ray of Enfeeblement",
+        "types": [
+         "Instant"
+        ],
+        "supertypes": [],
+        "subtypes": [],
+        "power": null,
+        "toughness": null,
+        "abilities": [
+         "Target creature gets -4/-1 until end of turn. If that creature is white, it gets -4/-4 until end of turn instead."
+        ],
+        "colors": [
+         "B"
+        ],
+        "manaValue": 1,
+        "manaCost": "{B}",
+        "isCreature": false,
+        "isToken": false,
+        "oracleText": "Target creature gets -4/-1 until end of turn. If that creature is white, it gets -4/-4 until end of turn instead.",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [
+         "Target creature gets -4/-1 until end of turn. If that creature is white, it gets -4/-4 until end of turn instead."
+        ],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ]
+     ],
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Hill Giant",
+       "imageUri": "https://cards.scryfall.io/small/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Giant"
+       ],
+       "printedPower": 3,
+       "printedToughness": 3,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Savannah Lions",
+       "imageUri": "https://cards.scryfall.io/small/front/9/c/9c9ac1bc-cdf3-4fa6-8319-a7ea164e9e47.jpg?1783909083",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Cat"
+       ],
+       "printedPower": 2,
+       "printedToughness": 1,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Runeclaw Bear",
+       "imageUri": "https://cards.scryfall.io/small/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_5",
+       "name": "Éowyn, Lady of Rohan",
+       "imageUri": "https://cards.scryfall.io/small/front/e/5/e59710c4-24de-419e-a8a0-e8392d450c23.jpg?1783916333",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [
+        "Legendary"
+       ],
+       "printedSubtypes": [
+        "Human",
+        "Noble"
+       ],
+       "printedPower": 2,
+       "printedToughness": 4,
+       "timestamp": 5
+      },
+      {
+       "id": "perm_6",
+       "name": "Necrogen Rotpriest",
+       "imageUri": "https://cards.scryfall.io/small/front/8/7/87519b36-1d95-4020-a61d-6afb75555e3e.jpg?1783917998",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Phyrexian",
+        "Zombie",
+        "Cleric"
+       ],
+       "printedPower": 1,
+       "printedToughness": 5,
+       "timestamp": 6
+      },
+      {
+       "id": "perm_7",
+       "name": "For the Family",
+       "imageUri": "https://cards.scryfall.io/small/front/0/5/052be93c-1970-4d05-a3d1-e87a6e51c423.jpg?1783923103",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "isSpell": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 7
+      },
+      {
+       "id": "perm_8",
+       "name": "Ray of Enfeeblement",
+       "imageUri": "https://cards.scryfall.io/small/front/f/f/ff5d948b-fd89-4b90-9b63-ad7da13b5f0e.jpg?1783926490",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "isSpell": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 9
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    }
+   },
+   {
+    "id": "perm_10",
+    "scryfallData": {
+     "object": "card",
+     "id": "509bf254-8a2b-4dfa-9ae5-386321b35e8b",
+     "oracle_id": "19b5c94b-b4fa-41a9-b649-51c4e6f03602",
+     "multiverse_ids": [
+      669058
+     ],
+     "mtgo_id": 129533,
+     "arena_id": 91680,
+     "tcgplayer_id": 558604,
+     "cardmarket_id": 776457,
+     "name": "Might of the Meek",
+     "lang": "en",
+     "released_at": "2024-08-02",
+     "uri": "https://api.scryfall.com/cards/509bf254-8a2b-4dfa-9ae5-386321b35e8b",
+     "scryfall_uri": "https://scryfall.com/card/blb/144/might-of-the-meek?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T02:46:59Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/5/0/509bf254-8a2b-4dfa-9ae5-386321b35e8b.jpg?1783910819",
+      "normal": "https://cards.scryfall.io/normal/front/5/0/509bf254-8a2b-4dfa-9ae5-386321b35e8b.jpg?1783910819",
+      "large": "https://cards.scryfall.io/large/front/5/0/509bf254-8a2b-4dfa-9ae5-386321b35e8b.jpg?1783910819",
+      "png": "https://cards.scryfall.io/png/front/5/0/509bf254-8a2b-4dfa-9ae5-386321b35e8b.png?1783910819",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/5/0/509bf254-8a2b-4dfa-9ae5-386321b35e8b.jpg?1783910819",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/5/0/509bf254-8a2b-4dfa-9ae5-386321b35e8b.jpg?1783910819",
+      "thumb": "https://cards.scryfall.io/thumb/front/5/0/509bf254-8a2b-4dfa-9ae5-386321b35e8b.webp?1783910819",
+      "grid": "https://cards.scryfall.io/grid/front/5/0/509bf254-8a2b-4dfa-9ae5-386321b35e8b.webp?1783910819",
+      "display": "https://cards.scryfall.io/display/front/5/0/509bf254-8a2b-4dfa-9ae5-386321b35e8b.webp?1783910819",
+      "art": "https://cards.scryfall.io/art/front/5/0/509bf254-8a2b-4dfa-9ae5-386321b35e8b.webp?1783910819",
+      "crop": "https://cards.scryfall.io/crop/front/5/0/509bf254-8a2b-4dfa-9ae5-386321b35e8b.webp?1783910819"
+     },
+     "mana_cost": "{R}",
+     "cmc": 1,
+     "type_line": "Instant",
+     "oracle_text": "Target creature gains trample until end of turn. It also gets +1/+0 until end of turn if you control a Mouse.\nDraw a card.",
+     "colors": [
+      "R"
+     ],
+     "color_identity": [
+      "R"
+     ],
+     "keywords": [],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "509bf254-8a2b-4dfa-9ae5-386321b35e8b",
+       "component": "combo_piece",
+       "name": "Might of the Meek",
+       "type_line": "Instant",
+       "uri": "https://api.scryfall.com/cards/509bf254-8a2b-4dfa-9ae5-386321b35e8b"
+      },
+      {
+       "object": "related_card",
+       "id": "4ea7d5a5-4dc3-4ea0-9b73-f57887d95910",
+       "component": "combo_piece",
+       "name": "Brave Meadowguard",
+       "type_line": "Creature — Mouse Soldier",
+       "uri": "https://api.scryfall.com/cards/4ea7d5a5-4dc3-4ea0-9b73-f57887d95910"
+      }
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo",
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "a2f58272-bba6-439d-871e-7a46686ac018",
+     "set": "blb",
+     "set_name": "Bloomburrow",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/a2f58272-bba6-439d-871e-7a46686ac018",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Ablb&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/blb?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/509bf254-8a2b-4dfa-9ae5-386321b35e8b/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A19b5c94b-b4fa-41a9-b649-51c4e6f03602&unique=prints",
+     "collector_number": "144",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"Fear is unavoidable. You can run from it with your tail between your legs, or charge it head on with sword in hand. I prefer the latter.\"\n—Rho, veteran hero",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Danny Schwartz",
+     "artist_ids": [
+      "48e30a4a-5b4d-48e2-9c53-03125085374e"
+     ],
+     "illustration_id": "97de934c-dad4-4317-998f-6c4a3e91f55c",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 3846,
+     "penny_rank": 6689,
+     "preview": {
+      "source": "Wizards of the Coast",
+      "source_uri": "https://twitter.com/wizards_magic/status/1806657782193717345/photo/1",
+      "previewed_at": "2024-06-28"
+     },
+     "prices": {
+      "usd": "0.24",
+      "usd_foil": "0.35",
+      "usd_etched": null,
+      "eur": "0.11",
+      "eur_foil": "0.22",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=669058&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DMight%2Bof%2Bthe%2BMeek",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DMight%2Bof%2Bthe%2BMeek",
+      "edhrec": "https://edhrec.com/route/?cc=Might+of+the+Meek"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F558604%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=776457&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/129533?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": true,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 15,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": "perm_4",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 16,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": {
+     "states": [
+      [
+       "perm_1",
+       {
+        "name": "Grizzly Bears",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Bear"
+        ],
+        "power": -2,
+        "toughness": 1,
+        "abilities": [],
+        "colors": [
+         "G"
+        ],
+        "manaValue": 2,
+        "manaCost": "{1}{G}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_2",
+       {
+        "name": "Hill Giant",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Giant"
+        ],
+        "power": 7,
+        "toughness": 7,
+        "abilities": [
+         "First strike"
+        ],
+        "colors": [
+         "R"
+        ],
+        "manaValue": 4,
+        "manaCost": "{3}{R}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_3",
+       {
+        "name": "Savannah Lions",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Cat"
+        ],
+        "power": -2,
+        "toughness": -3,
+        "abilities": [],
+        "colors": [
+         "W"
+        ],
+        "manaValue": 1,
+        "manaCost": "{W}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_4",
+       {
+        "name": "Runeclaw Bear",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Bear"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "abilities": [],
+        "colors": [
+         "G"
+        ],
+        "manaValue": 2,
+        "manaCost": "{1}{G}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_5",
+       {
+        "name": "Éowyn, Lady of Rohan",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [
+         "Legendary"
+        ],
+        "subtypes": [
+         "Human",
+         "Noble"
+        ],
+        "power": 2,
+        "toughness": 4,
+        "abilities": [
+         "At the beginning of combat on your turn, target creature gains your choice of first strike or vigilance until end of turn. If that creature is equipped, it gains first strike and vigilance until end of turn instead.",
+         "Equip abilities you activate cost {1} less to activate."
+        ],
+        "colors": [
+         "W"
+        ],
+        "manaValue": 3,
+        "manaCost": "{2}{W}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "At the beginning of combat on your turn, target creature gains your choice of first strike or vigilance until end of turn. If that creature is equipped, it gains first strike and vigilance until end of turn instead.\nEquip abilities you activate cost {1} less to activate.",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [
+         "At the beginning of combat on your turn, target creature gains your choice of first strike or vigilance until end of turn. If that creature is equipped, it gains first strike and vigilance until end of turn instead.",
+         "Equip abilities you activate cost {1} less to activate."
+        ],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_6",
+       {
+        "name": "Necrogen Rotpriest",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Phyrexian",
+         "Zombie",
+         "Cleric"
+        ],
+        "power": 1,
+        "toughness": 5,
+        "abilities": [
+         "Toxic 2",
+         "Whenever a creature you control with toxic deals combat damage to a player, that player gets an additional poison counter.",
+         "{1}{B}{G}: Target creature you control with toxic gains deathtouch until end of turn."
+        ],
+        "colors": [
+         "B",
+         "G"
+        ],
+        "manaValue": 4,
+        "manaCost": "{2}{B}{G}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "Toxic 2\nWhenever a creature you control with toxic deals combat damage to a player, that player gets an additional poison counter.\n{1}{B}{G}: Target creature you control with toxic gains deathtouch until end of turn.",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [
+         "Toxic 2",
+         "Whenever a creature you control with toxic deals combat damage to a player, that player gets an additional poison counter.",
+         "{1}{B}{G}: Target creature you control with toxic gains deathtouch until end of turn."
+        ],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_7",
+       {
+        "name": "For the Family",
+        "types": [
+         "Instant"
+        ],
+        "supertypes": [],
+        "subtypes": [],
+        "power": null,
+        "toughness": null,
+        "abilities": [
+         "Target creature gets +2/+2 until end of turn. If you control four or more creatures, that creature gets +4/+4 until end of turn instead."
+        ],
+        "colors": [
+         "G"
+        ],
+        "manaValue": 1,
+        "manaCost": "{G}",
+        "isCreature": false,
+        "isToken": false,
+        "oracleText": "Target creature gets +2/+2 until end of turn. If you control four or more creatures, that creature gets +4/+4 until end of turn instead.",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [
+         "Target creature gets +2/+2 until end of turn. If you control four or more creatures, that creature gets +4/+4 until end of turn instead."
+        ],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_8",
+       {
+        "name": "Ray of Enfeeblement",
+        "types": [
+         "Instant"
+        ],
+        "supertypes": [],
+        "subtypes": [],
+        "power": null,
+        "toughness": null,
+        "abilities": [
+         "Target creature gets -4/-1 until end of turn. If that creature is white, it gets -4/-4 until end of turn instead."
+        ],
+        "colors": [
+         "B"
+        ],
+        "manaValue": 1,
+        "manaCost": "{B}",
+        "isCreature": false,
+        "isToken": false,
+        "oracleText": "Target creature gets -4/-1 until end of turn. If that creature is white, it gets -4/-4 until end of turn instead.",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [
+         "Target creature gets -4/-1 until end of turn. If that creature is white, it gets -4/-4 until end of turn instead."
+        ],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_9",
+       {
+        "name": "Ray of Enfeeblement",
+        "types": [
+         "Instant"
+        ],
+        "supertypes": [],
+        "subtypes": [],
+        "power": null,
+        "toughness": null,
+        "abilities": [
+         "Target creature gets -4/-1 until end of turn. If that creature is white, it gets -4/-4 until end of turn instead."
+        ],
+        "colors": [
+         "B"
+        ],
+        "manaValue": 1,
+        "manaCost": "{B}",
+        "isCreature": false,
+        "isToken": false,
+        "oracleText": "Target creature gets -4/-1 until end of turn. If that creature is white, it gets -4/-4 until end of turn instead.",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "allPrintedAbilities": [
+         "Target creature gets -4/-1 until end of turn. If that creature is white, it gets -4/-4 until end of turn instead."
+        ],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ]
+     ],
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Hill Giant",
+       "imageUri": "https://cards.scryfall.io/small/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Giant"
+       ],
+       "printedPower": 3,
+       "printedToughness": 3,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Savannah Lions",
+       "imageUri": "https://cards.scryfall.io/small/front/9/c/9c9ac1bc-cdf3-4fa6-8319-a7ea164e9e47.jpg?1783909083",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Cat"
+       ],
+       "printedPower": 2,
+       "printedToughness": 1,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Runeclaw Bear",
+       "imageUri": "https://cards.scryfall.io/small/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_5",
+       "name": "Éowyn, Lady of Rohan",
+       "imageUri": "https://cards.scryfall.io/small/front/e/5/e59710c4-24de-419e-a8a0-e8392d450c23.jpg?1783916333",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [
+        "Legendary"
+       ],
+       "printedSubtypes": [
+        "Human",
+        "Noble"
+       ],
+       "printedPower": 2,
+       "printedToughness": 4,
+       "timestamp": 5
+      },
+      {
+       "id": "perm_6",
+       "name": "Necrogen Rotpriest",
+       "imageUri": "https://cards.scryfall.io/small/front/8/7/87519b36-1d95-4020-a61d-6afb75555e3e.jpg?1783917998",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Phyrexian",
+        "Zombie",
+        "Cleric"
+       ],
+       "printedPower": 1,
+       "printedToughness": 5,
+       "timestamp": 6
+      },
+      {
+       "id": "perm_7",
+       "name": "For the Family",
+       "imageUri": "https://cards.scryfall.io/small/front/0/5/052be93c-1970-4d05-a3d1-e87a6e51c423.jpg?1783923103",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "isSpell": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 7
+      },
+      {
+       "id": "perm_8",
+       "name": "Ray of Enfeeblement",
+       "imageUri": "https://cards.scryfall.io/small/front/f/f/ff5d948b-fd89-4b90-9b63-ad7da13b5f0e.jpg?1783926490",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "isSpell": true,
+       "label": "A",
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 9
+      },
+      {
+       "id": "perm_9",
+       "name": "Ray of Enfeeblement",
+       "imageUri": "https://cards.scryfall.io/small/front/f/f/ff5d948b-fd89-4b90-9b63-ad7da13b5f0e.jpg?1783926490",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "isSpell": true,
+       "label": "B",
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 11
+      },
+      {
+       "id": "trig_perm_5_0_13",
+       "name": "Éowyn, Lady of Rohan (trigger)",
+       "imageUri": "https://cards.scryfall.io/small/front/e/5/e59710c4-24de-419e-a8a0-e8392d450c23.jpg?1783916333",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": true,
+       "isTriggeredAbility": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "abilitySourceId": "perm_5",
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 13
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    }
+   }
+  ],
+  "firedAbilities": [
+   {
+    "id": "trig_perm_5_0_13",
+    "kind": "trigger",
+    "pseudoKind": "ability",
+    "sourceId": "perm_5",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 0,
+    "timestamp": 13,
+    "effectText": "Target creature gains first strike until end of turn. If target creature is equipped, target creature gains first strike and vigilance until end of turn instead.",
+    "xValue": null,
+    "hasXValue": false,
+    "cdaUserValue": null,
+    "linkedCards": null,
+    "fullText": "At the beginning of combat on your turn, target creature gains your choice of first strike or vigilance until end of turn. If that creature is equipped, it gains first strike and vigilance until end of turn instead.",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "guessedTargetSubjects": [],
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Grizzly Bears",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Bear"
+       ],
+       "power": -2,
+       "toughness": 1,
+       "abilities": [],
+       "colors": [
+        "G"
+       ],
+       "manaValue": 2,
+       "manaCost": "{1}{G}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_2",
+      {
+       "name": "Hill Giant",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Giant"
+       ],
+       "power": 7,
+       "toughness": 7,
+       "abilities": [],
+       "colors": [
+        "R"
+       ],
+       "manaValue": 4,
+       "manaCost": "{3}{R}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_3",
+      {
+       "name": "Savannah Lions",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Cat"
+       ],
+       "power": -2,
+       "toughness": -3,
+       "abilities": [],
+       "colors": [
+        "W"
+       ],
+       "manaValue": 1,
+       "manaCost": "{W}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_4",
+      {
+       "name": "Runeclaw Bear",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Bear"
+       ],
+       "power": 2,
+       "toughness": 2,
+       "abilities": [],
+       "colors": [
+        "G"
+       ],
+       "manaValue": 2,
+       "manaCost": "{1}{G}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_5",
+      {
+       "name": "Éowyn, Lady of Rohan",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [
+        "Legendary"
+       ],
+       "subtypes": [
+        "Human",
+        "Noble"
+       ],
+       "power": 2,
+       "toughness": 4,
+       "abilities": [
+        "At the beginning of combat on your turn, target creature gains your choice of first strike or vigilance until end of turn. If that creature is equipped, it gains first strike and vigilance until end of turn instead.",
+        "Equip abilities you activate cost {1} less to activate."
+       ],
+       "colors": [
+        "W"
+       ],
+       "manaValue": 3,
+       "manaCost": "{2}{W}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "At the beginning of combat on your turn, target creature gains your choice of first strike or vigilance until end of turn. If that creature is equipped, it gains first strike and vigilance until end of turn instead.\nEquip abilities you activate cost {1} less to activate.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "At the beginning of combat on your turn, target creature gains your choice of first strike or vigilance until end of turn. If that creature is equipped, it gains first strike and vigilance until end of turn instead.",
+        "Equip abilities you activate cost {1} less to activate."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_6",
+      {
+       "name": "Necrogen Rotpriest",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Phyrexian",
+        "Zombie",
+        "Cleric"
+       ],
+       "power": 1,
+       "toughness": 5,
+       "abilities": [
+        "Toxic 2",
+        "Whenever a creature you control with toxic deals combat damage to a player, that player gets an additional poison counter.",
+        "{1}{B}{G}: Target creature you control with toxic gains deathtouch until end of turn."
+       ],
+       "colors": [
+        "B",
+        "G"
+       ],
+       "manaValue": 4,
+       "manaCost": "{2}{B}{G}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "Toxic 2\nWhenever a creature you control with toxic deals combat damage to a player, that player gets an additional poison counter.\n{1}{B}{G}: Target creature you control with toxic gains deathtouch until end of turn.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "Toxic 2",
+        "Whenever a creature you control with toxic deals combat damage to a player, that player gets an additional poison counter.",
+        "{1}{B}{G}: Target creature you control with toxic gains deathtouch until end of turn."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_7",
+      {
+       "name": "For the Family",
+       "types": [
+        "Instant"
+       ],
+       "supertypes": [],
+       "subtypes": [],
+       "power": null,
+       "toughness": null,
+       "abilities": [
+        "Target creature gets +2/+2 until end of turn. If you control four or more creatures, that creature gets +4/+4 until end of turn instead."
+       ],
+       "colors": [
+        "G"
+       ],
+       "manaValue": 1,
+       "manaCost": "{G}",
+       "isCreature": false,
+       "isToken": false,
+       "oracleText": "Target creature gets +2/+2 until end of turn. If you control four or more creatures, that creature gets +4/+4 until end of turn instead.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "Target creature gets +2/+2 until end of turn. If you control four or more creatures, that creature gets +4/+4 until end of turn instead."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_8",
+      {
+       "name": "Ray of Enfeeblement",
+       "types": [
+        "Instant"
+       ],
+       "supertypes": [],
+       "subtypes": [],
+       "power": null,
+       "toughness": null,
+       "abilities": [
+        "Target creature gets -4/-1 until end of turn. If that creature is white, it gets -4/-4 until end of turn instead."
+       ],
+       "colors": [
+        "B"
+       ],
+       "manaValue": 1,
+       "manaCost": "{B}",
+       "isCreature": false,
+       "isToken": false,
+       "oracleText": "Target creature gets -4/-1 until end of turn. If that creature is white, it gets -4/-4 until end of turn instead.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "Target creature gets -4/-1 until end of turn. If that creature is white, it gets -4/-4 until end of turn instead."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_9",
+      {
+       "name": "Ray of Enfeeblement",
+       "types": [
+        "Instant"
+       ],
+       "supertypes": [],
+       "subtypes": [],
+       "power": null,
+       "toughness": null,
+       "abilities": [
+        "Target creature gets -4/-1 until end of turn. If that creature is white, it gets -4/-4 until end of turn instead."
+       ],
+       "colors": [
+        "B"
+       ],
+       "manaValue": 1,
+       "manaCost": "{B}",
+       "isCreature": false,
+       "isToken": false,
+       "oracleText": "Target creature gets -4/-1 until end of turn. If that creature is white, it gets -4/-4 until end of turn instead.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "Target creature gets -4/-1 until end of turn. If that creature is white, it gets -4/-4 until end of turn instead."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Hill Giant",
+       "imageUri": "https://cards.scryfall.io/small/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Giant"
+       ],
+       "printedPower": 3,
+       "printedToughness": 3,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Savannah Lions",
+       "imageUri": "https://cards.scryfall.io/small/front/9/c/9c9ac1bc-cdf3-4fa6-8319-a7ea164e9e47.jpg?1783909083",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Cat"
+       ],
+       "printedPower": 2,
+       "printedToughness": 1,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Runeclaw Bear",
+       "imageUri": "https://cards.scryfall.io/small/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_5",
+       "name": "Éowyn, Lady of Rohan",
+       "imageUri": "https://cards.scryfall.io/small/front/e/5/e59710c4-24de-419e-a8a0-e8392d450c23.jpg?1783916333",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [
+        "Legendary"
+       ],
+       "printedSubtypes": [
+        "Human",
+        "Noble"
+       ],
+       "printedPower": 2,
+       "printedToughness": 4,
+       "timestamp": 5
+      },
+      {
+       "id": "perm_6",
+       "name": "Necrogen Rotpriest",
+       "imageUri": "https://cards.scryfall.io/small/front/8/7/87519b36-1d95-4020-a61d-6afb75555e3e.jpg?1783917998",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Phyrexian",
+        "Zombie",
+        "Cleric"
+       ],
+       "printedPower": 1,
+       "printedToughness": 5,
+       "timestamp": 6
+      },
+      {
+       "id": "perm_7",
+       "name": "For the Family",
+       "imageUri": "https://cards.scryfall.io/small/front/0/5/052be93c-1970-4d05-a3d1-e87a6e51c423.jpg?1783923103",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "isSpell": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 7
+      },
+      {
+       "id": "perm_8",
+       "name": "Ray of Enfeeblement",
+       "imageUri": "https://cards.scryfall.io/small/front/f/f/ff5d948b-fd89-4b90-9b63-ad7da13b5f0e.jpg?1783926490",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "isSpell": true,
+       "label": "A",
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 9
+      },
+      {
+       "id": "perm_9",
+       "name": "Ray of Enfeeblement",
+       "imageUri": "https://cards.scryfall.io/small/front/f/f/ff5d948b-fd89-4b90-9b63-ad7da13b5f0e.jpg?1783926490",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "isSpell": true,
+       "label": "B",
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 11
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    },
+    "primaryTarget": "perm_2",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 14,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null
+   },
+   {
+    "id": "act_perm_6_2_17",
+    "kind": "activated",
+    "pseudoKind": "ability",
+    "sourceId": "perm_6",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 2,
+    "timestamp": 17,
+    "effectText": "Target creature you control with toxic gains deathtouch until end of turn.",
+    "xValue": null,
+    "hasXValue": false,
+    "cdaUserValue": null,
+    "linkedCards": null,
+    "fullText": "{1}{B}{G}: Target creature you control with toxic gains deathtouch until end of turn.",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "guessedTargetSubjects": [],
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Grizzly Bears",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Bear"
+       ],
+       "power": -2,
+       "toughness": 1,
+       "abilities": [],
+       "colors": [
+        "G"
+       ],
+       "manaValue": 2,
+       "manaCost": "{1}{G}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_2",
+      {
+       "name": "Hill Giant",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Giant"
+       ],
+       "power": 7,
+       "toughness": 7,
+       "abilities": [
+        "First strike"
+       ],
+       "colors": [
+        "R"
+       ],
+       "manaValue": 4,
+       "manaCost": "{3}{R}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_3",
+      {
+       "name": "Savannah Lions",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Cat"
+       ],
+       "power": -2,
+       "toughness": -3,
+       "abilities": [],
+       "colors": [
+        "W"
+       ],
+       "manaValue": 1,
+       "manaCost": "{W}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_4",
+      {
+       "name": "Runeclaw Bear",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Bear"
+       ],
+       "power": 2,
+       "toughness": 2,
+       "abilities": [
+        "Trample"
+       ],
+       "colors": [
+        "G"
+       ],
+       "manaValue": 2,
+       "manaCost": "{1}{G}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_5",
+      {
+       "name": "Éowyn, Lady of Rohan",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [
+        "Legendary"
+       ],
+       "subtypes": [
+        "Human",
+        "Noble"
+       ],
+       "power": 2,
+       "toughness": 4,
+       "abilities": [
+        "At the beginning of combat on your turn, target creature gains your choice of first strike or vigilance until end of turn. If that creature is equipped, it gains first strike and vigilance until end of turn instead.",
+        "Equip abilities you activate cost {1} less to activate."
+       ],
+       "colors": [
+        "W"
+       ],
+       "manaValue": 3,
+       "manaCost": "{2}{W}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "At the beginning of combat on your turn, target creature gains your choice of first strike or vigilance until end of turn. If that creature is equipped, it gains first strike and vigilance until end of turn instead.\nEquip abilities you activate cost {1} less to activate.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "At the beginning of combat on your turn, target creature gains your choice of first strike or vigilance until end of turn. If that creature is equipped, it gains first strike and vigilance until end of turn instead.",
+        "Equip abilities you activate cost {1} less to activate."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_6",
+      {
+       "name": "Necrogen Rotpriest",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Phyrexian",
+        "Zombie",
+        "Cleric"
+       ],
+       "power": 1,
+       "toughness": 5,
+       "abilities": [
+        "Toxic 2",
+        "Whenever a creature you control with toxic deals combat damage to a player, that player gets an additional poison counter.",
+        "{1}{B}{G}: Target creature you control with toxic gains deathtouch until end of turn."
+       ],
+       "colors": [
+        "B",
+        "G"
+       ],
+       "manaValue": 4,
+       "manaCost": "{2}{B}{G}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "Toxic 2\nWhenever a creature you control with toxic deals combat damage to a player, that player gets an additional poison counter.\n{1}{B}{G}: Target creature you control with toxic gains deathtouch until end of turn.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "Toxic 2",
+        "Whenever a creature you control with toxic deals combat damage to a player, that player gets an additional poison counter.",
+        "{1}{B}{G}: Target creature you control with toxic gains deathtouch until end of turn."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_7",
+      {
+       "name": "For the Family",
+       "types": [
+        "Instant"
+       ],
+       "supertypes": [],
+       "subtypes": [],
+       "power": null,
+       "toughness": null,
+       "abilities": [
+        "Target creature gets +2/+2 until end of turn. If you control four or more creatures, that creature gets +4/+4 until end of turn instead."
+       ],
+       "colors": [
+        "G"
+       ],
+       "manaValue": 1,
+       "manaCost": "{G}",
+       "isCreature": false,
+       "isToken": false,
+       "oracleText": "Target creature gets +2/+2 until end of turn. If you control four or more creatures, that creature gets +4/+4 until end of turn instead.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "Target creature gets +2/+2 until end of turn. If you control four or more creatures, that creature gets +4/+4 until end of turn instead."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_8",
+      {
+       "name": "Ray of Enfeeblement",
+       "types": [
+        "Instant"
+       ],
+       "supertypes": [],
+       "subtypes": [],
+       "power": null,
+       "toughness": null,
+       "abilities": [
+        "Target creature gets -4/-1 until end of turn. If that creature is white, it gets -4/-4 until end of turn instead."
+       ],
+       "colors": [
+        "B"
+       ],
+       "manaValue": 1,
+       "manaCost": "{B}",
+       "isCreature": false,
+       "isToken": false,
+       "oracleText": "Target creature gets -4/-1 until end of turn. If that creature is white, it gets -4/-4 until end of turn instead.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "Target creature gets -4/-1 until end of turn. If that creature is white, it gets -4/-4 until end of turn instead."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_9",
+      {
+       "name": "Ray of Enfeeblement",
+       "types": [
+        "Instant"
+       ],
+       "supertypes": [],
+       "subtypes": [],
+       "power": null,
+       "toughness": null,
+       "abilities": [
+        "Target creature gets -4/-1 until end of turn. If that creature is white, it gets -4/-4 until end of turn instead."
+       ],
+       "colors": [
+        "B"
+       ],
+       "manaValue": 1,
+       "manaCost": "{B}",
+       "isCreature": false,
+       "isToken": false,
+       "oracleText": "Target creature gets -4/-1 until end of turn. If that creature is white, it gets -4/-4 until end of turn instead.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "Target creature gets -4/-1 until end of turn. If that creature is white, it gets -4/-4 until end of turn instead."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_10",
+      {
+       "name": "Might of the Meek",
+       "types": [
+        "Instant"
+       ],
+       "supertypes": [],
+       "subtypes": [],
+       "power": null,
+       "toughness": null,
+       "abilities": [
+        "Target creature gains trample until end of turn. It also gets +1/+0 until end of turn if you control a Mouse.",
+        "Draw a card."
+       ],
+       "colors": [
+        "R"
+       ],
+       "manaValue": 1,
+       "manaCost": "{R}",
+       "isCreature": false,
+       "isToken": false,
+       "oracleText": "Target creature gains trample until end of turn. It also gets +1/+0 until end of turn if you control a Mouse.\nDraw a card.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "Target creature gains trample until end of turn. It also gets +1/+0 until end of turn if you control a Mouse.",
+        "Draw a card."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Hill Giant",
+       "imageUri": "https://cards.scryfall.io/small/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Giant"
+       ],
+       "printedPower": 3,
+       "printedToughness": 3,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Savannah Lions",
+       "imageUri": "https://cards.scryfall.io/small/front/9/c/9c9ac1bc-cdf3-4fa6-8319-a7ea164e9e47.jpg?1783909083",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Cat"
+       ],
+       "printedPower": 2,
+       "printedToughness": 1,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Runeclaw Bear",
+       "imageUri": "https://cards.scryfall.io/small/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_5",
+       "name": "Éowyn, Lady of Rohan",
+       "imageUri": "https://cards.scryfall.io/small/front/e/5/e59710c4-24de-419e-a8a0-e8392d450c23.jpg?1783916333",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [
+        "Legendary"
+       ],
+       "printedSubtypes": [
+        "Human",
+        "Noble"
+       ],
+       "printedPower": 2,
+       "printedToughness": 4,
+       "timestamp": 5
+      },
+      {
+       "id": "perm_6",
+       "name": "Necrogen Rotpriest",
+       "imageUri": "https://cards.scryfall.io/small/front/8/7/87519b36-1d95-4020-a61d-6afb75555e3e.jpg?1783917998",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Phyrexian",
+        "Zombie",
+        "Cleric"
+       ],
+       "printedPower": 1,
+       "printedToughness": 5,
+       "timestamp": 6
+      },
+      {
+       "id": "perm_7",
+       "name": "For the Family",
+       "imageUri": "https://cards.scryfall.io/small/front/0/5/052be93c-1970-4d05-a3d1-e87a6e51c423.jpg?1783923103",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "isSpell": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 7
+      },
+      {
+       "id": "perm_8",
+       "name": "Ray of Enfeeblement",
+       "imageUri": "https://cards.scryfall.io/small/front/f/f/ff5d948b-fd89-4b90-9b63-ad7da13b5f0e.jpg?1783926490",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "isSpell": true,
+       "label": "A",
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 9
+      },
+      {
+       "id": "perm_9",
+       "name": "Ray of Enfeeblement",
+       "imageUri": "https://cards.scryfall.io/small/front/f/f/ff5d948b-fd89-4b90-9b63-ad7da13b5f0e.jpg?1783926490",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "isSpell": true,
+       "label": "B",
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 11
+      },
+      {
+       "id": "trig_perm_5_0_13",
+       "name": "Éowyn, Lady of Rohan (trigger)",
+       "imageUri": "https://cards.scryfall.io/small/front/e/5/e59710c4-24de-419e-a8a0-e8392d450c23.jpg?1783916333",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": true,
+       "isTriggeredAbility": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "abilitySourceId": "perm_5",
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 13
+      },
+      {
+       "id": "perm_10",
+       "name": "Might of the Meek",
+       "imageUri": "https://cards.scryfall.io/small/front/5/0/509bf254-8a2b-4dfa-9ae5-386321b35e8b.jpg?1783910819",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "isSpell": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 15
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    },
+    "primaryTarget": "perm_6",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 18,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null
+   }
+  ],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Grizzly Bears",
+    "final": {
+     "name": "Grizzly Bears",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Bear"
+     ],
+     "power": -2,
+     "toughness": 1,
+     "colors": [
+      "G"
+     ],
+     "abilities": []
+    },
+    "changedBy": {
+     "7c": [
+      "Ray of Enfeeblement"
+     ]
+    }
+   },
+   {
+    "perm": "Hill Giant",
+    "final": {
+     "name": "Hill Giant",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Giant"
+     ],
+     "power": 7,
+     "toughness": 7,
+     "colors": [
+      "R"
+     ],
+     "abilities": [
+      "First strike"
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "Éowyn, Lady of Rohan (trigger)"
+     ],
+     "7c": [
+      "For the Family"
+     ]
+    }
+   },
+   {
+    "perm": "Savannah Lions",
+    "final": {
+     "name": "Savannah Lions",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Cat"
+     ],
+     "power": -2,
+     "toughness": -3,
+     "colors": [
+      "W"
+     ],
+     "abilities": []
+    },
+    "changedBy": {
+     "7c": [
+      "Ray of Enfeeblement"
+     ]
+    }
+   },
+   {
+    "perm": "Runeclaw Bear",
+    "final": {
+     "name": "Runeclaw Bear",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Bear"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "Trample"
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "Might of the Meek"
+     ]
+    }
+   },
+   {
+    "perm": "Éowyn, Lady of Rohan",
+    "final": {
+     "name": "Éowyn, Lady of Rohan",
+     "controller": "player_0",
+     "supertypes": [
+      "Legendary"
+     ],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Human",
+      "Noble"
+     ],
+     "power": 2,
+     "toughness": 4,
+     "colors": [
+      "W"
+     ],
+     "abilities": [
+      "At the beginning of combat on your turn, target creature gains your choice of first strike or vigilance until end of turn. If that creature is equipped, it gains first strike and vigilance until end of turn instead.",
+      "Equip abilities you activate cost {1} less to activate."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Necrogen Rotpriest",
+    "final": {
+     "name": "Necrogen Rotpriest",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Phyrexian",
+      "Zombie",
+      "Cleric"
+     ],
+     "power": 1,
+     "toughness": 5,
+     "colors": [
+      "B",
+      "G"
+     ],
+     "abilities": [
+      "Toxic 2",
+      "Whenever a creature you control with toxic deals combat damage to a player, that player gets an additional poison counter.",
+      "{1}{B}{G}: Target creature you control with toxic gains deathtouch until end of turn.",
+      "Deathtouch"
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "Necrogen Rotpriest (activated)"
+     ]
+    }
+   },
+   {
+    "perm": "For the Family",
+    "final": {
+     "name": "For the Family",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Instant"
+     ],
+     "subtypes": [],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "Target creature gets +2/+2 until end of turn. If you control four or more creatures, that creature gets +4/+4 until end of turn instead."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Ray of Enfeeblement A",
+    "final": {
+     "name": "Ray of Enfeeblement",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Instant"
+     ],
+     "subtypes": [],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "B"
+     ],
+     "abilities": [
+      "Target creature gets -4/-1 until end of turn. If that creature is white, it gets -4/-4 until end of turn instead."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Ray of Enfeeblement B",
+    "final": {
+     "name": "Ray of Enfeeblement",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Instant"
+     ],
+     "subtypes": [],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "B"
+     ],
+     "abilities": [
+      "Target creature gets -4/-1 until end of turn. If that creature is white, it gets -4/-4 until end of turn instead."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Might of the Meek",
+    "final": {
+     "name": "Might of the Meek",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Instant"
+     ],
+     "subtypes": [],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "R"
+     ],
+     "abilities": [
+      "Target creature gains trample until end of turn. It also gets +1/+0 until end of turn if you control a Mouse.",
+      "Draw a card."
+     ]
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "6": [
+    "Éowyn, Lady of Rohan (trigger)",
+    "Éowyn, Lady of Rohan (trigger)",
+    "Éowyn, Lady of Rohan (trigger)",
+    "Might of the Meek",
+    "Necrogen Rotpriest (activated)"
+   ],
+   "7c": [
+    "For the Family",
+    "For the Family",
+    "Ray of Enfeeblement",
+    "Ray of Enfeeblement",
+    "Ray of Enfeeblement",
+    "Ray of Enfeeblement",
+    "Might of the Meek"
+   ]
+  },
+  "effects": [
+   {
+    "source": "For the Family",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "target": "Hill Giant",
+    "params": {
+     "power": 2,
+     "toughness": 2
+    }
+   },
+   {
+    "source": "For the Family",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "target": "Hill Giant",
+    "params": {
+     "power": 4,
+     "toughness": 4
+    }
+   },
+   {
+    "source": "Ray of Enfeeblement",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "target": "Savannah Lions",
+    "params": {
+     "power": -4,
+     "toughness": -1
+    }
+   },
+   {
+    "source": "Ray of Enfeeblement",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "target": "Savannah Lions",
+    "params": {
+     "power": -4,
+     "toughness": -4
+    }
+   },
+   {
+    "source": "Ray of Enfeeblement",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "target": "Grizzly Bears",
+    "params": {
+     "power": -4,
+     "toughness": -1
+    }
+   },
+   {
+    "source": "Ray of Enfeeblement",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "target": "Grizzly Bears",
+    "params": {
+     "power": -4,
+     "toughness": -4
+    }
+   },
+   {
+    "source": "Might of the Meek",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "target": "Runeclaw Bear",
+    "params": {
+     "power": 1,
+     "toughness": 0
+    }
+   },
+   {
+    "source": "Might of the Meek",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "target": "Runeclaw Bear",
+    "params": {
+     "ability": "Trample"
+    }
+   },
+   {
+    "source": "Éowyn, Lady of Rohan (trigger)",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "target": "Hill Giant",
+    "params": {
+     "ability": "First strike"
+    }
+   },
+   {
+    "source": "Éowyn, Lady of Rohan (trigger)",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "target": "Hill Giant",
+    "params": {
+     "ability": "First strike"
+    }
+   },
+   {
+    "source": "Éowyn, Lady of Rohan (trigger)",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "target": "Hill Giant",
+    "params": {
+     "ability": "Vigilance"
+    }
+   },
+   {
+    "source": "Necrogen Rotpriest (activated)",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "target": "Necrogen Rotpriest",
+    "params": {
+     "ability": "Deathtouch"
+    }
+   }
+  ]
+ }
+}

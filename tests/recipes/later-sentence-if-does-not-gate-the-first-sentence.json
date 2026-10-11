@@ -1,0 +1,16 @@
+{
+  "name": "A later sentence's \"if\" does not gate the sentence before it (Chilling Trap, For the Family below four creatures)",
+  "notes": "Memory: project_audit_target_changes_nothing_2026-10-11. Found by tests/audit.py (target-changes-nothing). \"Target creature gets -4/-0 until end of turn. If you control a Wizard, draw a card.\" changed nothing: the condition parser's trailing-if pattern also matches a sentence-leading \"If X,\" in the middle of a line, and a condition is kept per line, so the first sentence was gated by the second one's condition. A later sentence with no continuous effect now registers no condition (cards-parser.js, Pattern D), and one with a continuous effect is moved to a line of its own by _splitConditionalBranches (\"… instead\" also negates the sentence it replaces). With two creatures For the Family gives +2/+2, not +4/+4.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Hill Giant", "as": "giant" },
+    { "add": "Chilling Trap", "as": "trap", "spell": true },
+    { "call": ["setTarget", "@trap", "@bears"] },
+    { "add": "For the Family", "as": "family", "spell": true },
+    { "call": ["setTarget", "@family", "@giant"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": -2, "toughness": 2 } },
+    { "perm": "Hill Giant", "final": { "power": 5, "toughness": 5 } }
+  ]
+}

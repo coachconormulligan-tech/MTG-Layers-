@@ -1,0 +1,31 @@
+{
+  "name": "\"… instead\" riders — each branch on its own condition (For the Family, Ray of Enfeeblement, Éowyn, Might of the Meek); \"with toxic\" lists Toxic 2",
+  "notes": "Memory: project_audit_target_changes_nothing_2026-10-11. Found by tests/audit.py. With four or more creatures For the Family gives +4/+4 and not +2/+2 as well. Ray of Enfeeblement (\"If that creature is white, it gets -4/-4 … instead\") is a rider about \"it\" written as \"that creature\": -4/-4 on the white Lions, -4/-1 on the green Bears. Éowyn, Lady of Rohan's fired option reads \"If target creature is equipped, target creature gains first strike and vigilance … instead\": an unequipped target gets first strike alone (it used to get nothing, and the equipped branch lost its duplicate first strike to the keyword de-duplication). Might of the Meek's \"It also gets +1/+0 … if you control a Mouse\" no longer gates the trample or reaches every creature. Necrogen Rotpriest's \"target creature you control with toxic\" lists itself (Toxic 2) — the keyword filter compared whole lines.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Hill Giant", "as": "giant" },
+    { "add": "Savannah Lions", "as": "lions" },
+    { "add": "Runeclaw Bear", "as": "other" },
+    { "add": "Éowyn, Lady of Rohan", "as": "eowyn" },
+    { "add": "Necrogen Rotpriest", "as": "priest" },
+    { "add": "For the Family", "as": "family", "spell": true },
+    { "call": ["setTarget", "@family", "@giant"] },
+    { "add": "Ray of Enfeeblement", "as": "ray1", "spell": true },
+    { "call": ["setTarget", "@ray1", "@lions"] },
+    { "add": "Ray of Enfeeblement", "as": "ray2", "spell": true },
+    { "call": ["setTarget", "@ray2", "@bears"] },
+    { "fire": "@eowyn", "trigger": 0, "mode": 0, "as": "firedEowyn" },
+    { "call": ["setTarget", "@firedEowyn", "@giant"] },
+    { "add": "Might of the Meek", "as": "might", "spell": true },
+    { "call": ["setTarget", "@might", "@other"] },
+    { "fire": "@priest", "activated": 2, "as": "firedPriest" },
+    { "call": ["setTarget", "@firedPriest", "@priest"] }
+  ],
+  "asserts": [
+    { "perm": "Hill Giant", "final": { "power": 7, "toughness": 7, "abilities": { "$includes": ["First strike"], "$excludes": ["Vigilance"] } } },
+    { "perm": "Savannah Lions", "final": { "power": -2, "toughness": -3 } },
+    { "perm": "Grizzly Bears", "final": { "power": -2, "toughness": 1 } },
+    { "perm": "Runeclaw Bear", "final": { "power": 2, "toughness": 2, "abilities": ["Trample"] } },
+    { "perm": "Necrogen Rotpriest", "final": { "abilities": { "$includes": ["Deathtouch"] } } }
+  ]
+}

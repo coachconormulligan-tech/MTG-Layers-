@@ -24,6 +24,14 @@ A unit whose own text names one permanent target ("singular") is checked twice:
   Check 1  Choosing no target changes no permanent, and choosing each listed permanent changes exactly
            that permanent. Findings: changes-with-no-target, target-changes-others,
            target-changes-nothing. (no-op-on-some, mixed-subject: information, not findings.)
+           Before target-changes-nothing is reported, the board is adjusted in the one way the text
+           asks for and the targets are tried again: a listed permanent is handed to the opponent
+           ("gain control of"), given the keyword being removed ("loses first strike"), the source
+           is tapped ("for as long as this creature remains tapped"), the chosen land type becomes
+           Island, or the spell's Kicked / Bargained toggle is switched on. A unit that then changes
+           its target is information (shown-on-adjusted-board). board-cannot-show, also
+           information: every listed permanent already has the keywords given or is already yours,
+           or the only continuous effect sits in a sentence with its own "if".
 
 Also reported: crash (an exception anywhere) and no-targeted-effect (the text names a target but the
 parse produced no targeted effect, so there is no picker to audit - the sweep already covers
@@ -445,7 +453,7 @@ def print_record(r):
             for t in c1['perTarget']:
                 print('                  %-26s -> %s' % (t['target'], ', '.join('%s (%s)' % (x['role'], x['what']) for x in t['changed']) or 'nothing changed'))
         for i in u.get('infos', []):
-            print('       info:      %s %s' % (i['code'], ', '.join(i.get('roles', []))))
+            print('       info:      %s %s' % (i['code'], i.get('what') or ', '.join(i.get('roles', []))))
         for f in u.get('findings', []):
             print('       FINDING    %s  %s' % (f['code'], finding_detail(f)))
     print()

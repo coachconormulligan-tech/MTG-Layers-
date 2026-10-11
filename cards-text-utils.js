@@ -758,7 +758,7 @@ function _splitConditionalBranches(text, isSpell, canParse) {
   const origLines = lines.slice();
   const out = { text, baseLineCount: lines.length, branchLines: new Map(), alwaysOnLines: new Set(), ownSlotLines: new Set(),
                 costLabel: null, costLabel2: null };
-  if (!/\botherwise,|\bif (?:x|\d+) is \d+ or\b|\bif this spell(?:'s \w+ cost)? was\b|\bto cast (?:this|that) spell[,.]|\bif you cast this spell during\b|\bif evidence was collected\b|\bgets more votes,|\b(?:if|as long as) it(?:'s| is| isn't| doesn't have| has)\b/i.test(text)) return out;
+  if (!/\botherwise,|\bif (?:x|\d+) is \d+ or\b|\bif this spell(?:'s \w+ cost)? was\b|\bto cast (?:this|that) spell[,.]|\bif you cast this spell during\b|\bif evidence was collected\b|\bgets more votes,|\b(?:if|as long as) it(?:'s| is| isn't| doesn't have| has)\b|\.[ ]+[^.\n]*\bif\b/i.test(text)) return out;
   // A spell has at most two toggles (Cankerous Thirst's {B} and {G}): with more cast conditions
   // than that, its branches are left where they are.
   const castLabels = new Set();
@@ -812,12 +812,28 @@ function _splitConditionalBranches(text, isSpell, canParse) {
         moved.add(i);
         continue;
       }
-      const rider = !quoted && i > 0 && sentences[i].match(_BRANCH_RIDER_RE);
+      // "… instead" replaces the sentence before it, which then applies only when the condition
+      // is false. That sentence with its subject spelled out, or null when it cannot be replaced.
+      const replacedPrev = () => {
+        let replaced = !moved.has(i - 1) && !/^(?:if|otherwise|as long as)\b/i.test(prev) && _branchIsContinuous(prev)
+          ? _branchResolveSubject(prev, sentences, i - 1, isSpell) : null;
+        const durationLead = replaced && replaced.match(/^until end of turn,\s+(.+?)\.?$/i);
+        if (durationLead) replaced = durationLead[1].charAt(0).toUpperCase() + durationLead[1].slice(1) + ' until end of turn.';
+        return replaced;
+      };
+      // "If that creature is an Ally, it also gains flying" (Yip Yip!) and, in a fired ability
+      // whose "it" has been spelled out, "If target creature is equipped, target creature gains …"
+      // (Éowyn, Lady of Rohan) are riders about "it".
+      const riderText = sentences[i].replace(/^(If|As long as)\s+(?:that (?:creature|permanent|artifact|land)|target (?:creature|permanent))\s+(is|isn't|has|doesn't have)\b/i, '$1 it $2');
+      const rider = !quoted && i > 0 && riderText.match(_BRANCH_RIDER_RE);
       // Not "If it's not your turn, …" (that "it" is no object), nor a rider about a card just
       // revealed or exiled ("If it's a land card, …").
       if (rider && !/\bturn\b|\bcards?$/i.test(rider[2])) {
         const cond = _branchRiderCondition(rider[2]);
-        let body = rider[3].replace(/\.$/, '').replace(/\balso\s+/i, '').replace(/\ban additional\s+/i, '').replace(/^it's\s+(?=an?\s)/i, 'it is ');
+        let body = rider[3].replace(/\.$/, '').replace(/\balso\s+/i, '').replace(/\ban additional\s+/i, '').replace(/^it's\s+(?=an?\s)/i, 'it is ')
+          // "instead put a +1/+1 counter on it and it gets +1/+1 …" (Regent's Authority): the
+          // counter is not a continuous effect, the rest is.
+          .replace(/^(instead\s+)?put [^,.]*?\bcounters? on (?:it|that creature|target creature) and\s+(?=(?:it|that creature|target creature)\s)/i, '$1');
         const instead = /^instead\s+|\s+instead$/i.test(body);
         body = body.replace(/^instead\s+|\s+instead$/i, '');
         const isAddition = /^(?:it|that \w+|target [^,]+?) is an?\s[^.]*\bin addition to its other\b/i.test(body);
@@ -837,17 +853,41 @@ function _splitConditionalBranches(text, isSpell, canParse) {
         if (instead) {
           // "… gets +2/+2 until end of turn. If it's a Human, instead it gets +3/+3 …" (Flare of
           // Faith): the sentence before then applies only when the rider does not.
-          let replaced = !moved.has(i - 1) && !/^(?:if|otherwise|as long as)\b/i.test(prev) && _branchIsContinuous(prev)
-            ? _branchResolveSubject(prev, sentences, i - 1, isSpell) : null;
+          const replaced = replacedPrev();
           if (!replaced) continue;
-          const durationLead = replaced.match(/^until end of turn,\s+(.+?)\.?$/i);
-          if (durationLead) replaced = durationLead[1].charAt(0).toUpperCase() + durationLead[1].slice(1) + ' until end of turn.';
           add(`${lead} it is not true that ${cond}, ${replaced}`, li);
           moved.add(i - 1);
         }
         add(`${lead} ${cond}, ${body}.`, li);
         moved.add(i);
         continue;
+      }
+      // A condition on a later sentence that is not about "it" gates that sentence only:
+      // "… gets +2/+2 until end of turn. If you control four or more creatures, that creature
+      // gets +4/+4 until end of turn instead." (For the Family), "It also gets +1/+0 until end
+      // of turn if you control a Mouse." (Might of the Meek).
+      const plain = isSpell && !quoted && i > 0 && !rider && !_branchCastClauses(sentences[i]).length && !/^If (?:X|\d+) is \d+ or\b/i.test(sentences[i]);
+      const leadIf = plain && sentences[i].match(/^If\s+([^,]+),\s+(.+?)\.?$/i);
+      // Not "… gains trample if it's red, and gains vigilance if it's white." (Aurelia, Exemplar
+      // of Justice): each of those conditions is on one clause.
+      const trailIf = plain && !leadIf && (sentences[i].match(/\bif\b/gi) || []).length === 1 &&
+        sentences[i].match(/^(?:Then\s+)?(.+?)\s+if\s+([^.,;]+)\.$/i);
+      if (leadIf || trailIf) {
+        const cond = leadIf ? leadIf[1] : trailIf[2];
+        let body = (leadIf ? leadIf[2] : trailIf[1]).replace(/\balso\s+/i, '').replace(/\ban additional\s+/i, '');
+        const instead = /^instead\s+|\s+instead$/i.test(body);
+        body = body.replace(/^instead\s+|\s+instead$/i, '');
+        body = canParse(cond) && _branchIsContinuous(body) ? _branchResolveSubject(body, sentences, i, true) : null;
+        const replaced = body && instead ? replacedPrev() : null;
+        if (body && (!instead || replaced)) {
+          if (replaced) {
+            add(`If on resolution it is not true that ${cond}, ${replaced}`, li);
+            moved.add(i - 1);
+          }
+          add(`If on resolution ${cond}, ${body}.`, li);
+          moved.add(i);
+          continue;
+        }
       }
       // "If X is 6 or more, those permanents are 4/4 creatures in addition to their other types."
       // (Dance of the Manse): X is already a number here when the spell has been given one, so
@@ -1390,13 +1430,18 @@ function _buildAppliesToFromTextInner(filterText) {
     'flanking', 'phasing', 'banding', 'undying', 'persist', 'skulk',
     'changeling', 'partner', 'decayed', 'training', 'toxic',
   ]);
+  // A keyword with a number counts ("with toxic" and Toxic 2 — Necrogen Rotpriest).
+  const hasFilterKeyword = (p, kw) => (p.abilities || []).some(a => {
+    const line = a.toLowerCase().trim().replace(/\s+until\b.*$/, '');
+    return line === kw || (line.startsWith(kw + ' ') && /^(?:\d+|x)$/.test(line.slice(kw.length + 1)));
+  });
   // "creature without flying" (High-Flying Ace).
   const withoutKeywordFilter = f.match(/^(.+?)\s+without\s+(.+)$/);
   if (withoutKeywordFilter && FILTER_KEYWORDS.has(withoutKeywordFilter[2].toLowerCase().trim())) {
     const baseFilter = buildAppliesToFromText(withoutKeywordFilter[1]);
     const kw = withoutKeywordFilter[2].toLowerCase().trim();
     return {
-      fn: (p) => baseFilter.fn(p) && !(p.abilities || []).some(a => a.toLowerCase().trim().replace(/\s+until\b.*$/, '') === kw),
+      fn: (p) => baseFilter.fn(p) && !hasFilterKeyword(p, kw),
       desc: `Applies to: ${baseFilter.desc.replace('Applies to: ', '')} without ${kw}`,
     };
   }
@@ -1416,7 +1461,7 @@ function _buildAppliesToFromTextInner(filterText) {
       const baseFilter = buildAppliesToFromText(withKeywordFilter[1]);
       const kw = kwCandidate;
       return {
-        fn: (p) => baseFilter.fn(p) && p.abilities.some(a => a.toLowerCase().trim() === kw),
+        fn: (p) => baseFilter.fn(p) && hasFilterKeyword(p, kw),
         desc: `Applies to: ${baseFilter.desc.replace('Applies to: ', '')} with ${kw}`,
       };
     }
