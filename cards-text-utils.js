@@ -1348,6 +1348,9 @@ function _buildAppliesToFromTextInner(filterText) {
   // --- OR with "or": "Elves or Goblins" ---
   if (f.includes(' or ') && !f.includes('more or') && !/\d+\s+or\s+(?:greater|more|less|fewer)/i.test(f)) {
     const parts = f.split(/\s+or\s+/);
+    // "black or red creature" (Sootstoke Kindler): the noun belongs to both colours.
+    const _colorOr = f.match(/^(white|blue|black|red|green)\s+or\s+((?:white|blue|black|red|green)\s+(.+))$/);
+    if (_colorOr) parts.splice(0, 2, _colorOr[1] + ' ' + _colorOr[3], _colorOr[2]);
     if (parts.length === 2) {
       const a = buildAppliesToFromText(parts[0]);
       const b = buildAppliesToFromText(parts[1]);
@@ -1493,6 +1496,7 @@ function _buildAppliesToFromTextInner(filterText) {
   const requiredSupertypes = [];
   const requiredColors = [];
   const requiredTraits = [];
+  const negatedTraits = [];   // "nonattacking creature" (Spider-Man, To the Rescue)
   const negatedTypes = [];
   const negatedSubtypes = [];
   const negatedSupertypes = [];
@@ -1558,10 +1562,10 @@ function _buildAppliesToFromTextInner(filterText) {
       else requiredColors.push(FILTER_COLOR_MAP[singular]);
     } else if (word === 'attacking' || word === 'attackers' || word === 'attacker') {
       // Trait-based filter: creature has 'Attacking' trait (set by toggleAttacking)
-      requiredTraits.push('Attacking');
+      (isNeg ? negatedTraits : requiredTraits).push('Attacking');
     } else if (word === 'blocking' || word === 'blockers' || word === 'blocker') {
       // Trait-based filter: creature has 'Blocking' trait (set by toggleBlocking)
-      requiredTraits.push('Blocking');
+      (isNeg ? negatedTraits : requiredTraits).push('Blocking');
     } else if (word === 'enchanted') {
       requiredTraits.push('Enchanted');
     } else if (word === 'equipped') {
@@ -1586,7 +1590,7 @@ function _buildAppliesToFromTextInner(filterText) {
 
   // --- "nonbasic lands" / "non-basic lands" ---
   const nonMatch = f.match(/^non-?(\w+)\s+(\w+)s?$/);
-  if (nonMatch && requiredTypes.length <= 1 && requiredSubtypes.length === 0) {
+  if (nonMatch && requiredTypes.length <= 1 && requiredSubtypes.length === 0 && negatedTraits.length === 0) {
     const negated = nonMatch[1].charAt(0).toUpperCase() + nonMatch[1].slice(1);
     const baseWord = nonMatch[2].toLowerCase();
     const typeInfo = CARD_TYPE_WORDS[baseWord] || CARD_TYPE_WORDS[baseWord + 's'];
@@ -1627,7 +1631,7 @@ function _buildAppliesToFromTextInner(filterText) {
 
   // If we parsed multiple qualifiers, build a composite filter
   if (requiredTypes.length > 0 || requiredSubtypes.length > 0 || requiredSupertypes.length > 0 ||
-      requiredColors.length > 0 || negatedColors.length > 0 || requiredTraits.length > 0 ||
+      requiredColors.length > 0 || negatedColors.length > 0 || requiredTraits.length > 0 || negatedTraits.length > 0 ||
       negatedTypes.length > 0 || negatedSubtypes.length > 0 || negatedSupertypes.length > 0 || requireNontoken || requireToken || requireCommander || requireTapped || requireUntapped) {
     const checks = [];
     const descParts = [];
@@ -1669,6 +1673,10 @@ function _buildAppliesToFromTextInner(filterText) {
     for (const trait of requiredTraits) {
       checks.push((p) => (p.traits || []).includes(trait));
       descParts.push(trait.toLowerCase());
+    }
+    for (const trait of negatedTraits) {
+      checks.push((p) => !(p.traits || []).includes(trait));
+      descParts.push(`non${trait.toLowerCase()}`);
     }
     if (requireNontoken) {
       checks.push((p) => !p.isToken);

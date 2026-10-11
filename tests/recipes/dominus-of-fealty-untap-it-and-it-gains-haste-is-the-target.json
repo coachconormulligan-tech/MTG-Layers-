@@ -1,0 +1,62 @@
+{
+  "name": "Dominus of Fealty — \"untap it and it gains haste\" gives haste to the target only",
+  "notes": "Memory: project_audit_list_mismatch_round_seven_2026-10-11. The fired text reads \"Untap it and target permanent gains haste\"; the subject was taken as \"Untap it and target permanent\", an OR filter matching every permanent. A leading instruction joined by \"and\" is no longer part of the subject.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre"
+    },
+    {
+      "add": "Dominus of Fealty",
+      "as": "dominus"
+    },
+    {
+      "fire": "@dominus",
+      "trigger": 1,
+      "as": "fired"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@fired",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Haste"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Haste"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Dominus of Fealty",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Haste"
+          ]
+        }
+      }
+    }
+  ]
+}

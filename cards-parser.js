@@ -1044,6 +1044,10 @@ function parseCardEffects(permanent, card, opts = {}) {
     // (On a line of its own: a condition belongs to every effect of its line.)
     (_, pre, subject, boost, cond, verb, what) => `${pre}${subject}${boost.trimEnd()}\n${subject} ${verb} ${what} as long as ${cond}.`);
 
+  // "Ferocious — That creature also gains trample …" (Temur Battle Rage): "that creature also"
+  // is the pronoun "that creature"; with "also" left in it read as every creature.
+  oracle = oracle.replace(/\b(that (?:creature|permanent|land|artifact|enchantment|planeswalker)) also (?=(?:gains?|gets?|has)\b)/gi, '$1 ');
+
   // "Untap all attacking creatures. They gain trample …" → "All attacking creatures gain trample …"
   oracle = _resolveTheyPronoun(oracle);
   if (permanent.isSpell) oracle = _resolveItPronoun(oracle);
@@ -4290,6 +4294,12 @@ function parseCardEffects(permanent, card, opts = {}) {
       const _becomesAnd = stripDurationPrefix(filterText).match(/^(this (?:card|creature|permanent|land|artifact|enchantment)|(?:up to \w+ |another )?target [^,.]+?)\s+becomes?\s+[^"]*\band$/i);
       if (_becomesAnd) filterText = _becomesAnd[1];
     }
+    // "Untap it and target permanent gains haste" (Dominus of Fealty, its "it" already resolved):
+    // an instruction joined by "and" is not part of the subject.
+    {
+      const _instructionAnd = filterText.match(/^(?:untap|tap|goad|suspect|put\s+[^,.]*?\bcounters?\s+on)\s+[^,.]*?\s+and\s+((?:another\s+)?target\s+[^,.]+|this\s+[\w-]+)$/i);
+      if (_instructionAnd) filterText = _instructionAnd[1];
+    }
     // "Create a token that's a copy of …, except … it has flying and haste" and "That token
     // gains haste" describe a token the ability makes; the token's own card carries them.
     if (/\bcreates?\b/i.test(filterText) || /^(?:that|the|those)\s+tokens?$/i.test(filterText)) continue;
@@ -4368,7 +4378,10 @@ function parseCardEffects(permanent, card, opts = {}) {
     // Skip if filterText doesn't reference permanents (and not spells — handled above)
     if (!filterReferencesPermanents(filterText)) continue;
     // Multiplayer: restore "you control" stripped by optional regex group
-    if (/\byou (?:control|own)\b/i.test(haveMatch[0]) && !/\byou (?:control|own)\b/i.test(filterText)) {
+    // (Not the "you control" of a count: "target creature gets +1/+1 for each creature you control
+    // and gains reach" — Get a Leg Up — targets any creature.)
+    const _haveMatchNoCount = haveMatch[0].replace(/\bfor each\b.*?(?=\s+and\s+(?:have|has|gains?)\b)/i, '');
+    if (/\byou (?:control|own)\b/i.test(_haveMatchNoCount) && !/\byou (?:control|own)\b/i.test(filterText)) {
       filterText += ' you control';
     }
     const { fn, desc, isSelf, isTargeted, needsTargetSelection: _haveNTS, maxTargets: _haveMaxT, isTargetPlayerControl: _haveTPC } = buildAppliesToFromText(filterText);
@@ -4672,6 +4685,12 @@ function parseCardEffects(permanent, card, opts = {}) {
     // like "Until end of turn, target creature you control gains \"…\"" (Pride of Hull Clade).
     filterText = stripDurationPrefix(filterText);
     if (!filterText) continue;
+    // Multiplayer: restore the "you control" the regex's optional group took from the subject
+    // ('target creature you control gains "…"' — Not Dead After All), as haveAbilityRegex does.
+    if (/\byou (?:control|own)\s+(?:have|has|gains?)\s+"/i.test(ftMatch[0]) && !/\byou (?:control|own)\b/i.test(filterText) &&
+        filterReferencesPermanents(filterText)) {
+      filterText += ' you control';
+    }
     // Dedup against the saga/self quoted-ability grant (sagaGainsQuotedRegex), which already
     // handled "This Saga/card/enchantment gains \"…\"" earlier in this pass.
     if (effects.some(e => e.layer === '6' && e.params && e.params.ability === abilityText && e.sourceId === permanent.id)) continue;
@@ -5927,7 +5946,9 @@ function parseCardEffects(permanent, card, opts = {}) {
       if (emittedControl && refersBackToPriorTarget && /\binstead\b/i.test(fullSentence)) continue;
 
       const isUntilEOT = /until end of turn/i.test(fullSentence);
-      const opponentCtrlRequired = /\bopponent(?:'?s?)?\s+controls?\b/i.test(fullSentence);
+      // ("Target creature you don't control" — Firbolg Flutist, Spreading Insurrection — likewise.)
+      const opponentCtrlRequired = /\bopponent(?:'?s?)?\s+controls?\b/i.test(fullSentence)
+        || /\btarget\b[^.,]*?\byou\s+don'?t\s+control\b/i.test(objectText);
 
       // For spells (isManualEffect): if "target" appears anywhere in the sentence
       // (e.g. "Untap target permanent and gain control of it"), the "it" pronoun
