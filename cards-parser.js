@@ -1042,6 +1042,9 @@ function parseCardEffects(permanent, card, opts = {}) {
   // e.g. "this enchantment becomes..." (Daxos' Torment), "this artifact gains...", etc.
   // Skip "this creature" and "this permanent" — those are already handled as self-refs.
   oracle = oracle.replace(/\bthis\s+(enchantment|artifact|land|planeswalker|battle|vehicle|instant|sorcery|case)\b/gi, 'this card');
+  // "This Equipment becomes a 2/1 Construct artifact creature …" (Dancing Sword): the same, for
+  // a subtype word, where the permanent itself is what changes.
+  oracle = oracle.replace(/\bthis\s+(?:equipment|aura)\s+(?=becomes?\b)/gi, 'this card ');
 
   // Normalize common contractions so regex patterns work uniformly
   oracle = oracle.replace(/\bit's\b/gi, 'it is');
@@ -2969,7 +2972,8 @@ function parseCardEffects(permanent, card, opts = {}) {
       const withText = withKWMatch[1].trim();
       // Check if the "with" clause contains keyword abilities (not "with power and toughness")
       const withWords = withText.toLowerCase().split(/\s+and\s+|\s*,\s*/);
-      const foundKWs = withWords.filter(w => KEYWORD_ABILITIES.includes(w.trim()));
+      // ("with flying and ward {1}" — Dancing Sword: a ward cost is part of the keyword.)
+      const foundKWs = withWords.filter(w => KEYWORD_ABILITIES.includes(w.trim()) || /^ward\s+(?:\{[^}]+\})+$/.test(w.trim()));
       if (foundKWs.length > 0) {
         becomesText = becomesText.slice(0, becomesText.length - withKWMatch[0].length).trim();
         _stGrantAbilities.push(...foundKWs.map(k => k.trim()));
@@ -3303,6 +3307,15 @@ function parseCardEffects(permanent, card, opts = {}) {
     while ((isntMatch = isntTypeRegex.exec(oracle)) !== null) {
       if (_isInActivatedEffect(isntMatch.index)) continue;
       let isntFilter = isntMatch[1].trim();
+      // "This card becomes a 2/1 Construct artifact creature …. It isn't an Equipment." (Dancing
+      // Sword): the subject is its own sentence's, and that "it" is the permanent the sentences
+      // before were about.
+      if (/\.\s/.test(isntFilter)) {
+        const before = isntFilter.split(/\.\s+/);
+        const last = before.pop().trim();
+        const self = before.join('. ').match(/\bthis (?:card|creature|permanent)\b/i);
+        isntFilter = /^it$/i.test(last) && self && !/\btarget\b/i.test(before.join('. ')) ? self[0] : last;
+      }
       const isntWord = isntMatch[2];
       // Skip state-based words that are not card types/subtypes
       if (/^(?:monstrous|saddled|crewed|tapped|attacking|blocking|still|legendary|basic|snow|world)\b/i.test(isntWord)) continue;
@@ -5761,15 +5774,36 @@ function parseCardEffects(permanent, card, opts = {}) {
   const traitStateRegex = /\b(.+?)\s+(?:is|are|becomes?)\s+(goaded|suspected)\b/gi;
   let traitStateMatch;
   while ((traitStateMatch = traitStateRegex.exec(oracle)) !== null) {
-    const filterText = traitStateMatch[1].trim();
+    // The subject is the last clause before the verb, not the sentences in front of it ("You may
+    // have an opponent gain control of it. It is goaded …" — Vislor Turlough — goaded every
+    // permanent the opponents control).
+    const filterText = traitStateMatch[1].trim().split(/\.\s+|,\s+/).pop().trim();
     const traitName = TRAIT_KEYWORDS[traitStateMatch[2].toLowerCase()];
     if (!traitName) continue;
+    // "if this creature is suspected, …" is a condition, not a grant.
+    if (/^(?:if|as long as|unless|while|when|whenever)\b/i.test(filterText)) continue;
+    const traitStatePos = traitStateMatch.index + traitStateMatch[0].lastIndexOf(filterText);
+    const traitStateCond = _getConditionForPos(traitStatePos);
+    const traitStateDesc = `${filterText} ${traitStateMatch[0].includes('are') ? 'are' : 'is'} ${traitName.toLowerCase()}.`;
+    if (/^(?:it|that (?:creature|permanent))$/i.test(filterText)) {
+      // A pronoun: in a permanent's own ability it waits for the ability to be fired. Fired (or
+      // in a spell) it is the target already named, or with no target the ability's source,
+      // which _pinAbilityEffectsToSource fills in.
+      if (!permanent.isSpell && !permanent.isManualEffect) continue;
+      const named = /\btarget\b/i.test(oracle.slice(0, traitStatePos));
+      const eff = pushEff('6', EFFECT_TYPE.ADD_ABILITY, { ability: traitName, isTrait: true },
+        { appliesTo: null, scope: 'targeted', selfTarget: false }, traitStateDesc, { _oraclePos: traitStatePos });
+      if (named) { eff.targetRestriction = () => true; eff._pronounTarget = true; }
+      if (traitStateCond) eff.asLongAsCondition = traitStateCond;
+      continue;
+    }
     const { fn, desc: filterDesc } = buildAppliesToFromText(filterText);
-    pushEff('6', EFFECT_TYPE.ADD_ABILITY,
+    const eff = pushEff('6', EFFECT_TYPE.ADD_ABILITY,
       { ability: traitName, isTrait: true },
       { appliesTo: fn, scope: fn ? 'global' : 'targeted', selfTarget: !fn },
-      `${filterText} ${traitStateMatch[0].includes('are') ? 'are' : 'is'} ${traitName.toLowerCase()}. ${filterDesc}`,
+      `${traitStateDesc} ${filterDesc}`,
       { _oraclePos: traitStateMatch.index });
+    if (traitStateCond && traitStateCond._toggle) eff.asLongAsCondition = traitStateCond;
   }
   // "Target Mount you control becomes saddled until end of turn" (Guidelight Matrix): the same
   // Saddled trait the Saddle ability sets. Only for a target of a spell or fired ability —
