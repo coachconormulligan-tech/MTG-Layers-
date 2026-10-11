@@ -1,0 +1,59 @@
+{
+  "name": "Ebony Fly — \"Until end of turn, you may have this artifact become an Insect creature\" toggle at Yes",
+  "notes": "Memory: project_may_action_behind_toggle_2026-10-11 (second follow-up). \"Roll a d6. Until end of turn, you may have this artifact become an X/X Insect artifact creature with flying, where X is the result.\" was three global effects with a junk filter. A later-sentence offer may start \"Until end of turn, you may\"; it gets its own toggle and applies to the Fly itself. At Yes the Fly is an Insect artifact creature with flying; the other artifact is untouched.",
+  "steps": [
+    {
+      "add": "Ornithopter",
+      "as": "thopter"
+    },
+    {
+      "add": "Ebony Fly",
+      "as": "fly"
+    },
+    {
+      "fire": "@fly",
+      "activated": 2,
+      "as": "fired"
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@fired",
+        true
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Ebony Fly",
+      "final": {
+        "types": {
+          "$includes": [
+            "Artifact",
+            "Creature"
+          ]
+        },
+        "subtypes": {
+          "$includes": [
+            "Insect"
+          ]
+        },
+        "abilities": {
+          "$includes": [
+            "Flying"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Ornithopter",
+      "final": {
+        "subtypes": {
+          "$excludes": [
+            "Insect"
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -692,7 +692,7 @@ function _branchIsContinuous(body) {
 // hand. (_addAbilityPseudo has already written some offers as plain sentences: "This card
 // becomes a legendary Equipment …" — The Irencrag.)
 function _branchOfferIsContinuous(sentence) {
-  const offer = sentence.replace(/^(?:then\s+)?you may\s+/i, '');
+  const offer = sentence.replace(/^(?:(?:then|until end of turn,)\s+)?you may\s+/i, '');
   if (/\blife\b|\bcounters?\b/i.test(offer)) return false;
   if (offer === sentence) return _branchIsContinuous(offer);
   return /^(?:have\s+[^,.]*?\s)?(?:gain control of|exchange control of)\b/i.test(offer) ||
@@ -702,7 +702,7 @@ function _branchOfferIsContinuous(sentence) {
 // "You may have target creature get +4/+0" / "have it become a 0/0 Elemental creature" with the
 // permanent as the subject, as the effect parsers expect it: "Target creature gets +4/+0".
 function _branchOfferBody(sentence) {
-  return sentence.replace(/^(?:then\s+)?you may\s+/i, '').replace(/\.$/, '')
+  return sentence.replace(/^(?:(?:then|until end of turn,)\s+)?you may\s+/i, '').replace(/\.$/, '')
     .replace(/^have\s+(.+?)\s+(get|gain|become|lose|have)\b/i, (all, subject, verb) => {
       // (A player, or a "…'s base power" phrase, is not the permanent that changes.)
       if (/'s base (?:power|toughness)\b|^the base (?:power|toughness)\b|^(?:that|target|an|each|the) (?:player|opponent)\b/i.test(subject)) return all;
@@ -785,7 +785,7 @@ function _splitConditionalBranches(text, isSpell, canParse) {
   const origLines = lines.slice();
   const out = { text, baseLineCount: lines.length, branchLines: new Map(), alwaysOnLines: new Set(), ownSlotLines: new Set(),
                 costLabel: null, costLabel2: null, costLabels: [] };
-  if (!/\botherwise,|\bif (?:x|\d+) is \d+ or\b|\bif this spell(?:'s \w+ cost)? was\b|\bto cast (?:this|that) spell[,.]|\bif you cast this spell during\b|\bif evidence was collected\b|\bgets more votes,|\b(?:if|as long as) it(?:'s| is| isn't| doesn't have| has)\b|\.[ ]+[^.\n]*\bif\b|\n(?:[A-Z][\w']*(?: [\w']+)* — )?if\b|\bwhen you do,|\.[ ]+(?:then )?you may\b/i.test(text)) return out;
+  if (!/\botherwise,|\bif (?:x|\d+) is \d+ or\b|\bif this spell(?:'s \w+ cost)? was\b|\bto cast (?:this|that) spell[,.]|\bif you cast this spell during\b|\bif evidence was collected\b|\bgets more votes,|\b(?:if|as long as) it(?:'s| is| isn't| doesn't have| has)\b|\.[ ]+[^.\n]*\bif\b|\n(?:[A-Z][\w']*(?: [\w']+)* — )?if\b|\bwhen you do,|\.[ ]+(?:then |until end of turn, )?you may\b|,[ ]+then you may have\b/i.test(text)) return out;
   // A spell has at most two toggles (Cankerous Thirst's {B} and {G}): with more cast conditions
   // than that, its branches are left where they are.
   const castLabels = new Set();
@@ -812,7 +812,7 @@ function _splitConditionalBranches(text, isSpell, canParse) {
       // "You may sacrifice a Food. If you do, …" → "Sacrifice a Food". Never assumed: every
       // "if you do" is asked (Conor, 2026-10-11).
       // ("Sacrifice a creature. When you do, …" — Tip the Scales — has no "may": the sentence itself.)
-      const before = condIndex > 0 ? sentences[condIndex - 1].replace(/\x05\d+\x05/g, '').trim() : '';
+      const before = condIndex > 0 ? unmask(sentences[condIndex - 1]).trim() : '';
       const offer = before.match(/\b(?:you )?may ([^.]+?)\.?$/i);
       if (offer) label = offer[1];
       else if (before && !/^(?:if|when|otherwise)\b/i.test(before)) label = before.replace(/\.$/, '');
@@ -835,14 +835,21 @@ function _splitConditionalBranches(text, isSpell, canParse) {
     const quoted = line.includes('"');
     const quotes = [];
     unmask = (t) => t.replace(/\x05(\d+)\x05/g, (_, n) => quotes[n]);
-    const sentences = line.trim().replace(/"[^"]*"/g, (q) => `\x05${quotes.push(q) - 1}\x05`).split(/(?<=\.)\s+/)
+    const sentences = line.trim().replace(/"[^"]*"/g, (q) => `\x05${quotes.push(q) - 1}\x05`)
+      // "Put a +1/+1 counter on this creature, then you may have this creature become a copy …"
+      // (Spirit of Resilience): the offer is a sentence of its own.
+      .replace(/,\s+then (you may have\s)/gi, (m, offer) => isSpell ? '. Then ' + offer : m)
+      .split(/(?<=\.)\s+/)
       // "When you do, …" after a "you may" asks the same question as "If you do, …". (Not "When you
       // do, if …": that condition is the parser's — Earthbender Ascension.)
       .map(x => x.replace(/^When you do,(?!\s*if\b)/i, 'If you do,'))
       // "If X is three or more, …" (Obsessive Pursuit) reads as "If X is 3 or more, …".
       .map(x => x.replace(/^(If (?:X|\d+) is )(one|two|three|four|five|six|seven|eight|nine|ten)(?= or (?:more|greater|less|fewer)\b)/i,
         (_, head, word) => head + ({ one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10 })[word.toLowerCase()]));
-    if (quoted && !sentences.some(x => _branchCastClauses(x).length)) continue;
+    // (… or for the "If you do, …" that follows an offer: 'You may have this card gain "…" until
+    // end of combat. If you do, …' — Johan.)
+    const offerThenDo = (k) => /^If you do,/i.test(sentences[k] || '') && !sentences[k].includes('\x05');
+    if (quoted && !sentences.some((x, k) => _branchCastClauses(x).length || offerThenDo(k))) continue;
     const moved = new Set();
     for (let i = 0; i < sentences.length; i++) {
       const prev = i > 0 ? sentences[i - 1] : '';
@@ -962,7 +969,7 @@ function _splitConditionalBranches(text, isSpell, canParse) {
       // optional continuous effect after something else the spell or ability does is asked
       // with a toggle of its own. (One followed by "If you do, …" shares that sentence's toggle,
       // below. A lone "you may …" is not asked: firing the ability is the choice.)
-      const mayLater = isSpell && !quoted && i > 0 && !moved.has(i) && /^(?:Then\s+)?you may\s/i.test(sentences[i]) &&
+      const mayLater = isSpell && !quoted && i > 0 && !moved.has(i) && /^(?:(?:Then|Until end of turn,)\s+)?you may\s/i.test(sentences[i]) &&
         !/^(?:If|When) you do\b/i.test(sentences[i + 1] || '') && _branchOfferIsContinuous(sentences[i]);
       if (mayLater) {
         const offered = _branchOfferBody(sentences[i]);
@@ -971,7 +978,7 @@ function _splitConditionalBranches(text, isSpell, canParse) {
           ? (/\b(?:it|them|that (?:creature|permanent|card)|those \w+)\b/i.test(offered) ? null
             : (/^have\s/i.test(offered) ? 'You may ' : '') + offered)
           : _branchResolveSubject(offered, sentences, i, true);
-        const label = body && askLabel(sentences[i].replace(/^(?:Then\s+)?you may\s+/i, '').replace(/\.$/, ''), sentences, i);
+        const label = body && askLabel(sentences[i].replace(/^(?:(?:Then|Until end of turn,)\s+)?you may\s+/i, '').replace(/\.$/, ''), sentences, i);
         if (label) {
           // "It's still a land." (Nissa of Shadowed Boughs) belongs to the sentence it follows.
           const still = /^(?:it|they)(?:'s|'re| is| are) still\b/i.test(sentences[i + 1] || '') ? ' ' + sentences[i + 1] : '';
@@ -982,7 +989,7 @@ function _splitConditionalBranches(text, isSpell, canParse) {
         }
       }
       const opensLaterLine = i === 0 && li > 0;
-      const plain = isSpell && !quoted && (i > 0 || opensLaterLine) && !rider && !_branchCastClauses(sentences[i]).length && !/^If (?:X|\d+) is \d+ or\b/i.test(sentences[i]);
+      const plain = isSpell && (!quoted || offerThenDo(i)) && (i > 0 || opensLaterLine) && !rider && !_branchCastClauses(sentences[i]).length && !/^If (?:X|\d+) is \d+ or\b/i.test(sentences[i]);
       // (An ability word in front — "Corrupted — If …" — is flavour.)
       const leadIf = plain && sentences[i].match(/^(?:[A-Z][\w']*(?: [\w']+)* — )?If\s+([^,]+),\s+(.+?)\.?$/);
       // Not "… gains trample if it's red, and gains vigilance if it's white." (Aurelia, Exemplar

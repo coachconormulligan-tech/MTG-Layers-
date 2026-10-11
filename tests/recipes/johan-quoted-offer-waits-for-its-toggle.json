@@ -1,0 +1,28 @@
+{
+  "name": "Johan — 'you may have Johan gain \"Johan can't attack\"' waits for its toggle",
+  "notes": "Memory: project_may_action_behind_toggle_2026-10-11 (second follow-up). 'You may have this card gain \"this card can't attack\" until end of combat. If you do, …': a line that grants a quoted ability was skipped by the branch splitter, so the offer was applied with no toggle. Such a line is now read when an \"If you do, …\" follows the offer. At No (here) Johan has not gained the ability.",
+  "steps": [
+    {
+      "add": "Johan",
+      "as": "johan"
+    },
+    {
+      "fire": "@johan",
+      "trigger": 0,
+      "as": "fired"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Johan",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "this card can't attack",
+            "This card can't attack"
+          ]
+        }
+      }
+    }
+  ]
+}

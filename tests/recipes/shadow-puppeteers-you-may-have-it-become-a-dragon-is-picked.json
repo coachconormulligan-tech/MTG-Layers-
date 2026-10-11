@@ -1,0 +1,56 @@
+{
+  "name": "Shadow Puppeteers — \"you may have it become a red Dragon 4/4\" is the creature picked, not the source",
+  "notes": "Memory: project_may_action_behind_toggle_2026-10-11 (second follow-up). \"Whenever a creature you control with flying attacks, you may have it become a red Dragon with base power and toughness 4/4 in addition to its other colors and types until end of turn.\" The effects were global with the junk filter \"You May\" and changed nothing. With the subject read as the permanent, \"it\" (a guess for the creature that attacked) opens the effect, so it keeps its restriction and is picked from a target list instead of being pinned to the source.",
+  "steps": [
+    {
+      "add": "Storm Crow",
+      "as": "crow"
+    },
+    {
+      "add": "Shadow Puppeteers",
+      "as": "pup"
+    },
+    {
+      "fire": "@pup",
+      "trigger": 2,
+      "as": "fired"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@fired",
+        "@crow"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Storm Crow",
+      "final": {
+        "power": 4,
+        "toughness": 4,
+        "subtypes": {
+          "$includes": [
+            "Bird",
+            "Dragon"
+          ]
+        },
+        "colors": {
+          "$includes": [
+            "R"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Shadow Puppeteers",
+      "final": {
+        "subtypes": {
+          "$excludes": [
+            "Dragon"
+          ]
+        }
+      }
+    }
+  ]
+}
