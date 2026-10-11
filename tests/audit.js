@@ -235,6 +235,10 @@ function classifyUnitText(text) {
   // (Gaining control is a continuous effect, layer 2.)
   const takesControl = /\bgains? control of (?:another |that |the )?$/.test(clauseBefore);
   if (!takesControl && (ONE_SHOT_VERBS.test(clauseBefore) || !CONTINUOUS_VERBS.test(verbAfter))) return { skip: 'one-shot-action' };
+  // "Target creature can't be blocked this turn" / "can't be regenerated" / "can attack as though
+  // it didn't have defender": a rule about the target, not a change to what it is. The site does
+  // not model these, so there is no targeted effect to expect.
+  if (/^(?:can|can't|cannot)\b/.test(verbAfter) && !/\b(?:gets?|gains?|has|have|becomes?|loses?)\b/.test(verbAfter)) return { skip: 'not-a-layer-effect' };
   if (/'s\b/.test(phrase)) return { skip: 'possessive-target' };
   // "creature or player", "target opponent", "creature card in a graveyard", "spell". ("creature that
   // player controls" and "this card creature" are permanents; the interpreter reports what it cannot read.)

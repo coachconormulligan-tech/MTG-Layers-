@@ -117,6 +117,19 @@ function _restrictionState(tState, fs, t) {
   };
 }
 
+/* Does the permanent have this keyword? A keyword is an ability line of its own or one entry
+   of a keyword list ("Flying, shroud"), possibly with a duration or reminder text after it —
+   not any ability whose text mentions the word ("{1}{U}{U}: This creature gains shroud until
+   end of turn" on Armored Guardian does not give it shroud). */
+function _hasKeywordAbility(abilities, keyword) {
+  const re = new RegExp('^' + keyword + '\\b(?!\\s*[:\u2014])', 'i');
+  return abilities.some(a => {
+    const line = String(a).trim();
+    if (/[:"\u201c]/.test(line.replace(/\(.*$/, '')) || /^(?:when|whenever|at|as long as|if)\b/i.test(line)) return false;
+    return line.replace(/\s*\(.*$/, '').split(/,\s*/).some(part => re.test(part.trim()));
+  });
+}
+
 function _targetPickerName(t, fs, withPlayer) {
   let name = (fs?.copySource ? fs.name + ' (copy)' : t.name) + (t.label ? ' ' + t.label : '');
   if (withPlayer && Battlefield.players.length > 1 && t.owner) name += ` [${Battlefield.getPlayerName(t.controller || t.owner)}]`;
@@ -231,9 +244,9 @@ function _singleTargetCandidates(sourceId) {
     const validSpell = !spellRestriction || spellRestriction(_restrictionState(tState, fs, t), snapStates || finalStates, sourceCtrl);
     // Shroud/hexproof prevent being targeted — but non-targeting selections bypass them
     const tAbilities = !isNonTargeting && fs ? (fs.abilities || []) : [];
-    const hasShroud = tAbilities.some(a => /\bshroud\b/i.test(a));
+    const hasShroud = _hasKeywordAbility(tAbilities, 'shroud');
     const tCtrl = t.controller || t.owner || 'player_0';
-    const hasHexproof = tCtrl !== sourceCtrl && tAbilities.some(a => /\bhexproof\b/i.test(a));
+    const hasHexproof = tCtrl !== sourceCtrl && _hasKeywordAbility(tAbilities, 'hexproof');
     // CR 702.16 — protection: skip if target is protected from this source.
     // Auras/equipment ALWAYS check (attachment counts); other non-targeting selections bypass.
     const isAttachment = !!auraRestriction || isEquipment;
@@ -289,9 +302,9 @@ function _multiTargetCandidates(sourceId, slotIndex) {
       : { types: t.printedTypes || [], supertypes: t.printedSupertypes || [], subtypes: t.printedSubtypes || [], colors: t.printedColors || [], isAllCreatureTypes: false, ...(liveBoard ? { traits: t.traits || [] } : {}) };
     const valid = t.id === currentVal || !spellRestriction || spellRestriction(_restrictionState(tState, fs, t), snapStates || finalStates, sourceCtrl);
     const tAbilities = !isNonTargeting && fs ? (fs.abilities || []) : [];
-    const hasShroud = tAbilities.some(a => /\bshroud\b/i.test(a));
+    const hasShroud = _hasKeywordAbility(tAbilities, 'shroud');
     const tCtrl = t.controller || t.owner || 'player_0';
-    const hasHexproof = tCtrl !== sourceCtrl && tAbilities.some(a => /\bhexproof\b/i.test(a));
+    const hasHexproof = tCtrl !== sourceCtrl && _hasKeywordAbility(tAbilities, 'hexproof');
     if (valid && !hasShroud && !hasHexproof) {
       candidates.push({ id: t.id, perm: t, state: fs || tState, displayName: _targetPickerName(t, fs, true) });
     }
@@ -331,9 +344,9 @@ function _slottedTargetCandidates(sourceId, slot) {
       : { types: t.printedTypes || [], supertypes: t.printedSupertypes || [], subtypes: t.printedSubtypes || [], colors: t.printedColors || [], isAllCreatureTypes: false };
     const validSpell = !spellRestriction || spellRestriction(_restrictionState(tState, fs, t), snapStates || finalStates, sourceCtrl);
     const tAbilities = fs ? (fs.abilities || []) : [];
-    const hasShroud = tAbilities.some(a => /\bshroud\b/i.test(a));
+    const hasShroud = _hasKeywordAbility(tAbilities, 'shroud');
     const tCtrl = t.controller || t.owner || 'player_0';
-    const hasHexproof = tCtrl !== sourceCtrl && tAbilities.some(a => /\bhexproof\b/i.test(a));
+    const hasHexproof = tCtrl !== sourceCtrl && _hasKeywordAbility(tAbilities, 'hexproof');
     const sourceFs = finalStates.get(sourceId);
     const isProtected = (typeof _isProtectedFromSource === 'function')
       ? !!_isProtectedFromSource(fs || tState, sourceFs, sourcePerm, t)
@@ -376,9 +389,9 @@ function _modalTargetCandidates(sourceId, modeIdx) {
       : { types: t.printedTypes || [], supertypes: t.printedSupertypes || [], subtypes: t.printedSubtypes || [], colors: t.printedColors || [], isAllCreatureTypes: false };
     const valid = t.id === currentTarget || !spellRestriction || spellRestriction(_restrictionState(tState, fs, t), snapStates || finalStates, sourceCtrl);
     const tAbilities = !isNonTargeting && fs ? (fs.abilities || []) : [];
-    const hasShroud = tAbilities.some(a => /\bshroud\b/i.test(a));
+    const hasShroud = _hasKeywordAbility(tAbilities, 'shroud');
     const tCtrl = t.controller || t.owner || 'player_0';
-    const hasHexproof = tCtrl !== sourceCtrl && tAbilities.some(a => /\bhexproof\b/i.test(a));
+    const hasHexproof = tCtrl !== sourceCtrl && _hasKeywordAbility(tAbilities, 'hexproof');
     if (valid && !hasShroud && !hasHexproof) {
       candidates.push({ id: t.id, perm: t, state: fs || tState, displayName: _targetPickerName(t, fs, false) });
     }
