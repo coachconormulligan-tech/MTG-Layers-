@@ -1,6 +1,6 @@
 {
- "name": "Pippin's Bravery — \"If you do, target creature gets +4/+4 … Otherwise, that creature gets +2/+2\"",
- "notes": "Memory: project_audit_small_clusters_round_eight_2026-10-11. \"If you do, target creature\" was read as a list and matched nothing, so the spell had no target. A clause before a target phrase is now dropped from the filter, and an \"Otherwise\" sentence after \"If you do\" is left out (the optional part is assumed done): +4/+4 only.",
+ "name": "Pippin's Bravery — toggle left at No gives +2/+2",
+ "notes": "Memory: project_asked_condition_toggles_2026-10-11. \"You may sacrifice a Food. If you do, target creature gets +4/+4 until end of turn. Otherwise, that creature gets +2/+2 until end of turn.\" Whether the Food was sacrificed cannot be read off the board, so the spell has a toggle labelled \"Sacrifice a Food\" (the same mechanism as Kicked). Here it is switched to Yes.",
  "recipe": {
   "steps": [
    {
@@ -29,8 +29,8 @@
   {
    "perm": "Grizzly Bears",
    "final": {
-    "power": 6,
-    "toughness": 6
+    "power": 4,
+    "toughness": 4
    }
   },
   {
@@ -731,8 +731,8 @@
      "subtypes": [
       "Bear"
      ],
-     "power": 6,
-     "toughness": 6,
+     "power": 4,
+     "toughness": 4,
      "colors": [
       "G"
      ],
@@ -789,6 +789,7 @@
   ],
   "order": {
    "7c": [
+    "Pippin's Bravery",
     "Pippin's Bravery"
    ]
   },
@@ -802,6 +803,17 @@
     "params": {
      "power": 4,
      "toughness": 4
+    }
+   },
+   {
+    "source": "Pippin's Bravery",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "target": "Grizzly Bears",
+    "params": {
+     "power": 2,
+     "toughness": 2
     }
    }
   ]

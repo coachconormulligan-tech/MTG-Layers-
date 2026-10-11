@@ -1,6 +1,6 @@
 {
-  "name": "Springjack Knight — \"If you win, target creature gains double strike\" is targeted",
-  "notes": "Memory: project_audit_small_clusters_round_eight_2026-10-11. \"If you win, target creature\" was read as a list of two filters and matched nothing. A clause before a target phrase is now dropped from the filter.",
+  "name": "Springjack Knight — \"If you win, target creature gains double strike\": targeted, behind a \"You win\" toggle",
+  "notes": "Memory: project_audit_small_clusters_round_eight_2026-10-11. \"If you win, target creature\" was read as a list of two filters and matched nothing. A clause before a target phrase is now dropped from the filter. Who wins a clash cannot be read off the board: the fired ability has a toggle labelled \"You win\", switched to Yes here (project_asked_condition_toggles_2026-10-11).",
   "steps": [
     {
       "add": "Grizzly Bears",
@@ -24,6 +24,13 @@
         "setTarget",
         "@fired",
         "@bears"
+      ]
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@fired",
+        true
       ]
     }
   ],

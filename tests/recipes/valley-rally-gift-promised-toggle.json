@@ -1,0 +1,35 @@
+{
+  "name": "Valley Rally — \"If the gift was promised\" is a toggle; at No the target gets no first strike",
+  "notes": "Memory: project_asked_condition_toggles_2026-10-11. A condition the board cannot show becomes a toggle on the spell, labelled with the condition.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Valley Rally",
+      "as": "spell",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTarget",
+        "@spell",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 4,
+        "abilities": {
+          "$excludes": [
+            "First strike"
+          ]
+        }
+      }
+    }
+  ]
+}

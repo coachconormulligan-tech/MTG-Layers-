@@ -287,6 +287,13 @@ const CONDITION_PARSERS = [
     const threshold = _wordThresh(m[1]);
     return () => { const gs = _gsGet(); return gs ? gs.currentLife >= threshold : true; };
   },
+  // "you have N or less life" (fateful hour — Break of Day).
+  (ct) => {
+    const m = ct.match(/you have (\w+)\s+or\s+(?:less|fewer)\s+life/);
+    if (!m) return null;
+    const threshold = _wordThresh(m[1]);
+    return () => { const gs = _gsGet(); return gs ? gs.currentLife <= threshold : false; };
+  },
   // "you have [at least] N life more than your starting life total" (Leyline of Hope).
   (ct) => {
     const m = ct.match(/you have (?:at least )?(\w+)\s+life\s+more\s+than\s+your\s+starting\s+life\s+total/);
@@ -1044,11 +1051,6 @@ function parseCardEffects(permanent, card, opts = {}) {
   oracle = oracle.replace(/(^|\n)([^.\n]+?)(\s+gets?\s+[+-]\d+\/[+-]\d+\.\s+)As long as ([^,.\n]+), they also (have|gain) ([^.\n]+)\./gi,
     // (On a line of its own: a condition belongs to every effect of its line.)
     (_, pre, subject, boost, cond, verb, what) => `${pre}${subject}${boost.trimEnd()}\n${subject} ${verb} ${what} as long as ${cond}.`);
-
-  // "You may sacrifice a Food. If you do, target creature gets +4/+4 until end of turn. Otherwise,
-  // that creature gets +2/+2 until end of turn." (Pippin's Bravery): the optional part is assumed
-  // done, as it is for a fired ability, so the "Otherwise" sentence does not happen.
-  oracle = oracle.replace(/(\bIf you do, [^.\n]+\.)\s+Otherwise, [^.\n]+\./gi, '$1');
 
   // "Ferocious — That creature also gains trample …" (Temur Battle Rage): "that creature also"
   // is the pronoun "that creature"; with "also" left in it read as every creature.
@@ -5752,11 +5754,10 @@ function parseCardEffects(permanent, card, opts = {}) {
     // A pronoun in a permanent's own triggered or activated ability is goaded when the ability
     // is fired, not statically ("At the beginning of combat …, … Goad that creature." — Kitt
     // Kanto, Mayhem Diva — goaded every creature while she was on the battlefield).
-    // ("When this creature enters, suspect it." — Barbed Servitor — is about the permanent itself
-    // and stays: it is suspected from the moment it is added.)
-    const _traitLine = oracle.slice(oracle.lastIndexOf('\n', traitVerbMatch.index) + 1).split('\n')[0];
-    if (!isSpellTarget && !permanent.isSpell && !permanent.isManualEffect && /^(?:it|them|(?:that|those)\s+\w+)$/i.test(targetText) &&
-        !/^when this \w+ enters,\s*(?:goad|suspect) it\b/i.test(_traitLine.trim()) &&
+    // ("When this creature enters, suspect it." — Barbed Servitor — is a trigger like any other:
+    // fired, it suspects its source.)
+    // (Any object but a target: "you may suspect one of the other creatures" — Frantic Scapegoat.)
+    if (!isSpellTarget && !permanent.isSpell && !permanent.isManualEffect &&
         (_isInTriggeredSentence(traitVerbMatch.index) || _isInActivatedEffect(traitVerbMatch.index))) continue;
     const eff = pushEff('6', EFFECT_TYPE.ADD_ABILITY,
       { ability: traitName, isTrait: true },

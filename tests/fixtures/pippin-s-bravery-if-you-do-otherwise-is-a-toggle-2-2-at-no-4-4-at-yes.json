@@ -1,6 +1,6 @@
 {
- "name": "Springjack Knight — \"If you win, target creature gains double strike\" is targeted",
- "notes": "Memory: project_audit_small_clusters_round_eight_2026-10-11. \"If you win, target creature\" was read as a list of two filters and matched nothing. A clause before a target phrase is now dropped from the filter.",
+ "name": "Pippin's Bravery — \"If you do … Otherwise …\" is a toggle: +2/+2 at No, +4/+4 at Yes",
+ "notes": "Memory: project_asked_condition_toggles_2026-10-11. \"You may sacrifice a Food. If you do, target creature gets +4/+4 until end of turn. Otherwise, that creature gets +2/+2 until end of turn.\" Whether the Food was sacrificed cannot be read off the board, so the spell has a toggle labelled \"Sacrifice a Food\" (the same mechanism as Kicked). Here it is switched to Yes.",
  "recipe": {
   "steps": [
    {
@@ -12,19 +12,22 @@
     "as": "ogre"
    },
    {
-    "add": "Springjack Knight",
-    "as": "knight"
-   },
-   {
-    "fire": "@knight",
-    "trigger": 0,
-    "as": "fired"
+    "add": "Pippin's Bravery",
+    "as": "spell",
+    "spell": true
    },
    {
     "call": [
      "setTarget",
-     "@fired",
+     "@spell",
      "@bears"
+    ]
+   },
+   {
+    "call": [
+     "setAdditionalCostPaid",
+     "@spell",
+     true
     ]
    }
   ]
@@ -33,21 +36,15 @@
   {
    "perm": "Grizzly Bears",
    "final": {
-    "abilities": {
-     "$includes": [
-      "Double strike"
-     ]
-    }
+    "power": 6,
+    "toughness": 6
    }
   },
   {
    "perm": "Gray Ogre",
    "final": {
-    "abilities": {
-     "$excludes": [
-      "Double strike"
-     ]
-    }
+    "power": 2,
+    "toughness": 2
    }
   }
  ],
@@ -411,58 +408,54 @@
     "id": "perm_3",
     "scryfallData": {
      "object": "card",
-     "id": "75fa0c72-427b-4797-b5b1-15f07fc5fa07",
-     "oracle_id": "97b0b719-d948-4671-97ba-1b2be8cc55e4",
+     "id": "bc60dc65-6813-4d57-877b-df195ed00d00",
+     "oracle_id": "c7ec52b1-295a-4daa-86fd-dcbe6fb412d7",
      "multiverse_ids": [
-      143016
+      617012
      ],
-     "mtgo_id": 28759,
-     "mtgo_foil_id": 28760,
-     "tcgplayer_id": 15637,
-     "cardmarket_id": 17782,
-     "name": "Springjack Knight",
+     "mtgo_id": 112274,
+     "arena_id": 84874,
+     "tcgplayer_id": 498372,
+     "cardmarket_id": 715950,
+     "name": "Pippin's Bravery",
      "lang": "en",
-     "released_at": "2007-10-12",
-     "uri": "https://api.scryfall.com/cards/75fa0c72-427b-4797-b5b1-15f07fc5fa07",
-     "scryfall_uri": "https://scryfall.com/card/lrw/41/springjack-knight?utm_source=api",
+     "released_at": "2023-06-23",
+     "uri": "https://api.scryfall.com/cards/bc60dc65-6813-4d57-877b-df195ed00d00",
+     "scryfall_uri": "https://scryfall.com/card/ltr/182/pippins-bravery?utm_source=api",
      "layout": "normal",
-     "highres_image": true,
-     "image_status": "highres_scan",
-     "image_updated_at": "2026-07-13T11:41:48Z",
+     "highres_image": false,
+     "image_status": "lowres",
+     "image_updated_at": "2026-07-13T04:17:46Z",
      "image_uris": {
-      "small": "https://cards.scryfall.io/small/front/7/5/75fa0c72-427b-4797-b5b1-15f07fc5fa07.jpg?1783942908",
-      "normal": "https://cards.scryfall.io/normal/front/7/5/75fa0c72-427b-4797-b5b1-15f07fc5fa07.jpg?1783942908",
-      "large": "https://cards.scryfall.io/large/front/7/5/75fa0c72-427b-4797-b5b1-15f07fc5fa07.jpg?1783942908",
-      "png": "https://cards.scryfall.io/png/front/7/5/75fa0c72-427b-4797-b5b1-15f07fc5fa07.png?1783942908",
-      "art_crop": "https://cards.scryfall.io/art_crop/front/7/5/75fa0c72-427b-4797-b5b1-15f07fc5fa07.jpg?1783942908",
-      "border_crop": "https://cards.scryfall.io/border_crop/front/7/5/75fa0c72-427b-4797-b5b1-15f07fc5fa07.jpg?1783942908",
-      "thumb": "https://cards.scryfall.io/thumb/front/7/5/75fa0c72-427b-4797-b5b1-15f07fc5fa07.webp?1783942908",
-      "grid": "https://cards.scryfall.io/grid/front/7/5/75fa0c72-427b-4797-b5b1-15f07fc5fa07.webp?1783942908",
-      "display": "https://cards.scryfall.io/display/front/7/5/75fa0c72-427b-4797-b5b1-15f07fc5fa07.webp?1783942908",
-      "art": "https://cards.scryfall.io/art/front/7/5/75fa0c72-427b-4797-b5b1-15f07fc5fa07.webp?1783942908",
-      "crop": "https://cards.scryfall.io/crop/front/7/5/75fa0c72-427b-4797-b5b1-15f07fc5fa07.webp?1783942908"
+      "small": "https://cards.scryfall.io/small/front/b/c/bc60dc65-6813-4d57-877b-df195ed00d00.jpg?1783916266",
+      "normal": "https://cards.scryfall.io/normal/front/b/c/bc60dc65-6813-4d57-877b-df195ed00d00.jpg?1783916266",
+      "large": "https://cards.scryfall.io/large/front/b/c/bc60dc65-6813-4d57-877b-df195ed00d00.jpg?1783916266",
+      "png": "https://cards.scryfall.io/png/front/b/c/bc60dc65-6813-4d57-877b-df195ed00d00.png?1783916266",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/b/c/bc60dc65-6813-4d57-877b-df195ed00d00.jpg?1783916266",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/b/c/bc60dc65-6813-4d57-877b-df195ed00d00.jpg?1783916266",
+      "thumb": "https://cards.scryfall.io/thumb/front/b/c/bc60dc65-6813-4d57-877b-df195ed00d00.webp?1783916266",
+      "grid": "https://cards.scryfall.io/grid/front/b/c/bc60dc65-6813-4d57-877b-df195ed00d00.webp?1783916266",
+      "display": "https://cards.scryfall.io/display/front/b/c/bc60dc65-6813-4d57-877b-df195ed00d00.webp?1783916266",
+      "art": "https://cards.scryfall.io/art/front/b/c/bc60dc65-6813-4d57-877b-df195ed00d00.webp?1783916266",
+      "crop": "https://cards.scryfall.io/crop/front/b/c/bc60dc65-6813-4d57-877b-df195ed00d00.webp?1783916266"
      },
-     "mana_cost": "{2}{W}",
-     "cmc": 3,
-     "type_line": "Creature — Kithkin Knight",
-     "oracle_text": "Whenever this creature attacks, clash with an opponent. If you win, target creature gains double strike until end of turn. (Each clashing player reveals the top card of their library, then puts that card on their choice of the top or bottom. A player wins if their card had a greater mana value.)",
-     "power": "2",
-     "toughness": "1",
+     "mana_cost": "{G}",
+     "cmc": 1,
+     "type_line": "Instant",
+     "oracle_text": "You may sacrifice a Food. If you do, target creature gets +4/+4 until end of turn. Otherwise, that creature gets +2/+2 until end of turn.",
      "colors": [
-      "W"
+      "G"
      ],
      "color_identity": [
-      "W"
+      "G"
      ],
-     "keywords": [
-      "Clash"
-     ],
+     "keywords": [],
      "legalities": {
       "standard": "not_legal",
       "future": "not_legal",
-      "historic": "not_legal",
-      "timeless": "not_legal",
-      "gladiator": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
       "pioneer": "not_legal",
       "modern": "legal",
       "legacy": "legal",
@@ -472,19 +465,20 @@
       "commander": "legal",
       "oathbreaker": "legal",
       "standardbrawl": "not_legal",
-      "brawl": "not_legal",
-      "competitivebrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
       "alchemy": "not_legal",
       "paupercommander": "legal",
       "duel": "legal",
       "oldschool": "not_legal",
       "premodern": "not_legal",
-      "predh": "legal",
+      "predh": "not_legal",
       "tlr": "legal"
      },
      "games": [
       "paper",
-      "mtgo"
+      "mtgo",
+      "arena"
      ],
      "reserved": false,
      "game_changer": false,
@@ -498,52 +492,58 @@
      "promo": false,
      "reprint": false,
      "variation": false,
-     "set_id": "30ec97cb-dca9-4bf4-a98b-310f9d8ceaff",
-     "set": "lrw",
-     "set_name": "Lorwyn",
-     "set_type": "expansion",
-     "set_uri": "https://api.scryfall.com/sets/30ec97cb-dca9-4bf4-a98b-310f9d8ceaff",
-     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Alrw&unique=prints",
-     "scryfall_set_uri": "https://scryfall.com/sets/lrw?utm_source=api",
-     "rulings_uri": "https://api.scryfall.com/cards/75fa0c72-427b-4797-b5b1-15f07fc5fa07/rulings",
-     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A97b0b719-d948-4671-97ba-1b2be8cc55e4&unique=prints",
-     "collector_number": "41",
+     "set_id": "08078706-ac5d-439b-8f01-894d38751367",
+     "set": "ltr",
+     "set_name": "The Lord of the Rings: Tales of Middle-earth",
+     "set_type": "draft_innovation",
+     "set_uri": "https://api.scryfall.com/sets/08078706-ac5d-439b-8f01-894d38751367",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Altr&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/ltr?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/bc60dc65-6813-4d57-877b-df195ed00d00/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ac7ec52b1-295a-4daa-86fd-dcbe6fb412d7&unique=prints",
+     "collector_number": "182",
      "digital": false,
      "rarity": "common",
+     "flavor_text": "Pippin stabbed upwards, and the written blade of Westernesse pierced through the hide and went deep into the vitals of the troll.",
      "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
-     "artist": "Steven Belledin",
+     "artist": "John Tedrick",
      "artist_ids": [
-      "f07d73b9-52a0-4fe5-858b-61f7b42174a5"
+      "4da667fd-a4ad-4aea-ba20-db542810e01b"
      ],
-     "illustration_id": "12357618-7d37-4a4f-8e1c-44e10421788f",
+     "illustration_id": "a42d4e83-7545-4331-a3c7-b022249b8007",
      "border_color": "black",
-     "frame": "2003",
+     "frame": "2015",
+     "security_stamp": "triangle",
      "full_art": false,
      "textless": false,
      "booster": true,
      "story_spotlight": false,
-     "edhrec_rank": 28679,
+     "promo_types": [
+      "universesbeyond"
+     ],
+     "edhrec_rank": 12854,
+     "penny_rank": 16016,
      "prices": {
-      "usd": "0.16",
-      "usd_foil": "0.33",
+      "usd": "0.20",
+      "usd_foil": "0.22",
       "usd_etched": null,
-      "eur": "0.09",
+      "eur": "0.06",
       "eur_foil": "0.18",
-      "tix": "0.04"
+      "tix": "0.03"
      },
      "related_uris": {
-      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=143016&printed=false",
-      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DSpringjack%2BKnight",
-      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DSpringjack%2BKnight",
-      "edhrec": "https://edhrec.com/route/?cc=Springjack+Knight"
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=617012&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DPippin%2527s%2BBravery",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DPippin%2527s%2BBravery",
+      "edhrec": "https://edhrec.com/route/?cc=Pippin%27s+Bravery"
      },
      "purchase_uris": {
-      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15637%3Fpage%3D1",
-      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=17782&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
-      "cardhoarder": "https://www.cardhoarder.com/cards/28759?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F498372%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=715950&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/112274?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
      }
     },
-    "isSpell": false,
+    "isSpell": true,
     "faceIndex": 0,
     "isToken": false,
     "owner": "player_0",
@@ -560,7 +560,7 @@
     "classLevel": null,
     "hasXValue": false,
     "xValue": null,
-    "additionalCostPaid": false,
+    "additionalCostPaid": true,
     "additionalCostPaid2": false,
     "chosenCreatureType": null,
     "chosenColor": null,
@@ -574,120 +574,65 @@
     "targetPlayerId": null,
     "enchantedPlayerId": null,
     "modalModeCounts": null,
-    "primaryTarget": null,
+    "primaryTarget": "perm_1",
     "multiTarget": null,
     "slotTargets": {},
     "modalTargets": {},
     "copySource": null,
-    "targetTs": null,
+    "targetTs": 4,
     "slotTs": {},
     "copyTargetPermId": null,
     "refPermId": null,
     "choices": null,
-    "firedAtSnapshot": null
-   }
-  ],
-  "firedAbilities": [
-   {
-    "id": "trig_perm_3_0_4",
-    "kind": "trigger",
-    "pseudoKind": "ability",
-    "sourceId": "perm_3",
-    "isCommandZone": false,
-    "commanderIdx": null,
-    "abilityIndex": 0,
-    "timestamp": 4,
-    "effectText": "Clash with an opponent. If you win, target creature gains double strike until end of turn.",
-    "xValue": null,
-    "hasXValue": false,
-    "cdaUserValue": null,
-    "linkedCards": null,
-    "fullText": "Whenever this creature attacks, clash with an opponent. If you win, target creature gains double strike until end of turn.",
-    "chosenColor": null,
-    "additionalCostPaid": false,
-    "additionalCostPaid2": false,
-    "guessedTargetSubjects": [],
-    "owner": "player_0",
-    "controller": "player_0",
-    "equipTargetId": null,
-    "targetOpponentPlayerId": null,
-    "targetPlayerId": null,
-    "enchantedPlayerId": null,
-    "firedAtStates": [
-     [
-      "perm_1",
-      {
-       "name": "Grizzly Bears",
-       "types": [
-        "Creature"
-       ],
-       "supertypes": [],
-       "subtypes": [
-        "Bear"
-       ],
-       "power": 2,
-       "toughness": 2,
-       "colors": [
-        "G"
-       ],
-       "abilities": [],
-       "oracleText": "",
-       "owner": "player_0",
-       "controller": "player_0",
-       "isToken": false
-      }
-     ],
-     [
-      "perm_2",
-      {
-       "name": "Gray Ogre",
-       "types": [
-        "Creature"
-       ],
-       "supertypes": [],
-       "subtypes": [
-        "Ogre"
-       ],
-       "power": 2,
-       "toughness": 2,
-       "colors": [
-        "R"
-       ],
-       "abilities": [],
-       "oracleText": "",
-       "owner": "player_0",
-       "controller": "player_0",
-       "isToken": false
-      }
-     ],
-     [
-      "perm_3",
-      {
-       "name": "Springjack Knight",
-       "types": [
-        "Creature"
-       ],
-       "supertypes": [],
-       "subtypes": [
-        "Kithkin",
-        "Knight"
-       ],
-       "power": 2,
-       "toughness": 1,
-       "colors": [
-        "W"
-       ],
-       "abilities": [
-        "Whenever this creature attacks, clash with an opponent. If you win, target creature gains double strike until end of turn."
-       ],
-       "oracleText": "Whenever this creature attacks, clash with an opponent. If you win, target creature gains double strike until end of turn.",
-       "owner": "player_0",
-       "controller": "player_0",
-       "isToken": false
-      }
-     ]
-    ],
     "firedAtSnapshot": {
+     "states": [
+      [
+       "perm_1",
+       {
+        "name": "Grizzly Bears",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Bear"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "colors": [
+         "G"
+        ],
+        "abilities": [],
+        "oracleText": "",
+        "owner": "player_0",
+        "controller": "player_0",
+        "isToken": false
+       }
+      ],
+      [
+       "perm_2",
+       {
+        "name": "Gray Ogre",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Ogre"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "colors": [
+         "R"
+        ],
+        "abilities": [],
+        "oracleText": "",
+        "owner": "player_0",
+        "controller": "player_0",
+        "isToken": false
+       }
+      ]
+     ],
      "perms": [
       {
        "id": "perm_1",
@@ -732,29 +677,6 @@
        "printedPower": 2,
        "printedToughness": 2,
        "timestamp": 2
-      },
-      {
-       "id": "perm_3",
-       "name": "Springjack Knight",
-       "imageUri": "https://cards.scryfall.io/small/front/7/5/75fa0c72-427b-4797-b5b1-15f07fc5fa07.jpg?1783942908",
-       "owner": "player_0",
-       "controller": "player_0",
-       "isToken": false,
-       "isManualEffect": false,
-       "label": null,
-       "traits": [],
-       "counters": {},
-       "printedTypes": [
-        "Creature"
-       ],
-       "printedSupertypes": [],
-       "printedSubtypes": [
-        "Kithkin",
-        "Knight"
-       ],
-       "printedPower": 2,
-       "printedToughness": 1,
-       "timestamp": 3
       }
      ],
      "mutateStacks": [],
@@ -766,19 +688,10 @@
        "name": "Player 1"
       }
      ]
-    },
-    "primaryTarget": "perm_1",
-    "multiTarget": null,
-    "slotTargets": {},
-    "modalTargets": {},
-    "copySource": null,
-    "targetTs": 5,
-    "slotTs": {},
-    "copyTargetPermId": null,
-    "refPermId": null,
-    "choices": null
+    }
    }
   ],
+  "firedAbilities": [],
   "players": [
    {
     "id": "player_0",
@@ -825,18 +738,16 @@
      "subtypes": [
       "Bear"
      ],
-     "power": 2,
-     "toughness": 2,
+     "power": 6,
+     "toughness": 6,
      "colors": [
       "G"
      ],
-     "abilities": [
-      "Double strike"
-     ]
+     "abilities": []
     },
     "changedBy": {
-     "6": [
-      "Springjack Knight (trigger)"
+     "7c": [
+      "Pippin's Bravery"
      ]
     }
    },
@@ -862,44 +773,54 @@
     "changedBy": {}
    },
    {
-    "perm": "Springjack Knight",
+    "perm": "Pippin's Bravery",
     "final": {
-     "name": "Springjack Knight",
+     "name": "Pippin's Bravery",
      "controller": "player_0",
      "supertypes": [],
      "types": [
-      "Creature"
+      "Instant"
      ],
-     "subtypes": [
-      "Kithkin",
-      "Knight"
-     ],
-     "power": 2,
-     "toughness": 1,
+     "subtypes": [],
+     "power": null,
+     "toughness": null,
      "colors": [
-      "W"
+      "G"
      ],
      "abilities": [
-      "Whenever this creature attacks, clash with an opponent. If you win, target creature gains double strike until end of turn."
+      "You may sacrifice a Food. If you do, target creature gets +4/+4 until end of turn. Otherwise, that creature gets +2/+2 until end of turn."
      ]
     },
     "changedBy": {}
    }
   ],
   "order": {
-   "6": [
-    "Springjack Knight (trigger)"
+   "7c": [
+    "Pippin's Bravery",
+    "Pippin's Bravery"
    ]
   },
   "effects": [
    {
-    "source": "Springjack Knight (trigger)",
-    "layer": "6",
-    "type": "add_ability",
+    "source": "Pippin's Bravery",
+    "layer": "7c",
+    "type": "modify_pt",
     "scope": "targeted",
     "target": "Grizzly Bears",
     "params": {
-     "ability": "Double strike"
+     "power": 4,
+     "toughness": 4
+    }
+   },
+   {
+    "source": "Pippin's Bravery",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "target": "Grizzly Bears",
+    "params": {
+     "power": 2,
+     "toughness": 2
     }
    }
   ]

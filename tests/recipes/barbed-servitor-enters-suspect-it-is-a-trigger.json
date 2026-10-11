@@ -1,0 +1,22 @@
+{
+  "name": "Barbed Servitor — \"When this creature enters, suspect it\" is a trigger, not static",
+  "notes": "Memory: project_asked_condition_toggles_2026-10-11. Conor (2026-10-11): this is to be an actual triggered ability. Just added, the Servitor is not suspected; firing the trigger suspects it (see the second recipe).",
+  "steps": [
+    {
+      "add": "Barbed Servitor",
+      "as": "servitor"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Barbed Servitor",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Suspected"
+          ]
+        }
+      }
+    }
+  ]
+}

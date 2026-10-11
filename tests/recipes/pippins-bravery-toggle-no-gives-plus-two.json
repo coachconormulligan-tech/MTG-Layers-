@@ -1,0 +1,42 @@
+{
+  "name": "Pippin's Bravery — toggle left at No gives +2/+2",
+  "notes": "Memory: project_asked_condition_toggles_2026-10-11. \"You may sacrifice a Food. If you do, target creature gets +4/+4 until end of turn. Otherwise, that creature gets +2/+2 until end of turn.\" Whether the Food was sacrificed cannot be read off the board, so the spell has a toggle labelled \"Sacrifice a Food\" (the same mechanism as Kicked). Here it is switched to Yes.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre"
+    },
+    {
+      "add": "Pippin's Bravery",
+      "as": "spell",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTarget",
+        "@spell",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 4,
+        "toughness": 4
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "power": 2,
+        "toughness": 2
+      }
+    }
+  ]
+}
