@@ -113,6 +113,8 @@ function _restrictionState(tState, fs, t) {
     toughness: src.toughness ?? t.printedToughness ?? null,
     abilities: src.abilities || t.printedAbilities || [],
     counters: src.counters || t.counters || {},
+    manaValue: src.manaValue ?? t.manaValue ?? 0,
+    isToken: !!t.isToken,
     traits: tState.traits || src.traits || t.traits || [],
   };
 }
