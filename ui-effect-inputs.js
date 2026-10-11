@@ -192,14 +192,17 @@ function renderChosenLandTypeInput(perm) {
   const basics = ['Plains', 'Island', 'Swamp', 'Mountain', 'Forest'];
   // "Choose a nonbasic land type" (March from Velis Vel): every land type but the five basics.
   const nonbasic = /\bchoose a nonbasic land type\b/i.test(perm.originalOracleText || '');
-  const types = nonbasic
+  // "Choose a land type" (Barbarian Guides): the basics first, then every other land type.
+  const anyType = /\bchoose a land type\b/i.test(perm.originalOracleText || '');
+  const others = (nonbasic || anyType)
     ? [...((typeof TypeCatalog !== 'undefined' && TypeCatalog.landTypes) || [])].filter(t => !basics.includes(t)).sort()
-    : basics;
+    : [];
+  const types = nonbasic ? others : [...basics, ...others];
   const options = types.map(t =>
     `<option value="${t}" ${val === t ? 'selected' : ''}>${t}</option>`
   ).join('');
   return `<div class="cda-counter-row chosen-color-row" onclick="event.stopPropagation()">
-    <span class="cda-label" title="Choose a ${nonbasic ? 'nonbasic' : 'basic'} land type">Land type:</span>
+    <span class="cda-label" title="Choose a ${nonbasic ? 'nonbasic ' : anyType ? '' : 'basic '}land type">Land type:</span>
     <select class="chosen-color-select" onchange="setChosenLandType('${perm.id}', this.value)">
       <option value="">— pick —</option>
       ${options}

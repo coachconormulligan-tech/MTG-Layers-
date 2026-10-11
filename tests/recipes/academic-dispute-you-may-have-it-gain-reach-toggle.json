@@ -1,0 +1,55 @@
+{
+  "name": "Academic Dispute — \"You may have it gain reach\" is a toggle on the spell, reach only for the target",
+  "notes": "Memory: project_may_action_behind_toggle_2026-10-11. \"Target creature blocks this turn if able. You may have it gain reach until end of turn.\" The reach was a global effect that could not be declined. It is now behind a toggle labelled with the offer, resolved to the spell's target; here the toggle is at Yes and only the target has reach.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre"
+    },
+    {
+      "add": "Academic Dispute",
+      "as": "ad",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTarget",
+        "@ad",
+        "@ogre"
+      ]
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@ad",
+        true
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Reach"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Reach"
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -848,7 +848,9 @@ const Battlefield = {
     const fakeCard = { name: sourcePerm.name, oracle_text: parsedEffectText, type_line: 'Instant', colors: sourcePerm.printedColors, cmc: 0 };
     // Detect "basic land type of your choice" in the ability text so the land-type
     // dropdown appears on the activated-ability pseudo-permanent (not on the source card).
-    if (/\bbasic land type of your choice\b|\bchoose a basic land type\b[^.]*\.[^\n]*\bbecomes? that type\b/i.test(parsedEffectText)) {
+    // Also "Choose a land type. Target creature you control gains snow landwalk of the chosen
+    // type" (Barbarian Guides).
+    if (/\bbasic land type of your choice\b|\bchoose a basic land type\b[^.]*\.[^\n]*\bbecomes? that type\b|\bchoose a (?:basic )?land type\b[^.]*\.[^\n]*\blandwalk of the chosen type\b/i.test(parsedEffectText)) {
       pseudoPerm.needsChosenLandType = true;
       pseudoPerm.chosenLandType = null;
       pseudoPerm.originalOracleText = parsedEffectText;
@@ -1778,6 +1780,12 @@ const Battlefield = {
     // Apply chosen basic land type substitution
     if (perm.chosenLandType) {
       const lt = perm.chosenLandType;
+      // "Choose a land type. … gains snow landwalk of the chosen type" → "gains snow forestwalk".
+      // (Giant Slug's "At the beginning of your next upkeep, choose a basic land type." goes too.)
+      if (/\blandwalk of the chosen type\b/i.test(oracleText)) {
+        oracleText = oracleText.replace(/\blandwalk of the chosen type\b/gi, `${lt.toLowerCase()}walk`)
+          .replace(/(?:at the beginning of [^,.]+,\s*)?choose a (?:basic )?land type\.\s*(\w)?/gi, (m, c) => c ? c.toUpperCase() : '');
+      }
       oracleText = oracleText.replace(/\bthe chosen (?:basic land )?type\b/gi, `a ${lt}`);
       oracleText = oracleText.replace(/\bthe basic land type of your choice\b/gi, `a ${lt}`);
       if (/\bchoose a basic land type\b/i.test(oracleText)) {

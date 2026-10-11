@@ -1,0 +1,14 @@
+{
+  "name": "Giant Slug — \"landwalk of the chosen type\" only when fired, with the chosen type",
+  "notes": "\"{5}: At the beginning of your next upkeep, choose a basic land type. This creature gains landwalk of the chosen type until the end of that turn.\" The landwalk catch-all read the activated ability's effect as a static global \"Landwalk\" grant on the permanent, and the fired ability gave a bare \"Landwalk\". The catch-all now skips activated effects and \"landwalk of the chosen type\"; the fired ability asks for the land type and grants that landwalk to its source only.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Giant Slug", "as": "slug" },
+    { "fire": "@slug", "activated": 0, "as": "fired" },
+    { "call": ["setChosenLandType", "@fired", "Swamp"] }
+  ],
+  "asserts": [
+    { "perm": "Giant Slug", "final": { "abilities": { "$includes": ["Swampwalk"], "$excludes": ["Landwalk"] } } },
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$excludes": ["Swampwalk", "Landwalk"] } } }
+  ]
+}

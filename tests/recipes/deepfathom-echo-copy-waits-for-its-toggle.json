@@ -1,0 +1,35 @@
+{
+  "name": "Deepfathom Echo — \"Then you may have it become a copy\" at No: not a copy even with a creature picked",
+  "notes": "Memory: project_may_action_behind_toggle_2026-10-11. \"This creature explores. Then you may have it become a copy of another creature you control until end of turn.\" The copy is behind a toggle of its own; copy effects now take their line's toggle condition, so at No the Echo stays itself although a creature to copy has been picked.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Deepfathom Echo",
+      "as": "echo"
+    },
+    {
+      "fire": "@echo",
+      "trigger": 0,
+      "as": "fired"
+    },
+    {
+      "copy": [
+        "@fired",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Deepfathom Echo",
+      "final": {
+        "name": "Deepfathom Echo",
+        "power": 4,
+        "toughness": 4
+      }
+    }
+  ]
+}

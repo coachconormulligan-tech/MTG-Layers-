@@ -686,6 +686,30 @@ function _branchIsContinuous(body) {
   body = body.replace(/^until end of turn,\s+/i, '');
   return _BRANCH_CONTINUOUS_VERB_RE.test(body) && !/^you\b/i.test(body) && !/\blife\b|\bcounters?\b/i.test(body);
 }
+// The optional action a toggle is named after — "You may gain control of target permanent until
+// end of turn." (Dominus of Fealty), "You may have target creature get +2/+0 …" — is itself a
+// continuous effect, so it waits for the toggle too. Not counters or life, which are put on by
+// hand. (_addAbilityPseudo has already written some offers as plain sentences: "This card
+// becomes a legendary Equipment …" — The Irencrag.)
+function _branchOfferIsContinuous(sentence) {
+  const offer = sentence.replace(/^(?:then\s+)?you may\s+/i, '');
+  if (/\blife\b|\bcounters?\b/i.test(offer)) return false;
+  if (offer === sentence) return _branchIsContinuous(offer);
+  return /^(?:have\s+[^,.]*?\s)?(?:gain control of|exchange control of)\b/i.test(offer) ||
+    /^have\s+[^,]+?\s(?:get|gain|become|lose|have)\b/i.test(offer) ||
+    /^(?:goad|suspect|switch)\b/i.test(offer);
+}
+// "You may have target creature get +4/+0" / "have it become a 0/0 Elemental creature" with the
+// permanent as the subject, as the effect parsers expect it: "Target creature gets +4/+0".
+function _branchOfferBody(sentence) {
+  return sentence.replace(/^(?:then\s+)?you may\s+/i, '').replace(/\.$/, '')
+    .replace(/^have\s+(.+?)\s+(get|gain|become|lose|have)\b/i, (all, subject, verb) => {
+      // (A player, or a "…'s base power" phrase, is not the permanent that changes.)
+      if (/'s base (?:power|toughness)\b|^the base (?:power|toughness)\b|^(?:that|target|an|each|the) (?:player|opponent)\b/i.test(subject)) return all;
+      const singular = /^(?:it|this|that|another target|target|enchanted|equipped)\b/i.test(subject);
+      return `${subject} ${!singular ? verb : verb.toLowerCase() === 'have' ? 'has' : verb + 's'}`;
+    });
+}
 // The permanents a spell's "it" / "that creature" / "those creatures" / "they" stands for:
 // the subject (or target) of the nearest earlier sentence on the line. null when there is
 // none, or when the pronoun is something the spell just made.
@@ -761,7 +785,7 @@ function _splitConditionalBranches(text, isSpell, canParse) {
   const origLines = lines.slice();
   const out = { text, baseLineCount: lines.length, branchLines: new Map(), alwaysOnLines: new Set(), ownSlotLines: new Set(),
                 costLabel: null, costLabel2: null, costLabels: [] };
-  if (!/\botherwise,|\bif (?:x|\d+) is \d+ or\b|\bif this spell(?:'s \w+ cost)? was\b|\bto cast (?:this|that) spell[,.]|\bif you cast this spell during\b|\bif evidence was collected\b|\bgets more votes,|\b(?:if|as long as) it(?:'s| is| isn't| doesn't have| has)\b|\.[ ]+[^.\n]*\bif\b|\n(?:[A-Z][\w']*(?: [\w']+)* — )?if\b|\bwhen you do,/i.test(text)) return out;
+  if (!/\botherwise,|\bif (?:x|\d+) is \d+ or\b|\bif this spell(?:'s \w+ cost)? was\b|\bto cast (?:this|that) spell[,.]|\bif you cast this spell during\b|\bif evidence was collected\b|\bgets more votes,|\b(?:if|as long as) it(?:'s| is| isn't| doesn't have| has)\b|\.[ ]+[^.\n]*\bif\b|\n(?:[A-Z][\w']*(?: [\w']+)* — )?if\b|\bwhen you do,|\.[ ]+(?:then )?you may\b/i.test(text)) return out;
   // A spell has at most two toggles (Cankerous Thirst's {B} and {G}): with more cast conditions
   // than that, its branches are left where they are.
   const castLabels = new Set();
@@ -932,6 +956,31 @@ function _splitConditionalBranches(text, isSpell, canParse) {
       // (A condition sentence that opens a later line of a spell — Efflorescence's "Corrupted —
       // If an opponent has three or more poison counters, that creature also gains …" — is read
       // here only when its condition has to be asked; a readable one is the line's own condition.)
+      // "Return target creature to its owner's hand. You may have Shapeshifters you control
+      // become copies of that creature until end of turn." (Absorb Identity), "… Then you may
+      // have it become a 0/0 Elemental creature until end of turn." (Crawling Barrens): an
+      // optional continuous effect after something else the spell or ability does is asked
+      // with a toggle of its own. (One followed by "If you do, …" shares that sentence's toggle,
+      // below. A lone "you may …" is not asked: firing the ability is the choice.)
+      const mayLater = isSpell && !quoted && i > 0 && !moved.has(i) && /^(?:Then\s+)?you may\s/i.test(sentences[i]) &&
+        !/^(?:If|When) you do\b/i.test(sentences[i + 1] || '') && _branchOfferIsContinuous(sentences[i]);
+      if (mayLater) {
+        const offered = _branchOfferBody(sentences[i]);
+        // An instruction about "it" ("gain control of it") would lose its object on a line of its own.
+        const body = /^(?:have\s|gain control|exchange control|goad|suspect|switch)\b/i.test(offered)
+          ? (/\b(?:it|them|that (?:creature|permanent|card)|those \w+)\b/i.test(offered) ? null
+            : (/^have\s/i.test(offered) ? 'You may ' : '') + offered)
+          : _branchResolveSubject(offered, sentences, i, true);
+        const label = body && askLabel(sentences[i].replace(/^(?:Then\s+)?you may\s+/i, '').replace(/\.$/, ''), sentences, i);
+        if (label) {
+          // "It's still a land." (Nissa of Shadowed Boughs) belongs to the sentence it follows.
+          const still = /^(?:it|they)(?:'s|'re| is| are) still\b/i.test(sentences[i + 1] || '') ? ' ' + sentences[i + 1] : '';
+          add(`If ${costToken(label, true)}, ${cap1(body)}.${still}`, li);
+          moved.add(i);
+          if (still) moved.add(i + 1);
+          continue;
+        }
+      }
       const opensLaterLine = i === 0 && li > 0;
       const plain = isSpell && !quoted && (i > 0 || opensLaterLine) && !rider && !_branchCastClauses(sentences[i]).length && !/^If (?:X|\d+) is \d+ or\b/i.test(sentences[i]);
       // (An ability word in front — "Corrupted — If …" — is flavour.)
@@ -962,6 +1011,14 @@ function _splitConditionalBranches(text, isSpell, canParse) {
         if (/^you do$/i.test(cond.trim()) && !/^Otherwise,/i.test(sentences[i + 1] || '')) {
           const label = askLabel(cond, sentences, i);
           const gated = [];
+          // The optional action itself ("You may gain control of target permanent …") happens
+          // only at Yes as well (Conor, 2026-10-11). Left alone when it speaks of an "it" named
+          // earlier on the line, which a line of its own would lose.
+          // ("Earthbend 2. When you do, …" — Earth Rumble — offers nothing: the land, written out
+          // by now as "becomes a 0/0 creature with haste that's still a land", simply changes.)
+          const offer = label && i > 0 && !moved.has(i - 1) && _branchOfferIsContinuous(prev) &&
+            !/\bbecomes a 0\/0 creature with haste that(?:'s| is) still a land\b/i.test(prev) &&
+            !(i > 1 && /^(?:then\s+)?(?:you may\s+)?(?:have\s+)?(?:it|that|those|they)\b/i.test(prev)) ? prev : null;
           if (label) {
             const own = _branchIsContinuous(body) ? _branchResolveSubject(body, sentences, i, true) : null;
             if (own) gated.push([i, own]);
@@ -973,7 +1030,16 @@ function _splitConditionalBranches(text, isSpell, canParse) {
               if (nextBody) gated.push([j, nextBody]);
             }
           }
-          if (gated.length) {
+          if (offer) {
+            // An "If you do, …" that is no continuous effect of its own ("untap this card, goad
+            // it, …" — Slicer, Hired Muscle) stays on the offer's line, behind the toggle with it.
+            const ownGated = gated.some(([j]) => j === i);
+            const offerText = /^(?:then\s+)?you may have target\b/i.test(offer) ? _branchOfferBody(offer) + '.' : offer;
+            add(`If ${costToken(label, true)}, ${cap1(offerText)}${ownGated ? '' : ' ' + cap1(body) + '.'}`, li);
+            moved.add(i - 1);
+            if (!ownGated) moved.add(i);
+          }
+          if (gated.length || offer) {
             for (const [j, text] of gated) { add(`If ${costToken(label, true)}, ${cap1(text)}.`, li); moved.add(j); }
             continue;
           }

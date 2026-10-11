@@ -1,0 +1,46 @@
+{
+  "name": "Dominus of Fealty — toggle at No: no control change and no haste",
+  "notes": "Memory: project_may_action_behind_toggle_2026-10-11. \"You may gain control of target permanent until end of turn. If you do, untap it and it gains haste until end of turn.\" The toggle \"Gain control of target permanent until end of turn\" at No used to withhold only the haste; the control effect applied anyway. The optional action itself now sits behind the same toggle (Conor's decision), and control effects take their line's toggle condition.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Dominus of Fealty",
+      "as": "dom"
+    },
+    {
+      "fire": "@dom",
+      "trigger": 1,
+      "as": "fired"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@fired",
+        "@ogre"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "controller": "player_1",
+        "abilities": {
+          "$excludes": [
+            "Haste"
+          ]
+        }
+      }
+    }
+  ]
+}

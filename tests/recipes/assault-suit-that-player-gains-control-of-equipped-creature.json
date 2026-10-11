@@ -1,6 +1,6 @@
 {
   "name": "Assault Suit — that player gains control of equipped creature",
-  "notes": "Found by tests/sweep.py. 'You may have that player gain control of equipped creature' was read as you gaining control of everything (global, no filter). It now gives the equipped creature to the player picked in the dropdown and leaves the Suit and everything else alone.",
+  "notes": "Found by tests/sweep.py. 'You may have that player gain control of equipped creature' was read as you gaining control of everything (global, no filter). It now gives the equipped creature to the player picked in the dropdown and leaves the Suit and everything else alone. Since 2026-10-11 the optional (\"you may\") effect waits for its toggle, which this recipe sets to Yes.",
   "steps": [
     {
       "call": [
@@ -48,6 +48,13 @@
         "setTargetPlayer",
         "@trigger",
         "p2"
+      ]
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@trigger",
+        true
       ]
     }
   ],

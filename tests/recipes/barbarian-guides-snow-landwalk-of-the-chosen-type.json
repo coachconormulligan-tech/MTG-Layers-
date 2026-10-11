@@ -1,0 +1,15 @@
+{
+  "name": "Barbarian Guides — \"snow landwalk of the chosen type\" asks for the land type",
+  "notes": "\"Choose a land type. Target creature you control gains snow landwalk of the chosen type until end of turn.\" produced no effect and no target picker (audit: no-targeted-effect). The fired ability now carries the land-type input; once a type is chosen the text reads \"gains snow forestwalk\", which the landwalk catch-all grants to the target (it now accepts a snow / nonbasic prefix).",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Barbarian Guides", "as": "guides" },
+    { "fire": "@guides", "activated": 0, "as": "fired" },
+    { "call": ["setChosenLandType", "@fired", "Forest"] },
+    { "call": ["setTarget", "@fired", "@bears"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$includes": ["Snow forestwalk"] } } },
+    { "perm": "Barbarian Guides", "final": { "abilities": { "$excludes": ["Snow forestwalk"] } } }
+  ]
+}

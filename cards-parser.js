@@ -241,10 +241,12 @@ const CONDITION_PARSERS = [
     if (!m) return null;
     const field = 'additionalCostPaid' + (m[1] ? m[1].trim() : '');
     const wantPaid = !m[2];
-    return () => {
+    const asked = () => {
       const src = typeof Battlefield !== 'undefined' ? Battlefield.getPermById(srcId) : null;
       return !!(src && src[field]) === wantPaid;
     };
+    asked._toggle = true;
+    return asked;
   },
 
   // "[6 is 6 or more]" / "[X is 4 or greater]" — what _splitConditionalBranches writes for a
@@ -323,9 +325,10 @@ const CONDITION_PARSERS = [
   // (a/all/each/their/every) counts across every player. Reuses _zoneCardMatchesQualifier
   // (engine-compute.js) so the qualifier ("creature", "Zombie creature", etc.) is honored.
   (ct) => {
-    const m = ct.match(/there (?:are|is)\s+(\w+)\s+or\s+more\s+(.+?)\s+cards?\s+in\s+(your|a|an|all|each|their|every)?\s*(graveyards?|exile)\b/);
+    // Also "there is a Lesson card in your graveyard" (Fire Nation Cadets): one or more.
+    const m = ct.match(/there (?:are|is)\s+(\w+\s+or\s+more|an?)\s+(.+?)\s+cards?\s+in\s+(your|a|an|all|each|their|every)?\s*(graveyards?|exile)\b/);
     if (!m) return null;
-    const threshold = _wordThresh(m[1]);
+    const threshold = /^an?$/.test(m[1]) ? 1 : _wordThresh(m[1].split(/\s+/)[0]);
     const qualifier = m[2].trim();
     const yoursOnly = (m[3] || '').toLowerCase() === 'your';
     const zone = /exile/.test(m[4]) ? 'exile' : 'graveyard';
@@ -1058,6 +1061,12 @@ function parseCardEffects(permanent, card, opts = {}) {
   // is the pronoun "that creature"; with "also" left in it read as every creature.
   oracle = oracle.replace(/\b(that (?:creature|permanent|land|artifact|enchantment|planeswalker)) also (?=(?:gains?|gets?|has)\b)/gi, '$1 ');
 
+  // "Choose target Human or artifact an opponent controls. For as long as this creature remains
+  // on the battlefield, gain control of that permanent, …" (Opportunistic Dragon): the permanent
+  // taken is the target just chosen, so its restriction goes where the pronoun stood.
+  oracle = oracle.replace(/(^|\n)Choose (target [^.\n"]+)\.\s+([^.\n"]*?\bgain control of )that (?:permanent|creature|artifact|land)\b/gi,
+    (_, pre, chosen, lead) => pre + lead.charAt(0).toUpperCase() + lead.slice(1) + chosen);
+
   // "Untap all attacking creatures. They gain trample …" → "All attacking creatures gain trample …"
   oracle = _resolveTheyPronoun(oracle);
   if (permanent.isSpell) oracle = _resolveItPronoun(oracle);
@@ -1266,6 +1275,15 @@ function parseCardEffects(permanent, card, opts = {}) {
     const rebuilt = [];
     let didRewrite = false;
     for (const line of oLines) {
+      // A spell's "Target creature gains your choice of lifelink or indestructible until end of
+      // turn." (Orcish Medicine): one mode per item, as a fired ability gets one option per item.
+      const choiceOf = permanent.isSpell && /\byour choice of\b/i.test(line) && !line.includes('"')
+        ? _yourChoiceOfOptions(line.trim()) : null;
+      if (choiceOf) {
+        rebuilt.push('Choose one —', ...choiceOf.map(o => '• ' + o));
+        didRewrite = true;
+        continue;
+      }
       const m = line.trim().match(inlineChoiceRegex);
       // "choose a player or planeswalker that opponent is attacking. …" (Tahngarth, First Mate)
       // picks a player or an object, not one of several abilities.
@@ -2228,12 +2246,17 @@ function parseCardEffects(permanent, card, opts = {}) {
     // statically — it will be re-parsed when the activated ability fires, and remapped to
     // target the original source via _addAbilityPseudo. copyClauseSpans is still populated
     // above so other regex parsers (addTypeRegex etc.) don't refire on the "except" clause.
+    // A copy on a line behind a toggle ("You may have this card become a copy of …. If you do,
+    // …" — Gogo, Mysterious Mime) waits for the toggle like the rest of the line.
+    const _cpToggle = _getConditionForPos(copyMatch.index);
+    const _cpAsked = _cpToggle && _cpToggle._toggle ? _cpToggle : null;
     if (_massCopy) {
       const _mcSubj = _massCopy.subject.charAt(0).toUpperCase() + _massCopy.subject.slice(1);
-      pushEff('1', EFFECT_TYPE.COPY, copyParams,
+      const _mcEff = pushEff('1', EFFECT_TYPE.COPY, copyParams,
         { appliesTo: _massCopy.fn, scope: 'global', selfTarget: false, affectsSelf: !_massCopy.excludesSelf },
         `${_mcSubj}: each becomes a copy of ${_mcLinkedCard ? 'the revealed card' : _mcPrintedDesc}${exceptClause ? ', except ' + exceptClause : ''}.`,
         { _oraclePos: copyMatch.index });
+      if (_cpAsked) _mcEff.asLongAsCondition = _cpAsked;
       for (const kw of _mcGainedKeywords) {
         const _kwCap = kw.charAt(0).toUpperCase() + kw.slice(1);
         pushEff('6', EFFECT_TYPE.ADD_ABILITY, { ability: _kwCap },
@@ -2244,6 +2267,7 @@ function parseCardEffects(permanent, card, opts = {}) {
       const _cpEff = pushEff('1', EFFECT_TYPE.COPY, copyParams,
         { appliesTo: null, scope: 'targeted', selfTarget: !isBecomesCopy || _isExiledCardCopy },
         `${isBecomesCopy ? 'Becomes' : 'Enter as'} a copy of ${targetDesc}${exceptClause ? ', except ' + exceptClause : ''}.`);
+      if (_cpAsked) _cpEff.asLongAsCondition = _cpAsked;
       // "Any number of target creatures you control each become a copy of that creature"
       // (Polymorphous Rush): the copies are the targets, as many as were picked.
       if (isBecomesCopy) {
@@ -4519,11 +4543,16 @@ function parseCardEffects(permanent, card, opts = {}) {
   }
 
   // Catch-all for "[X]walk" abilities not in the keyword list (handles text-changed landwalk).
-  const walkAbilityRegex = /(?:^|\.|;)\s*(.+?)\s+(?:you (?:control|own)\s+)?(?:have|has|gain|gains)\s+(\w+walk)\b/gmi;
+  const walkAbilityRegex = /(?:^|\.|;)\s*(.+?)\s+(you (?:control|own)\s+)?(?:have|has|gain|gains)\s+((?:snow\s+|nonbasic\s+)?\w+walk)\b(?!\s+of the chosen type)/gmi;
   let walkMatch;
   while ((walkMatch = walkAbilityRegex.exec(oracle)) !== null) {
+    // The effect of an activated ability ("{5}: … This creature gains landwalk of the chosen
+    // type …" — Giant Slug) waits for the ability to be fired.
+    if (_isInActivatedEffect(_getMatchContentPos(walkMatch.index))) continue;
     let filterText = walkMatch[1].trim();
-    const ability = walkMatch[2].charAt(0).toUpperCase() + walkMatch[2].slice(1);
+    // "Target creature you control gains …": whose creature it is limits the target.
+    if (walkMatch[2] && /\btarget\b/i.test(filterText)) filterText += ' ' + walkMatch[2].trim();
+    const ability = walkMatch[3].charAt(0).toUpperCase() + walkMatch[3].slice(1);
     // Fix: cross-sentence filter cleanup
     if (filterText.includes('.')) {
       const segments = filterText.split(/\.\s*/);
@@ -4536,12 +4565,14 @@ function parseCardEffects(permanent, card, opts = {}) {
     if (effects.some(e => e.layer === '6' && e.params.ability === ability && e.sourceId === permanent.id)) continue;
     // Skip if filterText doesn't reference permanents
     if (!filterReferencesPermanents(filterText)) continue;
-    const { fn, desc, isSelf, isTargeted } = buildAppliesToFromText(filterText);
+    const walkApplies = buildAppliesToFromText(filterText);
+    const { fn, desc, isSelf, isTargeted } = walkApplies;
     const selfAffect = isSelf ? true : detectSelfAffect(filterText);
     const walkCond = _getConditionForPos(walkMatch.index);
     const walkEff = pushEff('6', EFFECT_TYPE.ADD_ABILITY, { ability },
       { isSelf, isTargeted, fn, selfAffect },
       `${filterText} have ${ability}. ${desc}`);
+    _applyTargetInfo(walkEff, walkApplies, fn);
     if (walkCond) walkEff.asLongAsCondition = walkCond;
   }
 
@@ -4950,6 +4981,13 @@ function parseCardEffects(permanent, card, opts = {}) {
     {
       const _becomesList = stripDurationPrefix(filterSubject).match(/^(this (?:card|creature|permanent)|(?:up to \w+ |another )?target [^,.]+?)\s+becomes?\s+[^"]*,$/i);
       if (_becomesList) filterSubject = _becomesList[1];
+    }
+    // "…, gain control of target Human or artifact an opponent controls, target Human or artifact
+    // loses all abilities, …" (Opportunistic Dragon): the subject is the last item of the list,
+    // not the clauses before it.
+    {
+      const _afterControl = filterSubject.match(/\bgain control of [^,]+,\s+(?:and\s+)?((?:up to \w+ |another )?target [^,]+)$/i);
+      if (_afterControl) filterSubject = _afterControl[1];
     }
     // Skip enchanted/equipped — handled below
     if (/enchanted|equipped/i.test(filterSubject)) continue;
@@ -5841,7 +5879,20 @@ function parseCardEffects(permanent, card, opts = {}) {
     const otherPlayerSubjectRe = /(?:^|[\s,])((?:(?:target|that|an|each|another|the chosen)\s+(?:opponent|player)(?:\s+of your choice)?|the\s+player(?:\s+(?:to your (?:left|right)|with the most life))?|they|its\s+(?:owner|controller))(?:\s+each)?)\s+(?:may\s+)?$/i;
     let gcMatch;
     let emittedControl = false;
+    // A control effect on a line behind a toggle ("If [additional cost paid], You may gain
+    // control of target permanent …" — Dominus of Fealty) waits for the toggle like the rest
+    // of the line. Run for the effects of the match before, and once after the last.
+    let _gcPrev = null;
+    const _gcTakeToggle = () => {
+      const toggle = _gcPrev ? _getConditionForPos(_gcPrev.pos) : null;
+      if (!toggle || !toggle._toggle) return;
+      for (let k = _gcPrev.from; k < effects.length; k++) {
+        if (effects[k].type === EFFECT_TYPE.CONTROL && !effects[k].asLongAsCondition) effects[k].asLongAsCondition = toggle;
+      }
+    };
     while ((gcMatch = gainControlRegex.exec(oracle)) !== null) {
+      _gcTakeToggle();
+      _gcPrev = { pos: gcMatch.index, from: effects.length };
       // Skip if inside a triggered ability sentence (When/Whenever/At)
       const lineStart = oracle.lastIndexOf('\n', gcMatch.index);
       const lineText = oracle.substring(lineStart + 1, gcMatch.index + gcMatch[0].length);
@@ -5872,6 +5923,8 @@ function parseCardEffects(permanent, card, opts = {}) {
         .replace(/[.,;]?\s*$/, '')
         .replace(/\s+(?:until end of turn|until the end of [^,]+|for as long as\b.*|this turn)(?=,|\s|$).*$/i, '')
         .replace(/,\s+(?:then|untap|and)\b.*$/i, '')
+        // ", target Human or artifact loses all abilities, …": the next clause of the list.
+        .replace(/,\s+(?:it|they|target [^,]+?)\s+(?:loses?|gains?|gets?|has|have|becomes?)\b.*$/i, '')
         .replace(/\s+and\s+(?:it|they|untap|that)\b.*$/i, '')
         .trim();
       const subjectText = oracle.slice(_clauseStart(gcMatch.index), gcMatch.index);
@@ -6139,6 +6192,8 @@ function parseCardEffects(permanent, card, opts = {}) {
         if (alt) permanent.additionalCostLabel = alt[1].charAt(0).toUpperCase() + alt[1].slice(1).toLowerCase() + ' cost paid';
       }
     }
+
+    _gcTakeToggle();
 
     // "you control enchanted [type]" on auras → Layer 2 CONTROL for the enchanted permanent
     const youControlEnchanted = oracle.match(/\byou control enchanted (creature|permanent|artifact|enchantment|land|planeswalker)\b/i);

@@ -1,0 +1,42 @@
+{
+  "name": "Crawling Barrens — \"Then you may have it become a creature\" toggle at Yes: 0/0 Elemental land creature",
+  "notes": "Memory: project_may_action_behind_toggle_2026-10-11. Companion to crawling-barrens-you-may-toggle-no-stays-a-land: with the toggle at Yes the land is a 0/0 Elemental creature that is still a land (\"It's still a land.\" travels with the sentence it follows).",
+  "steps": [
+    {
+      "add": "Crawling Barrens",
+      "as": "barrens"
+    },
+    {
+      "fire": "@barrens",
+      "activated": 1,
+      "as": "fired"
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@fired",
+        true
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Crawling Barrens",
+      "final": {
+        "types": {
+          "$includes": [
+            "Land",
+            "Creature"
+          ]
+        },
+        "subtypes": {
+          "$includes": [
+            "Elemental"
+          ]
+        },
+        "power": 0,
+        "toughness": 0
+      }
+    }
+  ]
+}

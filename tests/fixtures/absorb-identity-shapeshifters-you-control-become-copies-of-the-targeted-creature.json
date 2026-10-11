@@ -1,6 +1,6 @@
 {
  "name": "Absorb Identity — Shapeshifters you control become copies of the targeted creature",
- "notes": "Sweep group 5, mass copies (2026-10-07). \"You may have Shapeshifters you control become copies of that creature until end of turn.\" parsed to nothing: the copy parser only read \"a copy of\". A mass copy is one layer 1 copy effect over the whole group; what is copied is picked with the copy picker and is never one of the copies. Woodland Changeling (a Shapeshifter) becomes Hill Giant; Grizzly Bears is no Shapeshifter and stays.",
+ "notes": "Sweep group 5, mass copies (2026-10-07). \"You may have Shapeshifters you control become copies of that creature until end of turn.\" parsed to nothing: the copy parser only read \"a copy of\". A mass copy is one layer 1 copy effect over the whole group; what is copied is picked with the copy picker and is never one of the copies. Woodland Changeling (a Shapeshifter) becomes Hill Giant; Grizzly Bears is no Shapeshifter and stays. Since 2026-10-11 the optional (\"you may\") effect waits for its toggle, which this recipe sets to Yes.",
  "recipe": {
   "steps": [
    {
@@ -24,6 +24,13 @@
     "copy": [
      "@s",
      "@g"
+    ]
+   },
+   {
+    "call": [
+     "setAdditionalCostPaid",
+     "@s",
+     true
     ]
    }
   ]
@@ -215,6 +222,7 @@
     "xValue": null,
     "additionalCostPaid": false,
     "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
     "chosenCreatureType": null,
     "chosenColor": null,
     "chosenCardName": null,
@@ -396,6 +404,7 @@
     "xValue": null,
     "additionalCostPaid": false,
     "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
     "chosenCreatureType": null,
     "chosenColor": null,
     "chosenCardName": null,
@@ -574,6 +583,7 @@
     "xValue": null,
     "additionalCostPaid": false,
     "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
     "chosenCreatureType": null,
     "chosenColor": null,
     "chosenCardName": null,
@@ -755,8 +765,9 @@
     "classLevel": null,
     "hasXValue": false,
     "xValue": null,
-    "additionalCostPaid": false,
+    "additionalCostPaid": true,
     "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
     "chosenCreatureType": null,
     "chosenColor": null,
     "chosenCardName": null,
