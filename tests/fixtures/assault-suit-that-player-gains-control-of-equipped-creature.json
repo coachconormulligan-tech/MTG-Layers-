@@ -1,6 +1,6 @@
 {
  "name": "Assault Suit — that player gains control of equipped creature",
- "notes": "Found by tests/sweep.py. 'You may have that player gain control of equipped creature' was read as you gaining control of everything (global, no filter). It now gives the equipped creature to the player picked in the dropdown and leaves the Suit and everything else alone.",
+ "notes": "Found by tests/sweep.py. 'You may have that player gain control of equipped creature' was read as you gaining control of everything (global, no filter). It now gives the equipped creature to the player picked in the dropdown and leaves the Suit and everything else alone. Since 2026-10-11 the optional (\"you may\") effect waits for its toggle, which this recipe sets to Yes.",
  "recipe": {
   "steps": [
    {
@@ -49,6 +49,13 @@
      "setTargetPlayer",
      "@trigger",
      "p2"
+    ]
+   },
+   {
+    "call": [
+     "setAdditionalCostPaid",
+     "@trigger",
+     true
     ]
    }
   ]
@@ -224,11 +231,16 @@
     "hasXValue": false,
     "xValue": null,
     "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
     "chosenCreatureType": null,
     "chosenColor": null,
     "chosenCardName": null,
+    "chosenExileIndex": null,
     "chosenLandType": null,
     "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
     "targetOpponentPlayerId": null,
     "targetPlayerId": null,
     "enchantedPlayerId": null,
@@ -241,6 +253,7 @@
     "targetTs": null,
     "slotTs": {},
     "copyTargetPermId": null,
+    "refPermId": null,
     "choices": null,
     "firedAtSnapshot": null
    },
@@ -393,11 +406,16 @@
     "hasXValue": false,
     "xValue": null,
     "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
     "chosenCreatureType": null,
     "chosenColor": null,
     "chosenCardName": null,
+    "chosenExileIndex": null,
     "chosenLandType": null,
     "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
     "targetOpponentPlayerId": null,
     "targetPlayerId": null,
     "enchantedPlayerId": null,
@@ -410,6 +428,7 @@
     "targetTs": null,
     "slotTs": {},
     "copyTargetPermId": null,
+    "refPermId": null,
     "choices": null,
     "firedAtSnapshot": null
    },
@@ -566,11 +585,16 @@
     "hasXValue": false,
     "xValue": null,
     "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
     "chosenCreatureType": null,
     "chosenColor": null,
     "chosenCardName": null,
+    "chosenExileIndex": null,
     "chosenLandType": null,
     "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
     "targetOpponentPlayerId": null,
     "targetPlayerId": null,
     "enchantedPlayerId": null,
@@ -583,6 +607,7 @@
     "targetTs": null,
     "slotTs": {},
     "copyTargetPermId": null,
+    "refPermId": null,
     "choices": null,
     "firedAtSnapshot": null
    },
@@ -733,11 +758,16 @@
     "hasXValue": false,
     "xValue": null,
     "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
     "chosenCreatureType": null,
     "chosenColor": null,
     "chosenCardName": null,
+    "chosenExileIndex": null,
     "chosenLandType": null,
     "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
     "targetOpponentPlayerId": null,
     "targetPlayerId": null,
     "enchantedPlayerId": null,
@@ -750,6 +780,7 @@
     "targetTs": 5,
     "slotTs": {},
     "copyTargetPermId": null,
+    "refPermId": null,
     "choices": null,
     "firedAtSnapshot": null
    }
@@ -764,9 +795,17 @@
     "commanderIdx": null,
     "abilityIndex": 1,
     "timestamp": 6,
-    "effectText": "you may have that player gain control of equipped creature until end of turn. If you do, untap it.",
+    "effectText": "You may have that player gain control of equipped creature until end of turn. If you do, untap it.",
+    "xValue": null,
+    "hasXValue": false,
+    "cdaUserValue": null,
+    "linkedCards": null,
     "fullText": "At the beginning of each opponent's upkeep, you may have that player gain control of equipped creature until end of turn. If you do, untap it.",
     "chosenColor": null,
+    "additionalCostPaid": true,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "guessedTargetSubjects": [],
     "owner": "player_0",
     "controller": "player_0",
     "equipTargetId": null,
@@ -887,6 +926,7 @@
     "targetTs": 6,
     "slotTs": {},
     "copyTargetPermId": null,
+    "refPermId": null,
     "choices": null
    }
   ],
@@ -903,12 +943,14 @@
      "isYourTurn": true,
      "isMonarch": false,
      "hasInitiative": false,
+     "hasCityBlessing": false,
      "poisonCounters": 0,
      "experienceCounters": 0,
      "customCounters": {}
     },
     "commanders": [],
     "graveyard": [],
+    "libraryTop": null,
     "emblems": []
    },
    {
@@ -923,12 +965,14 @@
      "isYourTurn": false,
      "isMonarch": false,
      "hasInitiative": false,
+     "hasCityBlessing": false,
      "poisonCounters": 0,
      "experienceCounters": 0,
      "customCounters": {}
     },
     "commanders": [],
     "graveyard": [],
+    "libraryTop": null,
     "emblems": []
    }
   ],

@@ -1,0 +1,13 @@
+{
+  "name": "Fire Nation Cadets — no Lesson card in your graveyard: no firebending",
+  "notes": "\"This creature has firebending 2 as long as there's a Lesson card in your graveyard.\" was granted unconditionally (the condition was not readable). The graveyard card-count condition (\"there are N or more X cards in your graveyard\") now also reads \"there is a/an X card in …\" as one or more, checked against the graveyard zone. Here the graveyard holds a non-Lesson card and the opponent's graveyard holds a Lesson, so the Cadets have no firebending.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Fire Nation Cadets", "as": "cadets" },
+    { "call": ["addToGraveyard", "p1", "card:Lightning Bolt"] },
+    { "call": ["addToGraveyard", "p2", "card:Environmental Sciences"] }
+  ],
+  "asserts": [
+    { "perm": "Fire Nation Cadets", "final": { "abilities": { "$excludes": ["Firebending 2"] } } }
+  ]
+}

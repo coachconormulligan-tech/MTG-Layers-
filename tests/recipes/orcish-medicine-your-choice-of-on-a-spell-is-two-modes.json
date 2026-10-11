@@ -1,0 +1,13 @@
+{
+  "name": "Orcish Medicine — a spell's \"your choice of lifelink or indestructible\" is two modes",
+  "notes": "\"Target creature gains your choice of lifelink or indestructible until end of turn.\" on a spell produced no effect and no way to choose (audit: no-targeted-effect). A spell line with \"your choice of A or B\" is rewritten into one mode per item (_yourChoiceOfOptions, as a fired ability's options), so the spell's mode pop-up offers them. Here the second mode is picked: the target gains indestructible and not lifelink.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Orcish Medicine", "as": "med", "spell": true },
+    { "call": ["setModalModeSelections", "@med", [1]] },
+    { "call": ["setModalModeTarget", "@med", 1, "@bears"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$includes": ["Indestructible"], "$excludes": ["Lifelink"] } } }
+  ]
+}

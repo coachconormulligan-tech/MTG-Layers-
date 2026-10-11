@@ -1,0 +1,58 @@
+{
+  "name": "Opportunistic Dragon — fired trigger takes a Human or artifact, which loses all abilities",
+  "notes": "\"Choose target Human or artifact an opponent controls. For as long as this creature remains on the battlefield, gain control of that permanent, it loses all abilities, and it can't attack or block.\" The control effect's \"that permanent\" had no Human-or-artifact restriction (the picker listed every permanent an opponent controls) and \"it loses all abilities\" was a global effect with a junk filter built from the whole sentence, so the target kept its abilities. The chosen target's words now stand where \"that permanent\" stood, the control object stops at the next clause of the list, and the lose-all subject is the last item of the list. Targeting the opponent's Llanowar Elves (not a Human or artifact) is not asserted; the Human target changes hands and loses its abilities, and the opponent's other creature keeps its own.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Llanowar Elves",
+      "as": "elves",
+      "controller": "p2"
+    },
+    {
+      "add": "Thraben Inspector",
+      "as": "human",
+      "controller": "p2"
+    },
+    {
+      "add": "Opportunistic Dragon",
+      "as": "dragon"
+    },
+    {
+      "fire": "@dragon",
+      "trigger": 1,
+      "as": "fired"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@fired",
+        "@human"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Thraben Inspector",
+      "final": {
+        "controller": "player_0",
+        "abilities": []
+      }
+    },
+    {
+      "perm": "Llanowar Elves",
+      "final": {
+        "controller": "player_1",
+        "abilities": {
+          "$includes": [
+            "{T}: Add {G}."
+          ]
+        }
+      }
+    }
+  ]
+}
