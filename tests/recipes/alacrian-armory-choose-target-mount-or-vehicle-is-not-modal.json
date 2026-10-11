@@ -1,0 +1,28 @@
+{
+  "name": "Alacrian Armory — \"choose up to one target Mount or Vehicle\" is not a list of modes",
+  "notes": "Memory: project_audit_small_clusters_round_eight_2026-10-11. The inline-choice rewrite (\"choose first strike, vigilance, or lifelink. …\") also took \"choose up to one target Mount or Vehicle you control. …\" for a choice of modes, which made the card modal and switched off its static \"Creatures you control get +0/+1 and have vigilance\". A choice that names a target is not rewritten.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Alacrian Armory",
+      "as": "armory"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 2,
+        "toughness": 3,
+        "abilities": {
+          "$includes": [
+            "Vigilance"
+          ]
+        }
+      }
+    }
+  ]
+}

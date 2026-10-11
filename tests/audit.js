@@ -249,7 +249,8 @@ function classifyUnitText(text) {
   // Likewise: "target unblocked creature becomes blocked", damage "… by target creature is dealt to
   // its controller instead", "which player … target attacking creature is attacking", "When target
   // creature is put into your graveyard …", "If target Plains is tapped for mana, …".
-  if (/^(?:becomes? blocked|is (?:dealt|attacking|put into|tapped for mana))\b/.test(verbAfter)) return { skip: 'not-a-layer-effect' };
+  // ("Becomes prepared / unprepared" is a designation the site does not track.)
+  if (/^(?:becomes? (?:blocked|prepared|unprepared)|is (?:dealt|attacking|put into|tapped for mana))\b/.test(verbAfter)) return { skip: 'not-a-layer-effect' };
   // A spell's own text followed by its cycling trigger ("When you cycle this card, you may have target
   // creature gain fear" — Dirge of Dread) is not something the spell does.
   if (/\bwhen you cycle\b/.test(clauseBefore)) return { skip: 'cycling-trigger' };

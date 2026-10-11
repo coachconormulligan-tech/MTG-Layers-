@@ -1265,7 +1265,9 @@ function parseCardEffects(permanent, card, opts = {}) {
       const m = line.trim().match(inlineChoiceRegex);
       // "choose a player or planeswalker that opponent is attacking. …" (Tahngarth, First Mate)
       // picks a player or an object, not one of several abilities.
-      if (m && !/^an?\s+(?:player|opponent)\b/i.test(m[2].trim())) {
+      // Nor is "choose up to one target Mount or Vehicle you control. …" (Alacrian Armory), which
+      // as a modal header switched off the card's own static line.
+      if (m && !/^an?\s+(?:player|opponent)\b/i.test(m[2].trim()) && !/\btarget\b/i.test(m[2])) {
         // m[1] = prefix ending with "choose "
         // m[2] = "first strike, vigilance, or lifelink"
         // m[3] = ". "
@@ -2274,7 +2276,7 @@ function parseCardEffects(permanent, card, opts = {}) {
     copyClauseSpans.push({ start: addSupertypeMatch.index, end: addSupertypeMatch.index + addSupertypeMatch[0].length });
   }
 
-  const removeSupertypeRegex = /(?:^|[.;])\s*(.+?)\s+(?:isn't|is not|aren't|are not)\s+(basic|legendary|snow|world)\b(?:\s+until\s+(?:end\s+of\s+turn|your\s+next\s+turn))?/gmi;
+  const removeSupertypeRegex = /(?:^|[.;])\s*(.+?)\s+(?:isn't|is not|aren't|are not|is no longer|are no longer)\s+(basic|legendary|snow|world)\b(?:\s+until\s+(?:end\s+of\s+turn|your\s+next\s+turn))?/gmi;
   let removeSupertypeMatch;
   while ((removeSupertypeMatch = removeSupertypeRegex.exec(oracle)) !== null) {
     if (_isInActivatedEffect(removeSupertypeMatch.index) || _isInTriggeredSentence(removeSupertypeMatch.index)) continue;
@@ -5719,6 +5721,21 @@ function parseCardEffects(permanent, card, opts = {}) {
       { appliesTo: fn, scope: fn ? 'global' : 'targeted', selfTarget: !fn },
       `${filterText} ${traitStateMatch[0].includes('are') ? 'are' : 'is'} ${traitName.toLowerCase()}. ${filterDesc}`,
       { _oraclePos: traitStateMatch.index });
+  }
+  // "Target Mount you control becomes saddled until end of turn" (Guidelight Matrix): the same
+  // Saddled trait the Saddle ability sets. Only for a target of a spell or fired ability —
+  // "as long as this creature is saddled" is a condition, not a grant.
+  if (permanent.isManualEffect || permanent.isSpell) {
+    const saddledRegex = /\b((?:another\s+)?target\s+[^.,"]+?)\s+becomes\s+saddled\b/gi;
+    let saddledMatch;
+    while ((saddledMatch = saddledRegex.exec(oracle)) !== null) {
+      const { fn, desc: filterDesc, isSpellTarget } = buildAppliesToFromText(saddledMatch[1].trim());
+      if (!isSpellTarget) continue;
+      pushEff('6', EFFECT_TYPE.ADD_ABILITY, { ability: 'Saddled', isTrait: true },
+        { appliesTo: null, scope: 'targeted', selfTarget: false },
+        `${saddledMatch[1].trim()} becomes saddled. ${filterDesc}`,
+        { _oraclePos: saddledMatch.index, targetRestriction: fn || null });
+    }
   }
   // Pattern: "goad/goads/suspect/suspects [target/filter]"
   const traitVerbRegex = /\b(goads?|suspects?)\s+(.+?)(?:\.|,|$)/gi;
