@@ -827,9 +827,7 @@ function _splitConditionalBranches(text, isSpell, canParse) {
       // that the sentence before applies only when the condition is false. True when done.
       const insteadOfNothing = (cond) => {
         // (Not "If a creature … would die this turn, exile it instead": that replaces an event.)
-        // Nor a condition on permanents by name ("If you control creatures named Mine Worker and
-        // Tower Worker" — Power Plant Worker), which the condition parser reads as less than it says.
-        if (!isSpell || /\bwould\b|\bnamed\b/i.test(cond) || !canParse(cond)) return false;
+        if (!isSpell || /\bwould\b/i.test(cond) || !canParse(cond)) return false;
         const replaced = replacedPrev();
         if (!replaced) return false;
         add(`If on resolution it is not true that ${cond}, ${replaced}`, li);
