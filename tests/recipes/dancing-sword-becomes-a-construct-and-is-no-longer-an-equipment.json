@@ -1,0 +1,65 @@
+{
+  "name": "Dancing Sword — fired trigger at Yes: 2/1 Construct artifact creature with flying and ward {1}, not an Equipment",
+  "notes": "Memory: project_may_action_behind_toggle_2026-10-11 (follow-up). \"You may have this Equipment become a 2/1 Construct artifact creature with flying and ward {1}. If you do, it isn't an Equipment.\" \"This Equipment\" before \"becomes\" was not read as the permanent itself (every effect was global with a junk filter and changed nothing), \"It isn't an Equipment\" took the whole line as its subject, and \"ward {1}\" was dropped from the keyword list. At Yes the Sword is a 2/1 Construct with flying and ward {1} and has lost the Equipment subtype; no other permanent changes.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Dancing Sword",
+      "as": "sword"
+    },
+    {
+      "fire": "@sword",
+      "trigger": 1,
+      "as": "fired"
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@fired",
+        true
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Dancing Sword",
+      "final": {
+        "types": {
+          "$includes": [
+            "Artifact",
+            "Creature"
+          ]
+        },
+        "subtypes": [
+          "Construct"
+        ],
+        "power": 2,
+        "toughness": 1,
+        "abilities": {
+          "$includes": [
+            "Flying",
+            "Ward {1}"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "types": [
+          "Creature"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "abilities": {
+          "$excludes": [
+            "Flying"
+          ]
+        }
+      }
+    }
+  ]
+}

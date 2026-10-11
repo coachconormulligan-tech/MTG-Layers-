@@ -1,0 +1,55 @@
+{
+  "name": "Vislor Turlough — \"it's goaded\" is Vislor itself, behind the toggle, and never static",
+  "notes": "Memory: project_may_action_behind_toggle_2026-10-11 (follow-up). \"When Vislor Turlough enters, you may have an opponent gain control of it. If you do, it's goaded for as long as they control it.\" The \"is goaded\" parser took everything before the verb as its subject and goaded every permanent the opponents control, both statically and when fired. The subject is now the last clause; a pronoun waits for the ability to be fired, where it is the source (or the target already named), and takes the line's condition. Here the toggle is at Yes: Vislor is goaded, the opponent's creature is not.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Vislor Turlough",
+      "as": "vislor"
+    },
+    {
+      "fire": "@vislor",
+      "trigger": 0,
+      "as": "fired"
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@fired",
+        true
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Vislor Turlough",
+      "final": {
+        "traits": {
+          "$includes": [
+            "Goaded"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Goaded"
+          ]
+        }
+      }
+    }
+  ]
+}

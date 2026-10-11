@@ -1,0 +1,43 @@
+{
+  "name": "Vislor Turlough — on the battlefield with nothing fired, nothing is goaded",
+  "notes": "Memory: project_may_action_behind_toggle_2026-10-11 (follow-up). Companion: before the fix Vislor's own trigger text statically goaded every permanent the opponents control.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Vislor Turlough",
+      "as": "vislor"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Goaded"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Vislor Turlough",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Goaded"
+          ]
+        }
+      }
+    }
+  ]
+}
