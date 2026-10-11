@@ -1,0 +1,42 @@
+{
+  "name": "Arcum's Weathervane — \"Target snow land is no longer snow\"",
+  "notes": "Memory: project_audit_small_clusters_round_eight_2026-10-11. The supertype-removal parser knew \"isn't / is not\" but not \"is no longer\".",
+  "steps": [
+    {
+      "add": "Snow-Covered Forest",
+      "as": "snow"
+    },
+    {
+      "add": "Forest",
+      "as": "plain"
+    },
+    {
+      "add": "Arcum's Weathervane",
+      "as": "vane"
+    },
+    {
+      "fire": "@vane",
+      "activated": 0,
+      "as": "fired"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@fired",
+        "@snow"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Snow-Covered Forest",
+      "final": {
+        "supertypes": {
+          "$excludes": [
+            "Snow"
+          ]
+        }
+      }
+    }
+  ]
+}

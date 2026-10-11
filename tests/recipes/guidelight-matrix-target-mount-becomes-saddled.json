@@ -1,0 +1,52 @@
+{
+  "name": "Guidelight Matrix — \"Target Mount you control becomes saddled\" sets the Saddled trait",
+  "notes": "Memory: project_audit_small_clusters_round_eight_2026-10-11. \"Becomes saddled\" parsed to nothing. A target of a spell or fired ability that becomes saddled now gets the same Saddled trait the Saddle ability sets, so \"is saddled\" conditions see it.",
+  "steps": [
+    {
+      "add": "Brightfield Mustang",
+      "as": "mount"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Guidelight Matrix",
+      "as": "matrix"
+    },
+    {
+      "fire": "@matrix",
+      "activated": 1,
+      "as": "fired"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@fired",
+        "@mount"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Brightfield Mustang",
+      "final": {
+        "traits": {
+          "$includes": [
+            "Saddled"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Saddled"
+          ]
+        }
+      }
+    }
+  ]
+}
