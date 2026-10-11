@@ -253,7 +253,10 @@ function classifyUnitText(text) {
 const SELF_WORDS = /\bthis (?:creature|permanent|card|artifact|enchantment|land|token|vehicle|equipment|aura|planeswalker|spell|saga|class)\b|~/;
 const GROUP_WORDS = /(?<!for )\beach (?:other )?(?:creature|permanent|artifact|land|enchantment|planeswalker)\b|\b(?:all|every) (?:other )?(?:creatures|permanents|artifacts|lands|enchantments|planeswalkers)\b|\bother (?:\w+ )?(?:creatures|permanents|artifacts|lands|enchantments)\b|\b\w+s you control (?:get|have|gain)\b/;
 function mixedSubject(text, targetIndex, cardName, isSpell) {
-  const lower = String(text).replace(/’/g, "'").replace(/["“][^"”]*["”]/g, 'QUOTED').toLowerCase();
+  const lower = String(text).replace(/’/g, "'").replace(/["“][^"”]*["”]/g, 'QUOTED').toLowerCase()
+    // "… for as long as this creature remains tapped" says how long, not who (same length kept:
+    // targetIndex is an offset into the text).
+    .replace(/\bfor as long as [^.;]*/g, (d) => ' '.repeat(d.length));
   // Clauses: sentences, then "and" / "then" / ";" within them.
   const clauses = [];
   const re = /[^.;]+/g;
@@ -579,6 +582,81 @@ function unitSummary(u) { return u.kind + (u.index !== undefined ? ' ' + u.index
 
 const COUNT_DEPENDENT = /\bfor each\b|\bwhere x is\b|\bequal to the number\b|\bequal to (?:the|that|its|your)\b/i;
 
+/* ─── A second attempt on an adjusted board ───
+   Each entry changes the board in one way the unit's own words ask for, and returns how to undo
+   it: { what, apply() -> undo, only?: ids to try }. Read from the text, never from the parse. */
+const LOSES_RE = /\bloses?\s+(all\s+)?(?:"([^"]+)"\s+abilities|([a-z][a-z' -]*?))(?=\s+(?:and|until|end of turn|this turn)\b|[.,]|$)/i;
+function boardAdjustments(ctx, u, unitId, pseudo, tryIds) {
+  const out = [];
+  const src = Battlefield.getPermById(ctx.sourceId);
+  const others = tryIds.filter(x => x !== ctx.sourceId);
+  // "… for as long as this creature remains tapped": the cost tapped it.
+  if (/\bremains tapped\b/i.test(u.text) && src && !src.tapped) {
+    out.push({ what: 'source tapped', apply: () => { Battlefield.toggleTapped(src.id); return () => Battlefield.toggleTapped(src.id); } });
+  }
+  // "becomes the basic land type of your choice": Forest on a Forest shows nothing.
+  if (pseudo && pseudo.needsChosenLandType) {
+    out.push({ what: 'land type Island chosen', apply: () => { Battlefield.setChosenLandType(unitId, 'Island'); return () => Battlefield.setChosenLandType(unitId, 'Forest'); } });
+  }
+  // "If this spell was kicked / bargained, …": the toggle the site shows on the spell.
+  if (pseudo && pseudo.additionalCostLabel && !pseudo.additionalCostPaid) {
+    out.push({ what: 'additional cost paid', apply: () => { Battlefield.setAdditionalCostPaid(unitId, true); return () => Battlefield.setAdditionalCostPaid(unitId, false); } });
+  }
+  // "Gain control of target artifact" when every artifact is already yours: one becomes the opponent's.
+  if (/\bgains? control of\b/i.test(u.text) && others.length) {
+    const p = Battlefield.getPermById(others[0]);
+    const opp = (Battlefield.players.find(pl => pl.id !== ctx.sourceCtrl) || {}).id;
+    if (p && opp && (p.owner || 'player_0') === ctx.sourceCtrl) {
+      out.push({ what: roleName(p.id) + ' given to the opponent', only: [p.id], apply: () => {
+        const saved = [p.owner, p.controller];
+        p.owner = p.controller = opp;
+        return () => { [p.owner, p.controller] = saved; };
+      } });
+    }
+  }
+  // "Target creature loses first strike": a listed creature is given the keyword first.
+  const loses = u.text.match(LOSES_RE);
+  if (loses && others.length) {
+    const named = (loses[2] || loses[3] || '').trim().toLowerCase();
+    const kw = loses[2] ? cap1(named) + ' legendary creatures'
+      : /^landwalk abilit/.test(named) ? 'Swampwalk'
+      : cap1(named.replace(/^all\s+/, ''));
+    const p = Battlefield.getPermById(others[0]);
+    if (p && kw) {
+      out.push({ what: roleName(p.id) + ' given ' + kw.toLowerCase(), only: [p.id], apply: () => {
+        const saved = p.printedAbilities;
+        p.printedAbilities = (saved || []).concat([kw]);
+        return () => { p.printedAbilities = saved; };
+      } });
+    }
+  }
+  return out;
+}
+
+/* What the fixed board cannot show however it is adjusted, or null. Read from the text and the
+   board as it was before the unit, never from the parse. */
+function boardCannotShow(ctx, u, tryIds) {
+  // Every listed permanent already has every keyword the text gives.
+  const gains = u.text.match(/\b(?:gains?|ha(?:s|ve))\s+([a-z][a-z ,]*?)(?=\s+(?:until|this turn|for as long)\b|[.]|$)/i);
+  if (gains && !/\b(?:gets?|becomes?|loses?)\b/i.test(u.text)) {
+    const kws = gains[1].toLowerCase().split(/\s*,\s*(?:and\s+)?|\s+and\s+/).map(k => k.trim()).filter(Boolean);
+    const all = kws.length && kws.every(k => KEYWORD_SET.has(k)) &&
+      tryIds.every(tid => kws.every(k => hasKeyword(ctx.preStates.get(tid), k)));
+    if (all) return 'every listed permanent already has ' + kws.join(' and ');
+  }
+  // "Gain control of target Sliver" when the only one listed is the source itself.
+  if (/\bgains? control of\b/i.test(u.text) && tryIds.every(tid => ctrlOf(ctx.preStates.get(tid), Battlefield.getPermById(tid) || {}) === ctx.sourceCtrl)) {
+    return 'every listed permanent is already yours';
+  }
+  // The only continuous effect is in a sentence with its own condition ("Target creature can't be
+  // blocked this turn. If it's a Vampire, it also gains lifelink …").
+  const unconditional = u.text.split(/(?<=\.)\s+/).filter(x => !/\bif\b/i.test(x)).join(' ');
+  if (unconditional !== u.text && !/\b(?:gets?|gains?|ha(?:s|ve)|becomes?|loses?)\b/i.test(unconditional)) {
+    return 'the only continuous effect is conditional';
+  }
+  return null;
+}
+
 /* Audits one unit that has already been fired/cast: `id` is the permanent whose effects are the
    unit's (the ability pseudo-permanent, or the spell). */
 function auditFired(ctx, u, id) {
@@ -673,33 +751,67 @@ function auditFired(ctx, u, id) {
   u.check1.via = siteIds && siteIds.length ? 'picker' : 'text';
   const othersSeen = [], noOp = [];
   let anyTargetChanged = false;
-  for (const tid of tryIds.slice(0, 14)) {
-    let changed = [];
-    try {
-      applyTarget(id, picker, tid);
-      changed = diffSummaries(before, summarizeBoard());
-    } catch (e) {
-      finding('check1', 'crash', { error: errInfo('set target', e) });
-      break;
-    } finally {
-      try { applyTarget(id, picker, null); } catch (e) { /* the board is restored by the caller */ }
+  // Chooses each of `ids` in turn against the summary `from`. `record` is false for a second
+  // attempt on an adjusted board, which only answers "did a target change itself and nothing else?".
+  const tryTargets = (ids, from, record) => {
+    let ok = false, clean = true;
+    for (const tid of ids.slice(0, 14)) {
+      let changed = [];
+      try {
+        applyTarget(id, picker, tid);
+        changed = diffSummaries(from, summarizeBoard());
+      } catch (e) {
+        if (record) finding('check1', 'crash', { error: errInfo('set target', e) });
+        clean = false;
+        break;
+      } finally {
+        try { applyTarget(id, picker, null); } catch (e) { /* the board is restored by the caller */ }
+      }
+      const role = roleName(tid);
+      let counted = changed;
+      if (mixed.source) counted = counted.filter(c => c.id !== ctx.sourceId);
+      const targetChanged = changed.some(c => c.id === tid) && !(mixed.source && tid === ctx.sourceId);
+      const others = mixed.group ? [] : counted.filter(c => c.id !== tid);
+      if (targetChanged) ok = true;
+      if (others.length) clean = false;
+      if (!record) continue;
+      u.check1.perTarget.push({ target: role, changed: changed.map(c => ({ role: c.role, what: c.what })) });
+      if (targetChanged) anyTargetChanged = true; else noOp.push(role);
+      if (others.length) othersSeen.push({ target: role, others: others.map(c => ({ role: c.role, what: c.what })) });
     }
-    const role = roleName(tid);
-    let counted = changed;
-    if (mixed.source) counted = counted.filter(c => c.id !== ctx.sourceId);
-    const targetChanged = changed.some(c => c.id === tid) && !(mixed.source && tid === ctx.sourceId);
-    const others = mixed.group ? [] : counted.filter(c => c.id !== tid);
-    u.check1.perTarget.push({ target: role, changed: changed.map(c => ({ role: c.role, what: c.what })) });
-    if (targetChanged) anyTargetChanged = true; else noOp.push(role);
-    if (others.length) othersSeen.push({ target: role, others: others.map(c => ({ role: c.role, what: c.what })) });
-  }
+    return ok && clean;
+  };
+  tryTargets(tryIds, before, true);
   if (othersSeen.length) finding('check1', 'target-changes-others', { examples: othersSeen.slice(0, 3), count: othersSeen.length });
   if (tryIds.length && !anyTargetChanged && !othersSeen.length) {
     // "-1/-1 for each Swamp you control", "where X is the number of cards in your graveyard": the board has
     // none, so the right answer may be a change of 0. Only for text that does nothing but give +N/-N,
     // so a keyword grant beside a count cannot hide behind it.
     if (COUNT_DEPENDENT.test(u.text) && /\bgets?\b/i.test(u.text) && !/\b(?:gains?|has|have|becomes?|loses?)\b/i.test(u.text)) u.infos.push({ code: 'count-or-condition-dependent', roles: [] });
-    else finding('check1', 'target-changes-nothing', { tried: tryIds.length });
+    else {
+      // The fixed board may simply have nothing the text can change (no creature with the keyword
+      // being removed, every artifact already yours). The board is adjusted in the one way the
+      // text asks for and the targets are tried again; only a unit that still changes nothing
+      // is a finding.
+      const shown = [];
+      for (const adj of boardAdjustments(ctx, u, id, pseudo, tryIds)) {
+        let undo = null, worked = false;
+        try {
+          undo = adj.apply();
+          Battlefield._invalidate();
+          const from = summarizeBoard();
+          const r = picker.kind === 'none' ? null : candidatesFor(id, picker);
+          const ids = r && r.candidates && r.candidates.length ? r.candidates.map(c => c.id) : tryIds;
+          worked = tryTargets(adj.only ? ids.filter(x => adj.only.includes(x)) : ids, from, false);
+        } catch (e) { worked = false; }
+        finally { try { if (undo) undo(); } catch (e) { /* restored by the caller */ } Battlefield._invalidate(); }
+        if (worked) { shown.push(adj.what); break; }
+      }
+      const limit = shown.length ? null : boardCannotShow(ctx, u, tryIds);
+      if (shown.length) u.infos.push({ code: 'shown-on-adjusted-board', roles: [], what: shown[0] });
+      else if (limit) u.infos.push({ code: 'board-cannot-show', roles: [], what: limit });
+      else finding('check1', 'target-changes-nothing', { tried: tryIds.length });
+    }
   }
   if (anyTargetChanged && noOp.length) u.infos.push({ code: 'no-op-on-some', roles: noOp });
   return { audited: true };

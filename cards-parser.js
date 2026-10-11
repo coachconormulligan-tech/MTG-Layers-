@@ -676,7 +676,15 @@ function parseCardEffects(permanent, card, opts = {}) {
 
   // "Sacrifice a creature. When you do, all creatures get -X/-X …" (Tip the Scales): in a spell
   // the reflexive trigger is simply the next thing that happens as it resolves.
+  const _reflexiveConditions = new Set();
+  // ("this enchantment" reads "this card" by the time the condition is parsed.)
+  const _reflexiveKey = (c) => c.toLowerCase().replace(/\bthis \w+/g, 'this');
   if (/\b(?:instant|sorcery)\b/i.test(card.type_line || '')) {
+    // "… put a quest counter on this enchantment. When you do, if it has four or more quest
+    // counters on it, put a +1/+1 counter on target creature you control. It gains trample …"
+    // (Earthbender Ascension): the condition is on everything the reflexive trigger does, not
+    // only on its first sentence.
+    for (const m of oracleRaw.matchAll(/\.\s+when you do,\s*if\s+([^.,;\n]+)/gi)) _reflexiveConditions.add(_reflexiveKey(m[1]));
     oracleRaw = oracleRaw.replace(/(\.\s+)when you do,\s*(\w)/gi, (_, pre, ch) => pre + ch.toUpperCase());
     // "Target creature gains trample until end of turn. When that creature becomes blocked this
     // turn, it gets +1/+1 until end of turn for each creature blocking it." (Barreling Attack):
@@ -1577,7 +1585,21 @@ function parseCardEffects(permanent, card, opts = {}) {
     }
     const sentencePrefix = full.substring(sentStart).replace(/^\s+/, '');
     if (_isTriggeredSentence(sentencePrefix)) return match;
+    // The "if" of a later sentence that changes nothing on the board ("… gets -4/-0 until end of
+    // turn. If you control a Wizard, draw a card." — Chilling Trap) is no condition on the
+    // sentences before it.
+    let gatesNothing = false;
+    if (sentStart > full.lastIndexOf('\n', offset) + 1) {
+      const sentEnd = full.slice(offset + match.length).search(/[.\n]/);
+      const sentence = full.slice(sentStart, sentEnd < 0 ? full.length : offset + match.length + sentEnd);
+      const body = sentence.replace(match, '').replace(/\x04\d+\x04/g, '').replace(/^[\s,]+/, '')
+        .replace(/^(?:then|instead)\s+/i, '').replace(/\balso\s+/i, '');
+      gatesNothing = !/\b(?:gets?|gains?|ha(?:s|ve)|becomes?|loses?)\b/i.test(
+        body.replace(/\b(?:gains?|loses?) (?:\w+ )?life\b|\bgains? control\b/gi, ''));
+    }
     const cond = _parseCondition(condText);
+    // The condition's words still leave the text, so they are not read as an effect.
+    if (cond && gatesNothing && !_reflexiveConditions.has(_reflexiveKey(condText))) return ' ';
     if (cond) {
       const idx = _asLongAsConditions.length;
       _asLongAsConditions.push(cond);
@@ -4371,7 +4393,12 @@ function parseCardEffects(permanent, card, opts = {}) {
       const linePos = _isModalSpell ? `@${haveMatch.index}`
         : permanent.isSpell ? `@line${oracle.slice(0, haveMatch.index + haveMatch[0].length).split('\n').length}`
           + (/\btarget\b/i.test(filterText) ? `@${haveMatch.index}` : '') : '';
-      const key = `${filterText}|${ability}${linePos}`.toLowerCase();
+      // The two branches of an "… instead" rider may grant the same keyword ("gains first strike
+      // … If that creature is equipped, it gains first strike and vigilance … instead" — Éowyn,
+      // Lady of Rohan): each branch line carries its own condition.
+      const _haveLine = oracle.slice(0, _getMatchContentPos(haveMatch.index)).split('\n').length - 1;
+      const branchPos = _branchInfo && _haveLine >= _branchInfo.baseLineCount ? `@branch${_haveLine}` : '';
+      const key = `${filterText}|${ability}${linePos}${branchPos}`.toLowerCase();
       if (haveAbilityParsed.has(key)) continue;
       haveAbilityParsed.add(key);
       const haveCond = _getConditionForPos(haveMatch.index);
