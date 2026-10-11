@@ -614,8 +614,15 @@ const Battlefield = {
     }
     // "another" or "other [thing]" in the effectText also excludes the source
     // (e.g. "another target creature", "each other creature you control").
-    if (/\banother\s+(?:target\s+)?[A-Za-z]/i.test(parsedEffectText) || /\bother\s+[A-Za-z]/i.test(parsedEffectText)) triggerHasAnother = true;
-    if (triggerHasAnother) pseudoPerm._excludeAbilitySource = true;
+    // ("In addition to its other types" — Liquimetal Coating — is not that "other".)
+    const _effectTextForOther = parsedEffectText.replace(/\b(?:its|their|his|her|the|any)\s+other\b/gi, '');
+    const effectHasAnother = /\banother\s+(?:target\s+)?[A-Za-z]/i.test(_effectTextForOther) || /\bother\s+[A-Za-z]/i.test(_effectTextForOther);
+    // "Another" in the trigger condition says who caused the trigger, not who may be targeted:
+    // "Whenever this creature or another Human you control enters, target creature gains double
+    // strike" (Théoden, King of Rohan) can target Théoden. It only keeps the source out when the
+    // effect has no target of its own and so is about the permanent that caused the trigger.
+    if (effectHasAnother || (triggerHasAnother && !/\btarget\b/i.test(parsedEffectText))) pseudoPerm._excludeAbilitySource = true;
+    if (effectHasAnother) triggerHasAnother = true;
 
     // Whether the effect already names an explicit "target" (independent of any "it"
     // conversion below). When it does, a pronoun like "It loses all abilities" refers to
