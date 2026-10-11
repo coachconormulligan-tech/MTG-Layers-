@@ -490,6 +490,14 @@ const Battlefield = {
 
     // "where X is this creature's power/toughness/mana value" — substitute X at fire time
     // using the source permanent's live final state (e.g. Ouroboroid).
+    // "You may have target creature get -1/-1 until end of turn" (Fourth Bridge Prowler), "you may
+    // have target creature get +2/+2 and gain haste" (Painsmith): the target is the subject.
+    parsedEffectText = parsedEffectText.replace(
+      /\byou may have ((?:another |up to \w+ )?target [^.,]*?) (get|gain|become|lose|have)\b([^.]*)/gi,
+      (_, subject, verb, rest) => {
+        const s3 = (v) => v.toLowerCase() === 'have' ? 'has' : v.toLowerCase() + 's';
+        return subject + ' ' + s3(verb) + rest.replace(/\b(and|,) (get|gain|become|lose|have)\b/gi, (m, j, v) => j + ' ' + s3(v));
+      }).replace(/^./, c => c.toUpperCase());
     if (/\bX\b/.test(parsedEffectText) && firedAtStates && sourcePermId) {
       const sourceFinalState = firedAtStates.get(sourcePermId);
       if (sourceFinalState) {

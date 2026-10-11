@@ -1,0 +1,16 @@
+{
+  "name": "Fourth Bridge Prowler — \"you may have target creature get -1/-1\" hits only the target",
+  "notes": "Memory: project_behavioural_audit_and_controller_restrictions_2026-10-11. A fired \"you may have target X get/gain/lose …\" was parsed with the target as part of a global filter, so every creature got -1/-1. _addAbilityPseudo now rewrites it to \"target X gets …\" before parsing. The Bears are targeted and become 1/1; the Runeclaw Bear stays 2/2.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Runeclaw Bear", "as": "other" },
+    { "add": "Fourth Bridge Prowler", "as": "prowler" },
+    { "fire": "@prowler", "trigger": 0, "as": "fired" },
+    { "call": ["setTarget", "@fired", "@bears"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": 1, "toughness": 1 } },
+    { "perm": "Runeclaw Bear", "final": { "power": 2, "toughness": 2 } },
+    { "perm": "Fourth Bridge Prowler", "final": { "power": 1, "toughness": 1 } }
+  ]
+}
