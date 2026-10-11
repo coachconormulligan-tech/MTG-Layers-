@@ -618,8 +618,14 @@ function boardAdjustments(ctx, u, unitId, pseudo, tryIds) {
     out.push({ what: 'land type Island chosen', apply: () => { Battlefield.setChosenLandType(unitId, 'Island'); return () => Battlefield.setChosenLandType(unitId, 'Forest'); } });
   }
   // "If this spell was kicked / bargained, …": the toggle the site shows on the spell.
+  // (Every toggle the unit has: "Kicked", and the conditions asked of the player — "Sacrifice a Food",
+  // "You win the flip".)
   if (pseudo && pseudo.additionalCostLabel && !pseudo.additionalCostPaid) {
-    out.push({ what: 'additional cost paid', apply: () => { Battlefield.setAdditionalCostPaid(unitId, true); return () => Battlefield.setAdditionalCostPaid(unitId, false); } });
+    const slots = [1, 2, 3, 4, 5, 6].filter(n => pseudo['additionalCostLabel' + (n > 1 ? n : '')]);
+    out.push({ what: 'additional cost paid', apply: () => {
+      slots.forEach(n => Battlefield.setAdditionalCostPaid(unitId, true, n));
+      return () => slots.forEach(n => Battlefield.setAdditionalCostPaid(unitId, false, n));
+    } });
   }
   // "Gain control of target artifact" when every artifact is already yours: one becomes the opponent's.
   if (/\bgains? control of\b/i.test(u.text) && others.length) {

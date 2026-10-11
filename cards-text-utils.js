@@ -753,12 +753,15 @@ function _branchResolveSubject(body, sentences, i, isSpell) {
   const ante = _branchAntecedent(sentences, i);
   return ante ? ante + body.slice(m[0].length) : null;
 }
+// How many toggles one spell or fired ability may carry (slot 1 is "additionalCostPaid", slot n
+// is "additionalCostPaid<n>"). A card with more askable conditions than this keeps the rest as text.
+const MAX_BRANCH_TOGGLES = 6;
 function _splitConditionalBranches(text, isSpell, canParse) {
   const lines = text.split('\n');
   const origLines = lines.slice();
   const out = { text, baseLineCount: lines.length, branchLines: new Map(), alwaysOnLines: new Set(), ownSlotLines: new Set(),
-                costLabel: null, costLabel2: null };
-  if (!/\botherwise,|\bif (?:x|\d+) is \d+ or\b|\bif this spell(?:'s \w+ cost)? was\b|\bto cast (?:this|that) spell[,.]|\bif you cast this spell during\b|\bif evidence was collected\b|\bgets more votes,|\b(?:if|as long as) it(?:'s| is| isn't| doesn't have| has)\b|\.[ ]+[^.\n]*\bif\b|\n(?:[A-Z][\w']*(?: [\w']+)* — )?if\b/i.test(text)) return out;
+                costLabel: null, costLabel2: null, costLabels: [] };
+  if (!/\botherwise,|\bif (?:x|\d+) is \d+ or\b|\bif this spell(?:'s \w+ cost)? was\b|\bto cast (?:this|that) spell[,.]|\bif you cast this spell during\b|\bif evidence was collected\b|\bgets more votes,|\b(?:if|as long as) it(?:'s| is| isn't| doesn't have| has)\b|\.[ ]+[^.\n]*\bif\b|\n(?:[A-Z][\w']*(?: [\w']+)* — )?if\b|\bwhen you do,/i.test(text)) return out;
   // A spell has at most two toggles (Cankerous Thirst's {B} and {G}): with more cast conditions
   // than that, its branches are left where they are.
   const castLabels = new Set();
@@ -770,7 +773,8 @@ function _splitConditionalBranches(text, isSpell, canParse) {
   const usedLabels = [];
   const costToken = (label, paid) => {
     if (!usedLabels.includes(label)) usedLabels.push(label);
-    return `[additional cost ${usedLabels.indexOf(label) ? '2 ' : ''}${paid ? '' : 'not '}paid]`;
+    const slot = usedLabels.indexOf(label) + 1;
+    return `[additional cost ${slot > 1 ? slot + ' ' : ''}${paid ? '' : 'not '}paid]`;
   };
   // A condition the board cannot show and the condition parser cannot read ("a creature died
   // this turn", "the gift was promised", "you win" a clash, "you do" what a "you may" offered)
@@ -781,15 +785,17 @@ function _splitConditionalBranches(text, isSpell, canParse) {
   const askLabel = (cond, sentences, condIndex) => {
     let label = cond.trim().replace(/\x05\d+\x05/g, '').replace(/\s+/g, ' ');
     if (/^you do$/i.test(label)) {
-      // "You may sacrifice a Food. If you do, A. Otherwise, B." → "Sacrifice a Food". Without
-      // an "Otherwise", what a "you may" offers is taken as done, as it is in a fired ability.
-      if (!/^Otherwise,/i.test(sentences[condIndex + 1] || '')) return null;
-      const offer = condIndex > 0 && sentences[condIndex - 1].match(/\b(?:you )?may ([^.]+?)\.?$/i);
+      // "You may sacrifice a Food. If you do, …" → "Sacrifice a Food". Never assumed: every
+      // "if you do" is asked (Conor, 2026-10-11).
+      // ("Sacrifice a creature. When you do, …" — Tip the Scales — has no "may": the sentence itself.)
+      const before = condIndex > 0 ? sentences[condIndex - 1].replace(/\x05\d+\x05/g, '').trim() : '';
+      const offer = before.match(/\b(?:you )?may ([^.]+?)\.?$/i);
       if (offer) label = offer[1];
+      else if (before && !/^(?:if|when|otherwise)\b/i.test(before)) label = before.replace(/\.$/, '');
     }
     if (!label || /^able$/i.test(label)) return null;
     label = cap1(label.length > 60 ? label.slice(0, 57).trimEnd() + '…' : label);
-    if (new Set([...castLabels, ...usedLabels, label]).size > 2) return null;
+    if (new Set([...castLabels, ...usedLabels, label]).size > MAX_BRANCH_TOGGLES) return null;
     return label;
   };
   const added = [];
@@ -806,6 +812,9 @@ function _splitConditionalBranches(text, isSpell, canParse) {
     const quotes = [];
     unmask = (t) => t.replace(/\x05(\d+)\x05/g, (_, n) => quotes[n]);
     const sentences = line.trim().replace(/"[^"]*"/g, (q) => `\x05${quotes.push(q) - 1}\x05`).split(/(?<=\.)\s+/)
+      // "When you do, …" after a "you may" asks the same question as "If you do, …". (Not "When you
+      // do, if …": that condition is the parser's — Earthbender Ascension.)
+      .map(x => x.replace(/^When you do,(?!\s*if\b)/i, 'If you do,'))
       // "If X is three or more, …" (Obsessive Pursuit) reads as "If X is 3 or more, …".
       .map(x => x.replace(/^(If (?:X|\d+) is )(one|two|three|four|five|six|seven|eight|nine|ten)(?= or (?:more|greater|less|fewer)\b)/i,
         (_, head, word) => head + ({ one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10 })[word.toLowerCase()]));
@@ -938,9 +947,37 @@ function _splitConditionalBranches(text, isSpell, canParse) {
         let body = (leadIf ? leadIf[2] : trailIf[1]).replace(/\balso\s+/i, '').replace(/\ban additional\s+/i, '');
         const instead = /^instead\s+|\s+instead$/i.test(body);
         body = body.replace(/^instead\s+|\s+instead$/i, '');
+        // "If you do, put a +1/+1 counter on this Vehicle and it gains menace" (Mukotai
+        // Soulripper): the counter is the player's to add; the rest is what the toggle gates.
+        if (/^you do$/i.test(cond.trim())) {
+          body = body.replace(/^put [^,.]*?\bcounters? on [^,.]*? and\s+(?=(?:it|that|this|those|they|target|another)\b)/i, '');
+        }
         if (instead && !_branchIsContinuous(body) && insteadOfNothing(cond)) continue;
         const readable = canParse(cond);
         if (opensLaterLine && readable) continue;
+        // What follows "If you do, …" / "When you do, …" on the line is part of the same outcome
+        // ("…, put a +1/+1 counter on this card. This card gains menace …" — Mukotai Soulripper;
+        // "…, target creature … gets +2/+2 …. Goad that creature." — Kitt Kanto): those sentences
+        // go behind the same toggle, whether or not the first one is itself a continuous effect.
+        if (/^you do$/i.test(cond.trim()) && !/^Otherwise,/i.test(sentences[i + 1] || '')) {
+          const label = askLabel(cond, sentences, i);
+          const gated = [];
+          if (label) {
+            const own = _branchIsContinuous(body) ? _branchResolveSubject(body, sentences, i, true) : null;
+            if (own) gated.push([i, own]);
+            for (let j = i + 1; j < sentences.length; j++) {
+              const next = sentences[j].replace(/\.$/, '');
+              if (/^(?:if|when|otherwise|as long as)\b/i.test(next)) break;
+              const nextBody = /^(?:goad|suspect)\b/i.test(next) ? next
+                : _branchIsContinuous(next) ? _branchResolveSubject(next, sentences, j, true) : null;
+              if (nextBody) gated.push([j, nextBody]);
+            }
+          }
+          if (gated.length) {
+            for (const [j, text] of gated) { add(`If ${costToken(label, true)}, ${cap1(text)}.`, li); moved.add(j); }
+            continue;
+          }
+        }
         // ("If you do, A. Otherwise, B." is one toggle for both; the Otherwise sentence pairs them.)
         const pairedWithOtherwise = /^Otherwise,/i.test(sentences[i + 1] || '');
         // "If a creature died this turn, that creature gets -13/-13 until end of turn instead."
@@ -987,7 +1024,7 @@ function _splitConditionalBranches(text, isSpell, canParse) {
         moved.add(i);
         continue;
       }
-      const costs = castLabels.size <= 2 ? _branchCastClauses(sentences[i]) : [];
+      const costs = castLabels.size <= MAX_BRANCH_TOGGLES ? _branchCastClauses(sentences[i]) : [];
       // Both halves of "A if {U} was spent …, and B if {R} was spent …" move, or neither.
       const costLines = [];
       for (const cost of costs) {
@@ -1035,7 +1072,7 @@ function _splitConditionalBranches(text, isSpell, canParse) {
         }
         // With two cast conditions, a branch that names its own target ("If {G} was spent …,
         // you may have target creature get +3/+3") is a target of its own, not the other's.
-        const ownSlot = castLabels.size === 2 && !replaced && body === unresolved && /\btarget\b/i.test(body);
+        const ownSlot = castLabels.size >= 2 && !replaced && body === unresolved && /\btarget\b/i.test(body);
         costLines.push([`If ${costToken(cost.label, true)}, ${body.charAt(0).toUpperCase() + body.slice(1)}.`, baseLi, ownSlot]);
       }
       for (const [lineText, baseLi, ownSlot] of costLines) {
@@ -1043,11 +1080,11 @@ function _splitConditionalBranches(text, isSpell, canParse) {
         add(lineText, baseLi);
         moved.add(i);
       }
-      if (usedLabels.length) [out.costLabel, out.costLabel2] = [usedLabels[0], usedLabels[1] || null];
     }
     if (moved.size) lines[li] = unmask(sentences.filter((_, i) => !moved.has(i)).join(' '));
   }
   if (usedLabels.length) [out.costLabel, out.costLabel2] = [usedLabels[0], usedLabels[1] || null];
+  out.costLabels = usedLabels.slice();
   if (added.length) out.text = lines.concat(added).join('\n');
   return out;
 }

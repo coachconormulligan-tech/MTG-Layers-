@@ -37,21 +37,21 @@ function setXValue(permId, rawValue) {
    A spell with two cast conditions (Cankerous Thirst: "{B} spent", "{G} spent") gets two. */
 function renderAdditionalCostToggle(perm) {
   const button = (slot) => {
-    const suffix = slot === 2 ? '2' : '';
+    const suffix = slot > 1 ? String(slot) : '';
     const paid = !!perm['additionalCostPaid' + suffix];
     return `<button class="ts-action-btn configure mutate-btn${paid ? ' mutate-active' : ''}"
             onclick="event.stopPropagation(); toggleAdditionalCostPaid('${perm.id}', ${slot})"
             title="Whether this was true when the spell or ability resolved">${escapeHtml(perm['additionalCostLabel' + suffix])}: ${paid ? 'Yes' : 'No'}</button>`;
   };
   return `<div class="cda-counter-row" onclick="event.stopPropagation()">
-    ${button(1)}${perm.additionalCostLabel2 ? button(2) : ''}
+    ${[1, 2, 3, 4, 5, 6].filter(n => perm['additionalCostLabel' + (n > 1 ? n : '')]).map(button).join('')}
   </div>`;
 }
 
 function toggleAdditionalCostPaid(permId, slot = 1) {
   const perm = Battlefield.getPermById(permId);
   if (!perm) return;
-  Battlefield.setAdditionalCostPaid(permId, !perm[slot === 2 ? 'additionalCostPaid2' : 'additionalCostPaid'], slot);
+  Battlefield.setAdditionalCostPaid(permId, !perm['additionalCostPaid' + (slot > 1 ? slot : '')], slot);
   Battlefield.evaluate();
   renderAll();
 }

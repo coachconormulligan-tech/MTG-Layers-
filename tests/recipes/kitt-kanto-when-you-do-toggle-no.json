@@ -1,0 +1,45 @@
+{
+  "name": "Kitt Kanto, Mayhem Diva — \"When you do\" toggle at No: nothing happens to the target",
+  "notes": "Memory: project_asked_condition_toggles_2026-10-11. \"You may tap two untapped creatures you control. When you do, target creature … gets +2/+2 and gains trample …. Goad that creature.\" Every sentence after \"When you do\" is behind the toggle \"Tap two untapped creatures you control\", which starts at No.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre"
+    },
+    {
+      "add": "Kitt Kanto, Mayhem Diva",
+      "as": "kitt"
+    },
+    {
+      "fire": "@kitt",
+      "trigger": 1,
+      "as": "fired"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@fired",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 2,
+        "toughness": 2,
+        "abilities": {
+          "$excludes": [
+            "Trample",
+            "Goaded"
+          ]
+        }
+      }
+    }
+  ]
+}

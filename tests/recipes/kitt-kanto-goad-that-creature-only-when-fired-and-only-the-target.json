@@ -1,6 +1,6 @@
 {
   "name": "Kitt Kanto, Mayhem Diva — \"Goad that creature\" happens when fired, to the target only",
-  "notes": "Memory: project_audit_small_clusters_round_eight_2026-10-11. The trait parser read \"Goad that creature\" inside Kitt's own triggered ability as a static effect on every creature, and in the fired ability gave it a second target slot. A pronoun object inside a permanent's own ability is no longer static, and in a fired ability it follows the one target. \"Target creature that player controls\" offers any creature.",
+  "notes": "Memory: project_audit_small_clusters_round_eight_2026-10-11. The trait parser read \"Goad that creature\" inside Kitt's own triggered ability as a static effect on every creature, and in the fired ability gave it a second target slot. A pronoun object inside a permanent's own ability is no longer static, and in a fired ability it follows the one target. \"Target creature that player controls\" offers any creature. Whether the optional part was done is now asked with a toggle (project_asked_condition_toggles_2026-10-11); it is switched to Yes here.",
   "steps": [
     {
       "add": "Grizzly Bears",
@@ -24,6 +24,13 @@
         "setTarget",
         "@fired",
         "@bears"
+      ]
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@fired",
+        true
       ]
     }
   ],

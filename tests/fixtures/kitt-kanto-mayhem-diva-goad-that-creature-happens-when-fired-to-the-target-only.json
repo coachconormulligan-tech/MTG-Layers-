@@ -1,6 +1,6 @@
 {
  "name": "Kitt Kanto, Mayhem Diva — \"Goad that creature\" happens when fired, to the target only",
- "notes": "Memory: project_audit_small_clusters_round_eight_2026-10-11. The trait parser read \"Goad that creature\" inside Kitt's own triggered ability as a static effect on every creature, and in the fired ability gave it a second target slot. A pronoun object inside a permanent's own ability is no longer static, and in a fired ability it follows the one target. \"Target creature that player controls\" offers any creature.",
+ "notes": "Memory: project_audit_small_clusters_round_eight_2026-10-11. The trait parser read \"Goad that creature\" inside Kitt's own triggered ability as a static effect on every creature, and in the fired ability gave it a second target slot. A pronoun object inside a permanent's own ability is no longer static, and in a fired ability it follows the one target. \"Target creature that player controls\" offers any creature. Whether the optional part was done is now asked with a toggle (project_asked_condition_toggles_2026-10-11); it is switched to Yes here.",
  "recipe": {
   "steps": [
    {
@@ -25,6 +25,13 @@
      "setTarget",
      "@fired",
      "@bears"
+    ]
+   },
+   {
+    "call": [
+     "setAdditionalCostPaid",
+     "@fired",
+     true
     ]
    }
   ]
@@ -215,6 +222,7 @@
     "xValue": null,
     "additionalCostPaid": false,
     "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
     "chosenCreatureType": null,
     "chosenColor": null,
     "chosenCardName": null,
@@ -389,6 +397,7 @@
     "xValue": null,
     "additionalCostPaid": false,
     "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
     "chosenCreatureType": null,
     "chosenColor": null,
     "chosenCardName": null,
@@ -598,6 +607,7 @@
     "xValue": null,
     "additionalCostPaid": false,
     "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
     "chosenCreatureType": null,
     "chosenColor": null,
     "chosenCardName": null,
@@ -633,15 +643,16 @@
     "commanderIdx": null,
     "abilityIndex": 1,
     "timestamp": 4,
-    "effectText": "You may tap two untapped creatures you control. Target creature that player controls gets +2/+2 and gains trample until end of turn. Goad that creature.",
+    "effectText": "You may tap two untapped creatures you control. When you do, target creature that player controls gets +2/+2 and gains trample until end of turn. Goad that creature.",
     "xValue": null,
     "hasXValue": false,
     "cdaUserValue": null,
     "linkedCards": null,
     "fullText": "At the beginning of combat on each player's turn, you may tap two untapped creatures you control. When you do, target creature that player controls gets +2/+2 and gains trample until end of turn. Goad that creature.",
     "chosenColor": null,
-    "additionalCostPaid": false,
+    "additionalCostPaid": true,
     "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
     "guessedTargetSubjects": [],
     "owner": "player_0",
     "controller": "player_0",
