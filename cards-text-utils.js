@@ -1067,13 +1067,22 @@ function buildAppliesToFromText(filterText) {
   // "You and permanents you control gain hexproof" (Veil of Summer, Heroic Intervention-style):
   // the player half is not a layer effect, so only the permanent half is filtered on.
   filterText = filterText.replace(/^\s*you\s+and\s+(?=\S)/i, '');
+  // A clause before the target is not part of it: "If you win, target creature" (Springjack
+  // Knight), "Until your next upkeep, target noncreature artifact" (Xenic Poltergeist), "For as
+  // long as this artifact remains tapped, another target permanent" (Immovable Rod),
+  // "Investigate, then target creature" (Confront the Unknown). Read as a list, it matched nothing.
+  filterText = filterText.replace(/^\s*(?:(?:if|until|for(?: as long as)?|as long as|when|otherwise)\b[^,]*,\s*(?:then\s+)?|\w+,\s*then\s+)(?=(?:another\s+|up to \w+\s+(?:other\s+)?)?target\s)/i, '');
   // Extract target/choose metadata first
   const _tinfo = extractTargetInfo(filterText);
   // A target phrase ends where its verb begins: "target creature gets +2/+2, gains flying, and"
   // (Jump Scare's later clauses) is still just "creature".
   if (_tinfo.needsTargetSelection) {
-    _tinfo.cleaned = _tinfo.cleaned.replace(/\s+(?:gets?|gains?|has|have|becomes?|loses?)\s.*$/i, '').trim() || _tinfo.cleaned;
+    // ("Target creature can't block this turn and becomes a Coward …" — Coward — likewise.)
+    _tinfo.cleaned = _tinfo.cleaned.replace(/\s+(?:gets?|gains?|has|have|becomes?|loses?|can(?:'t|not)?)\s.*$/i, '').trim() || _tinfo.cleaned;
   }
+  // "Target creature that player controls" (Kitt Kanto, Mayhem Diva: the player whose turn it
+  // is): which player is not known here, so any player's creature is offered.
+  if (_tinfo.needsTargetSelection) _tinfo.cleaned = _tinfo.cleaned.replace(/\s+that player controls(?=\s|$)/i, '').trim() || _tinfo.cleaned;
   // "Target creature you don't control" (Gnawing Vermin). Only for a target: "gain control of a
   // land you don't control" (Herald of Leshrac's upkeep cost) must not become a filter.
   const _notYours = _tinfo.needsTargetSelection && /\s+you (?:don't|do not) control(?=\s|$)/i.test(_tinfo.cleaned);

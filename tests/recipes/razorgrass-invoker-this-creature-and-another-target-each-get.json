@@ -1,0 +1,53 @@
+{
+  "name": "Razorgrass Invoker — \"This creature and up to one other target creature each get +3/+3\"",
+  "notes": "Memory: project_audit_small_clusters_round_eight_2026-10-11. The conjunction was collapsed to a self boost, so there was no picker (Deadly Dancer in the audit). The chosen target is now a second recipient; the source's half is marked _sourceHalf and Battlefield.setTarget leaves it pinned to the source.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre"
+    },
+    {
+      "add": "Razorgrass Invoker",
+      "as": "invoker"
+    },
+    {
+      "fire": "@invoker",
+      "activated": 1,
+      "as": "fired"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@fired",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 5,
+        "toughness": 5
+      }
+    },
+    {
+      "perm": "Razorgrass Invoker",
+      "final": {
+        "power": 7,
+        "toughness": 6
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "power": 2,
+        "toughness": 2
+      }
+    }
+  ]
+}

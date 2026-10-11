@@ -1,0 +1,38 @@
+{
+  "name": "Fang of the Pack — \"another target creature you control gains melee\"",
+  "notes": "Memory: project_audit_small_clusters_round_eight_2026-10-11. Melee (and firebending N) were missing from the keyword list, so grants of them parsed to nothing.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Fang of the Pack",
+      "as": "fang"
+    },
+    {
+      "fire": "@fang",
+      "trigger": 1,
+      "as": "fired"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@fired",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Melee"
+          ]
+        }
+      }
+    }
+  ]
+}

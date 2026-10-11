@@ -1,0 +1,42 @@
+{
+  "name": "Pippin's Bravery — \"If you do, target creature gets +4/+4 … Otherwise, that creature gets +2/+2\"",
+  "notes": "Memory: project_audit_small_clusters_round_eight_2026-10-11. \"If you do, target creature\" was read as a list and matched nothing, so the spell had no target. A clause before a target phrase is now dropped from the filter, and an \"Otherwise\" sentence after \"If you do\" is left out (the optional part is assumed done): +4/+4 only.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre"
+    },
+    {
+      "add": "Pippin's Bravery",
+      "as": "spell",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTarget",
+        "@spell",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 6,
+        "toughness": 6
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "power": 2,
+        "toughness": 2
+      }
+    }
+  ]
+}
