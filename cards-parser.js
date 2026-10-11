@@ -237,9 +237,9 @@ const CONDITION_PARSERS = [
   // spell's Kicked toggle (perm.additionalCostPaid). "[additional cost 2 paid]" is the second
   // toggle of a spell with two cast conditions (Cankerous Thirst: {B} spent, {G} spent).
   (ct, srcId) => {
-    const m = ct.match(/^\[additional cost (2 )?(not )?paid\]$/);
+    const m = ct.match(/^\[additional cost (\d+ )?(not )?paid\]$/);
     if (!m) return null;
-    const field = m[1] ? 'additionalCostPaid2' : 'additionalCostPaid';
+    const field = 'additionalCostPaid' + (m[1] ? m[1].trim() : '');
     const wantPaid = !m[2];
     return () => {
       const src = typeof Battlefield !== 'undefined' ? Battlefield.getPermById(srcId) : null;
@@ -696,7 +696,9 @@ function parseCardEffects(permanent, card, opts = {}) {
     // (Earthbender Ascension): the condition is on everything the reflexive trigger does, not
     // only on its first sentence.
     for (const m of oracleRaw.matchAll(/\.\s+when you do,\s*if\s+([^.,;\n]+)/gi)) _reflexiveConditions.add(_reflexiveKey(m[1]));
-    oracleRaw = oracleRaw.replace(/(\.\s+)when you do,\s*(\w)/gi, (_, pre, ch) => pre + ch.toUpperCase());
+    // (Only that form is folded in here. A plain "When you do, …" is left for the branch
+    // splitter, which asks whether it was done with a toggle.)
+    oracleRaw = oracleRaw.replace(/(\.\s+)when you do,\s*(?=if\b)(\w)/gi, (_, pre, ch) => pre + ch.toUpperCase());
     // "Target creature gains trample until end of turn. When that creature becomes blocked this
     // turn, it gets +1/+1 until end of turn for each creature blocking it." (Barreling Attack):
     // a delayed trigger about the spell's own target, read as the next thing that happens to it.
@@ -1529,6 +1531,13 @@ function parseCardEffects(permanent, card, opts = {}) {
     // Shows the "Kicked" / "Bargained" toggle on the spell.
     if (_branchInfo.costLabel) permanent.additionalCostLabel = _branchInfo.costLabel;
     if (_branchInfo.costLabel2) permanent.additionalCostLabel2 = _branchInfo.costLabel2;
+    // Third and later toggles (slot n is additionalCostLabel<n>).
+    _branchInfo.costLabels.forEach((label, k) => { if (k >= 2) permanent['additionalCostLabel' + (k + 1)] = label; });
+    // What the splitter did not take keeps the old reading: the optional part of "you may …. If
+    // you do, …" is taken as done, so the words do not sit in front of the sentence's subject.
+    if (permanent.isSpell || permanent.isManualEffect) {
+      oracle = oracle.replace(/(^|\.\s+|\n)(?:if|when) you do,\s*(?!if\b)(\w)/gi, (_, pre, ch) => pre + ch.toUpperCase());
+    }
   }
 
   // Pattern A: "As long as [condition], it [effect]" at start of line
@@ -5774,6 +5783,10 @@ function parseCardEffects(permanent, card, opts = {}) {
       eff.targetRestriction = fn || null;
       eff._pronounTarget = true; // never a target slot of its own (Kitt Kanto, Mayhem Diva)
     }
+    // A condition on its line gates it like any other effect ("When you do, … Goad that creature."
+    // behind the toggle for what was done — Kitt Kanto).
+    const traitVerbCond = _getConditionForPos(traitVerbMatch.index);
+    if (traitVerbCond) eff.asLongAsCondition = traitVerbCond;
   }
 
   // Parse quoted ability text

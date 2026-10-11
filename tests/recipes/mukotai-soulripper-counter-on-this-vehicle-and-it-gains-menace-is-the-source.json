@@ -1,6 +1,6 @@
 {
   "name": "Mukotai Soulripper — \"put a +1/+1 counter on this Vehicle and it gains menace\" is the Vehicle",
-  "notes": "Memory: project_audit_list_mismatch_round_seven_2026-10-11. \"it\" after \"on this Vehicle and\" was rewritten to a guessed \"target creature\" and the subject \"Put a +1/+1 counter on this Vehicle and target creature\" parsed as a global filter: every creature gained menace. The pronoun is now the source.",
+  "notes": "Memory: project_audit_list_mismatch_round_seven_2026-10-11. \"it\" after \"on this Vehicle and\" was rewritten to a guessed \"target creature\" and the subject \"Put a +1/+1 counter on this Vehicle and target creature\" parsed as a global filter: every creature gained menace. The pronoun is now the source. Whether the optional part was done is now asked with a toggle (project_asked_condition_toggles_2026-10-11); it is switched to Yes here.",
   "steps": [
     {
       "add": "Grizzly Bears",
@@ -14,6 +14,13 @@
       "fire": "@ripper",
       "trigger": 0,
       "as": "fired"
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@fired",
+        true
+      ]
     }
   ],
   "asserts": [

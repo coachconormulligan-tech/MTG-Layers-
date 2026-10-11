@@ -696,10 +696,8 @@ const Battlefield = {
     // (Cyclone Sire): the optional part is assumed done, as with "you may pay" above.
     // (A condition on the reflexive trigger — "When you do, if it has four or more quest counters
     // on it, …" — is left for the parser, which gates everything after it: Earthbender Ascension.)
-    // (With an "Otherwise, …" after it, "If you do" stays: which of the two happens is a toggle.)
-    if (!/\.\s+Otherwise,/i.test(parsedEffectText)) {
-      parsedEffectText = parsedEffectText.replace(/(^|\.\s+)(?:if|when) you do,\s*(?!if\b)(\w)/gi, (_, pre, ch) => pre + ch.toUpperCase());
-    }
+    // ("If you do, …" / "When you do, …" stay in the text: whether the optional part was done is
+    // asked with a toggle — _splitConditionalBranches. The parser strips what that leaves.)
     // A pronoun after a target the effect names is that target, and is written out as it:
     // "put a trample counter on up to one target creature you control. It becomes a Bear …"
     // (Beorn the Fierce) reads "target creature you control becomes a Bear …", so every parser
@@ -1645,7 +1643,7 @@ const Battlefield = {
      second toggle of a spell with two cast conditions (Cankerous Thirst: {B} spent, {G} spent). */
   setAdditionalCostPaid(permId, paid, slot = 1) {
     const perm = this.getPermById(permId);
-    const suffix = slot === 2 ? '2' : '';
+    const suffix = slot > 1 ? String(slot) : '';
     if (!perm || !perm['additionalCostLabel' + suffix]) return;
     perm['additionalCostPaid' + suffix] = !!paid;
     this._invalidate();
@@ -3390,6 +3388,7 @@ const Battlefield = {
         xValue: p.xValue ?? null,
         additionalCostPaid: !!p.additionalCostPaid,
         additionalCostPaid2: !!p.additionalCostPaid2,
+        additionalCostPaidMore: [3, 4, 5, 6].filter(n => p['additionalCostPaid' + n]),
         chosenCreatureType: p.chosenCreatureType || null,
         chosenColor: p.chosenColor || null,
         chosenCardName: p.chosenCardName || null,
@@ -3455,6 +3454,7 @@ const Battlefield = {
         chosenColor: p.chosenColor || null,
         additionalCostPaid: !!p.additionalCostPaid,
         additionalCostPaid2: !!p.additionalCostPaid2,
+        additionalCostPaidMore: [3, 4, 5, 6].filter(n => p['additionalCostPaid' + n]),
         // effectText above is already rewritten ("it" → "target Pirate"); which of its "target X"
         // subjects were such guesses cannot be read back from it (see _addAbilityPseudo).
         guessedTargetSubjects: p._guessedTargetSubjects || null,
@@ -3588,6 +3588,7 @@ const Battlefield = {
       for (const lc of r.linkedCards || []) this.addLinkedCard(np.id, lc);
       if (r.additionalCostPaid) this.setAdditionalCostPaid(np.id, true);
       if (r.additionalCostPaid2) this.setAdditionalCostPaid(np.id, true, 2);
+      for (const n of (r.additionalCostPaidMore || [])) this.setAdditionalCostPaid(np.id, true, n);
       // Mutable runtime/display state.
       np.controller = r.controller || r.owner;
       np.tapped = !!r.tapped;
@@ -3658,6 +3659,7 @@ const Battlefield = {
       for (const lc of f.linkedCards || []) this.addLinkedCard(pseudo.id, lc);
       if (f.additionalCostPaid) this.setAdditionalCostPaid(pseudo.id, true);
       if (f.additionalCostPaid2) this.setAdditionalCostPaid(pseudo.id, true, 2);
+      for (const n of (f.additionalCostPaidMore || [])) this.setAdditionalCostPaid(pseudo.id, true, n);
       // Re-stamp the ability's effects to its saved timestamp so layer ordering matches.
       for (const e of this.effects) { if (e.sourceId === pseudo.id) e.timestamp = f.timestamp; }
     }

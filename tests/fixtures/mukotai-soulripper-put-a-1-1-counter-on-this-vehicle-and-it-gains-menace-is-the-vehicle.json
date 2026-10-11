@@ -1,6 +1,6 @@
 {
  "name": "Mukotai Soulripper — \"put a +1/+1 counter on this Vehicle and it gains menace\" is the Vehicle",
- "notes": "Memory: project_audit_list_mismatch_round_seven_2026-10-11. \"it\" after \"on this Vehicle and\" was rewritten to a guessed \"target creature\" and the subject \"Put a +1/+1 counter on this Vehicle and target creature\" parsed as a global filter: every creature gained menace. The pronoun is now the source.",
+ "notes": "Memory: project_audit_list_mismatch_round_seven_2026-10-11. \"it\" after \"on this Vehicle and\" was rewritten to a guessed \"target creature\" and the subject \"Put a +1/+1 counter on this Vehicle and target creature\" parsed as a global filter: every creature gained menace. The pronoun is now the source. Whether the optional part was done is now asked with a toggle (project_asked_condition_toggles_2026-10-11); it is switched to Yes here.",
  "recipe": {
   "steps": [
    {
@@ -15,6 +15,13 @@
     "fire": "@ripper",
     "trigger": 0,
     "as": "fired"
+   },
+   {
+    "call": [
+     "setAdditionalCostPaid",
+     "@fired",
+     true
+    ]
    }
   ]
  },
@@ -198,6 +205,7 @@
     "xValue": null,
     "additionalCostPaid": false,
     "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
     "chosenCreatureType": null,
     "chosenColor": null,
     "chosenCardName": null,
@@ -385,6 +393,7 @@
     "xValue": null,
     "additionalCostPaid": false,
     "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
     "chosenCreatureType": null,
     "chosenColor": null,
     "chosenCardName": null,
@@ -420,15 +429,16 @@
     "commanderIdx": null,
     "abilityIndex": 0,
     "timestamp": 3,
-    "effectText": "You may sacrifice another artifact or creature. Put a +1/+1 counter on this Vehicle and this Vehicle gains menace until end of turn.",
+    "effectText": "You may sacrifice another artifact or creature. If you do, put a +1/+1 counter on this Vehicle and this Vehicle gains menace until end of turn.",
     "xValue": null,
     "hasXValue": false,
     "cdaUserValue": null,
     "linkedCards": null,
     "fullText": "Whenever this Vehicle attacks, you may sacrifice another artifact or creature. If you do, put a +1/+1 counter on this Vehicle and it gains menace until end of turn.",
     "chosenColor": null,
-    "additionalCostPaid": false,
+    "additionalCostPaid": true,
     "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
     "guessedTargetSubjects": [],
     "owner": "player_0",
     "controller": "player_0",

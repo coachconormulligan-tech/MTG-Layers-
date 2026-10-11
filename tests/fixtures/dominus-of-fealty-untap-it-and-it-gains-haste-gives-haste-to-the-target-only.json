@@ -1,6 +1,6 @@
 {
  "name": "Dominus of Fealty — \"untap it and it gains haste\" gives haste to the target only",
- "notes": "Memory: project_audit_list_mismatch_round_seven_2026-10-11. The fired text reads \"Untap it and target permanent gains haste\"; the subject was taken as \"Untap it and target permanent\", an OR filter matching every permanent. A leading instruction joined by \"and\" is no longer part of the subject.",
+ "notes": "Memory: project_audit_list_mismatch_round_seven_2026-10-11. The fired text reads \"Untap it and target permanent gains haste\"; the subject was taken as \"Untap it and target permanent\", an OR filter matching every permanent. A leading instruction joined by \"and\" is no longer part of the subject. Whether the optional part was done is now asked with a toggle (project_asked_condition_toggles_2026-10-11); it is switched to Yes here.",
  "recipe": {
   "steps": [
    {
@@ -25,6 +25,13 @@
      "setTarget",
      "@fired",
      "@bears"
+    ]
+   },
+   {
+    "call": [
+     "setAdditionalCostPaid",
+     "@fired",
+     true
     ]
    }
   ]
@@ -219,6 +226,7 @@
     "xValue": null,
     "additionalCostPaid": false,
     "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
     "chosenCreatureType": null,
     "chosenColor": null,
     "chosenCardName": null,
@@ -393,6 +401,7 @@
     "xValue": null,
     "additionalCostPaid": false,
     "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
     "chosenCreatureType": null,
     "chosenColor": null,
     "chosenCardName": null,
@@ -575,6 +584,7 @@
     "xValue": null,
     "additionalCostPaid": false,
     "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
     "chosenCreatureType": null,
     "chosenColor": null,
     "chosenCardName": null,
@@ -610,15 +620,16 @@
     "commanderIdx": null,
     "abilityIndex": 1,
     "timestamp": 4,
-    "effectText": "You may gain control of target permanent until end of turn. Untap it and target permanent gains haste until end of turn.",
+    "effectText": "You may gain control of target permanent until end of turn. If you do, untap it and target permanent gains haste until end of turn.",
     "xValue": null,
     "hasXValue": false,
     "cdaUserValue": null,
     "linkedCards": null,
     "fullText": "At the beginning of your upkeep, you may gain control of target permanent until end of turn. If you do, untap it and it gains haste until end of turn.",
     "chosenColor": null,
-    "additionalCostPaid": false,
+    "additionalCostPaid": true,
     "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
     "guessedTargetSubjects": [],
     "owner": "player_0",
     "controller": "player_0",
