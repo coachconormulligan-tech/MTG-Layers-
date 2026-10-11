@@ -601,6 +601,15 @@ function auditFired(ctx, u, id) {
 
   if (!targeted.length) {
     finding('check2', 'no-targeted-effect');
+    // No targeted effect does not mean no effect: the parse may have gone global instead ("you
+    // may have target creature get -1/-1" once gave every creature -1/-1). Check 1's first half
+    // still applies.
+    const mixed0 = mixedSubject(u.text, u.targetIndex, ctx.cardName, u.kind === 'spell');
+    const changed0 = diffSummaries(ctx.before, summarizeBoard());
+    u.check1 = { noTarget: changed0.map(c => ({ role: c.role, what: c.what })), perTarget: [] };
+    if (!(mixed0.source || mixed0.group) && changed0.length) {
+      finding('check1', 'changes-with-no-target', { changed: changed0.map(c => ({ role: c.role, what: c.what })) });
+    }
     return { audited: true };
   }
 
