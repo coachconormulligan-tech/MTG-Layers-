@@ -1,0 +1,15 @@
+{
+  "name": "Steel Seraph — \"gains your choice of flying, vigilance, or lifelink\" is one option per keyword",
+  "notes": "Memory: project_behavioural_audit_and_controller_restrictions_2026-10-11. \"Your choice of A, B, or C\" parsed to nothing. extractTriggeredAbilities / extractActivatedAbilities now offer one option per item (_yourChoiceOfOptions), fired like the \"+1/-1 or -1/+1\" options. Mode 1 is vigilance: the targeted Bears gain it, the other creature does not.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Runeclaw Bear", "as": "other" },
+    { "add": "Steel Seraph", "as": "seraph" },
+    { "fire": "@seraph", "trigger": 2, "mode": 1, "as": "fired" },
+    { "call": ["setTarget", "@fired", "@bears"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$includes": ["Vigilance"] } } },
+    { "perm": "Runeclaw Bear", "final": { "abilities": [] } }
+  ]
+}

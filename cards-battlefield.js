@@ -20,6 +20,21 @@ const DEFAULT_GAME_STATE = {
 };
 
 /* [KEY: BATTLEFIELD]  —  Global state */
+/* "Target creature you control gains your choice of flying, vigilance, or lifelink until end of
+   turn" (Steel Seraph): one ability, one outcome per item, picked when it is fired. Returns the
+   effect text once per item, or null. */
+function _yourChoiceOfOptions(effectText) {
+  const m = effectText.match(/\byour choice of ([^.]+?)(?=\s+until\b|\s+this turn\b|\.|$)/i);
+  if (!m) return null;
+  // Not for "this creature and up to one other target creature you control both gain your choice
+  // of …" (Ballroom Brawlers): that two-part subject is read as every permanent you control, so
+  // offering the options would apply the keyword to all of them.
+  if (/\band (?:up to \w+ )?(?:other |another )?target\b/i.test(effectText.slice(0, m.index))) return null;
+  const items = m[1].split(/\s*,\s*(?:or\s+)?|\s+or\s+/i).map(x => x.trim()).filter(Boolean);
+  if (items.length < 2 || items.some(x => x.split(/\s+/).length > 3)) return null;
+  return items.map(item => effectText.slice(0, m.index) + item + effectText.slice(m.index + m[0].length));
+}
+
 const Battlefield = {
   permanents: [],
   effects: [],
@@ -239,6 +254,11 @@ const Battlefield = {
       }
       // "…, you may have this creature's base power and toughness become 4/1 or 1/4 until end
       // of turn" (Master of Winds): one trigger, two outcomes to pick from when it is fired.
+      const choiceOptions = _yourChoiceOfOptions(effectText);
+      if (choiceOptions) {
+        result.push({ index: i, fullText: ab, effectText, triggerLimit, options: choiceOptions });
+        continue;
+      }
       const eitherPT = effectText.match(/^(.*\bbecomes?\s+)(\d+\/\d+)\s+or\s+(\d+\/\d+)(\b.*)$/i);
       if (eitherPT) {
         result.push({ index: i, fullText: ab, effectText, triggerLimit,
@@ -373,6 +393,7 @@ const Battlefield = {
       }
       // "Choose left or right. Each player gains control of … the next player in the chosen
       // direction." (Aminatou, the Fateshifter): the direction is the option.
+      if (!isMonstrosity && /your choice of/i.test(effectForSplit)) options = _yourChoiceOfOptions(effectForSplit);
       const directionM = effectForSplit.match(/^Choose left or right\.\s+(.*\bin the chosen direction\b.*)$/i);
       if (directionM) options = ['left', 'right'].map(d => directionM[1].replace(/\bin the chosen direction\b/i, `to the ${d}`));
       // "{4}, Sacrifice this artifact: Roll a d20." with result rows below (Treasure Chest).
