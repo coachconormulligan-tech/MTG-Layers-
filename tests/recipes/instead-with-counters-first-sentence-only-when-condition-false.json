@@ -1,0 +1,28 @@
+{
+  "name": "\"… put counters on it instead\" — the first sentence applies only when the condition is false (Throw from the Saddle, Will of the All-Hunter, Power Plant Worker)",
+  "notes": "Memory: project_audit_target_changes_nothing_2026-10-11. \"Target creature you control gets +1/+1 until end of turn. Put a +1/+1 counter on it instead if it's a Mount.\" gave the +1/+1 to a Mount as well (and, before that, only to a Mount). When an \"instead\" sentence replaces the one before it with something that is not a continuous effect, _splitConditionalBranches (insteadOfNothing) now gives the sentence before the negated condition and drops the replacement; the counters are left to the player. Bears get the boost, the Mount and the blocking Giant do not; Power Plant Worker without the other two Workers gets +2/+2. Not for \"If a creature … would die this turn, exile it instead\" (Malicious Eclipse), which replaces an event.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Bridled Bighorn", "as": "mount" },
+    { "add": "Hill Giant", "as": "giant" },
+    { "add": "Runeclaw Bear", "as": "other" },
+    { "call": ["toggleBlocking", "@giant"] },
+    { "add": "Throw from the Saddle", "as": "throw1", "spell": true },
+    { "call": ["setTarget", "@throw1", "@bears"] },
+    { "add": "Throw from the Saddle", "as": "throw2", "spell": true },
+    { "call": ["setTarget", "@throw2", "@mount"] },
+    { "add": "Will of the All-Hunter", "as": "will1", "spell": true },
+    { "call": ["setTarget", "@will1", "@giant"] },
+    { "add": "Will of the All-Hunter", "as": "will2", "spell": true },
+    { "call": ["setTarget", "@will2", "@other"] },
+    { "add": "Power Plant Worker", "as": "worker" },
+    { "fire": "@worker", "activated": 0, "as": "firedWorker" }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": 3, "toughness": 3 } },
+    { "perm": "Bridled Bighorn", "final": { "power": 3, "toughness": 4 } },
+    { "perm": "Hill Giant", "final": { "power": 3, "toughness": 3 } },
+    { "perm": "Runeclaw Bear", "final": { "power": 4, "toughness": 4 } },
+    { "perm": "Power Plant Worker", "final": { "power": 6, "toughness": 6 } }
+  ]
+}
