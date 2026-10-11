@@ -696,7 +696,10 @@ const Battlefield = {
     // (Cyclone Sire): the optional part is assumed done, as with "you may pay" above.
     // (A condition on the reflexive trigger — "When you do, if it has four or more quest counters
     // on it, …" — is left for the parser, which gates everything after it: Earthbender Ascension.)
-    parsedEffectText = parsedEffectText.replace(/(^|\.\s+)(?:if|when) you do,\s*(?!if\b)(\w)/gi, (_, pre, ch) => pre + ch.toUpperCase());
+    // (With an "Otherwise, …" after it, "If you do" stays: which of the two happens is a toggle.)
+    if (!/\.\s+Otherwise,/i.test(parsedEffectText)) {
+      parsedEffectText = parsedEffectText.replace(/(^|\.\s+)(?:if|when) you do,\s*(?!if\b)(\w)/gi, (_, pre, ch) => pre + ch.toUpperCase());
+    }
     // A pronoun after a target the effect names is that target, and is written out as it:
     // "put a trample counter on up to one target creature you control. It becomes a Bear …"
     // (Beorn the Fierce) reads "target creature you control becomes a Bear …", so every parser

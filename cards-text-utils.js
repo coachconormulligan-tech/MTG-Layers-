@@ -758,7 +758,7 @@ function _splitConditionalBranches(text, isSpell, canParse) {
   const origLines = lines.slice();
   const out = { text, baseLineCount: lines.length, branchLines: new Map(), alwaysOnLines: new Set(), ownSlotLines: new Set(),
                 costLabel: null, costLabel2: null };
-  if (!/\botherwise,|\bif (?:x|\d+) is \d+ or\b|\bif this spell(?:'s \w+ cost)? was\b|\bto cast (?:this|that) spell[,.]|\bif you cast this spell during\b|\bif evidence was collected\b|\bgets more votes,|\b(?:if|as long as) it(?:'s| is| isn't| doesn't have| has)\b|\.[ ]+[^.\n]*\bif\b/i.test(text)) return out;
+  if (!/\botherwise,|\bif (?:x|\d+) is \d+ or\b|\bif this spell(?:'s \w+ cost)? was\b|\bto cast (?:this|that) spell[,.]|\bif you cast this spell during\b|\bif evidence was collected\b|\bgets more votes,|\b(?:if|as long as) it(?:'s| is| isn't| doesn't have| has)\b|\.[ ]+[^.\n]*\bif\b|\n(?:[A-Z][\w']*(?: [\w']+)* — )?if\b/i.test(text)) return out;
   // A spell has at most two toggles (Cankerous Thirst's {B} and {G}): with more cast conditions
   // than that, its branches are left where they are.
   const castLabels = new Set();
@@ -771,6 +771,26 @@ function _splitConditionalBranches(text, isSpell, canParse) {
   const costToken = (label, paid) => {
     if (!usedLabels.includes(label)) usedLabels.push(label);
     return `[additional cost ${usedLabels.indexOf(label) ? '2 ' : ''}${paid ? '' : 'not '}paid]`;
+  };
+  // A condition the board cannot show and the condition parser cannot read ("a creature died
+  // this turn", "the gift was promised", "you win" a clash, "you do" what a "you may" offered)
+  // is asked of the player: it becomes one of the spell's or fired ability's two toggles, with
+  // the condition as its label. Like every toggle it starts at No. Null when both toggles are
+  // taken by other conditions.
+  const cap1 = (t) => t.charAt(0).toUpperCase() + t.slice(1);
+  const askLabel = (cond, sentences, condIndex) => {
+    let label = cond.trim().replace(/\x05\d+\x05/g, '').replace(/\s+/g, ' ');
+    if (/^you do$/i.test(label)) {
+      // "You may sacrifice a Food. If you do, A. Otherwise, B." → "Sacrifice a Food". Without
+      // an "Otherwise", what a "you may" offers is taken as done, as it is in a fired ability.
+      if (!/^Otherwise,/i.test(sentences[condIndex + 1] || '')) return null;
+      const offer = condIndex > 0 && sentences[condIndex - 1].match(/\b(?:you )?may ([^.]+?)\.?$/i);
+      if (offer) label = offer[1];
+    }
+    if (!label || /^able$/i.test(label)) return null;
+    label = cap1(label.length > 60 ? label.slice(0, 57).trimEnd() + '…' : label);
+    if (new Set([...castLabels, ...usedLabels, label]).size > 2) return null;
+    return label;
   };
   const added = [];
   // Quoted abilities are held out of a line while it is read, so a comma or full stop inside
@@ -785,7 +805,10 @@ function _splitConditionalBranches(text, isSpell, canParse) {
     const quoted = line.includes('"');
     const quotes = [];
     unmask = (t) => t.replace(/\x05(\d+)\x05/g, (_, n) => quotes[n]);
-    const sentences = line.trim().replace(/"[^"]*"/g, (q) => `\x05${quotes.push(q) - 1}\x05`).split(/(?<=\.)\s+/);
+    const sentences = line.trim().replace(/"[^"]*"/g, (q) => `\x05${quotes.push(q) - 1}\x05`).split(/(?<=\.)\s+/)
+      // "If X is three or more, …" (Obsessive Pursuit) reads as "If X is 3 or more, …".
+      .map(x => x.replace(/^(If (?:X|\d+) is )(one|two|three|four|five|six|seven|eight|nine|ten)(?= or (?:more|greater|less|fewer)\b)/i,
+        (_, head, word) => head + ({ one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10 })[word.toLowerCase()]));
     if (quoted && !sentences.some(x => _branchCastClauses(x).length)) continue;
     const moved = new Set();
     for (let i = 0; i < sentences.length; i++) {
@@ -795,6 +818,22 @@ function _splitConditionalBranches(text, isSpell, canParse) {
         const lead = prev.match(_BRANCH_LEAD_COND_RE);
         const trail = lead ? null : prev.match(/^(.+?)\s+as long as\s+([^.,;]+)\.$/i);
         const cond = lead ? lead[1] : trail ? trail[2] : null;
+        // "You may sacrifice a Food. If you do, target creature gets +4/+4 until end of turn.
+        // Otherwise, that creature gets +2/+2 until end of turn." (Pippin's Bravery), "If that
+        // card is a land card, destroy that creature. Otherwise, it gets +3/+3" (Paroxysm): which
+        // of the two happens is asked with a toggle.
+        if (lead && isSpell && !canParse(cond) && _branchIsContinuous(other[1])) {
+          const label = askLabel(cond, sentences, i - 1);
+          const otherBody = label && _branchResolveSubject(other[1], sentences, i, true);
+          const leadContinuous = _branchIsContinuous(lead[2]);
+          const leadBody = label && leadContinuous ? _branchResolveSubject(lead[2], sentences, i - 1, true) : null;
+          if (label && otherBody && (!leadContinuous || leadBody)) {
+            if (leadBody) { add(`If ${costToken(label, true)}, ${cap1(leadBody)}`, li); moved.add(i - 1); }
+            add(`If ${costToken(label, false)}, ${cap1(otherBody)}`, li);
+            moved.add(i);
+            continue;
+          }
+        }
         if (!cond || !canParse(cond) || !_branchIsContinuous(other[1])) continue;
         const body = _branchResolveSubject(other[1], sentences, i, isSpell);
         if (!body) continue;
@@ -881,11 +920,16 @@ function _splitConditionalBranches(text, isSpell, canParse) {
       // "… gets +2/+2 until end of turn. If you control four or more creatures, that creature
       // gets +4/+4 until end of turn instead." (For the Family), "It also gets +1/+0 until end
       // of turn if you control a Mouse." (Might of the Meek).
-      const plain = isSpell && !quoted && i > 0 && !rider && !_branchCastClauses(sentences[i]).length && !/^If (?:X|\d+) is \d+ or\b/i.test(sentences[i]);
-      const leadIf = plain && sentences[i].match(/^If\s+([^,]+),\s+(.+?)\.?$/i);
+      // (A condition sentence that opens a later line of a spell — Efflorescence's "Corrupted —
+      // If an opponent has three or more poison counters, that creature also gains …" — is read
+      // here only when its condition has to be asked; a readable one is the line's own condition.)
+      const opensLaterLine = i === 0 && li > 0;
+      const plain = isSpell && !quoted && (i > 0 || opensLaterLine) && !rider && !_branchCastClauses(sentences[i]).length && !/^If (?:X|\d+) is \d+ or\b/i.test(sentences[i]);
+      // (An ability word in front — "Corrupted — If …" — is flavour.)
+      const leadIf = plain && sentences[i].match(/^(?:[A-Z][\w']*(?: [\w']+)* — )?If\s+([^,]+),\s+(.+?)\.?$/);
       // Not "… gains trample if it's red, and gains vigilance if it's white." (Aurelia, Exemplar
       // of Justice): each of those conditions is on one clause.
-      const trailIf = plain && !leadIf && (sentences[i].match(/\bif\b/gi) || []).length === 1 &&
+      const trailIf = plain && !opensLaterLine && !leadIf && (sentences[i].match(/\bif\b/gi) || []).length === 1 &&
         sentences[i].match(/^(?:Then\s+)?(.+?)\s+if\s+([^.,;]+)\.$/i);
       if (leadIf || trailIf) {
         let cond = leadIf ? leadIf[1] : trailIf[2];
@@ -895,14 +939,30 @@ function _splitConditionalBranches(text, isSpell, canParse) {
         const instead = /^instead\s+|\s+instead$/i.test(body);
         body = body.replace(/^instead\s+|\s+instead$/i, '');
         if (instead && !_branchIsContinuous(body) && insteadOfNothing(cond)) continue;
-        body = canParse(cond) && _branchIsContinuous(body) ? _branchResolveSubject(body, sentences, i, true) : null;
+        const readable = canParse(cond);
+        if (opensLaterLine && readable) continue;
+        // ("If you do, A. Otherwise, B." is one toggle for both; the Otherwise sentence pairs them.)
+        const pairedWithOtherwise = /^Otherwise,/i.test(sentences[i + 1] || '');
+        // "If a creature died this turn, that creature gets -13/-13 until end of turn instead."
+        // (Tragic Banshee), "If the gift was promised, target creature you control gains first
+        // strike" (Valley Rally), "If you win, …" after a clash: asked with a toggle.
+        const asked = !readable && !pairedWithOtherwise && !/\bwould\b/i.test(cond) && _branchIsContinuous(body) ? askLabel(cond, sentences, i) : null;
+        // A spell's "that creature" may be the target named on an earlier line.
+        const prior = opensLaterLine ? origLines.slice(0, li).flatMap(l => l.trim().split(/(?<=\.)\s+/)) : [];
+        const unresolved = body;
+        body = (readable || asked) && _branchIsContinuous(body) ? _branchResolveSubject(body, prior.concat(sentences), prior.length + i, true) : null;
+        // The branch shares the target slot of the line its target was named on.
+        let baseLi = li;
+        if (opensLaterLine && body && body !== unresolved) {
+          for (let j = li - 1; j >= 0; j--) if (/\btarget\b/i.test(origLines[j])) { baseLi = j; break; }
+        }
         const replaced = body && instead ? replacedPrev() : null;
         if (body && (!instead || replaced)) {
           if (replaced) {
-            add(`If on resolution it is not true that ${cond}, ${replaced}`, li);
+            add(asked ? `If ${costToken(asked, false)}, ${replaced}` : `If on resolution it is not true that ${cond}, ${replaced}`, li);
             moved.add(i - 1);
           }
-          add(`If on resolution ${cond}, ${body}.`, li);
+          add(asked ? `If ${costToken(asked, true)}, ${cap1(body)}.` : `If on resolution ${cond}, ${body}.`, baseLi);
           moved.add(i);
           continue;
         }
@@ -987,6 +1047,7 @@ function _splitConditionalBranches(text, isSpell, canParse) {
     }
     if (moved.size) lines[li] = unmask(sentences.filter((_, i) => !moved.has(i)).join(' '));
   }
+  if (usedLabels.length) [out.costLabel, out.costLabel2] = [usedLabels[0], usedLabels[1] || null];
   if (added.length) out.text = lines.concat(added).join('\n');
   return out;
 }

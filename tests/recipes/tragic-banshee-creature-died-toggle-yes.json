@@ -1,0 +1,49 @@
+{
+  "name": "Tragic Banshee — \"A creature died this turn\" toggle at Yes: -13/-13 instead",
+  "notes": "Memory: project_asked_condition_toggles_2026-10-11. \"… gets -1/-1 until end of turn. If a creature died this turn, that creature gets -13/-13 until end of turn instead.\" Whether a creature died cannot be read off the board, so the fired ability has a toggle with that label: No gives -1/-1, Yes gives -13/-13 in its place. Both share the one target.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Craw Wurm",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Tragic Banshee",
+      "as": "banshee"
+    },
+    {
+      "fire": "@banshee",
+      "trigger": 0,
+      "as": "fired"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@fired",
+        "@ogre"
+      ]
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@fired",
+        true
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Craw Wurm",
+      "final": {
+        "power": -7,
+        "toughness": -9
+      }
+    }
+  ]
+}

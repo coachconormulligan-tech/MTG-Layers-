@@ -1,0 +1,41 @@
+{
+  "name": "Barbed Servitor — the fired \"suspect it\" trigger suspects the Servitor",
+  "notes": "Memory: project_asked_condition_toggles_2026-10-11. The fired ability's \"it\" is the source.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Barbed Servitor",
+      "as": "servitor"
+    },
+    {
+      "fire": "@servitor",
+      "trigger": 1,
+      "as": "fired"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Barbed Servitor",
+      "final": {
+        "traits": {
+          "$includes": [
+            "Suspected"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Suspected"
+          ]
+        }
+      }
+    }
+  ]
+}
