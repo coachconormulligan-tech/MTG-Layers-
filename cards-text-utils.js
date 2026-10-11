@@ -1011,7 +1011,21 @@ function buildAppliesToFromText(filterText) {
   filterText = filterText.replace(/^\s*you\s+and\s+(?=\S)/i, '');
   // Extract target/choose metadata first
   const _tinfo = extractTargetInfo(filterText);
+  // A target phrase ends where its verb begins: "target creature gets +2/+2, gains flying, and"
+  // (Jump Scare's later clauses) is still just "creature".
+  if (_tinfo.needsTargetSelection) {
+    _tinfo.cleaned = _tinfo.cleaned.replace(/\s+(?:gets?|gains?|has|have|becomes?|loses?)\s.*$/i, '').trim() || _tinfo.cleaned;
+  }
+  // "Target creature you don't control" (Gnawing Vermin). Only for a target: "gain control of a
+  // land you don't control" (Herald of Leshrac's upkeep cost) must not become a filter.
+  const _notYours = _tinfo.needsTargetSelection && /\s+you (?:don't|do not) control(?=\s|$)/i.test(_tinfo.cleaned);
+  if (_notYours) _tinfo.cleaned = _tinfo.cleaned.replace(/\s+you (?:don't|do not) control(?=\s|$)/gi, '').trim();
   const _result = _buildAppliesToFromTextInner(_tinfo.cleaned);
+  if (_notYours && _result.fn && !_result.isSelf) {
+    const innerFn = _result.fn;
+    _result.fn = (p, allStates, effectCtrl) =>
+      p.controller !== (effectCtrl || p.controller) && innerFn(p, allStates, effectCtrl);
+  }
   // Attach targeting metadata to the result
   if (_tinfo.needsTargetSelection) {
     _result.needsTargetSelection = true;
@@ -1289,6 +1303,16 @@ function _buildAppliesToFromTextInner(filterText) {
   }
 
   // --- Power/toughness filters: "creatures with power 4 or greater" ---
+  // ("with power 3 or less" — Whalebone Glider; "with toughness 2 or less" — Goblin Kites.)
+  const ptLessFilter = f.match(/^(.+?)\s+with\s+(power|toughness)\s+(\d+)\s+or\s+(?:less|fewer)$/);
+  if (ptLessFilter) {
+    const baseFilter = buildAppliesToFromText(ptLessFilter[1]);
+    const stat = ptLessFilter[2], max = parseInt(ptLessFilter[3]);
+    return {
+      fn: (p) => baseFilter.fn(p) && p[stat] !== null && p[stat] !== undefined && p[stat] <= max,
+      desc: `Applies to: ${baseFilter.desc.replace('Applies to: ', '')} with ${stat} ${max}-`,
+    };
+  }
   const powerFilter = f.match(/^(.+?)\s+with\s+power\s+(\d+)\s+or\s+(?:greater|more)$/);
   if (powerFilter) {
     const baseFilter = buildAppliesToFromText(powerFilter[1]);
@@ -1338,12 +1362,20 @@ function _buildAppliesToFromTextInner(filterText) {
   }
 
   // --- Counter filters: "creatures with a +1/+1 counter on it/them" ---
-  const counterFilter = f.match(/^(.+?)\s+with\s+(?:(?:a|an)\s+)?([\w+/]+)\s+counter(?:s)?\s+on\s+(?:it|them)$/);
+  // (A fired ability's "it" may already read "target creature": "with a +1/+1 counter on target
+  // creature" — Plaxcaster Frogling. "With a counter on it" — Hidden Hideout — is any counter.)
+  const counterFilter = f.match(/^(.+?)\s+with\s+(?:(?:a|an)\s+)?(?:([\w+/-]+)\s+)?counter(?:s)?\s+on\s+(?:it|them|(?:target|that|those)\s+\w+)$/);
   if (counterFilter) {
     const baseFilter = buildAppliesToFromText(counterFilter[1]);
     const counterType = counterFilter[2];
+    if (!counterType) {
+      return {
+        fn: (p) => baseFilter.fn(p) && Object.values(p.counters || {}).some(v => v > 0),
+        desc: `Applies to: ${baseFilter.desc.replace('Applies to: ', '')} with counters`,
+      };
+    }
     return {
-      fn: (p) => baseFilter.fn(p) && p.counters && p.counters[counterType] && p.counters[counterType] > 0,
+      fn: (p) => baseFilter.fn(p) && !!p.counters && p.counters[counterType] > 0,
       desc: `Applies to: ${baseFilter.desc.replace('Applies to: ', '')} with ${counterType} counters`,
     };
   }
@@ -1358,6 +1390,25 @@ function _buildAppliesToFromTextInner(filterText) {
     'flanking', 'phasing', 'banding', 'undying', 'persist', 'skulk',
     'changeling', 'partner', 'decayed', 'training', 'toxic',
   ]);
+  // "creature without flying" (High-Flying Ace).
+  const withoutKeywordFilter = f.match(/^(.+?)\s+without\s+(.+)$/);
+  if (withoutKeywordFilter && FILTER_KEYWORDS.has(withoutKeywordFilter[2].toLowerCase().trim())) {
+    const baseFilter = buildAppliesToFromText(withoutKeywordFilter[1]);
+    const kw = withoutKeywordFilter[2].toLowerCase().trim();
+    return {
+      fn: (p) => baseFilter.fn(p) && !(p.abilities || []).some(a => a.toLowerCase().trim().replace(/\s+until\b.*$/, '') === kw),
+      desc: `Applies to: ${baseFilter.desc.replace('Applies to: ', '')} without ${kw}`,
+    };
+  }
+  // "colorless creature" (Forerunner of Slaughter).
+  const colorlessFilter = f.match(/^colorless\s+(.+)$/);
+  if (colorlessFilter) {
+    const baseFilter = buildAppliesToFromText(colorlessFilter[1]);
+    return {
+      fn: (p) => baseFilter.fn(p) && (p.colors || []).length === 0,
+      desc: `Applies to: colorless ${baseFilter.desc.replace('Applies to: ', '')}`,
+    };
+  }
   const withKeywordFilter = f.match(/^(.+?)\s+with\s+(.+)$/);
   if (withKeywordFilter) {
     const kwCandidate = withKeywordFilter[2].toLowerCase().trim();
