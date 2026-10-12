@@ -1,0 +1,17 @@
+{
+  "name": "Shade's Breath, Iron Man Armor — 'becomes … and gains \"…\"' and 'If this Equipment isn't a creature, it becomes …'",
+  "notes": "Found with Kellan, Planar Trailblazer. Shade's Breath ('each creature you control becomes a black Shade and gains \"{B}: This creature gets +1/+1 until end of turn.\"') lost the colour and creature type because the sentence was cut at the period inside the quote: Grizzly Bears is a black Shade with the ability, the opponent's Gray Ogre is untouched. Iron Man Armor's '{2}: If this Equipment isn't a creature, it becomes a 0/0 Construct Hero artifact creature with flying …', fired, is about the Armor itself, not a target to pick.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears" },
+    { "add": "Gray Ogre", "controller": "p2" },
+    { "add": "Iron Man Armor", "as": "armor" },
+    { "fire": "@armor", "activated": 2 },
+    { "add": "Shade's Breath", "spell": true }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "colors": ["B"], "subtypes": ["Shade"], "abilities": { "$includes": ["{B}: This creature gets +1/+1 until end of turn."] } } },
+    { "perm": "Gray Ogre", "final": { "colors": ["R"], "subtypes": ["Ogre"] } },
+    { "perm": "Iron Man Armor", "final": { "types": ["Artifact", "Creature"], "abilities": { "$includes": ["Flying"] } } }
+  ]
+}

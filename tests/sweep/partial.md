@@ -8,10 +8,9 @@ Ranked by number of cards; examples are the most-played cards first (EDHREC rank
 
 | # | Cards | Part | Template | Most-played examples (the part not read) |
 |---:|---:|---|---|---|
-| 1 | 2 | Clause | `becomes a SUBTYPE` | Kellan, Planar Trailblazer (becomes a Human Faerie Detective); I'm a Doctor, Not a . . . (becomes a Doctor) |
-| 2 | 2 | Power of +N/+N | `it gets an additional +N/+N and has KEYWORD as long as an equipment named NAME` | Bride's Gown (+0/+2); Groom's Finery (+0/+2) |
-| 3 | 2 | Toughness of +N/+N | `it gets an additional +N/+N and has KEYWORD as long as an equipment named NAME` | Bride's Gown (+0/+2); Groom's Finery (+0/+2) |
-| 4 | 2 | Subtype | `until end of turn, THIS becomes a SUBTYPE, gets +N/+N, and gains KEYWORD` | Dragonsoul Knight (Dragon); Paragon of the Amesha (Angel) |
+| 1 | 2 | Power of +N/+N | `it gets an additional +N/+N and has KEYWORD as long as an equipment named NAME` | Bride's Gown (+0/+2); Groom's Finery (+0/+2) |
+| 2 | 2 | Toughness of +N/+N | `it gets an additional +N/+N and has KEYWORD as long as an equipment named NAME` | Bride's Gown (+0/+2); Groom's Finery (+0/+2) |
+| 3 | 2 | Subtype | `until end of turn, THIS becomes a SUBTYPE, gets +N/+N, and gains KEYWORD` | Dragonsoul Knight (Dragon); Paragon of the Amesha (Angel) |
 
 ## Single cards
 
@@ -64,9 +63,9 @@ Most-played first.
 | 27576 | Soul Sculptor | Clause: becomes an enchantment | {1}{W}, {T}: Target creature becomes an enchantment and loses all abilities until a player casts a creature spell. |
 | 28498 | Tek | Clause: gets +2/+0 as long as you control a Swamp | This creature gets +0/+2 as long as you control a Plains, has flying as long as you control an Island, gets +2/+0 as long as you control a Swamp, has first strike as long as you control a Mountain, and has trample as long as you control a Forest. |
 | 28498 | Tek | Clause: has first strike as long as you control a Mountain | This creature gets +0/+2 as long as you control a Plains, has flying as long as you control an Island, gets +2/+0 as long as you control a Swamp, has first strike as long as you control a Mountain, and has trample as long as you control a Forest. |
-| 30822 | Shade's Breath | Clause: becomes a black Shade | Until end of turn, each creature you control becomes a black Shade and gains "{B}: This creature gets +1/+1 until end of turn." |
 | 30921 | Chimeric Sphere | Power of N/N: 3/2 | {2}: Until end of turn, this artifact becomes a 3/2 Construct artifact creature and loses flying. |
 | 30921 | Chimeric Sphere | Toughness of N/N: 3/2 | {2}: Until end of turn, this artifact becomes a 3/2 Construct artifact creature and loses flying. |
 | 30921 | Chimeric Sphere | Subtype: Construct | {2}: Until end of turn, this artifact becomes a 3/2 Construct artifact creature and loses flying. |
 | 30921 | Chimeric Sphere | Card type: artifact | {2}: Until end of turn, this artifact becomes a 3/2 Construct artifact creature and loses flying. |
+| 31885 | I'm a Doctor, Not a . . . | Clause: becomes a Doctor | Until end of turn, it gets +1/+1 and becomes a Doctor. |
 |  | Mothers Yamazaki | Clause: get +2/+2 | As long as you control exactly two permanents named this card, the "legend rule" doesn't apply to them, and Samurai you control get +2/+2 and have vigilance and haste. |

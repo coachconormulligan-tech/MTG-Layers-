@@ -1,0 +1,101 @@
+{
+  "name": "Kellan, Planar Trailblazer — 'it becomes a Human Faerie Detective and gains \"…\"'",
+  "notes": "'If Kellan is a Scout, it becomes a Human Faerie Detective and gains \"Whenever Kellan deals combat damage …\"': fired, 'it' was offered as a target pick instead of being Kellan, and the new creature types were lost because the sentence was cut at the period inside the quoted ability. The first Kellan has its first ability fired: a Human Faerie Detective with the quoted ability. The second has both fired in order: a 3/2 Human Faerie Rogue with the quoted ability and double strike. The third is untouched and gets nothing from its own unfired ability text. Grizzly Bears stands by and gets nothing.",
+  "steps": [
+    {
+      "add": "Grizzly Bears"
+    },
+    {
+      "add": "Kellan, Planar Trailblazer",
+      "as": "k1"
+    },
+    {
+      "add": "Kellan, Planar Trailblazer",
+      "as": "k2"
+    },
+    {
+      "add": "Kellan, Planar Trailblazer",
+      "as": "k3"
+    },
+    {
+      "fire": "@k1",
+      "activated": 0
+    },
+    {
+      "fire": "@k2",
+      "activated": 0
+    },
+    {
+      "fire": "@k2",
+      "activated": 1
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Kellan, Planar Trailblazer A",
+      "final": {
+        "subtypes": [
+          "Human",
+          "Faerie",
+          "Detective"
+        ],
+        "power": 2,
+        "toughness": 1,
+        "abilities": {
+          "$includes": [
+            "Whenever this card deals combat damage to a player, exile the top card of your library. You may play that card this turn."
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Kellan, Planar Trailblazer B",
+      "final": {
+        "subtypes": [
+          "Human",
+          "Faerie",
+          "Rogue"
+        ],
+        "power": 3,
+        "toughness": 2,
+        "abilities": {
+          "$includes": [
+            "Whenever this card deals combat damage to a player, exile the top card of your library. You may play that card this turn.",
+            "Double strike"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Kellan, Planar Trailblazer C",
+      "final": {
+        "subtypes": [
+          "Human",
+          "Faerie",
+          "Scout"
+        ],
+        "power": 2,
+        "toughness": 1,
+        "abilities": {
+          "$excludes": [
+            "Whenever this card deals combat damage to a player, exile the top card of your library. You may play that card this turn.",
+            "Double strike"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "subtypes": [
+          "Bear"
+        ],
+        "abilities": {
+          "$excludes": [
+            "Whenever this card deals combat damage to a player, exile the top card of your library. You may play that card this turn."
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -591,7 +591,7 @@ const Battlefield = {
     // e.g. Eminence: "if this card is in the command zone or on the battlefield, another target Cat..."
     // "If this land isn't a creature, it becomes a 2/4 Wizard creature …" (Great Hall of the
     // Biblioplex, Veiled Serpent): "it" is the permanent the condition just named.
-    parsedEffectText = parsedEffectText.replace(/^if\s+this\s+(land|permanent|creature|artifact|enchantment)\s+[^,]+,\s*it\s+(?=becomes?\b)/i, 'This $1 ');
+    parsedEffectText = parsedEffectText.replace(/^if\s+this\s+(land|permanent|creature|artifact|enchantment|card|token|vehicle|equipment)\s+[^,]+,\s*it\s+(?=becomes?\b)/i, 'This $1 ');
     // A target named only in that condition is still what "it" means afterwards: "If target
     // attacking creature token is the chosen type, put three +1/+1 counters on it and it gains
     // deathtouch" (A Killer Among Us).
