@@ -15,13 +15,5 @@ Most-played first.
 
 | EDHREC rank | Card | Part not read | Sentence |
 |---:|---|---|---|
-| 26596 | Ageless Sentinels | Clause: it becomes a Bird Giant | When this creature blocks, it becomes a Bird Giant, and it loses defender. |
-| 27576 | Soul Sculptor | Clause: becomes an enchantment | {1}{W}, {T}: Target creature becomes an enchantment and loses all abilities until a player casts a creature spell. |
-| 28498 | Tek | Clause: gets +2/+0 as long as you control a Swamp | This creature gets +0/+2 as long as you control a Plains, has flying as long as you control an Island, gets +2/+0 as long as you control a Swamp, has first strike as long as you control a Mountain, and has trample as long as you control a Forest. |
-| 28498 | Tek | Clause: has first strike as long as you control a Mountain | This creature gets +0/+2 as long as you control a Plains, has flying as long as you control an Island, gets +2/+0 as long as you control a Swamp, has first strike as long as you control a Mountain, and has trample as long as you control a Forest. |
-| 30921 | Chimeric Sphere | Power of N/N: 3/2 | {2}: Until end of turn, this artifact becomes a 3/2 Construct artifact creature and loses flying. |
-| 30921 | Chimeric Sphere | Toughness of N/N: 3/2 | {2}: Until end of turn, this artifact becomes a 3/2 Construct artifact creature and loses flying. |
-| 30921 | Chimeric Sphere | Subtype: Construct | {2}: Until end of turn, this artifact becomes a 3/2 Construct artifact creature and loses flying. |
-| 30921 | Chimeric Sphere | Card type: artifact | {2}: Until end of turn, this artifact becomes a 3/2 Construct artifact creature and loses flying. |
 | 31885 | I'm a Doctor, Not a . . . | Clause: becomes a Doctor | Until end of turn, it gets +1/+1 and becomes a Doctor. |
 |  | Mothers Yamazaki | Clause: get +2/+2 | As long as you control exactly two permanents named this card, the "legend rule" doesn't apply to them, and Samurai you control get +2/+2 and have vigilance and haste. |

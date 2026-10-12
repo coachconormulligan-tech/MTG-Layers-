@@ -1684,6 +1684,25 @@ function parseCardEffects(permanent, card, opts = {}) {
       oracle = oracle.replace(/(^|\.\s+|\n)(?:if|when) you do,\s*(?!if\b)(\w)/gi, (_, pre, ch) => pre + ch.toUpperCase());
     }
   }
+  // "This creature gets +0/+2 as long as you control a Plains, has flying as long as you control
+  // an Island, …, and has trample as long as you control a Forest." (Tek): each item has its own
+  // condition, and a line carries one, so the later items move to lines of their own.
+  if (_branchInfo && !permanent.isSpell && !permanent.isManualEffect) {
+    const lines = oracle.split('\n'), extra = [];
+    lines.forEach((line, li) => {
+      if (li >= _branchInfo.baseLineCount) return;
+      const list = line.match(/^(this [\w-]+) ((?:gets|has) [^,.]+? as long as [^,.]+)((?:, (?:and )?(?:gets|has) [^,.]+? as long as [^,.]+)+)\.$/i);
+      if (!list) return;
+      lines[li] = `${list[1]} ${list[2]}.`;
+      for (const item of list[3].split(/, (?:and )?/).filter(Boolean)) {
+        _branchInfo.branchLines.set(lines.length + extra.length, li);
+        extra.push(`${list[1]} ${item}.`);
+      }
+      // The printed line stays in the ability list whichever of its conditions hold.
+      _branchInfo.alwaysOnLines.add(li);
+    });
+    oracle = [...lines, ...extra].join('\n');
+  }
   // "This creature has flying and trample if it devoured a creature." (Hellkite Hatchling): a
   // trailing condition of a permanent's static ability that the board cannot show is asked
   // with a toggle too.
@@ -3169,6 +3188,12 @@ function parseCardEffects(permanent, card, opts = {}) {
     // "becomes a 9/9 Phyrexian Construct artifact creature, loses all abilities, and gains
     // indestructible and toxic 9" (Monument to Perfection): the same list with a loss in the middle.
     becomesText = becomesText.replace(/,\s+loses?\s+all\s+abilities(?:,?\s+and\s+(?:gains?|ha(?:s|ve))\s+[^"]*)?$/i, '').trim();
+
+    // "becomes a 3/2 Construct artifact creature and loses flying" (Chimeric Sphere), "becomes a
+    // Bird Giant, and it loses defender" (Ageless Sentinels), "becomes an enchantment and loses
+    // all abilities until a player casts a creature spell" (Soul Sculptor): the loss is the
+    // ability-removal parsers'.
+    becomesText = becomesText.replace(/,?\s+and\s+(?:(?:it|this \w+|target [^,"]+?)\s+)?loses?\s+[^"]*$/i, '').trim();
 
     // Extract "that's still a [type]" / "that is still a [type]" clauses (Gideon Blackblade pattern)
     // These indicate types to preserve (ADD_TYPE rather than losing them)
@@ -5246,7 +5271,17 @@ function parseCardEffects(permanent, card, opts = {}) {
   const losesSpecificRegex = /(?:^|[.;])\s*(.+?)\s+(?:you (?:control|own)\s+)?(?:loses?)\s+(?!all\b)(.+?)(?:\.|$)/gmi;
   let losesSpecificMatch;
   while ((losesSpecificMatch = losesSpecificRegex.exec(oracle)) !== null) {
-    const filterText = losesSpecificMatch[1].trim();
+    // The effect of a triggered or activated ability waits for the ability to be fired ("When
+    // this creature blocks, it becomes a Bird Giant, and it loses defender" — Ageless Sentinels).
+    if (_isInActivatedEffect(losesSpecificMatch.index) || _isInTriggeredSentence(losesSpecificMatch.index)) continue;
+    let filterText = stripDurationPrefix(losesSpecificMatch[1].trim());
+    // "This artifact becomes a 3/2 Construct artifact creature and loses flying" (Chimeric
+    // Sphere): the subject is what stands before "becomes"; "… becomes a Bird Giant, and target
+    // creature loses defender" (Ageless Sentinels, fired) names it again.
+    {
+      const _becomesAndLoses = filterText.match(/^(this [\w-]+|(?:up to \w+ |another )?target [^,."]+?)\s+becomes?\s+[^"]*?(?:\s+and|,\s+and\s+(it|this [\w-]+|target [^,."]+))$/i);
+      if (_becomesAndLoses) filterText = _becomesAndLoses[2] && !/^it$/i.test(_becomesAndLoses[2]) ? _becomesAndLoses[2] : _becomesAndLoses[1];
+    }
     const lostText = losesSpecificMatch[2].trim().toLowerCase()
       // "…lose indestructible until end of turn, then destroy all creatures and Vehicles"
       // (Spectacular Pileup): what happens next is not part of what is lost.

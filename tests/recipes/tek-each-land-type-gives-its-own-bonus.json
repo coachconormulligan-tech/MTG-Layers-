@@ -1,0 +1,36 @@
+{
+  "name": "Tek — with a Swamp and a Mountain: +2/+0 and first strike only",
+  "notes": "Partial sweep (single cards, 2026-10-12). \"gets +0/+2 as long as you control a Plains, has flying as long as you control an Island, gets +2/+0 as long as you control a Swamp, has first strike as long as you control a Mountain, and has trample as long as you control a Forest.\" Two of the five items were unread, and the Plains condition gated the whole line. Each item now has its own condition: 4/2 with first strike, no flying, no trample.",
+  "steps": [
+    {
+      "add": "Swamp",
+      "as": "s"
+    },
+    {
+      "add": "Mountain",
+      "as": "m"
+    },
+    {
+      "add": "Tek",
+      "as": "tek"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Tek",
+      "final": {
+        "power": 4,
+        "toughness": 2,
+        "abilities": {
+          "$includes": [
+            "First strike"
+          ],
+          "$excludes": [
+            "Flying",
+            "Trample"
+          ]
+        }
+      }
+    }
+  ]
+}
