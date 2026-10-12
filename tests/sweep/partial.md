@@ -15,16 +15,6 @@ Most-played first.
 
 | EDHREC rank | Card | Part not read | Sentence |
 |---:|---|---|---|
-| 13910 | Gideon, Champion of Justice | Subtype: Human | 0: Until end of turn, this card becomes a Human Soldier creature with power and toughness each equal to the number of loyalty counters on him and gains indestructible. |
-| 13910 | Gideon, Champion of Justice | Card type: creature | 0: Until end of turn, this card becomes a Human Soldier creature with power and toughness each equal to the number of loyalty counters on him and gains indestructible. |
-| 14367 | Monument to Perfection | Power of N/N: 9/9 | {3}: This artifact becomes a 9/9 Phyrexian Construct artifact creature, loses all abilities, and gains indestructible and toxic 9. |
-| 14367 | Monument to Perfection | Toughness of N/N: 9/9 | {3}: This artifact becomes a 9/9 Phyrexian Construct artifact creature, loses all abilities, and gains indestructible and toxic 9. |
-| 14367 | Monument to Perfection | Subtype: Phyrexian | {3}: This artifact becomes a 9/9 Phyrexian Construct artifact creature, loses all abilities, and gains indestructible and toxic 9. |
-| 14367 | Monument to Perfection | Card type: artifact | {3}: This artifact becomes a 9/9 Phyrexian Construct artifact creature, loses all abilities, and gains indestructible and toxic 9. |
-| 16363 | Surge Engine | Clause: has base power and toughness 5/4 | {2}{U}: This creature becomes blue and has base power and toughness 5/4. |
-| 17585 | Zealot's Conviction | Power of +N/+N: +1/+0 | Corrupted — As long as an opponent has three or more poison counters, enchanted creature gets an additional +1/+0 and has first strike. |
-| 17585 | Zealot's Conviction | Toughness of +N/+N: +1/+0 | Corrupted — As long as an opponent has three or more poison counters, enchanted creature gets an additional +1/+0 and has first strike. |
-| 19056 | Withercrown | Clause: has base power 0 | Enchanted creature has base power 0 and has "At the beginning of your upkeep, you lose 1 life unless you sacrifice this creature." |
 | 19836 | Hulkling, Young Avenger | Power of N/N: 4/4 | Whenever you cast a noncreature spell, this card becomes a copy of up to one other target creature until end of turn, except his name is this card, he's 4/4, and he has flying and this ability. |
 | 19836 | Hulkling, Young Avenger | Toughness of N/N: 4/4 | Whenever you cast a noncreature spell, this card becomes a copy of up to one other target creature until end of turn, except his name is this card, he's 4/4, and he has flying and this ability. |
 | 20290 | Tsagan, Raider Warlord | Keyword: first strike | Max speed — this card has deathtouch and other creatures you control have first strike. |

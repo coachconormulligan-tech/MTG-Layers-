@@ -1,0 +1,60 @@
+{
+  "name": "Zealot's Conviction — without three poison counters the creature gets only +1/+1",
+  "notes": "Partial sweep (single cards, 2026-10-12). The other half of the Corrupted recipe: the opponent has two poison counters, so the Bears are 3/3 without first strike.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "b"
+    },
+    {
+      "add": "Zealot's Conviction",
+      "as": "z"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@z",
+        "@b"
+      ]
+    },
+    {
+      "call": [
+        "setActivePlayer",
+        "p2"
+      ]
+    },
+    {
+      "call": [
+        "updateGameState",
+        "poisonCounters",
+        2
+      ]
+    },
+    {
+      "call": [
+        "setActivePlayer",
+        "p1"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 3,
+        "toughness": 3,
+        "abilities": {
+          "$excludes": [
+            "First strike"
+          ]
+        }
+      }
+    }
+  ]
+}

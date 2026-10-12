@@ -1,0 +1,54 @@
+{
+  "name": "Gideon, Champion of Justice — \"becomes a Human Soldier creature with power and toughness each equal to the number of loyalty counters on him\"",
+  "notes": "Partial sweep (single cards, 2026-10-12). Fired, the 0 ability only gave indestructible: Gideon stayed a planeswalker with no power or toughness. The number is locked in as the ability resolves, so the fired text is rewritten to \"becomes a 5/5 Human Soldier creature\" from the loyalty counters on Gideon at that moment. Two counters added afterwards do not change it.",
+  "steps": [
+    {
+      "add": "Gideon, Champion of Justice",
+      "as": "g"
+    },
+    {
+      "call": [
+        "addCounter",
+        "@g",
+        "loyalty",
+        5
+      ]
+    },
+    {
+      "fire": "@g",
+      "activated": 1,
+      "as": "f"
+    },
+    {
+      "call": [
+        "addCounter",
+        "@g",
+        "loyalty",
+        2
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Gideon, Champion of Justice",
+      "final": {
+        "types": [
+          "Planeswalker",
+          "Creature"
+        ],
+        "subtypes": [
+          "Gideon",
+          "Human",
+          "Soldier"
+        ],
+        "power": 5,
+        "toughness": 5,
+        "abilities": {
+          "$includes": [
+            "Indestructible"
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -298,7 +298,18 @@ function _abilitiesFromOtherObject(text) {
 //    control" (Arni Brokenbrow)
 function _lockFireTimeBasePT(text, states, sourceId) {
   const src = states && states.get(sourceId);
-  if (!src || !/\bbase (?:power|toughness)\b/i.test(text)) return text;
+  if (!src) return text;
+  // "this card becomes a Human Soldier creature with power and toughness each equal to the number
+  // of loyalty counters on him" (Gideon, Champion of Justice): the counters on the source now.
+  text = text.replace(/\b(becomes?) an? ([^.,\n]*?) with power and toughness each equal to the number of ([\w+\/-]+) counters on (?:him|her|it|them|this \w+)\b/gi,
+    (_, verb, what, kind) => {
+      const srcPerm = Battlefield.getPermById(sourceId);
+      const counters = (srcPerm && srcPerm.counters) || {};
+      const key = Object.keys(counters).find(k => k.toLowerCase() === kind.toLowerCase());
+      const n = key ? counters[key] || 0 : 0;
+      return `${verb} a ${n}/${n} ${what}`;
+    });
+  if (!/\bbase (?:power|toughness)\b/i.test(text)) return text;
   const p = src.power || 0, t = src.toughness || 0;
   const SELF = "this (?:card|creature|permanent)'s";
   // "…exile them, then shuffle. If you do, this creature has base power and base toughness each

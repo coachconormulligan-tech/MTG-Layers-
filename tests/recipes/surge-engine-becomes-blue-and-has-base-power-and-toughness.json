@@ -1,0 +1,27 @@
+{
+  "name": "Surge Engine — \"becomes blue and has base power and toughness 5/4\"",
+  "notes": "Partial sweep (single cards, 2026-10-12). Fired, the second ability made Surge Engine blue but left it 3/2: the base power and toughness parser skips a subject that ends in \"and\", and here the subject was \"This creature becomes blue and\". The colour clause is now taken off the subject.",
+  "steps": [
+    {
+      "add": "Surge Engine",
+      "as": "s"
+    },
+    {
+      "fire": "@s",
+      "activated": 2,
+      "as": "f"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Surge Engine",
+      "final": {
+        "power": 5,
+        "toughness": 4,
+        "colors": [
+          "U"
+        ]
+      }
+    }
+  ]
+}

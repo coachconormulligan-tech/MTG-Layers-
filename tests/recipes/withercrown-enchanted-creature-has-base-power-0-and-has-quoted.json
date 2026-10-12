@@ -1,0 +1,35 @@
+{
+  "name": "Withercrown — \"Enchanted creature has base power 0 and has \"…\"\"",
+  "notes": "Partial sweep (single cards, 2026-10-12). The enchanted creature gained the upkeep trigger but kept its power: the parser for a single base value (\"has base power N\") skipped every subject with \"enchanted\" or \"equipped\" in it, and nothing else reads that wording. Hill Giant is 0/3.",
+  "steps": [
+    {
+      "add": "Hill Giant",
+      "as": "g"
+    },
+    {
+      "add": "Withercrown",
+      "as": "w"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@w",
+        "@g"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "power": 0,
+        "toughness": 3,
+        "abilities": {
+          "$includes": [
+            "At the beginning of your upkeep, you lose 1 life unless you sacrifice this creature"
+          ]
+        }
+      }
+    }
+  ]
+}

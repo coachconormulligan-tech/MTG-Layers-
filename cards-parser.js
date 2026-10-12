@@ -227,6 +227,21 @@ const CONDITION_PARSERS = [
     const threshold = _wordThresh(m[1]);
     return (s) => Object.values(s.counters || {}).reduce((n, v) => n + (v > 0 ? v : 0), 0) >= threshold;
   },
+  // "an opponent has three or more poison counters" (Corrupted — Zealot's Conviction, Bonepicker
+  // Skirge): the Poison counters of every other player in Game State.
+  // Must precede the counters-on-this-permanent check below.
+  (ct, srcId) => {
+    const m = ct.match(/\b(an|each) opponent has (\w+) or more poison counters?\b/);
+    if (!m) return null;
+    const threshold = _wordThresh(m[2]);
+    return (state, allStates) => {
+      if (typeof Battlefield === 'undefined') return false;
+      const you = ((allStates && allStates.get(srcId)) || state || {}).controller || Battlefield.activePlayerId;
+      const opps = (Battlefield.players || []).filter(pl => pl.id !== you);
+      const has = pl => ((pl.gameState && pl.gameState.poisonCounters) || 0) >= threshold;
+      return opps.length > 0 && (m[1] === 'each' ? opps.every(has) : opps.some(has));
+    };
+  },
   // "has N or more [type] counters on it".
   (ct) => {
     const m = ct.match(/has\s+(\w+)\s+or\s+more\s+([\w+/]+)\s+counter/);
@@ -349,19 +364,21 @@ const CONDITION_PARSERS = [
   // also "... in exile". "your" scopes to the source controller's zone; any other determiner
   // (a/all/each/their/every) counts across every player. Reuses _zoneCardMatchesQualifier
   // (engine-compute.js) so the qualifier ("creature", "Zombie creature", etc.) is honored.
-  (ct) => {
+  (ct, srcId) => {
     // Also "there is a Lesson card in your graveyard" (Fire Nation Cadets): one or more.
-    const m = ct.match(/there (?:are|is)\s+(\w+\s+or\s+more|an?)\s+(.+?)\s+cards?\s+in\s+(your|a|an|all|each|their|every)?\s*(graveyards?|exile)\b/);
+    // No qualifier is every card: "there are seven or more cards in your graveyard" (threshold).
+    const m = ct.match(/there (?:are|is)\s+(\w+\s+or\s+more|an?)\s+(?:(.+?)\s+)?cards?\s+in\s+(your|a|an|all|each|their|every)?\s*(graveyards?|exile)\b/);
     if (!m) return null;
     const threshold = /^an?$/.test(m[1]) ? 1 : _wordThresh(m[1].split(/\s+/)[0]);
-    const qualifier = m[2].trim();
+    const qualifier = (m[2] || '').trim();
     const yoursOnly = (m[3] || '').toLowerCase() === 'your';
     const zone = /exile/.test(m[4]) ? 'exile' : 'graveyard';
     const matches = (card) => (typeof _zoneCardMatchesQualifier === 'function')
       ? _zoneCardMatchesQualifier(card, qualifier) : true;
-    return (state) => {
+    return (state, allStates) => {
       if (typeof Battlefield === 'undefined') return true;
-      const ctrl = state && state.controller;
+      // "Your" is the source's controller, not the enchanted creature's (Patriarch's Desire).
+      const ctrl = ((allStates && allStates.get(srcId)) || state || {}).controller;
       let count = 0;
       if (zone === 'graveyard' && Array.isArray(Battlefield.players)) {
         for (const p of Battlefield.players) {
@@ -1082,6 +1099,12 @@ function parseCardEffects(permanent, card, opts = {}) {
   if (isAuraCard || isEquipmentCard) {
     oracle = oracle.replace(/(\.)\s+It gets an additional (?=[+-][\dX]+\/[+-][\dX]+)/g, `$1\n${enchantedRef} gets `);
   }
+  // "… enchanted creature gets an additional +1/+0 and has first strike" (Zealot's Conviction):
+  // every boost adds to the ones before it, so "an additional" says nothing the number does not.
+  // (Not "For each Spirit sacrificed this way, that creature gets an additional +3/+0" — Devouring
+  // Rage: a count placed before the subject is not read, and would be taken for the subject.)
+  oracle = oracle.replace(/\b(gets?) an additional (?=[+-][\dX]+\/[+-][\dX]+)/gi,
+    (whole, verb, pos, str) => /^For each\b/i.test(str.slice(0, pos).split(/\.\s+|\n/).pop()) ? whole : verb + ' ');
   // Normalize smart/curly double quotes (U+201C, U+201D) to straight ASCII double quotes
   oracle = oracle.replace(/[\u201c\u201d]/g, '"');
 
@@ -3096,6 +3119,9 @@ function parseCardEffects(permanent, card, opts = {}) {
     // "becomes a Dragon, gets +5/+3, and gains flying and trample" (Dragonsoul Knight): the list's
     // later items are the boost parser's and the keyword parser's.
     becomesText = becomesText.replace(/,\s+gets?\s+[+-][\dX]+\/[+-][\dX]+(?:,?\s+and\s+(?:gains?|ha(?:s|ve))\s+[^"]*)?$/i, '').trim();
+    // "becomes a 9/9 Phyrexian Construct artifact creature, loses all abilities, and gains
+    // indestructible and toxic 9" (Monument to Perfection): the same list with a loss in the middle.
+    becomesText = becomesText.replace(/,\s+loses?\s+all\s+abilities(?:,?\s+and\s+(?:gains?|ha(?:s|ve))\s+[^"]*)?$/i, '').trim();
 
     // Extract "that's still a [type]" / "that is still a [type]" clauses (Gideon Blackblade pattern)
     // These indicate types to preserve (ADD_TYPE rather than losing them)
@@ -4100,9 +4126,12 @@ function parseCardEffects(permanent, card, opts = {}) {
     // leaves ", up to one target artifact, creature, or planeswalker an opponent controls also".)
     // ('Target creature you control gains "…" and has base power and toughness 5/2' — Vincent's
     // Limit Break: the quoted grant before the "and" is the quoted-ability parser's.)
+    // ("This creature becomes blue and has base power and toughness 5/4" — Surge Engine: the
+    // colour before the "and" is the colour parser's.)
     const gbpFilterText = stripDurationPrefix(generalBasePTMatch[1].trim().split(/\.\s+/).pop().replace(/^["\u201d\s]+/, '').trim())
       .replace(/^,\s*/, '').replace(/\s+also$/i, '')
-      .replace(/^((?:up to \w+ (?:other )?|another )?target [^,."]+?)\s+(?:gains?|has)\s+"[^"]*"\s+and$/i, '$1');
+      .replace(/^((?:up to \w+ (?:other )?|another )?target [^,."]+?)\s+(?:gains?|has)\s+"[^"]*"\s+and$/i, '$1')
+      .replace(/^([^,."]+?)\s+becomes?\s+(?:colorless|(?:white|blue|black|red|green)(?:(?:,\s*|\s+and\s+)(?:white|blue|black|red|green))*)\s+and$/i, '$1');
     const gbpFLower = gbpFilterText.toLowerCase();
     const gbpIsTargetPhrase = /^(?:up to \w+ (?:other )?|another )?target\b/.test(gbpFLower);
     // Skip enchanted/equipped (handled above) and non-permanent references
@@ -4186,7 +4215,6 @@ function parseCardEffects(permanent, card, opts = {}) {
   while ((singleBaseMatch = singleBaseRegex.exec(oracle)) !== null) {
     const sbFilterText = stripDurationPrefix(singleBaseMatch[1].trim());
     const sbLower = sbFilterText.toLowerCase();
-    if (/enchanted|equipped/i.test(sbLower)) continue;
     if (_isTriggeredSentence(sbLower) || /^if\b/.test(sbLower) || sbLower.length > 60) continue;
     if (_isInActivatedEffect(singleBaseMatch.index) || _isInTriggeredSentence(singleBaseMatch.index)) continue;
     const sbApplies = buildAppliesToFromText(sbFilterText);
