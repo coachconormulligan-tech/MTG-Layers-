@@ -1,0 +1,43 @@
+{
+  "name": "World War Hulk — chapter III \"double its power and toughness and it gains trample\"",
+  "notes": "Partial sweep (single cards, 2026-10-12). \"and it gains trample\" after \"double its power and toughness\" was dropped (\"it\" is the target chosen in the sentence before). The doubling parser now grants the trailing keywords to the same creature. With three lore counters the Bears are 4/4 with trample.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "b"
+    },
+    {
+      "add": "World War Hulk",
+      "as": "s"
+    },
+    {
+      "call": [
+        "addCounter",
+        "@s",
+        "lore",
+        3
+      ]
+    },
+    {
+      "call": [
+        "setTarget",
+        "@s",
+        "@b"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 4,
+        "toughness": 4,
+        "abilities": {
+          "$includes": [
+            "Trample"
+          ]
+        }
+      }
+    }
+  ]
+}

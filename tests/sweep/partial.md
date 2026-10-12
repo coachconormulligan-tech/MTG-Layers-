@@ -15,29 +15,12 @@ Most-played first.
 
 | EDHREC rank | Card | Part not read | Sentence |
 |---:|---|---|---|
-| 4626 | Polymorphist's Jest | Clause: becomes a blue Frog with base power and toughness 1/1 | Until end of turn, each creature target player controls loses all abilities and becomes a blue Frog with base power and toughness 1/1. |
-| 5112 | Idol of False Gods | Clause: it has annihilator 2 | As long as this artifact has eight or more +1/+1 counters on it, it's a 0/0 creature in addition to its other types and it has annihilator 2. |
-| 5183 | Akroma, Vision of Ixidor | Power of +N/+N: +1/+1 | At the beginning of each combat, until end of turn, each other creature you control gets +1/+1 if it has flying, +1/+1 if it has first strike, and so on for double strike, deathtouch, haste, hexproof, indestructible, lifelink, menace, protection, reach, trample, vigilance, and partner. |
-| 5183 | Akroma, Vision of Ixidor | Toughness of +N/+N: +1/+1 | At the beginning of each combat, until end of turn, each other creature you control gets +1/+1 if it has flying, +1/+1 if it has first strike, and so on for double strike, deathtouch, haste, hexproof, indestructible, lifelink, menace, protection, reach, trample, vigilance, and partner. |
-| 6975 | Sigarda's Summons | Clause: have flying | Creatures you control with +1/+1 counters on them have base power and toughness 4/4, have flying, and are Angels in addition to their other types. |
-| 7205 | Ultimate Spider-Man | Clause: becomes colorless | He gains hexproof and becomes colorless until end of turn. |
-| 7237 | Sarkhan, Dragon Ascendant | Clause: becomes a Dragon in addition to his other types | Until end of turn, this card becomes a Dragon in addition to his other types and gains flying. |
-| 7428 | World War Hulk | Clause: it gains trample | Until end of turn, double its power and toughness and it gains trample. |
-| 7494 | Vincent's Limit Break | Clause: has the chosen base power and toughness | Until end of turn, target creature you control gains "When this creature dies, return it to the battlefield tapped under its owner's control" and has the chosen base power and toughness. |
-| 7836 | Arahbo, Roar of the World | Clause: gets +X/+X until end of turn, where X is its power | If you do, it gains trample and gets +X/+X until end of turn, where X is its power. |
-| 8379 | Aurelia, Exemplar of Justice | Clause: gains vigilance if it's white | Until end of turn, that creature gets +2/+0, gains trample if it's red, and gains vigilance if it's white. |
-| 8683 | Honest Work | Quoted ability: "{T}: Add {C}" | Enchanted creature loses all abilities and is a Citizen with base power and toughness 1/1 and "{T}: Add {C}" named Humble Merchant. |
-| 9592 | Elrond of the White Council | Clause: they gain "This creature can't attack its owner." | You gain control of each creature chosen this way, and they gain "This creature can't attack its owner." |
-| 10923 | Olivia, Mobilized for War | Clause: it becomes a Vampire in addition to its other types | If you do, put a +1/+1 counter on that creature, it gains haste until end of turn, and it becomes a Vampire in addition to its other types. |
-| 11981 | Hydro-Man, Fluid Felon | Card type: land | Until your next turn, he becomes a land and gains "{T}: Add {U}." |
-| 13763 | Wings of Velis Vel | Clause: gains all creature types | Until end of turn, target creature has base power and toughness 4/4, gains all creature types, and gains flying. |
 | 13910 | Gideon, Champion of Justice | Subtype: Human | 0: Until end of turn, this card becomes a Human Soldier creature with power and toughness each equal to the number of loyalty counters on him and gains indestructible. |
 | 13910 | Gideon, Champion of Justice | Card type: creature | 0: Until end of turn, this card becomes a Human Soldier creature with power and toughness each equal to the number of loyalty counters on him and gains indestructible. |
 | 14367 | Monument to Perfection | Power of N/N: 9/9 | {3}: This artifact becomes a 9/9 Phyrexian Construct artifact creature, loses all abilities, and gains indestructible and toxic 9. |
 | 14367 | Monument to Perfection | Toughness of N/N: 9/9 | {3}: This artifact becomes a 9/9 Phyrexian Construct artifact creature, loses all abilities, and gains indestructible and toxic 9. |
 | 14367 | Monument to Perfection | Subtype: Phyrexian | {3}: This artifact becomes a 9/9 Phyrexian Construct artifact creature, loses all abilities, and gains indestructible and toxic 9. |
 | 14367 | Monument to Perfection | Card type: artifact | {3}: This artifact becomes a 9/9 Phyrexian Construct artifact creature, loses all abilities, and gains indestructible and toxic 9. |
-| 14772 | Wild Mongrel | Clause: becomes the color of your choice | Discard a card: This creature gets +1/+1 and becomes the color of your choice until end of turn. |
 | 16363 | Surge Engine | Clause: has base power and toughness 5/4 | {2}{U}: This creature becomes blue and has base power and toughness 5/4. |
 | 17585 | Zealot's Conviction | Power of +N/+N: +1/+0 | Corrupted — As long as an opponent has three or more poison counters, enchanted creature gets an additional +1/+0 and has first strike. |
 | 17585 | Zealot's Conviction | Toughness of +N/+N: +1/+0 | Corrupted — As long as an opponent has three or more poison counters, enchanted creature gets an additional +1/+0 and has first strike. |
@@ -48,7 +31,6 @@ Most-played first.
 | 22625 | Hellcat, Undying Vigilante | Clause: gains haste | She loses all abilities and gains haste. |
 | 23954 | Hellkite Hatchling | Keyword: trample | This creature has flying and trample if it devoured a creature. |
 | 24670 | Dominaria's Judgment | Keyword: protection from white | Until end of turn, creatures you control gain protection from white if you control a Plains, from blue if you control an Island, from black if you control a Swamp, from red if you control a Mountain, and from green if you control a Forest. |
-| 24933 | Phantasmal Form | Clause: gain flying | Until end of turn, up to two target creatures each have base power and toughness 3/3, gain flying, and become blue Illusions in addition to their other colors and types. |
 | 26596 | Ageless Sentinels | Clause: it becomes a Bird Giant | When this creature blocks, it becomes a Bird Giant, and it loses defender. |
 | 27576 | Soul Sculptor | Clause: becomes an enchantment | {1}{W}, {T}: Target creature becomes an enchantment and loses all abilities until a player casts a creature spell. |
 | 28498 | Tek | Clause: gets +2/+0 as long as you control a Swamp | This creature gets +0/+2 as long as you control a Plains, has flying as long as you control an Island, gets +2/+0 as long as you control a Swamp, has first strike as long as you control a Mountain, and has trample as long as you control a Forest. |

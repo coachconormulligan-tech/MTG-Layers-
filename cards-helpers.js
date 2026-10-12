@@ -38,8 +38,10 @@ const _ABILITY_IT_RIVAL_RE = /\b(?:target|creates?|tokens?|cards?|cop(?:y|ies)|c
 // Case-sensitive on purpose: a capitalised word after an article is a subtype ("a Goblin").
 const _ABILITY_IT_SUBTYPE_RIVAL_RE = /\b(?:[Aa]n?|[Aa]nother|[Ee]ach|[Tt]hat|[Tt]hose|[Tt]he|[Oo]ther)\s+[A-Z][a-z]+/;
 function _resolveItToAbilitySource(text) {
-  if (!/\bit\b/i.test(text) || !/\bthis\b/i.test(text)) return text;
-  return text.replace(/\bit\s+(?=(?:gets?|gains?|has|have|is|becomes?|loses?)\b)/gi, (whole, offset) => {
+  // ("Put a +1/+1 counter on this card. He gains hexproof …" — Ultimate Spider-Man: a legendary
+  // character's "he" / "she" is the same pronoun.)
+  if (!/\b(?:it|he|she)\b/i.test(text) || !/\bthis\b/i.test(text)) return text;
+  return text.replace(/\b(?:it|he|she)\s+(?=(?:gets?|gains?|has|have|is|becomes?|loses?)\b)/gi, (whole, offset) => {
     const before = text.slice(0, offset);
     if ((before.match(/"/g) || []).length % 2) return whole; // inside a quoted ability
     const selves = before.match(_ABILITY_SELF_PHRASE_RE);
@@ -51,7 +53,7 @@ function _resolveItToAbilitySource(text) {
       .replace(_ABILITY_SELF_PHRASE_RE, ' ');
     if (_ABILITY_IT_RIVAL_RE.test(others) || _ABILITY_IT_SUBTYPE_RIVAL_RE.test(others)) return whole;
     const phrase = selves[selves.length - 1];
-    return (whole[0] === 'I' ? 'T' : 't') + phrase.slice(1) + ' ';
+    return (/[A-Z]/.test(whole[0]) ? 'T' : 't') + phrase.slice(1) + ' ';
   });
 }
 
@@ -394,6 +396,37 @@ function _writeOutEarthbend(text) {
     return (midSentence ? '. ' : '') + (opens ? 'T' : 't') + "arget land you control becomes a 0/0 creature with haste that's still a land";
   });
 }
+/* "Until end of turn, that creature gets +2/+0, gains trample if it's red, and gains vigilance
+   if it's white." (Aurelia, Exemplar of Justice): a list whose later items each carry their own
+   "if it's …" is written out as the sentence without them and one rider sentence an item,
+   "… gets +2/+0. If it's red, it gains trample until end of turn. If it's white, it gains …",
+   the form the rider parser reads (Wedding Invitation). Run on a card's text and on a fired
+   ability's; the result holds no such list, so running it twice changes nothing. */
+function _writeOutConditionalItems(text) {
+  if (!/\sif it's\s[^.,\n]+,\s+and\s/i.test(text)) return text;
+  return text.replace(
+    /((?:(until end of turn),\s+)?[^.,\n"]+?\s(?:gets?|gains?|has)\s[^.,\n"]+?)((?:,\s+(?:and\s+)?(?:gets?|gains?|has)\s[^.,\n"]+?\sif it's\s[^.,\n"]+){2,})\./gi,
+    (whole, head, duration, items) => {
+      const riders = items.split(/,\s+(?:and\s+)?/).filter(Boolean)
+        .map(item => item.match(/^(gets?|gains?|has)\s+(.+?)\s+if it's\s+(.+)$/i));
+      if (riders.some(r => !r)) return whole;
+      return head + '.' + riders.map(r => ` If it's ${r[3]}, it ${r[1]} ${r[2]}${duration ? ' until end of turn' : ''}.`).join('');
+    });
+}
+/* "… put a +1/+1 counter on that creature, it gains haste until end of turn, and it becomes a
+   Vampire in addition to its other types." (Olivia, Mobilized for War): a counter placed and then
+   two things said about the same object, as one comma list. Written out as one sentence each,
+   "… on that creature. It gains haste until end of turn. It becomes a Vampire …", which the
+   parsers read. Run on a card's text and on a fired ability's; running it twice changes nothing. */
+function _writeOutPronounClauseList(text) {
+  const verb = '(?:gains?|gets?|has|have|becomes?|loses?)';
+  return text.replace(
+    new RegExp(`(\\bput [^.,\\n"]+ counters? on [^.,\\n"]+),\\s+(it|they|that creature)\\s+(${verb}\\s[^.,\\n"]+),\\s+and\\s+(?:it|they|that creature)\\s+(${verb}\\s[^.\\n"]+)\\.`, 'gi'),
+    (whole, counters, pronoun, first, second) => {
+      const subject = pronoun.charAt(0).toUpperCase() + pronoun.slice(1).toLowerCase();
+      return `${counters}. ${subject} ${first}. ${subject} ${second}.`;
+    });
+}
 // ("becomes an X/X Cat" reads "a 2/2 Cat" once X is a number.)
 function _fixNumberArticle(text) {
   return text.replace(/\b(an?) (?=(\d+)\/\d)/gi, (m, art, n) => (/^(?:8\d*|11|18)$/.test(n) ? 'an ' : 'a '));
@@ -410,6 +443,11 @@ function _fireTimeBecomesRewrites(text, playerCount) {
   // (Primal Adversary).
   text = text.replace(/^you may pay [^.]+ any number of times\.\s+When you pay this cost one or more times,\s*(put that many [^.]*?),\s+then (up to that many target\b[^]*)$/i,
     (_, counters, rest) => (counters.charAt(0).toUpperCase() + counters.slice(1) + '. ' + rest.charAt(0).toUpperCase() + rest.slice(1)).replace(/\bthat many\b/gi, 'X'));
+  // "For each fellowship vote, the voter chooses a creature they control. You gain control of each
+  // creature chosen this way, and they gain "…"" (Elrond of the White Council): the creatures
+  // chosen are picked from the list, as many as there were votes.
+  text = text.replace(/\b(y)ou gain control of each (creature|permanent|artifact|land|enchantment) chosen this way,?\s+and they (?=(?:gain|get|have|lose|become)\b)/gi,
+    (_, y, noun) => `${y === 'Y' ? 'G' : 'g'}ain control of any number of target ${noun.toLowerCase()}s. They `);
   // "This creature becomes a legendary creature named Mileva, the Stalwart, it has base power
   // and toughness 5/5, and it gains "…"" (Tenth District Hero): one sentence a clause, each
   // about the source.

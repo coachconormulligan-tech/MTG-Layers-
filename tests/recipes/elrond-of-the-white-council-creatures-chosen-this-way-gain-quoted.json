@@ -1,0 +1,63 @@
+{
+  "name": "Elrond of the White Council — \"You gain control of each creature chosen this way, and they gain \"…\"\"",
+  "notes": "Partial sweep (single cards, 2026-10-12). Fired, the trigger was one control effect over nothing in particular and the quoted ability was dropped. The creatures chosen are now picked from a list (chosen, not targeted): the one picked changes controller and gains \"This creature can't attack its owner.\"; the other opposing creature is untouched.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears",
+      "controller": "p2"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant",
+      "controller": "p2"
+    },
+    {
+      "add": "Elrond of the White Council",
+      "as": "e"
+    },
+    {
+      "fire": "@e",
+      "trigger": 0,
+      "as": "f"
+    },
+    {
+      "call": [
+        "setMultiTarget",
+        "@f",
+        0,
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "controller": "player_0",
+        "abilities": {
+          "$includes": [
+            "This creature can't attack its owner."
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "controller": "player_1",
+        "abilities": {
+          "$excludes": [
+            "This creature can't attack its owner."
+          ]
+        }
+      }
+    }
+  ]
+}

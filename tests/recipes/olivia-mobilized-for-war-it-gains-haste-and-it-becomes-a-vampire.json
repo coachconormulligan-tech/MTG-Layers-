@@ -1,0 +1,59 @@
+{
+  "name": "Olivia, Mobilized for War — \"put a +1/+1 counter on that creature, it gains haste until end of turn, and it becomes a Vampire in addition to its other types\"",
+  "notes": "Partial sweep (single cards, 2026-10-12). Fired, haste was a global effect that reached nothing and the Vampire type was dropped: the counter, the haste and the type are one comma list. With the \"you may discard a card\" toggle at Yes, the creature picked gains haste and is a Bear Vampire; Olivia herself is unchanged.",
+  "steps": [
+    {
+      "add": "Olivia, Mobilized for War",
+      "as": "o"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "fire": "@o",
+      "trigger": 1,
+      "as": "f"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@f",
+        "@bears"
+      ]
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@f",
+        true
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "subtypes": [
+          "Bear",
+          "Vampire"
+        ],
+        "abilities": {
+          "$includes": [
+            "Haste"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Olivia, Mobilized for War",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Haste"
+          ]
+        }
+      }
+    }
+  ]
+}

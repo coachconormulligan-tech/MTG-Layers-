@@ -1,0 +1,37 @@
+{
+  "name": "Idol of False Gods — \"it's a 0/0 creature in addition to its other types and it has annihilator 2\"",
+  "notes": "Partial sweep (single cards, 2026-10-12). The keyword after \"in addition to its other types\" was read only as \"and has …\"; with the pronoun repeated (\"and it has annihilator 2\") it was dropped. With eight +1/+1 counters the Idol is an 8/8 creature with annihilator 2.",
+  "steps": [
+    {
+      "add": "Idol of False Gods",
+      "as": "idol"
+    },
+    {
+      "call": [
+        "addCounter",
+        "@idol",
+        "+1/+1",
+        8
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Idol of False Gods",
+      "final": {
+        "types": {
+          "$includes": [
+            "Creature"
+          ]
+        },
+        "power": 8,
+        "toughness": 8,
+        "abilities": {
+          "$includes": [
+            "Annihilator 2"
+          ]
+        }
+      }
+    }
+  ]
+}

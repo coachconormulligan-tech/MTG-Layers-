@@ -606,6 +606,8 @@ const Battlefield = {
     parsedEffectText = parsedEffectText.replace(/^if\s+[^,]+,\s*/i, '');
     parsedEffectText = _fireTimeBecomesRewrites(parsedEffectText, this.players.length);
     parsedEffectText = _writeOutEarthbend(parsedEffectText);
+    parsedEffectText = _writeOutConditionalItems(parsedEffectText);
+    parsedEffectText = _writeOutPronounClauseList(parsedEffectText);
     parsedEffectText = _fireTimeNewObjectRewrites(parsedEffectText);
     const cardValueText = _fireTimeCardValueAsX(parsedEffectText);
     if (cardValueText) parsedEffectText = cardValueText;
@@ -846,6 +848,10 @@ const Battlefield = {
     // (Thelonite Monk's own "Target land becomes a Forest." is a target, not a roll.)
     const isRolledLandTypes = _ROLLED_LAND_TYPES_RE.test(parsedEffectText) && (!!rolledLandIds || /\bat random\b/i.test(fullText || ''));
     if (isRolledLandTypes) didItConversion = true;
+    // Creatures "chosen this way" (Elrond of the White Council) are chosen, not targeted. A save
+    // replays the text with the choice already written out as targets, after its vote sentence.
+    if (/\bchosen this way,?\s+and they\b/i.test(effectText) ||
+        /\bthe voter chooses an? \w+ they control\.\s+Gain control of any number of target\b/i.test(effectText)) didItConversion = true;
     if (didItConversion) pseudoPerm._nonTargetingSelection = true;
     pseudoPerm._guessedTargetSubjects = savedGuesses === null ? null : [...guessedSubjects];
     // Sync oracleText with the fully-processed parsedEffectText (X substituted, "if" stripped, etc.)

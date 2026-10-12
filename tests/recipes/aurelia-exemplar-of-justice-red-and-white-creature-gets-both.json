@@ -1,0 +1,41 @@
+{
+  "name": "Aurelia, Exemplar of Justice — a red and white creature gets trample and vigilance",
+  "notes": "Companion to the white-creature recipe (2026-10-12). Boros Swiftblade (red and white 1/2) is 3/2 with trample and vigilance.",
+  "steps": [
+    {
+      "add": "Boros Swiftblade",
+      "as": "b"
+    },
+    {
+      "add": "Aurelia, Exemplar of Justice",
+      "as": "s"
+    },
+    {
+      "fire": "@s",
+      "trigger": 2,
+      "as": "f"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@f",
+        "@b"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Boros Swiftblade",
+      "final": {
+        "power": 3,
+        "toughness": 2,
+        "abilities": {
+          "$includes": [
+            "Trample",
+            "Vigilance"
+          ]
+        }
+      }
+    }
+  ]
+}

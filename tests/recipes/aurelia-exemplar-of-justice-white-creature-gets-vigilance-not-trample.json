@@ -1,0 +1,43 @@
+{
+  "name": "Aurelia, Exemplar of Justice — a white creature gets +2/+0 and vigilance, not trample",
+  "notes": "Partial sweep (single cards, 2026-10-12). \"gets +2/+0, gains trample if it's red, and gains vigilance if it's white\": \"if it's red\" gated the whole sentence and the vigilance item was dropped, so a white creature got nothing. Each conditional item is now its own rider sentence. Savannah Lions (white 2/1) is 4/1 with vigilance.",
+  "steps": [
+    {
+      "add": "Savannah Lions",
+      "as": "b"
+    },
+    {
+      "add": "Aurelia, Exemplar of Justice",
+      "as": "s"
+    },
+    {
+      "fire": "@s",
+      "trigger": 2,
+      "as": "f"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@f",
+        "@b"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Savannah Lions",
+      "final": {
+        "power": 4,
+        "toughness": 1,
+        "abilities": {
+          "$includes": [
+            "Vigilance"
+          ],
+          "$excludes": [
+            "Trample"
+          ]
+        }
+      }
+    }
+  ]
+}

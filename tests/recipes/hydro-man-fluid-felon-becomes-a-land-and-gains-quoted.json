@@ -1,0 +1,34 @@
+{
+  "name": "Hydro-Man, Fluid Felon — \"Until your next turn, he becomes a land and gains \"{T}: Add {U}.\"\"",
+  "notes": "Partial sweep (single cards, 2026-10-12). Fired, the end step trigger gave the mana ability to nothing and left Hydro-Man a creature: after \"Untap this card.\" neither the type parser nor the quoted-ability parser saw \"this card\" behind \"Until your next turn,\". Hydro-Man is a legendary land, not a creature, with \"{T}: Add {U}.\"",
+  "steps": [
+    {
+      "add": "Hydro-Man, Fluid Felon",
+      "as": "h"
+    },
+    {
+      "fire": "@h",
+      "trigger": 1,
+      "as": "f"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Hydro-Man, Fluid Felon",
+      "final": {
+        "supertypes": [
+          "Legendary"
+        ],
+        "types": [
+          "Land"
+        ],
+        "subtypes": [],
+        "abilities": {
+          "$includes": [
+            "{T}: Add {U}."
+          ]
+        }
+      }
+    }
+  ]
+}
