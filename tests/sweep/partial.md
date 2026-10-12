@@ -8,7 +8,6 @@ Ranked by number of cards; examples are the most-played cards first (EDHREC rank
 
 | # | Cards | Part | Template | Most-played examples (the part not read) |
 |---:|---:|---|---|---|
-| 1 | 2 | Subtype | `until end of turn, THIS becomes a SUBTYPE, gets +N/+N, and gains KEYWORD` | Dragonsoul Knight (Dragon); Paragon of the Amesha (Angel) |
 
 ## Single cards
 

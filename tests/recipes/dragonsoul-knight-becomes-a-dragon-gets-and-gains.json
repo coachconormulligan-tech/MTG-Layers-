@@ -1,0 +1,17 @@
+{
+  "name": "Dragonsoul Knight, Paragon of the Amesha — 'this creature becomes a Dragon, gets +5/+3, and gains flying and trample'",
+  "notes": "A three-part list: the creature type was lost and the boost was read as a global effect with the whole 'this creature becomes a Dragon,' as its subject. Both abilities are fired: Dragonsoul Knight is a 7/5 Dragon with first strike, flying and trample; Paragon of the Amesha is a 5/5 Angel with first strike, flying and lifelink; Grizzly Bears stands by untouched.",
+  "steps": [
+    { "add": "Grizzly Bears" },
+    { "add": "Dragonsoul Knight", "as": "knight" },
+    { "add": "Paragon of the Amesha", "as": "paragon" },
+    { "fire": "@knight", "activated": 1 },
+    { "fire": "@paragon", "activated": 1 }
+  ],
+  "asserts": [
+    { "perm": "Dragonsoul Knight", "final": { "subtypes": ["Dragon"], "power": 7, "toughness": 5, "abilities": { "$includes": ["First strike", "Flying", "Trample"] } } },
+    { "perm": "Paragon of the Amesha", "final": { "subtypes": ["Angel"], "power": 5, "toughness": 5, "abilities": { "$includes": ["First strike", "Flying", "Lifelink"] } } },
+    { "perm": "Paragon of the Amesha", "final": { "abilities": { "$excludes": ["Trample"] } } },
+    { "perm": "Grizzly Bears", "final": { "subtypes": ["Bear"], "power": 2, "toughness": 2, "abilities": [] } }
+  ]
+}

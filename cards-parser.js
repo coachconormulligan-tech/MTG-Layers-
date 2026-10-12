@@ -3043,6 +3043,9 @@ function parseCardEffects(permanent, card, opts = {}) {
     // Strip trailing "and gets +X/+Y" (e.g. "becomes green and gets +1/+0") so the "get" skip-word
     // doesn't abort the whole match. The boost itself is handled separately by boostRegex.
     becomesText = becomesText.replace(/\s+and\s+gets?\s+[+-]\d+\/[+-]\d+/i, '').trim();
+    // "becomes a Dragon, gets +5/+3, and gains flying and trample" (Dragonsoul Knight): the list's
+    // later items are the boost parser's and the keyword parser's.
+    becomesText = becomesText.replace(/,\s+gets?\s+[+-][\dX]+\/[+-][\dX]+(?:,?\s+and\s+(?:gains?|ha(?:s|ve))\s+[^"]*)?$/i, '').trim();
 
     // Extract "that's still a [type]" / "that is still a [type]" clauses (Gideon Blackblade pattern)
     // These indicate types to preserve (ADD_TYPE rather than losing them)
@@ -3508,6 +3511,9 @@ function parseCardEffects(permanent, card, opts = {}) {
     // e.g. "Target creature becomes green and gets +1/+0" → filterText "Target creature becomes green and"
     // → strip → "Target creature". Without this, the filter requires a "Becomes" creature subtype.
     filterText = filterText.replace(/\s+becomes?\s+[\w\s]+?\s+and\s*$/i, '').trim();
+    // The same in a three-part list: "this creature becomes a Dragon, gets +5/+3, and gains flying
+    // and trample" (Dragonsoul Knight).
+    filterText = filterText.replace(/\s+becomes?\s+[\w\s]+?,$/i, '').trim();
     if (!filterText) continue;
     // Multiplayer: The optional "you control" group in boostRegex strips "you control" from group 1.
     // Re-append it so buildAppliesToFromText can apply the controller filter wrapper.
