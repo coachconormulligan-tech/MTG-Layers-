@@ -8,11 +8,10 @@ Ranked by number of cards; examples are the most-played cards first (EDHREC rank
 
 | # | Cards | Part | Template | Most-played examples (the part not read) |
 |---:|---:|---|---|---|
-| 1 | 2 | Clause | `gain all TYPE types` | Mirror Entity (gain all creature types); Volatile Claws (gain all creature types) |
-| 2 | 2 | Clause | `becomes a SUBTYPE` | Kellan, Planar Trailblazer (becomes a Human Faerie Detective); I'm a Doctor, Not a . . . (becomes a Doctor) |
-| 3 | 2 | Power of +N/+N | `it gets an additional +N/+N and has KEYWORD as long as an equipment named NAME` | Bride's Gown (+0/+2); Groom's Finery (+0/+2) |
-| 4 | 2 | Toughness of +N/+N | `it gets an additional +N/+N and has KEYWORD as long as an equipment named NAME` | Bride's Gown (+0/+2); Groom's Finery (+0/+2) |
-| 5 | 2 | Subtype | `until end of turn, THIS becomes a SUBTYPE, gets +N/+N, and gains KEYWORD` | Dragonsoul Knight (Dragon); Paragon of the Amesha (Angel) |
+| 1 | 2 | Clause | `becomes a SUBTYPE` | Kellan, Planar Trailblazer (becomes a Human Faerie Detective); I'm a Doctor, Not a . . . (becomes a Doctor) |
+| 2 | 2 | Power of +N/+N | `it gets an additional +N/+N and has KEYWORD as long as an equipment named NAME` | Bride's Gown (+0/+2); Groom's Finery (+0/+2) |
+| 3 | 2 | Toughness of +N/+N | `it gets an additional +N/+N and has KEYWORD as long as an equipment named NAME` | Bride's Gown (+0/+2); Groom's Finery (+0/+2) |
+| 4 | 2 | Subtype | `until end of turn, THIS becomes a SUBTYPE, gets +N/+N, and gains KEYWORD` | Dragonsoul Knight (Dragon); Paragon of the Amesha (Angel) |
 
 ## Single cards
 
