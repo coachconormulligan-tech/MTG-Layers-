@@ -867,7 +867,12 @@ const Battlefield = {
     // "put that many +1/+1 counters …, then up to that many target lands …" (Primal Adversary):
     // how many times the cost was paid is asked for like any other X.
     // So is a number read off a card that is not on the battlefield (see _fireTimeCardValueAsX).
-    if (_PAID_TIMES_X_RE.test(parsedEffectText) || cardValueText) {
+    // So is the X of an activation cost: "{X}: Until end of turn, creatures you control have base
+    // power and toughness X/X …" (Mirror Entity), "{X}{R}{G}, {T}: Target creature gets +X/+0 …"
+    // (Kessig Wolf Run). Not an X the text defines itself ("where X is …").
+    const costPaidX = kind === 'activated' && /^[^:]*\{X\}[^:]*:/.test(fullText || '') &&
+      /\bX\b/.test(parsedEffectText) && !/\bwhere X is\b/i.test(parsedEffectText);
+    if (_PAID_TIMES_X_RE.test(parsedEffectText) || cardValueText || costPaidX) {
       pseudoPerm.hasXValue = true;
       pseudoPerm.xValue = null;
       pseudoPerm.originalOracleText = parsedEffectText;

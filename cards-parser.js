@@ -2461,6 +2461,30 @@ function parseCardEffects(permanent, card, opts = {}) {
       { targetRestriction: fn, asLongAsCondition: gainsAllCTCond || undefined });
   }
 
+  // A group as the subject: "creatures you control have base power and toughness X/X and gain all
+  // creature types" (Mirror Entity, fired), "creatures you control get +2/+0 and gain all creature
+  // types" (Volatile Claws). The base P/T or boost before the "and" is read by its own parser.
+  {
+    const groupAllCTRegex = /(?:^|[.;]\s*)([^.;:\n]*?)\s+(?:(?:have|has|gets?)\b[^.;:\n]*?\band\s+)?(?:gains?|are|is|becomes?)\s+all\s+creature\s+types/gim;
+    let gm;
+    while ((gm = groupAllCTRegex.exec(oracle)) !== null) {
+      const subject = stripDurationPrefix(gm[1].trim());
+      if (!subject || /^(?:(?:up to \w+ |another )?target\b|this\s|it$|that\s|those\s|enchanted\s|equipped\s)/i.test(subject)) continue;
+      // ("Creatures target player controls get +0/+1 and gain all creature types" — Shields of
+      // Velis Vel — is left to the target form above.)
+      if (/\b(?:whenever|when|if|create|creates|target)\b/i.test(subject)) continue;
+      const pos = gm.index + gm[0].length - 1;
+      if (_isInActivatedEffect(pos) || _isInTriggeredSentence(pos)) continue;
+      if (!filterReferencesPermanents(subject)) continue;
+      const applies = buildAppliesToFromText(subject);
+      if (applies.isSelf || applies.isTargeted || !applies.fn) continue;
+      pushEff('4', EFFECT_TYPE.ADD_TYPE, { gainsAllCreatureTypes: true },
+        { appliesTo: applies.fn, scope: 'global', selfTarget: false, affectsSelf: detectSelfAffect(subject) },
+        `${subject} are every creature type. ${applies.desc}`,
+        { asLongAsCondition: _getConditionForPos(gm.index) || undefined });
+    }
+  }
+
   // Changeling keyword ability → Layer 4 self-effect granting all creature types.
   // (The keyword on a line of its own or in a keyword list — not "create a … token with
   // changeling", which left Maskwood Nexus itself every creature type and its creatures not.)

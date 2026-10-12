@@ -1,0 +1,18 @@
+{
+  "name": "Mirror Entity, Volatile Claws — '… and gain all creature types' after a base P/T or a boost",
+  "notes": "'Creatures you control have base power and toughness X/X and gain all creature types' and 'creatures you control get +2/+0 and gain all creature types': the first half was read and the type half was lost. Mirror Entity is activated with X = 3, then Volatile Claws is cast: the first player's Grizzly Bears is 5/3 and every creature type; the second player's Gray Ogre is untouched.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears" },
+    { "add": "Gray Ogre", "controller": "p2" },
+    { "add": "Mirror Entity", "as": "entity" },
+    { "fire": "@entity", "activated": 1, "as": "a1" },
+    { "call": ["setXValue", "@a1", 3] },
+    { "add": "Volatile Claws", "spell": true }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": 5, "toughness": 3, "isAllCreatureTypes": true } },
+    { "perm": "Mirror Entity", "final": { "power": 5, "toughness": 3 } },
+    { "perm": "Gray Ogre", "final": { "power": 2, "toughness": 2, "subtypes": ["Ogre"] } }
+  ]
+}
