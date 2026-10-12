@@ -201,6 +201,24 @@ const CONDITION_PARSERS = [
     return (s) => s.subtypes.includes(subtype);
   },
 
+  // --- Attachment conditions ---
+  // "an Equipment named Groom's Finery is attached to a creature you control" (Bride's Gown).
+  (ct, srcId) => {
+    const m = ct.match(/^an equipment named (.+?) is attached to a creature you control$/i);
+    if (!m) return null;
+    const wanted = m[1].trim().toLowerCase();
+    return (state, allStates) => {
+      if (!allStates || typeof Battlefield === 'undefined') return false;
+      const you = (allStates.get(srcId) || state).controller;
+      return Battlefield.permanents.some(p => {
+        if (!p._isEquipEffect) return false;
+        const eq = allStates.get(p._equipSourceId), on = allStates.get(p._equipTargetId);
+        return !!eq && !!on && (eq.name || '').toLowerCase() === wanted &&
+          on.types.includes('Creature') && on.controller === you;
+      });
+    };
+  },
+
   // --- Counter conditions ---
   // "has N or more counters on it" — counters of any kind (Ezio, Brash Novice; Hero of Bretagard).
   (ct) => {
@@ -1029,6 +1047,13 @@ function parseCardEffects(permanent, card, opts = {}) {
 
   // Normalize curly apostrophes (U+2019) to straight — Scryfall uses curly in oracle text
   oracle = oracle.replace(/\u2019/g, "'");
+  // "Equipped creature gets +2/+0. It gets an additional +0/+2 and has first strike as long as
+  // an Equipment named Groom's Finery is attached to a creature you control." (Bride's Gown): a
+  // second boost for the same creature, with a condition of its own. Conditions attach per
+  // line, so the sentence moves to a line of its own with its subject written out.
+  if (isAuraCard || isEquipmentCard) {
+    oracle = oracle.replace(/(\.)\s+It gets an additional (?=[+-][\dX]+\/[+-][\dX]+)/g, `$1\n${enchantedRef} gets `);
+  }
   // Normalize smart/curly double quotes (U+201C, U+201D) to straight ASCII double quotes
   oracle = oracle.replace(/[\u201c\u201d]/g, '"');
 
