@@ -1,0 +1,44 @@
+{
+  "name": "Honest Work — \"is a Citizen with base power and toughness 1/1 and \"{T}: Add {C}\" named Humble Merchant\"",
+  "notes": "Partial sweep (single cards, 2026-10-12). Reading \"with base power and toughness 1/1\" removed the word \"with\", so the quoted mana ability joined to it by \"and\" was dropped. The enchanted creature loses its abilities, is a 1/1 Citizen named Humble Merchant and has \"{T}: Add {C}\".",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Llanowar Elves",
+      "as": "elves",
+      "controller": "p2"
+    },
+    {
+      "add": "Honest Work",
+      "as": "hw"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@hw",
+        "@elves"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Llanowar Elves",
+      "final": {
+        "name": "Humble Merchant",
+        "subtypes": [
+          "Citizen"
+        ],
+        "power": 1,
+        "toughness": 1,
+        "abilities": [
+          "{T}: Add {C}"
+        ]
+      }
+    }
+  ]
+}

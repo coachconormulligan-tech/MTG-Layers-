@@ -1,0 +1,41 @@
+{
+  "name": "Aurelia, Exemplar of Justice — a green creature gets only +2/+0",
+  "notes": "Companion to the white-creature recipe (2026-10-12). Grizzly Bears is 4/2 with neither keyword.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "b"
+    },
+    {
+      "add": "Aurelia, Exemplar of Justice",
+      "as": "s"
+    },
+    {
+      "fire": "@s",
+      "trigger": 2,
+      "as": "f"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@f",
+        "@b"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 4,
+        "toughness": 2,
+        "abilities": {
+          "$excludes": [
+            "Trample",
+            "Vigilance"
+          ]
+        }
+      }
+    }
+  ]
+}

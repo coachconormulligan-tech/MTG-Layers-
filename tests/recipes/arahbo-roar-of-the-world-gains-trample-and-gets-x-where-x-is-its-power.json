@@ -1,0 +1,40 @@
+{
+  "name": "Arahbo, Roar of the World — \"it gains trample and gets +X/+X …, where X is its power\"",
+  "notes": "Partial sweep (single cards, 2026-10-12). Fired, \"its power\" reads \"that creature's power\", which the boost parser did not take for the recipient's own power, so only trample came through. Savannah Lions (2/1) is 4/3 with trample.",
+  "steps": [
+    {
+      "add": "Savannah Lions",
+      "as": "b"
+    },
+    {
+      "add": "Arahbo, Roar of the World",
+      "as": "s"
+    },
+    {
+      "fire": "@s",
+      "trigger": 1,
+      "as": "f"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@f",
+        "@b"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Savannah Lions",
+      "final": {
+        "power": 4,
+        "toughness": 3,
+        "abilities": {
+          "$includes": [
+            "Trample"
+          ]
+        }
+      }
+    }
+  ]
+}

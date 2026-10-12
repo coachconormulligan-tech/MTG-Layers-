@@ -1,0 +1,66 @@
+{
+  "name": "Sigarda's Summons — \"have base power and toughness 4/4, have flying, and are Angels in addition to their other types\"",
+  "notes": "Partial sweep (single cards, 2026-10-12). The middle item of the list, \"have flying\", was dropped, and the base P/T was emitted twice (once by the type parser, once by the base-P/T parser). Grizzly Bears with a +1/+1 counter is a 5/5 flying Bear Angel through one base-P/T effect; Gray Ogre without a counter is untouched.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre"
+    },
+    {
+      "call": [
+        "addCounter",
+        "@bears",
+        "+1/+1",
+        1
+      ]
+    },
+    {
+      "add": "Sigarda's Summons",
+      "as": "s"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "subtypes": [
+          "Bear",
+          "Angel"
+        ],
+        "power": 5,
+        "toughness": 5,
+        "abilities": {
+          "$includes": [
+            "Flying"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "subtypes": [
+          "Ogre"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "abilities": {
+          "$excludes": [
+            "Flying"
+          ]
+        }
+      }
+    },
+    {
+      "effect": {
+        "source": "Sigarda's Summons",
+        "layer": "6",
+        "type": "add_ability"
+      }
+    }
+  ]
+}

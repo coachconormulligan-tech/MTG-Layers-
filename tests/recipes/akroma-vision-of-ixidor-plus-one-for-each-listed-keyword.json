@@ -1,0 +1,90 @@
+{
+  "name": "Akroma, Vision of Ixidor — \"+1/+1 if it has flying, +1/+1 if it has first strike, and so on for …\"",
+  "notes": "Partial sweep (single cards, 2026-10-12). The trigger gave one +1/+1 for flying and nothing for the other thirteen keywords. The list is now written out as one boost per keyword, each checked once against the creature as the trigger resolved. Serra Angel (flying, vigilance) is 6/6, White Knight (first strike, protection from black) 4/4, Thrasios (partner) 2/4, Grizzly Bears stays 2/2 even though Levitation gives it flying afterwards, and the opponent's Air Elemental and Akroma herself get nothing.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Serra Angel",
+      "as": "angel"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "White Knight",
+      "as": "wk"
+    },
+    {
+      "add": "Thrasios, Triton Hero",
+      "as": "th"
+    },
+    {
+      "add": "Air Elemental",
+      "as": "air",
+      "controller": "p2"
+    },
+    {
+      "add": "Akroma, Vision of Ixidor",
+      "as": "ak"
+    },
+    {
+      "fire": "@ak",
+      "trigger": 1,
+      "as": "f"
+    },
+    {
+      "add": "Levitation",
+      "as": "lev"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Serra Angel",
+      "final": {
+        "power": 6,
+        "toughness": 6
+      }
+    },
+    {
+      "perm": "White Knight",
+      "final": {
+        "power": 4,
+        "toughness": 4
+      }
+    },
+    {
+      "perm": "Thrasios, Triton Hero",
+      "final": {
+        "power": 2,
+        "toughness": 4
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 2,
+        "toughness": 2
+      }
+    },
+    {
+      "perm": "Air Elemental",
+      "final": {
+        "power": 4,
+        "toughness": 4
+      }
+    },
+    {
+      "perm": "Akroma, Vision of Ixidor",
+      "final": {
+        "power": 6,
+        "toughness": 6
+      }
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "name": "Ultimate Spider-Man — \"He gains hexproof and becomes colorless until end of turn\"",
+  "notes": "Partial sweep (single cards, 2026-10-12). The colour parser wanted its subject directly before \"becomes\", so the colour after \"gains hexproof and\" was dropped; and a legendary character's \"He\" after \"Put a +1/+1 counter on this card.\" was not resolved to the source the way \"It\" is. Fired, Camouflage leaves Ultimate Spider-Man colorless with hexproof.",
+  "steps": [
+    {
+      "add": "Miles Morales // Ultimate Spider-Man",
+      "as": "m"
+    },
+    {
+      "call": [
+        "flipCard",
+        "@m"
+      ]
+    },
+    {
+      "fire": "@m",
+      "activated": 1,
+      "as": "f"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Ultimate Spider-Man",
+      "final": {
+        "colors": [],
+        "abilities": {
+          "$includes": [
+            "Hexproof"
+          ]
+        }
+      }
+    }
+  ]
+}

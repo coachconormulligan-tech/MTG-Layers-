@@ -1,0 +1,41 @@
+{
+  "name": "Olivia, Mobilized for War — nothing happens while \"you may discard a card\" is at No",
+  "notes": "Partial sweep (single cards, 2026-10-12). The haste and the Vampire type follow \"If you do\": with the toggle left at No the creature picked stays a plain Bear.",
+  "steps": [
+    {
+      "add": "Olivia, Mobilized for War",
+      "as": "o"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "fire": "@o",
+      "trigger": 1,
+      "as": "f"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@f",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "subtypes": [
+          "Bear"
+        ],
+        "abilities": {
+          "$excludes": [
+            "Haste"
+          ]
+        }
+      }
+    }
+  ]
+}

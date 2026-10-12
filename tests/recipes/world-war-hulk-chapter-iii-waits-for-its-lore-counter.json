@@ -1,0 +1,43 @@
+{
+  "name": "World War Hulk — chapter III does nothing before the third lore counter",
+  "notes": "Found with the trample fix (2026-10-12): the doubling parser never took its line's condition, so a Saga chapter's doubling applied with no lore counters at all. With two lore counters the picked Bears stay 2/2 without trample.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "b"
+    },
+    {
+      "add": "World War Hulk",
+      "as": "s"
+    },
+    {
+      "call": [
+        "addCounter",
+        "@s",
+        "lore",
+        2
+      ]
+    },
+    {
+      "call": [
+        "setTarget",
+        "@s",
+        "@b"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 2,
+        "toughness": 2,
+        "abilities": {
+          "$excludes": [
+            "Trample"
+          ]
+        }
+      }
+    }
+  ]
+}

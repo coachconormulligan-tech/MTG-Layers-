@@ -1,0 +1,65 @@
+{
+  "name": "Polymorphist's Jest — \"each creature target player controls loses all abilities and becomes a blue Frog with base power and toughness 1/1\"",
+  "notes": "Partial sweep (single cards, 2026-10-12). Only the ability loss was read: the type-setting parser turned the subject away because \"target player controls\" was followed by \"loses all abilities and\" instead of closing it. The Frog type, blue and 1/1 are now read and scoped to the chosen player like the ability loss. The opponent's Serra Angel is a blue 1/1 Frog with no abilities; your own Grizzly Bears is untouched.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Serra Angel",
+      "as": "angel",
+      "controller": "p2"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Polymorphist's Jest",
+      "as": "jest",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTargetPlayer",
+        "@jest",
+        "p2"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Serra Angel",
+      "final": {
+        "types": [
+          "Creature"
+        ],
+        "subtypes": [
+          "Frog"
+        ],
+        "colors": [
+          "U"
+        ],
+        "power": 1,
+        "toughness": 1,
+        "abilities": []
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "subtypes": [
+          "Bear"
+        ],
+        "colors": [
+          "G"
+        ],
+        "power": 2,
+        "toughness": 2
+      }
+    }
+  ]
+}

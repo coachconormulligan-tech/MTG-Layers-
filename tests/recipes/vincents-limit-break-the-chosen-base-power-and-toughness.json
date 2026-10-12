@@ -1,0 +1,46 @@
+{
+  "name": "Vincent's Limit Break — \"has the chosen base power and toughness\" is the picked tier's",
+  "notes": "Partial sweep (single cards, 2026-10-12). The tiers are only \"3/2.\", \"5/2.\", \"7/2.\" and the sentence above them carries the effect, so nothing set the base power and toughness. Each tier is now written out as the whole sentence with its own numbers. Death Gigas picked: the Bears are 5/2 with the dies trigger.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "b"
+    },
+    {
+      "add": "Vincent's Limit Break",
+      "as": "s",
+      "spell": true
+    },
+    {
+      "call": [
+        "setModalModeSelections",
+        "@s",
+        [
+          1
+        ]
+      ]
+    },
+    {
+      "call": [
+        "setModalModeTarget",
+        "@s",
+        1,
+        "@b"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 5,
+        "toughness": 2,
+        "abilities": {
+          "$includes": [
+            "When this creature dies, return it to the battlefield tapped under its owner's control"
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "name": "Sarkhan, Dragon Ascendant — \"becomes a Dragon in addition to his other types and gains flying\"",
+  "notes": "Partial sweep (single cards, 2026-10-12). Fired, the trigger gave flying but no Dragon type: the type parser read only \"its/their other types\", and its source-subject guard did not see \"this card\" behind \"Until end of turn,\" after the counter sentence. Sarkhan is a Human Druid Dragon with flying.",
+  "steps": [
+    {
+      "add": "Sarkhan, Dragon Ascendant",
+      "as": "s"
+    },
+    {
+      "fire": "@s",
+      "trigger": 1,
+      "as": "f"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Sarkhan, Dragon Ascendant",
+      "final": {
+        "subtypes": [
+          "Human",
+          "Druid",
+          "Dragon"
+        ],
+        "abilities": {
+          "$includes": [
+            "Flying"
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -409,7 +409,13 @@ function effectAppliesToPerm(effect, permState, permanent, permId, allStates, ab
 
   // "As long as" conditional effects for global effects
   if (effect.asLongAsCondition) {
-    if (!effect.asLongAsCondition(permState, allStates)) return false;
+    // A condition checked once as the ability resolves ("each other creature you control gets
+    // +1/+1 if it has flying" — Akroma, Vision of Ixidor) reads the fire-time snapshot.
+    const snapState = effect.asLongAsCondition._onResolution && !effect.asLongAsCondition._finalPT && effect._firedAtStates
+      ? effect._firedAtStates.get(permId) : null;
+    if (snapState) {
+      if (!effect.asLongAsCondition(snapState, effect._firedAtStates)) return false;
+    } else if (!effect.asLongAsCondition(permState, allStates)) return false;
   }
 
   // Spell effects (instants/sorceries) only affect permanents that existed before the
