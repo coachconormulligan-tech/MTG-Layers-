@@ -230,7 +230,10 @@ NEW_OBJECT = r'\bcreates?\b|\bonto the battlefield\b|\bto the battlefield\b|\bre
 def refers_to_new_objects(text, line):
     """'Create two tokens. They gain haste.' - "they" are objects the ability just made or
     moved, which the site has no permanent for, so the sentence cannot produce an effect."""
-    plural = re.match(r'(?:until [^,.]+, )?(?:they|those tokens|that token|those creatures|those cards)\b', text, re.I)
+    # ("If you won, that token gains haste" - Rebellion of the Flamekin: a condition comes first.
+    # Only for tokens: "If you win, those creatures gain deathtouch" - Gilt-Leaf Ambush - is read.)
+    plural = re.match(r'(?:until [^,.]+, )?(?:they|those tokens|that token|those creatures|those cards)\b'
+                      r'|if [^,.]+, (?:those tokens|that token)\b', text, re.I)
     # "Create a token. It has ..." - the token's own card already carries that text. A card
     # put onto the battlefield is different: it is a permanent the user can point the effect at.
     made = re.match(r"(?:(?:until [^,.]+|if you do|when you do), )?(?:it|it's|the tokens?|the copy)\b", text, re.I)
@@ -278,6 +281,8 @@ OUT_OF_SCOPE = {
     'Two by Four': 'base power 4 counter',
     # Not legal in any format (an Astral card from the 1997 computer game).
     'Power Struggle': 'exchanges control of random target',
+    # Not legal in any format (a Secret Lair card about toys the players own).
+    'Applejack': 'If the toy has wings',
     # Two land types chosen in order by one spell.
     'Vision Charm': 'Each land of the first chosen type',
 }
@@ -310,6 +315,12 @@ def classify(text, kw_re):
     # the control effect the sentence before it makes; effect signatures do not show conditions.
     # Recipes cover it.
     if re.search(r"\bcost was paid, instead gain control of that \w+ if its (?:power|toughness) is\b", t):
+        return None
+    # "Gain control of target creature until end of turn. If …, gain control of that creature
+    # until the end of your next turn instead." (Evil's Thrall) restates how long the control
+    # effect of the sentence before it lasts. The site has no model of durations: an effect
+    # stays until its spell is removed. A recipe covers the single control effect.
+    if re.search(r"\bgains? control of (?:that \w+|it|them) until [^.]*\binstead\b", t):
         return None
     t = re.sub(r'\bcreates?\b.*', '', t)                                 # token descriptions are not effects
     if re.search(r'\bgains? control of\b|\bexchanges? control\b', t):
