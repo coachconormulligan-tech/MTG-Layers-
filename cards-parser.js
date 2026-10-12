@@ -77,7 +77,7 @@ const PARAMETERIZED_KEYWORDS = new Set([
   'annihilator', 'modular', 'dredge', 'casualty', 'toxic', 'backup',
   'ravenous', 'squad', 'afterlife', 'tribute', 'rampage', 'flanking',
   'sunburst', 'storm', 'cascade', 'exalted', 'battle cry',
-  'exploit', 'skulk', 'enlist', 'firebending',
+  'exploit', 'skulk', 'enlist', 'firebending', 'equip',
 ]);
 
 /* Shared helpers used by _parseCondition's branch table below. */
@@ -3233,6 +3233,17 @@ function parseCardEffects(permanent, card, opts = {}) {
     if (parsed.gainsAllLandTypes) {
       pushEff('4', EFFECT_TYPE.ADD_TYPE, { gainsAllLandTypes: true }, _stCtx,
         `${filterText} are every land type. ${desc}`);
+    } else if (parsed.gainsAllCreatureTypes && (parsed.types.length > 0 || parsed.subtypes.length > 0)) {
+      // "becomes a 2/2 creature with all creature types. It's still a land." (Mutavault): every
+      // creature type, and the card type it names along with the one it keeps.
+      pushEff('4', EFFECT_TYPE.ADD_TYPE, { gainsAllCreatureTypes: true }, _stCtx,
+        `${filterText} are every creature type. ${desc}`);
+      const allTypes = [...new Set([...parsed.types, ..._stKeepTypes])];
+      const keeps = _stKeepTypes.length > 0;
+      _stKeepTypes.length = 0;
+      pushEff('4', keeps ? EFFECT_TYPE.ADD_TYPE : EFFECT_TYPE.SET_TYPE,
+        keeps ? { types: allTypes, subtypes: parsed.subtypes } : { types: allTypes, subtypes: parsed.subtypes, keepSupertypes: true },
+        _stCtx, `${filterText} are ${becomesText}. ${desc}`);
     } else if (parsed.gainsAllCreatureTypes) {
       // The standalone self/targeted "all creature types" parser above already emits the
       // correctly-scoped effect for self subjects (e.g. Undercover Skrull's compound
@@ -3999,13 +4010,18 @@ function parseCardEffects(permanent, card, opts = {}) {
   while ((generalBasePTMatch = generalBasePTRegex.exec(oracle)) !== null) {
     // The subject never spans sentences: "…on target creature. Until end of turn, each modified
     // creature you control has base power and toughness 7/5" (Sephiroth, Fallen Hero).
-    const gbpFilterText = stripDurationPrefix(generalBasePTMatch[1].trim().split(/\.\s+/).pop().replace(/^["\u201d\s]+/, '').trim());
+    // ("If it's a creature, it also has base power and toughness 2/2" — Azure Beastbinder: the
+    // rider's condition is taken out of the line and its "it" written out as the target, which
+    // leaves ", up to one target artifact, creature, or planeswalker an opponent controls also".)
+    const gbpFilterText = stripDurationPrefix(generalBasePTMatch[1].trim().split(/\.\s+/).pop().replace(/^["\u201d\s]+/, '').trim())
+      .replace(/^,\s*/, '').replace(/\s+also$/i, '');
     const gbpFLower = gbpFilterText.toLowerCase();
+    const gbpIsTargetPhrase = /^(?:up to \w+ (?:other )?|another )?target\b/.test(gbpFLower);
     // Skip enchanted/equipped (handled above) and non-permanent references
     if (/enchanted|equipped/i.test(gbpFLower)) continue;
     // Skip triggered/activated ability text, and a conditional rider ("If it's not a Vehicle, it has …")
     const gbpRawLower = generalBasePTMatch[1].toLowerCase();
-    if (gbpRawLower.includes('whenever ') || gbpRawLower.includes('when ') || /^(?:then\s+)?if\b/.test(gbpFLower) || gbpFLower.length > 50) continue;
+    if (gbpRawLower.includes('whenever ') || gbpRawLower.includes('when ') || /^(?:then\s+)?if\b/.test(gbpFLower) || (gbpFLower.length > 50 && !gbpIsTargetPhrase)) continue;
     if (_isInTriggeredSentence(generalBasePTMatch.index + generalBasePTMatch[0].length - 1)) continue;
     // "{1}: This creature has base power and toughness 4/4 …" is handled when the ability fires.
     if (_isInActivatedEffect(generalBasePTMatch.index + generalBasePTMatch[0].length - 1)) continue;
@@ -4492,7 +4508,12 @@ function parseCardEffects(permanent, card, opts = {}) {
     const _haveLastStop = haveMatch[1].search(/\.\s+(?!.*\.\s)/s);
     const haveStart = _haveLastStop >= 0 ? haveMatch.index + haveMatch[0].indexOf(haveMatch[1]) + _haveLastStop : haveMatch.index;
     const haveEnd = haveMatch.index + haveMatch[0].length;
-    if (addTypeMatchRanges.some(r => (copyClauseSpans.includes(r) ? haveMatch.index : haveStart) < r.end && haveEnd > r.start)) continue;
+    // (Not a later sentence that names its own subjects: "…become a copy of another target
+    // creature you control …. If you do, this card and target creature you control each get
+    // +2/+0 and gain haste" — Gogo, Mysterious Mime.)
+    const _haveOwnSubject = /^this\s+[\w-]+\s+and\s+(?:another\s+|up to \w+\s+(?:other\s+)?)?target\b/i.test(filterText);
+    const _haveOwnStart = haveMatch.index + haveMatch[0].indexOf(haveMatch[1]) + Math.max(_haveLastStop, 0);
+    if (addTypeMatchRanges.some(r => (_haveOwnSubject ? _haveOwnStart : copyClauseSpans.includes(r) ? haveMatch.index : haveStart) < r.end && haveEnd > r.start)) continue;
     // Skip only singular targeted enchanted/equipped patterns (e.g., "enchanted creature"),
     // NOT plural/global ones (e.g., "Equipped creatures you control", "Enchanted creatures")
     if (/^(?:enchanted|equipped)\s+(?:non\w+\s+)?(?:creature|permanent|land|artifact|enchantment|planeswalker|battle|vehicle)$/i.test(filterText.trim())) continue;
@@ -4570,6 +4591,25 @@ function parseCardEffects(permanent, card, opts = {}) {
     const _haveBuildResult = { isSpellTarget: !!_haveNTS, maxTargets: _haveMaxT || 1, isTargetPlayerControl: !!_haveTPC };
     const _haveNeedsTarget = isTargeted;
     const selfAffect = isSelf ? true : detectSelfAffect(filterText);
+    // "This card and target creature you control each get +2/+0 and gain haste" (Gogo, Mysterious
+    // Mime), "this creature and up to one other target creature you control both gain first
+    // strike" (Ballroom Brawlers): two recipients, as in the boost parser — the source, and a
+    // chosen target with its own picker. One combined filter would match every permanent.
+    let _haveRecipients = [{ isSelf, needsTarget: _haveNeedsTarget, fn, selfAffect, build: _haveBuildResult, desc }];
+    const _haveConj = filterText.match(/^(this\s+[\w-]+)\s+and\s+((?:another\s+|up to \w+\s+(?:other\s+)?)?target\s+.+?)(?:\s+(?:each|both))?$/i);
+    if (_haveConj) {
+      const _hcSelf = buildAppliesToFromText(_haveConj[1]);
+      const _hcTarget = buildAppliesToFromText(_haveConj[2]);
+      if (_hcSelf.isSelf && _hcTarget.needsTargetSelection && _hcTarget.fn) {
+        _haveRecipients = [
+          { isSelf: true, needsTarget: false, fn: _hcSelf.fn, selfAffect: true,
+            build: { isSpellTarget: false, maxTargets: 1 }, desc: _hcSelf.desc, sourceHalf: true },
+          { isSelf: false, needsTarget: true, fn: _hcTarget.fn, selfAffect: false,
+            build: { isSpellTarget: true, maxTargets: _hcTarget.maxTargets || 1, isTargetPlayerControl: !!_hcTarget.isTargetPlayerControl },
+            desc: _hcTarget.desc },
+        ];
+      }
+    }
 
     // Collect ALL keywords from this sentence (including comma-separated ones)
     // Look at text after the "have/has/gain/gains" up to end of sentence
@@ -4600,7 +4640,7 @@ function parseCardEffects(permanent, card, opts = {}) {
     // Check if first ability is a parameterized keyword (e.g. "ward {2}", "toxic 1")
     let firstAbilityFull = firstAbility;
     if (PARAMETERIZED_KEYWORDS.has(haveMatch[2].toLowerCase())) {
-      const paramCostMatch = remainingText.match(/^\s*(\{[^}]+\}|\d+)/);
+      const paramCostMatch = remainingText.match(/^\s*((?:\{[^}]+\})+|\d+)/);
       if (paramCostMatch) {
         firstAbilityFull = `${firstAbility} ${paramCostMatch[1]}`;
       }
@@ -4642,15 +4682,19 @@ function parseCardEffects(permanent, card, opts = {}) {
       if (haveAbilityParsed.has(key)) continue;
       haveAbilityParsed.add(key);
       const haveCond = _getConditionForPos(haveMatch.index);
-      const _haveTargeted = isSelf || _haveNeedsTarget;
-      const eff = pushEff('6', EFFECT_TYPE.ADD_ABILITY, { ability },
-        { appliesTo: _haveTargeted ? null : fn,
-          scope: _haveTargeted ? 'targeted' : 'global',
-          selfTarget: !!isSelf, affectsSelf: selfAffect },
-        `${filterText.charAt(0).toUpperCase() + filterText.slice(1)} ${/^each\b/i.test(filterText) ? 'has' : 'have'} ${ability}. ${desc}`,
-        { _oraclePos: haveMatch.index });
-      if (haveCond) eff.asLongAsCondition = haveCond;
-      _applyTargetInfo(eff, _haveBuildResult, fn);
+      for (const rcpt of _haveRecipients) {
+        const _haveTargeted = rcpt.isSelf || rcpt.needsTarget;
+        const eff = pushEff('6', EFFECT_TYPE.ADD_ABILITY, { ability },
+          { appliesTo: _haveTargeted ? null : rcpt.fn,
+            scope: _haveTargeted ? 'targeted' : 'global',
+            selfTarget: !!rcpt.isSelf, affectsSelf: rcpt.selfAffect },
+          `${filterText.charAt(0).toUpperCase() + filterText.slice(1)} ${/^each\b/i.test(filterText) ? 'has' : 'have'} ${ability}. ${rcpt.desc}`,
+          { _oraclePos: haveMatch.index });
+        if (haveCond) eff.asLongAsCondition = haveCond;
+        _applyTargetInfo(eff, rcpt.build, rcpt.fn);
+        // The source's half keeps to the source when the other half's target is chosen.
+        if (rcpt.sourceHalf) eff._sourceHalf = true;
+      }
     }
   }
 
@@ -5133,6 +5177,14 @@ function parseCardEffects(permanent, card, opts = {}) {
     {
       const _afterControl = filterSubject.match(/\bgain control of [^,]+,\s+(?:and\s+)?((?:up to \w+ |another )?target [^,]+)$/i);
       if (_afterControl) filterSubject = _afterControl[1];
+    }
+    // 'This card gains equip {3} and "Equipped creature gets +3/+3" and loses all other
+    // abilities' (The Irencrag, fired): the subject is what stands before "gains"; what it gains
+    // is the keyword parser's, and _finalizeEffects puts the loss before it.
+    {
+      const _gainsAnd = /\bother\s+abilities\b/i.test(loseAllMatch[0]) &&
+        filterSubject.match(/^(this (?:card|creature|permanent|artifact|land|enchantment)|(?:up to \w+ |another )?target [^,."]+?)\s+(?:gains?|has)\s+.*\band$/i);
+      if (_gainsAnd) filterSubject = _gainsAnd[1];
     }
     // Skip enchanted/equipped — handled below
     if (/enchanted|equipped/i.test(filterSubject)) continue;

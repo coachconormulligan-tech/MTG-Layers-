@@ -1,0 +1,1320 @@
+{
+ "name": "Azure Beastbinder — \"If it's a creature, it also has base power and toughness 2/2\"",
+ "notes": "Partial sweep (single cards, 2026-10-12). Fired, the rider's \"it\" is written out as \"up to one target artifact, creature, or planeswalker an opponent controls\"; the commas of that list kept the rider from getting a line of its own, so its condition gated the whole line (an artifact target kept its abilities) and the base-P/T parser turned the long subject away (a creature target kept its P/T). Serra Angel becomes 2/2 with no abilities; Sol Ring loses its abilities and gets no P/T.",
+ "recipe": {
+  "steps": [
+   {
+    "call": [
+     "addPlayer",
+     "Opponent"
+    ]
+   },
+   {
+    "add": "Serra Angel",
+    "as": "angel",
+    "controller": "p2"
+   },
+   {
+    "add": "Sol Ring",
+    "as": "ring",
+    "controller": "p2"
+   },
+   {
+    "add": "Azure Beastbinder",
+    "as": "ab"
+   },
+   {
+    "fire": "@ab",
+    "trigger": 2,
+    "as": "fired"
+   },
+   {
+    "call": [
+     "setTarget",
+     "@fired",
+     "@angel"
+    ]
+   },
+   {
+    "fire": "@ab",
+    "trigger": 2,
+    "as": "fired2"
+   },
+   {
+    "call": [
+     "setTarget",
+     "@fired2",
+     "@ring"
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Serra Angel",
+   "final": {
+    "power": 2,
+    "toughness": 2,
+    "abilities": []
+   }
+  },
+  {
+   "perm": "Sol Ring",
+   "final": {
+    "types": [
+     "Artifact"
+    ],
+    "power": null,
+    "toughness": null,
+    "abilities": []
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d",
+     "oracle_id": "4b7ac066-e5c7-43e6-9e7e-2739b24a905d",
+     "multiverse_ids": [],
+     "tcgplayer_id": 695524,
+     "cardmarket_id": 904192,
+     "name": "Serra Angel",
+     "lang": "en",
+     "released_at": "2026-04-24",
+     "uri": "https://api.scryfall.com/cards/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d",
+     "scryfall_uri": "https://scryfall.com/card/fdn/740/serra-angel?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-08-24T09:18:11Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.jpg?1787563091",
+      "normal": "https://cards.scryfall.io/normal/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.jpg?1787563091",
+      "large": "https://cards.scryfall.io/large/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.jpg?1787563091",
+      "png": "https://cards.scryfall.io/png/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.png?1787563091",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.jpg?1787563091",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.jpg?1787563091",
+      "thumb": "https://cards.scryfall.io/thumb/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.webp?1787563091",
+      "grid": "https://cards.scryfall.io/grid/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.webp?1787563091",
+      "display": "https://cards.scryfall.io/display/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.webp?1787563091",
+      "art": "https://cards.scryfall.io/art/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.webp?1787563091",
+      "crop": "https://cards.scryfall.io/crop/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.webp?1787563091"
+     },
+     "mana_cost": "{3}{W}{W}",
+     "cmc": 5,
+     "type_line": "Creature — Angel",
+     "oracle_text": "Flying\nVigilance (Attacking doesn't cause this creature to tap.)",
+     "power": "4",
+     "toughness": "4",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [
+      "Flying",
+      "Vigilance"
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d",
+       "component": "combo_piece",
+       "name": "Serra Angel",
+       "type_line": "Creature — Angel",
+       "uri": "https://api.scryfall.com/cards/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d"
+      },
+      {
+       "object": "related_card",
+       "id": "ad2bbfa1-81e0-4683-b1dc-a3aaa9837690",
+       "component": "combo_piece",
+       "name": "Treizeci, Sun of Serra",
+       "type_line": "Legendary Creature — Human Knight",
+       "uri": "https://api.scryfall.com/cards/ad2bbfa1-81e0-4683-b1dc-a3aaa9837690"
+      }
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "arena",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a7ecb771-d1b6-4dec-8cf5-8d45179f21e0",
+     "set": "fdn",
+     "set_name": "Foundations",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a7ecb771-d1b6-4dec-8cf5-8d45179f21e0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Afdn&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/fdn?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A4b7ac066-e5c7-43e6-9e7e-2739b24a905d&unique=prints",
+     "collector_number": "740",
+     "digital": false,
+     "rarity": "uncommon",
+     "flavor_text": "Follow the light. In its absence, follow her.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Greg Staples",
+     "artist_ids": [
+      "93d65564-bf00-447b-8406-e2031f03b6b1"
+     ],
+     "illustration_id": "5f5651af-22fb-4fb8-a04c-1f34b5104bd9",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "setextension"
+     ],
+     "edhrec_rank": 9449,
+     "penny_rank": 12470,
+     "prices": {
+      "usd": "0.24",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.20",
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DSerra%2BAngel",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DSerra%2BAngel",
+      "edhrec": "https://edhrec.com/route/?cc=Serra+Angel"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F695524%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=904192&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Serra+Angel&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_1",
+    "controller": "player_1",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "8ee443cc-e17a-493b-9c93-1f9e141a30e4",
+     "oracle_id": "6ad8011d-3471-4369-9d68-b264cc027487",
+     "multiverse_ids": [],
+     "resource_id": "B12151C9CD0511F86702A215428AAE1A3170DF60AA4DE769D4FA59EDC207CA20",
+     "mtgo_id": 156438,
+     "tcgplayer_id": 717788,
+     "cardmarket_id": 909814,
+     "name": "Sol Ring",
+     "lang": "en",
+     "released_at": "2026-10-02",
+     "uri": "https://api.scryfall.com/cards/8ee443cc-e17a-493b-9c93-1f9e141a30e4",
+     "scryfall_uri": "https://scryfall.com/card/frc/21/sol-ring?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-09-17T11:27:26Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.jpg?1789644446",
+      "normal": "https://cards.scryfall.io/normal/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.jpg?1789644446",
+      "large": "https://cards.scryfall.io/large/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.jpg?1789644446",
+      "png": "https://cards.scryfall.io/png/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.png?1789644446",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.jpg?1789644446",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.jpg?1789644446",
+      "thumb": "https://cards.scryfall.io/thumb/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.webp?1789644446",
+      "grid": "https://cards.scryfall.io/grid/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.webp?1789644446",
+      "display": "https://cards.scryfall.io/display/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.webp?1789644446",
+      "art": "https://cards.scryfall.io/art/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.webp?1789644446",
+      "crop": "https://cards.scryfall.io/crop/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.webp?1789644446"
+     },
+     "mana_cost": "{1}",
+     "cmc": 1,
+     "type_line": "Artifact",
+     "oracle_text": "{T}: Add {C}{C}.",
+     "colors": [],
+     "color_identity": [],
+     "keywords": [],
+     "produced_mana": [
+      "C"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "banned",
+      "pauper": "not_legal",
+      "vintage": "restricted",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "banned",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "banned",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "banned"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "cfd10490-7397-4143-bda7-d388b877636f",
+     "set": "frc",
+     "set_name": "Reality Fracture Commander",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/cfd10490-7397-4143-bda7-d388b877636f",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Afrc&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/frc?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/8ee443cc-e17a-493b-9c93-1f9e141a30e4/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A6ad8011d-3471-4369-9d68-b264cc027487&unique=prints",
+     "collector_number": "21",
+     "digital": false,
+     "rarity": "uncommon",
+     "flavor_text": "Jace could see the sunlight in his Multiverse, but somewhere along the way, he lost the feel of its warmth.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Titus Lunter",
+     "artist_ids": [
+      "b11e6b3a-f4ca-4cf1-8fd7-475696de5f5c"
+     ],
+     "illustration_id": "f142ba5f-999f-42f6-b56e-26164a3b6b87",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 1,
+     "preview": {
+      "source": "Wizards of the Coast",
+      "source_uri": "https://youtu.be/mvTyHbTbfBo",
+      "previewed_at": "2026-09-16"
+     },
+     "prices": {
+      "usd": "1.13",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "1.13",
+      "eur_foil": null,
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DSol%2BRing",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DSol%2BRing",
+      "edhrec": "https://edhrec.com/route/?cc=Sol+Ring"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F717788%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=909814&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/156438?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_1",
+    "controller": "player_1",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "211af1bf-910b-41a5-b928-f378188d1871",
+     "oracle_id": "7bb51602-60e8-4730-b11c-2870d6b42e20",
+     "multiverse_ids": [
+      668955
+     ],
+     "mtgo_id": 129327,
+     "arena_id": 91577,
+     "tcgplayer_id": 559744,
+     "cardmarket_id": 778925,
+     "name": "Azure Beastbinder",
+     "lang": "en",
+     "released_at": "2024-08-02",
+     "uri": "https://api.scryfall.com/cards/211af1bf-910b-41a5-b928-f378188d1871",
+     "scryfall_uri": "https://scryfall.com/card/blb/41/azure-beastbinder?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T02:47:32Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/2/1/211af1bf-910b-41a5-b928-f378188d1871.jpg?1783910852",
+      "normal": "https://cards.scryfall.io/normal/front/2/1/211af1bf-910b-41a5-b928-f378188d1871.jpg?1783910852",
+      "large": "https://cards.scryfall.io/large/front/2/1/211af1bf-910b-41a5-b928-f378188d1871.jpg?1783910852",
+      "png": "https://cards.scryfall.io/png/front/2/1/211af1bf-910b-41a5-b928-f378188d1871.png?1783910852",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/2/1/211af1bf-910b-41a5-b928-f378188d1871.jpg?1783910852",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/2/1/211af1bf-910b-41a5-b928-f378188d1871.jpg?1783910852",
+      "thumb": "https://cards.scryfall.io/thumb/front/2/1/211af1bf-910b-41a5-b928-f378188d1871.webp?1783910852",
+      "grid": "https://cards.scryfall.io/grid/front/2/1/211af1bf-910b-41a5-b928-f378188d1871.webp?1783910852",
+      "display": "https://cards.scryfall.io/display/front/2/1/211af1bf-910b-41a5-b928-f378188d1871.webp?1783910852",
+      "art": "https://cards.scryfall.io/art/front/2/1/211af1bf-910b-41a5-b928-f378188d1871.webp?1783910852",
+      "crop": "https://cards.scryfall.io/crop/front/2/1/211af1bf-910b-41a5-b928-f378188d1871.webp?1783910852"
+     },
+     "mana_cost": "{1}{U}",
+     "cmc": 2,
+     "type_line": "Creature — Rat Rogue",
+     "oracle_text": "Vigilance\nThis creature can't be blocked by creatures with power 2 or greater.\nWhenever this creature attacks, up to one target artifact, creature, or planeswalker an opponent controls loses all abilities until your next turn. If it's a creature, it also has base power and toughness 2/2 until your next turn.",
+     "power": "1",
+     "toughness": "3",
+     "colors": [
+      "U"
+     ],
+     "color_identity": [
+      "U"
+     ],
+     "keywords": [
+      "Vigilance"
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo",
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "a2f58272-bba6-439d-871e-7a46686ac018",
+     "set": "blb",
+     "set_name": "Bloomburrow",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/a2f58272-bba6-439d-871e-7a46686ac018",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Ablb&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/blb?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/211af1bf-910b-41a5-b928-f378188d1871/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A7bb51602-60e8-4730-b11c-2870d6b42e20&unique=prints",
+     "collector_number": "41",
+     "digital": false,
+     "rarity": "rare",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Adam Paquette",
+     "artist_ids": [
+      "89023dad-e6c0-41e0-83fb-eb2bfbbdc3f2"
+     ],
+     "illustration_id": "012a3d4a-34f2-45f3-9e1c-6572312067d9",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 4150,
+     "penny_rank": 5321,
+     "preview": {
+      "source": "Wizards of the Coast",
+      "source_uri": "https://x.com/mtgjp/status/1813581947127648442",
+      "previewed_at": "2024-07-17"
+     },
+     "prices": {
+      "usd": "0.55",
+      "usd_foil": "0.66",
+      "usd_etched": null,
+      "eur": "0.84",
+      "eur_foil": "1.29",
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=668955&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DAzure%2BBeastbinder",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DAzure%2BBeastbinder",
+      "edhrec": "https://edhrec.com/route/?cc=Azure+Beastbinder"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F559744%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=778925&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/129327?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [
+   {
+    "id": "trig_perm_3_2_4",
+    "kind": "trigger",
+    "pseudoKind": "ability",
+    "sourceId": "perm_3",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 2,
+    "timestamp": 4,
+    "effectText": "Up to one target artifact, creature, or planeswalker an opponent controls loses all abilities until your next turn. If it's a creature, up to one target artifact, creature, or planeswalker an opponent controls also has base power and toughness 2/2 until your next turn.",
+    "xValue": null,
+    "hasXValue": false,
+    "cdaUserValue": null,
+    "linkedCards": null,
+    "fullText": "Whenever this creature attacks, up to one target artifact, creature, or planeswalker an opponent controls loses all abilities until your next turn. If it's a creature, it also has base power and toughness 2/2 until your next turn.",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "guessedTargetSubjects": [],
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Serra Angel",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Angel"
+       ],
+       "power": 4,
+       "toughness": 4,
+       "colors": [
+        "W"
+       ],
+       "abilities": [
+        "Flying",
+        "Vigilance"
+       ],
+       "oracleText": "Flying\nVigilance",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false
+      }
+     ],
+     [
+      "perm_2",
+      {
+       "name": "Sol Ring",
+       "types": [
+        "Artifact"
+       ],
+       "supertypes": [],
+       "subtypes": [],
+       "power": null,
+       "toughness": null,
+       "colors": [],
+       "abilities": [
+        "{T}: Add {C}{C}."
+       ],
+       "oracleText": "{T}: Add {C}{C}.",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false
+      }
+     ],
+     [
+      "perm_3",
+      {
+       "name": "Azure Beastbinder",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Rat",
+        "Rogue"
+       ],
+       "power": 1,
+       "toughness": 3,
+       "colors": [
+        "U"
+       ],
+       "abilities": [
+        "Vigilance",
+        "This creature can't be blocked by creatures with power 2 or greater.",
+        "Whenever this creature attacks, up to one target artifact, creature, or planeswalker an opponent controls loses all abilities until your next turn. If it's a creature, it also has base power and toughness 2/2 until your next turn."
+       ],
+       "oracleText": "Vigilance\nThis creature can't be blocked by creatures with power 2 or greater.\nWhenever this creature attacks, up to one target artifact, creature, or planeswalker an opponent controls loses all abilities until your next turn. If it's a creature, it also has base power and toughness 2/2 until your next turn.",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Serra Angel",
+       "imageUri": "https://cards.scryfall.io/small/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.jpg?1787563091",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Angel"
+       ],
+       "printedPower": 4,
+       "printedToughness": 4,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Sol Ring",
+       "imageUri": "https://cards.scryfall.io/small/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.jpg?1789644446",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Artifact"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Azure Beastbinder",
+       "imageUri": "https://cards.scryfall.io/small/front/2/1/211af1bf-910b-41a5-b928-f378188d1871.jpg?1783910852",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Rat",
+        "Rogue"
+       ],
+       "printedPower": 1,
+       "printedToughness": 3,
+       "timestamp": 3
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      },
+      {
+       "id": "player_1",
+       "name": "Opponent"
+      }
+     ]
+    },
+    "primaryTarget": "perm_1",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 5,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null
+   },
+   {
+    "id": "trig_perm_3_2_6",
+    "kind": "trigger",
+    "pseudoKind": "ability",
+    "sourceId": "perm_3",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 2,
+    "timestamp": 6,
+    "effectText": "Up to one target artifact, creature, or planeswalker an opponent controls loses all abilities until your next turn. If it's a creature, up to one target artifact, creature, or planeswalker an opponent controls also has base power and toughness 2/2 until your next turn.",
+    "xValue": null,
+    "hasXValue": false,
+    "cdaUserValue": null,
+    "linkedCards": null,
+    "fullText": "Whenever this creature attacks, up to one target artifact, creature, or planeswalker an opponent controls loses all abilities until your next turn. If it's a creature, it also has base power and toughness 2/2 until your next turn.",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "guessedTargetSubjects": [],
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Serra Angel",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Angel"
+       ],
+       "power": 2,
+       "toughness": 2,
+       "abilities": [],
+       "colors": [
+        "W"
+       ],
+       "manaValue": 5,
+       "manaCost": "{3}{W}{W}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "Flying\nVigilance",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": true,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "Flying",
+        "Vigilance"
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_1",
+       "controller": "player_1",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_2",
+      {
+       "name": "Sol Ring",
+       "types": [
+        "Artifact"
+       ],
+       "supertypes": [],
+       "subtypes": [],
+       "power": null,
+       "toughness": null,
+       "abilities": [
+        "{T}: Add {C}{C}."
+       ],
+       "colors": [],
+       "manaValue": 1,
+       "manaCost": "{1}",
+       "isCreature": false,
+       "isToken": false,
+       "oracleText": "{T}: Add {C}{C}.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "{T}: Add {C}{C}."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_1",
+       "controller": "player_1",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_3",
+      {
+       "name": "Azure Beastbinder",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Rat",
+        "Rogue"
+       ],
+       "power": 1,
+       "toughness": 3,
+       "abilities": [
+        "Vigilance",
+        "This creature can't be blocked by creatures with power 2 or greater.",
+        "Whenever this creature attacks, up to one target artifact, creature, or planeswalker an opponent controls loses all abilities until your next turn. If it's a creature, it also has base power and toughness 2/2 until your next turn."
+       ],
+       "colors": [
+        "U"
+       ],
+       "manaValue": 2,
+       "manaCost": "{1}{U}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "Vigilance\nThis creature can't be blocked by creatures with power 2 or greater.\nWhenever this creature attacks, up to one target artifact, creature, or planeswalker an opponent controls loses all abilities until your next turn. If it's a creature, it also has base power and toughness 2/2 until your next turn.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "allPrintedAbilities": [
+        "Vigilance",
+        "This creature can't be blocked by creatures with power 2 or greater.",
+        "Whenever this creature attacks, up to one target artifact, creature, or planeswalker an opponent controls loses all abilities until your next turn. If it's a creature, it also has base power and toughness 2/2 until your next turn."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Serra Angel",
+       "imageUri": "https://cards.scryfall.io/small/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.jpg?1787563091",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Angel"
+       ],
+       "printedPower": 4,
+       "printedToughness": 4,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Sol Ring",
+       "imageUri": "https://cards.scryfall.io/small/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.jpg?1789644446",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Artifact"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Azure Beastbinder",
+       "imageUri": "https://cards.scryfall.io/small/front/2/1/211af1bf-910b-41a5-b928-f378188d1871.jpg?1783910852",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Rat",
+        "Rogue"
+       ],
+       "printedPower": 1,
+       "printedToughness": 3,
+       "timestamp": 3
+      },
+      {
+       "id": "trig_perm_3_2_4",
+       "name": "Azure Beastbinder (trigger)",
+       "imageUri": "https://cards.scryfall.io/small/front/2/1/211af1bf-910b-41a5-b928-f378188d1871.jpg?1783910852",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": true,
+       "isTriggeredAbility": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "abilitySourceId": "perm_3",
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 4
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      },
+      {
+       "id": "player_1",
+       "name": "Opponent"
+      }
+     ]
+    },
+    "primaryTarget": "perm_2",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 7,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null
+   }
+  ],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   },
+   {
+    "id": "player_1",
+    "name": "Opponent",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": false,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 2,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Serra Angel",
+    "final": {
+     "name": "Serra Angel",
+     "controller": "player_1",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Angel"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "W"
+     ],
+     "abilities": [],
+     "allAbilitiesRemoved": true
+    },
+    "changedBy": {
+     "6": [
+      "Azure Beastbinder (trigger)"
+     ],
+     "7b": [
+      "Azure Beastbinder (trigger)"
+     ]
+    }
+   },
+   {
+    "perm": "Sol Ring",
+    "final": {
+     "name": "Sol Ring",
+     "controller": "player_1",
+     "supertypes": [],
+     "types": [
+      "Artifact"
+     ],
+     "subtypes": [],
+     "power": null,
+     "toughness": null,
+     "colors": [],
+     "abilities": [],
+     "allAbilitiesRemoved": true
+    },
+    "changedBy": {
+     "6": [
+      "Azure Beastbinder (trigger)"
+     ]
+    }
+   },
+   {
+    "perm": "Azure Beastbinder",
+    "final": {
+     "name": "Azure Beastbinder",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Rat",
+      "Rogue"
+     ],
+     "power": 1,
+     "toughness": 3,
+     "colors": [
+      "U"
+     ],
+     "abilities": [
+      "Vigilance",
+      "This creature can't be blocked by creatures with power 2 or greater.",
+      "Whenever this creature attacks, up to one target artifact, creature, or planeswalker an opponent controls loses all abilities until your next turn. If it's a creature, it also has base power and toughness 2/2 until your next turn."
+     ]
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "6": [
+    "Azure Beastbinder (trigger)",
+    "Azure Beastbinder (trigger)"
+   ],
+   "7b": [
+    "Azure Beastbinder (trigger)",
+    "Azure Beastbinder (trigger)"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Azure Beastbinder (trigger)",
+    "layer": "7b",
+    "type": "set_pt",
+    "scope": "targeted",
+    "target": "Serra Angel",
+    "params": {
+     "power": 2,
+     "toughness": 2
+    }
+   },
+   {
+    "source": "Azure Beastbinder (trigger)",
+    "layer": "6",
+    "type": "remove_abilities",
+    "scope": "targeted",
+    "target": "Serra Angel",
+    "params": {}
+   },
+   {
+    "source": "Azure Beastbinder (trigger)",
+    "layer": "7b",
+    "type": "set_pt",
+    "scope": "targeted",
+    "target": "Sol Ring",
+    "params": {
+     "power": 2,
+     "toughness": 2
+    }
+   },
+   {
+    "source": "Azure Beastbinder (trigger)",
+    "layer": "6",
+    "type": "remove_abilities",
+    "scope": "targeted",
+    "target": "Sol Ring",
+    "params": {}
+   }
+  ]
+ }
+}

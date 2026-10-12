@@ -1,0 +1,71 @@
+{
+  "name": "Azure Beastbinder — \"If it's a creature, it also has base power and toughness 2/2\"",
+  "notes": "Partial sweep (single cards, 2026-10-12). Fired, the rider's \"it\" is written out as \"up to one target artifact, creature, or planeswalker an opponent controls\"; the commas of that list kept the rider from getting a line of its own, so its condition gated the whole line (an artifact target kept its abilities) and the base-P/T parser turned the long subject away (a creature target kept its P/T). Serra Angel becomes 2/2 with no abilities; Sol Ring loses its abilities and gets no P/T.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Serra Angel",
+      "as": "angel",
+      "controller": "p2"
+    },
+    {
+      "add": "Sol Ring",
+      "as": "ring",
+      "controller": "p2"
+    },
+    {
+      "add": "Azure Beastbinder",
+      "as": "ab"
+    },
+    {
+      "fire": "@ab",
+      "trigger": 2,
+      "as": "fired"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@fired",
+        "@angel"
+      ]
+    },
+    {
+      "fire": "@ab",
+      "trigger": 2,
+      "as": "fired2"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@fired2",
+        "@ring"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Serra Angel",
+      "final": {
+        "power": 2,
+        "toughness": 2,
+        "abilities": []
+      }
+    },
+    {
+      "perm": "Sol Ring",
+      "final": {
+        "types": [
+          "Artifact"
+        ],
+        "power": null,
+        "toughness": null,
+        "abilities": []
+      }
+    }
+  ]
+}

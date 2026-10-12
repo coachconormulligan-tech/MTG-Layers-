@@ -235,6 +235,7 @@ function sentenceClauses(text) {
   return out;
 }
 
+const P_RESTATES_SET = /^(?:(?:it|they)\s+)?loses?\s+all\s+other\s+card\s+types$/i;
 // unit: the text that gets re-parsed; s: one of its sentences; sigsOf(text) re-parses.
 // Returns { n: probes made, dead: [{ k, what, tried }] } - tried is the sentence as re-parsed.
 function probeSentence(unit, s, sigsOf, baseSigs) {
@@ -244,6 +245,10 @@ function probeSentence(unit, s, sigsOf, baseSigs) {
   const dead = [], gone = [];
   let n = 0;
   for (const c of sentenceClauses(text)) {
+    // "… is a Vehicle artifact with crew 5 and it loses all other card types" (Swift
+    // Reconfiguration): with no "in addition", "is a <card type>" already replaces the card
+    // types (CR 205.1a), so this clause is read whether or not it is there.
+    if (P_RESTATES_SET.test(c.what) && !/\bin addition\b/i.test(text)) continue;
     n++;
     let rest = text.slice(0, c.a) + text.slice(c.b);
     if (c.cap) rest = rest.replace(/^\s*[a-z]/, ch => ch.toUpperCase());

@@ -186,8 +186,11 @@ function _finalizeEffects(effects, isEquipmentSource, permanent, oracleText) {
   const _oracle = (oracleText || '').toLowerCase();
   // "…, loses all abilities, and gains flying" (Dance of the Skywise, Dragonshift): effects of
   // one source apply in list order, so the loss must stand before the grant it leaves alone.
+  // ('gains equip {3} and "Equipped creature gets +3/+3" and loses all other abilities' — The
+  // Irencrag — names the grant first.)
   if (permanent && (permanent.isSpell || permanent.abilitySourceId) &&
-      /\bloses? all (?:other )?abilities,? and (?:gains?|ha(?:s|ve))\b/.test(_oracle)) {
+      (/\bloses? all (?:other )?abilities,? and (?:gains?|ha(?:s|ve))\b/.test(_oracle) ||
+       /\b(?:gains?|ha(?:s|ve))\b[^.\n]*\band loses? all other abilities\b/.test(_oracle))) {
     const isLoss = (e) => e.type === EFFECT_TYPE.REMOVE_ABILITIES && e.layer === '6' && !(e.params && e.params.specificAbilities);
     const firstGrant = effects.findIndex(e => e.type === EFFECT_TYPE.ADD_ABILITY && e.layer === '6' && e.scope === 'targeted');
     const loss = effects.findIndex(isLoss);

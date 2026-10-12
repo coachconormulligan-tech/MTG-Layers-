@@ -1,0 +1,29 @@
+{
+  "name": "Mutavault — \"becomes a 2/2 creature with all creature types\" reads the card type it names",
+  "notes": "Partial sweep (single cards, 2026-10-12). \"This land becomes a 2/2 creature with all creature types until end of turn. It's still a land.\" parseBecomesType returned only the all-creature-types flag, so the fired ability left Mutavault a Land with no P/T. What stands before \"with all creature types\" is now read as well: Land Creature, 2/2, every creature type.",
+  "steps": [
+    {
+      "add": "Mutavault",
+      "as": "vault"
+    },
+    {
+      "fire": "@vault",
+      "activated": 1,
+      "as": "fired"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Mutavault",
+      "final": {
+        "types": [
+          "Land",
+          "Creature"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "isAllCreatureTypes": true
+      }
+    }
+  ]
+}

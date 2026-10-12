@@ -1,0 +1,72 @@
+{
+  "name": "Gogo, Mysterious Mime — \"each get +2/+0 and gain haste until end of turn and attack this turn if able\" grants haste",
+  "notes": "Partial sweep (single cards, 2026-10-12). \"If you do, Gogo and that creature each get +2/+0 and gain haste until end of turn and attack this turn if able.\" The boost reached every creature and haste was dropped. \"That creature\" is now the copy's target, and both the boost and haste have a source half and a target half (as Deadly Dancer). Hill Giant is untouched.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Gogo, Mysterious Mime",
+      "as": "gogo"
+    },
+    {
+      "fire": "@gogo",
+      "trigger": 0,
+      "as": "fired"
+    },
+    {
+      "copy": [
+        "@fired",
+        "@bears"
+      ]
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@fired",
+        true
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 4,
+        "toughness": 2,
+        "abilities": [
+          "Haste"
+        ]
+      }
+    },
+    {
+      "perm": "Gogo, Mysterious Mime",
+      "final": {
+        "name": "Gogo, Mysterious Mime",
+        "subtypes": [
+          "Bear"
+        ],
+        "power": 4,
+        "toughness": 2,
+        "abilities": {
+          "$includes": [
+            "Haste"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "power": 3,
+        "toughness": 3,
+        "abilities": []
+      }
+    }
+  ]
+}

@@ -15,12 +15,6 @@ Most-played first.
 
 | EDHREC rank | Card | Part not read | Sentence |
 |---:|---|---|---|
-| 1909 | Mutavault | Card type: creature | {1}: This land becomes a 2/2 creature with all creature types until end of turn. |
-| 2564 | Gogo, Mysterious Mime | Clause: gain haste until end of turn and attack | If you do, this card and that creature each get +2/+0 and gain haste until end of turn and attack this turn if able. |
-| 3937 | The Irencrag | Clause: loses all other abilities | If you do, it gains equip {3} and "Equipped creature gets +3/+3" and loses all other abilities. |
-| 4022 | Swift Reconfiguration | Clause: it loses all other card types | Enchanted permanent is a Vehicle artifact with crew 5 and it loses all other card types. |
-| 4150 | Azure Beastbinder | Power of N/N: 2/2 | If it's a creature, it also has base power and toughness 2/2 until your next turn. |
-| 4150 | Azure Beastbinder | Toughness of N/N: 2/2 | If it's a creature, it also has base power and toughness 2/2 until your next turn. |
 | 4626 | Polymorphist's Jest | Clause: becomes a blue Frog with base power and toughness 1/1 | Until end of turn, each creature target player controls loses all abilities and becomes a blue Frog with base power and toughness 1/1. |
 | 5112 | Idol of False Gods | Clause: it has annihilator 2 | As long as this artifact has eight or more +1/+1 counters on it, it's a 0/0 creature in addition to its other types and it has annihilator 2. |
 | 5183 | Akroma, Vision of Ixidor | Power of +N/+N: +1/+1 | At the beginning of each combat, until end of turn, each other creature you control gets +1/+1 if it has flying, +1/+1 if it has first strike, and so on for double strike, deathtouch, haste, hexproof, indestructible, lifelink, menace, protection, reach, trample, vigilance, and partner. |
@@ -51,7 +45,6 @@ Most-played first.
 | 19836 | Hulkling, Young Avenger | Power of N/N: 4/4 | Whenever you cast a noncreature spell, this card becomes a copy of up to one other target creature until end of turn, except his name is this card, he's 4/4, and he has flying and this ability. |
 | 19836 | Hulkling, Young Avenger | Toughness of N/N: 4/4 | Whenever you cast a noncreature spell, this card becomes a copy of up to one other target creature until end of turn, except his name is this card, he's 4/4, and he has flying and this ability. |
 | 20290 | Tsagan, Raider Warlord | Keyword: first strike | Max speed — this card has deathtouch and other creatures you control have first strike. |
-| 22505 | One with the Stars | Clause: loses all other card types | Enchanted permanent is an enchantment and loses all other card types. |
 | 22625 | Hellcat, Undying Vigilante | Clause: gains haste | She loses all abilities and gains haste. |
 | 23954 | Hellkite Hatchling | Keyword: trample | This creature has flying and trample if it devoured a creature. |
 | 24670 | Dominaria's Judgment | Keyword: protection from white | Until end of turn, creatures you control gain protection from white if you control a Plains, from blue if you control an Island, from black if you control a Swamp, from red if you control a Mountain, and from green if you control a Forest. |

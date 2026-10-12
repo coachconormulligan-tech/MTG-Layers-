@@ -801,6 +801,14 @@ const Battlefield = {
     }
     // Also convert "that creature/permanent" pronouns (e.g. Gahiji: "that creature gets +2/+0")
     {
+      // "…become a copy of another target creature you control …. If you do, this card and that
+      // creature each get +2/+0" (Gogo, Mysterious Mime): the second of the pair is the target.
+      parsedEffectText = parsedEffectText.replace(
+        /\b(this\s+\w+\s+and\s+)that\s+(creature|permanent)(?=\s+(?:each|both)\s+(?:get|gain|have|lose)\b)/gi,
+        (whole, lead, noun, offset, text) => {
+          const real = targetFor(text, offset, noun.toLowerCase());
+          return real ? lead + real : whole;
+        });
       parsedEffectText = parsedEffectText.replace(/\bthat\s+creature\s+(get[s]?|gain[s]?|ha[s]|have|is|becomes?|loses?)\b/gi, pronounSubject('creature'));
       parsedEffectText = parsedEffectText.replace(/\bthat\s+permanent\s+(get[s]?|gain[s]?|ha[s]|have|is|becomes?|loses?)\b/gi, pronounSubject('permanent'));
     }
@@ -978,6 +986,18 @@ const Battlefield = {
       }
     }
     _pinAbilityEffectsToSource(newEffects, sourcePermId);
+    // "…becomes a copy of another target creature you control …. If you do, this card and
+    // target creature you control each get +2/+0 and gain haste" (Gogo, Mysterious Mime, its
+    // "that creature" written out above): the second of the pair is the creature copied. Its
+    // effects have no picker of their own and follow the copy picker (_syncCopyFollowers).
+    if (_COPY_THEN_PAIR_RE.test(parsedEffectText) &&
+        newEffects.some(e => e.type === EFFECT_TYPE.COPY && !e.params.massCopy && !e.params.copiesAbilitySource)) {
+      for (const eff of newEffects) {
+        if (eff.type === EFFECT_TYPE.COPY || eff.scope !== 'targeted' || eff.selfTarget || eff._sourceHalf || !eff.targetRestriction) continue;
+        eff._followsCopyTarget = true;
+        eff._autoTargetSource = true;
+      }
+    }
     // For self-referential triggers ("this creature attacks → it gains X"), force-pin
     // any remaining unset targeted effects to the source — no dropdown needed.
     // Exception: when the effect explicitly excludes the source ("another/other target
@@ -2130,6 +2150,7 @@ const Battlefield = {
         if (hasModalTargets && e.modalModeIndex !== undefined && e.disabled) return;
         if (e._targetSlot !== undefined) return; // slotted effects use setSlottedTarget
         if (e._sourceHalf && e._autoTargetSource) return;
+        if (e._followsCopyTarget) return;
         e.targetId = targetPermId;
         e.timestamp = newTs;
       }
@@ -2939,6 +2960,7 @@ const Battlefield = {
       if (cached) return cached;
     }
     // Cache miss — compute and store.
+    this._syncCopyFollowers();
     const result = evaluatePermanent(perm, this.permanents, this.effects, this.inspectedId);
     if (this._inspectorCacheVersion !== this._cacheVersion) {
       this._inspectorCache.clear();
@@ -2963,10 +2985,22 @@ const Battlefield = {
   /* Return Map<permId, finalState> for ALL real permanents.
      Calls evaluatePermanent exactly once (it already runs the full global pipeline),
      then reads finalStates from the result. Previously called it once per permanent. */
+  /* Effects on "that creature" of a fired "…becomes a copy of another target creature …. If you
+     do, this card and that creature each get +2/+0" (Gogo, Mysterious Mime) sit on whatever
+     the same ability's copy picker holds, and on nothing until it holds something. */
+  _syncCopyFollowers() {
+    for (const e of this.effects) {
+      if (!e._followsCopyTarget) continue;
+      const copy = this.effects.find(c => c.sourceId === e.sourceId && c.type === EFFECT_TYPE.COPY);
+      e.targetId = (copy && copy.params && copy.params._copyTargetPermId) || null;
+    }
+  },
+
   getAllFinalStates() {
     if (this._cachedFinalStatesVersion === this._cacheVersion && this._cachedFinalStates !== null) {
       return this._cachedFinalStates;
     }
+    this._syncCopyFollowers();
     const realPerms = this.permanents.filter(p => !p.isManualEffect);
     const _fallback = (p) => ({ name: p.name, types: p.printedTypes, supertypes: p.printedSupertypes,
       subtypes: p.printedSubtypes || [], power: p.printedPower, toughness: p.printedToughness,
@@ -3330,7 +3364,8 @@ const Battlefield = {
         if (e._targetSlot !== undefined) { if (e.targetId) { slotTargets[e._targetSlot] = e.targetId; slotTs[e._targetSlot] = e.timestamp; } }
         else if (e.modalModeIndex !== undefined) { if (e.targetId) modalTargets[e.modalModeIndex] = e.targetId; }
         // (Not the half pinned to the ability's own source — Deadly Dancer: the picked half is the target.)
-        else if (e.targetId && primaryTarget === null && !(e._sourceHalf && e._autoTargetSource)) { primaryTarget = e.targetId; targetTs = e.timestamp; }
+        // (Nor one that follows the copy picker — Gogo, Mysterious Mime.)
+        else if (e.targetId && primaryTarget === null && !(e._sourceHalf && e._autoTargetSource) && !e._followsCopyTarget) { primaryTarget = e.targetId; targetTs = e.timestamp; }
       }
       // targetTs / slotTs preserve the ACTUAL layer-ordering timestamp of targeted
       // effects (auras/equipment), which setTarget/setSlottedTarget bump independently of

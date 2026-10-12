@@ -683,7 +683,10 @@ function _branchCastClauses(sentence) {
 }
 const _BRANCH_LEAD_COND_RE = /^(?:As long as|If)\s+([^,]+),\s+(.+)$/i;
 function _branchIsContinuous(body) {
-  body = body.replace(/^until end of turn,\s+/i, '');
+  body = body.replace(/^until end of turn,\s+/i, '')
+    // (The commas of a target list — "up to one target artifact, creature, or planeswalker an
+    // opponent controls has …", Azure Beastbinder — do not end the first clause.)
+    .replace(/\btarget (?:[\w-]+, )+(?:or |and )?[\w-]+/i, (list) => list.replace(/,/g, ''));
   return _BRANCH_CONTINUOUS_VERB_RE.test(body) && !/^you\b/i.test(body) && !/\blife\b|\bcounters?\b/i.test(body);
 }
 // The optional action a toggle is named after — "You may gain control of target permanent until
@@ -932,7 +935,9 @@ function _splitConditionalBranches(text, isSpell, canParse) {
         const isAddition = /^(?:it|that \w+|target [^,]+?) is an?\s[^.]*\bin addition to its other\b/i.test(body);
         if (instead && !_branchIsContinuous(body) && insteadOfNothing(cond)) continue;
         // The condition's "it" must be what the rider changes: a pronoun, the target, or this permanent.
-        if (!/^(?:it|that (?:creature|permanent)|(?:another )?target|this)\s/i.test(body)) continue;
+        // ("up to one target artifact, creature, or planeswalker an opponent controls", the "it"
+        // of Azure Beastbinder's fired rider written out, is a target too.)
+        if (!/^(?:it|that (?:creature|permanent)|(?:another |up to \w+ (?:other )?)?target|this)\s/i.test(body)) continue;
         if (!canParse(cond) || !(isAddition || _branchIsContinuous(body))) continue;
         const lead = isSpell ? 'If on resolution' : 'As long as';
         if (isSpell) {
@@ -1989,6 +1994,9 @@ function parseBecomesType(text) {
     return { types: [], subtypes: [], isLandSubtype: true, gainsAllLandTypes: true, grantedAbilities: [] };
   }
   if (/\b(?:all|every)\s+creature\s+types?\b/i.test(t)) {
+    // "a 2/2 creature with all creature types" (Mutavault): what stands before "with" is still read.
+    const withAll = t.match(/^(.*\S)\s+with\s+all\s+creature\s+types$/i);
+    if (withAll) return Object.assign(parseBecomesType(withAll[1]), { gainsAllCreatureTypes: true });
     return { types: [], subtypes: [], isLandSubtype: false, gainsAllCreatureTypes: true, grantedAbilities: [] };
   }
 
