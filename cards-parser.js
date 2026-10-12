@@ -2913,10 +2913,12 @@ function parseCardEffects(permanent, card, opts = {}) {
     // whole quote out; it is granted further down with the other "with" abilities.
     let _stQuotedAbility = null;
     if ((becomesText.split('"').length - 1) % 2 === 1) {
-      const _qOpen = becomesText.match(/\s+(?:with|and)\s+"([^"]*)$/i);
+      // ('becomes a Human Faerie Detective and gains "Whenever …. You may play that card this
+      // turn."' — Kellan, Planar Trailblazer: that grant is the quoted-ability parser's.)
+      const _qOpen = becomesText.match(/\s+(?:with|and(\s+(?:gains?|ha(?:s|ve)))?)\s+"([^"]*)$/i);
       const _qClose = oracle.indexOf('"', mEnd);
       if (_qOpen && _qClose >= 0 && !oracle.slice(mEnd, _qClose).includes('\n')) {
-        _stQuotedAbility = (_qOpen[1] + '.' + oracle.slice(mEnd, _qClose)).trim().replace(/\.$/, '');
+        if (!_qOpen[1]) _stQuotedAbility = (_qOpen[2] + '.' + oracle.slice(mEnd, _qClose)).trim().replace(/\.$/, '');
         becomesText = becomesText.slice(0, _qOpen.index).trim();
         setTypeRegex.lastIndex = _qClose;
       }
@@ -4823,6 +4825,13 @@ function parseCardEffects(permanent, card, opts = {}) {
       const _ftEarlier = filterText.slice(0, filterText.length - _ftLast.length);
       if (/^(?:(?:attacking|blocking|other|tapped|untapped)\s+)*[\w-]+$/i.test(_ftLast) && filterReferencesPermanents(_ftLast) &&
           !/\b(?:target|creates?|tokens?|cards?|choose)\b/i.test(_ftEarlier)) filterText = _ftLast;
+    }
+    // 'This card becomes a Human Faerie Detective and gains "…"' (Kellan, Planar Trailblazer,
+    // fired): the subject is what stands before "becomes", as in haveAbilityRegex.
+    {
+      // (Also a group: 'each creature you control becomes a black Shade and gains "…"' — Shade's Breath.)
+      const _ftBecomesAnd = stripDurationPrefix(filterText).match(/^(this (?:card|creature|permanent|land|artifact|enchantment)|(?:up to \w+ |another )?target [^,.]+?|(?:each|all) [^,.]+?)\s+becomes?\s+[^"]*\band$/i);
+      if (_ftBecomesAnd) filterText = _ftBecomesAnd[1];
     }
     const abilityText = ftMatch[2].trim().replace(/,$/, '').trim();
     // A grant made by a permanent's triggered ability ('At end of combat, … Each of those
