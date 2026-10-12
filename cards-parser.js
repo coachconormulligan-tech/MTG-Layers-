@@ -1105,6 +1105,11 @@ function parseCardEffects(permanent, card, opts = {}) {
   // Rage: a count placed before the subject is not read, and would be taken for the subject.)
   oracle = oracle.replace(/\b(gets?) an additional (?=[+-][\dX]+\/[+-][\dX]+)/gi,
     (whole, verb, pos, str) => /^For each\b/i.test(str.slice(0, pos).split(/\.\s+|\n/).pop()) ? whole : verb + ' ');
+  // "… creatures you control gain protection from white if you control a Plains, from blue if
+  // you control an Island, …, and from green if you control a Forest." (Dominaria's Judgment):
+  // each "from X if Y" is a grant with a condition of its own.
+  oracle = oracle.replace(/^(.*?\b(?:gains?|ha(?:s|ve)) protection )(from [^,.\n]+? if [^,.\n]+(?:, (?:and )?from [^,.\n]+? if [^,.\n]+)+)\.$/gim,
+    (_, lead, items) => items.split(/, (?:and )?(?=from )/).map(item => `${lead}${item}.`).join(' '));
   // Normalize smart/curly double quotes (U+201C, U+201D) to straight ASCII double quotes
   oracle = oracle.replace(/[\u201c\u201d]/g, '"');
 
@@ -1529,6 +1534,28 @@ function parseCardEffects(permanent, card, opts = {}) {
   // set _targetsChosenPlayer on the permanent when they produce a target-player effect,
   // and the UI shows a dropdown to select the beneficiary at that point.
 
+  // A static ability of a permanent whose condition the board cannot show is asked with a
+  // toggle on the permanent, as a spell's is. Like every toggle it starts at No. The token for
+  // the label's toggle (a label asked before keeps its slot), or null when all are taken.
+  const _askStatic = (label) => {
+    for (let n = 1; n <= MAX_BRANCH_TOGGLES; n++) {
+      const key = 'additionalCostLabel' + (n > 1 ? n : '');
+      if (!permanent[key] || permanent[key] === label) {
+        permanent[key] = label;
+        return `[additional cost ${n > 1 ? n + ' ' : ''}paid]`;
+      }
+    }
+    return null;
+  };
+  // "Max speed — This creature gets +1/+1 and has menace." (Gastal Raider): unlike the ability
+  // words stripped below, "Max speed" is a condition (CR 702.179), and speed is not tracked.
+  if (!permanent.isSpell && !permanent.isManualEffect) {
+    oracle = oracle.replace(/^Max speed [——] (this [\w-]+ (?:has|gets)\s[^.\n"]+\.)$/gim, (whole, body) => {
+      const token = _askStatic('You have max speed');
+      return token ? `As long as ${token}, ${body}` : whole;
+    });
+  }
+
   // Strip ability words (flavor words before em dashes at the start of lines).
   // E.g. "Jump — During your turn, this card has flying." → "During your turn, this card has flying."
   // Ability words have no rules meaning; the em dash separates them from the actual rules text.
@@ -1657,6 +1684,24 @@ function parseCardEffects(permanent, card, opts = {}) {
       oracle = oracle.replace(/(^|\.\s+|\n)(?:if|when) you do,\s*(?!if\b)(\w)/gi, (_, pre, ch) => pre + ch.toUpperCase());
     }
   }
+  // "This creature has flying and trample if it devoured a creature." (Hellkite Hatchling): a
+  // trailing condition of a permanent's static ability that the board cannot show is asked
+  // with a toggle too.
+  if (!permanent.isSpell && !permanent.isManualEffect) {
+    oracle = oracle.split('\n').map((line) => {
+      if (_isTriggeredSentence(line.trim()) || /^[^."]*:\s/.test(line) || line.includes('"')) return line;
+      const trail = (line.match(/\bif\b/gi) || []).length === 1 &&
+        line.match(/^((?:this|equipped|enchanted) [^.]*?\b(?:has|gets)\b[^.]*?) if ([^.,;]+)\.$/i);
+      if (!trail || /^able$|\bwould\b/i.test(trail[2]) || _parseCondition(trail[2])) return line;
+      const token = _askStatic(trail[2].charAt(0).toUpperCase() + trail[2].slice(1));
+      return token ? `As long as ${token}, ${trail[1]}.` : line;
+    }).join('\n');
+  }
+  // "This card has deathtouch and other creatures you control have first strike" (Tsagan, Raider
+  // Warlord): two subjects, each with its own keywords, are two sentences. (A condition in
+  // front is the line's, so it holds for both.)
+  oracle = oracle.replace(/^(As long as [^,\n]+, )?(this [\w-]+ (?:has|gains?) [a-z ,]+?) and ((?:each other |other |all )?[\w' -]*?\byou control (?:have|gain) [^.\n"]+\.)$/gim,
+    (_, lead, own, others) => `${lead || ''}${own}. ${others.charAt(0).toUpperCase() + others.slice(1)}`);
   // "You may have Allies you control gain lifelink until end of turn" (Talus Paladin, Highland
   // Berserker): the permanents are the subject. Left in front, "you may have" was read as part
   // of the filter ("You May Ally") and the effect reached nothing. After the splitter, which
@@ -2255,7 +2300,8 @@ function parseCardEffects(permanent, card, opts = {}) {
         }
       }
       // "except it's X/Y" or "except it is X/Y" -> setPT (Mindlink Mech: "it's 4/3")
-      const itPTMatch = exceptClause.match(/it(?:'s| is)\s+(\d+)\/(\d+)\b/i);
+      // "he's 4/4" (Hulkling, Young Avenger) arrives here as "this card is 4/4".
+      const itPTMatch = exceptClause.match(/\b(?:it|this (?:card|permanent|creature|token))(?:'s| is)\s+(\d+)\/(\d+)\b/i);
       if (itPTMatch) {
         copyParams.setPT = { power: parseInt(itPTMatch[1]), toughness: parseInt(itPTMatch[2]) };
       }
@@ -2307,7 +2353,8 @@ function parseCardEffects(permanent, card, opts = {}) {
       // (cards-battlefield.js) may have rewritten the subject, so accept any of them.
       // permanent.abilityFullText carries the original "{cost}: ..." text (parsedEffectText/
       // exceptClause only has the post-colon body, which can't reconstruct the cost).
-      if (/\b(?:it|target\s+\w+|this card|this permanent)\s+(?:has|gains?)\s+this ability\b/i.test(exceptClause) && permanent.abilityFullText) {
+      // "he has flying and this ability" (Hulkling, Young Avenger): keywords may come first.
+      if (/\b(?:it|target\s+\w+|this card|this permanent)\s+(?:has|gains?)\s+(?:[a-z ,]+?\s+and\s+)?this ability\b/i.test(exceptClause) && permanent.abilityFullText) {
         (copyParams.addAbilities ||= []).push(permanent.abilityFullText);
       }
       // "except ... it has '<quoted ability>'" — Sakashima the Impostor grants the copy a full
@@ -4611,6 +4658,13 @@ function parseCardEffects(permanent, card, opts = {}) {
     {
       const _becomesAnd = stripDurationPrefix(filterText).match(/^(this (?:card|creature|permanent|land|artifact|enchantment)|(?:up to \w+ |another )?target [^,.]+?)\s+becomes?\s+[^"]*\band$/i);
       if (_becomesAnd) filterText = _becomesAnd[1];
+    }
+    // "She loses all abilities and gains haste" (Hellcat, Undying Vigilante): the subject is what
+    // stands before "loses"; the loss is loseAllAbilitiesRegex's, and _finalizeEffects puts it
+    // before the grant.
+    {
+      const _losesAnd = stripDurationPrefix(filterText).match(/^(this (?:card|creature|permanent|land|artifact|enchantment)|(?:up to \w+ |another )?target [^,.]+?)\s+loses? all abilities,? and$/i);
+      if (_losesAnd) filterText = _losesAnd[1];
     }
     // "Untap it and target permanent gains haste" (Dominus of Fealty, its "it" already resolved):
     // an instruction joined by "and" is not part of the subject.

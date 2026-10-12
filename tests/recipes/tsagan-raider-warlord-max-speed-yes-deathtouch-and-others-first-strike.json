@@ -1,0 +1,44 @@
+{
+  "name": "Tsagan, Raider Warlord — Max speed: Yes gives it deathtouch and other creatures you control first strike",
+  "notes": "Partial sweep (single cards, 2026-10-12). \"Max speed — Tsagan has deathtouch and other creatures you control have first strike.\" Only the first subject was read (one keyword grant per sentence), and \"Max speed\" was stripped as a flavour ability word, so deathtouch applied at any speed. The two subjects are now two sentences, and Max speed is a toggle on the permanent (\"You have max speed\"), since speed is not tracked. With it on, Tsagan has deathtouch and the Bears first strike; Tsagan itself does not get first strike.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Tsagan, Raider Warlord",
+      "as": "tsagan"
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@tsagan",
+        true
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Tsagan, Raider Warlord",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Deathtouch"
+          ],
+          "$excludes": [
+            "First strike"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": [
+          "First strike"
+        ]
+      }
+    }
+  ]
+}

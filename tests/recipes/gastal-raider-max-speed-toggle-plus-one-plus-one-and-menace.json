@@ -1,0 +1,47 @@
+{
+  "name": "Gastal Raider — Max speed: Yes gives +1/+1 and menace",
+  "notes": "Partial sweep (single cards, 2026-10-12). Found with Tsagan. \"Max speed — This creature gets +1/+1 and has menace.\" applied at any speed. Now behind the \"You have max speed\" toggle on the permanent.",
+  "steps": [
+    {
+      "add": "Gastal Raider",
+      "as": "raider"
+    },
+    {
+      "add": "Gastal Raider",
+      "as": "raider2"
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@raider",
+        true
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Gastal Raider A",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Menace"
+          ]
+        },
+        "power": 3,
+        "toughness": 2
+      }
+    },
+    {
+      "perm": "Gastal Raider B",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Menace"
+          ]
+        },
+        "power": 2,
+        "toughness": 1
+      }
+    }
+  ]
+}

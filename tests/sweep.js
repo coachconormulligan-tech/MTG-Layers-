@@ -173,7 +173,10 @@ function sentenceParts(text) {
   while ((x = prot.exec(m))) {
     if (!/\b(?:gains?|ha(?:s|ve)|loses?)\b/i.test(m.slice(0, x.index))) continue;
     const at = x.index + x[0].length - x[1].length;
-    parts.push({ k: 'keyword', what: 'protection from ' + x[1], a: at, b: at + x[1].length, to: _other(P_COLORS, lower) || 'white' });
+    // (A sentence naming all five colours — Dominaria's Judgment — leaves none to swap in; the
+    // swap takes the colour from another of its own grants, which changes the effects all the same.)
+    const to = _other(P_COLORS, lower) || P_COLORS.find(c => c !== x[1].toLowerCase());
+    parts.push({ k: 'keyword', what: 'protection from ' + x[1], a: at, b: at + x[1].length, to });
   }
   // Quoted abilities that something gains or has.
   for (const q of quotes) {

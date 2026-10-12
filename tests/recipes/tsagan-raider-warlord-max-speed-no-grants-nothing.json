@@ -1,0 +1,32 @@
+{
+  "name": "Tsagan, Raider Warlord — Max speed: No (the default) grants neither deathtouch nor first strike",
+  "notes": "Partial sweep (single cards, 2026-10-12). The \"You have max speed\" toggle starts at No, like every toggle: Tsagan has no deathtouch and the Bears no first strike.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Tsagan, Raider Warlord",
+      "as": "tsagan"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Tsagan, Raider Warlord",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Deathtouch"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": []
+      }
+    }
+  ]
+}

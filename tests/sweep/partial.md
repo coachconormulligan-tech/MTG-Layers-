@@ -15,12 +15,6 @@ Most-played first.
 
 | EDHREC rank | Card | Part not read | Sentence |
 |---:|---|---|---|
-| 19836 | Hulkling, Young Avenger | Power of N/N: 4/4 | Whenever you cast a noncreature spell, this card becomes a copy of up to one other target creature until end of turn, except his name is this card, he's 4/4, and he has flying and this ability. |
-| 19836 | Hulkling, Young Avenger | Toughness of N/N: 4/4 | Whenever you cast a noncreature spell, this card becomes a copy of up to one other target creature until end of turn, except his name is this card, he's 4/4, and he has flying and this ability. |
-| 20290 | Tsagan, Raider Warlord | Keyword: first strike | Max speed — this card has deathtouch and other creatures you control have first strike. |
-| 22625 | Hellcat, Undying Vigilante | Clause: gains haste | She loses all abilities and gains haste. |
-| 23954 | Hellkite Hatchling | Keyword: trample | This creature has flying and trample if it devoured a creature. |
-| 24670 | Dominaria's Judgment | Keyword: protection from white | Until end of turn, creatures you control gain protection from white if you control a Plains, from blue if you control an Island, from black if you control a Swamp, from red if you control a Mountain, and from green if you control a Forest. |
 | 26596 | Ageless Sentinels | Clause: it becomes a Bird Giant | When this creature blocks, it becomes a Bird Giant, and it loses defender. |
 | 27576 | Soul Sculptor | Clause: becomes an enchantment | {1}{W}, {T}: Target creature becomes an enchantment and loses all abilities until a player casts a creature spell. |
 | 28498 | Tek | Clause: gets +2/+0 as long as you control a Swamp | This creature gets +0/+2 as long as you control a Plains, has flying as long as you control an Island, gets +2/+0 as long as you control a Swamp, has first strike as long as you control a Mountain, and has trample as long as you control a Forest. |
