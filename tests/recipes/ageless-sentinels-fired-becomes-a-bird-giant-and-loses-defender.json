@@ -1,0 +1,37 @@
+{
+  "name": "Ageless Sentinels — fired: \"it becomes a Bird Giant, and it loses defender\"",
+  "notes": "Partial sweep (single cards, 2026-10-12). The type change was dropped (\", and it loses defender\" was left inside the text of what it becomes). Fired, the Wall is now a Bird Giant creature without defender, keeping flying.",
+  "steps": [
+    {
+      "add": "Ageless Sentinels",
+      "as": "wall"
+    },
+    {
+      "fire": "@wall",
+      "trigger": 2,
+      "as": "t"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Ageless Sentinels",
+      "final": {
+        "types": [
+          "Creature"
+        ],
+        "subtypes": [
+          "Bird",
+          "Giant"
+        ],
+        "abilities": {
+          "$includes": [
+            "Flying"
+          ],
+          "$excludes": [
+            "Defender"
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "name": "Ageless Sentinels — before it blocks it is still a Wall with defender",
+  "notes": "Partial sweep (single cards, 2026-10-12). \"loses defender\" inside the blocks-trigger was applied as a static effect, so the card never had defender. A keyword loss inside a triggered or activated ability now waits for the ability to be fired.",
+  "steps": [
+    {
+      "add": "Ageless Sentinels",
+      "as": "wall"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Ageless Sentinels",
+      "final": {
+        "subtypes": [
+          "Wall"
+        ],
+        "abilities": {
+          "$includes": [
+            "Defender",
+            "Flying"
+          ]
+        }
+      }
+    }
+  ]
+}

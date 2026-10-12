@@ -1,0 +1,55 @@
+{
+  "name": "Chimeric Sphere — 2/1 with flying, then \"becomes a 3/2 Construct artifact creature and loses flying\"",
+  "notes": "Partial sweep (single cards, 2026-10-12). The second ability produced only a flying loss aimed at everything: \"and loses flying\" was left inside the text of what the Sphere becomes. Fired after the first ability, the Sphere is a 3/2 Construct artifact creature without flying.",
+  "steps": [
+    {
+      "add": "Shivan Dragon",
+      "as": "dragon"
+    },
+    {
+      "add": "Chimeric Sphere",
+      "as": "sphere"
+    },
+    {
+      "fire": "@sphere",
+      "activated": 0,
+      "as": "a"
+    },
+    {
+      "fire": "@sphere",
+      "activated": 1,
+      "as": "b"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Chimeric Sphere",
+      "final": {
+        "types": [
+          "Artifact",
+          "Creature"
+        ],
+        "subtypes": [
+          "Construct"
+        ],
+        "power": 3,
+        "toughness": 2,
+        "abilities": {
+          "$excludes": [
+            "Flying"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Shivan Dragon",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Flying"
+          ]
+        }
+      }
+    }
+  ]
+}

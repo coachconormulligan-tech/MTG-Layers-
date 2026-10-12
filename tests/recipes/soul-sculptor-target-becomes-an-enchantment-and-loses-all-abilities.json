@@ -1,0 +1,39 @@
+{
+  "name": "Soul Sculptor — \"Target creature becomes an enchantment and loses all abilities\"",
+  "notes": "Partial sweep (single cards, 2026-10-12). Only the ability loss was read. The target is now an enchantment only (no \"in addition\", so it stops being a creature and loses its creature types) with no abilities.",
+  "steps": [
+    {
+      "add": "Shivan Dragon",
+      "as": "dragon"
+    },
+    {
+      "add": "Soul Sculptor",
+      "as": "s"
+    },
+    {
+      "fire": "@s",
+      "activated": 0,
+      "as": "t"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@t",
+        "@dragon"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Shivan Dragon",
+      "final": {
+        "types": [
+          "Enchantment"
+        ],
+        "subtypes": [],
+        "abilities": [],
+        "allAbilitiesRemoved": true
+      }
+    }
+  ]
+}
