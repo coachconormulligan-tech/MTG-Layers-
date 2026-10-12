@@ -1,0 +1,16 @@
+{
+  "name": "Legion Loyalist — fired, creatures gain first strike and trample; the list ends at 'until end of turn'",
+  "notes": "Found by the sweep's partial probe. 'creatures you control gain first strike and trample until end of turn and can't be blocked by creature tokens this turn': the duration was only cut from the end of the sentence, so the second keyword was read as 'trample until end of turn and can't be blocked …' and dropped. The keyword list now ends at the duration wherever it stands. The opponent's creature gains nothing.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears" },
+    { "add": "Gray Ogre", "controller": "p2" },
+    { "add": "Legion Loyalist", "as": "loyalist" },
+    { "fire": "@loyalist", "trigger": 1, "as": "t1" }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$includes": ["First strike", "Trample"] } } },
+    { "perm": "Legion Loyalist", "final": { "abilities": { "$includes": ["First strike", "Trample"] } } },
+    { "perm": "Gray Ogre", "final": { "abilities": [] } }
+  ]
+}

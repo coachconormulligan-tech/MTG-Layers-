@@ -1,0 +1,15 @@
+{
+  "name": "Kamahl, Heart of Krosa — fired, the land has vigilance, indestructible, and haste",
+  "notes": "Same fault as Sylvan Awakening, on a fired ability with one target: 'target land you control becomes a 1/1 Elemental creature with vigilance, indestructible, and haste' dropped haste. The Mountain is targeted; the Forest is not and stays a plain land.",
+  "steps": [
+    { "add": "Forest" },
+    { "add": "Mountain" },
+    { "add": "Kamahl, Heart of Krosa", "as": "kamahl" },
+    { "fire": "@kamahl", "activated": 1, "as": "a1" },
+    { "call": ["setTarget", "@a1", "@Mountain"] }
+  ],
+  "asserts": [
+    { "perm": "Mountain", "final": { "power": 1, "toughness": 1, "types": ["Land", "Creature"], "subtypes": ["Mountain", "Elemental"], "abilities": { "$includes": ["Vigilance", "Indestructible", "Haste"] } } },
+    { "perm": "Forest", "final": { "types": ["Land"], "abilities": { "$excludes": ["Haste"] } } }
+  ]
+}

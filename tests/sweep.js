@@ -5,12 +5,14 @@
    Usage:  <engine> tests/sweep.js -- <scripts.json> <cards.json>
    Output: one line per card face, prefixed "@@SWEEP ", holding
      { name, face, layout, typeLine, nEffects, errors[], nonsense[], sentences[] }
+     sentences[]: { ctx, text, line, covered, probes?, dead?[{ k, what }] }
 
    For every face it (1) adds the card through the real add pipeline next to a vanilla
    2/2 and points its targeted effects at that creature, (2) fires every triggered and
    activated ability the way the site's buttons do, (3) evaluates the board after each
    step, and (4) for every sentence of rules text, re-parses with that sentence removed.
-   A sentence whose removal leaves the parsed effects unchanged produced no effect. */
+   A sentence whose removal leaves the parsed effects unchanged produced no effect.
+   (5) A sentence that did produce an effect is probed part by part (see probeSentence). */
 
 /* ─── Engine shims (same as tests/harness.js) ─── */
 var _args;
@@ -81,6 +83,179 @@ function _sigVal(v) {
 function effectSigs(effs) {
   return effs.map(e => [e.layer, e.type, e.scope, e.selfTarget ? 'self' : '', e.asLongAsCondition ? 'cond' : '',
     e.duration || '', _sigVal(e.params || {})].join('|')).sort().join('\n');
+}
+
+/* ─── Probing inside a sentence ───
+   A sentence that produced an effect can still have a part the parser never read
+   ('It's goaded … and it gains "…"' with the quoted ability dropped). Two probes, neither
+   of which calls the parser to decide what the text says:
+     parts   - every number of a +N/+N or N/N, keyword of a granted list, quoted ability,
+               type word and colour word is swapped for a different one of its kind;
+     clauses - every "and …" / ", …" clause with its own verb is removed.
+   A swap or removal that leaves the parsed effects unchanged marks a part that was not read. */
+const P_KEYWORDS = ['first strike', 'double strike', 'flying', 'deathtouch', 'defender', 'haste', 'hexproof',
+  'indestructible', 'lifelink', 'menace', 'reach', 'trample', 'vigilance', 'flash', 'shroud', 'fear', 'intimidate',
+  'skulk', 'shadow', 'horsemanship', 'flanking', 'infect', 'wither', 'prowess', 'banding', 'phasing', 'changeling',
+  'devoid', 'convoke', 'delve', 'cascade', 'exalted', 'undying', 'persist', 'storm', 'islandwalk', 'swampwalk',
+  'forestwalk', 'mountainwalk', 'plainswalk'];
+const P_KW = '(?:' + P_KEYWORDS.join('|') + ')';
+const P_COLORS = ['white', 'blue', 'black', 'red', 'green'];
+const P_CARD_TYPES = ['artifact', 'creature', 'enchantment', 'land', 'planeswalker'];
+const P_NOT_EFFECT = [
+  /\bcreates?\b.*/gi,
+  /^\s*(?:when(?:ever)?|at)\b[^,]*,/gi,
+  /^\s*until [^,.]*,/gi,
+  /\bas though\b[^,.]*/gi,
+  /\bwhere \d+ is\b[^.]*/gi,                                  // "where X is …" once X has a value
+  /\byour choice of\b.*/gi,                                   // offered as options, parsed one by one
+  /[+\-\u2212]\d+\/[+\-\u2212]\d+ or [+\-\u2212]\d+\/[+\-\u2212]\d+/gi,
+  /\b(?:as long as|if|unless|while|for each|where x is|equal to|except|instead of|rather than)\b[^,.]*/gi,
+  /\b(?:that|which|who)\s+(?:has|have|had|is|are|was|were|isn't|aren't|shares?|became|becomes?)\b[^,.]*/gi,
+  /\b(?:doesn't|don't|does not|do not) have\b[^,.]*/gi,
+];
+const P_BECOMES_NOT = /^(?:tapped|untapped|blocked|unblocked|the target|a target|targeted|the monarch|attached|unattached|renowned|monstrous|day\b|night\b|saddled|crewed|suspected|goaded|plotted|prepared|solved|unlocked|locked|exerted|(?:an? )?cop(?:y|ies)\b|the color|the basic land type|that type|the chosen|your choice)/i;
+const P_TAIL = /\s+(?:until end of turn|until your next turn|until the end of your next turn|this turn|for as long as [^."]*|for the rest of the game)\s*\.?\s*$/i;
+const P_CLAUSE_HEAD = /^(?:(?:it|they|that \w+|those \w+|each \w+|this \w+)\s+)?(?:it's|they're|gets?|gains?|ha(?:s|ve)|loses?|becomes?|is|are|can't|doesn't|don't|must)\b/i;
+const P_OWN_SUBJECT = /^(?:it|they|that|those|each|this|it's|they're)\b/i;
+
+const _blank = (s) => s.replace(/[^\n]/g, ' ');
+// The sentence with quoted runs and everything that only describes (conditions, counts,
+// token descriptions) blanked out, offsets unchanged. Quoted runs are returned separately.
+function _effectMask(text) {
+  const quotes = [];
+  let m = text.replace(/["“][^"”]*["”]/g, (q, at) => { quotes.push({ a: at, b: at + q.length }); return '\u0001'.repeat(q.length); });
+  for (const re of P_NOT_EFFECT) m = m.replace(re, _blank);
+  return { m, quotes: quotes.filter(q => m[q.a] === '\u0001') };
+}
+
+let _subtypeKind = null;
+function _subtypeOf(word) {
+  if (!_subtypeKind) {
+    _subtypeKind = new Map();
+    for (const k of ['creatureTypes', 'landTypes', 'artifactTypes', 'enchantmentTypes']) for (const t of TypeCatalog[k]) if (!_subtypeKind.has(t)) _subtypeKind.set(t, k);
+  }
+  return _subtypeKind.get(word);
+}
+const P_SWAP_SUBTYPE = { creatureTypes: ['Goblin', 'Elf'], landTypes: ['Island', 'Forest'], artifactTypes: ['Clue', 'Food'], enchantmentTypes: ['Shrine', 'Curse'] };
+const _other = (list, not) => list.find(x => !not.includes(x.toLowerCase()));
+
+// Every swappable part of one sentence: [{ k, what, a, b, to }] with offsets into the sentence.
+function sentenceParts(text) {
+  const { m, quotes } = _effectMask(text);
+  const lower = text.toLowerCase(), parts = [];
+  let x;
+  // +N/+N, each number on its own.
+  const mod = /([+\-−])(\d+|X)\/([+\-−])(\d+|X)(?!\s*counter)/g;
+  while ((x = mod.exec(m))) {
+    // (An X stays: its value comes from elsewhere in the text, so a swap says nothing.)
+    const p0 = x.index + 1, t0 = x.index + x[1].length + x[2].length + 2;
+    if (x[2] !== 'X') parts.push({ k: 'power', what: x[0], a: p0, b: p0 + x[2].length, to: x[2] === '7' ? '8' : '7' });
+    if (x[4] !== 'X') parts.push({ k: 'toughness', what: x[0], a: t0, b: t0 + x[4].length, to: x[4] === '9' ? '8' : '9' });
+  }
+  // N/N after "becomes" or "base power and toughness".
+  const setPt = /(?<![+\-−\d\/])(\d+)\/(\d+)(?![\d\/])/g;
+  while ((x = setPt.exec(m))) {
+    if (!/\bbecomes?\b|\bbase power and toughness\b/i.test(m.slice(0, x.index))) continue;
+    parts.push({ k: 'base power', what: x[0], a: x.index, b: x.index + x[1].length, to: x[1] === '7' ? '8' : '7' });
+    const t0 = x.index + x[1].length + 1;
+    parts.push({ k: 'base toughness', what: x[0], a: t0, b: t0 + x[2].length, to: x[2] === '9' ? '8' : '9' });
+  }
+  // Keywords of a granted list ("with" only describes, except after "becomes").
+  const list = new RegExp('\\b(gains?|ha(?:s|ve)|loses?|with)\\s+(?:both\\s+)?(' + P_KW + '(?:(?:,\\s+(?:and\\s+)?|\\s+and\\s+|\\s+or\\s+)' + P_KW + ')*)(?!\\s+(?:from|counters?)\\b)', 'gi');
+  while ((x = list.exec(m))) {
+    if (/^with$/i.test(x[1]) && !/\bbecomes?\b/i.test(m.slice(0, x.index))) continue;
+    const at = x.index + x[0].length - x[2].length, one = new RegExp(P_KW, 'gi');
+    let y;
+    while ((y = one.exec(x[2]))) parts.push({ k: 'keyword', what: y[0], a: at + y.index, b: at + y.index + y[0].length, to: _other(['reach', 'flying', 'haste'], lower) || 'shroud' });
+  }
+  // "Protection from <color>".
+  const prot = new RegExp('\\bprotection from (?:\\w+ and from )?(' + P_COLORS.join('|') + ')\\b', 'gi');
+  while ((x = prot.exec(m))) {
+    if (!/\b(?:gains?|ha(?:s|ve)|loses?)\b/i.test(m.slice(0, x.index))) continue;
+    const at = x.index + x[0].length - x[1].length;
+    parts.push({ k: 'keyword', what: 'protection from ' + x[1], a: at, b: at + x[1].length, to: _other(P_COLORS, lower) || 'white' });
+  }
+  // Quoted abilities that something gains or has.
+  for (const q of quotes) {
+    if (!/\b(?:gains?|ha(?:s|ve)|loses?)\b[^.:]*$/i.test(m.slice(0, q.a))) continue;
+    const inner = text.slice(q.a + 1, q.b - 1);
+    parts.push({ k: 'quoted ability', what: text.slice(q.a, q.b), a: q.a + 1, b: q.b - 1, to: /Add \{C\}\{C\}/.test(inner) ? '{T}: Draw a card.' : '{T}: Add {C}{C}.' });
+  }
+  // Type and colour words after "becomes" / "is (also) a …".
+  const region = /\b(?:becomes?|(?:is|are|it's|they're)(?:\s+(?:also|still|now))?(?=\s+(?:an?\s+)?[^.,]*\b(?:artifacts?|creatures?|enchantments?|lands?|white|blue|black|red|green|colorless)\b))\s+/gi;
+  while ((x = region.exec(m))) {
+    const from = x.index + x[0].length;
+    const rest = m.slice(from);
+    if (/^the\b/i.test(rest) || (/^becomes?/i.test(x[0]) && P_BECOMES_NOT.test(rest))) continue;
+    const stop = rest.search(/,|\.|\u0001|\s+(?:with|until|in addition|and\s+(?:it\s+|they\s+)?(?:gets?|gains?|ha(?:s|ve)|loses?|is|are|becomes?|can't)|that's|that are|for as long)\b/i);
+    const seg = m.slice(from, stop < 0 ? m.length : from + stop);
+    const word = /[A-Za-z][A-Za-z'\-]*/g;
+    let w;
+    while ((w = word.exec(seg))) {
+      const lw = w[0].toLowerCase(), a = from + w.index, b = a + w[0].length;
+      if (P_COLORS.includes(lw)) parts.push({ k: 'color', what: w[0], a, b, to: _other(P_COLORS, lower) || 'white' });
+      else if (P_CARD_TYPES.includes(lw)) parts.push({ k: 'card type', what: w[0], a, b, to: _other(['enchantment', 'artifact', 'planeswalker'], lower) });
+      else if (/^[A-Z]/.test(w[0]) && a > 0) {
+        const kind = _subtypeOf(w[0]) || _subtypeOf(w[0].replace(/s$/, ''));
+        if (kind) parts.push({ k: 'subtype', what: w[0], a, b, to: P_SWAP_SUBTYPE[kind].find(t => !text.includes(t)) || 'Wall' });
+      }
+    }
+  }
+  return parts;
+}
+
+// Every removable clause of one sentence: [{ what, a, b, cap }]; removing [a, b) drops the clause.
+function sentenceClauses(text) {
+  const { m } = _effectMask(text);
+  const tail = m.match(P_TAIL);
+  const end = tail ? tail.index : text.replace(/[\s.]+$/, '').length;
+  const body = m.slice(0, end);
+  const cuts = [];   // { sepAt, at } accepted separators
+  const sep = /,\s+and\s+|\s+and\s+|,\s+then\s+|,\s+/gi;
+  let x;
+  while ((x = sep.exec(body))) {
+    const prevAt = cuts.length ? cuts[cuts.length - 1].at : 0;
+    if (!body.slice(prevAt, x.index).trim()) continue;
+    if (P_CLAUSE_HEAD.test(body.slice(x.index + x[0].length))) cuts.push({ sepAt: x.index, at: x.index + x[0].length });
+  }
+  if (!cuts.length) return [];
+  const out = [];
+  cuts.forEach((c, i) => {
+    const b = i + 1 < cuts.length ? cuts[i + 1].sepAt : end;
+    out.push({ what: text.slice(c.at, b).trim(), a: c.sepAt, b });
+  });
+  // The first clause: whole when the next one names its own subject, else from its verb on.
+  const first = body.slice(0, cuts[0].sepAt), start = first.search(/\S/);
+  if (P_OWN_SUBJECT.test(body.slice(cuts[0].at))) {
+    out.unshift({ what: text.slice(start, cuts[0].sepAt).trim(), a: start, b: cuts[0].at, cap: start === 0 });
+  } else {
+    const v = first.search(/\b(?:gets?|gains?|ha(?:s|ve)|loses?|becomes?|is|are)\b/i);
+    if (v >= 0) out.unshift({ what: text.slice(v, cuts[0].sepAt).trim(), a: v, b: cuts[0].at });
+  }
+  return out;
+}
+
+// unit: the text that gets re-parsed; s: one of its sentences; sigsOf(text) re-parses.
+// Returns { n: probes made, dead: [{ k, what, tried }] } - tried is the sentence as re-parsed.
+function probeSentence(unit, s, sigsOf, baseSigs) {
+  const lead = unit.slice(s.start, s.end).search(/\S/), at = s.start + Math.max(0, lead);
+  const text = unit.slice(at, s.end);
+  const same = (changed) => { try { return sigsOf(changed) === baseSigs; } catch (e) { return false; } };
+  const dead = [], gone = [];
+  let n = 0;
+  for (const c of sentenceClauses(text)) {
+    n++;
+    let rest = text.slice(0, c.a) + text.slice(c.b);
+    if (c.cap) rest = rest.replace(/^\s*[a-z]/, ch => ch.toUpperCase());
+    rest = rest.replace(/\s{2,}/g, ' ').replace(/\s+\./g, '.');
+    if (same(unit.slice(0, at) + rest + unit.slice(s.end))) { dead.push({ k: 'clause', what: c.what, tried: rest.trim() }); gone.push(c); }
+  }
+  for (const p of sentenceParts(text)) {
+    if (gone.some(c => p.a >= c.a && p.b <= c.b)) continue;   // already reported with its clause
+    n++;
+    if (same(unit.slice(0, at + p.a) + p.to + unit.slice(at + p.b))) dead.push({ k: p.k, what: p.what, tried: (text.slice(0, p.a) + p.to + text.slice(p.b)).trim() });
+  }
+  return { n, dead };
 }
 
 /* ─── Sanity checks ─── */
@@ -242,6 +417,18 @@ function fireAbility(perm, ab, kind, effectText, states, check) {
   return effs;
 }
 
+// probes: how many parts and clauses were tried; dead: the ones the parser did not read.
+function withProbes(sentence, pr) {
+  if (pr && pr.n) { sentence.probes = pr.n; if (pr.dead.length) sentence.dead = pr.dead; }
+  return sentence;
+}
+
+// The ability with one stretch of its text changed. The parser reads some effects off the
+// ability's full text, so a probe has to change that along with the effect text it fires.
+function withText(ab, from, to) {
+  return Object.assign({}, ab, { fullText: String(ab.fullText || '').split(from).join(to) });
+}
+
 function sweepFace(card, faceIndex) {
   const face = _resolveCardFace(card, faceIndex);
   const typeLine = face.type_line || card.type_line || '';
@@ -314,7 +501,8 @@ function sweepFace(card, faceIndex) {
             for (const s of splitSentences(opt)) {
               const rest = removeSpan(opt, s);
               const covered = rest ? effectSigs(fireAbility(base, ab, kind, rest, states, null)) !== optSigs : optEffs.length > 0;
-              fired.push({ kind, text: norm(s.text), line: norm(/^\d/.test(opt) ? opt : '\u2022 ' + opt), covered });
+              const pr = covered ? probeSentence(opt, s, (t) => effectSigs(fireAbility(base, withText(ab, opt, t), kind, t, states, null)), optSigs) : null;
+              fired.push({ kind, text: norm(s.text), line: norm(/^\d/.test(opt) ? opt : '\u2022 ' + opt), covered, pr });
             }
           });
           continue;
@@ -328,12 +516,14 @@ function sweepFace(card, faceIndex) {
         });
         const sents = splitSentences(ab.effectText);
         for (const s of sents) {
-          let covered = optionHit;
+          let covered = optionHit, pr = null;
           if (!covered) {
             const rest = removeSpan(ab.effectText, s);
             covered = rest ? effectSigs(fireAbility(base, ab, kind, rest, states, null)) !== fullSigs : full.length > 0;
+            // (An ability offered as options is parsed option by option; nothing to probe here.)
+            if (covered) pr = probeSentence(ab.effectText, s, (t) => effectSigs(fireAbility(base, withText(ab, ab.effectText, t), kind, t, states, null)), fullSigs);
           }
-          fired.push({ kind, text: norm(s.text), line: norm(ab.fullText), covered });
+          fired.push({ kind, text: norm(s.text), line: norm(ab.fullText), covered, pr });
         }
       } catch (e) { rec.errors.push(errInfo('fire ' + kind, e)); }
     }
@@ -356,7 +546,7 @@ function sweepFace(card, faceIndex) {
 
   const usedFired = new Set();
   for (const s of splitSentences(W)) {
-    let covered = false;
+    let covered = false, pr = null, wasFired = false;
     try {
       const rest = removeSpan(W, s);
       const p2 = addCard(withOracle(card, faceIndex, rest), faceIndex, isSpell);
@@ -370,13 +560,18 @@ function sweepFace(card, faceIndex) {
       const lc = text.toLowerCase();
       fired.forEach((f, i) => {
         const ft = f.text.toLowerCase();
-        if (lc.endsWith(ft) || withX(text).toLowerCase().endsWith(ft)) { usedFired.add(i); ctx = f.kind; covered = covered || f.covered; }
+        if (lc.endsWith(ft) || withX(text).toLowerCase().endsWith(ft)) { usedFired.add(i); ctx = f.kind; wasFired = true; covered = covered || f.covered; pr = pr || f.pr; }
       });
     }
-    rec.sentences.push({ ctx, text, line: norm(lines[s.line] || ''), covered });
+    // A sentence of an ability is probed where it was fired; any other, in the card's own text.
+    if (covered && !wasFired) {
+      try { pr = probeSentence(W, s, (t) => effectSigs(ownEffects(addCard(withOracle(card, faceIndex, t), faceIndex, isSpell))), baseSigs); }
+      catch (e) { rec.errors.push(errInfo('probe', e)); }
+    }
+    rec.sentences.push(withProbes({ ctx, text, line: norm(lines[s.line] || ''), covered }, pr));
   }
   // Abilities the permanent has that are not lines of its own text (saga chapters, levels, …).
-  fired.forEach((f, i) => { if (!usedFired.has(i)) rec.sentences.push({ ctx: f.kind, text: f.text, line: f.line, covered: f.covered }); });
+  fired.forEach((f, i) => { if (!usedFired.has(i)) rec.sentences.push(withProbes({ ctx: f.kind, text: f.text, line: f.line, covered: f.covered }, f.pr)); });
   return rec;
 }
 

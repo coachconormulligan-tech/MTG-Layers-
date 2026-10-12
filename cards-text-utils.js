@@ -1261,7 +1261,16 @@ function buildAppliesToFromText(filterText) {
   // land you don't control" (Herald of Leshrac's upkeep cost) must not become a filter.
   const _notYours = _tinfo.needsTargetSelection && /\s+you (?:don't|do not) control(?=\s|$)/i.test(_tinfo.cleaned);
   if (_notYours) _tinfo.cleaned = _tinfo.cleaned.replace(/\s+you (?:don't|do not) control(?=\s|$)/gi, '').trim();
+  // "Each creature you control but don't own" (Don Andres, the Renegade): yours by a control
+  // effect, added by another player.
+  const _notOwned = /\s+but (?:don't|do not) own(?=[\s,]|$)/i.test(_tinfo.cleaned);
+  if (_notOwned) _tinfo.cleaned = _tinfo.cleaned.replace(/\s+but (?:don't|do not) own(?=[\s,]|$)/gi, '').trim();
   const _result = _buildAppliesToFromTextInner(_tinfo.cleaned);
+  if (_notOwned && _result.fn && !_result.isSelf) {
+    const innerFn = _result.fn;
+    _result.fn = (p, allStates, effectCtrl) =>
+      (p.owner || 'player_0') !== (effectCtrl || p.controller) && innerFn(p, allStates, effectCtrl);
+  }
   if (_notYours && _result.fn && !_result.isSelf) {
     const innerFn = _result.fn;
     _result.fn = (p, allStates, effectCtrl) =>
