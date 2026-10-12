@@ -1,0 +1,73 @@
+{
+  "name": "The Irencrag — \"gains equip {3} and \"…\" and loses all other abilities\" removes the abilities it had",
+  "notes": "Partial sweep (single cards, 2026-10-12). Fired, \"it\" read \"target creature\" (the legendary creature that entered), equip lost its cost and \"loses all other abilities\" was dropped. Now \"it\" is The Irencrag (what the source becomes is no rival antecedent), the loss stands before the grants, and equipping it gives the Bears +3/+3.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "The Irencrag",
+      "as": "crag"
+    },
+    {
+      "fire": "@crag",
+      "trigger": 1,
+      "as": "fired"
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@fired",
+        true
+      ]
+    },
+    {
+      "call": [
+        "applyEquipAttachment",
+        "@crag",
+        0,
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "The Irencrag",
+      "final": {
+        "name": "Everflame, Heroes' Legacy",
+        "supertypes": [
+          "Legendary"
+        ],
+        "types": [
+          "Artifact"
+        ],
+        "subtypes": [
+          "Equipment"
+        ],
+        "abilities": [
+          "Equip {3}",
+          "Equipped creature gets +3/+3"
+        ]
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 5,
+        "toughness": 5
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "power": 3,
+        "toughness": 3
+      }
+    }
+  ]
+}

@@ -432,6 +432,10 @@ function isSourceViable(effect, allStates) {
   if (!effect.sourceId || effect.sourceId === 'manual') return true;
   // Counters are external game objects, not rules text — they survive ability removal.
   if (effect._isCounterEffect) return true;
+  // The attachment tracker of runtime-gained Equipment reads its boost from the abilities its
+  // source has now (engine-apply), so it outlives the loss of the others ('gains equip {3} and
+  // "Equipped creature gets +3/+3" and loses all other abilities' — The Irencrag).
+  if (effect._isEquipTargetEff) return true;
   const srcState = allStates.get(effect.sourceId);
   if (!srcState) return true; // source not tracked (manual pseudo-perm)
   if (srcState.abilitiesRemovedBy305_7) return false;

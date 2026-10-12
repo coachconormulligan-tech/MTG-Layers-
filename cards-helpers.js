@@ -44,12 +44,21 @@ function _resolveItToAbilitySource(text) {
     if ((before.match(/"/g) || []).length % 2) return whole; // inside a quoted ability
     const selves = before.match(_ABILITY_SELF_PHRASE_RE);
     if (!selves) return whole;
-    const others = before.replace(_ABILITY_SELF_PHRASE_RE, ' ');
+    // What the source itself becomes is no other object ("This card becomes a legendary Equipment
+    // artifact named Everflame, Heroes' Legacy. If you do, it gains equip {3} …" — The Irencrag).
+    const others = before
+      .replace(/\bthis\s+\w+\s+becomes?\s+(?![^.]*\b(?:target|cop(?:y|ies))\b)[^.]*/gi, ' ')
+      .replace(_ABILITY_SELF_PHRASE_RE, ' ');
     if (_ABILITY_IT_RIVAL_RE.test(others) || _ABILITY_IT_SUBTYPE_RIVAL_RE.test(others)) return whole;
     const phrase = selves[selves.length - 1];
     return (whole[0] === 'I' ? 'T' : 't') + phrase.slice(1) + ' ';
   });
 }
+
+/* A fired "This card becomes a copy of another target creature you control …. If you do, this
+   card and target creature you control each get …" (Gogo, Mysterious Mime): the pair's second
+   member is the creature the first sentence copies. */
+const _COPY_THEN_PAIR_RE = /\bbecomes? a copy of (?:another |up to one (?:other )?)?target\b[^.]*\.[^\n]*\bthis [\w-]+ and target [^.]*?\s(?:each|both) (?:get|gain|have|lose)\b/i;
 
 /* The target a pronoun in a fired ability's effect text stands for: the nearest "target …"
    phrase before it that names a permanent — "up to one target creature you control", "target

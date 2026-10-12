@@ -1,0 +1,44 @@
+{
+  "name": "Swift Reconfiguration — \"is a Vehicle artifact with crew 5 and it loses all other card types\"",
+  "notes": "Partial sweep (single cards, 2026-10-12): flagged because the sentence parses the same without \"and it loses all other card types\". Not a parser miss: \"is a Vehicle artifact\" with no \"in addition\" already sets the card types (CR 205.1a), so the clause adds nothing to the effects. Locked in: the Bears are an Artifact — Vehicle with crew 5 and nothing else.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Swift Reconfiguration",
+      "as": "sr"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@sr",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "types": [
+          "Artifact"
+        ],
+        "subtypes": [
+          "Vehicle"
+        ],
+        "abilities": [
+          "Crew 5"
+        ]
+      }
+    },
+    {
+      "effect": {
+        "source": "Swift Reconfiguration",
+        "layer": "4",
+        "type": "set_types"
+      }
+    }
+  ]
+}
