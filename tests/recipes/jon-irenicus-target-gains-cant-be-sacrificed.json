@@ -1,0 +1,73 @@
+{
+  "name": "Jon Irenicus, Shattered One — the target is goaded and gains \"This creature can't be sacrificed.\"",
+  "notes": "\"It's goaded for the rest of the game and it gains \\\"This creature can't be sacrificed.\\\"\" The target was goaded but never received the quoted ability.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Jon Irenicus, Shattered One",
+      "as": "jon"
+    },
+    {
+      "fire": "@jon",
+      "trigger": 0,
+      "as": "fired"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@fired",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "This creature can't be sacrificed."
+          ]
+        },
+        "traits": {
+          "$includes": [
+            "Goaded"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "This creature can't be sacrificed."
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Jon Irenicus, Shattered One",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "This creature can't be sacrificed."
+          ]
+        }
+      }
+    }
+  ]
+}

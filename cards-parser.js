@@ -4745,6 +4745,12 @@ function parseCardEffects(permanent, card, opts = {}) {
     const _ftEnd = ftMatch.index + ftMatch[0].length;
     if (addTypeMatchRanges.some(r => (copyClauseSpans.includes(r) ? ftMatch.index : _ftStart) < r.end && _ftEnd > r.start)) continue;
     let filterText = _lastSentenceTargetSubject(ftMatch[1].trim());
+    // 'It's goaded for the rest of the game and it gains "…"' (Jon Irenicus, Shattered One): a
+    // goaded / suspected clause joined by "and" is not part of the subject.
+    {
+      const _ftTraitAnd = filterText.split(/\.\s+/).pop().match(/^[^,.]+?\s+(?:is|are|becomes?)\s+(?:goaded|suspected)\b[^,.]*?\s+and\s+(it|they|that \w+|(?:another\s+)?target\s+[^,.]+)$/i);
+      if (_ftTraitAnd) filterText = _ftTraitAnd[1];
+    }
     // "…. This creature gains "…"" in a fired ability (Tenth District Hero): the source alone.
     if ((permanent.isTriggeredAbility || permanent.isActivatedAbility) && /\.\s/.test(filterText)) {
       const _ftSelf = filterText.split(/\.\s+/).pop().trim();
