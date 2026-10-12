@@ -1,0 +1,15 @@
+{
+  "name": "Mogis's Marauder — fired, the target gains intimidate and haste; ', where X is …' follows the duration",
+  "notes": "Found by the sweep's partial probe. 'up to X target creatures each gain intimidate and haste until end of turn, where X is your devotion to black': the comma before 'where' split the list and left 'haste until end of turn', which is no keyword. The keyword list now ends at the duration. (The site offers one target here: \"up to X\" with X a devotion count is not yet a multi-target picker.)",
+  "steps": [
+    { "add": "Grizzly Bears" },
+    { "add": "Gray Ogre" },
+    { "add": "Mogis's Marauder", "as": "marauder" },
+    { "fire": "@marauder", "trigger": 0, "as": "t1" },
+    { "call": ["setTarget", "@t1", "@Grizzly Bears"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$includes": ["Intimidate", "Haste"] } } },
+    { "perm": "Gray Ogre", "final": { "abilities": [] } }
+  ]
+}

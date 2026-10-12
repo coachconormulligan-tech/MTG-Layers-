@@ -202,6 +202,13 @@ const CONDITION_PARSERS = [
   },
 
   // --- Counter conditions ---
+  // "has N or more counters on it" — counters of any kind (Ezio, Brash Novice; Hero of Bretagard).
+  (ct) => {
+    const m = ct.match(/has\s+(\w+)\s+or\s+more\s+counters\b/);
+    if (!m) return null;
+    const threshold = _wordThresh(m[1]);
+    return (s) => Object.values(s.counters || {}).reduce((n, v) => n + (v > 0 ? v : 0), 0) >= threshold;
+  },
   // "has N or more [type] counters on it".
   (ct) => {
     const m = ct.match(/has\s+(\w+)\s+or\s+more\s+([\w+/]+)\s+counter/);
@@ -2004,7 +2011,11 @@ function parseCardEffects(permanent, card, opts = {}) {
     copyClauseSpans.push({ start: copyMatch.index, end: copyMatch.index + copyMatch[0].length });
     // Determine restriction from what can be copied (e.g. "any creature", "a creature or artifact")
     let targetDescRaw = copyMatch[2].trim();
-    const exceptClause = copyMatch[3] ? copyMatch[3].trim() : null;
+    // "except it isn't legendary, is an artifact in addition to its other types, and has myriad"
+    // (Auton Soldier): the later items of the list leave out the subject.
+    const exceptClause = copyMatch[3]
+      ? copyMatch[3].trim().replace(/,\s+(?:and\s+)?(?=(?:is|isn't|has|gains?|loses?)\s)/gi, ', it ')
+      : null;
     // A mass copy naming what is copied by a pronoun ("that creature", "it", "that token"):
     // the picker's restriction is read off the sentence that chose it ("Choose target creature
     // you control.", "Exile target nonlegendary creature you control.").
@@ -2202,6 +2213,14 @@ function parseCardEffects(permanent, card, opts = {}) {
         while ((kmatch = KEYWORD_RE.exec(exceptClause)) !== null) {
           abilities.push(kmatch[0].toLowerCase().replace(/\b\w/g, c => c.toUpperCase()));
         }
+        // Any other keyword named after "it has" / "it gains" ("…, and has myriad" — Auton Soldier).
+        const hasKwRe = /\bit\s+(?:has|gains?)\s+([^".]+?)(?=,\s+it\s|\s+and\s+it\s|\s+in addition\b|\.|$)/gi;
+        while ((kmatch = hasKwRe.exec(exceptClause)) !== null) {
+          for (const k of kmatch[1].toLowerCase().split(/,\s*(?:and\s+)?|\s+and\s+/).map(x => x.trim()).filter(Boolean)) {
+            const kw = k.charAt(0).toUpperCase() + k.slice(1);
+            if (KEYWORD_SET.has(k) && !abilities.some(a => a.toLowerCase() === k)) abilities.push(kw);
+          }
+        }
         if (abilities.length) copyParams.addAbilities = abilities;
       }
       // "except it has this ability" (Volrath, the Shapestealer) — self-reference to the
@@ -2231,7 +2250,7 @@ function parseCardEffects(permanent, card, opts = {}) {
       }
       // "except it's a [type]" -> setTypes (but not "if it's a X" conditional clauses)
       const typeMatch = exceptClause.match(/(?<!if )it(?:'s| is) (?:a |an )?(\w+)\b(?! also)/i);
-      if (typeMatch && !alsoMatch) {
+      if (typeMatch && !alsoMatch && !inAdditionHandled) {
         const typeCap = typeMatch[1].charAt(0).toUpperCase() + typeMatch[1].slice(1);
         if (['Artifact', 'Creature', 'Enchantment', 'Land', 'Planeswalker'].includes(typeCap)) {
           copyParams.setTypes = [typeCap];
@@ -2604,9 +2623,11 @@ function parseCardEffects(permanent, card, opts = {}) {
     let _addTypeFrontKeywords = [];
     {
       const frontKw = becomesText.match(/^([^"]+?)\s+and\s+(?:is|are|becomes?)\s+(.+)$/i);
-      // Only for an explicit target subject; Auras and Equipment ("Enchanted creature gets
-      // +4/+4, has flying and first strike, and is an Angel …") have their own parser.
-      if (frontKw && /(?:^|\.\s+)(?:until [^,]+,\s*)?target\s[^.]*$/i.test(addTypeMatch[1]) && /^ha(?:s|ve)\b/i.test(addTypeMatch[0].slice(addTypeMatch[0].indexOf(addTypeMatch[1]) + addTypeMatch[1].length).trim())) {
+      // Likewise "it has flying and is a Knight in addition …" (Skyknight Squire) and "Each
+      // creature you control but don't own gets +2/+2, has menace and deathtouch, and is a
+      // Pirate …" (Don Andres). Not Auras and Equipment ("Enchanted creature gets +4/+4, has
+      // flying and first strike, and is an Angel …"), which have their own parser.
+      if (frontKw && !/\b(?:enchanted|equipped)\b/i.test(addTypeMatch[1]) && /^(?:you (?:control|own)\s+)?ha(?:s|ve)\b/i.test(addTypeMatch[0].slice(addTypeMatch[0].indexOf(addTypeMatch[1]) + addTypeMatch[1].length).trim())) {
         const parts = frontKw[1].toLowerCase().split(/,\s*(?:and\s+)?|\s+and\s+/).map(k => k.trim()).filter(Boolean);
         if (parts.length && parts.every(k => KEYWORD_SET.has(k))) {
           _addTypeFrontKeywords = parts.map(k => k.charAt(0).toUpperCase() + k.slice(1));
@@ -2657,7 +2678,11 @@ function parseCardEffects(permanent, card, opts = {}) {
     }
     addTypeFilterText = stripDurationPrefix(addTypeFilterText)
       // "For as long as that creature has a shadow counter on it, target creature is a Wraith …"
-      .replace(/^for as long as [^,]+,\s*/i, '');
+      .replace(/^for as long as [^,]+,\s*/i, '')
+      // "Each creature you control but don't own gets +2/+2, has menace and deathtouch, and is a
+      // Pirate …" (Don Andres): the boost before the list's later items is the boost parser's.
+      // (Auras and Equipment have their own parser, as below.)
+      .replace(/^((?!.*\b(?:enchanted|equipped)\b).*?)\s+gets?\s+[+-][\dx]+\/[+-][\dx]+\s*,?$/i, '$1');
     // "Target creature gains haste and becomes a Pirate in addition …" (Coercive Recruiter),
     // "… has flying and is an Angel in addition …" (Valkyrie's Call): the keywords before the
     // "and" belong to the same subject. haveAbilityRegex skips this span as already handled.
@@ -2769,7 +2794,8 @@ function parseCardEffects(permanent, card, opts = {}) {
       // Parse keyword abilities. Use the canonical KEYWORD_SET (module scope).
       const kwParts = cleanText.toLowerCase().trim()
         .replace(/^(?:,\s*)?(?:and\s+)?/, '')
-        .split(/,\s*|\s+and\s+/).map(s => s.trim()).filter(Boolean);
+        // ("gains flying, first strike, lifelink, and hexproof" — Enter the Avatar State.)
+        .split(/,\s*(?:and\s+)?|\s+and\s+/).map(s => s.trim()).filter(Boolean);
       const parsedKws = [];
       for (const part of kwParts) {
         if (KEYWORD_SET.has(part)) {
@@ -2998,7 +3024,9 @@ function parseCardEffects(permanent, card, opts = {}) {
     if (withKWMatch) {
       const withText = withKWMatch[1].trim();
       // Check if the "with" clause contains keyword abilities (not "with power and toughness")
-      const withWords = withText.toLowerCase().split(/\s+and\s+|\s*,\s*/);
+      // ("with reach, indestructible, and haste" — Sylvan Awakening: the "and" after the last
+      // comma belongs to the separator, not to the keyword.)
+      const withWords = withText.toLowerCase().split(/\s*,\s*(?:and\s+)?|\s+and\s+/);
       // ("with flying and ward {1}" — Dancing Sword: a ward cost is part of the keyword.)
       const foundKWs = withWords.filter(w => KEYWORD_ABILITIES.includes(w.trim()) || /^ward\s+(?:\{[^}]+\})+$/.test(w.trim()));
       if (foundKWs.length > 0) {
@@ -3011,7 +3039,7 @@ function parseCardEffects(permanent, card, opts = {}) {
     const andHasMatch = becomesText.match(/\s+and\s+(?:(?:this\s+(?:card|creature|permanent|token)\s+)?(?:has|gains?|have))\s+(.+)$/i);
     if (andHasMatch && !andHasMatch[0].toLowerCase().includes('power and toughness')) {
       const abilText = andHasMatch[1].trim();
-      const abilWords = abilText.toLowerCase().split(/\s+and\s+|\s*,\s*/);
+      const abilWords = abilText.toLowerCase().split(/\s*,\s*(?:and\s+)?|\s+and\s+/);
       const foundAbils = abilWords.filter(w => KEYWORD_ABILITIES.includes(w.trim()));
       if (foundAbils.length > 0) {
         becomesText = becomesText.slice(0, becomesText.length - andHasMatch[0].length).trim();
@@ -4502,8 +4530,15 @@ function parseCardEffects(permanent, card, opts = {}) {
     const remainingText = restOfSentence.substring(0, sentenceEnd === -1 ? undefined : sentenceEnd);
     // Strip duration clauses before parsing keywords — "until end of turn" / "until your next turn"
     // would otherwise get attached to the last keyword and prevent matching.
-    const _haveEOTSuffix = /\s+until\s+(?:end of turn|your next turn|the end of your next turn)$/i.test(remainingText) ? ' until end of turn' : '';
-    const remainingForKw = remainingText.replace(/\s+until\s+(?:end of turn|your next turn|the end of your next turn)$/i, '');
+    // The list ends at the duration even when the sentence goes on: "gain first strike and
+    // trample until end of turn and can't be blocked by creature tokens this turn" (Legion
+    // Loyalist), "gain intimidate and haste until end of turn, where 2 is your devotion to
+    // black" (Mogis's Marauder, fired). (Not a duration inside a quoted ability being granted.)
+    const _haveDurRe = /\s+until\s+(?:end of turn|your next turn|the end of your next turn)(?=$|,?\s)/i;
+    const _haveDur = remainingText.match(_haveDurRe);
+    const _haveDurOutsideQuote = _haveDur && (remainingText.slice(0, _haveDur.index).split('"').length - 1) % 2 === 0;
+    const _haveEOTSuffix = _haveDurOutsideQuote ? ' until end of turn' : '';
+    const remainingForKw = _haveDurOutsideQuote ? remainingText.slice(0, _haveDur.index) : remainingText;
     
     // Check if first ability is a parameterized keyword (e.g. "ward {2}", "toxic 1")
     let firstAbilityFull = firstAbility;

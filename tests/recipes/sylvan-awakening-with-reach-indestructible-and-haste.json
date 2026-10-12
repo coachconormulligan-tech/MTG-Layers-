@@ -1,0 +1,11 @@
+{
+  "name": "Sylvan Awakening — the last keyword of 'with reach, indestructible, and haste' is granted",
+  "notes": "Found by the sweep's partial probe (tests/sweep/partial.md). 'become 2/2 Elemental creatures with reach, indestructible, and haste' was split on ' and ' or ',' so the last item was 'and haste', which is no keyword, and haste was dropped. The 'and' after the last comma now belongs to the separator.",
+  "steps": [
+    { "add": "Forest" },
+    { "add": "Sylvan Awakening", "as": "awakening", "spell": true }
+  ],
+  "asserts": [
+    { "perm": "Forest", "final": { "power": 2, "toughness": 2, "types": ["Land", "Creature"], "subtypes": ["Forest", "Elemental"], "abilities": { "$includes": ["Reach", "Indestructible", "Haste"] } } }
+  ]
+}

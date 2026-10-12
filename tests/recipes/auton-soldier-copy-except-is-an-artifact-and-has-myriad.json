@@ -1,0 +1,79 @@
+{
+  "name": "Auton Soldier — copy 'except it isn't legendary, is an artifact in addition to its other types, and has myriad'",
+  "notes": "Only the first exception of the list was read: the later items leave out the subject ('is an artifact …', 'has myriad'), and myriad was not in the copy clause's own short keyword list. Copying Isamaru, Hound of Konda gives a nonlegendary Artifact Creature — Dog with myriad. Phyrexian Metamorph ('except it's an artifact in addition to its other types') copies the same Dog and stays a creature: the clause used to be read a second time as 'it's an artifact', which replaced the copied card types.",
+  "steps": [
+    {
+      "add": "Isamaru, Hound of Konda",
+      "as": "dog"
+    },
+    {
+      "add": "Auton Soldier",
+      "as": "auton"
+    },
+    {
+      "copy": [
+        "@auton",
+        "@dog"
+      ]
+    },
+    {
+      "add": "Phyrexian Metamorph",
+      "as": "meta"
+    },
+    {
+      "copy": [
+        "@meta",
+        "@dog"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Auton Soldier A",
+      "final": {
+        "name": "Isamaru, Hound of Konda",
+        "supertypes": [],
+        "types": [
+          "Creature",
+          "Artifact"
+        ],
+        "subtypes": [
+          "Dog"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "abilities": {
+          "$includes": [
+            "Myriad"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Isamaru, Hound of Konda",
+      "final": {
+        "supertypes": [
+          "Legendary"
+        ],
+        "types": [
+          "Creature"
+        ]
+      }
+    },
+    {
+      "perm": "Phyrexian Metamorph B",
+      "final": {
+        "supertypes": [
+          "Legendary"
+        ],
+        "types": [
+          "Creature",
+          "Artifact"
+        ],
+        "subtypes": [
+          "Dog"
+        ]
+      }
+    }
+  ]
+}

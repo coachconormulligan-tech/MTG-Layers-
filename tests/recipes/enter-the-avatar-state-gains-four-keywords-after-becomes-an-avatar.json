@@ -1,0 +1,14 @@
+{
+  "name": "Enter the Avatar State — all four keywords after 'becomes an Avatar in addition to its other types and gains'",
+  "notes": "Found by the sweep's partial probe. '… and gains flying, first strike, lifelink, and hexproof' is read by the add-type block, whose own keyword split left 'and hexproof' after the last comma, so hexproof was dropped. The untargeted creature gains nothing.",
+  "steps": [
+    { "add": "Grizzly Bears" },
+    { "add": "Gray Ogre" },
+    { "add": "Enter the Avatar State", "as": "spell", "spell": true },
+    { "call": ["setTarget", "@spell", "@Grizzly Bears"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "subtypes": { "$includes": ["Bear", "Avatar"] }, "abilities": { "$includes": ["Flying", "First Strike", "Lifelink", "Hexproof"] } } },
+    { "perm": "Gray Ogre", "final": { "abilities": [] } }
+  ]
+}

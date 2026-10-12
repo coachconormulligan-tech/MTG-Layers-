@@ -15,6 +15,13 @@ tests/sweep/report.md and tests/sweep/singletons.md. No network. Two kinds of re
      keywords and colors are swapped for placeholders so cards that share a wording
      land in one cluster.
 
+  3. Parts of a sentence the parser did not read, although the sentence as a whole produced
+     an effect ('It's goaded ... and it gains "..."' with the quoted ability dropped). Every
+     number of a +N/+N or N/N, keyword of a granted list, quoted ability, type word and colour
+     word is swapped for another of its kind, and every "and ..." clause with its own verb is
+     removed; a swap or removal that leaves the effects unchanged is listed in
+     tests/sweep/partial.md, most-played cards first (EDHREC rank).
+
 A cluster shared by many cards is a generic parser gap; one that appears on a single card is
 a special-case candidate. tests/sweep.js does the parsing; this file filters and clusters.
 """
@@ -404,6 +411,26 @@ KIND_LABEL = {'gets': 'gets +N/+N', 'control': 'gain control', 'loses': 'loses',
               'has': 'has / gains', 'p/t': 'power / toughness', 'is': 'is / are'}
 
 
+PART_LABEL = {'clause': 'Clause', 'quoted ability': 'Quoted ability', 'keyword': 'Keyword', 'power': 'Power of +N/+N',
+              'toughness': 'Toughness of +N/+N', 'base power': 'Power of N/N', 'base toughness': 'Toughness of N/N',
+              'card type': 'Card type', 'subtype': 'Subtype', 'color': 'Colour'}
+
+
+def load_ranks():
+    """Card name (and each face's name) -> EDHREC rank; unranked cards are absent."""
+    ranks = {}
+    if not os.path.exists(CARD_CACHE):
+        return ranks
+    with gzip.open(CARD_CACHE, 'rt', encoding='utf-8') as f:
+        for line in f:
+            if '"edhrec_rank"' not in line:
+                continue
+            c = json.loads(line)
+            for n in [c['name']] + c['name'].split(' // '):
+                ranks[n] = min(c['edhrec_rank'], ranks.get(n, 10 ** 9))
+    return ranks
+
+
 def md(s):
     return s.replace('|', '\\|').replace('\n', ' / ')
 
@@ -419,6 +446,7 @@ def analyse(records, keywords):
     crashes = collections.defaultdict(list)       # (where, msg, stage) -> [card]
     nonsense = collections.defaultdict(list)      # message -> [card]
     clusters = {}                                 # (kind, template) -> {...}
+    partial = {}                                  # (part kind, template) -> {'cards': {name: (sentence, part)}}
     totals = collections.Counter()
     for r in records:
         totals['faces'] += 1
@@ -447,17 +475,27 @@ def analyse(records, keywords):
             totals['candidates'] += 1
             if s['covered']:
                 totals['candidates_covered'] += 1
+                totals['probes'] += s.get('probes', 0)
+                for d in s.get('dead', ()):
+                    # A removed clause only counts when the clause itself reads like an effect.
+                    if d['k'] == 'clause' and not classify(d['what'], tp.kw_re):
+                        continue
+                    totals['dead_parts'] += 1
+                    key = (d['k'], tp.template(d['what'] if d['k'] == 'clause' else s['text']))
+                    p = partial.setdefault(key, {'kind': key[0], 'template': key[1], 'cards': {}})
+                    p['cards'].setdefault(r['name'], (s['text'], d['what']))
                 continue
             key = (kind, tp.template(s['text']))
             c = clusters.setdefault(key, {'kind': kind, 'template': key[1], 'cards': {}, 'ctx': collections.Counter()})
             if r['name'] not in c['cards']:
                 c['cards'][r['name']] = s['text']
                 c['ctx'][s['ctx']] += 1
-    return totals, crashes, nonsense, sorted(clusters.values(), key=lambda c: (-len(c['cards']), c['template']))
+    return (totals, crashes, nonsense, sorted(clusters.values(), key=lambda c: (-len(c['cards']), c['template'])),
+            list(partial.values()))
 
 
 def write_report(records, keywords, meta):
-    totals, crashes, nonsense, clusters = analyse(records, keywords)
+    totals, crashes, nonsense, clusters, partial = analyse(records, keywords)
     os.makedirs(OUT_DIR, exist_ok=True)
     shared = [c for c in clusters if len(c['cards']) >= 2]
     single = [c for c in clusters if len(c['cards']) == 1]
@@ -474,6 +512,9 @@ def write_report(records, keywords, meta):
     L.append('| ...of which produced nothing | %d, on %d cards |' % (totals['candidates'] - totals['candidates_covered'], flagged_cards))
     L.append('| Not counted: "they" / "those tokens" / "it" meaning objects the ability just made | %d |' % totals['new_objects'])
     L.append('| Not counted: listed as out of scope (spells on the stack, players, names) | %d |' % totals['out_of_scope'])
+    L.append('| Parts and clauses probed inside sentences that produced an effect | %d |' % totals['probes'])
+    L.append('| ...of which the parser did not read | %d, on %d cards (listed in [partial.md](partial.md)) |'
+             % (totals['dead_parts'], len({n for p in partial for n in p['cards']})))
     L.append('| Clusters shared by 2 or more cards | %d |' % len(shared))
     L.append('| Single-card clusters | %d (listed in [singletons.md](singletons.md)) |' % len(single))
     L.append('| Distinct crashes | %d, on %d card faces |' % (len(crashes), totals['faces_with_errors']))
@@ -527,11 +568,49 @@ def write_report(records, keywords, meta):
     with open(os.path.join(OUT_DIR, 'singletons.md'), 'w', encoding='utf-8') as f:
         f.write('\n'.join(S) + '\n')
 
+    write_partial(partial)
+
     # Full membership of every cluster, for digging into one.
     with open(os.path.join(OUT_DIR, 'clusters.json'), 'w', encoding='utf-8') as f:
         json.dump([{'cards': len(c['cards']), 'kind': c['kind'], 'template': c['template'],
                     'members': c['cards']} for c in clusters], f, indent=1, ensure_ascii=False)
-    return totals, crashes, nonsense, clusters
+    return totals, crashes, nonsense, clusters, partial
+
+
+def write_partial(partial):
+    """tests/sweep/partial.md: parts of effect-producing sentences that the parser did not read."""
+    ranks = load_ranks()
+    rank = lambda n: ranks.get(n, 10 ** 9)
+    for p in partial:
+        p['names'] = sorted(p['cards'], key=lambda n: (rank(n), n))
+    partial.sort(key=lambda p: (-len(p['names']), rank(p['names'][0]), p['template']))
+    shared = [p for p in partial if len(p['names']) >= 2]
+    single = sorted((p for p in partial if len(p['names']) == 1), key=lambda p: (rank(p['names'][0]), p['names'][0]))
+    P = ['# Parser sweep: parts of a sentence the parser did not read\n',
+         'Generated by `python3 tests/sweep.py`. Each sentence here produced an effect, so [report.md](report.md) does '
+         'not list it, but one part of it made no difference: swapping that part for another of its kind (a number, '
+         'a keyword, a quoted ability, a type, a colour), or removing that clause, left the parsed effects exactly the '
+         'same. Either the parser dropped the part, or it reads it somewhere the effect signature does not show '
+         '(a condition, a filter, a choice the site asks for) - check the card before fixing.\n',
+         '## Shared by 2 or more cards\n',
+         'Ranked by number of cards; examples are the most-played cards first (EDHREC rank).\n',
+         '| # | Cards | Part | Template | Most-played examples (the part not read) |\n|---:|---:|---|---|---|']
+    for i, p in enumerate(shared, 1):
+        ex = '; '.join('%s (%s)' % (n, p['cards'][n][1]) for n in p['names'][:4])
+        P.append('| %d | %d | %s | `%s` | %s |' % (i, len(p['names']), PART_LABEL[p['kind']], md(p['template']), md(ex)))
+    P.append('\n## Single cards\n')
+    P.append('Most-played first.\n')
+    P.append('| EDHREC rank | Card | Part not read | Sentence |\n|---:|---|---|---|')
+    for p in single:
+        n = p['names'][0]
+        text, what = p['cards'][n]
+        P.append('| %s | %s | %s: %s | %s |' % (ranks.get(n, ''), md(n), PART_LABEL[p['kind']], md(what), md(text)))
+    with open(os.path.join(OUT_DIR, 'partial.md'), 'w', encoding='utf-8') as f:
+        f.write('\n'.join(P) + '\n')
+    with open(os.path.join(OUT_DIR, 'partial-clusters.json'), 'w', encoding='utf-8') as f:
+        json.dump([{'cards': len(p['names']), 'part': p['kind'], 'template': p['template'],
+                    'members': {n: {'sentence': p['cards'][n][0], 'part': p['cards'][n][1], 'rank': ranks.get(n)}
+                                for n in p['names']}} for p in partial], f, indent=1, ensure_ascii=False)
 
 
 def cmd_diff(before_path):
@@ -587,6 +666,10 @@ def main():
                 print('   %s %-9s %s' % (mark, s['ctx'], s['text']))
                 if kind and not s['covered']:
                     print('           template: %s' % tp.template(s['text']))
+                for d in s.get('dead', ()):
+                    if kind and (d['k'] != 'clause' or classify(d['what'], tp.kw_re)):
+                        print('           NOT READ  %s: %s' % (PART_LABEL[d['k']].lower(), d['what']))
+                        print('                     same effects from: %s' % d.get('tried', ''))
         return 0
 
     if args.report:
@@ -601,11 +684,13 @@ def main():
         except (OSError, KeyError, ValueError):
             pass
         save_raw(records, keywords, meta)
-    totals, crashes, nonsense, clusters = write_report(records, keywords, meta)
+    totals, crashes, nonsense, clusters, partial = write_report(records, keywords, meta)
     print('%d faces, %d candidate sentences, %d produced nothing' % (totals['faces'], totals['candidates'], totals['candidates'] - totals['candidates_covered']))
     print('%d crashes, %d kinds of nonsense, %d clusters (%d shared by 2+ cards)' % (
         len(crashes), len(nonsense), len(clusters), sum(1 for c in clusters if len(c['cards']) >= 2)))
-    print('Wrote tests/sweep/report.md, tests/sweep/singletons.md, tests/sweep/clusters.json')
+    print('%d parts probed inside effect-producing sentences, %d not read (%d clusters)' % (
+        totals['probes'], totals['dead_parts'], len(partial)))
+    print('Wrote tests/sweep/report.md, singletons.md, clusters.json, partial.md, partial-clusters.json')
     return 0
 
 

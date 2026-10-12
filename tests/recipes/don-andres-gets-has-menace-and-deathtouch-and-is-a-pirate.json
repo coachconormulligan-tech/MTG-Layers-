@@ -1,0 +1,17 @@
+{
+  "name": "Don Andres, the Renegade — 'gets +2/+2, has menace and deathtouch, and is a Pirate in addition to its other types'",
+  "notes": "The middle item of the three-part list was lost: the add-type parser claimed the sentence, the boost parser read +2/+2, and nothing read 'has menace and deathtouch'. 'You control but don't own' was not read either and matched nothing. Grizzly Bears is the second player's, taken with Control Magic, so it gets all three parts; Gray Ogre is the first player's own and gets none, and neither does Don Andres.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears", "as": "bears", "controller": "p2" },
+    { "add": "Gray Ogre", "as": "ogre" },
+    { "add": "Control Magic", "as": "magic" },
+    { "call": ["setTarget", "@magic", "@bears"] },
+    { "add": "Don Andres, the Renegade" }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "controller": "player_0", "power": 4, "toughness": 4, "subtypes": ["Bear", "Pirate"], "abilities": { "$includes": ["Menace", "Deathtouch"] } } },
+    { "perm": "Gray Ogre", "final": { "power": 2, "toughness": 2, "subtypes": ["Ogre"], "abilities": { "$excludes": ["Menace", "Deathtouch"] } } },
+    { "perm": "Don Andres, the Renegade", "final": { "power": 4, "toughness": 3, "abilities": { "$excludes": ["Menace", "Deathtouch"] } } }
+  ]
+}
