@@ -1,0 +1,30 @@
+{
+  "name": "Hellkite Hatchling — \"has flying and trample if it devoured a creature\": Yes gives both keywords",
+  "notes": "Partial sweep (single cards, 2026-10-12). Trample was dropped (the trailing \"if\" ended the keyword list after one keyword) and flying was unconditional. A trailing condition of a permanent's static ability that the board cannot show is now a toggle on the permanent, labelled with the condition (\"It devoured a creature\").",
+  "steps": [
+    {
+      "add": "Hellkite Hatchling",
+      "as": "hatch"
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@hatch",
+        true
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Hellkite Hatchling",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Flying",
+            "Trample"
+          ]
+        }
+      }
+    }
+  ]
+}

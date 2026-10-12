@@ -1,0 +1,26 @@
+{
+  "name": "Hellcat, Undying Vigilante — \"She loses all abilities and gains haste\" keeps haste",
+  "notes": "Partial sweep (single cards, 2026-10-12). The fired dies-trigger removed all abilities and dropped \"and gains haste\": the keyword parser skipped any subject containing \"loses all\". The subject is now cut to what stands before \"loses\", and the loss is ordered before the grant.",
+  "steps": [
+    {
+      "add": "Hellcat, Undying Vigilante",
+      "as": "cat"
+    },
+    {
+      "fire": "@cat",
+      "trigger": 1,
+      "as": "t"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Hellcat, Undying Vigilante",
+      "final": {
+        "abilities": [
+          "Haste"
+        ],
+        "allAbilitiesRemoved": true
+      }
+    }
+  ]
+}

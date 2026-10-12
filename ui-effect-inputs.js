@@ -41,7 +41,7 @@ function renderAdditionalCostToggle(perm) {
     const paid = !!perm['additionalCostPaid' + suffix];
     return `<button class="ts-action-btn configure mutate-btn${paid ? ' mutate-active' : ''}"
             onclick="event.stopPropagation(); toggleAdditionalCostPaid('${perm.id}', ${slot})"
-            title="Whether this was true when the spell or ability resolved">${escapeHtml(perm['additionalCostLabel' + suffix])}: ${paid ? 'Yes' : 'No'}</button>`;
+            title="${perm.isSpell || perm.isManualEffect ? 'Whether this was true when the spell or ability resolved' : 'Whether this is true of the permanent right now'}">${escapeHtml(perm['additionalCostLabel' + suffix])}: ${paid ? 'Yes' : 'No'}</button>`;
   };
   return `<div class="cda-counter-row" onclick="event.stopPropagation()">
     ${[1, 2, 3, 4, 5, 6].filter(n => perm['additionalCostLabel' + (n > 1 ? n : '')]).map(button).join('')}

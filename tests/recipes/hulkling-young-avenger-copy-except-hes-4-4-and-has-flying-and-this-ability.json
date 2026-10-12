@@ -1,0 +1,28 @@
+{
+  "name": "Hulkling, Young Avenger — copy \"except his name is Hulkling, he's 4/4, and he has flying and this ability\"",
+  "notes": "Partial sweep (single cards, 2026-10-12). The gendered pronouns of a copy exception are rewritten to \"this card is / this card has\" before the copy parser sees them, and the P/T exception only matched \"it's N/N\", while \"has this ability\" did not allow keywords in front of it (\"has flying and this ability\"). Copying Shivan Dragon gave a 5/5 that could not change shape again. Now it is a 4/4 Dragon named Hulkling with the Dragon's abilities, flying and its own trigger.",
+  "steps": [
+    { "add": "Shivan Dragon", "as": "dragon" },
+    { "add": "Hulkling, Young Avenger", "as": "hulk" },
+    { "fire": "@hulk", "trigger": 1, "as": "t" },
+    { "copy": ["@t", "@dragon"] }
+  ],
+  "asserts": [
+    {
+      "perm": "Hulkling, Young Avenger",
+      "final": {
+        "name": "Hulkling, Young Avenger",
+        "power": 4,
+        "toughness": 4,
+        "subtypes": ["Dragon"],
+        "abilities": {
+          "$includes": [
+            "Flying",
+            "{R}: This creature gets +1/+0 until end of turn.",
+            "Whenever you cast a noncreature spell, this card becomes a copy of up to one other target creature until end of turn, except his name is this card, he's 4/4, and he has flying and this ability."
+          ]
+        }
+      }
+    }
+  ]
+}
