@@ -1,0 +1,36 @@
+{
+  "name": "Monument to Perfection — \"becomes a 9/9 Phyrexian Construct artifact creature, loses all abilities, and gains indestructible and toxic 9\"",
+  "notes": "Partial sweep (single cards, 2026-10-12). Fired, the Monument lost its abilities and gained the two keywords but stayed a plain artifact: \", loses all abilities, and gains …\" was left on the text the type parser reads, and its words made the parser give up. The tail is now cut as it is for \", gets +N/+N, and gains …\".",
+  "steps": [
+    {
+      "add": "Monument to Perfection",
+      "as": "m"
+    },
+    {
+      "fire": "@m",
+      "activated": 1,
+      "as": "f"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Monument to Perfection",
+      "final": {
+        "types": [
+          "Artifact",
+          "Creature"
+        ],
+        "subtypes": [
+          "Phyrexian",
+          "Construct"
+        ],
+        "power": 9,
+        "toughness": 9,
+        "abilities": [
+          "Indestructible",
+          "Toxic 9"
+        ]
+      }
+    }
+  ]
+}

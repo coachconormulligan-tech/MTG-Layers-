@@ -1,0 +1,83 @@
+{
+  "name": "Threshold — off with six cards in the graveyard (Werebear, Patriarch's Desire)",
+  "notes": "Partial sweep (single cards, 2026-10-12). Found while checking the \"gets an additional\" change. \"there are seven or more cards in your graveyard\" was not read (the graveyard-count condition wanted a word before \"cards\"), and an unread condition is always true: Werebear was 4/4 with an empty graveyard. With six cards Werebear is 1/1 and the Giant has only Patriarch's Desire's first +2/-2.",
+  "steps": [
+    {
+      "add": "Hill Giant",
+      "as": "g"
+    },
+    {
+      "add": "Werebear",
+      "as": "w"
+    },
+    {
+      "add": "Patriarch's Desire",
+      "as": "d"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@d",
+        "@g"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Lightning Bolt"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Lightning Bolt"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Lightning Bolt"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Lightning Bolt"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Lightning Bolt"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Lightning Bolt"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Werebear",
+      "final": {
+        "power": 1,
+        "toughness": 1
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "power": 5,
+        "toughness": 1
+      }
+    }
+  ]
+}

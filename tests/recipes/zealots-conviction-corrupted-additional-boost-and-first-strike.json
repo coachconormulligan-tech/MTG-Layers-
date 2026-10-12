@@ -1,0 +1,60 @@
+{
+  "name": "Zealot's Conviction — Corrupted \"gets an additional +1/+0 and has first strike\" with an opponent at three poison counters",
+  "notes": "Partial sweep (single cards, 2026-10-12). \"gets an additional +1/+0\" was not read as a boost at all, and no rule read \"an opponent has three or more poison counters\" (it was taken for counters on the creature), so the Corrupted line never applied. With the opponent at three poison counters in Game State the Bears are 4/3 with first strike. The same condition now works for Bonepicker Skirge, Apostle of Invasion and Skrelv's Hive.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "b"
+    },
+    {
+      "add": "Zealot's Conviction",
+      "as": "z"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@z",
+        "@b"
+      ]
+    },
+    {
+      "call": [
+        "setActivePlayer",
+        "p2"
+      ]
+    },
+    {
+      "call": [
+        "updateGameState",
+        "poisonCounters",
+        3
+      ]
+    },
+    {
+      "call": [
+        "setActivePlayer",
+        "p1"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 4,
+        "toughness": 3,
+        "abilities": {
+          "$includes": [
+            "First strike"
+          ]
+        }
+      }
+    }
+  ]
+}
