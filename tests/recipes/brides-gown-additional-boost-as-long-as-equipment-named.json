@@ -1,0 +1,23 @@
+{
+  "name": "Bride's Gown, Groom's Finery — 'It gets an additional +0/+2 and has first strike as long as an Equipment named … is attached to a creature you control'",
+  "notes": "The additional boost was not read and the keyword was granted unconditionally. The first player's two Grizzly Bears wear the Gown and the Finery: each is 4/4, one with first strike, one with deathtouch. The second player's Gray Ogre wears a second Bride's Gown; no Groom's Finery is attached to a creature that player controls, so it is 4/2 without first strike.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears", "as": "bearsA" },
+    { "add": "Grizzly Bears", "as": "bearsB" },
+    { "add": "Gray Ogre", "as": "ogre", "controller": "p2" },
+    { "add": "Bride's Gown", "as": "gown" },
+    { "add": "Groom's Finery", "as": "finery" },
+    { "add": "Bride's Gown", "as": "gown2", "controller": "p2" },
+    { "call": ["applyEquipAttachment", "@gown", 1, "@bearsA"] },
+    { "call": ["applyEquipAttachment", "@finery", 1, "@bearsB"] },
+    { "call": ["applyEquipAttachment", "@gown2", 1, "@ogre"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears A", "final": { "power": 4, "toughness": 4, "abilities": { "$includes": ["First strike"] } } },
+    { "perm": "Grizzly Bears A", "final": { "abilities": { "$excludes": ["Deathtouch"] } } },
+    { "perm": "Grizzly Bears B", "final": { "power": 4, "toughness": 4, "abilities": { "$includes": ["Deathtouch"] } } },
+    { "perm": "Grizzly Bears B", "final": { "abilities": { "$excludes": ["First strike"] } } },
+    { "perm": "Gray Ogre", "final": { "power": 4, "toughness": 2, "abilities": { "$excludes": ["First strike", "Deathtouch"] } } }
+  ]
+}

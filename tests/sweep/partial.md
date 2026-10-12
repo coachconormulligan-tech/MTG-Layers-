@@ -8,9 +8,7 @@ Ranked by number of cards; examples are the most-played cards first (EDHREC rank
 
 | # | Cards | Part | Template | Most-played examples (the part not read) |
 |---:|---:|---|---|---|
-| 1 | 2 | Power of +N/+N | `it gets an additional +N/+N and has KEYWORD as long as an equipment named NAME` | Bride's Gown (+0/+2); Groom's Finery (+0/+2) |
-| 2 | 2 | Toughness of +N/+N | `it gets an additional +N/+N and has KEYWORD as long as an equipment named NAME` | Bride's Gown (+0/+2); Groom's Finery (+0/+2) |
-| 3 | 2 | Subtype | `until end of turn, THIS becomes a SUBTYPE, gets +N/+N, and gains KEYWORD` | Dragonsoul Knight (Dragon); Paragon of the Amesha (Angel) |
+| 1 | 2 | Subtype | `until end of turn, THIS becomes a SUBTYPE, gets +N/+N, and gains KEYWORD` | Dragonsoul Knight (Dragon); Paragon of the Amesha (Angel) |
 
 ## Single cards
 
