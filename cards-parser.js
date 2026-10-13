@@ -6939,6 +6939,10 @@ function parseCardEffects(permanent, card, opts = {}) {
         if (effects[i].modalModeIndex !== undefined && ofTrigger(effects[i].modalModeIndex)) effects.splice(i, 1);
       }
     }
+    // A permanent none of whose effects is a mode's has no mode to pick on it: its bullets are
+    // an ability's, chosen when that is fired, so the Modes button stays off the card.
+    if (!permanent.isSpell && !permanent.abilitySourceId && !permanent.isManualEffect &&
+        !effects.some(e => e.modalModeIndex !== undefined)) permanent.isModalSpell = false;
     // Sort effects by modalModeIndex to ensure card text order
     effects.sort((a, b) => (a.modalModeIndex ?? 999) - (b.modalModeIndex ?? 999));
     if (!permanent.modalRepeatable) {
