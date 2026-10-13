@@ -1,0 +1,74 @@
+{
+  "name": "Brenard, Ginger Sculptor — \"Each creature you control that's a Food or a Golem\"",
+  "notes": "Found by the subject probe in tests/sweep.py (2026-10-13). The filter was split at 'or', so 'a Golem' stood without 'creature' and the word 'creature' was not read for either half. The noun in front of \"that's a … or a …\" now holds for every alternative: a Food that is no creature gets nothing.",
+  "steps": [
+    {
+      "add": "Brenard, Ginger Sculptor",
+      "as": "brenard"
+    },
+    {
+      "add": "Golden Egg",
+      "as": "egg"
+    },
+    {
+      "add": "Gingerbrute",
+      "as": "brute"
+    },
+    {
+      "add": "Stone Golem",
+      "as": "golem"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Golden Egg",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Trample"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Gingerbrute",
+      "final": {
+        "power": 3,
+        "toughness": 3,
+        "abilities": {
+          "$includes": [
+            "Trample"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Stone Golem",
+      "final": {
+        "power": 6,
+        "toughness": 6,
+        "abilities": {
+          "$includes": [
+            "Trample"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 2,
+        "toughness": 2,
+        "abilities": {
+          "$excludes": [
+            "Trample"
+          ]
+        }
+      }
+    }
+  ]
+}
