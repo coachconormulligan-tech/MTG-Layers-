@@ -1,0 +1,14 @@
+{
+  "name": "Cyberman Patrol — \"Artifact creatures you control have afflict 3\"",
+  "notes": "Found behind an inert check of the subject probe in tests/sweep.py (2026-10-13). 'afflict' was in neither KEYWORD_LIST nor PARAMETERIZED_KEYWORDS, so a granted 'afflict N' produced no effect (also Lost Monarch of Ifnir, Lazotep Sliver, Dagger of the Worthy).",
+  "steps": [
+    { "add": "Stone Golem", "as": "golem" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Cyberman Patrol", "as": "patrol" }
+  ],
+  "asserts": [
+    { "perm": "Stone Golem", "final": { "abilities": { "$includes": ["Afflict 3"] } } },
+    { "perm": "Cyberman Patrol", "final": { "abilities": { "$includes": ["Afflict 3"] } } },
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$excludes": ["Afflict 3"] } } }
+  ]
+}

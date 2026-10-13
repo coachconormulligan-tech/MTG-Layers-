@@ -1,0 +1,14 @@
+{
+  "name": "Diregraf Captain — \"target opponent\" in a trigger leaves the lord effect alone",
+  "notes": "Found behind an inert check of the subject probe in tests/sweep.py (2026-10-13). _finalizeEffects tied every global effect of a card to the chosen opponent whenever the words 'target opponent' stood anywhere in its text, so 'Other Zombie creatures you control get +1/+1' reached nobody: the words belong to the dies trigger on the next line. On a permanent they now count only outside triggered and activated abilities.",
+  "steps": [
+    { "add": "Walking Corpse", "as": "corpse" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Diregraf Captain", "as": "captain" }
+  ],
+  "asserts": [
+    { "perm": "Walking Corpse", "final": { "power": 3, "toughness": 3 } },
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2 } },
+    { "perm": "Diregraf Captain", "final": { "power": 2, "toughness": 2 } }
+  ]
+}

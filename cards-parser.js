@@ -69,7 +69,7 @@ const KEYWORD_LIST = [
   'backup', 'bargain', 'craft', 'descend', 'discover',
   'plot', 'saddle', 'offspring', 'impending',
   'myriad', 'changeling', 'delve', 'equip', 'fortify',
-  'melee', 'firebending',
+  'melee', 'firebending', 'afflict',
 ];
 const KEYWORD_SET = new Set(KEYWORD_LIST);
 const PARAMETERIZED_KEYWORDS = new Set([
@@ -77,7 +77,7 @@ const PARAMETERIZED_KEYWORDS = new Set([
   'annihilator', 'modular', 'dredge', 'casualty', 'toxic', 'backup',
   'ravenous', 'squad', 'afterlife', 'tribute', 'rampage', 'flanking',
   'sunburst', 'storm', 'cascade', 'exalted', 'battle cry',
-  'exploit', 'skulk', 'enlist', 'firebending', 'equip',
+  'exploit', 'skulk', 'enlist', 'firebending', 'equip', 'afflict',
 ]);
 
 /* Shared helpers used by _parseCondition's branch table below. */
