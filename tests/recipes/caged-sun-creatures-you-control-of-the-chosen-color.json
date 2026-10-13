@@ -1,0 +1,41 @@
+{
+  "name": "Caged Sun — \"Creatures you control of the chosen color get +1/+1\"",
+  "notes": "Found behind an inert check of the subject probe in tests/sweep.py (2026-10-13). The chosen colour was written where 'the chosen color' stood ('Creatures you control of Red get +1/+1'), which the filter did not read, so the effect reached nobody. It now goes in front of its noun (also Heraldic Banner, Gauntlet of Power, Hall of Triumph).",
+  "steps": [
+    {
+      "add": "Goblin Piker",
+      "as": "piker"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Caged Sun",
+      "as": "sun"
+    },
+    {
+      "call": [
+        "setChosenColor",
+        "@sun",
+        "Red"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Goblin Piker",
+      "final": {
+        "power": 3,
+        "toughness": 2
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 2,
+        "toughness": 2
+      }
+    }
+  ]
+}

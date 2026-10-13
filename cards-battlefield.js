@@ -1837,6 +1837,14 @@ const Battlefield = {
     // Apply chosen color substitution
     if (perm.chosenColor) {
       const cc = perm.chosenColor;
+      // "Creatures you control of the chosen color get +1/+1" (Caged Sun) → "Red creatures you
+      // control get +1/+1". Left behind its noun ("creatures you control of red") the colour
+      // was not read and the effect reached nobody. Only as the subject of its sentence: "Create
+      // a 1/1 creature token of the chosen color and type" (Riptide Replicator) is left alone.
+      oracleText = oracleText.replace(
+        /(^|[.\n]\s*)((?:creatures?|permanents?)\b[^.,\n]*?)\s+of the chosen color\b/gim,
+        (_, lead, noun) => `${lead}${cc.charAt(0).toUpperCase()}${cc.slice(1).toLowerCase()} ${noun.charAt(0).toLowerCase()}${noun.slice(1)}`
+      );
       oracleText = oracleText.replace(/\bthe chosen color\b/gi, cc);
       oracleText = oracleText.replace(/\bof the chosen color\b/gi, cc);
       oracleText = oracleText.replace(/(?:as [^.]*)?choose a color\.\s*/gi, '');

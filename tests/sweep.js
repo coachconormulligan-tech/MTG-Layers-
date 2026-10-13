@@ -376,6 +376,13 @@ function addCard(card, faceIndex, isSpell) {
   const perm = Battlefield.addPermanent(card, opts);
   // A Room enters with both doors locked and no abilities; the sweep reads it with both open.
   if (perm.isRoom && perm.roomFaces) perm.roomFaces.forEach((_, i) => Battlefield.toggleRoomLock(perm.id, i));
+  // The subject probe reads a Class at its last level, and a leveler or Spacecraft with
+  // counters past its last threshold, so every line of the card is in force.
+  if (witnessBoard) {
+    if (perm._classLevelThresholds) Battlefield.setClassLevel(perm.id, 99);
+    if (perm._levelerData) Battlefield.addCounter(perm.id, 'level', 20);
+    if (perm._spacecraftData) Battlefield.addCounter(perm.id, 'charge', 20);
+  }
   // "As this enters, choose a …" cards parse to nothing until the choice is made.
   if (perm.needsChosenColor) Battlefield.setChosenColor(perm.id, 'red');
   if (perm.needsChosenCreatureType) Battlefield.setChosenCreatureType(perm.id, 'Goblin');
@@ -591,7 +598,7 @@ function sweepFace(card, faceIndex) {
 
 /* ─── Probing who a sentence reaches ───
    The probes above read the parsed effects, which hold who is affected as a function and so
-   cannot show it. This one reads the board instead: the same 16 blank witnesses on each side
+   cannot show it. This one reads the board instead: the same 17 blank witnesses on each side
    of a two-player board, and which of them change against the same text with the sentence
    (or, when it has two subjects, that subject's clause) taken out. For a sentence whose
    subject is a group of permanents ("Other Elves you control get …"):
@@ -620,6 +627,9 @@ const W_CARDS = [
   ['Eldrazi', 'Creature — Eldrazi', [], ''],
   ['Nymph', 'Enchantment Creature — Nymph', ['U'], ''],
   ['Giant', 'Legendary Creature — Giant', ['R'], ''],
+  // The one creature that is not a 2/2: "base power and toughness 2/2", and X/X with the
+  // sweep's X = 2, show on it.
+  ['Ogre', 'Creature — Ogre', ['B'], '', null, [3, 3]],
   ['Soldier Token', 'Token Creature — Soldier', ['W'], ''],
   ['Gear', 'Artifact — Equipment', [], ''],
   ['Treasure Token', 'Token Artifact — Treasure', [], ''],
@@ -629,15 +639,19 @@ const W_CARDS = [
 ];
 const W_N = W_CARDS.length;
 let witnessBoard = false, witnessIds = [];
-// Witnesses one sentence asks for on top of the 16 (see probeSubject), in W_CARDS form.
+// Witnesses one sentence asks for on top of the standing ones (see probeSubject), in W_CARDS form.
 let extraW = [];
-// Every creature witness is a 2/2 with mana value 3, so "power and toughness equal to its
-// mana value" (March of the Machines) shows on one that is reached.
+// A leveler's brackets shut each other out, so one of its lines reaching nobody means nothing.
+let levelerFace = false;
+// A creature witness is a 2/2 (the Ogre a 3/3, a made one what its subject asks) with mana
+// value 3, so "power and toughness equal to its mana value" (March of the Machines) shows on
+// one that is reached.
 function witnessCard(w, side) {
   const free = /Land|Token/.test(w[1]), creature = /Creature/.test(w[1]);
   const c = { name: 'Witness ' + w[0] + ' ' + side, layout: /Token/.test(w[1]) ? 'token' : 'normal', type_line: w[1], oracle_text: w[3],
     mana_cost: free ? '' : creature ? '{3}' : '{2}', cmc: free ? 0 : creature ? 3 : 2, colors: w[2], color_identity: w[2], keywords: w[3] ? [w[3]] : [] };
-  if (creature) { c.power = '2'; c.toughness = '2'; }
+  if (creature) { c.power = String((w[5] || [2, 2])[0]); c.toughness = String((w[5] || [2, 2])[1]); }
+  if (/Planeswalker/.test(w[1])) c.loyalty = '3';
   return c;
 }
 function addWitnesses() {
@@ -654,6 +668,7 @@ function addWitnesses() {
       if (st.blocking) Battlefield.toggleBlocking(p.id);
       if (st.tapped) Battlefield.toggleTapped(p.id);
       if (st.counter) Battlefield.addCounter(p.id, st.counter, 1);
+      if (st.commander) Battlefield.commanders.push({ card: null, name: p.name, imageUri: null, castCount: 0, linkedPermId: p.id });
     }
   }
   Battlefield.activePlayerId = 'player_0';
@@ -800,6 +815,7 @@ function subjectState(S) {
   const c = S.match(/\bwith\s+(?:an?\s+|one or more\s+)?(?:([+-]\d\/[+-]\d|[a-z]+)\s+)?counters?\s+on\s+(?:it|them)\b/i);
   if (c) st.counter = c[1] || '+1/+1';
   else if (/\bmodified\b/i.test(S)) st.counter = '+1/+1';
+  if (/\bcommanders?\b/i.test(S)) st.commander = true;
   return Object.keys(st).length ? st : null;
 }
 // One witness (W_CARDS form, with its state fifth) for a subject S that reached nobody: of the
@@ -809,21 +825,47 @@ function subjectWitness(S, ps, st) {
   const has = (re) => re.test(S);
   const head = { creatureTypes: 'Creature', artifactTypes: 'Artifact', landTypes: 'Land', enchantmentTypes: 'Enchantment' };
   const types = [...new Set(ps.map(p => head[p.kind]))];
-  for (const t of ['Artifact', 'Enchantment', 'Land', 'Creature']) if (!types.includes(t) && has(new RegExp('(?<!non)\\b' + t + '(?:s)?\\b', 'i')) && (t === 'Creature' || !ps.length || has(new RegExp('\\b' + t + ' creatures?\\b', 'i')))) types.push(t);
+  for (const t of ['Artifact', 'Enchantment', 'Land', 'Planeswalker', 'Creature']) if (!types.includes(t) && has(new RegExp('(?<!non)\\b' + t + '(?:s)?\\b', 'i')) && (t === 'Creature' || !ps.length || has(new RegExp('\\b' + t + ' creatures?\\b', 'i')))) types.push(t);
   // Only a creature attacks or blocks, and a subject that names no type ("attacking tokens") means one.
-  if (!types.length || ((st && (st.attacking || st.blocking)) && !types.includes('Creature'))) types.push('Creature');
+  if (!types.length || ((st && (st.attacking || st.blocking || st.commander)) && !types.includes('Creature') && !types.includes('Planeswalker'))) types.push('Creature');
   types.sort((a, b) => (a === 'Creature') - (b === 'Creature'));
   let named = P_COLORS.filter(c => has(new RegExp('(?<!non)\\b' + c + '\\b', 'i')));
   // A creature witness has a colour unless the subject says otherwise: "All Slivers are
   // colorless" (Ghostflame Sliver) shows on nothing that is colourless already.
   if (!named.length && types.includes('Creature') && !has(/(?<!non)\bcolorless\b/i)) named = P_COLORS.filter(c => !has(new RegExp('non' + c, 'i'))).slice(0, 1);
+  if (has(/(?<!non)\bmulticolored\b/i)) named = ['white', 'blue'];
   const colors = named.map(c => c === 'blue' ? 'U' : c[0].toUpperCase());
+  // "with defender", "with power 4 or greater": the witness has it.
+  const kw = (S.match(new RegExp('\\bwith\\s+(' + P_KW + ')\\b', 'i')) || [])[1];
+  const size = S.match(/\bwith\s+(power|toughness)\s+(\d+)\s+or\s+(?:greater|less)\b/i);
+  const pt = size && types.includes('Creature') ? [+size[2], +size[2]] : null;
   const subs = ps.length ? ps.map(p => p.sing) : [types.includes('Creature') ? 'Scout' : types[0] === 'Artifact' ? 'Clue' : types[0] === 'Land' ? 'Desert' : 'Rune'];
-  const line = (has(/\btokens?\b/i) ? 'Token ' : '') + (has(/(?<!non)\blegendary\b/i) ? 'Legendary ' : '') + types.join(' ') + ' — ' + subs.join(' ');
+  const legendary = has(/(?<!non)\blegendary\b/i) || types.includes('Planeswalker');
+  const line = (has(/\btokens?\b/i) ? 'Token ' : '') + (legendary ? 'Legendary ' : '') + (has(/(?<!non)\bsnow\b/i) ? 'Snow ' : '') + types.join(' ') + ' — ' + subs.join(' ');
   const how = st ? Object.keys(st).map(k => k === 'counter' ? 'with a ' + st.counter + ' counter' : k) : [];
   const name = how.filter(h => !/^with/.test(h)).concat(P_COLORS.filter(c => has(new RegExp('(?<!non)\\b' + c + '\\b', 'i'))), has(/(?<!non)\blegendary\b/i) ? ['legendary'] : [],
     subs, has(/\btokens?\b/i) ? ['token'] : [], how.filter(h => /^with/.test(h))).join(' ');
-  return [name, line, colors, '', st];
+  const text = kw ? kw[0].toUpperCase() + kw.slice(1) : '';
+  return [name + (kw ? ' with ' + kw : '') + (pt ? ' ' + pt.join('/') : ''), line, colors, text, st, pt];
+}
+
+// A sentence a made-to-fit witness must show: its subject is made only of words the witness
+// is built from, and what it does is a plain +N/+N or a list of keywords, with no amount,
+// condition or choice that could be zero or unmet on the board.
+const S_PLAIN_SUBJECT = new RegExp("^(?:\\s|,|\\b(?:all|each|other|and|or|non|nontoken|tokens?|legendary|snow|multicolored|creatures?|artifacts?|enchantments?|lands?|permanents?|planeswalkers?|"
+  + "you control|your opponents control|an opponent controls|you don't control|attacking|blocking|tapped|modified|commanders?|with|" + P_KW + "|" + P_COLORS.join('|') + ")\\b|-|\u0002)*$", 'i');
+const S_PLAIN_GRANT = "(?:gets? [+-]\\d+\\/[+-]\\d+|(?:ha(?:s|ve)|gains?) " + P_KW + "(?:(?:,| and|, and) " + P_KW + ")*)";
+const S_PLAIN_EFFECT = new RegExp("^" + S_PLAIN_GRANT + "(?: and " + S_PLAIN_GRANT + ")?(?: until end of turn)?\\.?$", 'i');
+function plainSentence(text, c) {
+  let S = c.S;
+  for (const p of c.ps.slice().sort((x, y) => y.a - x.a)) S = S.slice(0, p.a) + '\u0002' + S.slice(p.b);
+  // Not a Saga chapter or a named or conditional line ("III — …", "Threshold — …"), which the
+  // board may not have reached; not a subject with spells or cards in it; and not a keyword
+  // given to those that have it ("with flanking have flanking"), which shows on nobody.
+  if (/—/.test(text) || c.S.replace(/\s+/g, '') !== text.slice(0, c.v).replace(/\s+/g, '')) return false;
+  const kw = (S.match(new RegExp('\\bwith\\s+(' + P_KW + ')\\b', 'i')) || [])[1];
+  if (kw && new RegExp('\\b' + kw + '\\b', 'i').test(text.slice(c.v))) return false;
+  return S_PLAIN_SUBJECT.test(S) && S_PLAIN_EFFECT.test(text.slice(c.v).trim());
 }
 
 // sigOf(sentence) -> the board with the sentence replaced by that text. Returns the checks made.
@@ -850,7 +892,7 @@ function judgeSubject(text, sigOf, absent) {
     const names = (sig) => affected(sig).map((y, i) => y ? (i < n ? 'my ' : 'their ') + WC[i % n][0] : null).filter(Boolean).join(', ') || 'nothing';
     const witnesses = (sig) => sig.slice(0, 2 * n).join('\n');
     const hit = names(before);
-    if (absent && !any(before)) absent.push({ S: sp.S, ps: sp.parts.filter(p => p.k === 'subtype' && !/non-$/i.test(text.slice(0, p.a))) });
+    if (absent && !any(before)) absent.push({ S: sp.S, v: c.v, alone: c.alone, ps: sp.parts.filter(p => p.k === 'subtype' && !/non-$/i.test(text.slice(0, p.a))) });
     if (sp.side) {
       const aff = affected(before);
       let good = true;
@@ -886,7 +928,7 @@ function probeSubject(text, sigOf) {
   const absent = [];
   const rows = judgeSubject(text, sigOf, absent);
   const parts = absent.flatMap(c => c.ps);
-  if (!absent.some(c => c.ps.length || subjectState(c.S))) return rows;
+  if (!absent.length) return rows;
   const reached = (list) => list.some(r => r.hit && r.hit !== 'nothing');
   const twin = (list, row) => list.filter(r => r.k === row.k)[rows.filter(r => r.k === row.k).indexOf(row)];
   const settled = (r) => r && r.verdict !== 'inert' && r.verdict !== 'error';
@@ -902,7 +944,9 @@ function probeSubject(text, sigOf) {
       const g = groups[groups.length - 1], last = g && g[g.length - 1];
       if (last && p.kind === last.kind && !text.slice(last.b, p.a).trim()) g.push(p); else groups.push([p]);
     }
-    if (!groups.length && st) groups.push([]);
+    // (No subtype of its own: one witness of whatever else the subject asks - "Land creatures
+    // you control", "Creatures you control with defender".)
+    if (!groups.length) groups.push([]);
     for (const g of groups) made.push(subjectWitness(c.S, g, st));
   }
   let withW = [];
@@ -912,7 +956,7 @@ function probeSubject(text, sigOf) {
     extraW = added;
     try { withW = judgeSubject(text, sigOf, null); } catch (e) { withW = []; } finally { extraW = []; }
   }
-  const label = added.map(w => w[1] + (w[4] ? ' (' + Object.keys(w[4]).map(k => k === 'counter' ? w[4].counter + ' counter' : k).join(', ') + ')' : '')).join('; ');
+  const label = added.map(w => w[1] + (w[3] ? ' with ' + w[3].toLowerCase() : '') + (w[5] ? ' ' + w[5].join('/') : '') + (w[4] ? ' (' + Object.keys(w[4]).map(k => k === 'counter' ? w[4].counter + ' counter' : k).join(', ') + ')' : '')).join('; ');
   rows.forEach((row, i) => {
     const t = twin(withW, row);
     // (A witness made for the subject is nothing that a "non-" word leaves out, so that word
@@ -920,6 +964,9 @@ function probeSubject(text, sigOf) {
     if ((row.verdict === 'inert' || row.k === 'subtype') && settled(t) && !(t.neg && t.verdict === 'unread')) rows[i] = Object.assign({}, t, { witness: label });
   });
   if (reached(withW)) return rows;
+  // Witnesses made to be what the subject names, a plain effect, and still nobody is reached.
+  if (!pre && !levelerFace && absent.length === 1 && absent[0].alone && plainSentence(text, absent[0]))
+    rows.push({ k: 'reach', what: absent[0].S.trim(), verdict: 'nobody', hit: 'nothing', witness: label || 'none needed' });
 
   // Still nobody: a subtype the board has stands in for each of them. (Each gets a stand-in of
   // its own: "Goblin creatures and other Goblin creatures" would hide a word of one half behind
@@ -954,6 +1001,7 @@ function subjectFace(card, faceIndex) {
   witnessBoard = true;
   try {
     let base = addCard(withOracle(card, faceIndex, W), faceIndex, isSpell);
+    levelerFace = !!base._levelerData;
     let states = Battlefield.getAllFinalStates(), boardOf = '';
     // An ability is fired on the board its card is on; a sentence that asks for witnesses of
     // its own (extraW) gets the card on that board.
