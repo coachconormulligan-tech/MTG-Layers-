@@ -1,0 +1,144 @@
+{
+  "name": "Oviya, Automech Artisan — \"each creature that's attacking one of your opponents\" is the attackers, not what opponents control",
+  "notes": "Found by the subject probe (2026-10-12). The word 'opponents' made the filter 'permanents your opponents control', so every opposing permanent, lands included, gained trample. It is now any player's attacking creature whose attacked player (the pick on the card, else the first other player) is not Oviya's controller.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Second"
+      ]
+    },
+    {
+      "call": [
+        "addPlayer",
+        "Third"
+      ]
+    },
+    {
+      "add": "Oviya, Automech Artisan",
+      "as": "oviya"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Runeclaw Bear",
+      "as": "home"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Forest",
+      "as": "forest",
+      "controller": "p2"
+    },
+    {
+      "add": "Goblin Piker",
+      "as": "piker",
+      "controller": "p2"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant",
+      "controller": "p3"
+    },
+    {
+      "call": [
+        "toggleAttacking",
+        "@bears"
+      ]
+    },
+    {
+      "call": [
+        "toggleAttacking",
+        "@ogre"
+      ]
+    },
+    {
+      "call": [
+        "setAttackingPlayer",
+        "@ogre",
+        "p3"
+      ]
+    },
+    {
+      "call": [
+        "toggleAttacking",
+        "@giant"
+      ]
+    },
+    {
+      "call": [
+        "setAttackingPlayer",
+        "@giant",
+        "p1"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Trample"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Trample"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Trample"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Runeclaw Bear",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Trample"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Goblin Piker",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Trample"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Forest",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Trample"
+          ]
+        }
+      }
+    }
+  ]
+}

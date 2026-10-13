@@ -1340,6 +1340,25 @@ function _buildAppliesToFromTextInner(filterText) {
     // "attacking Vampire that isn't a Demon" (Clavileño) reads as "non-demon attacking vampire".
     .replace(/^(.+?)\s+that\s+(?:isn't|is not)\s+an?\s+([a-z-]+)$/, 'non-$2 $1');
 
+  // "Each creature that's attacking one of your opponents" (Oviya, Automech Artisan), "creatures
+  // attacking your opponents" (Blast-Furnace Hellkite): any player's attacker, as long as the
+  // player it attacks is not the effect's controller. Not "your opponents control".
+  const attackingOpp = raw.match(/^(.+?)\s+(?:(?:that's|that is|that are)\s+)?attacking\s+(?:one of your opponents|your opponents|an opponent)$/);
+  if (attackingOpp) {
+    const inner = _buildAppliesToFromTextInner(attackingOpp[1]);
+    if (inner && inner.fn && !inner.isSelf && !inner.isOpponentsControl) {
+      return {
+        fn: (p, allStates, effectCtrl) => {
+          const attacked = _attackedPlayerId(p), ctrl = effectCtrl || p.controller;
+          // (With no other player on the board, an attacker of yours is attacking an opponent.)
+          return (p.traits || []).includes('Attacking') && (attacked ? attacked !== ctrl : p.controller === ctrl) &&
+            inner.fn(p, allStates, effectCtrl);
+        },
+        desc: `${inner.desc} attacking your opponents`,
+      };
+    }
+  }
+
   // --- "this creature" / "this permanent" / "it" — selfTarget ---
   if (/^(this creature|this permanent|this card|this token|it|itself|that creature|that permanent)$/.test(f)) {
     return { fn: () => true, desc: 'Applies to: this permanent (self)', isSelf: true };

@@ -1,0 +1,114 @@
+{
+  "name": "Martial Impetus — the trigger boosts the other creatures attacking your opponents",
+  "notes": "Found by the subject probe (2026-10-12). 'Each other creature that's attacking one of your opponents gets +1/+1' reached every creature the opponents controlled. Now the Bears attacking the second player get it; the Giant attacking the Impetus's controller and the Piker that stayed home do not.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Second"
+      ]
+    },
+    {
+      "call": [
+        "addPlayer",
+        "Third"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Goblin Piker",
+      "as": "piker",
+      "controller": "p2"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant",
+      "controller": "p3"
+    },
+    {
+      "add": "Martial Impetus",
+      "as": "impetus"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@impetus",
+        "@ogre"
+      ]
+    },
+    {
+      "call": [
+        "toggleAttacking",
+        "@bears"
+      ]
+    },
+    {
+      "call": [
+        "toggleAttacking",
+        "@ogre"
+      ]
+    },
+    {
+      "call": [
+        "setAttackingPlayer",
+        "@ogre",
+        "p3"
+      ]
+    },
+    {
+      "call": [
+        "toggleAttacking",
+        "@giant"
+      ]
+    },
+    {
+      "call": [
+        "setAttackingPlayer",
+        "@giant",
+        "p1"
+      ]
+    },
+    {
+      "fire": "@impetus",
+      "trigger": 2
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 3,
+        "toughness": 3
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "power": 3,
+        "toughness": 3
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "power": 3,
+        "toughness": 3
+      }
+    },
+    {
+      "perm": "Goblin Piker",
+      "final": {
+        "power": 2,
+        "toughness": 1
+      }
+    }
+  ]
+}

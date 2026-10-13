@@ -47,6 +47,7 @@ function createBaseState(permanent) {
     cdaUserValue: null,
     counters: { ...(permanent.counters || {}) },
     traits: [...(permanent.traits || [])], // special traits like "Has all card names"
+    attackingPlayerId: permanent.attackingPlayerId || null, // the player an attacker was declared against
     allPrintedAbilities: allPrinted, // full list including conditional for display
     conditionalAbilityIndices: condIndices || null,
     conditionalAbilityConditions: permanent._conditionalAbilityConditions || null,

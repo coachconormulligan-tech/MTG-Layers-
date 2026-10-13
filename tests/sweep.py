@@ -322,6 +322,10 @@ def classify(text, kw_re):
     # stays until its spell is removed. A recipe covers the single control effect.
     if re.search(r"\bgains? control of (?:that \w+|it|them) until [^.]*\binstead\b", t):
         return None
+    # "Black and/or red permanents and spells are colorless sources of damage" (Ghostly Flame)
+    # changes what a source of damage counts as, not the colour of any permanent.
+    if re.search(r"\b(?:is|are) (?:a )?(?:white|blue|black|red|green|colorless) sources? of damage\b", t):
+        return None
     t = re.sub(r'\bcreates?\b.*', '', t)                                 # token descriptions are not effects
     if re.search(r'\bgains? control of\b|\bexchanges? control\b', t):
         return 'control'
