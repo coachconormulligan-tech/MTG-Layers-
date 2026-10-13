@@ -198,7 +198,15 @@ function _finalizeEffects(effects, isEquipmentSource, permanent, oracleText) {
       effects.splice(firstGrant, 0, effects.splice(loss, 1)[0]);
     }
   }
-  if (/\btarget\s+opponent\b/.test(_oracle) && permanent) {
+  // On a permanent, "target opponent" inside a triggered or activated ability is that ability's
+  // and says nothing about the card's static effects: "Other Zombie creatures you control get
+  // +1/+1. / Whenever another Zombie you control dies, target opponent loses 1 life" (Diregraf
+  // Captain) reached nobody until an opponent was picked, and then only that opponent's Zombies.
+  let _oppText = _oracle;
+  if (permanent && !permanent.isSpell && !permanent.abilitySourceId && !permanent.isManualEffect) {
+    _oppText = _oracle.split('\n').filter(l => !_isTriggeredSentence(l.trim()) && !/^[^"]*:[^"]*\btarget\s+opponent\b/.test(l)).join('\n');
+  }
+  if (/\btarget\s+opponent\b/.test(_oppText) && permanent) {
     const chosen = permanent._targetOpponentPlayerId || null;
     let tagged = false;
     for (const eff of effects) {
