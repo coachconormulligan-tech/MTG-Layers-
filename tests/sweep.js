@@ -382,6 +382,9 @@ function addCard(card, faceIndex, isSpell) {
     if (perm._classLevelThresholds) Battlefield.setClassLevel(perm.id, 99);
     if (perm._levelerData) Battlefield.addCounter(perm.id, 'level', 20);
     if (perm._spacecraftData) Battlefield.addCounter(perm.id, 'charge', 20);
+    // A Saga with every chapter reached: each chapter waits for its lore counter.
+    const lore = (perm._sagaMaxChapter || 0) - ((perm.counters && perm.counters.lore) || 0);
+    if (lore > 0) Battlefield.addCounter(perm.id, 'lore', lore);
   }
   // "As this enters, choose a …" cards parse to nothing until the choice is made.
   if (perm.needsChosenColor) Battlefield.setChosenColor(perm.id, 'red');
@@ -427,7 +430,7 @@ function fireAbility(perm, ab, kind, effectText, states, check, read) {
       checkEffects(effs, check.nonsense);
       checkStates(check.nonsense);
     }
-    if (read) { Battlefield._invalidate(); effs = read(); }
+    if (read) { Battlefield._invalidate(); effs = read(pseudo); }
   } finally {
     Battlefield.permanents = savedPerms;
     Battlefield.effects = savedEffects;
@@ -609,7 +612,10 @@ function sweepFace(card, faceIndex) {
              A word is unread when no swap of it changes which witnesses are affected.
    Without "other" the source is affected too; when it is not one of the group, or already
    has what is granted, the board cannot show that and the check is inert, as is any check
-   on a sentence that reaches no witness (the board has no chosen types, levels or picked modes).
+   on a sentence that reaches no witness (the board has no chosen types).
+   A mode's sentence is read with that mode picked, a Saga with every chapter reached, and a
+   sentence behind something the site asks about (kicked, "{G} was spent", "if you do") with
+   that answered Yes.
    A subject that asks for a state no witness is in (attacking, blocking, tapped, with a counter,
    modified) gets a witness in that state added to each side.
    A sentence that reaches nobody because no witness has its subtype ("Dragons you control") is
@@ -865,10 +871,12 @@ const S_PLAIN_EFFECT = new RegExp("^" + S_PLAIN_GRANT + "(?: and " + S_PLAIN_GRA
 function plainSentence(text, c) {
   let S = c.S;
   for (const p of c.ps.slice().sort((x, y) => y.a - x.a)) S = S.slice(0, p.a) + '\u0002' + S.slice(p.b);
-  // Not a Saga chapter or a named or conditional line ("III — …", "Threshold — …"), which the
-  // board may not have reached; not a subject with spells or cards in it; and not a keyword
-  // given to those that have it ("with flanking have flanking"), which shows on nobody.
-  if (/—/.test(text) || c.S.replace(/\s+/g, '') !== text.slice(0, c.v).replace(/\s+/g, '')) return false;
+  // Not a named or conditional line ("Threshold — …", "IV — Oblivion — …"), which the board may
+  // not have reached (a Saga's own chapters it has: the card is read with every lore counter on
+  // it); not a subject with spells or cards in it; and not a keyword given to those that have it
+  // ("with flanking have flanking"), which shows on nobody.
+  const chapter = (text.match(/^\s*[IVX]+(?:\s*,\s*[IVX]+)*\s*—\s*/) || [''])[0].length;
+  if (/—/.test(text.slice(chapter)) || c.S.replace(/\s+/g, '') !== text.slice(chapter, c.v).replace(/\s+/g, '')) return false;
   const kw = (S.match(new RegExp('\\bwith\\s+(' + P_KW + ')\\b', 'i')) || [])[1];
   if (kw && new RegExp('\\b' + kw + '\\b', 'i').test(text.slice(c.v))) return false;
   return S_PLAIN_SUBJECT.test(S) && S_PLAIN_EFFECT.test(text.slice(c.v).trim());
@@ -928,8 +936,8 @@ function judgeSubject(text, sigOf, absent) {
 }
 
 function probeSubject(text, sigOf) {
-  // A mode's bullet (or a die-roll row's range) stays where it is.
-  const pre = (text.match(/^\s*(?:•\s*|\d+(?:—\d+)? \|\s*)/) || [''])[0];
+  // A mode's bullet (or its Spree or pawprint cost, or a die-roll row's range) stays where it is.
+  const pre = (text.match(/^\s*(?:•\s*|\+\s*(?:\{[^}]*\})+\s*—\s*|(?:\{P\})+\s*—\s*|\d+(?:—\d+)? \|\s*)/) || [''])[0];
   if (pre) { const whole = sigOf; sigOf = (t) => whole(pre + t); text = text.slice(pre.length); }
   const absent = [];
   const rows = judgeSubject(text, sigOf, absent);
@@ -971,7 +979,7 @@ function probeSubject(text, sigOf) {
   });
   if (reached(withW)) return rows;
   // Witnesses made to be what the subject names, a plain effect, and still nobody is reached.
-  if (!pre && !levelerFace && absent.length === 1 && absent[0].alone && plainSentence(text, absent[0]))
+  if (!/\|/.test(pre) && !levelerFace && absent.length === 1 && absent[0].alone && plainSentence(text, absent[0]))
     rows.push({ k: 'reach', what: absent[0].S.trim(), verdict: 'nobody', hit: 'nothing', witness: label || 'none needed' });
 
   // Still nobody: a subtype the board has stands in for each of them. (Each gets a stand-in of
@@ -1003,7 +1011,38 @@ function subjectFace(card, faceIndex) {
   // Cheap look before any parsing: is there a group subject anywhere?
   const hasSubject = (t) => { const { m, clauses } = subjectClauses(t); return clauses.some(c => subjectParts(t, m, c.a, c.v)); };
   if (!splitSentences(W).some(s => hasSubject(s.text) || hasSubject(s.text.replace(/^[^:"]*:\s*/, '')))) return out;
-  const probe = (ctx, text, sigOf) => { const rows = probeSubject(text, sigOf); if (rows.length) out.push({ ctx, text, rows }); };
+  // sigOf(t, setup): setup(perm) is run on the spell, permanent or fired ability before the board
+  // is read. A sentence that reaches nobody is judged again with each thing the site asks about
+  // the card answered Yes (kicked, "{G} was spent", "if you do"), one at a time and then all at
+  // once; the first answer under which it reaches somebody is the one its checks are made under.
+  const toggles = (p) => [1, 2, 3, 4, 5, 6].map(n => [n, p && p['additionalCostLabel' + (n > 1 ? n : '')]]).filter(l => l[1]);
+  const probe = (ctx, text, sigOf, labelsOf) => {
+    const settled = (r) => r.verdict !== 'inert' && r.verdict !== 'error';
+    let rows = probeSubject(text, (t) => sigOf(t, null));
+    if (rows.length && !rows.every(settled)) {
+      let labels = [];
+      try { labels = [...new Set(labelsOf().map(l => l[1]))]; } catch (e) { /* nothing is asked */ }
+      const asks = labels.map(l => [l]);
+      if (labels.length > 1) asks.push(labels);
+      for (const ask of asks) {
+        // (By what is asked, not by its place: with a clause taken out, the text asks one thing fewer.)
+        const setup = (p) => { for (const [slot, label] of toggles(p)) if (ask.includes(label)) Battlefield.setAdditionalCostPaid(p.id, true, slot); };
+        let again = [];
+        try { again = probeSubject(text, (t) => sigOf(t, setup)); } catch (e) { continue; }
+        // Each subject of the sentence keeps the first answer under which it reaches somebody.
+        if (again.length !== rows.length) continue;
+        rows = rows.map((r, i) => !settled(r) && again[i].k === r.k && settled(again[i]) ? Object.assign({}, again[i], { asked: ask.join(' + ') }) : r);
+        if (rows.every(settled)) break;
+      }
+    }
+    if (rows.length) out.push({ ctx, text, rows });
+  };
+  // A sentence on a mode's line ("• …", Spree's "+ {1} — …", "{P}{P} — …") is read with that
+  // mode picked and no other. Which mode a line is comes from counting the lines, not from the parser.
+  const pickMode = (p, mode) => {
+    if (mode < 0 || !p.isModalSpell) return;
+    if (p.modalRepeatable) Battlefield.setModalModeCounts(p.id, { [mode]: 1 }); else Battlefield.setModalModeSelections(p.id, [mode]);
+  };
   witnessBoard = true;
   try {
     let base = addCard(withOracle(card, faceIndex, W), faceIndex, isSpell);
@@ -1037,21 +1076,25 @@ function subjectFace(card, faceIndex) {
           if (!unit) continue;
           for (const s of splitSentences(unit)) {
             const lead = unit.slice(s.start, s.end).search(/\S/), at = s.start + Math.max(0, lead);
-            probe(kind, unit.slice(at, s.end), (t) => {
+            probe(kind, unit.slice(at, s.end), (t, setup) => {
               const u = unit.slice(0, at) + t + unit.slice(s.end);
               onBoard();
-              return fireAbility(base, withText(ab, unit, u), kind, u, states, null, () => boardSig(base.id));
-            });
+              return fireAbility(base, withText(ab, unit, u), kind, u, states, null, (pseudo) => { if (setup) setup(pseudo); return boardSig(base.id); });
+            }, () => { onBoard(); return fireAbility(base, ab, kind, unit, states, null, toggles); });
           }
         }
       }
     } catch (e) { out.push({ ctx: 'ability', text: '', rows: [{ k: 'error', what: '', verdict: 'error', msg: String(e && e.message) }] }); }
 
+    const modeLines = lines.map((l, i) => /^\s*(?:\u2022|\+\s*\{|(?:\{P\})+\s*\u2014)/.test(l) ? i : -1).filter(i => i >= 0);
     for (const s of splitSentences(W)) {
       if (abilityLine.has(s.line)) continue;
       const lead = W.slice(s.start, s.end).search(/\S/), at = s.start + Math.max(0, lead);
+      const mode = modeLines.indexOf(s.line);
+      const put = (t) => { const p = addCard(withOracle(card, faceIndex, W.slice(0, at) + t + W.slice(s.end)), faceIndex, isSpell); pickMode(p, mode); return p; };
       probe(isSpell ? 'spell' : 'static', W.slice(at, s.end),
-        (t) => boardSig(addCard(withOracle(card, faceIndex, W.slice(0, at) + t + W.slice(s.end)), faceIndex, isSpell).id));
+        (t, setup) => { const p = put(t); if (setup) setup(p); return boardSig(p.id); },
+        () => toggles(put(W.slice(at, s.end))));
     }
   } finally { witnessBoard = false; }
   return out;

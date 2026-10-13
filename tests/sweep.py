@@ -689,8 +689,9 @@ def write_subject(records):
          'taken out. "You control" must reach nothing of the opponent\'s, "your opponents control" nothing of yours, '
          'and a subject that names no controller must reach both sides alike. Then each word of the subject is swapped '
          'for another of its kind: a word is **unread** when no swap of it changes who is affected. A check is '
-         '**inert** when the sentence reaches no witness (the board has no counters, attackers, chosen types or '
-         'unpicked modes; a sentence that reaches nobody because no witness has its subtype is judged with a witness '
+         '**inert** when the sentence reaches no witness (the board has no chosen types; a mode\'s sentence is read '
+         'with that mode picked, a Saga with every chapter reached, and a sentence behind something the site asks '
+         'with that answered Yes; a sentence that reaches nobody because no witness has its subtype is judged with a witness '
          'of that subtype added to each side, and failing that with a subtype of the board standing in for it), or '
          'when the card itself is not one of the group "other" leaves it out of; an inert check '
          'says nothing either way. A finding means "check this card".\n',
@@ -789,6 +790,8 @@ def main():
                         print('                      witness added to each side: %s' % row['witness'])
                     if row.get('standIn'):
                         print('                      judged as: %s' % row['standIn'])
+                    if row.get('asked'):
+                        print('                      answered Yes: %s' % row['asked'])
                     print('                      reaches: %s' % row.get('hit', row.get('msg', '')))
                     if row.get('tried'):
                         print('                      swapped: %s' % row['tried'])

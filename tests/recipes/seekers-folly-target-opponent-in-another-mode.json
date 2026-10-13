@@ -1,0 +1,51 @@
+{
+  "name": "Seeker's Folly — \"target opponent\" in the discard mode leaves \"Creatures your opponents control get -1/-1\" alone",
+  "notes": "Found by the subject probe's 'reaches nobody' verdict once it read a mode's sentence with that mode picked (2026-10-13). _finalizeEffects tied every global effect of a spell to the chosen opponent whenever 'target opponent' stood anywhere in its text, so a group effect in another mode reached nobody until an opponent was picked, and then only that player's permanents. When the words stand only inside modes they now count for those modes alone.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "theirs",
+      "controller": "p2"
+    },
+    {
+      "add": "Runeclaw Bear",
+      "as": "mine"
+    },
+    {
+      "add": "Seeker's Folly",
+      "as": "spell",
+      "spell": true
+    },
+    {
+      "call": [
+        "setModalModeSelections",
+        "@spell",
+        [
+          1
+        ]
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 1,
+        "toughness": 1
+      }
+    },
+    {
+      "perm": "Runeclaw Bear",
+      "final": {
+        "power": 2,
+        "toughness": 2
+      }
+    }
+  ]
+}

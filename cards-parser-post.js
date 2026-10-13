@@ -209,9 +209,17 @@ function _finalizeEffects(effects, isEquipmentSource, permanent, oracleText) {
   if (/\btarget\s+opponent\b/.test(_oppText) && permanent) {
     const chosen = permanent._targetOpponentPlayerId || null;
     let tagged = false;
+    // When the words stand only inside modes, they are those modes' own: "• Target opponent
+    // discards two cards. • Creatures your opponents control get -1/-1 until end of turn."
+    // (Seeker's Folly), "+ {2} — Creatures you control get +1/+0 … + {R} — Choose target
+    // opponent. …" (Great Train Heist). The other mode's effect reached nobody.
+    const _count = (t) => (String(t || '').toLowerCase().match(/\btarget\s+opponent\b/g) || []).length;
+    const _modeTexts = permanent.modalModeTexts || [];
+    const _onlyInModes = _modeTexts.length > 0 && _modeTexts.reduce((n, t) => n + _count(t), 0) >= _count(_oppText);
     for (const eff of effects) {
+      if (_onlyInModes && eff.modalModeIndex !== undefined && !_count(_modeTexts[eff.modalModeIndex])) continue;
       // (Not a mass copy: Sakashima's Will's "target opponent" is its other mode.)
-      if (eff.scope === 'global' && !(eff.params && (eff.params.mutualSwap || eff.params.opponentGetsControl || eff.params.massCopy))) {
+      if (eff.scope === 'global' &&!(eff.params && (eff.params.mutualSwap || eff.params.opponentGetsControl || eff.params.massCopy))) {
         eff._targetsOpponentPlayer = true;
         if (chosen) eff._targetOpponentPlayerId = chosen;
         tagged = true;
