@@ -22,6 +22,15 @@ tests/sweep/report.md and tests/sweep/singletons.md. No network. Two kinds of re
      removed; a swap or removal that leaves the effects unchanged is listed in
      tests/sweep/partial.md, most-played cards first (EDHREC rank).
 
+  4. Sentences that reach the wrong permanents. On a two-player board holding the same 16
+     blank witnesses on each side, a sentence whose subject is a group ("Other Elves you
+     control get ...") is judged by which witnesses change. "You control" must reach nothing
+     of the opponent's, and every word of the subject (the controller phrase, "other", colour,
+     card type, subtype, token, legendary, "with <keyword>", "power N or less") is swapped for
+     another of its kind: a word no swap of which changes who is affected was not read.
+     Listed in tests/sweep/subject.md, most-played cards first; cards legal in no format are
+     left out. A check on a sentence that reaches no witness says nothing ("inert").
+
 A cluster shared by many cards is a generic parser gap; one that appears on a single card is
 a special-case candidate. tests/sweep.js does the parsing; this file filters and clusters.
 """
@@ -431,18 +440,23 @@ PART_LABEL = {'clause': 'Clause', 'quoted ability': 'Quoted ability', 'keyword':
               'card type': 'Card type', 'subtype': 'Subtype', 'color': 'Colour'}
 
 
-def load_ranks():
-    """Card name (and each face's name) -> EDHREC rank; unranked cards are absent."""
+def load_ranks(legal=None):
+    """Card name (and each face's name) -> EDHREC rank; unranked cards are absent.
+    legal, when given, is filled with the names of cards legal in at least one format."""
     ranks = {}
     if not os.path.exists(CARD_CACHE):
         return ranks
     with gzip.open(CARD_CACHE, 'rt', encoding='utf-8') as f:
         for line in f:
-            if '"edhrec_rank"' not in line:
+            if legal is None and '"edhrec_rank"' not in line:
                 continue
             c = json.loads(line)
-            for n in [c['name']] + c['name'].split(' // '):
-                ranks[n] = min(c['edhrec_rank'], ranks.get(n, 10 ** 9))
+            names = [c['name']] + c['name'].split(' // ')
+            if legal is not None and any(v in ('legal', 'restricted') for v in (c.get('legalities') or {}).values()):
+                legal.update(names)
+            if c.get('edhrec_rank') is not None:
+                for n in names:
+                    ranks[n] = min(c['edhrec_rank'], ranks.get(n, 10 ** 9))
     return ranks
 
 
@@ -512,6 +526,10 @@ def analyse(records, keywords):
 def write_report(records, keywords, meta):
     totals, crashes, nonsense, clusters, partial = analyse(records, keywords)
     os.makedirs(OUT_DIR, exist_ok=True)
+    write_partial(partial)
+    totals['subject_checks'], subject = write_subject(records)
+    totals['subject_findings'] = len(subject)
+    totals['subject_cards'] = len({f['card'] for f in subject})
     shared = [c for c in clusters if len(c['cards']) >= 2]
     single = [c for c in clusters if len(c['cards']) == 1]
     flagged_cards = len({n for c in clusters for n in c['cards']})
@@ -531,6 +549,8 @@ def write_report(records, keywords, meta):
     L.append('| ...of which the parser did not read | %d, on %d cards (listed in [partial.md](partial.md)) |'
              % (totals['dead_parts'], len({n for p in partial for n in p['cards']})))
     L.append('| Clusters shared by 2 or more cards | %d |' % len(shared))
+    L.append('| Checks of who a sentence reaches | %d, with %d findings on %d cards (listed in [subject.md](subject.md)) |'
+             % (totals['subject_checks'], totals['subject_findings'], totals['subject_cards']))
     L.append('| Single-card clusters | %d (listed in [singletons.md](singletons.md)) |' % len(single))
     L.append('| Distinct crashes | %d, on %d card faces |' % (len(crashes), totals['faces_with_errors']))
     L.append('| Distinct kinds of nonsense output | %d |' % len(nonsense))
@@ -583,8 +603,6 @@ def write_report(records, keywords, meta):
     with open(os.path.join(OUT_DIR, 'singletons.md'), 'w', encoding='utf-8') as f:
         f.write('\n'.join(S) + '\n')
 
-    write_partial(partial)
-
     # Full membership of every cluster, for digging into one.
     with open(os.path.join(OUT_DIR, 'clusters.json'), 'w', encoding='utf-8') as f:
         json.dump([{'cards': len(c['cards']), 'kind': c['kind'], 'template': c['template'],
@@ -626,6 +644,77 @@ def write_partial(partial):
         json.dump([{'cards': len(p['names']), 'part': p['kind'], 'template': p['template'],
                     'members': {n: {'sentence': p['cards'][n][0], 'part': p['cards'][n][1], 'rank': ranks.get(n)}
                                 for n in p['names']}} for p in partial], f, indent=1, ensure_ascii=False)
+
+
+SUBJECT_VERDICTS = ('ok', 'unread', 'wrong side', 'inert', 'error')
+SUBJECT_FOUND = ('unread', 'wrong side', 'error')
+SUBJECT_LABEL = {'controller': 'Controller', 'other': '"Other"', 'color': 'Colour', 'card type': 'Card type',
+                 'subtype': 'Subtype', 'token': 'Token', 'legendary': 'Legendary', 'has keyword': 'With keyword',
+                 'size': 'Power / toughness N', 'error': 'Error'}
+
+
+def subject_label(k):
+    return 'Whose permanents' if k.startswith('side') else SUBJECT_LABEL.get(k, k)
+
+
+def write_subject(records):
+    """tests/sweep/subject.md: sentences that reach the wrong permanents on the witness board."""
+    legal = set()
+    ranks = load_ranks(legal)
+    tally, cards, findings, not_legal = collections.Counter(), set(), [], set()
+    for r in records:
+        for s in r.get('subject', ()):
+            cards.add(r['name'])
+            for row in s['rows']:
+                k = 'side' if row['k'].startswith('side') else row['k']
+                tally[(k, row['verdict'])] += 1
+                if row['verdict'] not in SUBJECT_FOUND:
+                    continue
+                if legal and r['name'] not in legal:
+                    not_legal.add(r['name'])
+                    continue
+                findings.append({'card': r['name'], 'rank': ranks.get(r['name']), 'where': s['ctx'], 'sentence': s['text'],
+                                 'check': row['k'], 'word': row.get('what', ''), 'verdict': row['verdict'],
+                                 'reaches': row.get('hit'), 'tried': row.get('tried'), 'reaches_after': row.get('hitAfter'),
+                                 'error': row.get('msg')})
+    findings.sort(key=lambda f: (f['rank'] is None, f['rank'] or 0, f['card'], f['sentence']))
+    kinds = sorted({k for k, _ in tally}, key=lambda k: (k != 'side', k))
+    total = sum(tally.values())
+    S = ['# Parser sweep: who a sentence reaches\n',
+         'Generated by `python3 tests/sweep.py`. Each card is added last to a two-player board holding the same 16 '
+         'blank witnesses on each side (ten creatures of different types and colours, a creature token, an Equipment, '
+         'a Treasure token, a Shrine, a Forest and a nonbasic land). A sentence whose subject is a group of permanents '
+         'is judged by which witnesses change, against the same text with that sentence (or that subject\'s clause) '
+         'taken out. "You control" must reach nothing of the opponent\'s, "your opponents control" nothing of yours, '
+         'and a subject that names no controller must reach both sides alike. Then each word of the subject is swapped '
+         'for another of its kind: a word is **unread** when no swap of it changes who is affected. A check is '
+         '**inert** when the sentence reaches no witness (the board has no counters, attackers, chosen types or '
+         'unpicked modes), or when the card itself is not one of the group "other" leaves it out of; an inert check '
+         'says nothing either way. A finding means "check this card".\n',
+         '%d checks on %d cards; %d findings on %d cards.%s\n' % (
+             total, len(cards), len(findings), len({f['card'] for f in findings}),
+             ' Left out: %d cards legal in no format.' % len(not_legal) if not_legal else ''),
+         '| Check | ' + ' | '.join(v.capitalize() for v in SUBJECT_VERDICTS) + ' |',
+         '|---|' + '---:|' * len(SUBJECT_VERDICTS)]
+    for k in kinds:
+        S.append('| %s | %s |' % (subject_label(k), ' | '.join(str(tally[(k, v)]) for v in SUBJECT_VERDICTS)))
+    S.append('| **All** | %s |' % ' | '.join(str(sum(tally[(k, v)] for k in kinds)) for v in SUBJECT_VERDICTS))
+    S.append('\n## Findings\n')
+    if not findings:
+        S.append('None.')
+    else:
+        S.append('Most-played first.\n')
+        S.append('| EDHREC rank | Card | Finding | Sentence | Reaches | Swap that changed nothing |\n|---:|---|---|---|---|---|')
+        for f in findings:
+            what = ('Error: %s' % f['error']) if f['verdict'] == 'error' else \
+                '%s, %s: %s' % (f['verdict'].capitalize(), subject_label(f['check']).lower(), f['word'])
+            S.append('| %s | %s | %s | %s | %s | %s |' % (f['rank'] or '', md(f['card']), md(what), md(f['sentence']),
+                                                    md(f['reaches'] or ''), md(f['tried'] or '')))
+    with open(os.path.join(OUT_DIR, 'subject.md'), 'w', encoding='utf-8') as f:
+        f.write('\n'.join(S) + '\n')
+    with open(os.path.join(OUT_DIR, 'subject-findings.json'), 'w', encoding='utf-8') as f:
+        json.dump(findings, f, indent=1, ensure_ascii=False)
+    return total, findings
 
 
 def cmd_diff(before_path):
@@ -685,6 +774,16 @@ def main():
                     if kind and (d['k'] != 'clause' or classify(d['what'], tp.kw_re)):
                         print('           NOT READ  %s: %s' % (PART_LABEL[d['k']].lower(), d['what']))
                         print('                     same effects from: %s' % d.get('tried', ''))
+            for s in r.get('subject', ()):
+                print('   WHO     %-9s %s' % (s['ctx'], s['text']))
+                for row in s['rows']:
+                    found = row['verdict'] in SUBJECT_FOUND
+                    print('           %-10s %s: %s' % (row['verdict'].upper() if found else row['verdict'],
+                                                      subject_label(row['k']).lower(), row.get('what', '')))
+                    print('                      reaches: %s' % row.get('hit', row.get('msg', '')))
+                    if row.get('tried'):
+                        print('                      swapped: %s' % row['tried'])
+                        print('                      reaches: %s' % row.get('hitAfter', ''))
         return 0
 
     if args.report:
@@ -705,7 +804,10 @@ def main():
         len(crashes), len(nonsense), len(clusters), sum(1 for c in clusters if len(c['cards']) >= 2)))
     print('%d parts probed inside effect-producing sentences, %d not read (%d clusters)' % (
         totals['probes'], totals['dead_parts'], len(partial)))
-    print('Wrote tests/sweep/report.md, singletons.md, clusters.json, partial.md, partial-clusters.json')
+    print('%d checks of who a sentence reaches, %d findings on %d cards' % (
+        totals['subject_checks'], totals['subject_findings'], totals['subject_cards']))
+    print('Wrote tests/sweep/report.md, singletons.md, clusters.json, partial.md, partial-clusters.json, subject.md, '
+          'subject-findings.json')
     return 0
 
 

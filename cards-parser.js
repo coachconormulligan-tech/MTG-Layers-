@@ -1727,6 +1727,12 @@ function parseCardEffects(permanent, card, opts = {}) {
   oracle = oracle.replace(/^(As long as [^,\n]+, )?(this [\w-]+) and ((?:each other |other )[\w' -]*?\byou control) (have|get|gain) ([^.\n"]+\.)$/gim,
     (_, lead, own, others, verb, rest) =>
       `${lead || ''}${own} ${verb.toLowerCase() === 'have' ? 'has' : verb + 's'} ${rest} ${others.charAt(0).toUpperCase() + others.slice(1)} ${verb} ${rest}`);
+  // "All creatures become black and all lands become Swamps" (Nightcreep): two subjects, each
+  // becoming something of its own, are two sentences. Left whole, the first subject took the
+  // second one's types and the creatures became Swamps. (On lines of their own: the type parser
+  // reads one "become" sentence a line.)
+  oracle = oracle.replace(/^(Until end of turn, )?((?:all|each) [\w' -]+? becomes? [^.\n"]+?) and ((?:all|each) [\w' -]+? becomes? [^.\n"]+\.)$/gim,
+    (_, lead, first, second) => `${lead || ''}${first}.\n${lead || ''}${lead ? second : second.charAt(0).toUpperCase() + second.slice(1)}`);
   // "You may have Allies you control gain lifelink until end of turn" (Talus Paladin, Highland
   // Berserker): the permanents are the subject. Left in front, "you may have" was read as part
   // of the filter ("You May Ally") and the effect reached nothing. After the splitter, which

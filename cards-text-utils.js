@@ -1561,6 +1561,21 @@ function _buildAppliesToFromTextInner(filterText) {
     }
   }
 
+  // --- "creature that's a Food or a Golem" (Brenard, Ginger Sculptor): the noun in front holds
+  // for every alternative. Split at "or" first, "a golem" stood alone and a Golem that is no
+  // creature was reached. ---
+  const thatIsOneOf = f.match(/^(.+?)\s+(?:that's|that is|that are)\s+an?\s+([a-z'-]+(?:\s+or\s+an?\s+[a-z'-]+)+)$/);
+  if (thatIsOneOf) {
+    const noun = buildAppliesToFromText(thatIsOneOf[1]);
+    const alts = thatIsOneOf[2].split(/\s+or\s+an?\s+/).map(a => buildAppliesToFromText(a));
+    if (!noun.isFallback && !noun.isSelf && !noun.isTargeted && alts.every(a => !a.isFallback && !a.isSelf && !a.isTargeted)) {
+      return {
+        fn: (...args) => noun.fn(...args) && alts.some(a => a.fn(...args)),
+        desc: `${noun.desc} that is ${alts.map(a => a.desc.replace('Applies to: ', '')).join(' OR ')}`,
+      };
+    }
+  }
+
   // --- OR with "or": "Elves or Goblins" ---
   if (f.includes(' or ') && !f.includes('more or') && !/\d+\s+or\s+(?:greater|more|less|fewer)/i.test(f)) {
     const parts = f.split(/\s+or\s+/);

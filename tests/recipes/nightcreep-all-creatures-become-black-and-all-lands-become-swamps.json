@@ -1,0 +1,42 @@
+{
+  "name": "Nightcreep — \"all creatures become black and all lands become Swamps\"",
+  "notes": "Found by the subject probe in tests/sweep.py (2026-10-13). The two subjects were read as one sentence: creatures took the Swamp subtype in place of their creature types and lands were left alone. It is now read as two sentences, one a line.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Forest",
+      "as": "forest"
+    },
+    {
+      "add": "Nightcreep",
+      "as": "spell"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "colors": [
+          "B"
+        ],
+        "subtypes": [
+          "Bear"
+        ]
+      }
+    },
+    {
+      "perm": "Forest",
+      "final": {
+        "subtypes": [
+          "Swamp"
+        ],
+        "types": [
+          "Land"
+        ]
+      }
+    }
+  ]
+}

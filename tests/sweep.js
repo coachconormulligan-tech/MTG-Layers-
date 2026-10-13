@@ -6,13 +6,16 @@
    Output: one line per card face, prefixed "@@SWEEP ", holding
      { name, face, layout, typeLine, nEffects, errors[], nonsense[], sentences[] }
      sentences[]: { ctx, text, line, covered, probes?, dead?[{ k, what }] }
+     subject?[]:  { ctx, text, rows[{ k, what, verdict, hit, tried?, hitAfter?, msg? }] }
 
    For every face it (1) adds the card through the real add pipeline next to a vanilla
    2/2 and points its targeted effects at that creature, (2) fires every triggered and
    activated ability the way the site's buttons do, (3) evaluates the board after each
    step, and (4) for every sentence of rules text, re-parses with that sentence removed.
    A sentence whose removal leaves the parsed effects unchanged produced no effect.
-   (5) A sentence that did produce an effect is probed part by part (see probeSentence). */
+   (5) A sentence that did produce an effect is probed part by part (see probeSentence).
+   (6) A sentence whose subject is a group of permanents is probed for who it reaches, on a
+       board of witnesses (see probeSubject); rec.subject holds every check made. */
 
 /* ─── Engine shims (same as tests/harness.js) ─── */
 var _args;
@@ -337,6 +340,7 @@ function resetBoard() {
   Battlefield.bestowTargets = new Map();
   if (Battlefield.triggerCounts) Battlefield.triggerCounts = new Map();
   if (Battlefield.activateCounts) Battlefield.activateCounts = new Map();
+  if (witnessBoard) { addWitnesses(); return; }
   const d = Battlefield.addPermanent(JSON.parse(JSON.stringify(DUMMY)), { suppressPrompt: true, controller: 'player_0', owner: 'player_0' });
   dummyId = d.id;
 }
@@ -385,7 +389,8 @@ function addCard(card, faceIndex, isSpell) {
 function ownEffects(perm) { return Battlefield.effects.filter(e => e.sourceId === perm.id); }
 
 // Fires one ability with the given effect text; returns its effects and removes it again.
-function fireAbility(perm, ab, kind, effectText, states, check) {
+// With read, returns what read() makes of the board while the fired ability is still on it.
+function fireAbility(perm, ab, kind, effectText, states, check, read) {
   const savedPerms = Battlefield.permanents.slice(), savedEffects = Battlefield.effects.slice();
   const before = new Set(savedEffects);
   let effs = [];
@@ -415,6 +420,7 @@ function fireAbility(perm, ab, kind, effectText, states, check) {
       checkEffects(effs, check.nonsense);
       checkStates(check.nonsense);
     }
+    if (read) { Battlefield._invalidate(); effs = read(); }
   } finally {
     Battlefield.permanents = savedPerms;
     Battlefield.effects = savedEffects;
@@ -583,6 +589,284 @@ function sweepFace(card, faceIndex) {
   return rec;
 }
 
+/* ─── Probing who a sentence reaches ───
+   The probes above read the parsed effects, which hold who is affected as a function and so
+   cannot show it. This one reads the board instead: the same 16 blank witnesses on each side
+   of a two-player board, and which of them change against the same text with the sentence
+   (or, when it has two subjects, that subject's clause) taken out. For a sentence whose
+   subject is a group of permanents ("Other Elves you control get …"):
+     side  - "you control" reaches nothing of theirs, "your opponents control" nothing of
+             mine, and a subject naming no controller reaches both sides alike;
+     words - the controller phrase, "other", colour, card type, subtype, token, legendary,
+             "with <keyword>" and "power N or less" are each swapped for another of their kind.
+             A word is unread when no swap of it changes which witnesses are affected.
+   Without "other" the source is affected too; when it is not one of the group, or already
+   has what is granted, the board cannot show that and the check is inert, as is any check
+   on a sentence that reaches no witness (the board has no counters, attackers or chosen types). */
+const W_CARDS = [
+  ['Goblin', 'Creature — Goblin', ['R'], ''],
+  ['Elf', 'Creature — Elf', ['G'], ''],
+  ['Zombie', 'Creature — Zombie', ['B'], ''],
+  ['Bird', 'Creature — Bird', ['U'], 'Flying'],
+  ['Human', 'Creature — Human Soldier', ['W'], ''],
+  ['Spider', 'Creature — Spider', ['G'], 'Reach'],
+  ['Golem', 'Artifact Creature — Golem', [], ''],
+  ['Eldrazi', 'Creature — Eldrazi', [], ''],
+  ['Nymph', 'Enchantment Creature — Nymph', ['U'], ''],
+  ['Giant', 'Legendary Creature — Giant', ['R'], ''],
+  ['Soldier Token', 'Token Creature — Soldier', ['W'], ''],
+  ['Gear', 'Artifact — Equipment', [], ''],
+  ['Treasure Token', 'Token Artifact — Treasure', [], ''],
+  ['Shrine', 'Enchantment — Shrine', ['W'], ''],
+  ['Forest', 'Basic Land — Forest', [], ''],
+  ['Tower', 'Land', [], ''],
+];
+const W_N = W_CARDS.length;
+let witnessBoard = false, witnessIds = [];
+// Every creature witness is a 2/2 with mana value 3, so "power and toughness equal to its
+// mana value" (March of the Machines) shows on one that is reached.
+function witnessCard(w, side) {
+  const free = /Land|Token/.test(w[1]), creature = /Creature/.test(w[1]);
+  const c = { name: 'Witness ' + w[0] + ' ' + side, layout: /Token/.test(w[1]) ? 'token' : 'normal', type_line: w[1], oracle_text: w[3],
+    mana_cost: free ? '' : creature ? '{3}' : '{2}', cmc: free ? 0 : creature ? 3 : 2, colors: w[2], color_identity: w[2], keywords: w[3] ? [w[3]] : [] };
+  if (creature) { c.power = '2'; c.toughness = '2'; }
+  return c;
+}
+function addWitnesses() {
+  const opp = Battlefield.addPlayer('Opponent');
+  witnessIds = [];
+  for (const side of ['player_0', opp.id]) {
+    Battlefield.activePlayerId = side;
+    for (const w of W_CARDS) {
+      const p = Battlefield.addPermanent(witnessCard(w, side), { suppressPrompt: true, controller: side, owner: side, isToken: /Token/.test(w[1]) });
+      witnessIds.push(p.id);
+    }
+  }
+  Battlefield.activePlayerId = 'player_0';
+  dummyId = witnessIds[0];
+}
+
+const _stateSig = (st) => st ? JSON.stringify([st.types, st.supertypes, st.subtypes, st.colors, st.abilities, st.power, st.toughness]) : 'none';
+// [my witnesses…, their witnesses…, the source]. The source's own text is left out of its
+// abilities, so that a sentence shows on its source only by what it does to it.
+function boardSig(sourceId) {
+  const states = Battlefield.getAllFinalStates();
+  const perm = sourceId && Battlefield.getPermById(sourceId), st = states.get(sourceId);
+  const own = new Set(((perm && perm.printedAbilities) || []).map(a => String(a).trim().toLowerCase()));
+  const src = st && Object.assign({}, st, { abilities: (st.abilities || []).filter(a => !own.has(String(a).trim().toLowerCase())) });
+  return witnessIds.map(id => _stateSig(states.get(id))).concat([_stateSig(src)]);
+}
+
+const S_VERB = /\b(?:gets?|gains?|ha(?:s|ve)|loses?|becomes?|is|are|can't)\b/i;
+const S_NOT_GROUP = /^(?:you|it|they|that|those|this|these|enchanted|equipped|fortified|target|up to|put|destroy|exile|sacrifice|return|choose|tap|untap|draw|create|search|reveal|counter|then|if|when|whenever|at|as|its|their|your|his|her|one|two|three|x|a|an|the)\b/i;
+const S_NOT_SUBJECT = /,|\u0001|\btarget\b|:/i;
+const S_TYPE_TO = { creature: ['artifact', 'enchantment', 'land'], artifact: ['enchantment', 'land', 'creature'], enchantment: ['artifact', 'land', 'creature'], land: ['artifact', 'enchantment', 'creature'] };
+// The witnesses' own types last: a subject joined to a wider one ("Slivers you control and
+// nontoken creatures you control" - Rukarumel) only shows a swap to a type that widens it.
+const S_SUB_TO = { creatureTypes: ['Goblin', 'Elf', 'Soldier'], landTypes: ['Forest', 'Island', 'Goblin'], artifactTypes: ['Treasure', 'Equipment', 'Goblin'], enchantmentTypes: ['Shrine', 'Aura', 'Goblin'] };
+// Words that sit in the subject without naming permanents on the battlefield.
+const S_OFF_BOARD = [
+  /\b[\w\-]+\s+cards?\s+(?:in|from)\s+[^,.]*?\b(?:librar(?:y|ies)|graveyards?|hands?|exile)\b/gi,   // "land cards in your library"
+  /\b[\w\-]+\s+spells?\b(?:\s+you\s+(?:cast|control))?/gi,
+];
+// _effectMask, with an ability word ("Synapse Creature — …") and those words blanked as well.
+function _subjectMask(text) {
+  let { m } = _effectMask(text.replace(/^\s*[A-Z][^{\n.;:"“”—]{0,40}—\s*/, _blank));
+  for (const re of S_OFF_BOARD) m = m.replace(re, _blank);
+  return m;
+}
+
+// The sentence cut into one clause per subject: "creatures you control get +1/+1 and creatures
+// your opponents control get -1/-1" (Zealous Persecution) is two. Each is
+// { a, v: its subject is [a, v), cut: [from, to) removes the clause, cap } - offsets into text.
+function subjectClauses(text) {
+  const m = _subjectMask(text);
+  const lead = m.search(/\S/), v0 = S_VERB.exec(m);
+  if (lead < 0 || !v0) return { m, clauses: [] };
+  const end = text.replace(/[\s.]+$/, '').length;
+  const starts = [{ sepAt: lead, a: lead, v: v0.index }];
+  const sep = /,?\s+and\s+/gi;
+  sep.lastIndex = v0.index;
+  let x;
+  while ((x = sep.exec(m))) {
+    const a = x.index + x[0].length, v = S_VERB.exec(m.slice(a));
+    if (!v) break;
+    const subj = m.slice(a, a + v.index).trim();
+    if (!subj || S_NOT_SUBJECT.test(subj) || S_NOT_GROUP.test(subj)) continue;
+    starts.push({ sepAt: x.index, a, v: a + v.index });
+  }
+  return { m, clauses: starts.map((c, i) => ({ a: c.a, v: c.v, alone: starts.length === 1,
+    cut: i === 0 ? [lead, starts.length > 1 ? starts[1].a : end] : [c.sepAt, i + 1 < starts.length ? starts[i + 1].sepAt : end], cap: i === 0 })) };
+}
+
+// The swappable words of one subject, m[a, v): { parts: [{ k, what, a, b, to: [candidates], cap }], side, S }.
+function subjectParts(text, m, a, v) {
+  const S = ' '.repeat(a) + m.slice(a, v), lead = S.search(/\S/);
+  if (lead < 0 || S_NOT_SUBJECT.test(S) || S_NOT_GROUP.test(S.slice(lead))) return null;
+  const lower = text.toLowerCase(), parts = [];
+  let x;
+  const each = (re, fn) => { re.lastIndex = 0; while ((x = re.exec(S))) fn(x); };
+  each(/\byou control\b/gi, x => parts.push({ k: 'controller', what: x[0], a: x.index, b: x.index + x[0].length, to: ['your opponents control'] }));
+  each(/\byour opponents control\b|\ban opponent controls\b|\byou don't control\b/gi, x => parts.push({ k: 'controller', what: x[0], a: x.index, b: x.index + x[0].length, to: ['you control'] }));
+  // ("Henry Wu and other Human creatures you control": the card is named beside the others.)
+  each(/\bother\s+/gi, x => /\band\s+$/i.test(S.slice(0, x.index)) || parts.push({ k: 'other', what: 'other', a: x.index, b: x.index + x[0].length, to: [''], cap: x.index === lead }));
+  each(/\b(non)?(white|blue|black|red|green)\b/gi, x => {
+    const at = x.index + (x[1] || '').length;
+    const to = P_COLORS.filter(c => !lower.includes(c));
+    parts.push({ k: 'color', what: x[0], a: at, b: at + x[2].length, to: to.length ? to : ['white'] });
+  });
+  each(/\b(non)?(artifact|creature|enchantment|land)(s?)\b/gi, x => {
+    const at = x.index + (x[1] || '').length;
+    // ("Artifact creatures" must not become "artifact artifacts".)
+    let to = S_TYPE_TO[x[2].toLowerCase()].filter(t => !new RegExp('\\b' + t, 'i').test(S));
+    if (!to.length) return;
+    if (x[2][0] !== x[2][0].toLowerCase()) to = to.map(t => t[0].toUpperCase() + t.slice(1));
+    parts.push({ k: 'card type', what: x[0], a: at, b: at + x[2].length, to });
+  });
+  each(/\bnontoken creatures\b|\bcreature tokens\b/gi, x => {
+    let to = /^non/i.test(x[0]) ? 'creature tokens' : 'nontoken creatures';
+    if (/^[A-Z]/.test(x[0])) to = to[0].toUpperCase() + to.slice(1);
+    parts.push({ k: 'token', what: x[0], a: x.index, b: x.index + x[0].length, to: [to] });
+  });
+  each(/\b(non)?legendary\b/gi, x => parts.push({ k: 'legendary', what: x[0], a: x.index, b: x.index + x[0].length,
+    to: [x[1] ? (/^N/.test(x[0]) ? 'Legendary' : 'legendary') : (/^L/.test(x[0]) ? 'Nonlegendary' : 'nonlegendary')] }));
+  each(new RegExp('\\bwith(?:out)?\\s+(' + P_KW + ')\\b', 'gi'), x => {
+    const at = x.index + x[0].length - x[1].length;
+    parts.push({ k: 'has keyword', what: x[0], a: at, b: at + x[1].length, to: ['flying', 'reach'].filter(k => k !== x[1].toLowerCase()) });
+  });
+  // Every creature witness has power and toughness 2.
+  each(/\b(?:power|toughness)\s+(\d+)\s+or\s+(less|greater)\b/gi, x => {
+    const n = +x[1], holds = x[2] === 'less' ? 2 <= n : 2 >= n;
+    const at = x.index + x[0].indexOf(x[1]);
+    parts.push({ k: 'size', what: x[0], a: at, b: at + x[1].length, to: [(x[2] === 'less') === holds ? '0' : '9'] });
+  });
+  each(/[A-Z][A-Za-z'\-]*/g, x => {
+    const w = x[0], lw = w.toLowerCase();
+    if (P_CARD_TYPES.includes(lw.replace(/s$/, '')) || P_COLORS.includes(lw)) return;
+    let sing = w, kind = _subtypeOf(w);
+    if (!kind) { sing = singularizeCreatureType(w); kind = _subtypeOf(sing); }
+    if (!kind && /s$/.test(w)) { sing = w.slice(0, -1); kind = _subtypeOf(sing); }
+    if (!kind) return;
+    const plural = sing !== w;
+    const to = S_SUB_TO[kind].filter(t => !text.includes(t)).map(t => !plural ? t : _subtypeOf(t) === 'creatureTypes' ? pluralizeCreatureType(t) : t + 's');
+    if (to.length) parts.push({ k: 'subtype', what: w, a: x.index, b: x.index + w.length, to });
+  });
+  if (!parts.length) return null;
+  // Whose permanents the subject can reach, when its words settle that.
+  const mine = /\byou control\b/i.test(S), theirs = /\byour opponents control\b|\ban opponent controls\b|\byou don't control\b/i.test(S);
+  const side = mine && !theirs ? 'mine' : theirs && !mine ? 'theirs' : (!mine && !theirs && !/\b(?:you|your|opponents?|players?|controller|owner)\b/i.test(S)) ? 'both' : null;
+  return { parts, side, S };
+}
+
+const _capFirst = (t) => t.replace(/^\s*[a-z]/, ch => ch.toUpperCase());
+// sigOf(sentence) -> the board with the sentence replaced by that text. Returns the checks made.
+function probeSubject(text, sigOf) {
+  const rows = [];
+  // A mode's bullet (or a die-roll row's range) stays where it is.
+  const pre = (text.match(/^\s*(?:•\s*|\d+(?:—\d+)? \|\s*)/) || [''])[0];
+  if (pre) { const whole = sigOf; sigOf = (t) => whole(pre + t); text = text.slice(pre.length); }
+  const { m, clauses } = subjectClauses(text);
+  let before = null;
+  for (const c of clauses) {
+    const sp = subjectParts(text, m, c.a, c.v);
+    if (!sp) continue;
+    // The reference keeps every other sentence, mode and subject where it was: this sentence
+    // saying nothing about the board, or saying everything but this subject's clause.
+    let without = 'Draw a card.';
+    if (!c.alone) {
+      const rest = text.slice(c.cut[1]);
+      without = (text.slice(0, c.cut[0]) + (c.cap ? _capFirst(rest) : rest)).replace(/\s{2,}/g, ' ').replace(/\s+\./g, '.');
+    }
+    let ref;
+    try { ref = sigOf(without); before = before || sigOf(text); }
+    catch (e) { rows.push({ k: 'error', what: sp.S.trim(), verdict: 'error', msg: String(e && e.message) }); continue; }
+    const affected = (sig) => sig.slice(0, 2 * W_N).map((s, i) => s !== ref[i]);
+    const any = (sig) => affected(sig).some(Boolean);
+    const names = (sig) => affected(sig).map((y, i) => y ? (i < W_N ? 'my ' : 'their ') + W_CARDS[i % W_N][0] : null).filter(Boolean).join(', ') || 'nothing';
+    const witnesses = (sig) => sig.slice(0, 2 * W_N).join('\n');
+    const hit = names(before);
+    if (sp.side) {
+      const aff = affected(before);
+      let good = true;
+      for (let i = 0; i < W_N; i++) if (sp.side === 'mine' ? aff[i + W_N] : sp.side === 'theirs' ? aff[i] : aff[i] !== aff[i + W_N]) good = false;
+      rows.push({ k: 'side: ' + sp.side, what: sp.S.trim(), verdict: !any(before) ? 'inert' : good ? 'ok' : 'wrong side', hit });
+    }
+    for (const p of sp.parts) {
+      const row = { k: p.k, what: p.what, hit };
+      try {
+        for (const to of p.to) {
+          let tried = text.slice(0, p.a) + to + text.slice(p.b);
+          if (p.cap) tried = text.slice(0, p.a) + _capFirst(text.slice(p.b));
+          const after = sigOf(tried);
+          // Without "other" the source is one of the group. Read with it there, the source
+          // was reached all along; reached neither way, the board cannot tell.
+          const read = p.k === 'other' ? after[2 * W_N] !== before[2 * W_N] : witnesses(after) !== witnesses(before);
+          if (!row.tried || read) { row.tried = tried; row.hitAfter = names(after); }
+          row.verdict = read ? 'ok' : p.k === 'other' ? (before[2 * W_N] !== ref[2 * W_N] ? 'unread' : 'inert') : any(before) ? 'unread' : 'inert';
+          if (read) break;
+        }
+      } catch (e) { row.verdict = 'error'; row.msg = String(e && e.message); }
+      rows.push(row);
+    }
+  }
+  return rows;
+}
+
+// Every sentence of one face on the witness board: [{ ctx, text, rows }].
+function subjectFace(card, faceIndex) {
+  const face = _resolveCardFace(card, faceIndex);
+  const isSpell = /\b(instant|sorcery)\b/i.test(face.type_line || card.type_line || '');
+  const W = _stripReminderText(face.oracle_text || '');
+  const out = [];
+  if (!W.trim()) return out;
+  // Cheap look before any parsing: is there a group subject anywhere?
+  const hasSubject = (t) => { const { m, clauses } = subjectClauses(t); return clauses.some(c => subjectParts(t, m, c.a, c.v)); };
+  if (!splitSentences(W).some(s => hasSubject(s.text) || hasSubject(s.text.replace(/^[^:"]*:\s*/, '')))) return out;
+  const probe = (ctx, text, sigOf) => { const rows = probeSubject(text, sigOf); if (rows.length) out.push({ ctx, text, rows }); };
+  witnessBoard = true;
+  try {
+    const base = addCard(withOracle(card, faceIndex, W), faceIndex, isSpell);
+    const states = Battlefield.getAllFinalStates();
+    const lines = W.split('\n');
+    const abilityLine = new Set();
+    try {
+      for (const a of Battlefield.extractTriggeredAbilities(lines)) { abilityLine.add(a.index); if (/\n\s*•/.test(a.fullText)) a.options.forEach((_, oi) => abilityLine.add(a.index + 1 + oi)); }
+      for (const a of Battlefield.extractActivatedAbilities(lines)) abilityLine.add(a.index);
+    } catch (e) { /* classification only */ }
+
+    try {
+      const fState = states.get(base.id);
+      const abilities = ((fState && fState.abilities) || []).slice();
+      const jobs = [
+        ...Battlefield.extractTriggeredAbilities(abilities).map(a => ['trigger', a]),
+        ...Battlefield.extractActivatedAbilities(abilities)
+          .filter(a => !(a.isMonstrosity || a.isCrew || a.isSaddle || a.isEquip || a.isReconfigure || a.isFortify)).map(a => ['activated', a]),
+      ];
+      for (const [kind, ab] of jobs) {
+        const bullets = ab.options && /\n\s*•/.test(ab.fullText);
+        for (const unit of bullets ? ab.options : [ab.effectText]) {
+          if (!unit) continue;
+          for (const s of splitSentences(unit)) {
+            const lead = unit.slice(s.start, s.end).search(/\S/), at = s.start + Math.max(0, lead);
+            probe(kind, unit.slice(at, s.end), (t) => {
+              const u = unit.slice(0, at) + t + unit.slice(s.end);
+              return fireAbility(base, withText(ab, unit, u), kind, u, states, null, () => boardSig(base.id));
+            });
+          }
+        }
+      }
+    } catch (e) { out.push({ ctx: 'ability', text: '', rows: [{ k: 'error', what: '', verdict: 'error', msg: String(e && e.message) }] }); }
+
+    for (const s of splitSentences(W)) {
+      if (abilityLine.has(s.line)) continue;
+      const lead = W.slice(s.start, s.end).search(/\S/), at = s.start + Math.max(0, lead);
+      probe(isSpell ? 'spell' : 'static', W.slice(at, s.end),
+        (t) => boardSig(addCard(withOracle(card, faceIndex, W.slice(0, at) + t + W.slice(s.end)), faceIndex, isSpell).id));
+    }
+  } finally { witnessBoard = false; }
+  return out;
+}
+
 /* ─── Main ─── */
 (function main() {
   const scripts = JSON.parse(readFile(_args[0]));
@@ -600,6 +884,13 @@ function sweepFace(card, faceIndex) {
   globalThis.console = globalThis.console || {};
   for (const k of ['log', 'warn', 'error', 'info', 'debug']) console[k] = () => {};
 
+  // The witness board must be the same on both sides, or the subject probe means nothing.
+  witnessBoard = true;
+  resetBoard();
+  const blank = boardSig(null);
+  for (let i = 0; i < W_N; i++) if (blank[i] !== blank[i + W_N]) throw new Error('Witness board is not symmetric at ' + W_CARDS[i][0]);
+  witnessBoard = false;
+
   print('@@KEYWORDS ' + JSON.stringify([...KEYWORD_SET]));
   const cards = JSON.parse(readFile(_args[1]));
   for (const card of cards) {
@@ -612,6 +903,8 @@ function sweepFace(card, faceIndex) {
       try { rec = sweepFace(card, fi); }
       catch (e) { rec = { name: card.name, face: fi, layout: card.layout, typeLine: card.type_line || '', nEffects: 0, errors: [errInfo('sweep', e)], nonsense: [], sentences: [] }; }
       rec.nonsense = [...new Set(rec.nonsense)];
+      try { const subject = subjectFace(card, fi); if (subject.length) rec.subject = subject; }
+      catch (e) { rec.subject = [{ ctx: 'face', text: '', rows: [{ k: 'error', what: '', verdict: 'error', msg: String(e && e.message) }] }]; }
       print('@@SWEEP ' + JSON.stringify(rec));
     }
   }
