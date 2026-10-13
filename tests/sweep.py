@@ -676,6 +676,7 @@ def write_subject(records):
                 findings.append({'card': r['name'], 'rank': ranks.get(r['name']), 'where': s['ctx'], 'sentence': s['text'],
                                  'check': row['k'], 'word': row.get('what', ''), 'verdict': row['verdict'],
                                  'reaches': row.get('hit'), 'tried': row.get('tried'), 'reaches_after': row.get('hitAfter'),
+                                 'stand_in': row.get('standIn'), 'witness': row.get('witness'),
                                  'error': row.get('msg')})
     findings.sort(key=lambda f: (f['rank'] is None, f['rank'] or 0, f['card'], f['sentence']))
     kinds = sorted({k for k, _ in tally}, key=lambda k: (k != 'side', k))
@@ -689,7 +690,9 @@ def write_subject(records):
          'and a subject that names no controller must reach both sides alike. Then each word of the subject is swapped '
          'for another of its kind: a word is **unread** when no swap of it changes who is affected. A check is '
          '**inert** when the sentence reaches no witness (the board has no counters, attackers, chosen types or '
-         'unpicked modes), or when the card itself is not one of the group "other" leaves it out of; an inert check '
+         'unpicked modes; a sentence that reaches nobody because no witness has its subtype is judged with a witness '
+         'of that subtype added to each side, and failing that with a subtype of the board standing in for it), or '
+         'when the card itself is not one of the group "other" leaves it out of; an inert check '
          'says nothing either way. A finding means "check this card".\n',
          '%d checks on %d cards; %d findings on %d cards.%s\n' % (
              total, len(cards), len(findings), len({f['card'] for f in findings}),
@@ -708,7 +711,9 @@ def write_subject(records):
         for f in findings:
             what = ('Error: %s' % f['error']) if f['verdict'] == 'error' else \
                 '%s, %s: %s' % (f['verdict'].capitalize(), subject_label(f['check']).lower(), f['word'])
-            S.append('| %s | %s | %s | %s | %s | %s |' % (f['rank'] or '', md(f['card']), md(what), md(f['sentence']),
+            sentence = f['sentence'] + (' (judged as: %s)' % f['stand_in'] if f.get('stand_in') else '') + \
+                (' (witness added: %s)' % f['witness'] if f.get('witness') else '')
+            S.append('| %s | %s | %s | %s | %s | %s |' % (f['rank'] or '', md(f['card']), md(what), md(sentence),
                                                     md(f['reaches'] or ''), md(f['tried'] or '')))
     with open(os.path.join(OUT_DIR, 'subject.md'), 'w', encoding='utf-8') as f:
         f.write('\n'.join(S) + '\n')
@@ -780,6 +785,10 @@ def main():
                     found = row['verdict'] in SUBJECT_FOUND
                     print('           %-10s %s: %s' % (row['verdict'].upper() if found else row['verdict'],
                                                       subject_label(row['k']).lower(), row.get('what', '')))
+                    if row.get('witness'):
+                        print('                      witness added to each side: %s' % row['witness'])
+                    if row.get('standIn'):
+                        print('                      judged as: %s' % row['standIn'])
                     print('                      reaches: %s' % row.get('hit', row.get('msg', '')))
                     if row.get('tried'):
                         print('                      swapped: %s' % row['tried'])

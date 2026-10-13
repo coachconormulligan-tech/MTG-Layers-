@@ -1729,10 +1729,9 @@ function parseCardEffects(permanent, card, opts = {}) {
       `${lead || ''}${own} ${verb.toLowerCase() === 'have' ? 'has' : verb + 's'} ${rest} ${others.charAt(0).toUpperCase() + others.slice(1)} ${verb} ${rest}`);
   // "All creatures become black and all lands become Swamps" (Nightcreep): two subjects, each
   // becoming something of its own, are two sentences. Left whole, the first subject took the
-  // second one's types and the creatures became Swamps. (On lines of their own: the type parser
-  // reads one "become" sentence a line.)
+  // second one's types and the creatures became Swamps.
   oracle = oracle.replace(/^(Until end of turn, )?((?:all|each) [\w' -]+? becomes? [^.\n"]+?) and ((?:all|each) [\w' -]+? becomes? [^.\n"]+\.)$/gim,
-    (_, lead, first, second) => `${lead || ''}${first}.\n${lead || ''}${lead ? second : second.charAt(0).toUpperCase() + second.slice(1)}`);
+    (_, lead, first, second) => `${lead || ''}${first}. ${lead || ''}${lead ? second : second.charAt(0).toUpperCase() + second.slice(1)}`);
   // "You may have Allies you control gain lifelink until end of turn" (Talus Paladin, Highland
   // Berserker): the permanents are the subject. Left in front, "you may have" was read as part
   // of the filter ("You May Ally") and the effect reached nothing. After the splitter, which
@@ -3043,10 +3042,19 @@ function parseCardEffects(permanent, card, opts = {}) {
   // Spans where setTypeRegex emitted a colour, so becomesColorRegex below does not repeat it.
   const _stColorRanges = [];
   const setTypeRegex = /(?:^|[.;])\s*(?:all\s+|each\s+)?(.+?)\s+(?:you (?:control|own)\s+)?(?:are|is|becomes?)\s+(.+?)(?:\.|$)/gmi;
+  const _stNextSentenceRegex = /^\.[ \t]*(?:all\s+|each\s+)?[^.\n]+?\s+(?:you (?:control|own)\s+)?(?:are|is|becomes?)\s+[^.\n]/i;
   let setTypeMatch;
   while ((setTypeMatch = setTypeRegex.exec(oracle)) !== null) {
     const mStart = setTypeMatch.index;
     const mEnd = mStart + setTypeMatch[0].length;
+    // The match takes its closing period, which the next sentence on the same line needs as its
+    // opening one ("All creatures become black. All lands become Swamps."). Hand it back when
+    // that sentence has an "is / are / becomes" of its own; otherwise the search moves on as before.
+    // (Not on a triggered line read as part of the whole card: "When this creature dies, if it's
+    // not a Spirit, return it …. It's a Spirit Detective" — Otherworldly Escort — belongs to the
+    // trigger and is parsed when it fires.)
+    if (setTypeMatch[0].endsWith('.') && _stNextSentenceRegex.test(oracle.slice(mEnd - 1)) &&
+        !_isInTriggeredSentence(mEnd)) setTypeRegex.lastIndex = mEnd - 1;
     const overlaps = addTypeMatchRanges.some(r => mStart < r.end && mEnd > r.start);
     if (overlaps) continue;
 
@@ -3322,7 +3330,8 @@ function parseCardEffects(permanent, card, opts = {}) {
     // "It is still a [type]." is a continuation sentence for enchantTransformRegex aura/equip effects.
     // Parsing it here would generate a selfTarget SET_TYPE on the source aura itself (wrong).
     // enchantTransformRegex already merges "It is/has..." continuations and handles them correctly.
-    if (/^it$/i.test(filterText) && /\bstill\b/i.test(becomesText)) continue;
+    // ("He's still a planeswalker" — Gideon, Champion of Justice: the sentence before it kept the type.)
+    if (/^(?:it|he|she|they|this (?:card|creature|permanent))$/i.test(filterText) && /\bstill\b/i.test(becomesText)) continue;
 
     // Fix: Handle "X loses all abilities and is Y" pattern (e.g. Titania's Song).
     // The setTypeRegex lazily matches the first standalone "is", so filterText becomes
