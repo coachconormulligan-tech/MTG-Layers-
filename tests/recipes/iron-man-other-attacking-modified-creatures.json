@@ -1,0 +1,20 @@
+{
+  "name": "Iron Man, Armored Avenger — \"other attacking modified creatures gain flying\"",
+  "notes": "Found by the subject probe's 'reaches nobody' verdict (2026-10-13), also on War Machine, Avenging Arsenal. The modified branch of _buildAppliesToFromTextInner wanted 'modified' first, so 'attacking modified creatures' matched nothing. Only the attacker with a counter gets flying.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "call": ["addCounter", "@bears", "+1/+1", 1] },
+    { "call": ["toggleAttacking", "@bears"] },
+    { "add": "Runeclaw Bear", "as": "plain" },
+    { "call": ["toggleAttacking", "@plain"] },
+    { "add": "Hill Giant", "as": "home" },
+    { "call": ["addCounter", "@home", "+1/+1", 1] },
+    { "add": "Iron Man, Armored Avenger", "as": "iron" },
+    { "fire": "@iron", "trigger": 2, "as": "attack" }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$includes": ["Flying"] } } },
+    { "perm": "Runeclaw Bear", "final": { "abilities": { "$excludes": ["Flying"] } } },
+    { "perm": "Hill Giant", "final": { "abilities": { "$excludes": ["Flying"] } } }
+  ]
+}

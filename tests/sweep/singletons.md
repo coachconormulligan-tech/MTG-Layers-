@@ -4,3 +4,4 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 
 | Card | Reads like | Where | Sentence |
 |---|---|---|---|
+| Territorial Kavu | power / toughness | static | Domain — this card's power and toughness are each equal to the number of basic land types among lands you control. |

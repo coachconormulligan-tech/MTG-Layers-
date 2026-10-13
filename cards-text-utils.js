@@ -1323,13 +1323,18 @@ function buildAppliesToFromText(filterText) {
 
 function _buildAppliesToFromTextInner(filterText) {
   const raw = filterText.toLowerCase().trim();
+  // "Creatures you don't control get -1/-1" (Orzhov Pontiff): everybody's but yours. (A group;
+  // "a land you don't control" - what Herald of Leshrac's upkeep cost takes - is one object.)
+  const _notYours = /\byou don't control$/.test(raw) && !/^(?:an?|another|target|up to)\b/.test(raw);
   // Detect "your opponents control"  —  mark effect but return empty (nothing applies)
   const opponentsControl = raw.includes('your opponents control') || raw.includes("opponents' control")
     || raw.includes("opponent controls") || raw.includes("opponents control")
-    || /\bopponent'?s?\b/.test(raw);
+    || /\bopponent'?s?\b/.test(raw)
+    || _notYours;
   const youControl = !opponentsControl && (/\byou (?:control|own)\b/.test(raw));
   const f = raw
     .replace(/^(?:all|each|every|up to \w+( other)?)\s+/, '')
+    .replace(/\s+you don't control$/, (m) => _notYours ? '' : m)
     .replace(/\s+you (?:control|own)(?=\s|$)/g, '')
     .replace(/\s+your opponents control(?=\s|$)/g, '')
     .replace(/\s+opponents control(?=\s|$)/g, '')
@@ -1390,6 +1395,17 @@ function _buildAppliesToFromTextInner(filterText) {
 
   // "modified creatures" = filter for modified permanents (CR 701.52)
   // Modified: has a counter, an Aura attached (Enchanted trait), or Equipment attached (Equipped trait)
+  // "attacking modified creatures" (War Machine, Avenging Arsenal): modified, and whatever the
+  // words around it ask.
+  const midModified = f.match(/^(.+?)\s+modified\s+(.+)$/);
+  if (midModified) {
+    const baseFilter = buildAppliesToFromText(`${midModified[1]} ${midModified[2]}`);
+    return {
+      fn: (p, allStates, effectCtrl) => baseFilter.fn(p, allStates, effectCtrl) &&
+        (Object.values(p.counters || {}).some(v => v > 0) || (p.traits || []).includes('Enchanted') || (p.traits || []).includes('Equipped')),
+      desc: `Applies to: modified ${baseFilter.desc.replace('Applies to: ', '')}`,
+    };
+  }
   const modifiedMatch = f.match(/^modified\s+(.+)$/);
   if (modifiedMatch) {
     const typeInfo = CARD_TYPE_WORDS[modifiedMatch[1]] || CARD_TYPE_WORDS[modifiedMatch[1].replace(/s$/, '')];
@@ -1704,6 +1720,16 @@ function _buildAppliesToFromTextInner(filterText) {
     return {
       fn: (p) => baseFilter.fn(p) && (p.colors || []).length === 0,
       desc: `Applies to: colorless ${baseFilter.desc.replace('Applies to: ', '')}`,
+    };
+  }
+  // "multicolored creatures" (Glass of the Guildpact), "monocolored creature".
+  const colorCountFilter = f.match(/^(multicolored|monocolored)\s+(.+)$/);
+  if (colorCountFilter) {
+    const baseFilter = buildAppliesToFromText(colorCountFilter[2]);
+    const multi = colorCountFilter[1] === 'multicolored';
+    return {
+      fn: (p) => baseFilter.fn(p) && (multi ? (p.colors || []).length > 1 : (p.colors || []).length === 1),
+      desc: `Applies to: ${colorCountFilter[1]} ${baseFilter.desc.replace('Applies to: ', '')}`,
     };
   }
   const withKeywordFilter = f.match(/^(.+?)\s+with\s+(.+)$/);
