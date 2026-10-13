@@ -429,6 +429,7 @@ function renderBattlefield() {
           title="Room options — ${unlockedCount}/${p.roomFaces.length} unlocked"
         >Rooms ${unlockedCount}/${p.roomFaces.length}</button>`;
       })() : ''}
+      ${isCreature && !p.isManualEffect && !p.isSpell && (p.traits || []).includes('Attacking') ? renderAttackedPlayerSelect(p) : ''}
       ${p.isToken ? '<div class="bf-card-token-badge">TOKEN</div>' : ''}
       ${_cardFs?.copySource ? '<div class="bf-card-copy-badge">COPY</div>' : ''}
       ${(p.isSpell || (p.isManualEffect && !p.isTriggeredAbility && !p.isActivatedAbility)) ? '<div class="bf-card-spell-badge">SPELL</div>' : ''}
@@ -663,6 +664,22 @@ function toggleTapped(id) {
 
 function toggleAttacking(id) {
   Battlefield.toggleAttacking(id);
+  Battlefield.evaluate();
+  renderAll();
+}
+
+// Which player an attacking creature is attacking: every player but its controller.
+function renderAttackedPlayerSelect(p) {
+  const ctrl = p.controller || p.owner || 'player_0';
+  const others = Battlefield.players.filter(pl => pl.id !== ctrl);
+  if (!others.length) return '';
+  const attacked = _attackedPlayerId(p);
+  return `<select class="bf-card-attack-select" title="Which player this creature is attacking" onclick="event.stopPropagation()" onchange="setAttackingPlayer('${p.id}', this.value)">${
+    others.map(pl => `<option value="${escapeAttr(pl.id)}"${pl.id === attacked ? ' selected' : ''}>Attacking ${escapeHtml(pl.name)}</option>`).join('')}</select>`;
+}
+
+function setAttackingPlayer(id, playerId) {
+  Battlefield.setAttackingPlayer(id, playerId);
   Battlefield.evaluate();
   renderAll();
 }

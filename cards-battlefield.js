@@ -938,6 +938,11 @@ const Battlefield = {
       // Stamp the origin id so effectAppliesToPerm can exclude it directly.
       if (pseudoPerm._excludeAbilitySource && eff.scope === 'global' && eff.affectsSelf === false) {
         eff._excludeSourceId = sourcePermId;
+        // "Whenever enchanted creature attacks, each other creature …" (Martial Impetus): the
+        // creature left out is the one the Aura or Equipment is attached to.
+        // (Looked up when the effect is applied: a restored board fires the ability before the
+        // Aura's own target is set again.)
+        if (/^when(?:ever)?\s+(?:enchanted|equipped)\s+(?:creature|permanent)\b/i.test(fullText || '')) eff._excludeAttachedOfId = sourcePermId;
       }
       if (abilityTargetRestriction) eff._abilityTargetRestriction = abilityTargetRestriction;
       // "creatures you control other than this creature become copies of …" (Deceiver of Form).
@@ -1974,12 +1979,23 @@ const Battlefield = {
       const isAttacking = perm.traits.includes('Attacking');
       if (isAttacking) {
         perm.traits = perm.traits.filter(t => t !== 'Attacking');
+        delete perm.attackingPlayerId;
       } else {
         // Mutually exclusive with Blocking
         perm.traits = perm.traits.filter(t => t !== 'Blocking');
         perm.traits.push('Attacking');
       }
     }
+  },
+
+  /* Which player an attacking creature is attacking (the pick on the card). Any player but
+     its controller; anything else clears the pick, and the first other player is assumed. */
+  setAttackingPlayer(id, playerId) {
+    this._invalidate();
+    const perm = this.getPermById(id);
+    if (!perm) return;
+    if (playerId && playerId !== (perm.controller || perm.owner) && this.getPlayer(playerId)) perm.attackingPlayerId = playerId;
+    else delete perm.attackingPlayerId;
   },
 
   /* Toggle the 'Blocking' trait on a creature. Mutually exclusive with 'Attacking'. */
@@ -1994,6 +2010,7 @@ const Battlefield = {
       } else {
         // Mutually exclusive with Attacking
         perm.traits = perm.traits.filter(t => t !== 'Attacking');
+        delete perm.attackingPlayerId;
         perm.traits.push('Blocking');
       }
     }
@@ -3431,6 +3448,7 @@ const Battlefield = {
         timestamp: p.timestamp,
         tapped: !!p.tapped,
         traits: Array.isArray(p.traits) ? p.traits.slice() : [],
+        attackingPlayerId: p.attackingPlayerId || undefined,
         counters: { ...(p.counters || {}) },
         counterTimestamps: { ...(p.counterTimestamps || {}) },
         isFaceDown: !!p.isFaceDown,
@@ -3647,6 +3665,7 @@ const Battlefield = {
       np.controller = r.controller || r.owner;
       np.tapped = !!r.tapped;
       np.traits = Array.isArray(r.traits) ? r.traits.slice() : [];
+      if (r.attackingPlayerId) np.attackingPlayerId = r.attackingPlayerId;
       np.counters = { ...(r.counters || {}) };
       np.counterTimestamps = { ...(r.counterTimestamps || {}) };
       // Counters drive P/T and keyword grants through synthetic effects — rebuild them.

@@ -82,6 +82,7 @@ function snapshotState(state) {
     cdaUserValue: state.cdaUserValue ?? null,
     counters: { ...(state.counters || {}) },
     traits: [...(state.traits || [])],
+    attackingPlayerId: state.attackingPlayerId || null,
     allPrintedAbilities: state.allPrintedAbilities ? [...state.allPrintedAbilities] : null,
     conditionalAbilityIndices: state.conditionalAbilityIndices || null,
     conditionalAbilityConditions: state.conditionalAbilityConditions || null,
@@ -197,3 +198,14 @@ function _permIdOfState(allStates, state) {
   return null;
 }
 
+// The player an attacking permanent (or its state) is attacking: the one picked on the card,
+// else the first player who is not its controller. Null when it is not attacking or there is
+// no other player.
+function _attackedPlayerId(st) {
+  if (!st || !(st.traits || []).includes('Attacking')) return null;
+  const players = (typeof Battlefield !== 'undefined' && Battlefield.players) || [];
+  const ctrl = st.controller || st.owner || 'player_0';
+  if (st.attackingPlayerId && st.attackingPlayerId !== ctrl && players.some(pl => pl.id === st.attackingPlayerId)) return st.attackingPlayerId;
+  const other = players.find(pl => pl.id !== ctrl);
+  return other ? other.id : null;
+}

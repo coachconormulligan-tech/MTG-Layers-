@@ -1,0 +1,50 @@
+{
+  "name": "Dion, Bahamut's Dominant — \"this card and other Knights you control have flying\" includes Dion",
+  "notes": "Found while fixing Henry Wu (2026-10-12). '[This card] and other X you control have/get …' reached the other permanents but not the card itself (Vampire Nocturnus likewise). The sentence is now split into one for the card and one for the others.",
+  "steps": [
+    {
+      "add": "Dion, Bahamut's Dominant",
+      "as": "dion"
+    },
+    {
+      "add": "Fireborn Knight",
+      "as": "knight"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Dion, Bahamut's Dominant",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Flying"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Fireborn Knight",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Flying"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Flying"
+          ]
+        }
+      }
+    }
+  ]
+}

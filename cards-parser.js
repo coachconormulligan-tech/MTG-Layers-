@@ -1721,6 +1721,12 @@ function parseCardEffects(permanent, card, opts = {}) {
   // front is the line's, so it holds for both.)
   oracle = oracle.replace(/^(As long as [^,\n]+, )?(this [\w-]+ (?:has|gains?) [a-z ,]+?) and ((?:each other |other |all )?[\w' -]*?\byou control (?:have|gain) [^.\n"]+\.)$/gim,
     (_, lead, own, others) => `${lead || ''}${own}. ${others.charAt(0).toUpperCase() + others.slice(1)}`);
+  // "This card and other Human creatures you control have exploit" (Henry Wu, InGen Geneticist):
+  // one keyword list for two subjects, so each subject gets the sentence. Left whole, the
+  // subject was not understood and every permanent you control gained the ability.
+  oracle = oracle.replace(/^(As long as [^,\n]+, )?(this [\w-]+) and ((?:each other |other )[\w' -]*?\byou control) (have|get|gain) ([^.\n"]+\.)$/gim,
+    (_, lead, own, others, verb, rest) =>
+      `${lead || ''}${own} ${verb.toLowerCase() === 'have' ? 'has' : verb + 's'} ${rest} ${others.charAt(0).toUpperCase() + others.slice(1)} ${verb} ${rest}`);
   // "You may have Allies you control gain lifelink until end of turn" (Talus Paladin, Highland
   // Berserker): the permanents are the subject. Left in front, "you may have" was read as part
   // of the filter ("You May Ally") and the effect reached nothing. After the splitter, which
@@ -3969,7 +3975,7 @@ function parseCardEffects(permanent, card, opts = {}) {
   }
 
   // ---- Layer 5: "[filter] are [color]" → SET_COLOR (Shifting Sky) ----
-  const colorSetRegex = /(?:^|\.)\s*(?:all\s+)?(.+?)\s+(?:you (?:control|own)\s+)?(?:are|is)\s+(white|blue|black|red|green|colorless)(?:\s|\.|\,|$)/gmi;
+  const colorSetRegex = /(?:^|\.)\s*(?:all\s+)?(.+?)\s+(?:you (?:control|own)\s+)?(?:are|is)\s+(white|blue|black|red|green|colorless)(?!\s+sources?\b)(?:\s|\.|\,|$)/gmi;
   let colorSetMatch;
   while ((colorSetMatch = colorSetRegex.exec(oracle)) !== null) {
     const csFilterText = colorSetMatch[1].trim();

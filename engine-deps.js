@@ -308,6 +308,10 @@ function effectAppliesToPerm(effect, permState, permanent, permId, allStates, ab
   // Triggered/activated "each other [thing] you control" pseudo-perm effects carry the
   // original ability source id so it can be excluded even though the effect's sourceId is
   // the pseudo-perm (e.g. God-Eternal Rhonas doubling each OTHER creature's power).
+  if (effect.scope === 'global' && effect._excludeAttachedOfId && typeof Battlefield !== 'undefined' &&
+      Battlefield.effects.some(e => e.sourceId === effect._excludeAttachedOfId && e.scope === 'targeted' && e.targetId === permId)) {
+    return false;
+  }
   if (effect.scope === 'global' && effect._excludeSourceId && effect._excludeSourceId === permId) {
     return false;
   }

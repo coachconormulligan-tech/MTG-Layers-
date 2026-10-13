@@ -1,0 +1,89 @@
+{
+  "name": "Blast-Furnace Hellkite — \"creatures attacking your opponents\" is the attackers, not what opponents control",
+  "notes": "Found by the subject probe (2026-10-12). Every permanent the opponent controlled gained double strike. Now only a creature that is attacking a player other than the Hellkite's controller.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Second"
+      ]
+    },
+    {
+      "add": "Blast-Furnace Hellkite",
+      "as": "kite"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Forest",
+      "as": "forest",
+      "controller": "p2"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant",
+      "controller": "p2"
+    },
+    {
+      "call": [
+        "toggleAttacking",
+        "@bears"
+      ]
+    },
+    {
+      "call": [
+        "toggleAttacking",
+        "@giant"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Double strike"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Double strike"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Double strike"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Forest",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Double strike"
+          ]
+        }
+      }
+    }
+  ]
+}
