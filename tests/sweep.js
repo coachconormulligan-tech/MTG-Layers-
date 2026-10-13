@@ -602,7 +602,11 @@ function sweepFace(card, faceIndex) {
              A word is unread when no swap of it changes which witnesses are affected.
    Without "other" the source is affected too; when it is not one of the group, or already
    has what is granted, the board cannot show that and the check is inert, as is any check
-   on a sentence that reaches no witness (the board has no counters, attackers or chosen types). */
+   on a sentence that reaches no witness (the board has no counters, attackers or chosen types).
+   A sentence that reaches nobody because no witness has its subtype ("Dragons you control") is
+   judged again with a witness of that subtype added to each side; when it still reaches nobody,
+   with a subtype of the board standing in. Reaching the stand-in's witnesses and not its own
+   is "unread" for the subtype word. */
 const W_CARDS = [
   ['Goblin', 'Creature — Goblin', ['R'], ''],
   ['Elf', 'Creature — Elf', ['G'], ''],
@@ -623,6 +627,8 @@ const W_CARDS = [
 ];
 const W_N = W_CARDS.length;
 let witnessBoard = false, witnessIds = [];
+// Witnesses one sentence asks for on top of the 16 (see probeSubject), in W_CARDS form.
+let extraW = [];
 // Every creature witness is a 2/2 with mana value 3, so "power and toughness equal to its
 // mana value" (March of the Machines) shows on one that is reached.
 function witnessCard(w, side) {
@@ -637,7 +643,7 @@ function addWitnesses() {
   witnessIds = [];
   for (const side of ['player_0', opp.id]) {
     Battlefield.activePlayerId = side;
-    for (const w of W_CARDS) {
+    for (const w of W_CARDS.concat(extraW)) {
       const p = Battlefield.addPermanent(witnessCard(w, side), { suppressPrompt: true, controller: side, owner: side, isToken: /Token/.test(w[1]) });
       witnessIds.push(p.id);
     }
@@ -744,12 +750,13 @@ function subjectParts(text, m, a, v) {
     const w = x[0], lw = w.toLowerCase();
     if (P_CARD_TYPES.includes(lw.replace(/s$/, '')) || P_COLORS.includes(lw)) return;
     let sing = w, kind = _subtypeOf(w);
+    if (!kind) { sing = _ownSingular(w); kind = _subtypeOf(sing); }
     if (!kind) { sing = singularizeCreatureType(w); kind = _subtypeOf(sing); }
     if (!kind && /s$/.test(w)) { sing = w.slice(0, -1); kind = _subtypeOf(sing); }
     if (!kind) return;
     const plural = sing !== w;
     const to = S_SUB_TO[kind].filter(t => !text.includes(t)).map(t => !plural ? t : _subtypeOf(t) === 'creatureTypes' ? pluralizeCreatureType(t) : t + 's');
-    if (to.length) parts.push({ k: 'subtype', what: w, a: x.index, b: x.index + w.length, to });
+    if (to.length) parts.push({ k: 'subtype', what: w, a: x.index, b: x.index + w.length, to, sing, kind, S });
   });
   if (!parts.length) return null;
   // Whose permanents the subject can reach, when its words settle that.
@@ -759,12 +766,43 @@ function subjectParts(text, m, a, v) {
 }
 
 const _capFirst = (t) => t.replace(/^\s*[a-z]/, ch => ch.toUpperCase());
+
+// The singular of a subtype's plural, worked out here and not by the parser's own helper: a
+// witness built from the parser's reading of "Dwarves" would agree with the parser when both are wrong.
+const S_SINGULAR = { dwarves: 'Dwarf', elves: 'Elf', wolves: 'Wolf', werewolves: 'Werewolf', mice: 'Mouse', oxen: 'Ox',
+  heroes: 'Hero', fungi: 'Fungus', pegasi: 'Pegasus', cyclopes: 'Cyclops', geese: 'Goose', faeries: 'Faerie',
+  zombies: 'Zombie', pixies: 'Pixie', genies: 'Genie', kavu: 'Kavu', thieves: 'Thief', octopuses: 'Octopus' };
+function _ownSingular(w) {
+  const l = w.toLowerCase();
+  if (S_SINGULAR[l]) return S_SINGULAR[l];
+  if (/ies$/.test(l)) return w.slice(0, -3) + 'y';
+  if (/men$/.test(l)) return w.slice(0, -3) + 'man';
+  if (/(?:x|ch|sh|ss)es$/.test(l)) return w.slice(0, -2);
+  return /s$/.test(l) ? w.slice(0, -1) : w;
+}
+// One witness (W_CARDS form) for the subtype words p of a subject that are not on the board, with
+// the rest of what the subject asks of it: "white Knights", "Zombie tokens", "legendary Dragons".
+function subtypeWitness(ps) {
+  const S = ps[0].S, has = (re) => re.test(S);
+  const head = { creatureTypes: 'Creature', artifactTypes: 'Artifact', landTypes: 'Land', enchantmentTypes: 'Enchantment' };
+  const types = [...new Set(ps.map(p => head[p.kind]))];
+  for (const t of ['Artifact', 'Enchantment', 'Land', 'Creature']) if (!types.includes(t) && has(new RegExp('(?<!non)\\b' + t + '(?:s)?\\b', 'i')) && (t === 'Creature' || has(new RegExp('\\b' + t + ' creatures?\\b', 'i')))) types.push(t);
+  types.sort((a, b) => (a === 'Creature') - (b === 'Creature'));
+  let named = P_COLORS.filter(c => has(new RegExp('(?<!non)\\b' + c + '\\b', 'i')));
+  // A creature witness has a colour unless the subject says otherwise: "All Slivers are
+  // colorless" (Ghostflame Sliver) shows on nothing that is colourless already.
+  if (!named.length && types.includes('Creature') && !has(/(?<!non)\bcolorless\b/i)) named = P_COLORS.filter(c => !has(new RegExp('non' + c, 'i'))).slice(0, 1);
+  const colors = named.map(c => c === 'blue' ? 'U' : c[0].toUpperCase());
+  const line = (has(/\btokens?\b/i) ? 'Token ' : '') + (has(/(?<!non)\blegendary\b/i) ? 'Legendary ' : '') + types.join(' ') + ' — ' + ps.map(p => p.sing).join(' ');
+  const name = P_COLORS.filter(c => has(new RegExp('(?<!non)\\b' + c + '\\b', 'i'))).concat(has(/(?<!non)\blegendary\b/i) ? ['legendary'] : [],
+    ps.map(p => p.sing), has(/\btokens?\b/i) ? ['token'] : []).join(' ');
+  return [name, line, colors, ''];
+}
+
 // sigOf(sentence) -> the board with the sentence replaced by that text. Returns the checks made.
-function probeSubject(text, sigOf) {
-  const rows = [];
-  // A mode's bullet (or a die-roll row's range) stays where it is.
-  const pre = (text.match(/^\s*(?:•\s*|\d+(?:—\d+)? \|\s*)/) || [''])[0];
-  if (pre) { const whole = sigOf; sigOf = (t) => whole(pre + t); text = text.slice(pre.length); }
+// absent, when given, collects the subtype words of each subject that reached no witness.
+function judgeSubject(text, sigOf, absent) {
+  const rows = [], WC = W_CARDS.concat(extraW), n = WC.length;
   const { m, clauses } = subjectClauses(text);
   let before = null;
   for (const c of clauses) {
@@ -780,15 +818,16 @@ function probeSubject(text, sigOf) {
     let ref;
     try { ref = sigOf(without); before = before || sigOf(text); }
     catch (e) { rows.push({ k: 'error', what: sp.S.trim(), verdict: 'error', msg: String(e && e.message) }); continue; }
-    const affected = (sig) => sig.slice(0, 2 * W_N).map((s, i) => s !== ref[i]);
+    const affected = (sig) => sig.slice(0, 2 * n).map((s, i) => s !== ref[i]);
     const any = (sig) => affected(sig).some(Boolean);
-    const names = (sig) => affected(sig).map((y, i) => y ? (i < W_N ? 'my ' : 'their ') + W_CARDS[i % W_N][0] : null).filter(Boolean).join(', ') || 'nothing';
-    const witnesses = (sig) => sig.slice(0, 2 * W_N).join('\n');
+    const names = (sig) => affected(sig).map((y, i) => y ? (i < n ? 'my ' : 'their ') + WC[i % n][0] : null).filter(Boolean).join(', ') || 'nothing';
+    const witnesses = (sig) => sig.slice(0, 2 * n).join('\n');
     const hit = names(before);
+    if (absent && !any(before)) absent.push(sp.parts.filter(p => p.k === 'subtype' && !/non-$/i.test(text.slice(0, p.a))));
     if (sp.side) {
       const aff = affected(before);
       let good = true;
-      for (let i = 0; i < W_N; i++) if (sp.side === 'mine' ? aff[i + W_N] : sp.side === 'theirs' ? aff[i] : aff[i] !== aff[i + W_N]) good = false;
+      for (let i = 0; i < n; i++) if (sp.side === 'mine' ? aff[i + n] : sp.side === 'theirs' ? aff[i] : aff[i] !== aff[i + n]) good = false;
       rows.push({ k: 'side: ' + sp.side, what: sp.S.trim(), verdict: !any(before) ? 'inert' : good ? 'ok' : 'wrong side', hit });
     }
     for (const p of sp.parts) {
@@ -800,15 +839,66 @@ function probeSubject(text, sigOf) {
           const after = sigOf(tried);
           // Without "other" the source is one of the group. Read with it there, the source
           // was reached all along; reached neither way, the board cannot tell.
-          const read = p.k === 'other' ? after[2 * W_N] !== before[2 * W_N] : witnesses(after) !== witnesses(before);
+          const read = p.k === 'other' ? after[2 * n] !== before[2 * n] : witnesses(after) !== witnesses(before);
           if (!row.tried || read) { row.tried = tried; row.hitAfter = names(after); }
-          row.verdict = read ? 'ok' : p.k === 'other' ? (before[2 * W_N] !== ref[2 * W_N] ? 'unread' : 'inert') : any(before) ? 'unread' : 'inert';
+          row.verdict = read ? 'ok' : p.k === 'other' ? (before[2 * n] !== ref[2 * n] ? 'unread' : 'inert') : any(before) ? 'unread' : 'inert';
           if (read) break;
         }
       } catch (e) { row.verdict = 'error'; row.msg = String(e && e.message); }
       rows.push(row);
     }
   }
+  return rows;
+}
+
+function probeSubject(text, sigOf) {
+  // A mode's bullet (or a die-roll row's range) stays where it is.
+  const pre = (text.match(/^\s*(?:•\s*|\d+(?:—\d+)? \|\s*)/) || [''])[0];
+  if (pre) { const whole = sigOf; sigOf = (t) => whole(pre + t); text = text.slice(pre.length); }
+  const absent = [];
+  const rows = judgeSubject(text, sigOf, absent);
+  const parts = absent.flat();
+  if (!parts.length) return rows;
+  const reached = (list) => list.some(r => r.hit && r.hit !== 'nothing');
+  const twin = (list, row) => list.filter(r => r.k === row.k)[rows.filter(r => r.k === row.k).indexOf(row)];
+  const settled = (r) => r && r.verdict !== 'inert' && r.verdict !== 'error';
+
+  // "Dragons you control get +1/+0" reaches no witness because none is a Dragon, which says
+  // nothing about "you control". Each side gets a Dragon and the sentence is judged again.
+  // Subtype words side by side are one witness ("Elf Warriors").
+  const groups = [];
+  for (const ps of absent) for (const p of ps) {
+    const g = groups[groups.length - 1], last = g && g[g.length - 1];
+    if (last && ps.includes(last) && p.kind === last.kind && !text.slice(last.b, p.a).trim()) g.push(p); else groups.push([p]);
+  }
+  let withW = [];
+  const added = groups.map(subtypeWitness).filter((w, i, all) => !W_CARDS.concat(all.slice(0, i)).some(o => o[1] === w[1] && String(o[2]) === String(w[2])));
+  if (added.length) {
+    extraW = added;
+    try { withW = judgeSubject(text, sigOf, null); } catch (e) { withW = []; } finally { extraW = []; }
+  }
+  const label = added.map(w => w[1]).join('; ');
+  rows.forEach((row, i) => {
+    const t = twin(withW, row);
+    if ((row.verdict === 'inert' || row.k === 'subtype') && settled(t)) rows[i] = Object.assign({}, t, { witness: label });
+  });
+  if (reached(withW)) return rows;
+
+  // Still nobody: a subtype the board has stands in for each of them. (Each gets a stand-in of
+  // its own: "Goblin creatures and other Goblin creatures" would hide a word of one half behind
+  // the other.) A sentence that reaches the stand-in's witnesses and not the ones made for its
+  // own words did not read those words.
+  let stood = text;
+  parts.forEach((p, i) => { p.as = p.to[i % p.to.length]; });
+  for (const p of parts.slice().sort((x, y) => y.a - x.a)) stood = stood.slice(0, p.a) + p.as + stood.slice(p.b);
+  let again = [];
+  try { again = judgeSubject(stood, sigOf, null); } catch (e) { /* the sentence stays inert */ }
+  rows.forEach((row, i) => {
+    const t = twin(again, row);
+    if (row.k === 'subtype' && parts.some(p => p.what === row.what) && added.length && reached(again))
+      rows[i] = { k: 'subtype', what: row.what, verdict: 'unread', hit: 'nothing', witness: label, tried: stood, hitAfter: (again.find(r => r.hit !== 'nothing') || {}).hit };
+    else if (row.verdict === 'inert' && row.k !== 'subtype' && settled(t)) rows[i] = Object.assign({}, t, { standIn: stood });
+  });
   return rows;
 }
 
@@ -825,8 +915,15 @@ function subjectFace(card, faceIndex) {
   const probe = (ctx, text, sigOf) => { const rows = probeSubject(text, sigOf); if (rows.length) out.push({ ctx, text, rows }); };
   witnessBoard = true;
   try {
-    const base = addCard(withOracle(card, faceIndex, W), faceIndex, isSpell);
-    const states = Battlefield.getAllFinalStates();
+    let base = addCard(withOracle(card, faceIndex, W), faceIndex, isSpell);
+    let states = Battlefield.getAllFinalStates(), boardOf = '';
+    // An ability is fired on the board its card is on; a sentence that asks for witnesses of
+    // its own (extraW) gets the card on that board.
+    const onBoard = () => {
+      const key = JSON.stringify(extraW);
+      if (key !== boardOf) { base = addCard(withOracle(card, faceIndex, W), faceIndex, isSpell); states = Battlefield.getAllFinalStates(); boardOf = key; }
+    };
+    boardOf = JSON.stringify(extraW);
     const lines = W.split('\n');
     const abilityLine = new Set();
     try {
@@ -850,6 +947,7 @@ function subjectFace(card, faceIndex) {
             const lead = unit.slice(s.start, s.end).search(/\S/), at = s.start + Math.max(0, lead);
             probe(kind, unit.slice(at, s.end), (t) => {
               const u = unit.slice(0, at) + t + unit.slice(s.end);
+              onBoard();
               return fireAbility(base, withText(ab, unit, u), kind, u, states, null, () => boardSig(base.id));
             });
           }
