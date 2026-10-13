@@ -6882,6 +6882,24 @@ function parseCardEffects(permanent, card, opts = {}) {
       if (eff._oraclePos !== undefined) {
         const mode = _getModalModeForPos(eff._oraclePos);
         if (mode >= 0) { eff.modalModeIndex = mode; continue; }
+        // On a permanent, a line outside the bullets is no mode at all: "Attacking creatures
+        // you control have deathtouch. / {1}{G}, {T}: Choose one — • …" (Bow of Nylea). Guessed
+        // into a mode by its words, the static effect was switched off with that mode.
+        // (The position can miss a line that is a mode, so the line's own words decide: one
+        // that is the text of a mode belongs to it.)
+        if (!permanent.isSpell && !permanent.abilitySourceId && !permanent.isManualEffect) {
+          const norm = (t) => String(t || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
+          let at = eff._oraclePos;
+          while (at < oracle.length && /[.\s;]/.test(oracle[at])) at++;
+          const lineEnd = oracle.indexOf('\n', at);
+          const lineText = norm(oracle.slice(oracle.lastIndexOf('\n', at - 1) + 1, lineEnd < 0 ? oracle.length : lineEnd));
+          const k = (permanent.modalModeTexts || []).findIndex(t => {
+            const m = norm(t);
+            return m && lineText && (m.includes(lineText.slice(0, 24)) || lineText.includes(m.slice(0, 24)));
+          });
+          if (k >= 0) eff.modalModeIndex = k;
+          continue;
+        }
       }
       // Fallback: desc-based specificity matching (penalize unmatched line words)
       const effDesc = (eff.desc || '').toLowerCase();
@@ -6896,6 +6914,30 @@ function parseCardEffects(permanent, card, opts = {}) {
         if (spec > bestSpec) { bestSpec = spec; bestMode = modeIdx; }
       }
       eff.modalModeIndex = bestMode;
+    }
+    // On a permanent, the modes of a triggered ability ("When this creature enters or the
+    // creature it haunts dies, choose one — • Creatures you control get +1/+1 until end of
+    // turn. • …", Orzhov Pontiff) are the trigger's: they do nothing until it is fired, and
+    // firing parses the picked mode on its own. Read with the card, the first mode stood as
+    // a static effect.
+    if (!permanent.isSpell && !permanent.abilitySourceId && !permanent.isManualEffect) {
+      // (By the lines' words, not their numbers: lines have come and gone since the modes were counted.)
+      const norm = (t) => String(t || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
+      const modeNorms = (permanent.modalModeTexts || []).map(norm);
+      // The card's text as printed: by now the trigger's own line has been taken out of what is parsed.
+      const nowLines = String(permanent.oracleText || card.oracle_text || '').split('\n');
+      const isBullet = (l) => /^\s*\u2022/.test(l || '');
+      const modeOfLine = (l) => { const n = norm(l); return n ? modeNorms.findIndex(m => m && (m.includes(n.slice(0, 24)) || n.includes(m.slice(0, 24)))) : -1; };
+      const ofTrigger = (mode) => {
+        let line = nowLines.findIndex(l => isBullet(l) && modeOfLine(l) === mode);
+        if (line < 0) return false;
+        while (line > 0 && isBullet(nowLines[line])) line--;
+        const head = (nowLines[line] || '').trim();
+        return !isBullet(head) && _isTriggeredSentence(head) && /\bchoose\b[^.]*$/i.test(head);
+      };
+      for (let i = effects.length - 1; i >= 0; i--) {
+        if (effects[i].modalModeIndex !== undefined && ofTrigger(effects[i].modalModeIndex)) effects.splice(i, 1);
+      }
     }
     // Sort effects by modalModeIndex to ensure card text order
     effects.sort((a, b) => (a.modalModeIndex ?? 999) - (b.modalModeIndex ?? 999));

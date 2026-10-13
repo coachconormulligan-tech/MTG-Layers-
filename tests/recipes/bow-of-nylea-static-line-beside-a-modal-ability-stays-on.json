@@ -1,0 +1,14 @@
+{
+  "name": "Bow of Nylea — a static line beside a modal ability stays on",
+  "notes": "Found by the subject probe's 'reaches nobody' verdict (2026-10-13). A permanent whose activated ability has bullets is parsed as modal; the static line outside the bullets was guessed into a mode by its words ('creature') and switched off with it. On a permanent, an effect read from a line that is no mode is left out of the modes.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "call": ["toggleAttacking", "@bears"] },
+    { "add": "Runeclaw Bear", "as": "home" },
+    { "add": "Bow of Nylea", "as": "bow" }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$includes": ["Deathtouch"] } } },
+    { "perm": "Runeclaw Bear", "final": { "abilities": { "$excludes": ["Deathtouch"] } } }
+  ]
+}

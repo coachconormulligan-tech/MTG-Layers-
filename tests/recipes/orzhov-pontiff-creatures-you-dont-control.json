@@ -1,0 +1,16 @@
+{
+  "name": "Orzhov Pontiff — \"Creatures you don't control get -1/-1\"",
+  "notes": "Found by the subject probe's 'reaches nobody' verdict (2026-10-13), also on Mishra, Lost to Phyrexia. 'You don't control' at the end of a group subject was not read as a controller, so the words stayed in the filter and nothing matched. It now means every other player's permanents; 'a land you don't control' (Herald of Leshrac's upkeep cost) is one object and stays as it was.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears", "as": "theirs", "controller": "p2" },
+    { "add": "Runeclaw Bear", "as": "mine" },
+    { "add": "Orzhov Pontiff", "as": "pontiff" },
+    { "fire": "@pontiff", "trigger": 1, "mode": 1, "as": "haunt" }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": 1, "toughness": 1 } },
+    { "perm": "Runeclaw Bear", "final": { "power": 2, "toughness": 2 } },
+    { "perm": "Orzhov Pontiff", "final": { "power": 1, "toughness": 1 } }
+  ]
+}

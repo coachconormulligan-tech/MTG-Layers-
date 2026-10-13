@@ -598,7 +598,7 @@ function sweepFace(card, faceIndex) {
 
 /* ─── Probing who a sentence reaches ───
    The probes above read the parsed effects, which hold who is affected as a function and so
-   cannot show it. This one reads the board instead: the same 17 blank witnesses on each side
+   cannot show it. This one reads the board instead: the same 22 blank witnesses on each side
    of a two-player board, and which of them change against the same text with the sentence
    (or, when it has two subjects, that subject's clause) taken out. For a sentence whose
    subject is a group of permanents ("Other Elves you control get …"):
@@ -627,9 +627,15 @@ const W_CARDS = [
   ['Eldrazi', 'Creature — Eldrazi', [], ''],
   ['Nymph', 'Enchantment Creature — Nymph', ['U'], ''],
   ['Giant', 'Legendary Creature — Giant', ['R'], ''],
-  // The one creature that is not a 2/2: "base power and toughness 2/2", and X/X with the
-  // sweep's X = 2, show on it.
+  // The creatures that are not 2/2, from 1 to 10 in power and in toughness: "base power and
+  // toughness 2/2" and X/X with the sweep's X = 2 show on them, and "power 4 or greater" has
+  // somebody to reach. Two are lopsided, to tell power from toughness.
+  ['Kobold', 'Creature — Kobold', ['R'], '', null, [1, 1]],
   ['Ogre', 'Creature — Ogre', ['B'], '', null, [3, 3]],
+  ['Crab', 'Creature — Crab', ['U'], '', null, [1, 4]],
+  ['Boar', 'Creature — Boar', ['G'], '', null, [4, 1]],
+  ['Rhino', 'Creature — Rhino', ['W'], '', null, [5, 5]],
+  ['Leviathan', 'Creature — Leviathan', ['U'], '', null, [10, 10]],
   ['Soldier Token', 'Token Creature — Soldier', ['W'], ''],
   ['Gear', 'Artifact — Equipment', [], ''],
   ['Treasure Token', 'Token Artifact — Treasure', [], ''],
@@ -765,11 +771,11 @@ function subjectParts(text, m, a, v) {
     const at = x.index + x[0].length - x[1].length;
     parts.push({ k: 'has keyword', what: x[0], a: at, b: at + x[1].length, to: ['flying', 'reach'].filter(k => k !== x[1].toLowerCase()) });
   });
-  // Every creature witness has power and toughness 2.
+  // The creature witnesses run from 1 to 10 in power and toughness: 0 leaves all of them on one
+  // side of the line and 11 on the other.
   each(/\b(?:power|toughness)\s+(\d+)\s+or\s+(less|greater)\b/gi, x => {
-    const n = +x[1], holds = x[2] === 'less' ? 2 <= n : 2 >= n;
     const at = x.index + x[0].indexOf(x[1]);
-    parts.push({ k: 'size', what: x[0], a: at, b: at + x[1].length, to: [(x[2] === 'less') === holds ? '0' : '9'] });
+    parts.push({ k: 'size', what: x[0], a: at, b: at + x[1].length, to: ['0', '11'] });
   });
   each(/[A-Z][A-Za-z'\-]*/g, x => {
     const w = x[0], lw = w.toLowerCase();
