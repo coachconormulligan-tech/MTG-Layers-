@@ -1,0 +1,19 @@
+{
+  "name": "Teferi's Moat — creatures of the chosen color without flying can't attack you",
+  "notes": "The subject probe flagged 'without flying' as unread: no red witness on its board flies or has reach, so swapping the keyword changed nobody. The site was right all along; tests/sweep.js now adds a witness of the subject with the keyword ('the chosen color' as the sweep's red) when a keyword check is unread or inert. This recipe locks the behaviour in (it passes on the old code too): red chosen, the opponent's Hill Giant (red, no flying) can't attack Player 1; Shivan Dragon (red, flying) and Grizzly Bears (green) can; my own Raging Goblin gets nothing. Memory: project_nuclear_fallout_and_teferis_moat_2026-10-14.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Teferi's Moat", "as": "moat" },
+    { "call": ["setChosenColor", "@moat", "Red"] },
+    { "add": "Hill Giant", "controller": "p2" },
+    { "add": "Shivan Dragon", "controller": "p2" },
+    { "add": "Grizzly Bears", "controller": "p2" },
+    { "add": "Raging Goblin" }
+  ],
+  "asserts": [
+    { "perm": "Hill Giant", "final": { "traits": { "$includes": ["Can't attack Player 1"] } } },
+    { "perm": "Shivan Dragon", "final": { "traits": { "$excludes": ["Can't attack Player 1"] } } },
+    { "perm": "Grizzly Bears", "final": { "traits": { "$excludes": ["Can't attack Player 1"] } } },
+    { "perm": "Raging Goblin", "final": { "traits": { "$excludes": ["Can't attack Player 1"] } } }
+  ]
+}

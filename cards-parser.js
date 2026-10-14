@@ -1268,6 +1268,9 @@ function parseCardEffects(permanent, card, opts = {}) {
   // Rewrite "+X/+X, where X is the number of [DESC]" → "+1/+1 for each [DESC]" so the
   // existing for-each pipeline handles it (Jodah, the Unifier and similar cards).
   oracle = _normalizeWhereXIs(oracle);
+  // "Each creature gets twice -X/-X" (Nuclear Fallout), X already filled in: the doubled boost.
+  oracle = oracle.replace(/\b(gets?)\s+twice\s+([+-])(\d+)\/([+-])(\d+)/gi,
+    (m, verb, s1, a, s2, b) => `${verb} ${s1}${2 * a}/${s2}${2 * b}`);
 
   // ---- Layer 4 + 7b: "As long as [self] isn't on the battlefield, it's a [P/T] [type] creature
   // in addition to its other types." (Grist, the Hunger Tide). A static ability that functions

@@ -1,0 +1,14 @@
+{
+  "name": "Nuclear Fallout — each creature gets twice -X/-X",
+  "notes": "Diagnosed from the subject probe's open list (memory project_suspected_menace_and_for_each_inert_diagnosis_2026-10-14). With X filled in, the text reads 'Each creature gets twice -2/-2'; boostRegex wants the number straight after 'gets', so the spell made no effect. parseCardEffects (cards-parser.js, after _normalizeWhereXIs) now rewrites 'get(s) twice ±N/±N' to the doubled boost. X = 2: Grizzly Bears 2/2 becomes -2/-2, the opponent's Craw Wurm 6/4 becomes 2/0. The rad counters are not a continuous effect and are not tracked. Memory: project_nuclear_fallout_and_teferis_moat_2026-10-14.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears" },
+    { "add": "Craw Wurm", "controller": "p2" },
+    { "add": "Nuclear Fallout", "spell": true, "x": 2 }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": -2, "toughness": -2 } },
+    { "perm": "Craw Wurm", "final": { "power": 2, "toughness": 0 } }
+  ]
+}
