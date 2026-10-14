@@ -1,0 +1,31 @@
+{
+  "name": "Hand counts read the hand of the player the words name, not the open tab's",
+  "notes": "Found while fixing Ensnaring Bridge (project_bess_base_pt_and_amount_in_subject_2026-10-14). _computeForEachCount read every 'cards in … hand(s)' off Battlefield.gameState, the player whose tab is open. _countCardsInHand (engine-compute.js) now reads each player's own Cards in Hand. Hands: Player 1 two, Player 2 three, Player 3 one. Maro (Player 2's, 'your hand') 3/3. Multani (all players' hands) 6/6. Enemy of Enlightenment (5/5, -1/-1 per card in your opponents' hands) 1/1. Adamaro (the opponent with the most cards in hand) 3/3. Righteous Authority (Player 1's) on Player 3's Grizzly Bears ('its controller's hand') 3/3. Nyxathid (7/7, chosen player's hand) with nobody chosen reads the first opponent, Player 2: 4/4. Memory: project_hand_count_by_player_2026-10-14.",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"] },
+    { "call": ["addPlayer", "Player 3"] },
+    { "call": ["setActivePlayer", "p1"] },
+    { "call": ["updateGameState", "handSize", 2] },
+    { "call": ["setActivePlayer", "p2"] },
+    { "call": ["updateGameState", "handSize", 3] },
+    { "call": ["setActivePlayer", "p3"] },
+    { "call": ["updateGameState", "handSize", 1] },
+    { "call": ["setActivePlayer", "p2"] },
+    { "add": "Maro", "controller": "p2" },
+    { "add": "Multani, Maro-Sorcerer" },
+    { "add": "Enemy of Enlightenment" },
+    { "add": "Adamaro, First to Desire" },
+    { "add": "Nyxathid" },
+    { "add": "Grizzly Bears", "as": "bears", "controller": "p3" },
+    { "add": "Righteous Authority", "as": "aura" },
+    { "call": ["setTarget", "@aura", "@bears"] }
+  ],
+  "asserts": [
+    { "perm": "Maro", "final": { "power": 3, "toughness": 3 } },
+    { "perm": "Multani, Maro-Sorcerer", "final": { "power": 6, "toughness": 6 } },
+    { "perm": "Enemy of Enlightenment", "final": { "power": 1, "toughness": 1 } },
+    { "perm": "Adamaro, First to Desire", "final": { "power": 3, "toughness": 3 } },
+    { "perm": "Grizzly Bears", "final": { "power": 3, "toughness": 3 } },
+    { "perm": "Nyxathid", "final": { "power": 4, "toughness": 4 } }
+  ]
+}
