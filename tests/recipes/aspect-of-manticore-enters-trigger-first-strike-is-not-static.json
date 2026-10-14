@@ -1,0 +1,35 @@
+{
+  "name": "Aspect of Manticore — \"When this Aura enters, enchanted creature gains first strike until end of turn\" is not static",
+  "notes": "Memory: project_cant_rules_and_goaded_as_traits_2026-10-13 (follow-up). enchantAbilityRegex read the enters trigger as a static grant, so the enchanted creature had first strike for good. It now skips trigger lines of an unfired permanent. Same for Captain's Tutelage, Fire-Rim Form, Military Discipline, Super Speed, Gilt-Leaf's Embrace, Accelerated Evolution, Starlit Mantle, Sentinel's Mark, Maze's Mantle, Item Shopkeep, Earthbind.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Aspect of Manticore",
+      "as": "aura"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@aura",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 4,
+        "toughness": 2,
+        "abilities": {
+          "$excludes": [
+            "First strike"
+          ]
+        }
+      }
+    }
+  ]
+}

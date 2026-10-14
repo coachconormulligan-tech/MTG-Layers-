@@ -3999,6 +3999,9 @@ function parseCardEffects(permanent, card, opts = {}) {
   while ((colorSetMatch = colorSetRegex.exec(oracle)) !== null) {
     const csFilterText = colorSetMatch[1].trim();
     if (/\bthat$/i.test(csFilterText)) continue; // relative clause ("…token that's red"), see setTypeRegex
+    // A condition, not a colour change: "When this Aura enters, if enchanted creature is red, tap
+    // it" (Ray of Frost made every permanent red).
+    if (/\b(?:if|when|whenever|as long as|unless|while)\b/i.test(csFilterText)) continue;
     // Skip overlaps with "in addition to" (handled by addTypeRegex)
     const afterMatch = oracle.substring(colorSetMatch.index + colorSetMatch[0].length, colorSetMatch.index + colorSetMatch[0].length + 30);
     if (/in addition to/i.test(afterMatch)) continue;
@@ -4228,7 +4231,10 @@ function parseCardEffects(permanent, card, opts = {}) {
     const gbpFilterText = stripDurationPrefix(generalBasePTMatch[1].trim().split(/\.\s+/).pop().replace(/^["\u201d\s]+/, '').trim())
       .replace(/^,\s*/, '').replace(/\s+also$/i, '')
       .replace(/^((?:up to \w+ (?:other )?|another )?target [^,."]+?)\s+(?:gains?|has)\s+"[^"]*"\s+and$/i, '$1')
-      .replace(/^([^,."]+?)\s+becomes?\s+(?:colorless|(?:white|blue|black|red|green)(?:(?:,\s*|\s+and\s+)(?:white|blue|black|red|green))*)\s+and$/i, '$1');
+      .replace(/^([^,."]+?)\s+becomes?\s+(?:colorless|(?:white|blue|black|red|green)(?:(?:,\s*|\s+and\s+)(?:white|blue|black|red|green))*)\s+and$/i, '$1')
+      // ("That creature can't be blocked this turn and has base power and toughness 1/1" — Atomic
+      // Microsizer: the rule before the "and" is the can't-rule block's.)
+      .replace(/^([^,."]+?)\s+can't\s+[^,."]+?\s+and$/i, '$1');
     const gbpFLower = gbpFilterText.toLowerCase();
     const gbpIsTargetPhrase = /^(?:up to \w+ (?:other )?|another )?target\b/.test(gbpFLower);
     // Skip enchanted/equipped (handled above) and non-permanent references
@@ -5243,6 +5249,9 @@ function parseCardEffects(permanent, card, opts = {}) {
   let enchantAbMatch;
   while ((enchantAbMatch = enchantAbilityRegex.exec(oracleLower)) !== null) {
     if (_isInActivatedEffect(enchantAbMatch.index)) continue;
+    // "When this Aura enters, enchanted creature gains first strike until end of turn" (Aspect
+    // of Manticore) happens when the trigger is fired.
+    if (!permanent.isSpell && !permanent.isManualEffect && _isInTriggeredSentence(enchantAbMatch.index)) continue;
     const matchCond = _getConditionForPos(enchantAbMatch.index);
     const fullAbilityText = enchantAbMatch[0].replace(/^(?:enchanted|equipped)\s+(?:(?:non\w+\s+)?(?:creature|permanent|land|artifact|enchantment|planeswalker|battle|vehicle))\s+(?:has|gains?)\s+/i, '');
     const allKws = parseKeywordList(fullAbilityText);
@@ -5561,6 +5570,9 @@ function parseCardEffects(permanent, card, opts = {}) {
     if ((textBefore.match(/["“”]/g) || []).length % 2 !== 0) continue;
     // "{2}: Enchanted Forest becomes a 4/4 …" (Genju cycle) applies only once activated.
     if (_isInActivatedEffect(matchPos)) continue;
+    // "Whenever equipped creature attacks, choose up to one target creature. That creature …
+    // has base power and toughness 1/1" (Atomic Microsizer) happens when the trigger is fired.
+    if (!permanent.isSpell && !permanent.isManualEffect && _isInTriggeredSentence(matchPos)) continue;
     const lineNum = textBefore.split('\n').length - 1;
     const _matchConditionIdx = _lineConditionMap.has(lineNum) ? _lineConditionMap.get(lineNum) : -1;
     const _matchCondition = _matchConditionIdx >= 0 ? _asLongAsConditions[_matchConditionIdx] : null;
@@ -6373,6 +6385,9 @@ function parseCardEffects(permanent, card, opts = {}) {
       // their controller's last turn can't attack" — Halls of Mist).
       if (/^(?:you|players?|each (?:player|opponent)|your opponents|target (?:player|opponent)|that player)$/i.test(subj)) continue;
       if (/\bthat (?:attacked|blocked|entered|didn't|weren't|wasn't)\b/i.test(subj)) continue;
+      // "The chosen creatures attack if able, and other creatures can't attack" (Oracle en-Vec):
+      // which creatures were chosen is not on the board.
+      if (/^other\b/i.test(subj) && /\bthe chosen creatures\b/i.test(oracle.slice(contentStart, cantMatch.index))) continue;
       const key = `${contentStart}|${subj}|${rule}`.toLowerCase();
       if (_cantSeen.has(key)) continue;
       _cantSeen.add(key);
@@ -6404,7 +6419,24 @@ function parseCardEffects(permanent, card, opts = {}) {
         const conj = subj.match(/^(this\s+[\w-]+)\s+and\s+((?:another\s+|up to \w+\s+(?:other\s+)?)?target\s+.+?)(?:\s+(?:each|both))?$/i);
         for (const part of conj ? [conj[1], conj[2]] : [subj]) {
           if (!filterReferencesPermanents(part) && !/^this\s+[\w-]+$/i.test(part)) continue;
-          const b = buildAppliesToFromText(part);
+          let b = buildAppliesToFromText(part);
+          // "Creatures with power less than this creature's power" (Aura Gnarlid): measured
+          // against the source as it is now.
+          const vsSource = part.match(/^(.+?)\s+with\s+(power|toughness)\s+(less|greater)\s+than\s+this\s+[\w-]+'s\s+(power|toughness)$/i);
+          if (vsSource) {
+            const base = buildAppliesToFromText(vsSource[1]);
+            const stat = vsSource[2].toLowerCase(), less = /less/i.test(vsSource[3]), srcStat = vsSource[4].toLowerCase();
+            const srcId = permanent.id, printed = srcStat === 'power' ? permanent.printedPower : permanent.printedToughness;
+            if (base.fn) b = Object.assign({}, base, {
+              fn: (st, all, ctrl) => {
+                if (!base.fn(st, all, ctrl) || st[stat] === null || st[stat] === undefined) return false;
+                const src = all && all.get ? all.get(srcId) : null;
+                const ref = src ? src[srcStat] : printed;
+                return ref !== null && ref !== undefined && (less ? st[stat] < ref : st[stat] > ref);
+              },
+              desc: `${base.desc} with ${stat} ${less ? 'less' : 'greater'} than this creature's ${srcStat}`,
+            });
+          }
           if (b.isSelf && !_cantFired) continue;
           if (!b.isSelf && !b.isTargeted && !b.needsTargetSelection && !b.fn) continue;
           eff = pushEff('6', EFFECT_TYPE.ADD_ABILITY, params,

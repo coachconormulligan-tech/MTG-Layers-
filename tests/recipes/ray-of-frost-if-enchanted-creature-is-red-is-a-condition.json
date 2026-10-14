@@ -1,0 +1,42 @@
+{
+  "name": "Ray of Frost — \"if enchanted creature is red\" is a condition, not a colour change",
+  "notes": "Memory: project_cant_rules_and_goaded_as_traits_2026-10-13 (follow-up). colorSetRegex read \"When this Aura enters, if enchanted creature is red, tap it\" as \"<subject> is red\" and made every permanent red. A subject with if / when / as long as / unless / while in it is now a condition. Same for the Ring cycle (\"if it's white\"), Zealots en-Dal, Penumbra Umbra, Selective Obliteration.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Llanowar Elves"
+    },
+    {
+      "add": "Ray of Frost",
+      "as": "aura"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@aura",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Llanowar Elves",
+      "final": {
+        "colors": [
+          "G"
+        ]
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "colors": [
+          "G"
+        ]
+      }
+    }
+  ]
+}

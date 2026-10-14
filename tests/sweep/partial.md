@@ -15,6 +15,5 @@ Most-played first.
 
 | EDHREC rank | Card | Part not read | Sentence |
 |---:|---|---|---|
-| 15835 | Atomic Microsizer | Clause: has base power and toughness 1/1 | That creature can't be blocked this turn and has base power and toughness 1/1 until end of turn. |
 | 31885 | I'm a Doctor, Not a . . . | Clause: becomes a Doctor | Until end of turn, it gets +1/+1 and becomes a Doctor. |
 |  | Mothers Yamazaki | Clause: get +2/+2 | As long as you control exactly two permanents named this card, the "legend rule" doesn't apply to them, and Samurai you control get +2/+2 and have vigilance and haste. |
