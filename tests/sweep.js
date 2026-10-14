@@ -687,7 +687,7 @@ function addWitnesses() {
   dummyId = witnessIds[0];
 }
 
-const _stateSig = (st) => st ? JSON.stringify([st.types, st.supertypes, st.subtypes, st.colors, st.abilities, st.power, st.toughness]) : 'none';
+const _stateSig = (st) => st ? JSON.stringify([st.types, st.supertypes, st.subtypes, st.colors, st.abilities, st.power, st.toughness, st.traits || []]) : 'none';
 // [my witnesses…, their witnesses…, the source]. The source's own text is left out of its
 // abilities, so that a sentence shows on its source only by what it does to it.
 function boardSig(sourceId) {
@@ -909,9 +909,12 @@ function judgeSubject(text, sigOf, absent) {
     if (absent && !any(before)) absent.push({ S: sp.S, v: c.v, alone: c.alone, ps: sp.parts.filter(p => p.k === 'subtype' && !/non-$/i.test(text.slice(0, p.a))) });
     if (sp.side) {
       const aff = affected(before);
+      // A rule against attacking you says nothing about your own creatures, whoever the
+      // subject is ("Creatures can't attack you unless …").
+      const side = sp.side === 'both' && /^\s*can't attack (?:you|planeswalkers you control)\b/i.test(text.slice(c.v)) ? 'theirs' : sp.side;
       let good = true;
-      for (let i = 0; i < n; i++) if (sp.side === 'mine' ? aff[i + n] : sp.side === 'theirs' ? aff[i] : aff[i] !== aff[i + n]) good = false;
-      rows.push({ k: 'side: ' + sp.side, what: sp.S.trim(), verdict: !any(before) ? 'inert' : good ? 'ok' : 'wrong side', hit });
+      for (let i = 0; i < n; i++) if (side === 'mine' ? aff[i + n] : side === 'theirs' ? aff[i] : aff[i] !== aff[i + n]) good = false;
+      rows.push({ k: 'side: ' + side, what: sp.S.trim(), verdict: !any(before) ? 'inert' : good ? 'ok' : 'wrong side', hit });
     }
     for (const p of sp.parts) {
       const row = { k: p.k, what: p.what, hit };
@@ -1016,9 +1019,13 @@ function subjectFace(card, faceIndex) {
   // the card answered Yes (kicked, "{G} was spent", "if you do"), one at a time and then all at
   // once; the first answer under which it reaches somebody is the one its checks are made under.
   const toggles = (p) => [1, 2, 3, 4, 5, 6].map(n => [n, p && p['additionalCostLabel' + (n > 1 ? n : '')]]).filter(l => l[1]);
+  // A legend's short name that is also a creature type ("Fear Gas — Wraith can't be blocked",
+  // Wraith, Vicious Vigilante) is the card, not a group: its subtype check says nothing.
+  const shortName = (card.name || '').split(/,| \/\/ /)[0].trim().toLowerCase();
+  const notOwnName = (rows) => rows.filter(r => !(r.k === 'subtype' && String(r.what || '').toLowerCase() === shortName));
   const probe = (ctx, text, sigOf, labelsOf) => {
     const settled = (r) => r.verdict !== 'inert' && r.verdict !== 'error';
-    let rows = probeSubject(text, (t) => sigOf(t, null));
+    let rows = notOwnName(probeSubject(text, (t) => sigOf(t, null)));
     if (rows.length && !rows.every(settled)) {
       let labels = [];
       try { labels = [...new Set(labelsOf().map(l => l[1]))]; } catch (e) { /* nothing is asked */ }
@@ -1028,7 +1035,7 @@ function subjectFace(card, faceIndex) {
         // (By what is asked, not by its place: with a clause taken out, the text asks one thing fewer.)
         const setup = (p) => { for (const [slot, label] of toggles(p)) if (ask.includes(label)) Battlefield.setAdditionalCostPaid(p.id, true, slot); };
         let again = [];
-        try { again = probeSubject(text, (t) => sigOf(t, setup)); } catch (e) { continue; }
+        try { again = notOwnName(probeSubject(text, (t) => sigOf(t, setup))); } catch (e) { continue; }
         // Each subject of the sentence keeps the first answer under which it reaches somebody.
         if (again.length !== rows.length) continue;
         rows = rows.map((r, i) => !settled(r) && again[i].k === r.k && settled(again[i]) ? Object.assign({}, again[i], { asked: ask.join(' + ') }) : r);

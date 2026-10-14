@@ -1,0 +1,53 @@
+{
+  "name": "Propaganda — \"can't attack you unless their controller pays {2}\" is a trait naming both players",
+  "notes": "Conor's decision 2026-10-13: rules about attacking, blocking and being targeted are traits (never ability lines), in the words of the card with the players filled in; Goaded is a trait only and names the player who goaded. Parser block 'Rules about attacking, blocking and being targeted' in cards-parser.js, _resolveTraitText in engine-helpers.js. \"You\" is Propaganda's controller, \"their controller\" the creature's. The rule says nothing about the creatures of the player it protects, so those get no trait.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Propaganda"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "abilities": [],
+        "traits": [
+          "Can't attack Player 1 unless Opponent pays {2} for each creature Opponent controls that is attacking Player 1"
+        ]
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "traits": {
+          "$excludes": [
+            "Can't attack Player 1 unless Player 1 pays {2} for each creature Player 1 controls that is attacking Player 1"
+          ]
+        }
+      }
+    },
+    {
+      "effect": {
+        "source": "Propaganda",
+        "layer": "6",
+        "type": "add_ability",
+        "scope": "global"
+      }
+    }
+  ]
+}

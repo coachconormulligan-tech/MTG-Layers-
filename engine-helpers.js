@@ -108,6 +108,31 @@ function getEffectControllerId(effect, allStates) {
   }
   return effect.ownerId || 'player_0';
 }
+/* The words of a trait-only effect as they read on one permanent: "Goaded" names the player
+   who goaded it, and in a rule about attacking, blocking or targeting "you" is the controller
+   of the effect's source, "their controller" the controller of the permanent, and "this
+   creature" the source by name. Returns null when the rule says nothing about this permanent
+   ("can't attack you" on a creature of the player it protects). */
+function _resolveTraitText(ab, effect, state) {
+  const name = (id) => (typeof Battlefield !== 'undefined' && Battlefield.getPlayerName) ? Battlefield.getPlayerName(id) : id;
+  const livePerm = (!effect._allStates && typeof Battlefield !== 'undefined' && Battlefield.getPermById) ? Battlefield.getPermById(effect.sourceId) : null;
+  const srcCtrl = (livePerm && livePerm.controller) || getEffectControllerId(effect, effect._allStates);
+  if (ab === 'Goaded') return `Goaded by ${name(srcCtrl)}`;
+  if (!effect.params.traitPlayers) return ab;
+  if (/^can't attack (?:you|planeswalkers you control)\b/i.test(ab) && state.controller === srcCtrl) return null;
+  const you = name(srcCtrl), them = name(state.controller);
+  const srcName = _effectDisplayName(effect, effect._allStates);
+  // "They" is the permanent's controller only once that player has been named ("unless their
+  // controller pays {2} for each creature they control …").
+  const named = /\b(?:their|its|that (?:creature|permanent)'s) controller\b/i.test(ab);
+  return (named ? ab.replace(/\bthey control\b/gi, `${them} controls`) : ab)
+    .replace(/\b(?:their|its|that (?:creature|permanent)'s) controller\b/gi, them)
+    .replace(/\byou control\b/gi, `${you} controls`)
+    .replace(/\byou(?:'ve| have)\b/gi, `${you} has`)
+    .replace(/\byour\b/gi, `${you}'s`)
+    .replace(/\byou\b/gi, you)
+    .replace(/\bthis (?:creature|permanent|card|artifact|enchantment|land|vehicle|equipment|aura)\b/gi, srcName || '$&');
+}
 /* [END: STATE] */
 
 /* Compare two states for meaningful differences. */

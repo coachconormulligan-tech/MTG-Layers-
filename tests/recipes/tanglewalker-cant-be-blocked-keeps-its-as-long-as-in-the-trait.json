@@ -1,0 +1,45 @@
+{
+  "name": "Tanglewalker — a condition the board cannot read stays in the words of the trait",
+  "notes": "Conor's decision 2026-10-13: rules about attacking, blocking and being targeted are traits (never ability lines), in the words of the card with the players filled in; Goaded is a trait only and names the player who goaded. Parser block 'Rules about attacking, blocking and being targeted' in cards-parser.js, _resolveTraitText in engine-helpers.js. \"Each creature you control can't be blocked as long as defending player controls an artifact land.\" The trailing \"as long as\" was dropped when unreadable; for these rules it is kept, so the trait is qualified, not flat.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Tanglewalker"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "traits": [
+          "Can't be blocked as long as defending player controls an artifact land"
+        ]
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "traits": {
+          "$excludes": [
+            "Can't be blocked as long as defending player controls an artifact land",
+            "Can't be blocked"
+          ]
+        }
+      }
+    }
+  ]
+}
