@@ -1039,10 +1039,34 @@ function probeSubject(text, sigOf) {
   const absent = [];
   const rows = judgeSubject(text, sigOf, absent);
   const parts = absent.flatMap(c => c.ps);
-  if (!absent.length) return rows;
   const reached = (list) => list.some(r => r.hit && r.hit !== 'nothing');
   const twin = (list, row) => list.filter(r => r.k === row.k)[rows.filter(r => r.k === row.k).indexOf(row)];
   const settled = (r) => r && r.verdict !== 'inert' && r.verdict !== 'error';
+  const witnessLabel = (ws) => ws.map(w => w[1] + (w[3] ? ' with ' + w[3].toLowerCase() : '') + (w[5] ? ' ' + w[5].join('/') : '') + (w[4] ? ' (' + Object.keys(w[4]).map(k => k === 'counter' ? w[4].counter + ' counter' : k).join(', ') + ')' : '')).join('; ');
+
+  // "Creatures of the chosen color without flying" (Teferi's Moat): no red witness flies or has
+  // reach, so the keyword swapped for another reaches the same creatures. A witness of the
+  // subject that has the keyword is added to each side and the sentence judged again ("the
+  // chosen color" being the sweep's red).
+  if (rows.some(r => r.k === 'has keyword' && (r.verdict === 'unread' || r.verdict === 'inert'))) {
+    const { m, clauses } = subjectClauses(text), kwMade = [];
+    for (const c of clauses) {
+      const sp = subjectParts(text, m, c.a, c.v);
+      if (!sp || !sp.parts.some(p => p.k === 'has keyword')) continue;
+      const S = sp.S.replace(new RegExp('\\bwithout\\s+(' + P_KW + ')\\b', 'gi'), 'with $1').replace(/\bthe chosen colou?r\b/gi, 'red');
+      kwMade.push(subjectWitness(S, sp.parts.filter(p => p.k === 'subtype'), subjectState(sp.S)));
+    }
+    if (kwMade.length) {
+      let withKw = [];
+      extraW = kwMade;
+      try { withKw = judgeSubject(text, sigOf, null); } catch (e) { withKw = []; } finally { extraW = []; }
+      rows.forEach((row, i) => {
+        const t = twin(withKw, row);
+        if (row.k === 'has keyword' && (row.verdict === 'unread' || row.verdict === 'inert') && settled(t)) rows[i] = Object.assign({}, t, { witness: witnessLabel(kwMade) });
+      });
+    }
+  }
+  if (!absent.length) return rows;
 
   // "Dragons you control get +1/+0" reaches no witness because none is a Dragon, which says
   // nothing about "you control". Each side gets a Dragon and the sentence is judged again.
@@ -1067,7 +1091,7 @@ function probeSubject(text, sigOf) {
     extraW = added;
     try { withW = judgeSubject(text, sigOf, null); } catch (e) { withW = []; } finally { extraW = []; }
   }
-  const label = added.map(w => w[1] + (w[3] ? ' with ' + w[3].toLowerCase() : '') + (w[5] ? ' ' + w[5].join('/') : '') + (w[4] ? ' (' + Object.keys(w[4]).map(k => k === 'counter' ? w[4].counter + ' counter' : k).join(', ') + ')' : '')).join('; ');
+  const label = witnessLabel(added);
   rows.forEach((row, i) => {
     const t = twin(withW, row);
     // (A witness made for the subject is nothing that a "non-" word leaves out, so that word
