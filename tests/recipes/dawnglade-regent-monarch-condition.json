@@ -1,0 +1,18 @@
+{
+  "name": "Dawnglade Regent — \"as long as you're the monarch\" reads its controller's Monarch toggle",
+  "notes": "No condition branch knew 'you're the monarch', so the condition was dropped and permanents you control always had hexproof. A branch now reads the Monarch toggle of the source's controller (_gsOfController), and 'an opponent is the monarch' any opponent's. Player 2 is the monarch and controls Dawnglade Regent and Grizzly Bears; Player 1's tab is open and Player 1 controls Runeclaw Bear. Regent and Grizzly Bears have hexproof, Runeclaw Bear does not. Memory: project_monarch_initiative_conditions_2026-10-14.",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"] },
+    { "call": ["setActivePlayer", "p2"] },
+    { "call": ["updateGameState", "isMonarch", true] },
+    { "add": "Dawnglade Regent", "controller": "p2" },
+    { "add": "Grizzly Bears", "controller": "p2" },
+    { "call": ["setActivePlayer", "p1"] },
+    { "add": "Runeclaw Bear", "controller": "p1" }
+  ],
+  "asserts": [
+    { "perm": "Dawnglade Regent", "final": { "abilities": { "$includes": ["Hexproof"] } } },
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$includes": ["Hexproof"] } } },
+    { "perm": "Runeclaw Bear", "final": { "abilities": { "$excludes": ["Hexproof"] } } }
+  ]
+}
