@@ -1,0 +1,22 @@
+{
+  "name": "Bess, Soul Nourisher — each other creature you control with base power and toughness 1/1 gets +X/+X",
+  "notes": "Found by tests/sweep.py (subject probe: 'nobody, amount on the board'). The filter 'with base power and toughness 1/1' had no reading: the 'and' split in _buildAppliesToFromTextInner cut it in two and nothing matched. It is now read ahead of that split (also 'with base power N' and 'with base power or toughness N'); base P/T is recorded on each state as layer 7c begins (engine-layer.js), carried by snapshotState. Bess has two +1/+1 counters, so X = 2. Llanowar Elves (1/1) gets +2/+2; Memnite with a +1/+1 counter is 2/2 but its base is still 1/1, so it gets +2/+2 too; Grizzly Bears (base 2/2) and the opponent's Fugitive Wizard do not; Bess is 'other'. Memory: project_bess_base_pt_and_amount_in_subject_2026-10-14.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Llanowar Elves" },
+    { "add": "Memnite", "as": "memnite" },
+    { "call": ["addCounter", "@memnite", "+1/+1", 1] },
+    { "add": "Grizzly Bears" },
+    { "add": "Fugitive Wizard", "controller": "p2" },
+    { "add": "Bess, Soul Nourisher", "as": "bess" },
+    { "call": ["addCounter", "@bess", "+1/+1", 2] },
+    { "fire": "@bess", "trigger": 1 }
+  ],
+  "asserts": [
+    { "perm": "Llanowar Elves", "final": { "power": 3, "toughness": 3 } },
+    { "perm": "Memnite", "final": { "power": 4, "toughness": 4 } },
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2 } },
+    { "perm": "Fugitive Wizard", "final": { "power": 1, "toughness": 1 } },
+    { "perm": "Bess, Soul Nourisher", "final": { "power": 3, "toughness": 3 } }
+  ]
+}

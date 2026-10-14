@@ -48,6 +48,7 @@ function createBaseState(permanent) {
     counters: { ...(permanent.counters || {}) },
     traits: [...(permanent.traits || [])], // special traits like "Has all card names"
     attackingPlayerId: permanent.attackingPlayerId || null, // the player an attacker was declared against
+    timesAttackedThisTurn: permanent.timesAttackedThisTurn || 0, // typed by hand (Moraug)
     allPrintedAbilities: allPrinted, // full list including conditional for display
     conditionalAbilityIndices: condIndices || null,
     conditionalAbilityConditions: permanent._conditionalAbilityConditions || null,

@@ -1321,6 +1321,29 @@ function buildAppliesToFromText(filterText) {
   return _result;
 }
 
+/* "base power and toughness 1/1", "base power or toughness 1", "base power 1" / "base toughness 1"
+   → { test(state), words }, or null for any other wording. Base P/T is what layers 7a and 7b
+   leave: the engine records it on each state (basePower / baseToughness) as layer 7c begins,
+   and before then the P/T a state has is its base. Shared by subject filters (Bess, Soul
+   Nourisher) and counts (Zinnia, Valley's Voice; Sword of the Squeak). */
+function _parseBasePTQualifier(text) {
+  const m = (text || '').toLowerCase().trim()
+    .match(/^base\s+(?:power\s+and\s+toughness\s+(\d+)\/(\d+)|power\s+or\s+toughness\s+(\d+)|(power|toughness)\s+(\d+))$/);
+  if (!m) return null;
+  const bp = (p) => p.basePower !== undefined ? p.basePower : p.power;
+  const bt = (p) => p.baseToughness !== undefined ? p.baseToughness : p.toughness;
+  if (m[1] !== undefined) {
+    const pw = +m[1], th = +m[2];
+    return { test: (p) => bp(p) === pw && bt(p) === th, words: `base power and toughness ${pw}/${th}` };
+  }
+  if (m[3] !== undefined) {
+    const n = +m[3];
+    return { test: (p) => bp(p) === n || bt(p) === n, words: `base power or toughness ${n}` };
+  }
+  const n = +m[5], stat = m[4] === 'power' ? bp : bt;
+  return { test: (p) => stat(p) === n, words: `base ${m[4]} ${n}` };
+}
+
 function _buildAppliesToFromTextInner(filterText) {
   const raw = filterText.toLowerCase().trim();
   // "Creatures you don't control get -1/-1" (Orzhov Pontiff): everybody's but yours. (A group;
@@ -1372,6 +1395,26 @@ function _buildAppliesToFromTextInner(filterText) {
       return {
         fn: (p, allStates, effectCtrl) => (p.traits || []).includes('Attacking') && inner.fn(p, allStates, effectCtrl),
         desc: `${inner.desc} attacking a player`,
+        ...(inner.isOpponentsControl ? { isOpponentsControl: true } : {}),
+      };
+    }
+  }
+
+  // "Each other creature you control with base power and toughness 1/1" (Bess, Soul Nourisher),
+  // "with base power 1" (Rapid Augmenter), "with base power or toughness 1" (Sword of the
+  // Squeak). Base P/T is what layers 7a and 7b leave: the engine records it on each state as
+  // layer 7c begins, and before then the P/T a state has is its base. (Read ahead of the "and"
+  // and "or" splits below, which cut "power and toughness" in two.) Not what something becomes:
+  // "enchanted creature is an Insect artifact creature with base power and toughness 0/1"
+  // (Darksteel Mutation, handed over whole by the have-ability parser) is the enchanted creature.
+  const basePT = f.match(/^(.+?)\s+with\s+(base\s+.+)$/);
+  const baseQual = basePT && !/\b(?:is|are|becomes?|has|have|gets?|gains?)\b/.test(basePT[1]) && _parseBasePTQualifier(basePT[2]);
+  if (baseQual) {
+    const inner = _buildAppliesToFromTextInner(basePT[1]);
+    if (inner && inner.fn && !inner.isSelf && !inner.isTargeted && !inner.isFallback) {
+      return {
+        fn: (p, allStates, effectCtrl) => baseQual.test(p) && inner.fn(p, allStates, effectCtrl),
+        desc: `${inner.desc} with ${baseQual.words}`,
         ...(inner.isOpponentsControl ? { isOpponentsControl: true } : {}),
       };
     }

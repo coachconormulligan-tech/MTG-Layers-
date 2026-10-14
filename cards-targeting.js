@@ -75,6 +75,8 @@ function getEffectInfo(permId, finalState) {
     hasExchangeControl,
     exchangeControlMode: exchangeControlEff?.params?.exchangeMode || null,
     hasCDA: effs.some(e => (e.type === EFFECT_TYPE.CDA_PT && (e.params.userAdjustable || (!e.params.forEachDesc && !e.params.compute))) || (e.type === EFFECT_TYPE.MODIFY_PT && e.params.forEachDesc !== undefined && e.params.userAdjustable)),
+    // "For each time it has attacked this turn" (Moraug): a count typed on each creature.
+    attackCountEffect: effs.find(e => e.type === EFFECT_TYPE.MODIFY_PT && /\bit has attacked this turn$/i.test((e.params && e.params.forEachDesc) || '')) || null,
     isManualEffect: isManual,
     maxTargets: multiTargetEff ? multiTargetEff.maxTargets : 1,
     hasModalTargets,

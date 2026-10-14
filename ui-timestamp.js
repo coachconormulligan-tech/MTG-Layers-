@@ -111,6 +111,7 @@ function renderTimestampPanel() {
         ${showAbilityRemove ? `<button class="ts-action-btn remove-mutate-btn" onclick="event.stopPropagation(); removeAbilityEffect('${p.id}')" title="Remove">✕</button>` : ''}
       </div>
       ${effInfo.hasCDA ? renderCDAInput(p) : ''}
+      ${effInfo.attackCountEffect ? renderTimesAttackedInputs(effInfo.attackCountEffect) : ''}
       ${p.hasXValue ? renderXValueInput(p) : ''}
       ${p.additionalCostLabel ? renderAdditionalCostToggle(p) : ''}
       ${p.needsChosenCardName ? renderChosenCardNameInput(p) : ''}

@@ -74,6 +74,34 @@ function renderCDAInput(perm) {
   </div>`;
 }
 
+/* "For each time it has attacked this turn" (Moraug): one count per creature the effect reaches,
+   kept on that creature (Battlefield.setTimesAttacked). */
+function renderTimesAttackedInputs(effect) {
+  const states = Battlefield.getAllFinalStates();
+  // Who it reaches, whatever the counts are (effectAppliesToPerm hides a "for each" at 0).
+  const reach = Object.assign({}, effect, { params: Object.assign({}, effect.params, { forEachDesc: undefined }) });
+  const reached = Battlefield.permanents.filter(q => {
+    const st = states.get(q.id);
+    if (!st || q.isManualEffect || !(st.types || []).includes('Creature')) return false;
+    try { return effectAppliesToPerm(reach, st, q, q.id, states); } catch (e) { return false; }
+  });
+  if (!reached.length) return '';
+  return `<div class="cda-counter-row times-attacked-rows" onclick="event.stopPropagation()">
+    <span class="cda-label">Times attacked this turn:</span>
+    ${reached.map(q => `<label class="times-attacked-row" title="How many times ${escapeAttr(q.name)} has attacked this turn">
+      <input type="number" class="cda-counter-input" value="${q.timesAttackedThisTurn || 0}" min="0" max="99"
+             onchange="setTimesAttacked('${q.id}', parseInt(this.value) || 0)">
+      <span class="cda-label">${escapeHtml(q.name + (q.label ? ' ' + q.label : ''))}</span>
+    </label>`).join('')}
+  </div>`;
+}
+
+function setTimesAttacked(permId, value) {
+  Battlefield.setTimesAttacked(permId, value);
+  Battlefield.evaluate();
+  renderAll();
+}
+
 function setCDAValue(permId, value) {
   Battlefield.setCDAValue(permId, value);
   Battlefield.evaluate();

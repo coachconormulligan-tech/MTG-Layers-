@@ -1,0 +1,21 @@
+{
+  "name": "Zinnia, Valley's Voice, Sword of the Squeak — counting creatures with base power (or toughness) 1",
+  "notes": "Found while fixing Bess (project_bess_base_pt_and_amount_in_subject_2026-10-14). 'The number of other creatures you control with base power 1' and 'for each creature you control with base power or toughness 1' counted 0: the '[qualifiers] [type]' block of _computeForEachCount read 'with <keyword>' only. It now reads 'with base …' through _parseBasePTQualifier (cards-text-utils.js), the helper subject filters use. Memnite has a +1/+1 counter and still has base 1/1; Goblin Piker (2/1) has base toughness 1; Grizzly Bears (2/2) and the opponent's Fugitive Wizard count for neither. Zinnia (1/3) counts Elves and Memnite, not itself: 3/3. The Sword on Grizzly Bears counts Elves, Memnite, Goblin Piker and Zinnia: +4/+4, 6/6. Memory: project_zinnia_sword_count_base_power_2026-10-14.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Llanowar Elves" },
+    { "add": "Memnite", "as": "memnite" },
+    { "call": ["addCounter", "@memnite", "+1/+1", 1] },
+    { "add": "Goblin Piker" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Fugitive Wizard", "controller": "p2" },
+    { "add": "Zinnia, Valley's Voice" },
+    { "add": "Sword of the Squeak", "as": "sword" },
+    { "call": ["applyEquipAttachment", "@sword", 0, "@bears"] }
+  ],
+  "asserts": [
+    { "perm": "Zinnia, Valley's Voice", "final": { "power": 3, "toughness": 3 } },
+    { "perm": "Grizzly Bears", "final": { "power": 6, "toughness": 6 } },
+    { "perm": "Llanowar Elves", "final": { "power": 1, "toughness": 1 } }
+  ]
+}

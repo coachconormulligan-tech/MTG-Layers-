@@ -1,0 +1,26 @@
+{
+  "name": "Ensnaring Bridge, Kraken of the Straits — power compared with an amount in the subject",
+  "notes": "Found by tests/sweep.py (subject probe: Ensnaring Bridge reached nobody at hand size 7). 'Creatures with power greater than the number of cards in your hand' and 'Creatures with power less than the number of Islands you control' had no reading of the amount; the can't-rule block in cards-parser.js now counts it with _computeForEachCount for the source, 'you' being its controller, and builds the subject from the words before 'with' only (the 'you control' in the amount is not the subject's). Hand size 2 (set on Player 1's tab: the hand count reads the player whose tab is open, not the source's controller, an open finding): Hill Giant (3) and the opponent's Craw Wurm (6) can't attack, Grizzly Bears (2) can. I control two Islands, the opponent three: Llanowar Elves (1) can't block the Kraken, Grizzly Bears (2) can (it could if all five Islands were counted). Memory: project_bess_base_pt_and_amount_in_subject_2026-10-14.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Ensnaring Bridge" },
+    { "add": "Kraken of the Straits" },
+    { "add": "Island" },
+    { "add": "Island" },
+    { "add": "Island", "controller": "p2" },
+    { "add": "Island", "controller": "p2" },
+    { "add": "Island", "controller": "p2" },
+    { "add": "Grizzly Bears" },
+    { "add": "Hill Giant" },
+    { "add": "Craw Wurm", "controller": "p2" },
+    { "add": "Llanowar Elves", "controller": "p2" },
+    { "call": ["setActivePlayer", "p1"] },
+    { "call": ["updateGameState", "handSize", 2] }
+  ],
+  "asserts": [
+    { "perm": "Hill Giant", "final": { "traits": { "$includes": ["Can't attack"] } } },
+    { "perm": "Craw Wurm", "final": { "traits": { "$includes": ["Can't attack"] } } },
+    { "perm": "Grizzly Bears", "final": { "traits": { "$excludes": ["Can't attack", "Can't block Kraken of the Straits"] } } },
+    { "perm": "Llanowar Elves", "final": { "traits": { "$includes": ["Can't block Kraken of the Straits"] } } }
+  ]
+}
