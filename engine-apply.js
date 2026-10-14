@@ -342,6 +342,11 @@ function applyEffect(state, effect, context) {
           state.traits.push(trait);
           changes.push(`Gained trait "${trait}"`);
         }
+        // A suspected creature has menace for as long as it is suspected (CR 701.60c).
+        if (ab === 'Suspected' && state.types.includes('Creature') && !state.abilities.includes('Menace')) {
+          state.abilities.push('Menace');
+          changes.push('Added ability "Menace" (suspected)');
+        }
         break;
       }
       if (ab) {

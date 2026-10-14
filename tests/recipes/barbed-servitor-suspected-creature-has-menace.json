@@ -1,0 +1,46 @@
+{
+  "name": "Barbed Servitor — a suspected creature has menace",
+  "notes": "CR 701.60c: a suspected creature has menace for as long as it is suspected. Added in engine-apply.js's trait-only branch of ADD_ABILITY, only on a creature. Conor asked for Menace only; \"This creature can't block\" is not added.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Barbed Servitor",
+      "as": "servitor"
+    },
+    {
+      "fire": "@servitor",
+      "trigger": 1,
+      "as": "fired"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Barbed Servitor",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Menace"
+          ]
+        },
+        "traits": {
+          "$includes": [
+            "Suspected"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Menace"
+          ]
+        }
+      }
+    }
+  ]
+}

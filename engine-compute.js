@@ -259,7 +259,14 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
   // "+1/+0 for each other Rat you control"; Coat of Arms: each creature skips itself).
   const excludeSelf = /^other\s+/.test(desc);
   if (excludeSelf) desc = desc.replace(/^other\s+/, '');
-  const pool = excludeSelf ? [...allStates].filter(([, st]) => st !== selfState) : allStates;
+  let pool = excludeSelf ? [...allStates].filter(([, st]) => st !== selfState) : allStates;
+  // "for each nonbasic land defending player controls" (Mercadia's Downfall): the player the
+  // creature being modified is attacking; nobody when it is not attacking.
+  if (/\s+defending player controls$/.test(desc)) {
+    desc = desc.replace(/\s+defending player controls$/, '');
+    const defending = _attackedPlayerId(selfState);
+    pool = [...pool].filter(([, st]) => defending && st.controller === defending);
+  }
 
   // Count by type/subtype across all permanents on the battlefield
   let count = 0;
@@ -380,18 +387,73 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
     }
   }
 
-  for (let i = 0; i < words.length; i++) {
-    const w = words[i];
-    const typeCheck = TYPE_MAP[w];
-    if (typeCheck) {
-      // Words before this are subtype qualifiers
-      const subtypeWords = words.slice(0, i);
-      if (subtypeWords.length > 0) {
-        const subtype = subtypeWords.map(s => _singularize(s)).join(' ');
-        for (const [, st] of pool) {
+  // "Other creature on the battlefield that shares at least one creature type with it" (Coat of
+  // Arms): creatures sharing a creature type with the permanent being modified.
+  if (/^creatures? (?:on the battlefield )?that shares? (?:at least one|a) creature type with (?:it|that creature)$/.test(desc)) {
+    const own = new Set(selfState.subtypes || []);
+    for (const [, st] of pool) {
+      if (youControl && st.controller !== ctrlId) continue;
+      if (opponentsControl && st.controller === ctrlId) continue;
+      if (st.types.includes('Creature') && (st.subtypes || []).some(s => own.has(s) && (!TypeCatalog.creatureTypes.size || TypeCatalog.creatureTypes.has(s)))) count++;
+    }
+    return count;
+  }
+  // "Other creature you control with the same name as that creature" (Mirror Box).
+  if (/^creatures? (?:you control )?with the same name as (?:that creature|it)$/.test(desc)) {
+    for (const [, st] of pool) {
+      if (youControl && st.controller !== ctrlId) continue;
+      if (st.types.includes('Creature') && st.name === selfState.name) count++;
+    }
+    return count;
+  }
+
+  // "[qualifiers] [type]": "elf creatures", "blue permanents", "attacking creatures", "legendary
+  // Human creatures", "artifact token". Every word in front of the last one must be a subtype,
+  // colour, supertype, card type or combat state; anything else ("valor counter on this
+  // creature", "Equipment attached to this creature") is another pattern, further down.
+  // "Other than this card" leaves the source out (Márton Stromgald).
+  {
+    let qDesc = desc, notSource = false;
+    const otherThan = qDesc.match(/^(.+?)\s+other than (?:this (?:card|creature|permanent)|it)$/);
+    if (otherThan) { qDesc = otherThan[1]; notSource = true; }
+    const qWords = qDesc.split(/\s+/);
+    const head = qWords[qWords.length - 1];
+    const headCheck = /^tokens?$/.test(head) ? ((st) => !!st.isToken) : TYPE_MAP[head];
+    const COLOR_WORDS = { white: 'W', blue: 'U', black: 'B', red: 'R', green: 'G' };
+    const STATE_WORDS = {
+      attacking: (st) => (st.traits || []).includes('Attacking'), blocking: (st) => (st.traits || []).includes('Blocking'),
+      tapped: (st) => !!st.tapped, untapped: (st) => !st.tapped, equipped: (st) => (st.traits || []).includes('Equipped'),
+      historic: (st) => st.types.includes('Artifact') || (st.supertypes || []).includes('Legendary') || (st.subtypes || []).includes('Saga'),
+      multicolored: (st) => (st.colors || []).length > 1, monocolored: (st) => (st.colors || []).length === 1,
+      colorless: (st) => !(st.colors || []).length, token: (st) => !!st.isToken, nontoken: (st) => !st.isToken,
+    };
+    // Without the Scryfall catalogs any plain word counts as a subtype, as it always did.
+    const catalogLoaded = typeof TypeCatalog !== 'undefined' && TypeCatalog.creatureTypes && TypeCatalog.creatureTypes.size > 0;
+    const isSubtype = (s) => catalogLoaded ? _isKnownSubtypeWord(s)
+      : /^[A-Z][a-z'-]+(?: [A-Z][a-z'-]+)*$/.test(s) && !/\b(?:Counters?|On|Attached|To|This|It|With|That|Of|The|In|Among|You|Your)\b/.test(s);
+    if (headCheck && qWords.length > 1) {
+      const checks = [headCheck], subWords = [];
+      for (const w of qWords.slice(0, -1)) {
+        if (COLOR_WORDS[w]) { const c = COLOR_WORDS[w]; checks.push((st) => (st.colors || []).includes(c)); }
+        else if (STATE_WORDS[w]) checks.push(STATE_WORDS[w]);
+        else if (SUPERTYPE_MAP[w]) { const sv = SUPERTYPE_MAP[w]; checks.push((st) => (st.supertypes || []).includes(sv)); }
+        else if (TYPE_MAP[w] && !/^permanents?$/.test(w)) checks.push(TYPE_MAP[w]);
+        else subWords.push(w);
+      }
+      // Subtype words: one subtype of several words ("Time Lord"), or each its own ("Elf Warrior").
+      let subOk = true;
+      if (subWords.length) {
+        const joined = subWords.map(s => _singularize(s)).join(' ');
+        if (isSubtype(joined)) checks.push((st) => st.subtypes.includes(joined));
+        else if (subWords.every(s => isSubtype(_singularize(s)))) for (const s of subWords) { const sub = _singularize(s); checks.push((st) => st.subtypes.includes(sub)); }
+        else subOk = false;
+      }
+      if (subOk) {
+        for (const [pid, st] of pool) {
+          if (notSource && effect && pid === effect.sourceId) continue;
           if (youControl && st.controller !== ctrlId) continue;
           if (opponentsControl && st.controller === ctrlId) continue;
-          if (typeCheck(st) && st.subtypes.includes(subtype)) count++;
+          if (checks.every(fn => fn(st))) count++;
         }
         return count;
       }
@@ -457,7 +519,10 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
     if (typeof Battlefield !== 'undefined' && Battlefield.effects) {
       // Find the ID of the creature that things are attached to (= the boost target / selfState).
       let creatureId = null;
-      if (effect) {
+      // "Attached to this creature" is the effect's source (Armament Master: "Other Kor
+      // creatures you control get +2/+2 for each Equipment attached to this creature").
+      if (effect && effect.sourceId && /\bthis (?:creature|permanent|card)\s*$/.test(desc)) creatureId = effect.sourceId;
+      if (!creatureId && effect) {
         creatureId = effect.targetId || (effect.selfTarget ? effect.sourceId : null);
       }
       if (!creatureId && allStates) {

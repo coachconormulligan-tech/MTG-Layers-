@@ -1,0 +1,31 @@
+{
+  "name": "Intrepid Adversary — +1/+1 for each valor counter on this creature",
+  "notes": "Fixed in _computeForEachCount (engine-compute.js): words before a card-type word were all read as one subtype, so the count was 0. Memory: project_suspected_menace_and_for_each_inert_diagnosis_2026-10-14.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Intrepid Adversary",
+      "as": "ia"
+    },
+    {
+      "call": [
+        "addCounter",
+        "@ia",
+        "valor",
+        2
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 4,
+        "toughness": 4
+      }
+    }
+  ]
+}
