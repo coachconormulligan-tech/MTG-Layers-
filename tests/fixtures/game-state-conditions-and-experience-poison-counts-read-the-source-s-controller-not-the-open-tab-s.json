@@ -1,0 +1,2107 @@
+{
+ "name": "Game-state conditions and experience / poison counts read the source's controller, not the open tab's",
+ "notes": "Conditions in the parser (your turn, city's blessing, no / N or more cards in hand, life totals) read Battlefield.gameState, the player whose tab is open; experience and poison counts too. _gsOfController (cards-parser.js) reads the source's controller; _gsOfNamedPlayers reads 'an opponent' / 'a player' / 'each player' for hand conditions; _countPlayerCounters (engine-compute.js) reads 'you have', 'your opponents have', 'its controller has'. Player 1's tab is open: not their turn, 7 cards, 20 life, 2 poison. Player 2: their turn, the city's blessing, no cards in hand, 30 life, 3 experience, 5 poison. Player 2's Wildwood Geist 5/5, Dusk Charger 5/5, Gathan Raiders 5/5, Serra Ascendant 6/6, Kalemne 6/6, Akki Underling (seven or more cards) 2/1. Player 1's Mycosynth Fiend (poison your opponents have) 7/7, Guul Draz Specter (an opponent has no cards in hand) 5/5. Memory: project_game_state_conditions_by_controller_2026-10-14.",
+ "recipe": {
+  "steps": [
+   {
+    "call": [
+     "addPlayer",
+     "Player 2"
+    ]
+   },
+   {
+    "call": [
+     "setActivePlayer",
+     "p2"
+    ]
+   },
+   {
+    "call": [
+     "updateGameState",
+     "isYourTurn",
+     true
+    ]
+   },
+   {
+    "call": [
+     "updateGameState",
+     "hasCityBlessing",
+     true
+    ]
+   },
+   {
+    "call": [
+     "updateGameState",
+     "handSize",
+     0
+    ]
+   },
+   {
+    "call": [
+     "updateGameState",
+     "currentLife",
+     30
+    ]
+   },
+   {
+    "call": [
+     "updateGameState",
+     "experienceCounters",
+     3
+    ]
+   },
+   {
+    "call": [
+     "updateGameState",
+     "poisonCounters",
+     5
+    ]
+   },
+   {
+    "add": "Wildwood Geist",
+    "controller": "p2"
+   },
+   {
+    "add": "Dusk Charger",
+    "controller": "p2"
+   },
+   {
+    "add": "Gathan Raiders",
+    "controller": "p2"
+   },
+   {
+    "add": "Serra Ascendant",
+    "controller": "p2"
+   },
+   {
+    "add": "Kalemne, Disciple of Iroas",
+    "controller": "p2"
+   },
+   {
+    "add": "Akki Underling",
+    "controller": "p2"
+   },
+   {
+    "call": [
+     "setActivePlayer",
+     "p1"
+    ]
+   },
+   {
+    "call": [
+     "updateGameState",
+     "isYourTurn",
+     false
+    ]
+   },
+   {
+    "call": [
+     "updateGameState",
+     "handSize",
+     7
+    ]
+   },
+   {
+    "call": [
+     "updateGameState",
+     "poisonCounters",
+     2
+    ]
+   },
+   {
+    "add": "Mycosynth Fiend",
+    "controller": "p1"
+   },
+   {
+    "add": "Guul Draz Specter",
+    "controller": "p1"
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Wildwood Geist",
+   "final": {
+    "power": 5,
+    "toughness": 5
+   }
+  },
+  {
+   "perm": "Dusk Charger",
+   "final": {
+    "power": 5,
+    "toughness": 5
+   }
+  },
+  {
+   "perm": "Gathan Raiders",
+   "final": {
+    "power": 5,
+    "toughness": 5
+   }
+  },
+  {
+   "perm": "Serra Ascendant",
+   "final": {
+    "power": 6,
+    "toughness": 6
+   }
+  },
+  {
+   "perm": "Kalemne, Disciple of Iroas",
+   "final": {
+    "power": 6,
+    "toughness": 6
+   }
+  },
+  {
+   "perm": "Akki Underling",
+   "final": {
+    "power": 2,
+    "toughness": 1
+   }
+  },
+  {
+   "perm": "Mycosynth Fiend",
+   "final": {
+    "power": 7,
+    "toughness": 7
+   }
+  },
+  {
+   "perm": "Guul Draz Specter",
+   "final": {
+    "power": 5,
+    "toughness": 5
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "4658b4b2-7043-4ca2-96fd-4f663c20c80f",
+     "oracle_id": "9fb4aa2d-6414-4176-9070-e5230e100c6a",
+     "multiverse_ids": [
+      240098
+     ],
+     "mtgo_id": 44133,
+     "mtgo_foil_id": 44134,
+     "tcgplayer_id": 58983,
+     "cardmarket_id": 254706,
+     "name": "Wildwood Geist",
+     "lang": "en",
+     "released_at": "2012-05-04",
+     "uri": "https://api.scryfall.com/cards/4658b4b2-7043-4ca2-96fd-4f663c20c80f",
+     "scryfall_uri": "https://scryfall.com/card/avr/204/wildwood-geist?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:04:17Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/6/4658b4b2-7043-4ca2-96fd-4f663c20c80f.jpg?1783940657",
+      "normal": "https://cards.scryfall.io/normal/front/4/6/4658b4b2-7043-4ca2-96fd-4f663c20c80f.jpg?1783940657",
+      "large": "https://cards.scryfall.io/large/front/4/6/4658b4b2-7043-4ca2-96fd-4f663c20c80f.jpg?1783940657",
+      "png": "https://cards.scryfall.io/png/front/4/6/4658b4b2-7043-4ca2-96fd-4f663c20c80f.png?1783940657",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/6/4658b4b2-7043-4ca2-96fd-4f663c20c80f.jpg?1783940657",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/6/4658b4b2-7043-4ca2-96fd-4f663c20c80f.jpg?1783940657",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/6/4658b4b2-7043-4ca2-96fd-4f663c20c80f.webp?1783940657",
+      "grid": "https://cards.scryfall.io/grid/front/4/6/4658b4b2-7043-4ca2-96fd-4f663c20c80f.webp?1783940657",
+      "display": "https://cards.scryfall.io/display/front/4/6/4658b4b2-7043-4ca2-96fd-4f663c20c80f.webp?1783940657",
+      "art": "https://cards.scryfall.io/art/front/4/6/4658b4b2-7043-4ca2-96fd-4f663c20c80f.webp?1783940657",
+      "crop": "https://cards.scryfall.io/crop/front/4/6/4658b4b2-7043-4ca2-96fd-4f663c20c80f.webp?1783940657"
+     },
+     "mana_cost": "{4}{G}",
+     "cmc": 5,
+     "type_line": "Creature — Spirit",
+     "oracle_text": "During your turn, this creature gets +2/+2.",
+     "power": "3",
+     "toughness": "3",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "039810a9-92d7-4f2d-b2d0-ca661ac586c0",
+     "set": "avr",
+     "set_name": "Avacyn Restored",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/039810a9-92d7-4f2d-b2d0-ca661ac586c0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aavr&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/avr?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/4658b4b2-7043-4ca2-96fd-4f663c20c80f/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A9fb4aa2d-6414-4176-9070-e5230e100c6a&unique=prints",
+     "collector_number": "204",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "The geists that dwell in the deep forests of Kessig are as untamable as the woods themselves.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Lars Grant-West",
+     "artist_ids": [
+      "21ed6499-c4d3-4965-ab02-6c7228275bec"
+     ],
+     "illustration_id": "1dc4b5d7-1622-48e0-a261-20fda0241dcb",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 31767,
+     "prices": {
+      "usd": "0.04",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.04",
+      "eur_foil": "0.20",
+      "tix": "0.04"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=240098&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DWildwood%2BGeist",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DWildwood%2BGeist",
+      "edhrec": "https://edhrec.com/route/?cc=Wildwood+Geist"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F58983%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=254706&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/44133?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_1",
+    "controller": "player_1",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "c2ce54a3-f3eb-48a0-bfa2-5f4b90e413f0",
+     "oracle_id": "e0190e13-89f6-4b51-a277-bf3eb842963e",
+     "multiverse_ids": [
+      439726
+     ],
+     "mtgo_id": 66591,
+     "arena_id": 66755,
+     "tcgplayer_id": 155568,
+     "cardmarket_id": 315279,
+     "name": "Dusk Charger",
+     "lang": "en",
+     "released_at": "2018-01-19",
+     "uri": "https://api.scryfall.com/cards/c2ce54a3-f3eb-48a0-bfa2-5f4b90e413f0",
+     "scryfall_uri": "https://scryfall.com/card/rix/69/dusk-charger?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T09:35:12Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/c/2/c2ce54a3-f3eb-48a0-bfa2-5f4b90e413f0.jpg?1783935312",
+      "normal": "https://cards.scryfall.io/normal/front/c/2/c2ce54a3-f3eb-48a0-bfa2-5f4b90e413f0.jpg?1783935312",
+      "large": "https://cards.scryfall.io/large/front/c/2/c2ce54a3-f3eb-48a0-bfa2-5f4b90e413f0.jpg?1783935312",
+      "png": "https://cards.scryfall.io/png/front/c/2/c2ce54a3-f3eb-48a0-bfa2-5f4b90e413f0.png?1783935312",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/c/2/c2ce54a3-f3eb-48a0-bfa2-5f4b90e413f0.jpg?1783935312",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/c/2/c2ce54a3-f3eb-48a0-bfa2-5f4b90e413f0.jpg?1783935312",
+      "thumb": "https://cards.scryfall.io/thumb/front/c/2/c2ce54a3-f3eb-48a0-bfa2-5f4b90e413f0.webp?1783935312",
+      "grid": "https://cards.scryfall.io/grid/front/c/2/c2ce54a3-f3eb-48a0-bfa2-5f4b90e413f0.webp?1783935312",
+      "display": "https://cards.scryfall.io/display/front/c/2/c2ce54a3-f3eb-48a0-bfa2-5f4b90e413f0.webp?1783935312",
+      "art": "https://cards.scryfall.io/art/front/c/2/c2ce54a3-f3eb-48a0-bfa2-5f4b90e413f0.webp?1783935312",
+      "crop": "https://cards.scryfall.io/crop/front/c/2/c2ce54a3-f3eb-48a0-bfa2-5f4b90e413f0.webp?1783935312"
+     },
+     "mana_cost": "{3}{B}",
+     "cmc": 4,
+     "type_line": "Creature — Horse",
+     "oracle_text": "Ascend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\nThis creature gets +2/+2 as long as you have the city's blessing.",
+     "power": "3",
+     "toughness": "3",
+     "colors": [
+      "B"
+     ],
+     "color_identity": [
+      "B"
+     ],
+     "keywords": [
+      "Ascend"
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "ba64ed3e-93c5-406f-a38d-65cc68472122",
+       "component": "combo_piece",
+       "name": "City's Blessing",
+       "type_line": "Card",
+       "uri": "https://api.scryfall.com/cards/ba64ed3e-93c5-406f-a38d-65cc68472122"
+      },
+      {
+       "object": "related_card",
+       "id": "c2ce54a3-f3eb-48a0-bfa2-5f4b90e413f0",
+       "component": "combo_piece",
+       "name": "Dusk Charger",
+       "type_line": "Creature — Horse",
+       "uri": "https://api.scryfall.com/cards/c2ce54a3-f3eb-48a0-bfa2-5f4b90e413f0"
+      }
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "arena",
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "2f7e40fc-772d-4a85-bfdd-01653c41d0fa",
+     "set": "rix",
+     "set_name": "Rivals of Ixalan",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/2f7e40fc-772d-4a85-bfdd-01653c41d0fa",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Arix&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/rix?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/c2ce54a3-f3eb-48a0-bfa2-5f4b90e413f0/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ae0190e13-89f6-4b51-a277-bf3eb842963e&unique=prints",
+     "collector_number": "69",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "Stories say demon blood runs in its veins, making it fearless and bloodthirsty.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Lucas Graciano",
+     "artist_ids": [
+      "ce98f39c-7cdd-47e6-a520-6c50443bb4c2"
+     ],
+     "illustration_id": "c5e02f92-1217-4d19-81f3-992162b174b1",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 28583,
+     "penny_rank": 15596,
+     "prices": {
+      "usd": "0.11",
+      "usd_foil": "0.26",
+      "usd_etched": null,
+      "eur": "0.06",
+      "eur_foil": "0.24",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=439726&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DDusk%2BCharger",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DDusk%2BCharger",
+      "edhrec": "https://edhrec.com/route/?cc=Dusk+Charger"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F155568%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=315279&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/66591?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_1",
+    "controller": "player_1",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "58c232e5-54e2-44b7-85b1-ed039a8e5a73",
+     "oracle_id": "31ea0a21-9c47-4917-9df9-3469b6e5243d",
+     "multiverse_ids": [
+      509530
+     ],
+     "mtgo_id": 86701,
+     "tcgplayer_id": 233918,
+     "cardmarket_id": 544876,
+     "name": "Gathan Raiders",
+     "lang": "en",
+     "released_at": "2021-03-19",
+     "uri": "https://api.scryfall.com/cards/58c232e5-54e2-44b7-85b1-ed039a8e5a73",
+     "scryfall_uri": "https://scryfall.com/card/tsr/165/gathan-raiders?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T07:29:57Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/5/8/58c232e5-54e2-44b7-85b1-ed039a8e5a73.jpg?1783927797",
+      "normal": "https://cards.scryfall.io/normal/front/5/8/58c232e5-54e2-44b7-85b1-ed039a8e5a73.jpg?1783927797",
+      "large": "https://cards.scryfall.io/large/front/5/8/58c232e5-54e2-44b7-85b1-ed039a8e5a73.jpg?1783927797",
+      "png": "https://cards.scryfall.io/png/front/5/8/58c232e5-54e2-44b7-85b1-ed039a8e5a73.png?1783927797",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/5/8/58c232e5-54e2-44b7-85b1-ed039a8e5a73.jpg?1783927797",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/5/8/58c232e5-54e2-44b7-85b1-ed039a8e5a73.jpg?1783927797",
+      "thumb": "https://cards.scryfall.io/thumb/front/5/8/58c232e5-54e2-44b7-85b1-ed039a8e5a73.webp?1783927797",
+      "grid": "https://cards.scryfall.io/grid/front/5/8/58c232e5-54e2-44b7-85b1-ed039a8e5a73.webp?1783927797",
+      "display": "https://cards.scryfall.io/display/front/5/8/58c232e5-54e2-44b7-85b1-ed039a8e5a73.webp?1783927797",
+      "art": "https://cards.scryfall.io/art/front/5/8/58c232e5-54e2-44b7-85b1-ed039a8e5a73.webp?1783927797",
+      "crop": "https://cards.scryfall.io/crop/front/5/8/58c232e5-54e2-44b7-85b1-ed039a8e5a73.webp?1783927797"
+     },
+     "mana_cost": "{3}{R}{R}",
+     "cmc": 5,
+     "type_line": "Creature — Human Warrior",
+     "oracle_text": "Hellbent — This creature gets +2/+2 as long as you have no cards in hand.\nMorph—Discard a card. (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)",
+     "power": "3",
+     "toughness": "3",
+     "colors": [
+      "R"
+     ],
+     "color_identity": [
+      "R"
+     ],
+     "keywords": [
+      "Morph",
+      "Hellbent"
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "58c232e5-54e2-44b7-85b1-ed039a8e5a73",
+       "component": "combo_piece",
+       "name": "Gathan Raiders",
+       "type_line": "Creature — Human Warrior",
+       "uri": "https://api.scryfall.com/cards/58c232e5-54e2-44b7-85b1-ed039a8e5a73"
+      },
+      {
+       "object": "related_card",
+       "id": "5430da88-b72e-4d64-bd3c-b21062cac1c2",
+       "component": "combo_piece",
+       "name": "Morph",
+       "type_line": "Creature",
+       "uri": "https://api.scryfall.com/cards/5430da88-b72e-4d64-bd3c-b21062cac1c2"
+      }
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "11e90d1b-0502-43e6-b056-e24836523c13",
+     "set": "tsr",
+     "set_name": "Time Spiral Remastered",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/11e90d1b-0502-43e6-b056-e24836523c13",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Atsr&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/tsr?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/58c232e5-54e2-44b7-85b1-ed039a8e5a73/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A31ea0a21-9c47-4917-9df9-3469b6e5243d&unique=prints",
+     "collector_number": "165",
+     "digital": false,
+     "rarity": "common",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Paolo Parente",
+     "artist_ids": [
+      "d48dd097-720d-476a-8722-6a02854ae28b"
+     ],
+     "illustration_id": "8be4e235-42ea-4b4c-9adc-b1d4eccbc918",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 30102,
+     "penny_rank": 10056,
+     "preview": {
+      "source": "Full Metal Gaming",
+      "source_uri": "https://www.facebook.com/FMGFullMetalGaming/posts/1087353665010166",
+      "previewed_at": "2021-03-02"
+     },
+     "prices": {
+      "usd": "0.10",
+      "usd_foil": "0.25",
+      "usd_etched": null,
+      "eur": "0.05",
+      "eur_foil": "0.12",
+      "tix": "0.04"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=509530&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGathan%2BRaiders",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGathan%2BRaiders",
+      "edhrec": "https://edhrec.com/route/?cc=Gathan+Raiders"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F233918%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=544876&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/86701?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_1",
+    "controller": "player_1",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "0a22ee47-fc56-436d-8570-88fbff421027",
+     "oracle_id": "27ad3e00-6ffb-48f7-8469-8868d066d1e2",
+     "multiverse_ids": [
+      438597
+     ],
+     "mtgo_id": 65941,
+     "mtgo_foil_id": 65942,
+     "tcgplayer_id": 145317,
+     "cardmarket_id": 301424,
+     "name": "Serra Ascendant",
+     "lang": "en",
+     "released_at": "2017-11-17",
+     "uri": "https://api.scryfall.com/cards/0a22ee47-fc56-436d-8570-88fbff421027",
+     "scryfall_uri": "https://scryfall.com/card/ima/31/serra-ascendant?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T09:39:14Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/0/a/0a22ee47-fc56-436d-8570-88fbff421027.jpg?1783935554",
+      "normal": "https://cards.scryfall.io/normal/front/0/a/0a22ee47-fc56-436d-8570-88fbff421027.jpg?1783935554",
+      "large": "https://cards.scryfall.io/large/front/0/a/0a22ee47-fc56-436d-8570-88fbff421027.jpg?1783935554",
+      "png": "https://cards.scryfall.io/png/front/0/a/0a22ee47-fc56-436d-8570-88fbff421027.png?1783935554",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/0/a/0a22ee47-fc56-436d-8570-88fbff421027.jpg?1783935554",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/0/a/0a22ee47-fc56-436d-8570-88fbff421027.jpg?1783935554",
+      "thumb": "https://cards.scryfall.io/thumb/front/0/a/0a22ee47-fc56-436d-8570-88fbff421027.webp?1783935554",
+      "grid": "https://cards.scryfall.io/grid/front/0/a/0a22ee47-fc56-436d-8570-88fbff421027.webp?1783935554",
+      "display": "https://cards.scryfall.io/display/front/0/a/0a22ee47-fc56-436d-8570-88fbff421027.webp?1783935554",
+      "art": "https://cards.scryfall.io/art/front/0/a/0a22ee47-fc56-436d-8570-88fbff421027.webp?1783935554",
+      "crop": "https://cards.scryfall.io/crop/front/0/a/0a22ee47-fc56-436d-8570-88fbff421027.webp?1783935554"
+     },
+     "mana_cost": "{W}",
+     "cmc": 1,
+     "type_line": "Creature — Human Monk",
+     "oracle_text": "Lifelink (Damage dealt by this creature also causes you to gain that much life.)\nAs long as you have 30 or more life, this creature gets +5/+5 and has flying.",
+     "power": "1",
+     "toughness": "1",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [
+      "Lifelink"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "741bcd30-7709-4133-8919-f4b46483bed7",
+     "set": "ima",
+     "set_name": "Iconic Masters",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/741bcd30-7709-4133-8919-f4b46483bed7",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aima&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/ima?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/0a22ee47-fc56-436d-8570-88fbff421027/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A27ad3e00-6ffb-48f7-8469-8868d066d1e2&unique=prints",
+     "collector_number": "31",
+     "digital": false,
+     "rarity": "rare",
+     "flavor_text": "Faith in Serra is its own reward.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Howard Lyon",
+     "artist_ids": [
+      "6dd06426-59fe-4b9c-aad5-6da8446a5c3d"
+     ],
+     "illustration_id": "2eefd32a-c388-4692-b095-b41d90e65943",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 1011,
+     "penny_rank": 1924,
+     "prices": {
+      "usd": "29.42",
+      "usd_foil": "57.75",
+      "usd_etched": null,
+      "eur": "25.05",
+      "eur_foil": "34.68",
+      "tix": "0.45"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=438597&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DSerra%2BAscendant",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DSerra%2BAscendant",
+      "edhrec": "https://edhrec.com/route/?cc=Serra+Ascendant"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F145317%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=301424&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/65941?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_1",
+    "controller": "player_1",
+    "timestamp": 4,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_5",
+    "scryfallData": {
+     "object": "card",
+     "id": "3c718940-dc07-4449-ba35-4029f366c3eb",
+     "oracle_id": "e100f9fc-b6fb-42ab-b9b3-796bede6804d",
+     "multiverse_ids": [
+      446743
+     ],
+     "tcgplayer_id": 166684,
+     "cardmarket_id": 357022,
+     "name": "Kalemne, Disciple of Iroas",
+     "lang": "en",
+     "released_at": "2018-06-08",
+     "uri": "https://api.scryfall.com/cards/3c718940-dc07-4449-ba35-4029f366c3eb",
+     "scryfall_uri": "https://scryfall.com/card/cm2/7/kalemne-disciple-of-iroas?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T09:26:19Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/3/c/3c718940-dc07-4449-ba35-4029f366c3eb.jpg?1783934779",
+      "normal": "https://cards.scryfall.io/normal/front/3/c/3c718940-dc07-4449-ba35-4029f366c3eb.jpg?1783934779",
+      "large": "https://cards.scryfall.io/large/front/3/c/3c718940-dc07-4449-ba35-4029f366c3eb.jpg?1783934779",
+      "png": "https://cards.scryfall.io/png/front/3/c/3c718940-dc07-4449-ba35-4029f366c3eb.png?1783934779",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/3/c/3c718940-dc07-4449-ba35-4029f366c3eb.jpg?1783934779",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/3/c/3c718940-dc07-4449-ba35-4029f366c3eb.jpg?1783934779",
+      "thumb": "https://cards.scryfall.io/thumb/front/3/c/3c718940-dc07-4449-ba35-4029f366c3eb.webp?1783934779",
+      "grid": "https://cards.scryfall.io/grid/front/3/c/3c718940-dc07-4449-ba35-4029f366c3eb.webp?1783934779",
+      "display": "https://cards.scryfall.io/display/front/3/c/3c718940-dc07-4449-ba35-4029f366c3eb.webp?1783934779",
+      "art": "https://cards.scryfall.io/art/front/3/c/3c718940-dc07-4449-ba35-4029f366c3eb.webp?1783934779",
+      "crop": "https://cards.scryfall.io/crop/front/3/c/3c718940-dc07-4449-ba35-4029f366c3eb.webp?1783934779"
+     },
+     "mana_cost": "{2}{R}{W}",
+     "cmc": 4,
+     "type_line": "Legendary Creature — Giant Soldier",
+     "oracle_text": "Double strike, vigilance\nWhenever you cast a creature spell with mana value 5 or greater, you get an experience counter.\nKalemne gets +1/+1 for each experience counter you have.",
+     "power": "3",
+     "toughness": "3",
+     "colors": [
+      "R",
+      "W"
+     ],
+     "color_identity": [
+      "R",
+      "W"
+     ],
+     "keywords": [
+      "Vigilance",
+      "Double strike"
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "1374bfa2-9714-486d-90aa-7a9b8d8ef3a8",
+       "component": "combo_piece",
+       "name": "Experience",
+       "type_line": "Card",
+       "uri": "https://api.scryfall.com/cards/1374bfa2-9714-486d-90aa-7a9b8d8ef3a8"
+      },
+      {
+       "object": "related_card",
+       "id": "3c718940-dc07-4449-ba35-4029f366c3eb",
+       "component": "combo_piece",
+       "name": "Kalemne, Disciple of Iroas",
+       "type_line": "Legendary Creature — Giant Soldier",
+       "uri": "https://api.scryfall.com/cards/3c718940-dc07-4449-ba35-4029f366c3eb"
+      }
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": false,
+     "finishes": [
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "2ba5b1a3-40ed-422e-981d-56753004dfc6",
+     "set": "cm2",
+     "set_name": "Commander Anthology Volume II",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/2ba5b1a3-40ed-422e-981d-56753004dfc6",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Acm2&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/cm2?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/3c718940-dc07-4449-ba35-4029f366c3eb/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ae100f9fc-b6fb-42ab-b9b3-796bede6804d&unique=prints",
+     "collector_number": "7",
+     "digital": false,
+     "rarity": "mythic",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Jason Chan",
+     "artist_ids": [
+      "8062d5a9-51b6-4822-933f-fa9e9dba8416"
+     ],
+     "illustration_id": "cacad3d4-f792-4fbb-812d-012df03ad017",
+     "border_color": "black",
+     "frame": "2015",
+     "frame_effects": [
+      "legendary"
+     ],
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 8478,
+     "prices": {
+      "usd": null,
+      "usd_foil": "13.74",
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": "8.98",
+      "tix": null
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=446743&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DKalemne%252C%2BDisciple%2Bof%2BIroas",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DKalemne%252C%2BDisciple%2Bof%2BIroas",
+      "edhrec": "https://edhrec.com/route/?cc=Kalemne%2C+Disciple+of+Iroas"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F166684%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=357022&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Kalemne%2C+Disciple+of+Iroas&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_1",
+    "controller": "player_1",
+    "timestamp": 5,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_6",
+    "scryfallData": {
+     "object": "card",
+     "id": "106382db-56aa-4061-9d1e-17821937f1de",
+     "oracle_id": "91f95d83-3637-4cf8-af6c-56bc4e4b2591",
+     "multiverse_ids": [
+      79164
+     ],
+     "mtgo_id": 21934,
+     "mtgo_foil_id": 21935,
+     "tcgplayer_id": 12396,
+     "cardmarket_id": 12624,
+     "name": "Akki Underling",
+     "lang": "en",
+     "released_at": "2005-06-03",
+     "uri": "https://api.scryfall.com/cards/106382db-56aa-4061-9d1e-17821937f1de",
+     "scryfall_uri": "https://scryfall.com/card/sok/93/akki-underling?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T12:02:29Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/1/0/106382db-56aa-4061-9d1e-17821937f1de.jpg?1783944149",
+      "normal": "https://cards.scryfall.io/normal/front/1/0/106382db-56aa-4061-9d1e-17821937f1de.jpg?1783944149",
+      "large": "https://cards.scryfall.io/large/front/1/0/106382db-56aa-4061-9d1e-17821937f1de.jpg?1783944149",
+      "png": "https://cards.scryfall.io/png/front/1/0/106382db-56aa-4061-9d1e-17821937f1de.png?1783944149",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/1/0/106382db-56aa-4061-9d1e-17821937f1de.jpg?1783944149",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/1/0/106382db-56aa-4061-9d1e-17821937f1de.jpg?1783944149",
+      "thumb": "https://cards.scryfall.io/thumb/front/1/0/106382db-56aa-4061-9d1e-17821937f1de.webp?1783944149",
+      "grid": "https://cards.scryfall.io/grid/front/1/0/106382db-56aa-4061-9d1e-17821937f1de.webp?1783944149",
+      "display": "https://cards.scryfall.io/display/front/1/0/106382db-56aa-4061-9d1e-17821937f1de.webp?1783944149",
+      "art": "https://cards.scryfall.io/art/front/1/0/106382db-56aa-4061-9d1e-17821937f1de.webp?1783944149",
+      "crop": "https://cards.scryfall.io/crop/front/1/0/106382db-56aa-4061-9d1e-17821937f1de.webp?1783944149"
+     },
+     "mana_cost": "{1}{R}",
+     "cmc": 2,
+     "type_line": "Creature — Goblin Warrior",
+     "oracle_text": "As long as you have seven or more cards in hand, this creature gets +2/+1 and has first strike.",
+     "power": "2",
+     "toughness": "1",
+     "colors": [
+      "R"
+     ],
+     "color_identity": [
+      "R"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "4db16ad3-2b95-442f-bb6b-e9aa7fe7f769",
+     "set": "sok",
+     "set_name": "Saviors of Kamigawa",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/4db16ad3-2b95-442f-bb6b-e9aa7fe7f769",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Asok&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/sok?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/106382db-56aa-4061-9d1e-17821937f1de/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A91f95d83-3637-4cf8-af6c-56bc4e4b2591&unique=prints",
+     "collector_number": "93",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"I lost my hounds in the war and thus found myself employing akki as servants. I found their training to be remarkably similar.\"\n—Kensuke, houndmaster",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Franz Vohwinkel",
+     "artist_ids": [
+      "3a243c17-3baa-4b53-9599-645311cd7d3d"
+     ],
+     "illustration_id": "62f02755-ad16-4afd-9966-7f591e46c960",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 29678,
+     "prices": {
+      "usd": "0.08",
+      "usd_foil": "0.31",
+      "usd_etched": null,
+      "eur": "0.10",
+      "eur_foil": "0.47",
+      "tix": "0.05"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=79164&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DAkki%2BUnderling",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DAkki%2BUnderling",
+      "edhrec": "https://edhrec.com/route/?cc=Akki+Underling"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F12396%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=12624&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/21934?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_1",
+    "controller": "player_1",
+    "timestamp": 6,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_7",
+    "scryfallData": {
+     "object": "card",
+     "id": "bdcd1b8e-9f1f-48a3-b7a1-43a32cc03bb1",
+     "oracle_id": "e7c4bc25-806c-4a75-85bf-a0e66308d5d8",
+     "multiverse_ids": [
+      217995
+     ],
+     "mtgo_id": 39782,
+     "mtgo_foil_id": 39783,
+     "tcgplayer_id": 39550,
+     "cardmarket_id": 245941,
+     "name": "Mycosynth Fiend",
+     "lang": "en",
+     "released_at": "2011-05-13",
+     "uri": "https://api.scryfall.com/cards/bdcd1b8e-9f1f-48a3-b7a1-43a32cc03bb1",
+     "scryfall_uri": "https://scryfall.com/card/nph/117/mycosynth-fiend?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:15:01Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/b/d/bdcd1b8e-9f1f-48a3-b7a1-43a32cc03bb1.jpg?1783941301",
+      "normal": "https://cards.scryfall.io/normal/front/b/d/bdcd1b8e-9f1f-48a3-b7a1-43a32cc03bb1.jpg?1783941301",
+      "large": "https://cards.scryfall.io/large/front/b/d/bdcd1b8e-9f1f-48a3-b7a1-43a32cc03bb1.jpg?1783941301",
+      "png": "https://cards.scryfall.io/png/front/b/d/bdcd1b8e-9f1f-48a3-b7a1-43a32cc03bb1.png?1783941301",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/b/d/bdcd1b8e-9f1f-48a3-b7a1-43a32cc03bb1.jpg?1783941301",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/b/d/bdcd1b8e-9f1f-48a3-b7a1-43a32cc03bb1.jpg?1783941301",
+      "thumb": "https://cards.scryfall.io/thumb/front/b/d/bdcd1b8e-9f1f-48a3-b7a1-43a32cc03bb1.webp?1783941301",
+      "grid": "https://cards.scryfall.io/grid/front/b/d/bdcd1b8e-9f1f-48a3-b7a1-43a32cc03bb1.webp?1783941301",
+      "display": "https://cards.scryfall.io/display/front/b/d/bdcd1b8e-9f1f-48a3-b7a1-43a32cc03bb1.webp?1783941301",
+      "art": "https://cards.scryfall.io/art/front/b/d/bdcd1b8e-9f1f-48a3-b7a1-43a32cc03bb1.webp?1783941301",
+      "crop": "https://cards.scryfall.io/crop/front/b/d/bdcd1b8e-9f1f-48a3-b7a1-43a32cc03bb1.webp?1783941301"
+     },
+     "mana_cost": "{2}{G}",
+     "cmc": 3,
+     "type_line": "Creature — Phyrexian Horror",
+     "oracle_text": "This creature gets +1/+1 for each poison counter your opponents have.",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "e8e356d8-6d01-4dab-aa07-d0999dc9359f",
+     "set": "nph",
+     "set_name": "New Phyrexia",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/e8e356d8-6d01-4dab-aa07-d0999dc9359f",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Anph&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/nph?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/bdcd1b8e-9f1f-48a3-b7a1-43a32cc03bb1/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ae7c4bc25-806c-4a75-85bf-a0e66308d5d8&unique=prints",
+     "collector_number": "117",
+     "digital": false,
+     "rarity": "uncommon",
+     "watermark": "phyrexian",
+     "flavor_text": "\"I wish I could take credit for it, but nature progresses on its own, just the way it should.\"\n—Vorinclex, Voice of Hunger",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Kev Walker",
+     "artist_ids": [
+      "f366a0ee-a0cd-466d-ba6a-90058c7a31a6"
+     ],
+     "illustration_id": "53d29e15-eba7-41a7-98b8-886dff4a99c8",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 19208,
+     "prices": {
+      "usd": "0.19",
+      "usd_foil": "6.29",
+      "usd_etched": null,
+      "eur": "0.14",
+      "eur_foil": "0.61",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=217995&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DMycosynth%2BFiend",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DMycosynth%2BFiend",
+      "edhrec": "https://edhrec.com/route/?cc=Mycosynth+Fiend"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F39550%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=245941&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/39782?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 7,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_8",
+    "scryfallData": {
+     "object": "card",
+     "id": "edb0546f-f893-460c-8af4-79b24c373ebe",
+     "oracle_id": "733cfc16-9a16-41e2-b36e-3d7a546c67f0",
+     "multiverse_ids": [
+      416894
+     ],
+     "tcgplayer_id": 121841,
+     "cardmarket_id": 291866,
+     "name": "Guul Draz Specter",
+     "lang": "en",
+     "released_at": "2016-08-26",
+     "uri": "https://api.scryfall.com/cards/edb0546f-f893-460c-8af4-79b24c373ebe",
+     "scryfall_uri": "https://scryfall.com/card/cn2/137/guul-draz-specter?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T10:08:32Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/e/d/edb0546f-f893-460c-8af4-79b24c373ebe.jpg?1783937312",
+      "normal": "https://cards.scryfall.io/normal/front/e/d/edb0546f-f893-460c-8af4-79b24c373ebe.jpg?1783937312",
+      "large": "https://cards.scryfall.io/large/front/e/d/edb0546f-f893-460c-8af4-79b24c373ebe.jpg?1783937312",
+      "png": "https://cards.scryfall.io/png/front/e/d/edb0546f-f893-460c-8af4-79b24c373ebe.png?1783937312",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/e/d/edb0546f-f893-460c-8af4-79b24c373ebe.jpg?1783937312",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/e/d/edb0546f-f893-460c-8af4-79b24c373ebe.jpg?1783937312",
+      "thumb": "https://cards.scryfall.io/thumb/front/e/d/edb0546f-f893-460c-8af4-79b24c373ebe.webp?1783937312",
+      "grid": "https://cards.scryfall.io/grid/front/e/d/edb0546f-f893-460c-8af4-79b24c373ebe.webp?1783937312",
+      "display": "https://cards.scryfall.io/display/front/e/d/edb0546f-f893-460c-8af4-79b24c373ebe.webp?1783937312",
+      "art": "https://cards.scryfall.io/art/front/e/d/edb0546f-f893-460c-8af4-79b24c373ebe.webp?1783937312",
+      "crop": "https://cards.scryfall.io/crop/front/e/d/edb0546f-f893-460c-8af4-79b24c373ebe.webp?1783937312"
+     },
+     "mana_cost": "{2}{B}{B}",
+     "cmc": 4,
+     "type_line": "Creature — Specter",
+     "oracle_text": "Flying\nThis creature gets +3/+3 as long as an opponent has no cards in hand.\nWhenever this creature deals combat damage to a player, that player discards a card.",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "B"
+     ],
+     "color_identity": [
+      "B"
+     ],
+     "keywords": [
+      "Flying"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "ad1b8847-1905-4080-9e26-80691ea7c1ef",
+     "set": "cn2",
+     "set_name": "Conspiracy: Take the Crown",
+     "set_type": "draft_innovation",
+     "set_uri": "https://api.scryfall.com/sets/ad1b8847-1905-4080-9e26-80691ea7c1ef",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Acn2&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/cn2?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/edb0546f-f893-460c-8af4-79b24c373ebe/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A733cfc16-9a16-41e2-b36e-3d7a546c67f0&unique=prints",
+     "collector_number": "137",
+     "digital": false,
+     "rarity": "rare",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Mark Tedin",
+     "artist_ids": [
+      "9ee9a9cc-c09e-486f-918b-69f80cbc4188"
+     ],
+     "illustration_id": "8ea89fee-2147-4ffd-913c-141e22c58474",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 19475,
+     "penny_rank": 9202,
+     "prices": {
+      "usd": "0.25",
+      "usd_foil": "0.38",
+      "usd_etched": null,
+      "eur": "0.24",
+      "eur_foil": "0.43",
+      "tix": null
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=416894&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGuul%2BDraz%2BSpecter",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGuul%2BDraz%2BSpecter",
+      "edhrec": "https://edhrec.com/route/?cc=Guul+Draz+Specter"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F121841%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=291866&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Guul+Draz+Specter&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 8,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": false,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 2,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   },
+   {
+    "id": "player_1",
+    "name": "Player 2",
+    "gameState": {
+     "handSize": 0,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 30,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": true,
+     "poisonCounters": 5,
+     "experienceCounters": 3,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 2,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Wildwood Geist",
+    "final": {
+     "name": "Wildwood Geist",
+     "controller": "player_1",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Spirit"
+     ],
+     "power": 5,
+     "toughness": 5,
+     "colors": [
+      "G"
+     ],
+     "abilities": []
+    },
+    "changedBy": {
+     "7c": [
+      "Wildwood Geist"
+     ]
+    }
+   },
+   {
+    "perm": "Dusk Charger",
+    "final": {
+     "name": "Dusk Charger",
+     "controller": "player_1",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Horse"
+     ],
+     "power": 5,
+     "toughness": 5,
+     "colors": [
+      "B"
+     ],
+     "abilities": [
+      "Ascend"
+     ]
+    },
+    "changedBy": {
+     "7c": [
+      "Dusk Charger"
+     ]
+    }
+   },
+   {
+    "perm": "Gathan Raiders",
+    "final": {
+     "name": "Gathan Raiders",
+     "controller": "player_1",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Human",
+      "Warrior"
+     ],
+     "power": 5,
+     "toughness": 5,
+     "colors": [
+      "R"
+     ],
+     "abilities": [
+      "Morph—Discard a card."
+     ]
+    },
+    "changedBy": {
+     "7c": [
+      "Gathan Raiders"
+     ]
+    }
+   },
+   {
+    "perm": "Serra Ascendant",
+    "final": {
+     "name": "Serra Ascendant",
+     "controller": "player_1",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Human",
+      "Monk"
+     ],
+     "power": 6,
+     "toughness": 6,
+     "colors": [
+      "W"
+     ],
+     "abilities": [
+      "Lifelink",
+      "Flying"
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "Serra Ascendant"
+     ],
+     "7c": [
+      "Serra Ascendant"
+     ]
+    }
+   },
+   {
+    "perm": "Kalemne, Disciple of Iroas",
+    "final": {
+     "name": "Kalemne, Disciple of Iroas",
+     "controller": "player_1",
+     "supertypes": [
+      "Legendary"
+     ],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Giant",
+      "Soldier"
+     ],
+     "power": 6,
+     "toughness": 6,
+     "colors": [
+      "R",
+      "W"
+     ],
+     "abilities": [
+      "Double strike, vigilance",
+      "Whenever you cast a creature spell with mana value 5 or greater, you get an experience counter.",
+      "This card gets +1/+1 for each experience counter you have."
+     ]
+    },
+    "changedBy": {
+     "7c": [
+      "Kalemne, Disciple of Iroas"
+     ]
+    }
+   },
+   {
+    "perm": "Akki Underling",
+    "final": {
+     "name": "Akki Underling",
+     "controller": "player_1",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Goblin",
+      "Warrior"
+     ],
+     "power": 2,
+     "toughness": 1,
+     "colors": [
+      "R"
+     ],
+     "abilities": []
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Mycosynth Fiend",
+    "final": {
+     "name": "Mycosynth Fiend",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Phyrexian",
+      "Horror"
+     ],
+     "power": 7,
+     "toughness": 7,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "This creature gets +1/+1 for each poison counter your opponents have."
+     ]
+    },
+    "changedBy": {
+     "7c": [
+      "Mycosynth Fiend"
+     ]
+    }
+   },
+   {
+    "perm": "Guul Draz Specter",
+    "final": {
+     "name": "Guul Draz Specter",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Specter"
+     ],
+     "power": 5,
+     "toughness": 5,
+     "colors": [
+      "B"
+     ],
+     "abilities": [
+      "Flying",
+      "Whenever this creature deals combat damage to a player, that player discards a card."
+     ]
+    },
+    "changedBy": {
+     "7c": [
+      "Guul Draz Specter"
+     ]
+    }
+   }
+  ],
+  "order": {
+   "6": [
+    "Serra Ascendant",
+    "Akki Underling"
+   ],
+   "7c": [
+    "Wildwood Geist",
+    "Dusk Charger",
+    "Gathan Raiders",
+    "Serra Ascendant",
+    "Kalemne, Disciple of Iroas",
+    "Akki Underling",
+    "Mycosynth Fiend",
+    "Guul Draz Specter"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Wildwood Geist",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "power": 2,
+     "toughness": 2
+    }
+   },
+   {
+    "source": "Dusk Charger",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "power": 2,
+     "toughness": 2
+    }
+   },
+   {
+    "source": "Gathan Raiders",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "power": 2,
+     "toughness": 2
+    }
+   },
+   {
+    "source": "Serra Ascendant",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "power": 5,
+     "toughness": 5
+    }
+   },
+   {
+    "source": "Serra Ascendant",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "ability": "Flying"
+    }
+   },
+   {
+    "source": "Kalemne, Disciple of Iroas",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "basePower": 1,
+     "baseToughness": 1,
+     "forEachDesc": "experience counter you have",
+     "isGraveyardCount": false,
+     "power": 1,
+     "toughness": 1,
+     "userAdjustable": false
+    }
+   },
+   {
+    "source": "Akki Underling",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "power": 2,
+     "toughness": 1
+    }
+   },
+   {
+    "source": "Akki Underling",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "ability": "First strike"
+    }
+   },
+   {
+    "source": "Mycosynth Fiend",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "basePower": 1,
+     "baseToughness": 1,
+     "forEachDesc": "poison counter your opponents have",
+     "isGraveyardCount": false,
+     "power": 1,
+     "toughness": 1,
+     "userAdjustable": false
+    }
+   },
+   {
+    "source": "Guul Draz Specter",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "power": 3,
+     "toughness": 3
+    }
+   }
+  ]
+ }
+}

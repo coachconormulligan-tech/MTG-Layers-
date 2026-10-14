@@ -195,20 +195,13 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
     return found.size;
   }
 
-  // "experience counter(s) [you have]" — read from gameState.experienceCounters
+  // "experience counter(s) you have" / "poison counter(s) your opponents have": the counters of
+  // the player the words name, never those of the player whose tab is open (_countPlayerCounters).
   if (/\bexperience\s+counters?\b/.test(desc)) {
-    if (typeof Battlefield !== 'undefined' && Battlefield.gameState) {
-      return Battlefield.gameState.experienceCounters || 0;
-    }
-    return null;
+    return _countPlayerCounters('experienceCounters', desc, ctrlId, selfState);
   }
-
-  // "poison counter(s) [you have]" — read from gameState.poisonCounters
   if (/\bpoison\s+counters?\b/.test(desc)) {
-    if (typeof Battlefield !== 'undefined' && Battlefield.gameState) {
-      return Battlefield.gameState.poisonCounters || 0;
-    }
-    return null;
+    return _countPlayerCounters('poisonCounters', desc, ctrlId, selfState);
   }
 
   // Cards in a hand: the hand of the player the words name, never that of the player whose tab
@@ -828,6 +821,30 @@ function _countCardsInHand(desc, ctrlId, selfState, effect) {
     return opps.length ? handOf(opps[0]) : 0;
   }
   return handOf(ctrlId);
+}
+/* Number of a player's own counters (`field`: 'poisonCounters', 'experienceCounters') a count
+   names, from each player's game state. `ctrlId` is the effect's controller.
+   - "you have": the effect's controller (Kalemne, Minthara).
+   - "your opponents have" / "each opponent has": the sum over the opponents (Vishgraz, Mycosynth
+     Fiend).
+   - "its controller has": the modified permanent's controller (Phyresis Outbreak).
+   - "each player has" / "all players have": the sum over every player. */
+function _countPlayerCounters(field, desc, ctrlId, selfState) {
+  if (typeof Battlefield === 'undefined' || !Array.isArray(Battlefield.players)) return null;
+  const players = Battlefield.players;
+  const countOf = (id) => {
+    const pl = players.find(p => p.id === id);
+    return pl && pl.gameState ? (pl.gameState[field] || 0) : 0;
+  };
+  const sum = (ids) => ids.reduce((n, id) => n + countOf(id), 0);
+  if (/\b(?:each|all) players? ha(?:s|ve)\b/.test(desc)) return sum(players.map(p => p.id));
+  if (/\b(?:your )?opponents have\b|\beach opponent has\b/.test(desc)) {
+    return sum(players.filter(p => p.id !== ctrlId).map(p => p.id));
+  }
+  if (/\b(?:its|that creature's|that permanent's|enchanted creature's|equipped creature's) controller has\b/.test(desc)) {
+    return countOf((selfState && selfState.controller) || ctrlId);
+  }
+  return countOf(ctrlId);
 }
 /* [END: FOR-EACH-COMPUTE] */
 
