@@ -262,7 +262,11 @@ def matches(spec, value):
                 return False
             return (all(x in value for x in spec.get('$includes', []))
                     and not any(x in value for x in spec.get('$excludes', [])))
-        return isinstance(value, dict) and all(k in value and matches(v, value[k]) for k, v in spec.items())
+        # A list the summary leaves out because it is empty (traits) excludes everything.
+        def absent_ok(v):
+            return isinstance(v, dict) and '$excludes' in v and '$includes' not in v
+        return isinstance(value, dict) and all(
+            (absent_ok(v) and value.get(k) is None) or (k in value and matches(v, value[k])) for k, v in spec.items())
     return spec == value
 
 

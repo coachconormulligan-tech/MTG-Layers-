@@ -1,0 +1,46 @@
+{
+  "name": "Aura Gnarlid — \"can't block it\" names Aura Gnarlid, on smaller creatures only",
+  "notes": "Conor's decision 2026-10-13: rules about attacking, blocking and being targeted are traits (never ability lines), in the words of the card with the players filled in; Goaded is a trait only and names the player who goaded. Parser block 'Rules about attacking, blocking and being targeted' in cards-parser.js, _resolveTraitText in engine-helpers.js. \"Creatures with power less than this creature's power can't block it.\" In a permanent's own text \"it\" is the permanent, shown by name. The card's own printed rule gives itself no trait.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Llanowar Elves",
+      "as": "elf",
+      "controller": "p2"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant",
+      "controller": "p2"
+    },
+    {
+      "add": "Aura Gnarlid"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Llanowar Elves",
+      "final": {
+        "traits": [
+          "Can't block Aura Gnarlid"
+        ]
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "traits": {
+          "$excludes": [
+            "Can't block Aura Gnarlid"
+          ]
+        }
+      }
+    }
+  ],
+  "knownFailure": "Open, waiting for Conor: the subject \"Creatures with power less than this creature's power\" is not read by the filter builder (its words become required subtypes), so the rule reaches nobody. Same wording on Battering Wurm, Den Protector, Elusive Otter, Feasting Hobbit, Formation Breaker, Howlgeist, Shrill Howler, Skarrgan Pit-Skulk, Wandering Wolf, Silumgar Assassin (\"greater than\"), Champion of Lambholt."
+}

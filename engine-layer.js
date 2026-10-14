@@ -263,6 +263,11 @@ function applyEffectGlobally(effect, allStates, realPerms, inspectedId, applicat
       effect._allStates = allStates;
     }
 
+    // A trait that names players ("Goaded by Player 1") reads the source's current controller.
+    if (effect.type === EFFECT_TYPE.ADD_ABILITY && effect.params.traitOnly) {
+      effect._allStates = allStates;
+    }
+
     // For runtime-gained Equipment tracking effects, attach allStates so the engine can read
     // the source equipment's computed abilities (e.g. "Equipped creature gets +2/+0" granted
     // by Armed with Proof) rather than the fixed +0/+0 placeholder in the effect's params.

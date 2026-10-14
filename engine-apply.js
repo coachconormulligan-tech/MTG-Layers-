@@ -334,6 +334,16 @@ function applyEffect(state, effect, context) {
       if (ab && /\{mana value\}/i.test(ab)) {
         ab = ab.replace(/\{mana value\}/gi, String(state.manaValue || 0));
       }
+      // A status or a rule about attacking, blocking or targeting ("Goaded by Player 1", "Can't
+      // attack Player 1 unless Player 2 pays {2}") is a trait only, never a line of rules text.
+      if (ab && effect.params.traitOnly) {
+        const trait = _resolveTraitText(ab, effect, state);
+        if (trait && !state.traits.includes(trait)) {
+          state.traits.push(trait);
+          changes.push(`Gained trait "${trait}"`);
+        }
+        break;
+      }
       if (ab) {
         // Most abilities stack meaningfully when granted multiple times (activated abilities,
         // triggered abilities, ward, etc.). Only static keyword abilities that have no

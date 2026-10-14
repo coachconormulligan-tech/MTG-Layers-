@@ -1,0 +1,48 @@
+{
+  "name": "Disrupt Decorum — goaded creatures carry \"Goaded by <player>\", as a trait only",
+  "notes": "Conor's decision 2026-10-13: rules about attacking, blocking and being targeted are traits (never ability lines), in the words of the card with the players filled in; Goaded is a trait only and names the player who goaded. Parser block 'Rules about attacking, blocking and being targeted' in cards-parser.js, _resolveTraitText in engine-helpers.js. Cast by the opponent, it goads Player 1's creature: the trait names the opponent, and \"Goaded\" is no longer a line among the abilities.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Disrupt Decorum",
+      "spell": true,
+      "controller": "p2"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": [],
+        "traits": [
+          "Goaded by Opponent"
+        ]
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "traits": {
+          "$excludes": [
+            "Goaded by Opponent",
+            "Goaded by Player 1"
+          ]
+        }
+      }
+    }
+  ]
+}

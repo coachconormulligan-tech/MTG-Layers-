@@ -1,0 +1,57 @@
+{
+  "name": "Distortion Strike — \"gets +1/+0 until end of turn and can't be blocked this turn\": one target, boost and trait",
+  "notes": "Conor's decision 2026-10-13: rules about attacking, blocking and being targeted are traits (never ability lines), in the words of the card with the players filled in; Goaded is a trait only and names the player who goaded. Parser block 'Rules about attacking, blocking and being targeted' in cards-parser.js, _resolveTraitText in engine-helpers.js. The rule shares the target of the boost in its sentence (one picker, not two), and loses its duration words.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Distortion Strike",
+      "as": "spell",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTarget",
+        "@spell",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 3,
+        "toughness": 2,
+        "traits": [
+          "Can't be blocked"
+        ]
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "power": 2,
+        "toughness": 2,
+        "traits": {
+          "$excludes": [
+            "Can't be blocked"
+          ]
+        }
+      }
+    }
+  ]
+}
