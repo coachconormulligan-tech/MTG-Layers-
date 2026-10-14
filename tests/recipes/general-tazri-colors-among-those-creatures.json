@@ -1,0 +1,53 @@
+{
+  "name": "General Tazri \u2014 +X/+X where X is the number of colors among those creatures (Ally creatures you control)",
+  "notes": "Fixed in the fire-time count (cards-battlefield.js: 'those creatures' is the sentence's subject) and _computeForEachCount ('colors among <group>'); X was 0. Your Allies are white and black (X = 2); the opponent's blue Ally is not one of them. Memory: project_moraug_chong_tazri_counts_2026-10-14. Note: X is taken when the ability is activated and saved in the board's text, so this fixture passes on the old code too; the fix is checked when the recipe is rebuilt (--build).",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Player 2"
+      ]
+    },
+    {
+      "add": "Hagra Sharpshooter"
+    },
+    {
+      "add": "Kazandu Blademaster"
+    },
+    {
+      "add": "Halimar Excavator",
+      "controller": "p2"
+    },
+    {
+      "add": "General Tazri",
+      "as": "tazri"
+    },
+    {
+      "fire": "@tazri",
+      "activated": 1
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Hagra Sharpshooter",
+      "final": {
+        "power": 4,
+        "toughness": 4
+      }
+    },
+    {
+      "perm": "General Tazri",
+      "final": {
+        "power": 5,
+        "toughness": 6
+      }
+    },
+    {
+      "perm": "Halimar Excavator",
+      "final": {
+        "power": 1,
+        "toughness": 3
+      }
+    }
+  ]
+}

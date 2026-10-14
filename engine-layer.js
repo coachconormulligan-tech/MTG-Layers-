@@ -571,6 +571,14 @@ function evaluatePermanent(permanent, allPermanents, allEffects, inspectedId) {
         st.hasChangeling = st.abilities.some(a => /\bchangeling\b/i.test(a));
       }
     }
+    // Base power and toughness are what layers 7a and 7b leave ("with base power and toughness
+    // 1/1" — Bess, Soul Nourisher); later sublayers modify P/T without changing them.
+    if (layerDef.id === '7c') {
+      for (const st of allStates.values()) {
+        st.basePower = st.power;
+        st.baseToughness = st.toughness;
+      }
+    }
 
     if (layerEffects.length === 0) {
       // For Layer 1, still apply mutate even if no COPY effects exist

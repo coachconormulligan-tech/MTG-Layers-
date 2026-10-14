@@ -3824,6 +3824,8 @@ function parseCardEffects(permanent, card, opts = {}) {
         // earlier in the turn ("creatures that entered the battlefield under your control this
         // turn" — Kinbinding; "cards you've drawn this turn" — Knowledge Is Power), nor the mana
         // a spell was cast with ("colors of mana spent to cast this spell" — Roilmage's Trick).
+        // ("Each time it has attacked this turn" — Moraug — differs per creature and is typed on
+        // each creature instead; _computeForEachCount reads it.)
         const byHand = /\bblocking (?:it|this creature|that creature)\b|\bthis way$|\bthis turn$|\bmana spent to cast\b/i.test(countTarget)
           && !/\bit has attacked this turn$/i.test(countTarget);
         const isGraveyard = !byHand && countTarget.toLowerCase().includes('graveyard');
@@ -6442,6 +6444,26 @@ function parseCardEffects(permanent, card, opts = {}) {
                 return ref !== null && ref !== undefined && (less ? st[stat] < ref : st[stat] > ref);
               },
               desc: `${base.desc} with ${stat} ${less ? 'less' : 'greater'} than this creature's ${srcStat}`,
+            });
+          }
+          // "Creatures with power greater than the number of cards in your hand" (Ensnaring
+          // Bridge), "… less than the number of Islands you control" (Kraken of the Straits): the
+          // amount is counted for the source as it is now, "you" being its controller. Only the
+          // words before "with" say whose creatures; the "you control" in the amount does not.
+          const vsAmount = part.match(/^(.+?)\s+with\s+(power|toughness)\s+(less|greater)\s+than\s+(or\s+equal\s+to\s+)?the\s+number\s+of\s+(.+)$/i);
+          if (vsAmount) {
+            const base = buildAppliesToFromText(vsAmount[1]);
+            const stat = vsAmount[2].toLowerCase(), less = /less/i.test(vsAmount[3]), orEqual = !!vsAmount[4], amount = vsAmount[5];
+            const srcId = permanent.id;
+            if (base.fn) b = Object.assign({}, base, {
+              fn: (st, all, ctrl) => {
+                if (!base.fn(st, all, ctrl) || st[stat] === null || st[stat] === undefined) return false;
+                const src = all && all.get ? all.get(srcId) : null;
+                const n = _computeForEachCount(amount, all || new Map(), src || st, { sourceId: srcId });
+                if (n === null || n === undefined) return false;
+                return less ? (orEqual ? st[stat] <= n : st[stat] < n) : (orEqual ? st[stat] >= n : st[stat] > n);
+              },
+              desc: `${base.desc} with ${stat} ${less ? 'less' : 'greater'} than ${orEqual ? 'or equal to ' : ''}the number of ${amount}`,
             });
           }
           if (b.isSelf && !_cantFired) continue;

@@ -233,6 +233,27 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
     return null; // fall back to user input if no commander data
   }
 
+  // "Color(s) among <group>" ("permanents you control"; General Tazri's "those creatures", which
+  // the fire-time snapshot replaces with the sentence's subject) and "[kind] counter(s) among
+  // <group>" (Chong and Lily: "lore counter among Sagas you control"). The group is read as a
+  // subject is (buildAppliesToFromText), "you control" meaning the effect's controller.
+  const amongMatch = rawDesc.match(/^(?:colou?rs?|(?:(?:an?|one)\s+)?(?:([+-]\d+\/[+-]\d+|[a-z]+)\s+)?counters?)\s+among\s+(.+)$/);
+  if (amongMatch && typeof buildAppliesToFromText === 'function') {
+    const group = buildAppliesToFromText(amongMatch[2].replace(/\s+on the battlefield$/, ''));
+    if (group && group.fn && !group.isSelf && !group.needsTargetSelection) {
+      const inGroup = [...allStates].filter(([, st]) => { try { return group.fn(st, allStates, ctrlId); } catch (e) { return false; } });
+      if (/^colou?r/.test(rawDesc)) {
+        const found = new Set();
+        for (const [, st] of inGroup) for (const c of (st.colors || [])) found.add(c);
+        return found.size;
+      }
+      const kind = amongMatch[1];
+      let total = 0;
+      for (const [, st] of inGroup) for (const [k, n] of Object.entries(st.counters || {})) if (!kind || k === kind) total += n;
+      return total;
+    }
+  }
+
   // "color among permanents" / "color among permanents you control"
   // Count distinct colors across all permanents on the battlefield
   if (/\bcolou?rs?\s+among\s+permanents?\b/.test(desc) || /\bcolou?r\s+among\s+permanents?\b/.test(desc)) {
@@ -287,6 +308,10 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
     }
     return total;
   }
+
+  // "for each time it has attacked this turn" (Moraug): typed by hand on each creature
+  // (Battlefield.setTimesAttacked), as no history of combats is kept.
+  if (/^times? it has attacked this turn$/.test(desc)) return selfState.timesAttackedThisTurn || 0;
 
   // "the number of players being attacked" (Pack Attack): the different players the attacking
   // creatures are attacking.
@@ -457,11 +482,18 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
   // creature", "Equipment attached to this creature") is another pattern, further down.
   // "Other than this card" leaves the source out (Márton Stromgald). "With <keyword>[ or
   // <keyword>]" asks for any of the keywords (Dauthi Warlord "creatures on the battlefield with
-  // shadow", Tsagan "creature you control with first strike or double strike").
+  // shadow", Tsagan "creature you control with first strike or double strike"). "With base power
+  // 1" / "with base power or toughness 1" asks about base P/T (Zinnia, Valley's Voice; Sword of
+  // the Squeak), read by the same helper as subject filters.
   {
-    let qDesc = desc, notSource = false, withKeywords = null;
+    let qDesc = desc, notSource = false, withKeywords = null, withBase = null;
     const otherThan = qDesc.match(/^(.+?)\s+other than (?:this (?:card|creature|permanent)|it)$/);
     if (otherThan) { qDesc = otherThan[1]; notSource = true; }
+    const baseMatch = qDesc.match(/^(.+?)\s+(?:on the battlefield\s+|you control\s+|your opponents control\s+)?with\s+(base\s+.+)$/);
+    if (baseMatch && typeof _parseBasePTQualifier === 'function') {
+      const q = _parseBasePTQualifier(baseMatch[2]);
+      if (q) { qDesc = baseMatch[1]; withBase = q.test; }
+    }
     const withMatch = qDesc.match(/^(.+?)\s+(?:on the battlefield\s+|you control\s+|your opponents control\s+)?with\s+([a-z ,/]+)$/);
     if (withMatch) {
       const kws = withMatch[2].split(/\s*,\s*(?:(?:and\/)?or\s+)?|\s+and\/or\s+|\s+or\s+/).filter(Boolean);
@@ -482,9 +514,10 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
     const catalogLoaded = typeof TypeCatalog !== 'undefined' && TypeCatalog.creatureTypes && TypeCatalog.creatureTypes.size > 0;
     const isSubtype = (s) => catalogLoaded ? _isKnownSubtypeWord(s)
       : /^[A-Z][a-z'-]+(?: [A-Z][a-z'-]+)*$/.test(s) && !/\b(?:Counters?|On|Attached|To|This|It|With|That|Of|The|In|Among|You|Your)\b/.test(s);
-    if (headCheck && (qWords.length > 1 || withKeywords)) {
+    if (headCheck && (qWords.length > 1 || withKeywords || withBase)) {
       const checks = [headCheck], subWords = [];
       if (withKeywords) checks.push((st) => withKeywords.some(k => _hasKeywordAbility(st.abilities || [], k)));
+      if (withBase) checks.push(withBase);
       for (const w of qWords.slice(0, -1)) {
         if (COLOR_WORDS[w]) { const c = COLOR_WORDS[w]; checks.push((st) => (st.colors || []).includes(c)); }
         else if (STATE_WORDS[w]) checks.push(STATE_WORDS[w]);

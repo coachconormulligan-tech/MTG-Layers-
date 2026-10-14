@@ -1,0 +1,58 @@
+{
+  "name": "Chong and Lily, Nomads \u2014 +1/+0 for each lore counter among Sagas you control",
+  "notes": "Fixed in _computeForEachCount (engine-compute.js): '[kind] counter among <group>' had no reading, so the count was 0. Only your Sagas count: 2 lore counters on yours, 3 on the opponent's. Memory: project_moraug_chong_tazri_counts_2026-10-14.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Player 2"
+      ]
+    },
+    {
+      "add": "The Eldest Reborn",
+      "as": "saga"
+    },
+    {
+      "call": [
+        "addCounter",
+        "@saga",
+        "lore",
+        2
+      ]
+    },
+    {
+      "add": "The Eldest Reborn",
+      "controller": "p2",
+      "as": "theirs"
+    },
+    {
+      "call": [
+        "addCounter",
+        "@theirs",
+        "lore",
+        3
+      ]
+    },
+    {
+      "add": "Grizzly Bears"
+    },
+    {
+      "add": "Chong and Lily, Nomads",
+      "as": "cl"
+    },
+    {
+      "fire": "@cl",
+      "trigger": 0,
+      "mode": 1
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 4,
+        "toughness": 2
+      }
+    }
+  ]
+}

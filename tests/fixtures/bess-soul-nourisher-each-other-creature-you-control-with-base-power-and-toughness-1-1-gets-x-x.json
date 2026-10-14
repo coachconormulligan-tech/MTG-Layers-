@@ -1,0 +1,1712 @@
+{
+ "name": "Bess, Soul Nourisher — each other creature you control with base power and toughness 1/1 gets +X/+X",
+ "notes": "Found by tests/sweep.py (subject probe: 'nobody, amount on the board'). The filter 'with base power and toughness 1/1' had no reading: the 'and' split in _buildAppliesToFromTextInner cut it in two and nothing matched. It is now read ahead of that split (also 'with base power N' and 'with base power or toughness N'); base P/T is recorded on each state as layer 7c begins (engine-layer.js), carried by snapshotState. Bess has two +1/+1 counters, so X = 2. Llanowar Elves (1/1) gets +2/+2; Memnite with a +1/+1 counter is 2/2 but its base is still 1/1, so it gets +2/+2 too; Grizzly Bears (base 2/2) and the opponent's Fugitive Wizard do not; Bess is 'other'. Memory: project_bess_base_pt_and_amount_in_subject_2026-10-14.",
+ "recipe": {
+  "steps": [
+   {
+    "call": [
+     "addPlayer",
+     "Opponent"
+    ]
+   },
+   {
+    "add": "Llanowar Elves"
+   },
+   {
+    "add": "Memnite",
+    "as": "memnite"
+   },
+   {
+    "call": [
+     "addCounter",
+     "@memnite",
+     "+1/+1",
+     1
+    ]
+   },
+   {
+    "add": "Grizzly Bears"
+   },
+   {
+    "add": "Fugitive Wizard",
+    "controller": "p2"
+   },
+   {
+    "add": "Bess, Soul Nourisher",
+    "as": "bess"
+   },
+   {
+    "call": [
+     "addCounter",
+     "@bess",
+     "+1/+1",
+     2
+    ]
+   },
+   {
+    "fire": "@bess",
+    "trigger": 1
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Llanowar Elves",
+   "final": {
+    "power": 3,
+    "toughness": 3
+   }
+  },
+  {
+   "perm": "Memnite",
+   "final": {
+    "power": 4,
+    "toughness": 4
+   }
+  },
+  {
+   "perm": "Grizzly Bears",
+   "final": {
+    "power": 2,
+    "toughness": 2
+   }
+  },
+  {
+   "perm": "Fugitive Wizard",
+   "final": {
+    "power": 1,
+    "toughness": 1
+   }
+  },
+  {
+   "perm": "Bess, Soul Nourisher",
+   "final": {
+    "power": 3,
+    "toughness": 3
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "6a0b230b-d391-4998-a3f7-7b158a0ec2cd",
+     "oracle_id": "68954295-54e3-4303-a6bc-fc4547a4e3a3",
+     "multiverse_ids": [
+      679969
+     ],
+     "mtgo_id": 133480,
+     "arena_id": 93940,
+     "tcgplayer_id": 557921,
+     "cardmarket_id": 795132,
+     "name": "Llanowar Elves",
+     "lang": "en",
+     "released_at": "2024-11-15",
+     "uri": "https://api.scryfall.com/cards/6a0b230b-d391-4998-a3f7-7b158a0ec2cd",
+     "scryfall_uri": "https://scryfall.com/card/fdn/227/llanowar-elves?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T02:17:37Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+      "normal": "https://cards.scryfall.io/normal/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+      "large": "https://cards.scryfall.io/large/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+      "png": "https://cards.scryfall.io/png/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.png?1783909057",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+      "thumb": "https://cards.scryfall.io/thumb/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.webp?1783909057",
+      "grid": "https://cards.scryfall.io/grid/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.webp?1783909057",
+      "display": "https://cards.scryfall.io/display/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.webp?1783909057",
+      "art": "https://cards.scryfall.io/art/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.webp?1783909057",
+      "crop": "https://cards.scryfall.io/crop/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.webp?1783909057"
+     },
+     "mana_cost": "{G}",
+     "cmc": 1,
+     "type_line": "Creature — Elf Druid",
+     "oracle_text": "{T}: Add {G}.",
+     "power": "1",
+     "toughness": "1",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "produced_mana": [
+      "G"
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "11bd6cef-f887-4b07-a957-4c53cb3c9c87",
+       "component": "combo_piece",
+       "name": "Llanowar Elves",
+       "type_line": "Creature — Elf Druid",
+       "uri": "https://api.scryfall.com/cards/11bd6cef-f887-4b07-a957-4c53cb3c9c87"
+      },
+      {
+       "object": "related_card",
+       "id": "8ef95e7a-9f07-41f8-908b-2df93e03d391",
+       "component": "combo_piece",
+       "name": "Marwyn's Kindred",
+       "type_line": "Sorcery",
+       "uri": "https://api.scryfall.com/cards/8ef95e7a-9f07-41f8-908b-2df93e03d391"
+      }
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "arena",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a7ecb771-d1b6-4dec-8cf5-8d45179f21e0",
+     "set": "fdn",
+     "set_name": "Foundations",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a7ecb771-d1b6-4dec-8cf5-8d45179f21e0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Afdn&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/fdn?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/6a0b230b-d391-4998-a3f7-7b158a0ec2cd/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A68954295-54e3-4303-a6bc-fc4547a4e3a3&unique=prints",
+     "collector_number": "227",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "The elves of the Llanowar forest have defended it for generations. It is their sacred duty to keep outside influences from corrupting their ancestral home.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Kev Walker",
+     "artist_ids": [
+      "f366a0ee-a0cd-466d-ba6a-90058c7a31a6"
+     ],
+     "illustration_id": "96ffb0f9-113f-4fff-a45f-69cbb8d60890",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "promo_types": [
+      "beginnerbox",
+      "startercollection"
+     ],
+     "edhrec_rank": 58,
+     "penny_rank": 282,
+     "preview": {
+      "source": "Wizards of the Coast",
+      "source_uri": "https://twitter.com/wizards_magic/status/1806644973263302981",
+      "previewed_at": "2024-06-28"
+     },
+     "prices": {
+      "usd": "0.28",
+      "usd_foil": "1.59",
+      "usd_etched": null,
+      "eur": "0.21",
+      "eur_foil": "0.52",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=679969&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DLlanowar%2BElves",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DLlanowar%2BElves",
+      "edhrec": "https://edhrec.com/route/?cc=Llanowar+Elves"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F557921%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=795132&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/133480?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "975459ba-e1c2-4800-a3fa-5c0cf8ce728f",
+     "oracle_id": "7663ac7c-1de3-4250-b96a-fae9dbd66a27",
+     "multiverse_ids": [],
+     "mtgo_id": 40246,
+     "mtgo_foil_id": 40247,
+     "name": "Memnite",
+     "lang": "en",
+     "released_at": "2011-05-14",
+     "uri": "https://api.scryfall.com/cards/975459ba-e1c2-4800-a3fa-5c0cf8ce728f",
+     "scryfall_uri": "https://scryfall.com/card/td2/2/memnite?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:14:45Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/9/7/975459ba-e1c2-4800-a3fa-5c0cf8ce728f.jpg?1783941285",
+      "normal": "https://cards.scryfall.io/normal/front/9/7/975459ba-e1c2-4800-a3fa-5c0cf8ce728f.jpg?1783941285",
+      "large": "https://cards.scryfall.io/large/front/9/7/975459ba-e1c2-4800-a3fa-5c0cf8ce728f.jpg?1783941285",
+      "png": "https://cards.scryfall.io/png/front/9/7/975459ba-e1c2-4800-a3fa-5c0cf8ce728f.png?1783941285",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/9/7/975459ba-e1c2-4800-a3fa-5c0cf8ce728f.jpg?1783941285",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/9/7/975459ba-e1c2-4800-a3fa-5c0cf8ce728f.jpg?1783941285",
+      "thumb": "https://cards.scryfall.io/thumb/front/9/7/975459ba-e1c2-4800-a3fa-5c0cf8ce728f.webp?1783941285",
+      "grid": "https://cards.scryfall.io/grid/front/9/7/975459ba-e1c2-4800-a3fa-5c0cf8ce728f.webp?1783941285",
+      "display": "https://cards.scryfall.io/display/front/9/7/975459ba-e1c2-4800-a3fa-5c0cf8ce728f.webp?1783941285",
+      "art": "https://cards.scryfall.io/art/front/9/7/975459ba-e1c2-4800-a3fa-5c0cf8ce728f.webp?1783941285",
+      "crop": "https://cards.scryfall.io/crop/front/9/7/975459ba-e1c2-4800-a3fa-5c0cf8ce728f.webp?1783941285"
+     },
+     "mana_cost": "{0}",
+     "cmc": 0,
+     "type_line": "Artifact Creature — Construct",
+     "oracle_text": "",
+     "power": "1",
+     "toughness": "1",
+     "colors": [],
+     "color_identity": [],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "b240675e-3a95-498d-a3b5-949ec08f7003",
+     "set": "td2",
+     "set_name": "Duel Decks: Mirrodin Pure vs. New Phyrexia",
+     "set_type": "duel_deck",
+     "set_uri": "https://api.scryfall.com/sets/b240675e-3a95-498d-a3b5-949ec08f7003",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Atd2&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/td2?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/975459ba-e1c2-4800-a3fa-5c0cf8ce728f/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A7663ac7c-1de3-4250-b96a-fae9dbd66a27&unique=prints",
+     "collector_number": "2",
+     "digital": true,
+     "rarity": "uncommon",
+     "watermark": "mirran",
+     "flavor_text": "Reminders of Memnarch's reign still skirr across Mirrodin, reminiscent of his form if not his power.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Svetlin Velinov",
+     "artist_ids": [
+      "ffd063ae-c097-4f26-b2e6-b1e2137708bc"
+     ],
+     "illustration_id": "692a6fe2-80ba-4aed-8962-68204b7c9f36",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 2298,
+     "penny_rank": 277,
+     "prices": {
+      "usd": null,
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": null,
+      "tix": "0.45"
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DMemnite",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DMemnite",
+      "edhrec": "https://edhrec.com/route/?cc=Memnite"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fmagic%2Fproduct%3FproductLineName%3Dmagic%26q%3DMemnite%26view%3Dgrid",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products/Search?referrer=scryfall&searchString=Memnite&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/40246?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {
+     "+1/+1": 1
+    },
+    "counterTimestamps": {
+     "+1/+1": 3
+    },
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+     "multiverse_ids": [
+      129586
+     ],
+     "mtgo_id": 27400,
+     "mtgo_foil_id": 27401,
+     "tcgplayer_id": 15153,
+     "cardmarket_id": 16432,
+     "name": "Grizzly Bears",
+     "lang": "en",
+     "released_at": "2007-07-13",
+     "uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "scryfall_uri": "https://scryfall.com/card/10e/268/grizzly-bears?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:43:21Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "normal": "https://cards.scryfall.io/normal/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "large": "https://cards.scryfall.io/large/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "png": "https://cards.scryfall.io/png/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.png?1783943001",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "grid": "https://cards.scryfall.io/grid/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "display": "https://cards.scryfall.io/display/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "art": "https://cards.scryfall.io/art/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "crop": "https://cards.scryfall.io/crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001"
+     },
+     "mana_cost": "{1}{G}",
+     "cmc": 2,
+     "type_line": "Creature — Bear",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set": "10e",
+     "set_name": "Tenth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A14c8f55d-d177-4c25-a931-ebeb9e6062a0&unique=prints",
+     "collector_number": "268",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"We cannot forget that among all of Dominaria's wonders, a system of life exists, with prey and predators that will never fight wars nor vie for ancient power.\"\n—Jolrael, empress of beasts",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "D. J. Cleland-Hura",
+     "artist_ids": [
+      "87d21070-2432-4167-8aab-5968af1c14f3"
+     ],
+     "illustration_id": "066bfe81-0f53-43da-a074-b2ecc5dcda72",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 8114,
+     "penny_rank": 10982,
+     "prices": {
+      "usd": "0.22",
+      "usd_foil": "3.29",
+      "usd_etched": null,
+      "eur": "0.11",
+      "eur_foil": "1.97",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129586&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "edhrec": "https://edhrec.com/route/?cc=Grizzly+Bears"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15153%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16432&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27400?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 4,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "520ad9d0-5f41-4183-a04e-58a61ad7202b",
+     "oracle_id": "381fa2a9-69fc-4558-a0ac-fb99c6f8d77f",
+     "multiverse_ids": [
+      383249
+     ],
+     "mtgo_id": 53248,
+     "mtgo_foil_id": 53249,
+     "tcgplayer_id": 90905,
+     "cardmarket_id": 267570,
+     "name": "Fugitive Wizard",
+     "lang": "en",
+     "released_at": "2014-07-18",
+     "uri": "https://api.scryfall.com/cards/520ad9d0-5f41-4183-a04e-58a61ad7202b",
+     "scryfall_uri": "https://scryfall.com/card/m15/56/fugitive-wizard?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T10:39:53Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/5/2/520ad9d0-5f41-4183-a04e-58a61ad7202b.jpg?1783939193",
+      "normal": "https://cards.scryfall.io/normal/front/5/2/520ad9d0-5f41-4183-a04e-58a61ad7202b.jpg?1783939193",
+      "large": "https://cards.scryfall.io/large/front/5/2/520ad9d0-5f41-4183-a04e-58a61ad7202b.jpg?1783939193",
+      "png": "https://cards.scryfall.io/png/front/5/2/520ad9d0-5f41-4183-a04e-58a61ad7202b.png?1783939193",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/5/2/520ad9d0-5f41-4183-a04e-58a61ad7202b.jpg?1783939193",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/5/2/520ad9d0-5f41-4183-a04e-58a61ad7202b.jpg?1783939193",
+      "thumb": "https://cards.scryfall.io/thumb/front/5/2/520ad9d0-5f41-4183-a04e-58a61ad7202b.webp?1783939193",
+      "grid": "https://cards.scryfall.io/grid/front/5/2/520ad9d0-5f41-4183-a04e-58a61ad7202b.webp?1783939193",
+      "display": "https://cards.scryfall.io/display/front/5/2/520ad9d0-5f41-4183-a04e-58a61ad7202b.webp?1783939193",
+      "art": "https://cards.scryfall.io/art/front/5/2/520ad9d0-5f41-4183-a04e-58a61ad7202b.webp?1783939193",
+      "crop": "https://cards.scryfall.io/crop/front/5/2/520ad9d0-5f41-4183-a04e-58a61ad7202b.webp?1783939193"
+     },
+     "mana_cost": "{U}",
+     "cmc": 1,
+     "type_line": "Creature — Human Wizard",
+     "oracle_text": "",
+     "power": "1",
+     "toughness": "1",
+     "colors": [
+      "U"
+     ],
+     "color_identity": [
+      "U"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "6ce49890-3b37-42a5-8932-dbeef1d7b62c",
+     "set": "m15",
+     "set_name": "Magic 2015",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/6ce49890-3b37-42a5-8932-dbeef1d7b62c",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Am15&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/m15?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/520ad9d0-5f41-4183-a04e-58a61ad7202b/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A381fa2a9-69fc-4558-a0ac-fb99c6f8d77f&unique=prints",
+     "collector_number": "56",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"The law has its place—as a footnote in my spellbook.\"\n—Siyani, fugitive mage",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Mark Zug",
+     "artist_ids": [
+      "48e2b98c-5467-4671-bd42-4c3746115117"
+     ],
+     "illustration_id": "f2683ed4-c876-454f-be52-bc1f534cae19",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 28286,
+     "prices": {
+      "usd": "0.09",
+      "usd_foil": "0.05",
+      "usd_etched": null,
+      "eur": "0.03",
+      "eur_foil": "0.15",
+      "tix": "0.04"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=383249&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DFugitive%2BWizard",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DFugitive%2BWizard",
+      "edhrec": "https://edhrec.com/route/?cc=Fugitive+Wizard"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F90905%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=267570&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/53248?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_1",
+    "controller": "player_1",
+    "timestamp": 5,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_5",
+    "scryfallData": {
+     "object": "card",
+     "id": "d96c33f5-f891-44bc-8ae1-11bc6f6544b6",
+     "oracle_id": "df72b5d6-6f9e-4d6b-acf6-7dec4ff35468",
+     "multiverse_ids": [
+      598181
+     ],
+     "mtgo_id": 99469,
+     "tcgplayer_id": 270118,
+     "cardmarket_id": 652461,
+     "name": "Bess, Soul Nourisher",
+     "lang": "en",
+     "released_at": "2022-04-29",
+     "uri": "https://api.scryfall.com/cards/d96c33f5-f891-44bc-8ae1-11bc6f6544b6",
+     "scryfall_uri": "https://scryfall.com/card/ncc/67/bess-soul-nourisher?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T06:15:51Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/d/9/d96c33f5-f891-44bc-8ae1-11bc6f6544b6.jpg?1783923351",
+      "normal": "https://cards.scryfall.io/normal/front/d/9/d96c33f5-f891-44bc-8ae1-11bc6f6544b6.jpg?1783923351",
+      "large": "https://cards.scryfall.io/large/front/d/9/d96c33f5-f891-44bc-8ae1-11bc6f6544b6.jpg?1783923351",
+      "png": "https://cards.scryfall.io/png/front/d/9/d96c33f5-f891-44bc-8ae1-11bc6f6544b6.png?1783923351",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/d/9/d96c33f5-f891-44bc-8ae1-11bc6f6544b6.jpg?1783923351",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/d/9/d96c33f5-f891-44bc-8ae1-11bc6f6544b6.jpg?1783923351",
+      "thumb": "https://cards.scryfall.io/thumb/front/d/9/d96c33f5-f891-44bc-8ae1-11bc6f6544b6.webp?1783923351",
+      "grid": "https://cards.scryfall.io/grid/front/d/9/d96c33f5-f891-44bc-8ae1-11bc6f6544b6.webp?1783923351",
+      "display": "https://cards.scryfall.io/display/front/d/9/d96c33f5-f891-44bc-8ae1-11bc6f6544b6.webp?1783923351",
+      "art": "https://cards.scryfall.io/art/front/d/9/d96c33f5-f891-44bc-8ae1-11bc6f6544b6.webp?1783923351",
+      "crop": "https://cards.scryfall.io/crop/front/d/9/d96c33f5-f891-44bc-8ae1-11bc6f6544b6.webp?1783923351"
+     },
+     "mana_cost": "{1}{G}{W}",
+     "cmc": 3,
+     "type_line": "Legendary Creature — Human Citizen",
+     "oracle_text": "Whenever one or more other creatures you control with base power and toughness 1/1 enter, put a +1/+1 counter on Bess.\nWhenever Bess attacks, each other creature you control with base power and toughness 1/1 gets +X/+X until end of turn, where X is the number of +1/+1 counters on Bess.",
+     "power": "1",
+     "toughness": "1",
+     "colors": [
+      "G",
+      "W"
+     ],
+     "color_identity": [
+      "G",
+      "W"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "c51de34b-d4d6-4179-a432-573744ded119",
+     "set": "ncc",
+     "set_name": "New Capenna Commander",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/c51de34b-d4d6-4179-a432-573744ded119",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Ancc&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/ncc?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/d96c33f5-f891-44bc-8ae1-11bc6f6544b6/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Adf72b5d6-6f9e-4d6b-acf6-7dec4ff35468&unique=prints",
+     "collector_number": "67",
+     "digital": false,
+     "rarity": "rare",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Leonardo Santanna",
+     "artist_ids": [
+      "f1f8e6d8-8fb3-472a-a32f-a4b1225bd054"
+     ],
+     "illustration_id": "61c39827-a45e-4b01-855e-c96107b40f3b",
+     "border_color": "black",
+     "frame": "2015",
+     "frame_effects": [
+      "legendary"
+     ],
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 10677,
+     "prices": {
+      "usd": "2.09",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.43",
+      "eur_foil": null,
+      "tix": "0.46"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=598181&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DBess%252C%2BSoul%2BNourisher",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DBess%252C%2BSoul%2BNourisher",
+      "edhrec": "https://edhrec.com/route/?cc=Bess%2C+Soul+Nourisher"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F270118%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=652461&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/99469?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 6,
+    "tapped": false,
+    "traits": [],
+    "counters": {
+     "+1/+1": 2
+    },
+    "counterTimestamps": {
+     "+1/+1": 7
+    },
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [
+   {
+    "id": "trig_perm_5_1_8",
+    "kind": "trigger",
+    "pseudoKind": "ability",
+    "sourceId": "perm_5",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 1,
+    "timestamp": 8,
+    "effectText": "Each other creature you control with base power and toughness 1/1 gets +2/+2 until end of turn, where 2 is the number of +1/+1 counters on this card.",
+    "xValue": null,
+    "hasXValue": false,
+    "cdaUserValue": null,
+    "linkedCards": null,
+    "fullText": "Whenever this card attacks, each other creature you control with base power and toughness 1/1 gets +X/+X until end of turn, where X is the number of +1/+1 counters on this card.",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "guessedTargetSubjects": [],
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Llanowar Elves",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Elf",
+        "Druid"
+       ],
+       "power": 1,
+       "toughness": 1,
+       "basePower": 1,
+       "baseToughness": 1,
+       "abilities": [
+        "{T}: Add {G}."
+       ],
+       "colors": [
+        "G"
+       ],
+       "manaValue": 1,
+       "manaCost": "{G}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "{T}: Add {G}.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "attackingPlayerId": null,
+       "timesAttackedThisTurn": 0,
+       "allPrintedAbilities": [
+        "{T}: Add {G}."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_2",
+      {
+       "name": "Memnite",
+       "types": [
+        "Artifact",
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Construct"
+       ],
+       "power": 2,
+       "toughness": 2,
+       "basePower": 1,
+       "baseToughness": 1,
+       "abilities": [],
+       "colors": [],
+       "manaValue": 0,
+       "manaCost": "{0}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {
+        "+1/+1": 1
+       },
+       "traits": [],
+       "attackingPlayerId": null,
+       "timesAttackedThisTurn": 0,
+       "allPrintedAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_3",
+      {
+       "name": "Grizzly Bears",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Bear"
+       ],
+       "power": 2,
+       "toughness": 2,
+       "basePower": 2,
+       "baseToughness": 2,
+       "abilities": [],
+       "colors": [
+        "G"
+       ],
+       "manaValue": 2,
+       "manaCost": "{1}{G}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "attackingPlayerId": null,
+       "timesAttackedThisTurn": 0,
+       "allPrintedAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_4",
+      {
+       "name": "Fugitive Wizard",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Human",
+        "Wizard"
+       ],
+       "power": 1,
+       "toughness": 1,
+       "basePower": 1,
+       "baseToughness": 1,
+       "abilities": [],
+       "colors": [
+        "U"
+       ],
+       "manaValue": 1,
+       "manaCost": "{U}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "attackingPlayerId": null,
+       "timesAttackedThisTurn": 0,
+       "allPrintedAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_1",
+       "controller": "player_1",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_5",
+      {
+       "name": "Bess, Soul Nourisher",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [
+        "Legendary"
+       ],
+       "subtypes": [
+        "Human",
+        "Citizen"
+       ],
+       "power": 3,
+       "toughness": 3,
+       "basePower": 1,
+       "baseToughness": 1,
+       "abilities": [
+        "Whenever one or more other creatures you control with base power and toughness 1/1 enter, put a +1/+1 counter on this card.",
+        "Whenever this card attacks, each other creature you control with base power and toughness 1/1 gets +X/+X until end of turn, where X is the number of +1/+1 counters on this card."
+       ],
+       "colors": [
+        "G",
+        "W"
+       ],
+       "manaValue": 3,
+       "manaCost": "{1}{G}{W}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "Whenever one or more other creatures you control with base power and toughness 1/1 enter, put a +1/+1 counter on this card.\nWhenever this card attacks, each other creature you control with base power and toughness 1/1 gets +X/+X until end of turn, where X is the number of +1/+1 counters on this card.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {
+        "+1/+1": 2
+       },
+       "traits": [],
+       "attackingPlayerId": null,
+       "timesAttackedThisTurn": 0,
+       "allPrintedAbilities": [
+        "Whenever one or more other creatures you control with base power and toughness 1/1 enter, put a +1/+1 counter on this card.",
+        "Whenever this card attacks, each other creature you control with base power and toughness 1/1 gets +X/+X until end of turn, where X is the number of +1/+1 counters on this card."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Llanowar Elves",
+       "imageUri": "https://cards.scryfall.io/small/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Elf",
+        "Druid"
+       ],
+       "printedPower": 1,
+       "printedToughness": 1,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Memnite",
+       "imageUri": "https://cards.scryfall.io/small/front/9/7/975459ba-e1c2-4800-a3fa-5c0cf8ce728f.jpg?1783941285",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {
+        "+1/+1": 1
+       },
+       "printedTypes": [
+        "Artifact",
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Construct"
+       ],
+       "printedPower": 1,
+       "printedToughness": 1,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_4",
+       "name": "Fugitive Wizard",
+       "imageUri": "https://cards.scryfall.io/small/front/5/2/520ad9d0-5f41-4183-a04e-58a61ad7202b.jpg?1783939193",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Human",
+        "Wizard"
+       ],
+       "printedPower": 1,
+       "printedToughness": 1,
+       "timestamp": 5
+      },
+      {
+       "id": "perm_5",
+       "name": "Bess, Soul Nourisher",
+       "imageUri": "https://cards.scryfall.io/small/front/d/9/d96c33f5-f891-44bc-8ae1-11bc6f6544b6.jpg?1783923351",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {
+        "+1/+1": 2
+       },
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [
+        "Legendary"
+       ],
+       "printedSubtypes": [
+        "Human",
+        "Citizen"
+       ],
+       "printedPower": 1,
+       "printedToughness": 1,
+       "timestamp": 6
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      },
+      {
+       "id": "player_1",
+       "name": "Opponent"
+      }
+     ]
+    },
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null
+   }
+  ],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   },
+   {
+    "id": "player_1",
+    "name": "Opponent",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": false,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 2,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Llanowar Elves",
+    "final": {
+     "name": "Llanowar Elves",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Elf",
+      "Druid"
+     ],
+     "power": 3,
+     "toughness": 3,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "{T}: Add {G}."
+     ]
+    },
+    "changedBy": {
+     "7c": [
+      "Bess, Soul Nourisher (trigger)"
+     ]
+    }
+   },
+   {
+    "perm": "Memnite",
+    "final": {
+     "name": "Memnite",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Artifact",
+      "Creature"
+     ],
+     "subtypes": [
+      "Construct"
+     ],
+     "power": 4,
+     "toughness": 4,
+     "colors": [],
+     "abilities": [],
+     "counters": {
+      "+1/+1": 1
+     }
+    },
+    "changedBy": {
+     "7c": [
+      "Memnite",
+      "Bess, Soul Nourisher (trigger)"
+     ]
+    }
+   },
+   {
+    "perm": "Grizzly Bears",
+    "final": {
+     "name": "Grizzly Bears",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Bear"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "G"
+     ],
+     "abilities": []
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Fugitive Wizard",
+    "final": {
+     "name": "Fugitive Wizard",
+     "controller": "player_1",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Human",
+      "Wizard"
+     ],
+     "power": 1,
+     "toughness": 1,
+     "colors": [
+      "U"
+     ],
+     "abilities": []
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Bess, Soul Nourisher",
+    "final": {
+     "name": "Bess, Soul Nourisher",
+     "controller": "player_0",
+     "supertypes": [
+      "Legendary"
+     ],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Human",
+      "Citizen"
+     ],
+     "power": 3,
+     "toughness": 3,
+     "colors": [
+      "G",
+      "W"
+     ],
+     "abilities": [
+      "Whenever one or more other creatures you control with base power and toughness 1/1 enter, put a +1/+1 counter on this card.",
+      "Whenever this card attacks, each other creature you control with base power and toughness 1/1 gets +X/+X until end of turn, where X is the number of +1/+1 counters on this card."
+     ],
+     "counters": {
+      "+1/+1": 2
+     }
+    },
+    "changedBy": {
+     "7c": [
+      "Bess, Soul Nourisher"
+     ]
+    }
+   }
+  ],
+  "order": {
+   "7c": [
+    "Memnite",
+    "Bess, Soul Nourisher",
+    "Bess, Soul Nourisher (trigger)"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Memnite",
+    "layer": "7c",
+    "type": "add_counters",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "count": 1,
+     "counterType": "+1/+1",
+     "powerMod": 1,
+     "toughnessMod": 1
+    }
+   },
+   {
+    "source": "Bess, Soul Nourisher",
+    "layer": "7c",
+    "type": "add_counters",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "count": 2,
+     "counterType": "+1/+1",
+     "powerMod": 1,
+     "toughnessMod": 1
+    }
+   },
+   {
+    "source": "Bess, Soul Nourisher (trigger)",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "global",
+    "params": {
+     "power": 2,
+     "toughness": 2
+    }
+   }
+  ]
+ }
+}

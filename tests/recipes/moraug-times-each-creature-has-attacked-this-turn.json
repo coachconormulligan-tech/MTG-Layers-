@@ -1,0 +1,54 @@
+{
+  "name": "Moraug, Fury of Akoum \u2014 +1/+0 for each time each creature has attacked this turn, typed on each creature",
+  "notes": "The count differs per creature and the site keeps no history of combats, so it was always 0 with no input. It is now typed per creature on Moraug's row and kept on the creature (Battlefield.setTimesAttacked); _computeForEachCount reads it. Memory: project_moraug_chong_tazri_counts_2026-10-14.",
+  "steps": [
+    {
+      "add": "Moraug, Fury of Akoum",
+      "as": "m"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "b"
+    },
+    {
+      "add": "Llanowar Elves"
+    },
+    {
+      "call": [
+        "setTimesAttacked",
+        "@b",
+        2
+      ]
+    },
+    {
+      "call": [
+        "setTimesAttacked",
+        "@m",
+        1
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 4,
+        "toughness": 2
+      }
+    },
+    {
+      "perm": "Llanowar Elves",
+      "final": {
+        "power": 1,
+        "toughness": 1
+      }
+    },
+    {
+      "perm": "Moraug, Fury of Akoum",
+      "final": {
+        "power": 7,
+        "toughness": 6
+      }
+    }
+  ]
+}

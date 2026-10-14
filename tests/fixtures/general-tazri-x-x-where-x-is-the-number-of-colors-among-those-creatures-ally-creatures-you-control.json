@@ -1,0 +1,1255 @@
+{
+ "name": "General Tazri — +X/+X where X is the number of colors among those creatures (Ally creatures you control)",
+ "notes": "Fixed in the fire-time count (cards-battlefield.js: 'those creatures' is the sentence's subject) and _computeForEachCount ('colors among <group>'); X was 0. Your Allies are white and black (X = 2); the opponent's blue Ally is not one of them. Memory: project_moraug_chong_tazri_counts_2026-10-14. Note: X is taken when the ability is activated and saved in the board's text, so this fixture passes on the old code too; the fix is checked when the recipe is rebuilt (--build).",
+ "recipe": {
+  "steps": [
+   {
+    "call": [
+     "addPlayer",
+     "Player 2"
+    ]
+   },
+   {
+    "add": "Hagra Sharpshooter"
+   },
+   {
+    "add": "Kazandu Blademaster"
+   },
+   {
+    "add": "Halimar Excavator",
+    "controller": "p2"
+   },
+   {
+    "add": "General Tazri",
+    "as": "tazri"
+   },
+   {
+    "fire": "@tazri",
+    "activated": 1
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Hagra Sharpshooter",
+   "final": {
+    "power": 4,
+    "toughness": 4
+   }
+  },
+  {
+   "perm": "General Tazri",
+   "final": {
+    "power": 5,
+    "toughness": 6
+   }
+  },
+  {
+   "perm": "Halimar Excavator",
+   "final": {
+    "power": 1,
+    "toughness": 3
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "a706b2e3-bd0e-4111-8b68-976869c7d707",
+     "oracle_id": "d2f59fa6-8e61-4a70-8044-196d7b26ec9e",
+     "multiverse_ids": [
+      401908
+     ],
+     "mtgo_id": 58609,
+     "mtgo_foil_id": 58610,
+     "tcgplayer_id": 105615,
+     "cardmarket_id": 284852,
+     "name": "Hagra Sharpshooter",
+     "lang": "en",
+     "released_at": "2015-10-02",
+     "uri": "https://api.scryfall.com/cards/a706b2e3-bd0e-4111-8b68-976869c7d707",
+     "scryfall_uri": "https://scryfall.com/card/bfz/113/hagra-sharpshooter?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T10:23:21Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/a/7/a706b2e3-bd0e-4111-8b68-976869c7d707.jpg?1783938201",
+      "normal": "https://cards.scryfall.io/normal/front/a/7/a706b2e3-bd0e-4111-8b68-976869c7d707.jpg?1783938201",
+      "large": "https://cards.scryfall.io/large/front/a/7/a706b2e3-bd0e-4111-8b68-976869c7d707.jpg?1783938201",
+      "png": "https://cards.scryfall.io/png/front/a/7/a706b2e3-bd0e-4111-8b68-976869c7d707.png?1783938201",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/a/7/a706b2e3-bd0e-4111-8b68-976869c7d707.jpg?1783938201",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/a/7/a706b2e3-bd0e-4111-8b68-976869c7d707.jpg?1783938201",
+      "thumb": "https://cards.scryfall.io/thumb/front/a/7/a706b2e3-bd0e-4111-8b68-976869c7d707.webp?1783938201",
+      "grid": "https://cards.scryfall.io/grid/front/a/7/a706b2e3-bd0e-4111-8b68-976869c7d707.webp?1783938201",
+      "display": "https://cards.scryfall.io/display/front/a/7/a706b2e3-bd0e-4111-8b68-976869c7d707.webp?1783938201",
+      "art": "https://cards.scryfall.io/art/front/a/7/a706b2e3-bd0e-4111-8b68-976869c7d707.webp?1783938201",
+      "crop": "https://cards.scryfall.io/crop/front/a/7/a706b2e3-bd0e-4111-8b68-976869c7d707.webp?1783938201"
+     },
+     "mana_cost": "{2}{B}",
+     "cmc": 3,
+     "type_line": "Creature — Human Assassin Ally",
+     "oracle_text": "{4}{B}: Target creature gets -1/-1 until end of turn.",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "B"
+     ],
+     "color_identity": [
+      "B"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "91719374-7ac5-4afa-ada8-5da964dcf1d4",
+     "set": "bfz",
+     "set_name": "Battle for Zendikar",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/91719374-7ac5-4afa-ada8-5da964dcf1d4",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Abfz&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/bfz?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/a706b2e3-bd0e-4111-8b68-976869c7d707/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ad2f59fa6-8e61-4a70-8044-196d7b26ec9e&unique=prints",
+     "collector_number": "113",
+     "digital": false,
+     "rarity": "uncommon",
+     "flavor_text": "\"It's hard to find their weak points, but I very much enjoy the discovery process.\"",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Josu Hernaiz",
+     "artist_ids": [
+      "74246024-92b4-43d0-a5af-a3f9f2a35d5f"
+     ],
+     "illustration_id": "82229afa-a344-4a1c-97b3-57c7f06ead37",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 30148,
+     "penny_rank": 14104,
+     "prices": {
+      "usd": "0.07",
+      "usd_foil": "0.17",
+      "usd_etched": null,
+      "eur": "0.03",
+      "eur_foil": "0.23",
+      "tix": "0.04"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=401908&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DHagra%2BSharpshooter",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DHagra%2BSharpshooter",
+      "edhrec": "https://edhrec.com/route/?cc=Hagra+Sharpshooter"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F105615%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=284852&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/58609?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "9642bdbf-c03f-4c48-a5c8-c9201a08b834",
+     "oracle_id": "133f5d30-d883-493e-93a1-cf9583db460b",
+     "multiverse_ids": [
+      191356
+     ],
+     "mtgo_id": 34364,
+     "mtgo_foil_id": 34365,
+     "tcgplayer_id": 33338,
+     "cardmarket_id": 21779,
+     "name": "Kazandu Blademaster",
+     "lang": "en",
+     "released_at": "2009-10-02",
+     "uri": "https://api.scryfall.com/cards/9642bdbf-c03f-4c48-a5c8-c9201a08b834",
+     "scryfall_uri": "https://scryfall.com/card/zen/16/kazandu-blademaster?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:29:32Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/9/6/9642bdbf-c03f-4c48-a5c8-c9201a08b834.jpg?1783942172",
+      "normal": "https://cards.scryfall.io/normal/front/9/6/9642bdbf-c03f-4c48-a5c8-c9201a08b834.jpg?1783942172",
+      "large": "https://cards.scryfall.io/large/front/9/6/9642bdbf-c03f-4c48-a5c8-c9201a08b834.jpg?1783942172",
+      "png": "https://cards.scryfall.io/png/front/9/6/9642bdbf-c03f-4c48-a5c8-c9201a08b834.png?1783942172",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/9/6/9642bdbf-c03f-4c48-a5c8-c9201a08b834.jpg?1783942172",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/9/6/9642bdbf-c03f-4c48-a5c8-c9201a08b834.jpg?1783942172",
+      "thumb": "https://cards.scryfall.io/thumb/front/9/6/9642bdbf-c03f-4c48-a5c8-c9201a08b834.webp?1783942172",
+      "grid": "https://cards.scryfall.io/grid/front/9/6/9642bdbf-c03f-4c48-a5c8-c9201a08b834.webp?1783942172",
+      "display": "https://cards.scryfall.io/display/front/9/6/9642bdbf-c03f-4c48-a5c8-c9201a08b834.webp?1783942172",
+      "art": "https://cards.scryfall.io/art/front/9/6/9642bdbf-c03f-4c48-a5c8-c9201a08b834.webp?1783942172",
+      "crop": "https://cards.scryfall.io/crop/front/9/6/9642bdbf-c03f-4c48-a5c8-c9201a08b834.webp?1783942172"
+     },
+     "mana_cost": "{W}{W}",
+     "cmc": 2,
+     "type_line": "Creature — Human Soldier Ally",
+     "oracle_text": "First strike, vigilance\nWhenever this creature or another Ally you control enters, you may put a +1/+1 counter on this creature.",
+     "power": "1",
+     "toughness": "1",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [
+      "Vigilance",
+      "First strike"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "eb16a2bd-a218-4e4e-8339-4aa1afc0c8d2",
+     "set": "zen",
+     "set_name": "Zendikar",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/eb16a2bd-a218-4e4e-8339-4aa1afc0c8d2",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Azen&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/zen?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/9642bdbf-c03f-4c48-a5c8-c9201a08b834/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A133f5d30-d883-493e-93a1-cf9583db460b&unique=prints",
+     "collector_number": "16",
+     "digital": false,
+     "rarity": "uncommon",
+     "flavor_text": "\"If you hire a sell-sword, you'd better watch your back. Hire me, and I'll watch it for you.\"",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Michael Komarck",
+     "artist_ids": [
+      "96a53b95-fe5f-4fbb-9411-ccf4ee150aca"
+     ],
+     "illustration_id": "8daaecc3-f8b9-45cf-bdab-4965c225a0be",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 13539,
+     "penny_rank": 2744,
+     "prices": {
+      "usd": "0.32",
+      "usd_foil": "2.90",
+      "usd_etched": null,
+      "eur": "0.32",
+      "eur_foil": "1.24",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=191356&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DKazandu%2BBlademaster",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DKazandu%2BBlademaster",
+      "edhrec": "https://edhrec.com/route/?cc=Kazandu+Blademaster"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F33338%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=21779&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/34364?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "d147dce7-b2dd-426a-9ff7-843d50bb8b01",
+     "oracle_id": "fd3e37c9-93bf-4f3e-a279-22afbffd8d43",
+     "multiverse_ids": [
+      197129
+     ],
+     "mtgo_id": 35609,
+     "mtgo_foil_id": 35610,
+     "tcgplayer_id": 34378,
+     "cardmarket_id": 22118,
+     "name": "Halimar Excavator",
+     "lang": "en",
+     "released_at": "2010-02-05",
+     "uri": "https://api.scryfall.com/cards/d147dce7-b2dd-426a-9ff7-843d50bb8b01",
+     "scryfall_uri": "https://scryfall.com/card/wwk/29/halimar-excavator?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:27:43Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/d/1/d147dce7-b2dd-426a-9ff7-843d50bb8b01.jpg?1783942063",
+      "normal": "https://cards.scryfall.io/normal/front/d/1/d147dce7-b2dd-426a-9ff7-843d50bb8b01.jpg?1783942063",
+      "large": "https://cards.scryfall.io/large/front/d/1/d147dce7-b2dd-426a-9ff7-843d50bb8b01.jpg?1783942063",
+      "png": "https://cards.scryfall.io/png/front/d/1/d147dce7-b2dd-426a-9ff7-843d50bb8b01.png?1783942063",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/d/1/d147dce7-b2dd-426a-9ff7-843d50bb8b01.jpg?1783942063",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/d/1/d147dce7-b2dd-426a-9ff7-843d50bb8b01.jpg?1783942063",
+      "thumb": "https://cards.scryfall.io/thumb/front/d/1/d147dce7-b2dd-426a-9ff7-843d50bb8b01.webp?1783942063",
+      "grid": "https://cards.scryfall.io/grid/front/d/1/d147dce7-b2dd-426a-9ff7-843d50bb8b01.webp?1783942063",
+      "display": "https://cards.scryfall.io/display/front/d/1/d147dce7-b2dd-426a-9ff7-843d50bb8b01.webp?1783942063",
+      "art": "https://cards.scryfall.io/art/front/d/1/d147dce7-b2dd-426a-9ff7-843d50bb8b01.webp?1783942063",
+      "crop": "https://cards.scryfall.io/crop/front/d/1/d147dce7-b2dd-426a-9ff7-843d50bb8b01.webp?1783942063"
+     },
+     "mana_cost": "{1}{U}",
+     "cmc": 2,
+     "type_line": "Creature — Human Wizard Ally",
+     "oracle_text": "Whenever this creature or another Ally you control enters, target player mills X cards, where X is the number of Allies you control.",
+     "power": "1",
+     "toughness": "3",
+     "colors": [
+      "U"
+     ],
+     "color_identity": [
+      "U"
+     ],
+     "keywords": [
+      "Mill"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "2f248ce6-c2a5-4c6f-a2be-0c593fbe173c",
+     "set": "wwk",
+     "set_name": "Worldwake",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/2f248ce6-c2a5-4c6f-a2be-0c593fbe173c",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Awwk&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/wwk?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/d147dce7-b2dd-426a-9ff7-843d50bb8b01/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Afd3e37c9-93bf-4f3e-a279-22afbffd8d43&unique=prints",
+     "collector_number": "29",
+     "digital": false,
+     "rarity": "common",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Kev Walker",
+     "artist_ids": [
+      "f366a0ee-a0cd-466d-ba6a-90058c7a31a6"
+     ],
+     "illustration_id": "766fda8b-20b1-4453-ac5d-635bec8a0a3e",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 14238,
+     "penny_rank": 4060,
+     "prices": {
+      "usd": "0.32",
+      "usd_foil": "4.28",
+      "usd_etched": null,
+      "eur": "0.27",
+      "eur_foil": "1.10",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=197129&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DHalimar%2BExcavator",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DHalimar%2BExcavator",
+      "edhrec": "https://edhrec.com/route/?cc=Halimar+Excavator"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F34378%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=22118&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/35609?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_1",
+    "controller": "player_1",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": true,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "34e9aa86-1a31-4c0f-928d-923f066286b6",
+     "oracle_id": "b0f19cba-1339-4518-8320-d7b1dcaf2eb0",
+     "multiverse_ids": [
+      407529
+     ],
+     "mtgo_id": 59439,
+     "mtgo_foil_id": 59440,
+     "tcgplayer_id": 110810,
+     "cardmarket_id": 287225,
+     "name": "General Tazri",
+     "lang": "en",
+     "released_at": "2016-01-22",
+     "uri": "https://api.scryfall.com/cards/34e9aa86-1a31-4c0f-928d-923f066286b6",
+     "scryfall_uri": "https://scryfall.com/card/ogw/19/general-tazri?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T10:18:47Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/3/4/34e9aa86-1a31-4c0f-928d-923f066286b6.jpg?1783937927",
+      "normal": "https://cards.scryfall.io/normal/front/3/4/34e9aa86-1a31-4c0f-928d-923f066286b6.jpg?1783937927",
+      "large": "https://cards.scryfall.io/large/front/3/4/34e9aa86-1a31-4c0f-928d-923f066286b6.jpg?1783937927",
+      "png": "https://cards.scryfall.io/png/front/3/4/34e9aa86-1a31-4c0f-928d-923f066286b6.png?1783937927",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/3/4/34e9aa86-1a31-4c0f-928d-923f066286b6.jpg?1783937927",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/3/4/34e9aa86-1a31-4c0f-928d-923f066286b6.jpg?1783937927",
+      "thumb": "https://cards.scryfall.io/thumb/front/3/4/34e9aa86-1a31-4c0f-928d-923f066286b6.webp?1783937927",
+      "grid": "https://cards.scryfall.io/grid/front/3/4/34e9aa86-1a31-4c0f-928d-923f066286b6.webp?1783937927",
+      "display": "https://cards.scryfall.io/display/front/3/4/34e9aa86-1a31-4c0f-928d-923f066286b6.webp?1783937927",
+      "art": "https://cards.scryfall.io/art/front/3/4/34e9aa86-1a31-4c0f-928d-923f066286b6.webp?1783937927",
+      "crop": "https://cards.scryfall.io/crop/front/3/4/34e9aa86-1a31-4c0f-928d-923f066286b6.webp?1783937927"
+     },
+     "mana_cost": "{4}{W}",
+     "cmc": 5,
+     "type_line": "Legendary Creature — Human Ally",
+     "oracle_text": "When General Tazri enters, you may search your library for an Ally creature card, reveal it, put it into your hand, then shuffle.\n{W}{U}{B}{R}{G}: Ally creatures you control get +X/+X until end of turn, where X is the number of colors among those creatures.",
+     "power": "3",
+     "toughness": "4",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "cd51d245-8f95-45b0-ab5f-e2b3a3eb5dfe",
+     "set": "ogw",
+     "set_name": "Oath of the Gatewatch",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/cd51d245-8f95-45b0-ab5f-e2b3a3eb5dfe",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aogw&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/ogw?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/34e9aa86-1a31-4c0f-928d-923f066286b6/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ab0f19cba-1339-4518-8320-d7b1dcaf2eb0&unique=prints",
+     "collector_number": "19",
+     "digital": false,
+     "rarity": "mythic",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Chris Rahn",
+     "artist_ids": [
+      "7742047e-0f80-4c0f-a530-d07460165e86"
+     ],
+     "illustration_id": "d0e7ee55-39a3-489b-8099-a150f9eb23d8",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 14320,
+     "penny_rank": 15692,
+     "prices": {
+      "usd": "0.89",
+      "usd_foil": "12.50",
+      "usd_etched": null,
+      "eur": "0.90",
+      "eur_foil": "5.66",
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=407529&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGeneral%2BTazri",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGeneral%2BTazri",
+      "edhrec": "https://edhrec.com/route/?cc=General+Tazri"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F110810%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=287225&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/59439?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 4,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [
+   {
+    "id": "act_perm_4_1_5",
+    "kind": "activated",
+    "pseudoKind": "ability",
+    "sourceId": "perm_4",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 1,
+    "timestamp": 5,
+    "effectText": "Ally creatures you control get +2/+2 until end of turn, where 2 is the number of colors among those creatures.",
+    "xValue": null,
+    "hasXValue": false,
+    "cdaUserValue": null,
+    "linkedCards": null,
+    "fullText": "{W}{U}{B}{R}{G}: Ally creatures you control get +X/+X until end of turn, where X is the number of colors among those creatures.",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "guessedTargetSubjects": [],
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Hagra Sharpshooter",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Human",
+        "Assassin",
+        "Ally"
+       ],
+       "power": 2,
+       "toughness": 2,
+       "colors": [
+        "B"
+       ],
+       "abilities": [
+        "{4}{B}: Target creature gets -1/-1 until end of turn."
+       ],
+       "oracleText": "{4}{B}: Target creature gets -1/-1 until end of turn.",
+       "manaValue": 3,
+       "manaCost": "{2}{B}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false
+      }
+     ],
+     [
+      "perm_2",
+      {
+       "name": "Kazandu Blademaster",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Human",
+        "Soldier",
+        "Ally"
+       ],
+       "power": 1,
+       "toughness": 1,
+       "colors": [
+        "W"
+       ],
+       "abilities": [
+        "First strike, vigilance",
+        "Whenever this creature or another Ally you control enters, you may put a +1/+1 counter on this creature."
+       ],
+       "oracleText": "First strike, vigilance\nWhenever this creature or another Ally you control enters, you may put a +1/+1 counter on this creature.",
+       "manaValue": 2,
+       "manaCost": "{W}{W}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false
+      }
+     ],
+     [
+      "perm_3",
+      {
+       "name": "Halimar Excavator",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Human",
+        "Wizard",
+        "Ally"
+       ],
+       "power": 1,
+       "toughness": 3,
+       "colors": [
+        "U"
+       ],
+       "abilities": [
+        "Whenever this creature or another Ally you control enters, target player mills X cards, where X is the number of Allies you control."
+       ],
+       "oracleText": "Whenever this creature or another Ally you control enters, target player mills X cards, where X is the number of Allies you control.",
+       "manaValue": 2,
+       "manaCost": "{1}{U}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false
+      }
+     ],
+     [
+      "perm_4",
+      {
+       "name": "General Tazri",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [
+        "Legendary"
+       ],
+       "subtypes": [
+        "Human",
+        "Ally"
+       ],
+       "power": 3,
+       "toughness": 4,
+       "colors": [
+        "W"
+       ],
+       "abilities": [
+        "When this card enters, you may search your library for an Ally creature card, reveal it, put it into your hand, then shuffle.",
+        "{W}{U}{B}{R}{G}: Ally creatures you control get +X/+X until end of turn, where X is the number of colors among those creatures."
+       ],
+       "oracleText": "When this card enters, you may search your library for an Ally creature card, reveal it, put it into your hand, then shuffle.\n{W}{U}{B}{R}{G}: Ally creatures you control get +X/+X until end of turn, where X is the number of colors among those creatures.",
+       "manaValue": 5,
+       "manaCost": "{4}{W}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Hagra Sharpshooter",
+       "imageUri": "https://cards.scryfall.io/small/front/a/7/a706b2e3-bd0e-4111-8b68-976869c7d707.jpg?1783938201",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Human",
+        "Assassin",
+        "Ally"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Kazandu Blademaster",
+       "imageUri": "https://cards.scryfall.io/small/front/9/6/9642bdbf-c03f-4c48-a5c8-c9201a08b834.jpg?1783942172",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Human",
+        "Soldier",
+        "Ally"
+       ],
+       "printedPower": 1,
+       "printedToughness": 1,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Halimar Excavator",
+       "imageUri": "https://cards.scryfall.io/small/front/d/1/d147dce7-b2dd-426a-9ff7-843d50bb8b01.jpg?1783942063",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Human",
+        "Wizard",
+        "Ally"
+       ],
+       "printedPower": 1,
+       "printedToughness": 3,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "General Tazri",
+       "imageUri": "https://cards.scryfall.io/small/front/3/4/34e9aa86-1a31-4c0f-928d-923f066286b6.jpg?1783937927",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [
+        "Legendary"
+       ],
+       "printedSubtypes": [
+        "Human",
+        "Ally"
+       ],
+       "printedPower": 3,
+       "printedToughness": 4,
+       "timestamp": 4
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      },
+      {
+       "id": "player_1",
+       "name": "Player 2"
+      }
+     ]
+    },
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null
+   }
+  ],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   },
+   {
+    "id": "player_1",
+    "name": "Player 2",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": false,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 2,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Hagra Sharpshooter",
+    "final": {
+     "name": "Hagra Sharpshooter",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Human",
+      "Assassin",
+      "Ally"
+     ],
+     "power": 4,
+     "toughness": 4,
+     "colors": [
+      "B"
+     ],
+     "abilities": [
+      "{4}{B}: Target creature gets -1/-1 until end of turn."
+     ]
+    },
+    "changedBy": {
+     "7c": [
+      "General Tazri (activated)"
+     ]
+    }
+   },
+   {
+    "perm": "Kazandu Blademaster",
+    "final": {
+     "name": "Kazandu Blademaster",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Human",
+      "Soldier",
+      "Ally"
+     ],
+     "power": 3,
+     "toughness": 3,
+     "colors": [
+      "W"
+     ],
+     "abilities": [
+      "First strike, vigilance",
+      "Whenever this creature or another Ally you control enters, you may put a +1/+1 counter on this creature."
+     ]
+    },
+    "changedBy": {
+     "7c": [
+      "General Tazri (activated)"
+     ]
+    }
+   },
+   {
+    "perm": "Halimar Excavator",
+    "final": {
+     "name": "Halimar Excavator",
+     "controller": "player_1",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Human",
+      "Wizard",
+      "Ally"
+     ],
+     "power": 1,
+     "toughness": 3,
+     "colors": [
+      "U"
+     ],
+     "abilities": [
+      "Whenever this creature or another Ally you control enters, target player mills X cards, where X is the number of Allies you control."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "General Tazri",
+    "final": {
+     "name": "General Tazri",
+     "controller": "player_0",
+     "supertypes": [
+      "Legendary"
+     ],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Human",
+      "Ally"
+     ],
+     "power": 5,
+     "toughness": 6,
+     "colors": [
+      "W"
+     ],
+     "abilities": [
+      "When this card enters, you may search your library for an Ally creature card, reveal it, put it into your hand, then shuffle.",
+      "{W}{U}{B}{R}{G}: Ally creatures you control get +X/+X until end of turn, where X is the number of colors among those creatures."
+     ]
+    },
+    "changedBy": {
+     "7c": [
+      "General Tazri (activated)"
+     ]
+    }
+   }
+  ],
+  "order": {
+   "7c": [
+    "General Tazri (activated)"
+   ]
+  },
+  "effects": [
+   {
+    "source": "General Tazri (activated)",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "global",
+    "params": {
+     "power": 2,
+     "toughness": 2
+    }
+   }
+  ]
+ }
+}

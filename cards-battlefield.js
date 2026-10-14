@@ -567,7 +567,13 @@ const Battlefield = {
     if (/\bX\b/.test(parsedEffectText) && firedAtStates) {
       const _whereXMatch = /,?\s*where\s+X\s+is\s+the\s+number\s+of\s+([^.;\n]+)/i.exec(parsedEffectText);
       if (_whereXMatch) {
-        const _descRaw = _whereXMatch[1].trim().replace(/\.$/, '');
+        let _descRaw = _whereXMatch[1].trim().replace(/\.$/, '');
+        // "… where X is the number of colors among those creatures" (General Tazri): those are
+        // the creatures the sentence's subject names ("Ally creatures you control").
+        if (/\bthose (?:creatures|permanents)$/i.test(_descRaw)) {
+          const _subj = /^(?:until end of turn,\s*)?(.+?)\s+gets?\s+[+-]X\//i.exec(parsedEffectText);
+          if (_subj) _descRaw = _descRaw.replace(/\bthose (?:creatures|permanents)$/i, _subj[1]);
+        }
         const _srcState = sourcePermId ? firedAtStates.get(sourcePermId) : null;
         const _snapVal = _computeForEachCount(_descRaw, firedAtStates, _srcState, null);
         if (_snapVal !== null && _snapVal !== undefined) {
@@ -2006,6 +2012,16 @@ const Battlefield = {
     else delete perm.attackingPlayerId;
   },
 
+  /* How many times a creature has attacked this turn, typed by hand: the site keeps no history
+     of combats (Moraug, Fury of Akoum: "+1/+0 for each time it has attacked this turn"). */
+  setTimesAttacked(id, n) {
+    this._invalidate();
+    const perm = this.getPermById(id);
+    if (!perm) return;
+    if (n > 0) perm.timesAttackedThisTurn = n;
+    else delete perm.timesAttackedThisTurn;
+  },
+
   /* Toggle the 'Blocking' trait on a creature. Mutually exclusive with 'Attacking'. */
   toggleBlocking(id) {
     this._invalidate();
@@ -3036,7 +3052,7 @@ const Battlefield = {
     const _fallback = (p) => ({ name: p.name, types: p.printedTypes, supertypes: p.printedSupertypes,
       subtypes: p.printedSubtypes || [], power: p.printedPower, toughness: p.printedToughness,
       colors: p.printedColors || [], abilities: p.printedAbilities || [], oracleText: p.oracleText || '',
-      manaValue: p.manaValue || 0, manaCost: p.manaCost || '',
+      manaValue: p.manaValue || 0, manaCost: p.manaCost || '', timesAttackedThisTurn: p.timesAttackedThisTurn || 0,
       owner: p.owner || 'player_0', controller: p.owner || 'player_0', isToken: !!p.isToken });
     const hasTraits = realPerms.some(rp => rp.traits && rp.traits.length > 0);
     if (realPerms.length === 0) { this._cachedFinalStates = new Map(); this._cachedFinalStatesVersion = this._cacheVersion; return this._cachedFinalStates; }
@@ -3465,6 +3481,7 @@ const Battlefield = {
         tapped: !!p.tapped,
         traits: Array.isArray(p.traits) ? p.traits.slice() : [],
         attackingPlayerId: p.attackingPlayerId || undefined,
+        timesAttackedThisTurn: p.timesAttackedThisTurn || undefined,
         counters: { ...(p.counters || {}) },
         counterTimestamps: { ...(p.counterTimestamps || {}) },
         isFaceDown: !!p.isFaceDown,
@@ -3682,6 +3699,7 @@ const Battlefield = {
       np.tapped = !!r.tapped;
       np.traits = Array.isArray(r.traits) ? r.traits.slice() : [];
       if (r.attackingPlayerId) np.attackingPlayerId = r.attackingPlayerId;
+      if (r.timesAttackedThisTurn) np.timesAttackedThisTurn = r.timesAttackedThisTurn;
       np.counters = { ...(r.counters || {}) };
       np.counterTimestamps = { ...(r.counterTimestamps || {}) };
       // Counters drive P/T and keyword grants through synthetic effects — rebuild them.
