@@ -256,6 +256,49 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
     return creatureSubtypes.length;
   }
 
+  // "for each of its colors" (Knight of New Alara, Might of the Nephilim, Civic Saber): the
+  // colours of the permanent being modified.
+  if (/^(?:of\s+)?its\s+colou?rs$/.test(desc)) return (selfState.colors || []).length;
+
+  // Chroma: "[colour] mana symbol in its mana cost" (Light from Within) reads the permanent
+  // being modified; "… in the mana costs of permanents you control" (Heartlash Cinder) adds up
+  // every such permanent. A hybrid or Phyrexian symbol of that colour counts.
+  const chromaMatch = desc.match(/^(white|blue|black|red|green) mana symbols? in (?:its mana cost|the mana costs of permanents)$/);
+  if (chromaMatch) {
+    const letter = { white: 'W', blue: 'U', black: 'B', red: 'R', green: 'G' }[chromaMatch[1]];
+    const symbolsIn = (st) => ((st.manaCost || '').match(/\{[^}]*\}/g) || []).filter(s => s.includes(letter)).length;
+    if (/\bits mana cost$/.test(desc)) return symbolsIn(selfState);
+    let total = 0;
+    for (const [, st] of allStates) {
+      if (youControl && st.controller !== ctrlId) continue;
+      if (opponentsControl && st.controller === ctrlId) continue;
+      total += symbolsIn(st);
+    }
+    return total;
+  }
+
+  // "for each point of bushido it has" (Takeno): the bushido of the permanent being modified,
+  // every instance added together.
+  if (/^points? of bushido (?:it|that creature) has$/.test(desc)) {
+    let total = 0;
+    for (const a of (selfState.abilities || [])) {
+      const m = String(a).match(/^bushido (\d+)\b/i);
+      if (m) total += parseInt(m[1], 10);
+    }
+    return total;
+  }
+
+  // "the number of players being attacked" (Pack Attack): the different players the attacking
+  // creatures are attacking.
+  if (/^players? being attacked$/.test(desc)) {
+    const attacked = new Set();
+    for (const [, st] of allStates) {
+      const pl = _attackedPlayerId(st);
+      if (pl) attacked.add(pl);
+    }
+    return attacked.size;
+  }
+
   // "other [type/subtype]" — the permanent being modified doesn't count itself (Rat Colony:
   // "+1/+0 for each other Rat you control"; Coat of Arms: each creature skips itself).
   const excludeSelf = /^other\s+/.test(desc);
@@ -412,11 +455,18 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
   // Human creatures", "artifact token". Every word in front of the last one must be a subtype,
   // colour, supertype, card type or combat state; anything else ("valor counter on this
   // creature", "Equipment attached to this creature") is another pattern, further down.
-  // "Other than this card" leaves the source out (Márton Stromgald).
+  // "Other than this card" leaves the source out (Márton Stromgald). "With <keyword>[ or
+  // <keyword>]" asks for any of the keywords (Dauthi Warlord "creatures on the battlefield with
+  // shadow", Tsagan "creature you control with first strike or double strike").
   {
-    let qDesc = desc, notSource = false;
+    let qDesc = desc, notSource = false, withKeywords = null;
     const otherThan = qDesc.match(/^(.+?)\s+other than (?:this (?:card|creature|permanent)|it)$/);
     if (otherThan) { qDesc = otherThan[1]; notSource = true; }
+    const withMatch = qDesc.match(/^(.+?)\s+(?:on the battlefield\s+|you control\s+|your opponents control\s+)?with\s+([a-z ,/]+)$/);
+    if (withMatch) {
+      const kws = withMatch[2].split(/\s*,\s*(?:(?:and\/)?or\s+)?|\s+and\/or\s+|\s+or\s+/).filter(Boolean);
+      if (kws.length && kws.every(k => _COUNT_FILTER_KEYWORDS.has(k))) { qDesc = withMatch[1]; withKeywords = kws; }
+    }
     const qWords = qDesc.split(/\s+/);
     const head = qWords[qWords.length - 1];
     const headCheck = /^tokens?$/.test(head) ? ((st) => !!st.isToken) : TYPE_MAP[head];
@@ -432,8 +482,9 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
     const catalogLoaded = typeof TypeCatalog !== 'undefined' && TypeCatalog.creatureTypes && TypeCatalog.creatureTypes.size > 0;
     const isSubtype = (s) => catalogLoaded ? _isKnownSubtypeWord(s)
       : /^[A-Z][a-z'-]+(?: [A-Z][a-z'-]+)*$/.test(s) && !/\b(?:Counters?|On|Attached|To|This|It|With|That|Of|The|In|Among|You|Your)\b/.test(s);
-    if (headCheck && qWords.length > 1) {
+    if (headCheck && (qWords.length > 1 || withKeywords)) {
       const checks = [headCheck], subWords = [];
+      if (withKeywords) checks.push((st) => withKeywords.some(k => _hasKeywordAbility(st.abilities || [], k)));
       for (const w of qWords.slice(0, -1)) {
         if (COLOR_WORDS[w]) { const c = COLOR_WORDS[w]; checks.push((st) => (st.colors || []).includes(c)); }
         else if (STATE_WORDS[w]) checks.push(STATE_WORDS[w]);
@@ -601,6 +652,14 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
 
   return null; // couldn't auto-compute; fall back to user input
 }
+
+// Keywords a count may ask for with "with <keyword>" (as in buildAppliesToFromText's filters).
+const _COUNT_FILTER_KEYWORDS = new Set([
+  'flying', 'first strike', 'double strike', 'deathtouch', 'haste', 'hexproof', 'indestructible',
+  'lifelink', 'menace', 'reach', 'trample', 'vigilance', 'flash', 'defender', 'fear', 'intimidate',
+  'shroud', 'wither', 'infect', 'prowess', 'shadow', 'horsemanship', 'flanking', 'banding',
+  'undying', 'persist', 'skulk', 'changeling', 'ward', 'toxic',
+]);
 
 const _ZONE_CLAUSE_TYPE_WORDS = {
   artifact: 'Artifact', creature: 'Creature', enchantment: 'Enchantment',

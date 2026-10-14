@@ -1,0 +1,65 @@
+{
+  "name": "Pack Attack \u2014 +X/+0 where X is the number of players being attacked",
+  "notes": "Fixed in _computeForEachCount (engine-compute.js): 'players being attacked' had no reading, so X was 0. Two creatures attack two different opponents: X = 2. Memory: project_for_each_c3_measurable_and_by_hand_2026-10-14.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Player 2"
+      ]
+    },
+    {
+      "call": [
+        "addPlayer",
+        "Player 3"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "a"
+    },
+    {
+      "add": "Llanowar Elves",
+      "as": "b"
+    },
+    {
+      "call": [
+        "toggleAttacking",
+        "@a"
+      ]
+    },
+    {
+      "call": [
+        "toggleAttacking",
+        "@b"
+      ]
+    },
+    {
+      "call": [
+        "setAttackingPlayer",
+        "@b",
+        "p3"
+      ]
+    },
+    {
+      "add": "Pack Attack",
+      "spell": true
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 4,
+        "toughness": 2
+      }
+    },
+    {
+      "perm": "Llanowar Elves",
+      "final": {
+        "power": 3,
+        "toughness": 1
+      }
+    }
+  ]
+}

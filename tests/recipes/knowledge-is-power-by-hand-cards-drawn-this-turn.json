@@ -1,0 +1,29 @@
+{
+  "name": "Knowledge Is Power \u2014 cards drawn this turn is a count entered by hand",
+  "notes": "Fixed in the parser's for-each boost (cards-parser.js): cards drawn this turn are not recorded and the count had no input, so it was always 0. It is now typed on the card's row (setCDAValue). Memory: project_for_each_c3_measurable_and_by_hand_2026-10-14.",
+  "steps": [
+    {
+      "add": "Knowledge Is Power",
+      "as": "k"
+    },
+    {
+      "add": "Grizzly Bears"
+    },
+    {
+      "call": [
+        "setCDAValue",
+        "@k",
+        3
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 5,
+        "toughness": 5
+      }
+    }
+  ]
+}

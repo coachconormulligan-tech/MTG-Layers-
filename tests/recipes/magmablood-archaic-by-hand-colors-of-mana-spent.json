@@ -1,0 +1,34 @@
+{
+  "name": "Magmablood Archaic \u2014 colors of mana spent to cast that spell is a count entered by hand",
+  "notes": "Fixed in the parser's for-each boost (cards-parser.js): the count had no input, so the fired trigger gave +0/+0. It is now typed on the fired ability's row (setCDAValue). Memory: project_for_each_c3_measurable_and_by_hand_2026-10-14.",
+  "steps": [
+    {
+      "add": "Magmablood Archaic",
+      "as": "m"
+    },
+    {
+      "add": "Grizzly Bears"
+    },
+    {
+      "fire": "@m",
+      "trigger": 2,
+      "as": "trig"
+    },
+    {
+      "call": [
+        "setCDAValue",
+        "@trig",
+        2
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 4,
+        "toughness": 2
+      }
+    }
+  ]
+}

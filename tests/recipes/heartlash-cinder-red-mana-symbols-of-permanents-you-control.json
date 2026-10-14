@@ -1,0 +1,26 @@
+{
+  "name": "Heartlash Cinder \u2014 +X/+0 where X is the red mana symbols in the mana costs of permanents you control",
+  "notes": "Fixed in _computeForEachCount (engine-compute.js): chroma counts had no reading. Also getAllFinalStates' no-effects fallback (cards-battlefield.js) left out manaCost, so the fire-time count read 0 on a board with no static effects. Hill Giant {3}{R} and Heartlash Cinder {1}{R}: X = 2. Memory: project_for_each_c3_measurable_and_by_hand_2026-10-14. Note: the count is taken when the trigger is fired and saved in the board's text, so this fixture passes on the old code too; it records the expected result, the fix itself is checked only when the recipe is rebuilt (--build).",
+  "steps": [
+    {
+      "add": "Hill Giant"
+    },
+    {
+      "add": "Heartlash Cinder",
+      "as": "h"
+    },
+    {
+      "fire": "@h",
+      "trigger": 1
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Heartlash Cinder",
+      "final": {
+        "power": 3,
+        "toughness": 1
+      }
+    }
+  ]
+}

@@ -1,0 +1,1700 @@
+{
+ "name": "Jurin, Leading the Charge — +1/+0 for each creature the player it is attacking controls",
+ "notes": "Fixed in two places: the subject 'each creature you control attacking a player' reached nobody (buildAppliesToFromText, cards-text-utils.js, now reads it as an attacker), and in the parser's for-each boost (cards-parser.js) 'that player controls' after 'attacking a player' is the defending player's, which _computeForEachCount reads. Each creature counts the creatures of the player it attacks. Memory: project_for_each_c3_measurable_and_by_hand_2026-10-14.",
+ "recipe": {
+  "steps": [
+   {
+    "call": [
+     "addPlayer",
+     "Player 2"
+    ]
+   },
+   {
+    "call": [
+     "addPlayer",
+     "Player 3"
+    ]
+   },
+   {
+    "add": "Grizzly Bears",
+    "controller": "p2"
+   },
+   {
+    "add": "Llanowar Elves",
+    "controller": "p2"
+   },
+   {
+    "add": "Hill Giant",
+    "controller": "p3"
+   },
+   {
+    "add": "Jurin, Leading the Charge",
+    "as": "jurin"
+   },
+   {
+    "add": "Watchwolf",
+    "as": "wolf"
+   },
+   {
+    "call": [
+     "toggleAttacking",
+     "@jurin"
+    ]
+   },
+   {
+    "call": [
+     "toggleAttacking",
+     "@wolf"
+    ]
+   },
+   {
+    "call": [
+     "setAttackingPlayer",
+     "@wolf",
+     "p3"
+    ]
+   },
+   {
+    "fire": "@jurin",
+    "trigger": 2
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Jurin, Leading the Charge",
+   "final": {
+    "power": 6
+   }
+  },
+  {
+   "perm": "Watchwolf",
+   "final": {
+    "power": 4,
+    "toughness": 3
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+     "multiverse_ids": [
+      129586
+     ],
+     "mtgo_id": 27400,
+     "mtgo_foil_id": 27401,
+     "tcgplayer_id": 15153,
+     "cardmarket_id": 16432,
+     "name": "Grizzly Bears",
+     "lang": "en",
+     "released_at": "2007-07-13",
+     "uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "scryfall_uri": "https://scryfall.com/card/10e/268/grizzly-bears?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:43:21Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "normal": "https://cards.scryfall.io/normal/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "large": "https://cards.scryfall.io/large/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "png": "https://cards.scryfall.io/png/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.png?1783943001",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "grid": "https://cards.scryfall.io/grid/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "display": "https://cards.scryfall.io/display/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "art": "https://cards.scryfall.io/art/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "crop": "https://cards.scryfall.io/crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001"
+     },
+     "mana_cost": "{1}{G}",
+     "cmc": 2,
+     "type_line": "Creature — Bear",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set": "10e",
+     "set_name": "Tenth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A14c8f55d-d177-4c25-a931-ebeb9e6062a0&unique=prints",
+     "collector_number": "268",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"We cannot forget that among all of Dominaria's wonders, a system of life exists, with prey and predators that will never fight wars nor vie for ancient power.\"\n—Jolrael, empress of beasts",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "D. J. Cleland-Hura",
+     "artist_ids": [
+      "87d21070-2432-4167-8aab-5968af1c14f3"
+     ],
+     "illustration_id": "066bfe81-0f53-43da-a074-b2ecc5dcda72",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 8114,
+     "penny_rank": 10982,
+     "prices": {
+      "usd": "0.22",
+      "usd_foil": "3.29",
+      "usd_etched": null,
+      "eur": "0.11",
+      "eur_foil": "1.97",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129586&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "edhrec": "https://edhrec.com/route/?cc=Grizzly+Bears"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15153%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16432&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27400?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_1",
+    "controller": "player_1",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "6a0b230b-d391-4998-a3f7-7b158a0ec2cd",
+     "oracle_id": "68954295-54e3-4303-a6bc-fc4547a4e3a3",
+     "multiverse_ids": [
+      679969
+     ],
+     "mtgo_id": 133480,
+     "arena_id": 93940,
+     "tcgplayer_id": 557921,
+     "cardmarket_id": 795132,
+     "name": "Llanowar Elves",
+     "lang": "en",
+     "released_at": "2024-11-15",
+     "uri": "https://api.scryfall.com/cards/6a0b230b-d391-4998-a3f7-7b158a0ec2cd",
+     "scryfall_uri": "https://scryfall.com/card/fdn/227/llanowar-elves?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T02:17:37Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+      "normal": "https://cards.scryfall.io/normal/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+      "large": "https://cards.scryfall.io/large/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+      "png": "https://cards.scryfall.io/png/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.png?1783909057",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+      "thumb": "https://cards.scryfall.io/thumb/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.webp?1783909057",
+      "grid": "https://cards.scryfall.io/grid/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.webp?1783909057",
+      "display": "https://cards.scryfall.io/display/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.webp?1783909057",
+      "art": "https://cards.scryfall.io/art/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.webp?1783909057",
+      "crop": "https://cards.scryfall.io/crop/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.webp?1783909057"
+     },
+     "mana_cost": "{G}",
+     "cmc": 1,
+     "type_line": "Creature — Elf Druid",
+     "oracle_text": "{T}: Add {G}.",
+     "power": "1",
+     "toughness": "1",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "produced_mana": [
+      "G"
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "11bd6cef-f887-4b07-a957-4c53cb3c9c87",
+       "component": "combo_piece",
+       "name": "Llanowar Elves",
+       "type_line": "Creature — Elf Druid",
+       "uri": "https://api.scryfall.com/cards/11bd6cef-f887-4b07-a957-4c53cb3c9c87"
+      },
+      {
+       "object": "related_card",
+       "id": "8ef95e7a-9f07-41f8-908b-2df93e03d391",
+       "component": "combo_piece",
+       "name": "Marwyn's Kindred",
+       "type_line": "Sorcery",
+       "uri": "https://api.scryfall.com/cards/8ef95e7a-9f07-41f8-908b-2df93e03d391"
+      }
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "arena",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a7ecb771-d1b6-4dec-8cf5-8d45179f21e0",
+     "set": "fdn",
+     "set_name": "Foundations",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a7ecb771-d1b6-4dec-8cf5-8d45179f21e0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Afdn&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/fdn?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/6a0b230b-d391-4998-a3f7-7b158a0ec2cd/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A68954295-54e3-4303-a6bc-fc4547a4e3a3&unique=prints",
+     "collector_number": "227",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "The elves of the Llanowar forest have defended it for generations. It is their sacred duty to keep outside influences from corrupting their ancestral home.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Kev Walker",
+     "artist_ids": [
+      "f366a0ee-a0cd-466d-ba6a-90058c7a31a6"
+     ],
+     "illustration_id": "96ffb0f9-113f-4fff-a45f-69cbb8d60890",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "promo_types": [
+      "beginnerbox",
+      "startercollection"
+     ],
+     "edhrec_rank": 58,
+     "penny_rank": 282,
+     "preview": {
+      "source": "Wizards of the Coast",
+      "source_uri": "https://twitter.com/wizards_magic/status/1806644973263302981",
+      "previewed_at": "2024-06-28"
+     },
+     "prices": {
+      "usd": "0.28",
+      "usd_foil": "1.59",
+      "usd_etched": null,
+      "eur": "0.21",
+      "eur_foil": "0.52",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=679969&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DLlanowar%2BElves",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DLlanowar%2BElves",
+      "edhrec": "https://edhrec.com/route/?cc=Llanowar+Elves"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F557921%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=795132&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/133480?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_1",
+    "controller": "player_1",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8",
+     "oracle_id": "342199e0-15b6-4824-83da-25caef2592b3",
+     "multiverse_ids": [
+      129591
+     ],
+     "mtgo_id": 27040,
+     "mtgo_foil_id": 27041,
+     "tcgplayer_id": 15162,
+     "cardmarket_id": 16376,
+     "name": "Hill Giant",
+     "lang": "en",
+     "released_at": "2007-07-13",
+     "uri": "https://api.scryfall.com/cards/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8",
+     "scryfall_uri": "https://scryfall.com/card/10e/212/hill-giant?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:43:38Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+      "normal": "https://cards.scryfall.io/normal/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+      "large": "https://cards.scryfall.io/large/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+      "png": "https://cards.scryfall.io/png/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.png?1783943018",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+      "thumb": "https://cards.scryfall.io/thumb/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018",
+      "grid": "https://cards.scryfall.io/grid/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018",
+      "display": "https://cards.scryfall.io/display/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018",
+      "art": "https://cards.scryfall.io/art/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018",
+      "crop": "https://cards.scryfall.io/crop/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018"
+     },
+     "mana_cost": "{3}{R}",
+     "cmc": 4,
+     "type_line": "Creature — Giant",
+     "oracle_text": "",
+     "power": "3",
+     "toughness": "3",
+     "colors": [
+      "R"
+     ],
+     "color_identity": [
+      "R"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set": "10e",
+     "set_name": "Tenth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A342199e0-15b6-4824-83da-25caef2592b3&unique=prints",
+     "collector_number": "212",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "Fortunately, hill giants have large blind spots in which a human can easily hide. Unfortunately, these blind spots are beneath the bottoms of their feet.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Kev Walker",
+     "artist_ids": [
+      "f366a0ee-a0cd-466d-ba6a-90058c7a31a6"
+     ],
+     "illustration_id": "fd46160d-4dd0-4ab6-b452-cff004f5e6f2",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 29148,
+     "prices": {
+      "usd": "0.04",
+      "usd_foil": "0.83",
+      "usd_etched": null,
+      "eur": "0.02",
+      "eur_foil": "0.28",
+      "tix": "0.04"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129591&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DHill%2BGiant",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DHill%2BGiant",
+      "edhrec": "https://edhrec.com/route/?cc=Hill+Giant"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15162%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16376&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27040?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_2",
+    "controller": "player_2",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "867b4e3d-e175-4d6b-868a-87b3d6f61b07",
+     "oracle_id": "de384867-8bb4-4edf-b542-970538718fdd",
+     "multiverse_ids": [],
+     "tcgplayer_id": 630005,
+     "cardmarket_id": 806650,
+     "name": "Jurin, Leading the Charge",
+     "lang": "en",
+     "released_at": "2025-04-25",
+     "uri": "https://api.scryfall.com/cards/867b4e3d-e175-4d6b-868a-87b3d6f61b07",
+     "scryfall_uri": "https://scryfall.com/card/slx/27/jurin-leading-the-charge?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T01:39:27Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/8/6/867b4e3d-e175-4d6b-868a-87b3d6f61b07.jpg?1783906767",
+      "normal": "https://cards.scryfall.io/normal/front/8/6/867b4e3d-e175-4d6b-868a-87b3d6f61b07.jpg?1783906767",
+      "large": "https://cards.scryfall.io/large/front/8/6/867b4e3d-e175-4d6b-868a-87b3d6f61b07.jpg?1783906767",
+      "png": "https://cards.scryfall.io/png/front/8/6/867b4e3d-e175-4d6b-868a-87b3d6f61b07.png?1783906767",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/8/6/867b4e3d-e175-4d6b-868a-87b3d6f61b07.jpg?1783906767",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/8/6/867b4e3d-e175-4d6b-868a-87b3d6f61b07.jpg?1783906767",
+      "thumb": "https://cards.scryfall.io/thumb/front/8/6/867b4e3d-e175-4d6b-868a-87b3d6f61b07.webp?1783906767",
+      "grid": "https://cards.scryfall.io/grid/front/8/6/867b4e3d-e175-4d6b-868a-87b3d6f61b07.webp?1783906767",
+      "display": "https://cards.scryfall.io/display/front/8/6/867b4e3d-e175-4d6b-868a-87b3d6f61b07.webp?1783906767",
+      "art": "https://cards.scryfall.io/art/front/8/6/867b4e3d-e175-4d6b-868a-87b3d6f61b07.webp?1783906767",
+      "crop": "https://cards.scryfall.io/crop/front/8/6/867b4e3d-e175-4d6b-868a-87b3d6f61b07.webp?1783906767"
+     },
+     "mana_cost": "{4}{R}{R}",
+     "cmc": 6,
+     "type_line": "Legendary Creature — Human Barbarian",
+     "oracle_text": "Haste\nJurin must be blocked if able.\nWhenever Jurin attacks, each creature you control attacking a player gets +1/+0 until end of turn for each creature that player controls.",
+     "power": "4",
+     "toughness": "6",
+     "colors": [
+      "R"
+     ],
+     "color_identity": [
+      "R"
+     ],
+     "keywords": [
+      "Haste"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "3c318e12-9152-4300-a096-4f58a6438897",
+     "set": "slx",
+     "set_name": "Universes Within",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/3c318e12-9152-4300-a096-4f58a6438897",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aslx&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/slx?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/867b4e3d-e175-4d6b-868a-87b3d6f61b07/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ade384867-8bb4-4edf-b542-970538718fdd&unique=prints",
+     "collector_number": "27",
+     "digital": false,
+     "rarity": "rare",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Craig J Spearing",
+     "artist_ids": [
+      "b0f15e74-0dd6-4156-959e-c5e30c5cdc52"
+     ],
+     "illustration_id": "aea17449-d78d-45ae-85c3-f4e8011e55d3",
+     "border_color": "borderless",
+     "frame": "2015",
+     "frame_effects": [
+      "legendary",
+      "inverted"
+     ],
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "instore"
+     ],
+     "edhrec_rank": 15999,
+     "preview": {
+      "source": "Wizards of the Coast",
+      "source_uri": "https://magic.wizards.com/en/news/announcements/earn-d-and-d-themed-promo-cards-with-magic-presents-spring-flourishes",
+      "previewed_at": "2025-01-13"
+     },
+     "prices": {
+      "usd": "1.60",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "1.63",
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DJurin%252C%2BLeading%2Bthe%2BCharge",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DJurin%252C%2BLeading%2Bthe%2BCharge",
+      "edhrec": "https://edhrec.com/route/?cc=Jurin%2C+Leading+the+Charge"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F630005%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=806650&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Jurin%2C+Leading+the+Charge&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 4,
+    "tapped": false,
+    "traits": [
+     "Attacking"
+    ],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_5",
+    "scryfallData": {
+     "object": "card",
+     "id": "682af5e9-26b5-4f88-99e1-ab2aa34fba86",
+     "oracle_id": "a35c2e20-eb90-4132-b65f-be1fcb569819",
+     "multiverse_ids": [
+      442209
+     ],
+     "mtgo_id": 67354,
+     "mtgo_foil_id": 67355,
+     "tcgplayer_id": 161540,
+     "cardmarket_id": 319246,
+     "name": "Watchwolf",
+     "lang": "en",
+     "released_at": "2018-03-16",
+     "uri": "https://api.scryfall.com/cards/682af5e9-26b5-4f88-99e1-ab2aa34fba86",
+     "scryfall_uri": "https://scryfall.com/card/a25/220/watchwolf?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T09:31:50Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/6/8/682af5e9-26b5-4f88-99e1-ab2aa34fba86.jpg?1783935110",
+      "normal": "https://cards.scryfall.io/normal/front/6/8/682af5e9-26b5-4f88-99e1-ab2aa34fba86.jpg?1783935110",
+      "large": "https://cards.scryfall.io/large/front/6/8/682af5e9-26b5-4f88-99e1-ab2aa34fba86.jpg?1783935110",
+      "png": "https://cards.scryfall.io/png/front/6/8/682af5e9-26b5-4f88-99e1-ab2aa34fba86.png?1783935110",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/6/8/682af5e9-26b5-4f88-99e1-ab2aa34fba86.jpg?1783935110",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/6/8/682af5e9-26b5-4f88-99e1-ab2aa34fba86.jpg?1783935110",
+      "thumb": "https://cards.scryfall.io/thumb/front/6/8/682af5e9-26b5-4f88-99e1-ab2aa34fba86.webp?1783935110",
+      "grid": "https://cards.scryfall.io/grid/front/6/8/682af5e9-26b5-4f88-99e1-ab2aa34fba86.webp?1783935110",
+      "display": "https://cards.scryfall.io/display/front/6/8/682af5e9-26b5-4f88-99e1-ab2aa34fba86.webp?1783935110",
+      "art": "https://cards.scryfall.io/art/front/6/8/682af5e9-26b5-4f88-99e1-ab2aa34fba86.webp?1783935110",
+      "crop": "https://cards.scryfall.io/crop/front/6/8/682af5e9-26b5-4f88-99e1-ab2aa34fba86.webp?1783935110"
+     },
+     "mana_cost": "{G}{W}",
+     "cmc": 2,
+     "type_line": "Creature — Wolf",
+     "oracle_text": "",
+     "power": "3",
+     "toughness": "3",
+     "colors": [
+      "G",
+      "W"
+     ],
+     "color_identity": [
+      "G",
+      "W"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "41ee6e2f-69b3-4c53-8a8e-960f5e974cfc",
+     "set": "a25",
+     "set_name": "Masters 25",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/41ee6e2f-69b3-4c53-8a8e-960f5e974cfc",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aa25&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/a25?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/682af5e9-26b5-4f88-99e1-ab2aa34fba86/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aa35c2e20-eb90-4132-b65f-be1fcb569819&unique=prints",
+     "collector_number": "220",
+     "digital": false,
+     "rarity": "uncommon",
+     "watermark": "set",
+     "flavor_text": "Only in Ravnica do the wolves watch the flock.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Dave Kendall",
+     "artist_ids": [
+      "8a5540a8-18c9-4fa9-802c-59d6866114d5"
+     ],
+     "illustration_id": "dbdb30fe-f4dc-4934-b5f4-36f7be67b5fc",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 13013,
+     "penny_rank": 5160,
+     "prices": {
+      "usd": "0.22",
+      "usd_foil": "0.37",
+      "usd_etched": null,
+      "eur": "0.18",
+      "eur_foil": "0.44",
+      "tix": "0.06"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=442209&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DWatchwolf",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DWatchwolf",
+      "edhrec": "https://edhrec.com/route/?cc=Watchwolf"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F161540%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=319246&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/67354?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 5,
+    "tapped": false,
+    "traits": [
+     "Attacking"
+    ],
+    "attackingPlayerId": "player_2",
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [
+   {
+    "id": "trig_perm_4_2_6",
+    "kind": "trigger",
+    "pseudoKind": "ability",
+    "sourceId": "perm_4",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 2,
+    "timestamp": 6,
+    "effectText": "Each creature you control attacking a player gets +1/+0 until end of turn for each creature that player controls.",
+    "xValue": null,
+    "hasXValue": false,
+    "cdaUserValue": null,
+    "linkedCards": null,
+    "fullText": "Whenever this card attacks, each creature you control attacking a player gets +1/+0 until end of turn for each creature that player controls.",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "guessedTargetSubjects": [],
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Grizzly Bears",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Bear"
+       ],
+       "power": 2,
+       "toughness": 2,
+       "abilities": [],
+       "colors": [
+        "G"
+       ],
+       "manaValue": 2,
+       "manaCost": "{1}{G}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "attackingPlayerId": null,
+       "allPrintedAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_1",
+       "controller": "player_1",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_2",
+      {
+       "name": "Llanowar Elves",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Elf",
+        "Druid"
+       ],
+       "power": 1,
+       "toughness": 1,
+       "abilities": [
+        "{T}: Add {G}."
+       ],
+       "colors": [
+        "G"
+       ],
+       "manaValue": 1,
+       "manaCost": "{G}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "{T}: Add {G}.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "attackingPlayerId": null,
+       "allPrintedAbilities": [
+        "{T}: Add {G}."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_1",
+       "controller": "player_1",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_3",
+      {
+       "name": "Hill Giant",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Giant"
+       ],
+       "power": 3,
+       "toughness": 3,
+       "abilities": [],
+       "colors": [
+        "R"
+       ],
+       "manaValue": 4,
+       "manaCost": "{3}{R}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "attackingPlayerId": null,
+       "allPrintedAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_2",
+       "controller": "player_2",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_4",
+      {
+       "name": "Jurin, Leading the Charge",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [
+        "Legendary"
+       ],
+       "subtypes": [
+        "Human",
+        "Barbarian"
+       ],
+       "power": 4,
+       "toughness": 6,
+       "abilities": [
+        "Haste",
+        "this card must be blocked if able.",
+        "Whenever this card attacks, each creature you control attacking a player gets +1/+0 until end of turn for each creature that player controls."
+       ],
+       "colors": [
+        "R"
+       ],
+       "manaValue": 6,
+       "manaCost": "{4}{R}{R}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "Haste\nthis card must be blocked if able.\nWhenever this card attacks, each creature you control attacking a player gets +1/+0 until end of turn for each creature that player controls.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [
+        "Attacking"
+       ],
+       "attackingPlayerId": null,
+       "allPrintedAbilities": [
+        "Haste",
+        "this card must be blocked if able.",
+        "Whenever this card attacks, each creature you control attacking a player gets +1/+0 until end of turn for each creature that player controls."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_5",
+      {
+       "name": "Watchwolf",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Wolf"
+       ],
+       "power": 3,
+       "toughness": 3,
+       "abilities": [],
+       "colors": [
+        "G",
+        "W"
+       ],
+       "manaValue": 2,
+       "manaCost": "{G}{W}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [
+        "Attacking"
+       ],
+       "attackingPlayerId": "player_2",
+       "allPrintedAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Llanowar Elves",
+       "imageUri": "https://cards.scryfall.io/small/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Elf",
+        "Druid"
+       ],
+       "printedPower": 1,
+       "printedToughness": 1,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Hill Giant",
+       "imageUri": "https://cards.scryfall.io/small/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+       "owner": "player_2",
+       "controller": "player_2",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Giant"
+       ],
+       "printedPower": 3,
+       "printedToughness": 3,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Jurin, Leading the Charge",
+       "imageUri": "https://cards.scryfall.io/small/front/8/6/867b4e3d-e175-4d6b-868a-87b3d6f61b07.jpg?1783906767",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [
+        "Attacking"
+       ],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [
+        "Legendary"
+       ],
+       "printedSubtypes": [
+        "Human",
+        "Barbarian"
+       ],
+       "printedPower": 4,
+       "printedToughness": 6,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_5",
+       "name": "Watchwolf",
+       "imageUri": "https://cards.scryfall.io/small/front/6/8/682af5e9-26b5-4f88-99e1-ab2aa34fba86.jpg?1783935110",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [
+        "Attacking"
+       ],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Wolf"
+       ],
+       "printedPower": 3,
+       "printedToughness": 3,
+       "timestamp": 5
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      },
+      {
+       "id": "player_1",
+       "name": "Player 2"
+      },
+      {
+       "id": "player_2",
+       "name": "Player 3"
+      }
+     ]
+    },
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null
+   }
+  ],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   },
+   {
+    "id": "player_1",
+    "name": "Player 2",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": false,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   },
+   {
+    "id": "player_2",
+    "name": "Player 3",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": false,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 3,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Grizzly Bears",
+    "final": {
+     "name": "Grizzly Bears",
+     "controller": "player_1",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Bear"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "G"
+     ],
+     "abilities": []
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Llanowar Elves",
+    "final": {
+     "name": "Llanowar Elves",
+     "controller": "player_1",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Elf",
+      "Druid"
+     ],
+     "power": 1,
+     "toughness": 1,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "{T}: Add {G}."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Hill Giant",
+    "final": {
+     "name": "Hill Giant",
+     "controller": "player_2",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Giant"
+     ],
+     "power": 3,
+     "toughness": 3,
+     "colors": [
+      "R"
+     ],
+     "abilities": []
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Jurin, Leading the Charge",
+    "final": {
+     "name": "Jurin, Leading the Charge",
+     "controller": "player_0",
+     "supertypes": [
+      "Legendary"
+     ],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Human",
+      "Barbarian"
+     ],
+     "power": 6,
+     "toughness": 6,
+     "colors": [
+      "R"
+     ],
+     "abilities": [
+      "Haste",
+      "this card must be blocked if able.",
+      "Whenever this card attacks, each creature you control attacking a player gets +1/+0 until end of turn for each creature that player controls."
+     ],
+     "traits": [
+      "Attacking"
+     ]
+    },
+    "changedBy": {
+     "7c": [
+      "Jurin, Leading the Charge (trigger)"
+     ]
+    }
+   },
+   {
+    "perm": "Watchwolf",
+    "final": {
+     "name": "Watchwolf",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Wolf"
+     ],
+     "power": 4,
+     "toughness": 3,
+     "colors": [
+      "G",
+      "W"
+     ],
+     "abilities": [],
+     "traits": [
+      "Attacking"
+     ]
+    },
+    "changedBy": {
+     "7c": [
+      "Jurin, Leading the Charge (trigger)"
+     ]
+    }
+   }
+  ],
+  "order": {
+   "7c": [
+    "Jurin, Leading the Charge (trigger)"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Jurin, Leading the Charge (trigger)",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "global",
+    "params": {
+     "basePower": 1,
+     "baseToughness": 0,
+     "forEachDesc": "creature defending player controls",
+     "isGraveyardCount": false,
+     "power": 1,
+     "toughness": 0,
+     "userAdjustable": false
+    }
+   }
+  ]
+ }
+}

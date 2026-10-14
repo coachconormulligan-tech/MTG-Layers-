@@ -1,0 +1,40 @@
+{
+  "name": "Tsagan, Raider Warlord \u2014 +1/+0 for each creature you control with first strike or double strike",
+  "notes": "Fixed in _computeForEachCount (engine-compute.js): 'with <keyword>' was not read, so the count was 0. The opponent's first striker does not count. Memory: project_for_each_c3_measurable_and_by_hand_2026-10-14.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Player 2"
+      ]
+    },
+    {
+      "add": "White Knight"
+    },
+    {
+      "add": "Grizzly Bears"
+    },
+    {
+      "add": "White Knight",
+      "controller": "p2",
+      "as": "theirs"
+    },
+    {
+      "add": "Tsagan, Raider Warlord",
+      "as": "tsagan"
+    },
+    {
+      "fire": "@tsagan",
+      "trigger": 2
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 4,
+        "toughness": 2
+      }
+    }
+  ]
+}

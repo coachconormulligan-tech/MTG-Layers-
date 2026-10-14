@@ -1,0 +1,29 @@
+{
+  "name": "Kinbinding \u2014 creatures that entered this turn is a count entered by hand",
+  "notes": "Fixed in the parser's for-each boost (cards-parser.js): what entered this turn is not recorded, and the count had no input, so it was always 0. It is now typed on Kinbinding's row (setCDAValue). Memory: project_for_each_c3_measurable_and_by_hand_2026-10-14.",
+  "steps": [
+    {
+      "add": "Kinbinding",
+      "as": "k"
+    },
+    {
+      "add": "Grizzly Bears"
+    },
+    {
+      "call": [
+        "setCDAValue",
+        "@k",
+        2
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 4,
+        "toughness": 4
+      }
+    }
+  ]
+}
