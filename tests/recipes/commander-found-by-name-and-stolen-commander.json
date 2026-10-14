@@ -1,0 +1,19 @@
+{
+  "name": "A commander added from search is known by its owner's command zone; a stolen commander is still a commander but not its new controller's",
+  "notes": "Companion to commander-identity-reads-every-player-not-the-open-tab. Player 2's commander Kalemne is added from search, not put onto the battlefield from the command zone, so it is known by name among its owner's commanders. Player 1 enchants it with Control Magic. Player 1's Bastion Protector ('Commander creatures you control') then gives it +2/+2 and indestructible: it is a commander and Player 1 controls it. Player 2's Thunderfoot Baloth ('As long as you control your commander') does nothing: Player 2 no longer controls it. Evaluated from Player 1's tab. Kalemne 5/5 indestructible, Baloth 5/5, Bastion 3/3. Memory: project_commander_identity_by_owner_2026-10-14.",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"] },
+    { "call": ["setActivePlayer", "p2"] },
+    { "call": ["addCommander", "card:Kalemne, Disciple of Iroas"] },
+    { "add": "Kalemne, Disciple of Iroas", "as": "kalemne", "controller": "p2" },
+    { "add": "Thunderfoot Baloth", "controller": "p2" },
+    { "add": "Bastion Protector", "controller": "p1" },
+    { "add": "Control Magic", "as": "steal", "controller": "p1" },
+    { "call": ["setTarget", "@steal", "@kalemne"] }
+  ],
+  "asserts": [
+    { "perm": "Kalemne, Disciple of Iroas", "final": { "controller": "player_0", "power": 5, "toughness": 5, "abilities": { "$includes": ["Indestructible"] } } },
+    { "perm": "Thunderfoot Baloth", "final": { "power": 5, "toughness": 5 } },
+    { "perm": "Bastion Protector", "final": { "power": 3, "toughness": 3 } }
+  ]
+}

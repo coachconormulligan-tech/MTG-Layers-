@@ -1,0 +1,29 @@
+{
+  "name": "Commanders are known on every tab: commander creatures, Lieutenant and cast counts read the owner's command zone",
+  "notes": "Found in project_command_zone_controller_and_defending_player_hand_2026-10-14. Battlefield.isCommander, Lieutenant's 'you control your commander' and the 'times you've cast your commander' count read Battlefield.commanders, the open tab's list, so from Player 1's tab Player 2's commander was not a commander. Now isCommander reads every player's commanders (by the permanent put onto the battlefield from the command zone, else by name among its owner's commanders), Lieutenant looks for a commander its controller owns and controls, the cast count reads the effect's controller's commanders, and the commander's battlefield permanent is kept in a save. Player 2: commander Kalemne cast twice, put onto the battlefield from the command zone (Kalemne A), a second Kalemne added from search (B, not the commander: the commander is already on the battlefield as A), Bastion Protector, Thunderfoot Baloth, Commander's Insignia. Player 1: commander Clara Oswald cast once, a Kalemne of its own (not a commander: Player 1's commander is Clara), Grizzly Bears, Commander's Insignia. Evaluated from Player 1's tab, after a save and reload (the harness round-trips through restore). Kalemne A 3/3 +2/+2 Bastion +2/+2 Baloth +2/+2 Insignia = 9/9 with indestructible; Baloth 5/5 +2/+2 +2/+2 = 9/9; Bastion 3/3 +2/+2 +2/+2 = 7/7; Kalemne B 3/3 +2/+2 +2/+2 = 7/7, no indestructible; Player 1's Kalemne 3/3 +1/+1 = 4/4; Grizzly Bears 3/3. Memory: project_commander_identity_by_owner_2026-10-14.",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"] },
+    { "call": ["setActivePlayer", "p2"] },
+    { "call": ["addCommander", "card:Kalemne, Disciple of Iroas"] },
+    { "call": ["modifyCommanderCast", 0, 2] },
+    { "call": ["putCommanderOnBattlefield", 0], "as": "cmdr" },
+    { "add": "Kalemne, Disciple of Iroas", "controller": "p2" },
+    { "add": "Bastion Protector", "controller": "p2" },
+    { "add": "Thunderfoot Baloth", "controller": "p2" },
+    { "add": "Commander's Insignia", "controller": "p2" },
+    { "call": ["setActivePlayer", "p1"] },
+    { "call": ["addCommander", "card:Clara Oswald"] },
+    { "call": ["modifyCommanderCast", 0, 1] },
+    { "add": "Kalemne, Disciple of Iroas", "controller": "p1" },
+    { "add": "Grizzly Bears", "controller": "p1" },
+    { "add": "Commander's Insignia", "controller": "p1" }
+  ],
+  "asserts": [
+    { "perm": "Kalemne, Disciple of Iroas A", "final": { "power": 9, "toughness": 9, "abilities": { "$includes": ["Indestructible", "Trample"] } } },
+    { "perm": "Thunderfoot Baloth", "final": { "power": 9, "toughness": 9 } },
+    { "perm": "Bastion Protector", "final": { "power": 7, "toughness": 7 } },
+    { "perm": "Kalemne, Disciple of Iroas B", "final": { "power": 7, "toughness": 7, "abilities": { "$excludes": ["Indestructible"] } } },
+    { "perm": "Kalemne, Disciple of Iroas", "final": { "power": 4, "toughness": 4, "abilities": { "$excludes": ["Indestructible"] } } },
+    { "perm": "Grizzly Bears", "final": { "power": 3, "toughness": 3 } }
+  ]
+}
