@@ -1,0 +1,63 @@
+{
+  "name": "Atomic Microsizer — the attack trigger is not static; fired, its target is 1/1 and can't be blocked",
+  "notes": "Memory: project_cant_rules_and_goaded_as_traits_2026-10-13 (follow-up). \"Whenever equipped creature attacks, choose up to one target creature. That creature can't be blocked this turn and has base power and toughness 1/1 until end of turn.\" The enchant/equip transform section read the trigger line and made the EQUIPPED creature 1/1 for good; the fired trigger set nothing, because the base-P/T subject ran on into \"can't be blocked this turn and\". Now the transform section skips trigger lines of an unfired permanent, and the base-P/T subject drops a can't-rule before its \"and\".",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant",
+      "controller": "p2"
+    },
+    {
+      "add": "Atomic Microsizer",
+      "as": "eq"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@eq",
+        "@bears"
+      ]
+    },
+    {
+      "fire": "@eq",
+      "trigger": 1,
+      "as": "trig"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@trig",
+        "@giant"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 3,
+        "toughness": 2
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "power": 1,
+        "toughness": 1,
+        "traits": [
+          "Can't be blocked"
+        ]
+      }
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 {
  "name": "Aura Gnarlid — \"can't block it\" names Aura Gnarlid, on smaller creatures only",
- "notes": "Conor's decision 2026-10-13: rules about attacking, blocking and being targeted are traits (never ability lines), in the words of the card with the players filled in; Goaded is a trait only and names the player who goaded. Parser block 'Rules about attacking, blocking and being targeted' in cards-parser.js, _resolveTraitText in engine-helpers.js. \"Creatures with power less than this creature's power can't block it.\" In a permanent's own text \"it\" is the permanent, shown by name. The card's own printed rule gives itself no trait.",
+ "notes": "Conor's decision 2026-10-13: rules about attacking, blocking and being targeted are traits (never ability lines), in the words of the card with the players filled in; Goaded is a trait only and names the player who goaded. Parser block 'Rules about attacking, blocking and being targeted' in cards-parser.js, _resolveTraitText in engine-helpers.js. \"Creatures with power less than this creature's power can't block it.\" In a permanent's own text \"it\" is the permanent, shown by name. The card's own printed rule gives itself no trait. The subject is measured against the source as it is now (a closure over its id in the can't-rule block; the filter builder has no source to compare with). Same wording on Battering Wurm, Den Protector, Elusive Otter, Feasting Hobbit, Formation Breaker, Howlgeist, Shrill Howler, Skarrgan Pit-Skulk, Wandering Wolf, Silumgar Assassin (\"greater than\").",
  "recipe": {
   "steps": [
    {
@@ -691,9 +691,16 @@
      ],
      "abilities": [
       "{T}: Add {G}."
+     ],
+     "traits": [
+      "Can't block Aura Gnarlid"
      ]
     },
-    "changedBy": {}
+    "changedBy": {
+     "6": [
+      "Aura Gnarlid"
+     ]
+    }
    },
    {
     "perm": "Hill Giant",
@@ -779,6 +786,5 @@
     }
    }
   ]
- },
- "knownFailure": "Open, waiting for Conor: the subject \"Creatures with power less than this creature's power\" is not read by the filter builder (its words become required subtypes), so the rule reaches nobody. Same wording on Battering Wurm, Den Protector, Elusive Otter, Feasting Hobbit, Formation Breaker, Howlgeist, Shrill Howler, Skarrgan Pit-Skulk, Wandering Wolf, Silumgar Assassin (\"greater than\"), Champion of Lambholt."
+ }
 }
