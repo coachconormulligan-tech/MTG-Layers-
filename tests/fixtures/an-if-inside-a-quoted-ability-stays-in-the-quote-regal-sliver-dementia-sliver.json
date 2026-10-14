@@ -1,0 +1,832 @@
+{
+ "name": "An \"if\" inside a quoted ability stays in the quote — Regal Sliver, Dementia Sliver",
+ "notes": "The trailing-'if' stripper (Pattern D) took an 'if [condition]' out of a quoted ability granted to other permanents when the condition parsed, leaving ', ,' in the quote and putting the condition on the grant. It surfaced when 'you're the monarch' became a condition (Regal Sliver) and was already mangling Dementia Sliver, Tazri, Guild Artisan, Nadu and others. Player 2 is the monarch and their tab is open; Player 1 controls Regal Sliver and Dementia Sliver and fires Regal Sliver's granted enters trigger: Player 1 is not the monarch, so the Slivers get nothing (Regal Sliver 3/3, Dementia Sliver 3/3). Dementia Sliver's parsed grant keeps 'If that card has the chosen name' (checked on the effect: the granted ability does not show in a state's abilities, already so before this change). Memory: project_monarch_initiative_conditions_2026-10-14.",
+ "recipe": {
+  "steps": [
+   {
+    "call": [
+     "addPlayer",
+     "Player 2"
+    ]
+   },
+   {
+    "call": [
+     "setActivePlayer",
+     "p2"
+    ]
+   },
+   {
+    "call": [
+     "updateGameState",
+     "isMonarch",
+     true
+    ]
+   },
+   {
+    "add": "Regal Sliver",
+    "as": "regal",
+    "controller": "p1"
+   },
+   {
+    "add": "Dementia Sliver",
+    "controller": "p1"
+   },
+   {
+    "fire": "@regal",
+    "trigger": 1
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Regal Sliver",
+   "final": {
+    "power": 3,
+    "toughness": 3
+   }
+  },
+  {
+   "perm": "Dementia Sliver",
+   "final": {
+    "power": 3,
+    "toughness": 3
+   }
+  },
+  {
+   "effect": {
+    "source": "Dementia Sliver",
+    "layer": "6",
+    "type": "add_ability",
+    "params": {
+     "ability": "{T}: Choose a card name. Target opponent reveals a card at random from their hand. If that card has the chosen name, that player discards it. Activate only during your turn."
+    }
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "9b081723-41a1-4139-88ee-01c0238e50c3",
+     "oracle_id": "3a68915d-3e8b-4ede-bdd9-6c138ca63220",
+     "multiverse_ids": [
+      625089
+     ],
+     "mtgo_id": 114479,
+     "tcgplayer_id": 505041,
+     "cardmarket_id": 722909,
+     "name": "Regal Sliver",
+     "lang": "en",
+     "released_at": "2023-08-04",
+     "uri": "https://api.scryfall.com/cards/9b081723-41a1-4139-88ee-01c0238e50c3",
+     "scryfall_uri": "https://scryfall.com/card/cmm/724/regal-sliver?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T04:04:45Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/9/b/9b081723-41a1-4139-88ee-01c0238e50c3.jpg?1783915485",
+      "normal": "https://cards.scryfall.io/normal/front/9/b/9b081723-41a1-4139-88ee-01c0238e50c3.jpg?1783915485",
+      "large": "https://cards.scryfall.io/large/front/9/b/9b081723-41a1-4139-88ee-01c0238e50c3.jpg?1783915485",
+      "png": "https://cards.scryfall.io/png/front/9/b/9b081723-41a1-4139-88ee-01c0238e50c3.png?1783915485",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/9/b/9b081723-41a1-4139-88ee-01c0238e50c3.jpg?1783915485",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/9/b/9b081723-41a1-4139-88ee-01c0238e50c3.jpg?1783915485",
+      "thumb": "https://cards.scryfall.io/thumb/front/9/b/9b081723-41a1-4139-88ee-01c0238e50c3.webp?1783915485",
+      "grid": "https://cards.scryfall.io/grid/front/9/b/9b081723-41a1-4139-88ee-01c0238e50c3.webp?1783915485",
+      "display": "https://cards.scryfall.io/display/front/9/b/9b081723-41a1-4139-88ee-01c0238e50c3.webp?1783915485",
+      "art": "https://cards.scryfall.io/art/front/9/b/9b081723-41a1-4139-88ee-01c0238e50c3.webp?1783915485",
+      "crop": "https://cards.scryfall.io/crop/front/9/b/9b081723-41a1-4139-88ee-01c0238e50c3.webp?1783915485"
+     },
+     "mana_cost": "{3}{W}",
+     "cmc": 4,
+     "type_line": "Creature — Sliver",
+     "oracle_text": "Sliver creatures you control have \"When this creature enters, Slivers you control get +1/+1 until end of turn if you're the monarch. Otherwise, you become the monarch.\"",
+     "power": "3",
+     "toughness": "3",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "4b23e2e0-b7d8-41fa-8441-118c552cd872",
+       "component": "combo_piece",
+       "name": "Regal Sliver",
+       "type_line": "Creature — Sliver",
+       "uri": "https://api.scryfall.com/cards/4b23e2e0-b7d8-41fa-8441-118c552cd872"
+      },
+      {
+       "object": "related_card",
+       "id": "0cd9c491-6ba0-4484-822c-73bcbe9b0c49",
+       "component": "combo_piece",
+       "name": "The Monarch",
+       "type_line": "Card",
+       "uri": "https://api.scryfall.com/cards/0cd9c491-6ba0-4484-822c-73bcbe9b0c49"
+      }
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "cd05036f-2698-43e6-a48e-5c8d82f0a551",
+     "set": "cmm",
+     "set_name": "Commander Masters",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/cd05036f-2698-43e6-a48e-5c8d82f0a551",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Acmm&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/cmm?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/9b081723-41a1-4139-88ee-01c0238e50c3/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A3a68915d-3e8b-4ede-bdd9-6c138ca63220&unique=prints",
+     "collector_number": "724",
+     "digital": false,
+     "rarity": "rare",
+     "flavor_text": "\"It is possible that some queens are not born queens, but evolve into that form over time.\"\n—Rukarumel, field notes",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Victor Adame Minguez",
+     "artist_ids": [
+      "bd8f7368-5b10-4554-b6b8-d052c6aca89f"
+     ],
+     "illustration_id": "6f9ffbce-7058-46ad-b3aa-9b8ba87ae467",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 9924,
+     "preview": {
+      "source": "Commander At Home",
+      "source_uri": "https://www.youtube.com/watch?v=LyQ-JPT3XEk",
+      "previewed_at": "2023-07-17"
+     },
+     "prices": {
+      "usd": "1.24",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.95",
+      "eur_foil": null,
+      "tix": "3.27"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=625089&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DRegal%2BSliver",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DRegal%2BSliver",
+      "edhrec": "https://edhrec.com/route/?cc=Regal+Sliver"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F505041%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=722909&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/114479?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "955028d2-33df-4295-8ee3-572e5979b04c",
+     "oracle_id": "d09b57c5-255b-41a5-959b-90d0fdc9752c",
+     "multiverse_ids": [
+      109668
+     ],
+     "mtgo_id": 25487,
+     "mtgo_foil_id": 25488,
+     "tcgplayer_id": 14200,
+     "cardmarket_id": 13807,
+     "name": "Dementia Sliver",
+     "lang": "en",
+     "released_at": "2006-10-06",
+     "uri": "https://api.scryfall.com/cards/955028d2-33df-4295-8ee3-572e5979b04c",
+     "scryfall_uri": "https://scryfall.com/card/tsp/236/dementia-sliver?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:46:43Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/9/5/955028d2-33df-4295-8ee3-572e5979b04c.jpg?1783943203",
+      "normal": "https://cards.scryfall.io/normal/front/9/5/955028d2-33df-4295-8ee3-572e5979b04c.jpg?1783943203",
+      "large": "https://cards.scryfall.io/large/front/9/5/955028d2-33df-4295-8ee3-572e5979b04c.jpg?1783943203",
+      "png": "https://cards.scryfall.io/png/front/9/5/955028d2-33df-4295-8ee3-572e5979b04c.png?1783943203",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/9/5/955028d2-33df-4295-8ee3-572e5979b04c.jpg?1783943203",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/9/5/955028d2-33df-4295-8ee3-572e5979b04c.jpg?1783943203",
+      "thumb": "https://cards.scryfall.io/thumb/front/9/5/955028d2-33df-4295-8ee3-572e5979b04c.webp?1783943203",
+      "grid": "https://cards.scryfall.io/grid/front/9/5/955028d2-33df-4295-8ee3-572e5979b04c.webp?1783943203",
+      "display": "https://cards.scryfall.io/display/front/9/5/955028d2-33df-4295-8ee3-572e5979b04c.webp?1783943203",
+      "art": "https://cards.scryfall.io/art/front/9/5/955028d2-33df-4295-8ee3-572e5979b04c.webp?1783943203",
+      "crop": "https://cards.scryfall.io/crop/front/9/5/955028d2-33df-4295-8ee3-572e5979b04c.webp?1783943203"
+     },
+     "mana_cost": "{3}{U}{B}",
+     "cmc": 5,
+     "type_line": "Creature — Sliver",
+     "oracle_text": "All Slivers have \"{T}: Choose a card name. Target opponent reveals a card at random from their hand. If that card has the chosen name, that player discards it. Activate only during your turn.\"",
+     "power": "3",
+     "toughness": "3",
+     "colors": [
+      "B",
+      "U"
+     ],
+     "color_identity": [
+      "B",
+      "U"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "c1d109bc-ffd8-428f-8d7d-3f8d7e648046",
+     "set": "tsp",
+     "set_name": "Time Spiral",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/c1d109bc-ffd8-428f-8d7d-3f8d7e648046",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Atsp&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/tsp?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/955028d2-33df-4295-8ee3-572e5979b04c/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ad09b57c5-255b-41a5-959b-90d0fdc9752c&unique=prints",
+     "collector_number": "236",
+     "digital": false,
+     "rarity": "uncommon",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Una Fricker",
+     "artist_ids": [
+      "0471a371-1bf8-49f2-8e76-cbe3a0bfa7e8"
+     ],
+     "illustration_id": "965eedbd-73b5-4218-ad8d-851706ad73e8",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 26061,
+     "penny_rank": 16781,
+     "prices": {
+      "usd": "0.36",
+      "usd_foil": "4.00",
+      "usd_etched": null,
+      "eur": "0.24",
+      "eur_foil": "1.15",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=109668&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DDementia%2BSliver",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DDementia%2BSliver",
+      "edhrec": "https://edhrec.com/route/?cc=Dementia+Sliver"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F14200%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=13807&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/25487?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [
+   {
+    "id": "trig_perm_1_1_3",
+    "kind": "trigger",
+    "pseudoKind": "ability",
+    "sourceId": "perm_1",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 1,
+    "timestamp": 3,
+    "effectText": "Slivers you control get +1/+1 until end of turn if you're the monarch. Otherwise, you become the monarch.",
+    "xValue": null,
+    "hasXValue": false,
+    "cdaUserValue": null,
+    "linkedCards": null,
+    "fullText": "When this creature enters, Slivers you control get +1/+1 until end of turn if you're the monarch. Otherwise, you become the monarch.",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "guessedTargetSubjects": [],
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Regal Sliver",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Sliver"
+       ],
+       "power": 3,
+       "toughness": 3,
+       "basePower": 3,
+       "baseToughness": 3,
+       "abilities": [
+        "Sliver creatures you control have \"When this creature enters, Slivers you control get +1/+1 until end of turn if you're the monarch. Otherwise, you become the monarch.\"",
+        "When this creature enters, Slivers you control get +1/+1 until end of turn if you're the monarch. Otherwise, you become the monarch."
+       ],
+       "colors": [
+        "W"
+       ],
+       "manaValue": 4,
+       "manaCost": "{3}{W}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "Sliver creatures you control have \"When this creature enters, Slivers you control get +1/+1 until end of turn if you're the monarch. Otherwise, you become the monarch.\"",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "attackingPlayerId": null,
+       "timesAttackedThisTurn": 0,
+       "allPrintedAbilities": [
+        "Sliver creatures you control have \"When this creature enters, Slivers you control get +1/+1 until end of turn if you're the monarch. Otherwise, you become the monarch.\""
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_2",
+      {
+       "name": "Dementia Sliver",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Sliver"
+       ],
+       "power": 3,
+       "toughness": 3,
+       "basePower": 3,
+       "baseToughness": 3,
+       "abilities": [
+        "All Slivers have \"{T}: Choose a card name. Target opponent reveals a card at random from their hand. If that card has the chosen name, that player discards it. Activate only during your turn.\"",
+        "When this creature enters, Slivers you control get +1/+1 until end of turn if you're the monarch. Otherwise, you become the monarch."
+       ],
+       "colors": [
+        "B",
+        "U"
+       ],
+       "manaValue": 5,
+       "manaCost": "{3}{U}{B}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "All Slivers have \"{T}: Choose a card name. Target opponent reveals a card at random from their hand. If that card has the chosen name, that player discards it. Activate only during your turn.\"",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "attackingPlayerId": null,
+       "timesAttackedThisTurn": 0,
+       "allPrintedAbilities": [
+        "All Slivers have \"{T}: Choose a card name. Target opponent reveals a card at random from their hand. If that card has the chosen name, that player discards it. Activate only during your turn.\""
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Regal Sliver",
+       "imageUri": "https://cards.scryfall.io/small/front/9/b/9b081723-41a1-4139-88ee-01c0238e50c3.jpg?1783915485",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Sliver"
+       ],
+       "printedPower": 3,
+       "printedToughness": 3,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Dementia Sliver",
+       "imageUri": "https://cards.scryfall.io/small/front/9/5/955028d2-33df-4295-8ee3-572e5979b04c.jpg?1783943203",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Sliver"
+       ],
+       "printedPower": 3,
+       "printedToughness": 3,
+       "timestamp": 2
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      },
+      {
+       "id": "player_1",
+       "name": "Player 2"
+      }
+     ]
+    },
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null
+   }
+  ],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   },
+   {
+    "id": "player_1",
+    "name": "Player 2",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": false,
+     "isMonarch": true,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 2,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Regal Sliver",
+    "final": {
+     "name": "Regal Sliver",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Sliver"
+     ],
+     "power": 3,
+     "toughness": 3,
+     "colors": [
+      "W"
+     ],
+     "abilities": [
+      "Sliver creatures you control have \"When this creature enters, Slivers you control get +1/+1 until end of turn if you're the monarch. Otherwise, you become the monarch.\"",
+      "When this creature enters, Slivers you control get +1/+1 until end of turn if you're the monarch. Otherwise, you become the monarch."
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "Regal Sliver"
+     ]
+    }
+   },
+   {
+    "perm": "Dementia Sliver",
+    "final": {
+     "name": "Dementia Sliver",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Sliver"
+     ],
+     "power": 3,
+     "toughness": 3,
+     "colors": [
+      "B",
+      "U"
+     ],
+     "abilities": [
+      "All Slivers have \"{T}: Choose a card name. Target opponent reveals a card at random from their hand. If that card has the chosen name, that player discards it. Activate only during your turn.\"",
+      "When this creature enters, Slivers you control get +1/+1 until end of turn if you're the monarch. Otherwise, you become the monarch."
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "Regal Sliver"
+     ]
+    }
+   }
+  ],
+  "order": {
+   "6": [
+    "Regal Sliver",
+    "Dementia Sliver"
+   ],
+   "7c": [
+    "Regal Sliver",
+    "Regal Sliver (trigger)"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Regal Sliver",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "global",
+    "params": {
+     "ability": "When this creature enters, Slivers you control get +1/+1 until end of turn if you're the monarch. Otherwise, you become the monarch."
+    }
+   },
+   {
+    "source": "Regal Sliver",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "global",
+    "params": {
+     "power": 1,
+     "toughness": 1
+    }
+   },
+   {
+    "source": "Dementia Sliver",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "global",
+    "params": {
+     "ability": "{T}: Choose a card name. Target opponent reveals a card at random from their hand. If that card has the chosen name, that player discards it. Activate only during your turn."
+    }
+   },
+   {
+    "source": "Regal Sliver (trigger)",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "global",
+    "params": {
+     "power": 1,
+     "toughness": 1
+    }
+   }
+  ]
+ }
+}

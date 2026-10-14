@@ -1,0 +1,64 @@
+{
+  "name": "An \"if\" inside a quoted ability stays in the quote — Regal Sliver, Dementia Sliver",
+  "notes": "The trailing-'if' stripper (Pattern D) took an 'if [condition]' out of a quoted ability granted to other permanents when the condition parsed, leaving ', ,' in the quote and putting the condition on the grant. It surfaced when 'you're the monarch' became a condition (Regal Sliver) and was already mangling Dementia Sliver, Tazri, Guild Artisan, Nadu and others. Player 2 is the monarch and their tab is open; Player 1 controls Regal Sliver and Dementia Sliver and fires Regal Sliver's granted enters trigger: Player 1 is not the monarch, so the Slivers get nothing (Regal Sliver 3/3, Dementia Sliver 3/3). Dementia Sliver's parsed grant keeps 'If that card has the chosen name' (checked on the effect: the granted ability does not show in a state's abilities, already so before this change). Memory: project_monarch_initiative_conditions_2026-10-14.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Player 2"
+      ]
+    },
+    {
+      "call": [
+        "setActivePlayer",
+        "p2"
+      ]
+    },
+    {
+      "call": [
+        "updateGameState",
+        "isMonarch",
+        true
+      ]
+    },
+    {
+      "add": "Regal Sliver",
+      "as": "regal",
+      "controller": "p1"
+    },
+    {
+      "add": "Dementia Sliver",
+      "controller": "p1"
+    },
+    {
+      "fire": "@regal",
+      "trigger": 1
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Regal Sliver",
+      "final": {
+        "power": 3,
+        "toughness": 3
+      }
+    },
+    {
+      "perm": "Dementia Sliver",
+      "final": {
+        "power": 3,
+        "toughness": 3
+      }
+    },
+    {
+      "effect": {
+        "source": "Dementia Sliver",
+        "layer": "6",
+        "type": "add_ability",
+        "params": {
+          "ability": "{T}: Choose a card name. Target opponent reveals a card at random from their hand. If that card has the chosen name, that player discards it. Activate only during your turn."
+        }
+      }
+    }
+  ]
+}

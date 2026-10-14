@@ -1,0 +1,15 @@
+{
+  "name": "Dawnglade Regent — no hexproof while its controller is not the monarch",
+  "notes": "Before the monarch condition branch, Dawnglade Regent's 'As long as you're the monarch, permanents you control have hexproof' had its condition dropped and always applied. Player 1 is the monarch and their tab is open; Player 2 controls Dawnglade Regent and Grizzly Bears, which do not have hexproof (reading the open tab would give it). The positive case is dawnglade-regent-monarch-condition. Memory: project_monarch_initiative_conditions_2026-10-14.",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"] },
+    { "call": ["setActivePlayer", "p1"] },
+    { "call": ["updateGameState", "isMonarch", true] },
+    { "add": "Dawnglade Regent", "controller": "p2" },
+    { "add": "Grizzly Bears", "controller": "p2" }
+  ],
+  "asserts": [
+    { "perm": "Dawnglade Regent", "final": { "abilities": { "$excludes": ["Hexproof"] } } },
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$excludes": ["Hexproof"] } } }
+  ]
+}

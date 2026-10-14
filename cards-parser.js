@@ -335,6 +335,26 @@ const CONDITION_PARSERS = [
   (ct, srcId) => /\byou have the city's blessing\b/.test(ct)
     ? (state, allStates) => { const gs = _gsOfController(srcId, state, allStates); return gs ? !!gs.hasCityBlessing : false; }
     : null,
+  // "you're the monarch" (Dawnglade Regent), "you're not the monarch": the Monarch toggle in Game
+  // State; "an opponent is the monarch": any opponent's.
+  (ct, srcId) => {
+    const m = ct.match(/\b(?:you(?:'re| are)( not)?|(an opponent) is) the monarch\b/);
+    if (!m) return null;
+    return (state, allStates) => {
+      if (typeof Battlefield === 'undefined') return false;
+      if (m[2]) {
+        const src = (allStates && allStates.get(srcId)) || Battlefield.getPermById(srcId) || state;
+        const you = src ? src.controller : Battlefield.activePlayerId;
+        return (Battlefield.players || []).some(pl => pl.id !== you && pl.gameState && pl.gameState.isMonarch);
+      }
+      const gs = _gsOfController(srcId, state, allStates);
+      return !!(gs && gs.isMonarch) !== !!m[1];
+    };
+  },
+  // "you have the initiative": the Have Initiative toggle in Game State.
+  (ct, srcId) => /\byou have the initiative\b/.test(ct)
+    ? (state, allStates) => { const gs = _gsOfController(srcId, state, allStates); return gs ? !!gs.hasInitiative : false; }
+    : null,
   (ct, srcId) => /\bno cards in hand\b/.test(ct)
     ? (state, allStates) => { const r = _anyOrEvery(_gsOfNamedPlayers(ct, srcId, state, allStates), gs => gs.handSize === 0); return r === null ? true : r; }
     : null,
@@ -1894,6 +1914,10 @@ function parseCardEffects(permanent, card, opts = {}) {
     }
     const sentencePrefix = full.substring(sentStart).replace(/^\s+/, '');
     if (_isTriggeredSentence(sentencePrefix)) return match;
+    // An "if" inside a quoted ability belongs to that ability, not to the grant ("Sliver creatures
+    // you control have "When this creature enters, Slivers you control get +1/+1 until end of turn
+    // if you're the monarch. …"" — Regal Sliver).
+    if ((full.substring(full.lastIndexOf('\n', offset) + 1, offset).match(/"/g) || []).length % 2 === 1) return match;
     // The "if" of a later sentence that changes nothing on the board ("… gets -4/-0 until end of
     // turn. If you control a Wizard, draw a card." — Chilling Trap) is no condition on the
     // sentences before it.
