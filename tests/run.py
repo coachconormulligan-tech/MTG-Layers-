@@ -14,6 +14,9 @@ Asserts are the hand-written facts the fixture exists to protect, checked on eve
     { "perm": "Grizzly Bears", "final": { "power": 3, "toughness": 3 } }
     { "effect": { "source": "Glorious Anthem", "layer": "7c", "type": "modify_pt" } }
     { "order": { "4": ["Conversion", "Blood Moon"] } }
+    { "triggerCondition": { "perm": "Reaper of Night B", "trigger": 0 }, "is": false }
+        (what the site's fire-time check says now of a trigger's "if [condition],": true, false,
+        or null when it does not read it; a false one fires nothing)
 A recipe may carry "knownFailure": "reason" to mark an open bug whose asserts do not hold
 yet; it is reported but does not fail the run, and is flagged once it starts passing.
 Matching is partial: only the keys given are compared. Use { "$includes": [...] } or
@@ -270,10 +273,18 @@ def matches(spec, value):
     return spec == value
 
 
-def check_asserts(asserts, actual):
+def check_asserts(asserts, actual, trigger_conditions=()):
     """List of failure messages for a fixture's hand-written asserts."""
     out = []
     for a in asserts or []:
+        if 'triggerCondition' in a:
+            found = [c for c in trigger_conditions or [] if matches(a['triggerCondition'], c)]
+            if not found:
+                out.append('assert: no trigger opening "if" matching %s' % short(a['triggerCondition']))
+            elif found[0]['result'] != a.get('is'):
+                out.append('assert on %s: expected %s, got %s (condition "%s")' % (
+                    short(a['triggerCondition']), short(a.get('is')), short(found[0]['result']), found[0]['condition']))
+            continue
         if 'perm' in a:
             found = [p for p in actual['permanents'] if p['perm'] == a['perm']]
             if not found:
@@ -324,7 +335,7 @@ def cmd_build(recipe_paths):
             failed += 1
             print('ERROR  %s\n       %s' % (name, r['error'].replace('\n', '\n       ')))
             continue
-        problems = check_asserts(recipe.get('asserts'), r['actual'])
+        problems = check_asserts(recipe.get('asserts'), r['actual'], r.get('triggerConditions'))
         fx = {'name': name, 'notes': recipe.get('notes', ''), 'recipe': {'steps': recipe.get('steps', [])},
               'asserts': recipe.get('asserts', []), 'board': r['board'], 'expected': r['actual']}
         if recipe.get('knownFailure'):
@@ -395,7 +406,7 @@ def main():
             failed += 1
             print('ERROR  %s\n       %s' % (label, r['error'].replace('\n', '\n       ')))
             continue
-        problems = check_asserts(fx.get('asserts'), r['actual'])
+        problems = check_asserts(fx.get('asserts'), r['actual'], r.get('triggerConditions'))
         if fx.get('knownFailure'):
             # An open bug with its fixture already written. Reported, but does not fail the
             # run, so the suite stays usable as a gate while the bug is waiting to be fixed.

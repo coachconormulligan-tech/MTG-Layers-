@@ -1,0 +1,1552 @@
+{
+ "name": "Reaper of Night — \"if defending player has two or fewer cards in hand\" reads the attacked player's hand as the trigger resolves",
+ "notes": "Found in project_command_zone_controller_and_defending_player_hand_2026-10-14: the condition was never read, so the fired trigger gave flying at any hand size. _addAbilityPseudo strips a trigger's leading 'if [condition],' from the fired text; the site reads it at fire time (_evaluateTriggerCondition, called by fireTriggeredAbility and by this harness's fire step) and fires nothing when it is false. It now reads the hand of the player the creature attacks (_attackedPlayerId). Three players; Player 1, Reaper's controller, has no cards in hand throughout. With Player 2 at five cards and Player 3 at one, Reaper A attacks Player 3 (picked on the card) and fires: flying. Then Player 2 goes to two and Player 3 to four. Reaper B attacks Player 3: nothing fires, no flying. Reaper C attacks Player 2 (the default): flying. Reaper A keeps flying (decided as its trigger resolved). The triggerCondition asserts check the fire-time reading on the saved board, so the suite guards it without a rebuild. Memory: project_reaper_of_night_defending_player_hand_2026-10-14.",
+ "recipe": {
+  "steps": [
+   {
+    "call": [
+     "addPlayer",
+     "Player 2"
+    ]
+   },
+   {
+    "call": [
+     "addPlayer",
+     "Player 3"
+    ]
+   },
+   {
+    "call": [
+     "setActivePlayer",
+     "p1"
+    ]
+   },
+   {
+    "call": [
+     "updateGameState",
+     "handSize",
+     0
+    ]
+   },
+   {
+    "call": [
+     "setActivePlayer",
+     "p2"
+    ]
+   },
+   {
+    "call": [
+     "updateGameState",
+     "handSize",
+     5
+    ]
+   },
+   {
+    "call": [
+     "setActivePlayer",
+     "p3"
+    ]
+   },
+   {
+    "call": [
+     "updateGameState",
+     "handSize",
+     1
+    ]
+   },
+   {
+    "call": [
+     "setActivePlayer",
+     "p1"
+    ]
+   },
+   {
+    "add": "Reaper of Night",
+    "as": "a"
+   },
+   {
+    "call": [
+     "toggleAttacking",
+     "@a"
+    ]
+   },
+   {
+    "call": [
+     "setAttackingPlayer",
+     "@a",
+     "p3"
+    ]
+   },
+   {
+    "fire": "@a",
+    "trigger": 0
+   },
+   {
+    "call": [
+     "setActivePlayer",
+     "p2"
+    ]
+   },
+   {
+    "call": [
+     "updateGameState",
+     "handSize",
+     2
+    ]
+   },
+   {
+    "call": [
+     "setActivePlayer",
+     "p3"
+    ]
+   },
+   {
+    "call": [
+     "updateGameState",
+     "handSize",
+     4
+    ]
+   },
+   {
+    "call": [
+     "setActivePlayer",
+     "p1"
+    ]
+   },
+   {
+    "add": "Reaper of Night",
+    "as": "b"
+   },
+   {
+    "call": [
+     "toggleAttacking",
+     "@b"
+    ]
+   },
+   {
+    "call": [
+     "setAttackingPlayer",
+     "@b",
+     "p3"
+    ]
+   },
+   {
+    "fire": "@b",
+    "trigger": 0
+   },
+   {
+    "add": "Reaper of Night",
+    "as": "c"
+   },
+   {
+    "call": [
+     "toggleAttacking",
+     "@c"
+    ]
+   },
+   {
+    "fire": "@c",
+    "trigger": 0
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Reaper of Night A",
+   "final": {
+    "abilities": {
+     "$includes": [
+      "Flying"
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Reaper of Night B",
+   "final": {
+    "abilities": {
+     "$excludes": [
+      "Flying"
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Reaper of Night C",
+   "final": {
+    "abilities": {
+     "$includes": [
+      "Flying"
+     ]
+    }
+   }
+  },
+  {
+   "triggerCondition": {
+    "perm": "Reaper of Night B",
+    "trigger": 0
+   },
+   "is": false
+  },
+  {
+   "triggerCondition": {
+    "perm": "Reaper of Night C",
+    "trigger": 0
+   },
+   "is": true
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "4dc774b4-3f70-4351-b1b8-8a0193cb3a50",
+     "oracle_id": "d40e5a76-6c9a-47eb-b412-d3056cf36b3f",
+     "multiverse_ids": [
+      473064
+     ],
+     "mtgo_id": 78322,
+     "arena_id": 70249,
+     "tcgplayer_id": 199528,
+     "cardmarket_id": 401969,
+     "name": "Reaper of Night // Harvest Fear",
+     "lang": "en",
+     "released_at": "2019-10-04",
+     "uri": "https://api.scryfall.com/cards/4dc774b4-3f70-4351-b1b8-8a0193cb3a50",
+     "scryfall_uri": "https://scryfall.com/card/eld/102/reaper-of-night-harvest-fear?utm_source=api",
+     "layout": "adventure",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T08:50:35Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.jpg?1783932635",
+      "normal": "https://cards.scryfall.io/normal/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.jpg?1783932635",
+      "large": "https://cards.scryfall.io/large/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.jpg?1783932635",
+      "png": "https://cards.scryfall.io/png/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.png?1783932635",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.jpg?1783932635",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.jpg?1783932635",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.webp?1783932635",
+      "grid": "https://cards.scryfall.io/grid/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.webp?1783932635",
+      "display": "https://cards.scryfall.io/display/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.webp?1783932635",
+      "art": "https://cards.scryfall.io/art/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.webp?1783932635",
+      "crop": "https://cards.scryfall.io/crop/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.webp?1783932635"
+     },
+     "mana_cost": "{5}{B}{B} // {3}{B}",
+     "cmc": 7,
+     "type_line": "Creature — Specter // Sorcery — Adventure",
+     "power": "4",
+     "toughness": "5",
+     "colors": [
+      "B"
+     ],
+     "color_identity": [
+      "B"
+     ],
+     "keywords": [],
+     "card_faces": [
+      {
+       "object": "card_face",
+       "name": "Reaper of Night",
+       "mana_cost": "{5}{B}{B}",
+       "type_line": "Creature — Specter",
+       "oracle_text": "Whenever this creature attacks, if defending player has two or fewer cards in hand, it gains flying until end of turn.",
+       "power": "4",
+       "toughness": "5",
+       "artist": "Jeff Simpson",
+       "artist_id": "bb21cc10-54bf-4d10-b90c-72ba55dd3d37",
+       "illustration_id": "688d681d-bd7d-461a-ac4b-0663b23cd4a0"
+      },
+      {
+       "object": "card_face",
+       "name": "Harvest Fear",
+       "mana_cost": "{3}{B}",
+       "type_line": "Sorcery — Adventure",
+       "oracle_text": "Target opponent discards two cards. (Then exile this card. You may cast the creature later from exile.)",
+       "artist": "Jeff Simpson",
+       "artist_id": "bb21cc10-54bf-4d10-b90c-72ba55dd3d37"
+      }
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "a8d50cf9-03e6-467a-aadf-84a24106ffa9",
+       "component": "combo_piece",
+       "name": "On an Adventure",
+       "type_line": "Card",
+       "uri": "https://api.scryfall.com/cards/a8d50cf9-03e6-467a-aadf-84a24106ffa9"
+      },
+      {
+       "object": "related_card",
+       "id": "39c0abef-f59c-473a-8a6e-eacd4a78ff72",
+       "component": "combo_piece",
+       "name": "Reaper of Night // Harvest Fear",
+       "type_line": "Creature — Specter // Sorcery — Adventure",
+       "uri": "https://api.scryfall.com/cards/39c0abef-f59c-473a-8a6e-eacd4a78ff72"
+      }
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "arena",
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "a90a7b2f-9dd8-4fc7-9f7d-8ea2797ec782",
+     "set": "eld",
+     "set_name": "Throne of Eldraine",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/a90a7b2f-9dd8-4fc7-9f7d-8ea2797ec782",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aeld&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/eld?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/4dc774b4-3f70-4351-b1b8-8a0193cb3a50/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ad40e5a76-6c9a-47eb-b412-d3056cf36b3f&unique=prints",
+     "collector_number": "102",
+     "digital": false,
+     "rarity": "common",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Jeff Simpson",
+     "artist_ids": [
+      "bb21cc10-54bf-4d10-b90c-72ba55dd3d37"
+     ],
+     "illustration_id": "688d681d-bd7d-461a-ac4b-0663b23cd4a0",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 24437,
+     "penny_rank": 11244,
+     "prices": {
+      "usd": "0.11",
+      "usd_foil": "0.31",
+      "usd_etched": null,
+      "eur": "0.05",
+      "eur_foil": "0.12",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=473064&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DReaper%2Bof%2BNight%2B%252F%252F%2BHarvest%2BFear",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DReaper%2Bof%2BNight%2B%252F%252F%2BHarvest%2BFear",
+      "edhrec": "https://edhrec.com/route/?cc=Reaper+of+Night"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F199528%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=401969&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/78322?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [
+     "Attacking"
+    ],
+    "attackingPlayerId": "player_2",
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "4dc774b4-3f70-4351-b1b8-8a0193cb3a50",
+     "oracle_id": "d40e5a76-6c9a-47eb-b412-d3056cf36b3f",
+     "multiverse_ids": [
+      473064
+     ],
+     "mtgo_id": 78322,
+     "arena_id": 70249,
+     "tcgplayer_id": 199528,
+     "cardmarket_id": 401969,
+     "name": "Reaper of Night // Harvest Fear",
+     "lang": "en",
+     "released_at": "2019-10-04",
+     "uri": "https://api.scryfall.com/cards/4dc774b4-3f70-4351-b1b8-8a0193cb3a50",
+     "scryfall_uri": "https://scryfall.com/card/eld/102/reaper-of-night-harvest-fear?utm_source=api",
+     "layout": "adventure",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T08:50:35Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.jpg?1783932635",
+      "normal": "https://cards.scryfall.io/normal/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.jpg?1783932635",
+      "large": "https://cards.scryfall.io/large/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.jpg?1783932635",
+      "png": "https://cards.scryfall.io/png/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.png?1783932635",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.jpg?1783932635",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.jpg?1783932635",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.webp?1783932635",
+      "grid": "https://cards.scryfall.io/grid/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.webp?1783932635",
+      "display": "https://cards.scryfall.io/display/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.webp?1783932635",
+      "art": "https://cards.scryfall.io/art/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.webp?1783932635",
+      "crop": "https://cards.scryfall.io/crop/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.webp?1783932635"
+     },
+     "mana_cost": "{5}{B}{B} // {3}{B}",
+     "cmc": 7,
+     "type_line": "Creature — Specter // Sorcery — Adventure",
+     "power": "4",
+     "toughness": "5",
+     "colors": [
+      "B"
+     ],
+     "color_identity": [
+      "B"
+     ],
+     "keywords": [],
+     "card_faces": [
+      {
+       "object": "card_face",
+       "name": "Reaper of Night",
+       "mana_cost": "{5}{B}{B}",
+       "type_line": "Creature — Specter",
+       "oracle_text": "Whenever this creature attacks, if defending player has two or fewer cards in hand, it gains flying until end of turn.",
+       "power": "4",
+       "toughness": "5",
+       "artist": "Jeff Simpson",
+       "artist_id": "bb21cc10-54bf-4d10-b90c-72ba55dd3d37",
+       "illustration_id": "688d681d-bd7d-461a-ac4b-0663b23cd4a0"
+      },
+      {
+       "object": "card_face",
+       "name": "Harvest Fear",
+       "mana_cost": "{3}{B}",
+       "type_line": "Sorcery — Adventure",
+       "oracle_text": "Target opponent discards two cards. (Then exile this card. You may cast the creature later from exile.)",
+       "artist": "Jeff Simpson",
+       "artist_id": "bb21cc10-54bf-4d10-b90c-72ba55dd3d37"
+      }
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "a8d50cf9-03e6-467a-aadf-84a24106ffa9",
+       "component": "combo_piece",
+       "name": "On an Adventure",
+       "type_line": "Card",
+       "uri": "https://api.scryfall.com/cards/a8d50cf9-03e6-467a-aadf-84a24106ffa9"
+      },
+      {
+       "object": "related_card",
+       "id": "39c0abef-f59c-473a-8a6e-eacd4a78ff72",
+       "component": "combo_piece",
+       "name": "Reaper of Night // Harvest Fear",
+       "type_line": "Creature — Specter // Sorcery — Adventure",
+       "uri": "https://api.scryfall.com/cards/39c0abef-f59c-473a-8a6e-eacd4a78ff72"
+      }
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "arena",
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "a90a7b2f-9dd8-4fc7-9f7d-8ea2797ec782",
+     "set": "eld",
+     "set_name": "Throne of Eldraine",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/a90a7b2f-9dd8-4fc7-9f7d-8ea2797ec782",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aeld&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/eld?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/4dc774b4-3f70-4351-b1b8-8a0193cb3a50/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ad40e5a76-6c9a-47eb-b412-d3056cf36b3f&unique=prints",
+     "collector_number": "102",
+     "digital": false,
+     "rarity": "common",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Jeff Simpson",
+     "artist_ids": [
+      "bb21cc10-54bf-4d10-b90c-72ba55dd3d37"
+     ],
+     "illustration_id": "688d681d-bd7d-461a-ac4b-0663b23cd4a0",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 24437,
+     "penny_rank": 11244,
+     "prices": {
+      "usd": "0.11",
+      "usd_foil": "0.31",
+      "usd_etched": null,
+      "eur": "0.05",
+      "eur_foil": "0.12",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=473064&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DReaper%2Bof%2BNight%2B%252F%252F%2BHarvest%2BFear",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DReaper%2Bof%2BNight%2B%252F%252F%2BHarvest%2BFear",
+      "edhrec": "https://edhrec.com/route/?cc=Reaper+of+Night"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F199528%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=401969&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/78322?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [
+     "Attacking"
+    ],
+    "attackingPlayerId": "player_2",
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "4dc774b4-3f70-4351-b1b8-8a0193cb3a50",
+     "oracle_id": "d40e5a76-6c9a-47eb-b412-d3056cf36b3f",
+     "multiverse_ids": [
+      473064
+     ],
+     "mtgo_id": 78322,
+     "arena_id": 70249,
+     "tcgplayer_id": 199528,
+     "cardmarket_id": 401969,
+     "name": "Reaper of Night // Harvest Fear",
+     "lang": "en",
+     "released_at": "2019-10-04",
+     "uri": "https://api.scryfall.com/cards/4dc774b4-3f70-4351-b1b8-8a0193cb3a50",
+     "scryfall_uri": "https://scryfall.com/card/eld/102/reaper-of-night-harvest-fear?utm_source=api",
+     "layout": "adventure",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T08:50:35Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.jpg?1783932635",
+      "normal": "https://cards.scryfall.io/normal/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.jpg?1783932635",
+      "large": "https://cards.scryfall.io/large/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.jpg?1783932635",
+      "png": "https://cards.scryfall.io/png/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.png?1783932635",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.jpg?1783932635",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.jpg?1783932635",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.webp?1783932635",
+      "grid": "https://cards.scryfall.io/grid/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.webp?1783932635",
+      "display": "https://cards.scryfall.io/display/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.webp?1783932635",
+      "art": "https://cards.scryfall.io/art/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.webp?1783932635",
+      "crop": "https://cards.scryfall.io/crop/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.webp?1783932635"
+     },
+     "mana_cost": "{5}{B}{B} // {3}{B}",
+     "cmc": 7,
+     "type_line": "Creature — Specter // Sorcery — Adventure",
+     "power": "4",
+     "toughness": "5",
+     "colors": [
+      "B"
+     ],
+     "color_identity": [
+      "B"
+     ],
+     "keywords": [],
+     "card_faces": [
+      {
+       "object": "card_face",
+       "name": "Reaper of Night",
+       "mana_cost": "{5}{B}{B}",
+       "type_line": "Creature — Specter",
+       "oracle_text": "Whenever this creature attacks, if defending player has two or fewer cards in hand, it gains flying until end of turn.",
+       "power": "4",
+       "toughness": "5",
+       "artist": "Jeff Simpson",
+       "artist_id": "bb21cc10-54bf-4d10-b90c-72ba55dd3d37",
+       "illustration_id": "688d681d-bd7d-461a-ac4b-0663b23cd4a0"
+      },
+      {
+       "object": "card_face",
+       "name": "Harvest Fear",
+       "mana_cost": "{3}{B}",
+       "type_line": "Sorcery — Adventure",
+       "oracle_text": "Target opponent discards two cards. (Then exile this card. You may cast the creature later from exile.)",
+       "artist": "Jeff Simpson",
+       "artist_id": "bb21cc10-54bf-4d10-b90c-72ba55dd3d37"
+      }
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "a8d50cf9-03e6-467a-aadf-84a24106ffa9",
+       "component": "combo_piece",
+       "name": "On an Adventure",
+       "type_line": "Card",
+       "uri": "https://api.scryfall.com/cards/a8d50cf9-03e6-467a-aadf-84a24106ffa9"
+      },
+      {
+       "object": "related_card",
+       "id": "39c0abef-f59c-473a-8a6e-eacd4a78ff72",
+       "component": "combo_piece",
+       "name": "Reaper of Night // Harvest Fear",
+       "type_line": "Creature — Specter // Sorcery — Adventure",
+       "uri": "https://api.scryfall.com/cards/39c0abef-f59c-473a-8a6e-eacd4a78ff72"
+      }
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "arena",
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "a90a7b2f-9dd8-4fc7-9f7d-8ea2797ec782",
+     "set": "eld",
+     "set_name": "Throne of Eldraine",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/a90a7b2f-9dd8-4fc7-9f7d-8ea2797ec782",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aeld&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/eld?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/4dc774b4-3f70-4351-b1b8-8a0193cb3a50/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ad40e5a76-6c9a-47eb-b412-d3056cf36b3f&unique=prints",
+     "collector_number": "102",
+     "digital": false,
+     "rarity": "common",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Jeff Simpson",
+     "artist_ids": [
+      "bb21cc10-54bf-4d10-b90c-72ba55dd3d37"
+     ],
+     "illustration_id": "688d681d-bd7d-461a-ac4b-0663b23cd4a0",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 24437,
+     "penny_rank": 11244,
+     "prices": {
+      "usd": "0.11",
+      "usd_foil": "0.31",
+      "usd_etched": null,
+      "eur": "0.05",
+      "eur_foil": "0.12",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=473064&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DReaper%2Bof%2BNight%2B%252F%252F%2BHarvest%2BFear",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DReaper%2Bof%2BNight%2B%252F%252F%2BHarvest%2BFear",
+      "edhrec": "https://edhrec.com/route/?cc=Reaper+of+Night"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F199528%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=401969&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/78322?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 4,
+    "tapped": false,
+    "traits": [
+     "Attacking"
+    ],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [
+   {
+    "id": "trig_perm_1_0_2",
+    "kind": "trigger",
+    "pseudoKind": "ability",
+    "sourceId": "perm_1",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 0,
+    "timestamp": 2,
+    "effectText": "target creature gains flying until end of turn.",
+    "xValue": null,
+    "hasXValue": false,
+    "cdaUserValue": null,
+    "linkedCards": null,
+    "fullText": "Whenever this creature attacks, if defending player has two or fewer cards in hand, it gains flying until end of turn.",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "guessedTargetSubjects": [
+     "creature"
+    ],
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Reaper of Night",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Specter"
+       ],
+       "power": 4,
+       "toughness": 5,
+       "basePower": 4,
+       "baseToughness": 5,
+       "abilities": [
+        "Whenever this creature attacks, if defending player has two or fewer cards in hand, it gains flying until end of turn."
+       ],
+       "colors": [
+        "B"
+       ],
+       "manaValue": 7,
+       "manaCost": "{5}{B}{B}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "Whenever this creature attacks, if defending player has two or fewer cards in hand, it gains flying until end of turn.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [
+        "Attacking"
+       ],
+       "attackingPlayerId": "player_2",
+       "timesAttackedThisTurn": 0,
+       "allPrintedAbilities": [
+        "Whenever this creature attacks, if defending player has two or fewer cards in hand, it gains flying until end of turn."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Reaper of Night",
+       "imageUri": "https://cards.scryfall.io/small/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.jpg?1783932635",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [
+        "Attacking"
+       ],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Specter"
+       ],
+       "printedPower": 4,
+       "printedToughness": 5,
+       "isTransformable": false,
+       "isChooseableFace": true,
+       "isRoom": false,
+       "timestamp": 1
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      },
+      {
+       "id": "player_1",
+       "name": "Player 2"
+      },
+      {
+       "id": "player_2",
+       "name": "Player 3"
+      }
+     ]
+    },
+    "primaryTarget": "perm_1",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 2,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null
+   },
+   {
+    "id": "trig_perm_3_0_5",
+    "kind": "trigger",
+    "pseudoKind": "ability",
+    "sourceId": "perm_3",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 0,
+    "timestamp": 5,
+    "effectText": "target creature gains flying until end of turn.",
+    "xValue": null,
+    "hasXValue": false,
+    "cdaUserValue": null,
+    "linkedCards": null,
+    "fullText": "Whenever this creature attacks, if defending player has two or fewer cards in hand, it gains flying until end of turn.",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "guessedTargetSubjects": [
+     "creature"
+    ],
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Reaper of Night",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Specter"
+       ],
+       "power": 4,
+       "toughness": 5,
+       "basePower": 4,
+       "baseToughness": 5,
+       "abilities": [
+        "Whenever this creature attacks, if defending player has two or fewer cards in hand, it gains flying until end of turn.",
+        "Flying"
+       ],
+       "colors": [
+        "B"
+       ],
+       "manaValue": 7,
+       "manaCost": "{5}{B}{B}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "Whenever this creature attacks, if defending player has two or fewer cards in hand, it gains flying until end of turn.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [
+        "Attacking"
+       ],
+       "attackingPlayerId": "player_2",
+       "timesAttackedThisTurn": 0,
+       "allPrintedAbilities": [
+        "Whenever this creature attacks, if defending player has two or fewer cards in hand, it gains flying until end of turn."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_2",
+      {
+       "name": "Reaper of Night",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Specter"
+       ],
+       "power": 4,
+       "toughness": 5,
+       "basePower": 4,
+       "baseToughness": 5,
+       "abilities": [
+        "Whenever this creature attacks, if defending player has two or fewer cards in hand, it gains flying until end of turn."
+       ],
+       "colors": [
+        "B"
+       ],
+       "manaValue": 7,
+       "manaCost": "{5}{B}{B}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "Whenever this creature attacks, if defending player has two or fewer cards in hand, it gains flying until end of turn.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [
+        "Attacking"
+       ],
+       "attackingPlayerId": "player_2",
+       "timesAttackedThisTurn": 0,
+       "allPrintedAbilities": [
+        "Whenever this creature attacks, if defending player has two or fewer cards in hand, it gains flying until end of turn."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_3",
+      {
+       "name": "Reaper of Night",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Specter"
+       ],
+       "power": 4,
+       "toughness": 5,
+       "basePower": 4,
+       "baseToughness": 5,
+       "abilities": [
+        "Whenever this creature attacks, if defending player has two or fewer cards in hand, it gains flying until end of turn."
+       ],
+       "colors": [
+        "B"
+       ],
+       "manaValue": 7,
+       "manaCost": "{5}{B}{B}",
+       "isCreature": true,
+       "isToken": false,
+       "oracleText": "Whenever this creature attacks, if defending player has two or fewer cards in hand, it gains flying until end of turn.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [
+        "Attacking"
+       ],
+       "attackingPlayerId": null,
+       "timesAttackedThisTurn": 0,
+       "allPrintedAbilities": [
+        "Whenever this creature attacks, if defending player has two or fewer cards in hand, it gains flying until end of turn."
+       ],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Reaper of Night",
+       "imageUri": "https://cards.scryfall.io/small/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.jpg?1783932635",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": "A",
+       "traits": [
+        "Attacking"
+       ],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Specter"
+       ],
+       "printedPower": 4,
+       "printedToughness": 5,
+       "isTransformable": false,
+       "isChooseableFace": true,
+       "isRoom": false,
+       "timestamp": 1
+      },
+      {
+       "id": "trig_perm_1_0_2",
+       "name": "Reaper of Night (trigger)",
+       "imageUri": "https://cards.scryfall.io/small/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.jpg?1783932635",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": true,
+       "isTriggeredAbility": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "abilitySourceId": "perm_1",
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_2",
+       "name": "Reaper of Night",
+       "imageUri": "https://cards.scryfall.io/small/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.jpg?1783932635",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": "B",
+       "traits": [
+        "Attacking"
+       ],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Specter"
+       ],
+       "printedPower": 4,
+       "printedToughness": 5,
+       "isTransformable": false,
+       "isChooseableFace": true,
+       "isRoom": false,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_3",
+       "name": "Reaper of Night",
+       "imageUri": "https://cards.scryfall.io/small/front/4/d/4dc774b4-3f70-4351-b1b8-8a0193cb3a50.jpg?1783932635",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": "C",
+       "traits": [
+        "Attacking"
+       ],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Specter"
+       ],
+       "printedPower": 4,
+       "printedToughness": 5,
+       "isTransformable": false,
+       "isChooseableFace": true,
+       "isRoom": false,
+       "timestamp": 4
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      },
+      {
+       "id": "player_1",
+       "name": "Player 2"
+      },
+      {
+       "id": "player_2",
+       "name": "Player 3"
+      }
+     ]
+    },
+    "primaryTarget": "perm_3",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 5,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null
+   }
+  ],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 0,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   },
+   {
+    "id": "player_1",
+    "name": "Player 2",
+    "gameState": {
+     "handSize": 2,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": false,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   },
+   {
+    "id": "player_2",
+    "name": "Player 3",
+    "gameState": {
+     "handSize": 4,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": false,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 3,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Reaper of Night A",
+    "final": {
+     "name": "Reaper of Night",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Specter"
+     ],
+     "power": 4,
+     "toughness": 5,
+     "colors": [
+      "B"
+     ],
+     "abilities": [
+      "Whenever this creature attacks, if defending player has two or fewer cards in hand, it gains flying until end of turn.",
+      "Flying"
+     ],
+     "traits": [
+      "Attacking"
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "Reaper of Night A (trigger)"
+     ]
+    }
+   },
+   {
+    "perm": "Reaper of Night B",
+    "final": {
+     "name": "Reaper of Night",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Specter"
+     ],
+     "power": 4,
+     "toughness": 5,
+     "colors": [
+      "B"
+     ],
+     "abilities": [
+      "Whenever this creature attacks, if defending player has two or fewer cards in hand, it gains flying until end of turn."
+     ],
+     "traits": [
+      "Attacking"
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Reaper of Night C",
+    "final": {
+     "name": "Reaper of Night",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Specter"
+     ],
+     "power": 4,
+     "toughness": 5,
+     "colors": [
+      "B"
+     ],
+     "abilities": [
+      "Whenever this creature attacks, if defending player has two or fewer cards in hand, it gains flying until end of turn.",
+      "Flying"
+     ],
+     "traits": [
+      "Attacking"
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "Reaper of Night C (trigger)"
+     ]
+    }
+   }
+  ],
+  "order": {
+   "6": [
+    "Reaper of Night A (trigger)",
+    "Reaper of Night C (trigger)"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Reaper of Night A (trigger)",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "target": "Reaper of Night A",
+    "params": {
+     "ability": "Flying"
+    }
+   },
+   {
+    "source": "Reaper of Night C (trigger)",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "target": "Reaper of Night C",
+    "params": {
+     "ability": "Flying"
+    }
+   }
+  ]
+ }
+}

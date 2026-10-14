@@ -69,6 +69,24 @@ function _summarizeState(st) {
   return s;
 }
 
+// What the site's fire-time check (_evaluateTriggerCondition, as fireTriggeredAbility calls it)
+// says now of each trigger that opens "if [condition],": true, false or null (not read). Kept
+// out of the summary, so no fixture records it; "triggerCondition" asserts read it.
+function triggerConditions() {
+  const finalStates = Battlefield.getAllFinalStates();
+  const out = [];
+  for (const p of Battlefield.permanents) {
+    const st = finalStates.get(p.id);
+    if (p.isManualEffect || !st) continue;
+    for (const t of Battlefield.extractTriggeredAbilities(st.abilities || [])) {
+      const m = t.effectText.match(/^if\s+([^,]+),\s*/i);
+      if (m) out.push({ perm: p.name + (p.label ? ' ' + p.label : ''), trigger: t.index, condition: m[1].trim(),
+        result: _evaluateTriggerCondition(m[1].trim(), st) });
+    }
+  }
+  return out;
+}
+
 function summarizeBoard() {
   const finalStates = Battlefield.getAllFinalStates();
   const realPerms = Battlefield.permanents.filter(p => !p.isManualEffect)
@@ -128,6 +146,8 @@ function summarizeBoard() {
    "vote" lists the option(s) that got the most votes, as picked in the site's vote pop-up.
    "mode" is the 0-based mode picked in the site's pop-up for a "choose one —" trigger.
    "color" is the colour picked in the site's pop-up for "protection from the color of your choice".
+   A trigger whose "if [condition]," the site reads as false at fire time (_evaluateTriggerCondition,
+   as fireTriggeredAbility does) fires nothing, and "as" names nothing.
    "as" on a call names what the method returns (the pseudo-permanent of a fired ability).
    In call args, "@alias" becomes that permanent's id, "p2" the second player's id, and
    "card:Card Name" the Scryfall card object. Players beyond the first need
@@ -188,6 +208,8 @@ function buildFromRecipe(recipe, cards) {
       const ab = (isTrigger ? Battlefield.extractTriggeredAbilities(abilities) : Battlefield.extractActivatedAbilities(abilities))
         .find(a => a.index === index);
       if (!ab) throw new Error('fire step: no ' + (isTrigger ? 'triggered' : 'activated') + ' ability at index ' + index + ' of ' + JSON.stringify(abilities));
+      const ifCond = isTrigger && ab.effectText.match(/^if\s+([^,]+),\s*/i);
+      if (ifCond && _evaluateTriggerCondition(ifCond[1].trim(), states.get(id)) === false) continue;
       // "vote": the option(s) picked in the site's vote pop-up as having the most votes.
       let effectText = step.vote ? resolveVoteText(ab.effectText, step.vote) : ab.effectText;
       // "mode": which "• …" mode of a "choose one —" trigger was picked in the site's pop-up (0-based).
@@ -241,6 +263,7 @@ function buildFromRecipe(recipe, cards) {
       }
       if (!Battlefield.restore(board)) throw new Error('Battlefield.restore() rejected the board');
       out.actual = summarizeBoard();
+      out.triggerConditions = triggerConditions();
     } catch (e) {
       out.error = String(e) + (e && e.stack ? '\n' + String(e.stack).split('\n').slice(0, 6).join('\n') : '');
     }
