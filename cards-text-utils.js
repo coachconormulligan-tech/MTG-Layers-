@@ -2336,6 +2336,13 @@ function buildAuraRestriction(enchantTarget) {
 function _evaluateTriggerCondition(condText, sourceState) {
   const ct = condText.toLowerCase().trim();
   const traits = sourceState ? (sourceState.traits || []) : [];
+  // "Your turn", "you're the monarch": the game state of the source's controller, not of the
+  // player whose tab is open.
+  const gs = (() => {
+    if (typeof Battlefield === 'undefined') return null;
+    const pl = sourceState && (Battlefield.players || []).find(p => p.id === sourceState.controller);
+    return pl && pl.gameState ? pl.gameState : (Battlefield.gameState || null);
+  })();
   if (/\bis monstrous\b/.test(ct)) return traits.includes('Monstrous');
   if (/\bisn'?t monstrous\b|\bis not monstrous\b/.test(ct)) return !traits.includes('Monstrous');
   if (/\bis saddled\b/.test(ct)) return traits.includes('Saddled');
@@ -2343,19 +2350,19 @@ function _evaluateTriggerCondition(condText, sourceState) {
   if (/\bis crewed\b/.test(ct)) return traits.includes('Crewed');
   if (/\bisn'?t crewed\b|\bis not crewed\b/.test(ct)) return !traits.includes('Crewed');
   if (/\b(?:it(?:'s| is)\s+your\s+turn|during\s+your\s+turn|on\s+your\s+turn)\b/.test(ct)) {
-    return (typeof Battlefield !== 'undefined' && Battlefield.gameState) ? Battlefield.gameState.isYourTurn : null;
+    return gs ? gs.isYourTurn : null;
   }
   if (/\b(?:it(?:'s| is)\s+not\s+your\s+turn|not\s+your\s+turn)\b/.test(ct)) {
-    return (typeof Battlefield !== 'undefined' && Battlefield.gameState) ? !Battlefield.gameState.isYourTurn : null;
+    return gs ? !gs.isYourTurn : null;
   }
   if (/\byou\s+have\s+the\s+initiative\b/.test(ct)) {
-    return (typeof Battlefield !== 'undefined' && Battlefield.gameState) ? !!Battlefield.gameState.hasInitiative : null;
+    return gs ? !!gs.hasInitiative : null;
   }
   if (/\byou\s+have\s+the\s+city's\s+blessing\b/.test(ct)) {
-    return (typeof Battlefield !== 'undefined' && Battlefield.gameState) ? !!Battlefield.gameState.hasCityBlessing : null;
+    return gs ? !!gs.hasCityBlessing : null;
   }
   if (/\byou(?:'re| are)\s+the\s+monarch\b/.test(ct)) {
-    return (typeof Battlefield !== 'undefined' && Battlefield.gameState) ? !!Battlefield.gameState.isMonarch : null;
+    return gs ? !!gs.isMonarch : null;
   }
   // "if she was a nonland creature" (Princess Yue): only qualifies while the source is
   // a creature that isn't a land. Once she's already a land, the trigger does nothing.

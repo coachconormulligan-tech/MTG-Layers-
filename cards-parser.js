@@ -82,7 +82,31 @@ const PARAMETERIZED_KEYWORDS = new Set([
 
 /* Shared helpers used by _parseCondition's branch table below. */
 function _wordThresh(w) { return WORD_TO_NUM[w.toLowerCase()] || parseInt(w) || 1; }
-function _gsGet() { return (typeof Battlefield !== 'undefined' && Battlefield.gameState) ? Battlefield.gameState : null; }
+/* Game state of the source's controller: "you", "your turn" and "your life" belong to that player,
+   never to the player whose tab is open. The source's state in allStates carries its controller
+   after Layer 2; the permanent being modified stands in when the source has no state. */
+function _gsOfController(srcId, state, allStates) {
+  if (typeof Battlefield === 'undefined') return null;
+  const src = (allStates && allStates.get(srcId)) || Battlefield.getPermById(srcId) || state;
+  const pl = src && (Battlefield.players || []).find(p => p.id === src.controller);
+  return pl && pl.gameState ? pl.gameState : (Battlefield.gameState || null);
+}
+/* Game states of the players a hand condition names: "an opponent has no cards in hand" (Guul
+   Draz Specter) is any opponent of the source's controller, "a player" / "each player" any or every
+   player; otherwise the source's controller. Returns { states, every } or null with no board. */
+function _gsOfNamedPlayers(ct, srcId, state, allStates) {
+  if (typeof Battlefield === 'undefined') return null;
+  const m = ct.match(/\b(an|each) (opponent|player) (?:has|have)\b/);
+  if (!m) { const gs = _gsOfController(srcId, state, allStates); return gs ? { states: [gs], every: true } : null; }
+  const src = (allStates && allStates.get(srcId)) || Battlefield.getPermById(srcId) || state;
+  const you = src ? src.controller : Battlefield.activePlayerId;
+  const players = (Battlefield.players || []).filter(pl => m[2] === 'player' || pl.id !== you);
+  return { states: players.map(pl => pl.gameState || {}), every: m[1] === 'each' };
+}
+function _anyOrEvery(named, test) {
+  if (!named) return null;
+  return named.every ? named.states.every(test) : named.states.some(test);
+}
 
 /* Branch table for _parseCondition. Each entry is (ct, srcId) => predicate | null.
    The dispatcher loops in order; the first non-null wins, mirroring the historical
@@ -300,63 +324,63 @@ const CONDITION_PARSERS = [
     return () => holds;
   },
 
-  // --- Game-state conditions (Battlefield.gameState) ---
-  (ct) => /\b(?:it(?:'s| is)\s+your\s+turn|during\s+your\s+turn|on\s+your\s+turn)\b/.test(ct)
-    ? () => { const gs = _gsGet(); return gs ? gs.isYourTurn : true; }
+  // --- Game-state conditions (the source controller's game state, _gsOfController) ---
+  (ct, srcId) => /\b(?:it(?:'s| is)\s+your\s+turn|during\s+your\s+turn|on\s+your\s+turn)\b/.test(ct)
+    ? (state, allStates) => { const gs = _gsOfController(srcId, state, allStates); return gs ? gs.isYourTurn : true; }
     : null,
-  (ct) => /\b(?:it(?:'s| is)\s+not\s+your\s+turn|not\s+your\s+turn|during\s+(?:an?\s+)?opponent'?s?\s+turn)\b/.test(ct)
-    ? () => { const gs = _gsGet(); return gs ? !gs.isYourTurn : true; }
+  (ct, srcId) => /\b(?:it(?:'s| is)\s+not\s+your\s+turn|not\s+your\s+turn|during\s+(?:an?\s+)?opponent'?s?\s+turn)\b/.test(ct)
+    ? (state, allStates) => { const gs = _gsOfController(srcId, state, allStates); return gs ? !gs.isYourTurn : true; }
     : null,
   // "you have the city's blessing" (Ascend): the City's Blessing toggle in Game State.
-  (ct) => /\byou have the city's blessing\b/.test(ct)
-    ? () => { const gs = _gsGet(); return gs ? !!gs.hasCityBlessing : false; }
+  (ct, srcId) => /\byou have the city's blessing\b/.test(ct)
+    ? (state, allStates) => { const gs = _gsOfController(srcId, state, allStates); return gs ? !!gs.hasCityBlessing : false; }
     : null,
-  (ct) => /\bno cards in hand\b/.test(ct)
-    ? () => { const gs = _gsGet(); return gs ? gs.handSize === 0 : true; }
+  (ct, srcId) => /\bno cards in hand\b/.test(ct)
+    ? (state, allStates) => { const r = _anyOrEvery(_gsOfNamedPlayers(ct, srcId, state, allStates), gs => gs.handSize === 0); return r === null ? true : r; }
     : null,
-  (ct) => {
+  (ct, srcId) => {
     const m = ct.match(/(\w+)\s+or\s+more\s+cards?\s+in\s+hand/);
     if (!m) return null;
     const threshold = _wordThresh(m[1]);
-    return () => { const gs = _gsGet(); return gs ? gs.handSize >= threshold : true; };
+    return (state, allStates) => { const r = _anyOrEvery(_gsOfNamedPlayers(ct, srcId, state, allStates), gs => gs.handSize >= threshold); return r === null ? true : r; };
   },
 
   // --- Life-total conditions ---
   // "you have N or more life" (Serra Ascendant).
-  (ct) => {
+  (ct, srcId) => {
     const m = ct.match(/you have (\w+)\s+or\s+more\s+life/);
     if (!m) return null;
     const threshold = _wordThresh(m[1]);
-    return () => { const gs = _gsGet(); return gs ? gs.currentLife >= threshold : true; };
+    return (state, allStates) => { const gs = _gsOfController(srcId, state, allStates); return gs ? gs.currentLife >= threshold : true; };
   },
   // "you have N or less life" (fateful hour — Break of Day).
-  (ct) => {
+  (ct, srcId) => {
     const m = ct.match(/you have (\w+)\s+or\s+(?:less|fewer)\s+life/);
     if (!m) return null;
     const threshold = _wordThresh(m[1]);
-    return () => { const gs = _gsGet(); return gs ? gs.currentLife <= threshold : false; };
+    return (state, allStates) => { const gs = _gsOfController(srcId, state, allStates); return gs ? gs.currentLife <= threshold : false; };
   },
   // "you have [at least] N life more than your starting life total" (Leyline of Hope).
-  (ct) => {
+  (ct, srcId) => {
     const m = ct.match(/you have (?:at least )?(\w+)\s+life\s+more\s+than\s+your\s+starting\s+life\s+total/);
     if (!m) return null;
     const threshold = _wordThresh(m[1]);
-    return () => { const gs = _gsGet(); return gs ? (gs.currentLife - gs.startingLife) >= threshold : true; };
+    return (state, allStates) => { const gs = _gsOfController(srcId, state, allStates); return gs ? (gs.currentLife - gs.startingLife) >= threshold : true; };
   },
   // "your life total is [at least] N greater than your starting life total" (alternate phrasing).
-  (ct) => {
+  (ct, srcId) => {
     const m = ct.match(/your life total is (?:at least )?(\w+)\s+greater than your starting life total/);
     if (!m) return null;
     const threshold = _wordThresh(m[1]);
-    return () => { const gs = _gsGet(); return gs ? (gs.currentLife - gs.startingLife) >= threshold : true; };
+    return (state, allStates) => { const gs = _gsOfController(srcId, state, allStates); return gs ? (gs.currentLife - gs.startingLife) >= threshold : true; };
   },
   // "your life total is greater than your starting life total" (Elenda, Saint of Dusk).
-  (ct) => /your life total is greater than your starting life total/.test(ct)
-    ? () => { const gs = _gsGet(); return gs ? gs.currentLife > gs.startingLife : true; }
+  (ct, srcId) => /your life total is greater than your starting life total/.test(ct)
+    ? (state, allStates) => { const gs = _gsOfController(srcId, state, allStates); return gs ? gs.currentLife > gs.startingLife : true; }
     : null,
   // "your life total is less than your starting life total".
-  (ct) => /your life total is less than your starting life total/.test(ct)
-    ? () => { const gs = _gsGet(); return gs ? gs.currentLife < gs.startingLife : true; }
+  (ct, srcId) => /your life total is less than your starting life total/.test(ct)
+    ? (state, allStates) => { const gs = _gsOfController(srcId, state, allStates); return gs ? gs.currentLife < gs.startingLife : true; }
     : null,
 
   // --- Graveyard / exile card-count conditions ---
