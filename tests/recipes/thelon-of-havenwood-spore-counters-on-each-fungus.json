@@ -1,0 +1,15 @@
+{
+  "name": "Thelon of Havenwood — each Fungus gets +1/+1 for each spore counter on it, of that kind only",
+  "notes": "Fixed in _computeForEachCount (engine-compute.js): 'spore counter on it' counted every counter on Thelon. Now spore counters on the Fungus itself; its +1/+1 counter is not a spore counter. Memory: project_counters_on_it_and_cast_a_commander_2026-10-14.",
+  "steps": [
+    { "add": "Thallid", "as": "thallid" },
+    { "add": "Thelon of Havenwood", "as": "thelon" },
+    { "call": ["addCounter", "@thallid", "spore", 2] },
+    { "call": ["addCounter", "@thallid", "+1/+1", 1] },
+    { "call": ["addCounter", "@thelon", "spore", 3] }
+  ],
+  "asserts": [
+    { "perm": "Thallid", "final": { "power": 4, "toughness": 4 } },
+    { "perm": "Thelon of Havenwood", "final": { "power": 2, "toughness": 2 } }
+  ]
+}

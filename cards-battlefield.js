@@ -3296,6 +3296,13 @@ const Battlefield = {
     this.commanders.push({ card, name: face.name || card.name, imageUri, castCount: 0, linkedPermId: null });
   },
 
+  // Times the commander at this index was cast from the command zone ("for each time you've
+  // cast your commander / a commander").
+  modifyCommanderCast(index, delta) {
+    const c = this.commanders[index];
+    if (c) c.castCount = Math.max(0, (c.castCount || 0) + delta);
+  },
+
   removeCommander(index) {
     this.commanders.splice(index, 1);
   },

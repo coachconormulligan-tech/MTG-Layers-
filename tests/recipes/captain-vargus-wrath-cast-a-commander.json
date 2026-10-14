@@ -1,0 +1,14 @@
+{
+  "name": "Captain Vargus Wrath — +1/+1 for each time you've cast a commander from the command zone",
+  "notes": "Fixed in _computeForEachCount (engine-compute.js): only 'cast your commander' was read, so 'cast a commander' counted 0. Memory: project_counters_on_it_and_cast_a_commander_2026-10-14.",
+  "steps": [
+    { "call": ["addCommander", "card:Toxrill, the Corrosive"] },
+    { "call": ["modifyCommanderCast", 0, 2] },
+    { "add": "Kitesail Freebooter", "as": "pirate" },
+    { "add": "Captain Vargus Wrath", "as": "vargus" },
+    { "fire": "@vargus", "trigger": 0, "as": "atk" }
+  ],
+  "asserts": [
+    { "perm": "Kitesail Freebooter", "final": { "power": 3, "toughness": 4 } }
+  ]
+}

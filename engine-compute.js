@@ -220,8 +220,9 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
   }
 
   // "time you've cast your commander from the command zone this game" (Commander's Insignia, etc.)
-  // Matches patterns like: "time you've cast your commander from the command zone"
-  if (/\btimes?\s+you(?:'ve|'ve|\s+have)\s+cast\s+your\s+commander\b/.test(desc)) {
+  // Matches patterns like: "time you've cast your commander from the command zone";
+  // "cast a commander" (Captain Vargus Wrath) counts the same casts.
+  if (/\btimes?\s+you(?:'ve|'ve|\s+have)\s+cast\s+(?:your|a)\s+commander\b/.test(desc)) {
     if (typeof Battlefield !== 'undefined' && Battlefield.commanders) {
       let totalCasts = 0;
       for (const cmd of Battlefield.commanders) {
@@ -461,6 +462,28 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
   }
 
   // --- Counter patterns (checked BEFORE bare subtype to avoid changeling false positives) ---
+
+  // "[kind] counter on it / on them / on that creature" — on the permanent being modified
+  // (Clamavus "Each creature you control gets +1/+1 for each +1/+1 counter on it", Toxrill
+  // "… for each slime counter on them", Luxior "Equipped creature … for each counter on it").
+  // "on this creature" / "on <name>" — on the effect's source. A named kind counts only that
+  // kind (Thelon's spore counters); no kind counts every counter.
+  const onCounterMatch = desc.match(/^(?:(?:an?|one)\s+)?(?:([+-]\d+\/[+-]\d+|[a-z]+(?:\s+strike)?)\s+)?counters?\s+on\s+(.+)$/);
+  if (onCounterMatch) {
+    const holderText = onCounterMatch[2].trim();
+    const srcName = ((sourceState && sourceState.name) || '').toLowerCase();
+    let holder = null;
+    if (/^(?:it|them|that creature|that permanent|those creatures|those permanents)$/.test(holderText)) holder = selfState;
+    else if (/^this\s+[a-z]+$/.test(holderText) || (srcName && holderText === srcName)) holder = sourceState;
+    if (holder) {
+      const counters = holder.counters || {};
+      const kind = onCounterMatch[1];
+      if (kind) return counters[kind] || 0;
+      let total = 0;
+      for (const n of Object.values(counters)) total += n;
+      return total;
+    }
+  }
 
   // Specific counter type on self: "+1/+1 counters on it" / "+1/+1 counter on this card"
   const selfCounterMatch = desc.match(/([+-]\d+\/[+-]\d+)\s+counters?\s+on\s+(.+)/);
