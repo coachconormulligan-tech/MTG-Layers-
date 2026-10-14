@@ -3813,12 +3813,19 @@ function parseCardEffects(permanent, card, opts = {}) {
           return;
         }
         // Keep "you control" in forEachDesc so _computeForEachCount filters by controller.
-        const cleanTarget = countTarget.replace(/\s+in your graveyard$/i, '');
+        // "Each creature you control attacking a player gets … for each creature that player
+        // controls" (Jurin): that player is the one each creature is attacking.
+        let cleanTarget = countTarget.replace(/\s+in your graveyard$/i, '');
+        if (/\battacking a player\b/i.test(fullSentence)) cleanTarget = cleanTarget.replace(/\bthat player controls$/i, 'defending player controls');
         // A count the board cannot give is entered by hand on the row of the spell or ability:
         // who blocks whom is not recorded ("for each creature blocking it [beyond the first]" —
         // Rabid Elephant, Barreling Attack), nor which cards a spell just milled ("for each
-        // creature card put into your graveyard this way" — Song of Blood).
-        const byHand = /\bblocking (?:it|this creature|that creature)\b|\bthis way$/i.test(countTarget);
+        // creature card put into your graveyard this way" — Song of Blood), nor what happened
+        // earlier in the turn ("creatures that entered the battlefield under your control this
+        // turn" — Kinbinding; "cards you've drawn this turn" — Knowledge Is Power), nor the mana
+        // a spell was cast with ("colors of mana spent to cast this spell" — Roilmage's Trick).
+        const byHand = /\bblocking (?:it|this creature|that creature)\b|\bthis way$|\bthis turn$|\bmana spent to cast\b/i.test(countTarget)
+          && !/\bit has attacked this turn$/i.test(countTarget);
         const isGraveyard = !byHand && countTarget.toLowerCase().includes('graveyard');
         const _effFe = pushEff('7c', EFFECT_TYPE.MODIFY_PT, {
             power: parseInt(boostMatch[2]),

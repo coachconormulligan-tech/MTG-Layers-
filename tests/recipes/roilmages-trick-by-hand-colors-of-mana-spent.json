@@ -1,0 +1,37 @@
+{
+  "name": "Roilmage's Trick \u2014 colors of mana spent to cast it is a count entered by hand",
+  "notes": "Fixed in the parser's for-each boost (cards-parser.js): the mana a spell was cast with is not recorded and the count had no input, so X was always 0. It is now typed on the spell's row (setCDAValue). Memory: project_for_each_c3_measurable_and_by_hand_2026-10-14.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Player 2"
+      ]
+    },
+    {
+      "add": "Hill Giant",
+      "controller": "p2"
+    },
+    {
+      "add": "Roilmage's Trick",
+      "spell": true,
+      "as": "t"
+    },
+    {
+      "call": [
+        "setCDAValue",
+        "@t",
+        3
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "power": 0,
+        "toughness": 3
+      }
+    }
+  ]
+}

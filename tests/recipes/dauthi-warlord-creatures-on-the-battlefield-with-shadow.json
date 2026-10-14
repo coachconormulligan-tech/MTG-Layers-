@@ -1,0 +1,31 @@
+{
+  "name": "Dauthi Warlord \u2014 power equal to the number of creatures on the battlefield with shadow",
+  "notes": "Fixed in _computeForEachCount (engine-compute.js): 'with shadow' was not read, so its power was 0. Shadow creatures of both players count; Grizzly Bears does not. Memory: project_for_each_c3_measurable_and_by_hand_2026-10-14.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Player 2"
+      ]
+    },
+    {
+      "add": "Dauthi Warlord"
+    },
+    {
+      "add": "Dauthi Slayer",
+      "controller": "p2"
+    },
+    {
+      "add": "Grizzly Bears"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Dauthi Warlord",
+      "final": {
+        "power": 2,
+        "toughness": 1
+      }
+    }
+  ]
+}

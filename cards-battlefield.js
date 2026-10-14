@@ -3036,6 +3036,7 @@ const Battlefield = {
     const _fallback = (p) => ({ name: p.name, types: p.printedTypes, supertypes: p.printedSupertypes,
       subtypes: p.printedSubtypes || [], power: p.printedPower, toughness: p.printedToughness,
       colors: p.printedColors || [], abilities: p.printedAbilities || [], oracleText: p.oracleText || '',
+      manaValue: p.manaValue || 0, manaCost: p.manaCost || '',
       owner: p.owner || 'player_0', controller: p.owner || 'player_0', isToken: !!p.isToken });
     const hasTraits = realPerms.some(rp => rp.traits && rp.traits.length > 0);
     if (realPerms.length === 0) { this._cachedFinalStates = new Map(); this._cachedFinalStatesVersion = this._cacheVersion; return this._cachedFinalStates; }

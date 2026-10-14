@@ -1363,6 +1363,19 @@ function _buildAppliesToFromTextInner(filterText) {
       };
     }
   }
+  // "Each creature you control attacking a player" (Jurin, Leading the Charge): an attacker. The
+  // site records only players as what a creature attacks, so every attacker is attacking one.
+  const attackingPlayer = raw.match(/^(.+?)\s+(?:(?:that's|that is|that are)\s+)?attacking\s+a\s+player$/);
+  if (attackingPlayer) {
+    const inner = _buildAppliesToFromTextInner(attackingPlayer[1]);
+    if (inner && inner.fn && !inner.isSelf) {
+      return {
+        fn: (p, allStates, effectCtrl) => (p.traits || []).includes('Attacking') && inner.fn(p, allStates, effectCtrl),
+        desc: `${inner.desc} attacking a player`,
+        ...(inner.isOpponentsControl ? { isOpponentsControl: true } : {}),
+      };
+    }
+  }
 
   // --- "this creature" / "this permanent" / "it" — selfTarget ---
   if (/^(this creature|this permanent|this card|this token|it|itself|that creature|that permanent)$/.test(f)) {

@@ -1,0 +1,76 @@
+{
+  "name": "Jurin, Leading the Charge \u2014 +1/+0 for each creature the player it is attacking controls",
+  "notes": "Fixed in two places: the subject 'each creature you control attacking a player' reached nobody (buildAppliesToFromText, cards-text-utils.js, now reads it as an attacker), and in the parser's for-each boost (cards-parser.js) 'that player controls' after 'attacking a player' is the defending player's, which _computeForEachCount reads. Each creature counts the creatures of the player it attacks. Memory: project_for_each_c3_measurable_and_by_hand_2026-10-14.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Player 2"
+      ]
+    },
+    {
+      "call": [
+        "addPlayer",
+        "Player 3"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "controller": "p2"
+    },
+    {
+      "add": "Llanowar Elves",
+      "controller": "p2"
+    },
+    {
+      "add": "Hill Giant",
+      "controller": "p3"
+    },
+    {
+      "add": "Jurin, Leading the Charge",
+      "as": "jurin"
+    },
+    {
+      "add": "Watchwolf",
+      "as": "wolf"
+    },
+    {
+      "call": [
+        "toggleAttacking",
+        "@jurin"
+      ]
+    },
+    {
+      "call": [
+        "toggleAttacking",
+        "@wolf"
+      ]
+    },
+    {
+      "call": [
+        "setAttackingPlayer",
+        "@wolf",
+        "p3"
+      ]
+    },
+    {
+      "fire": "@jurin",
+      "trigger": 2
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Jurin, Leading the Charge",
+      "final": {
+        "power": 6
+      }
+    },
+    {
+      "perm": "Watchwolf",
+      "final": {
+        "power": 4,
+        "toughness": 3
+      }
+    }
+  ]
+}
