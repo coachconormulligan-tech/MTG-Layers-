@@ -1,0 +1,23 @@
+{
+  "name": "Prismatic Piper, Clara Oswald, Faceless One — the chosen color when it is its owner's commander, whoever controls it",
+  "notes": "Conor, 2026-10-14: these cards are the color their owner chose if the card is the owner's commander. 'If The Prismatic Piper is your commander, choose a color before the game begins. The Prismatic Piper is the chosen color.' The 'your commander' condition (cards-parser.js CONDITION_PARSERS) is now Battlefield.isCommander alone, which reads the owner's command zone; for a while it also required the source's controller to own it, so a stolen Piper lost its color. Player 2's commanders are The Prismatic Piper (chose red) and Clara Oswald (chose blue); Player 1 takes the Piper with Control Magic and it stays red; Clara is blue (read from Player 1's tab). Player 1's Faceless One (chose green) is not Player 1's commander and stays colorless. Memory: project_commander_identity_by_owner_2026-10-14.",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"] },
+    { "call": ["setActivePlayer", "p2"] },
+    { "call": ["addCommander", "card:The Prismatic Piper"] },
+    { "call": ["addCommander", "card:Clara Oswald"] },
+    { "add": "The Prismatic Piper", "as": "piper", "controller": "p2" },
+    { "call": ["setChosenColor", "@piper", "Red"] },
+    { "add": "Clara Oswald", "as": "clara", "controller": "p2" },
+    { "call": ["setChosenColor", "@clara", "Blue"] },
+    { "add": "Faceless One", "as": "faceless", "controller": "p1" },
+    { "call": ["setChosenColor", "@faceless", "Green"] },
+    { "add": "Control Magic", "as": "steal", "controller": "p1" },
+    { "call": ["setTarget", "@steal", "@piper"] }
+  ],
+  "asserts": [
+    { "perm": "The Prismatic Piper", "final": { "controller": "player_0", "colors": ["R"] } },
+    { "perm": "Clara Oswald", "final": { "colors": ["U"] } },
+    { "perm": "Faceless One", "final": { "colors": { "$excludes": ["G"] } } }
+  ]
+}
