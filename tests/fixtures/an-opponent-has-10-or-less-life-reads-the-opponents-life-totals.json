@@ -1,0 +1,1113 @@
+{
+ "name": "\"An opponent has 10 or less life\" reads the opponents' life totals",
+ "notes": "The generic 'has [ability]' condition branch read 'an opponent has 10 or less life' as an ability named '10 or less life', so the condition was never true. A life branch now reads any opponent (or a / each player) of the source's controller, and the 'X and Y' split recognises 'an opponent has', so Blood Baron of Vizkopa reads both halves. Life: Player 1 30, Player 2 8, Player 3 20; Player 2's tab is open. Player 1's Bloodghast has haste, Ruthless Cullblade 4/2, Blood Baron 10/10 with flying. Player 2's Guul Draz Vampire (opponents at 30 and 20) stays 1/1 without intimidate. Memory: project_opponent_life_conditions_2026-10-14.",
+ "recipe": {
+  "steps": [
+   {
+    "call": [
+     "addPlayer",
+     "Player 2"
+    ]
+   },
+   {
+    "call": [
+     "addPlayer",
+     "Player 3"
+    ]
+   },
+   {
+    "call": [
+     "setActivePlayer",
+     "p1"
+    ]
+   },
+   {
+    "call": [
+     "updateGameState",
+     "currentLife",
+     30
+    ]
+   },
+   {
+    "call": [
+     "setActivePlayer",
+     "p3"
+    ]
+   },
+   {
+    "call": [
+     "updateGameState",
+     "currentLife",
+     20
+    ]
+   },
+   {
+    "call": [
+     "setActivePlayer",
+     "p2"
+    ]
+   },
+   {
+    "call": [
+     "updateGameState",
+     "currentLife",
+     8
+    ]
+   },
+   {
+    "add": "Bloodghast",
+    "controller": "p1"
+   },
+   {
+    "add": "Blood Baron of Vizkopa",
+    "controller": "p1"
+   },
+   {
+    "add": "Ruthless Cullblade",
+    "controller": "p1"
+   },
+   {
+    "add": "Guul Draz Vampire",
+    "controller": "p2"
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Bloodghast",
+   "final": {
+    "abilities": {
+     "$includes": [
+      "Haste"
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Ruthless Cullblade",
+   "final": {
+    "power": 4,
+    "toughness": 2
+   }
+  },
+  {
+   "perm": "Blood Baron of Vizkopa",
+   "final": {
+    "power": 10,
+    "toughness": 10,
+    "abilities": {
+     "$includes": [
+      "Flying"
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Guul Draz Vampire",
+   "final": {
+    "power": 1,
+    "toughness": 1,
+    "abilities": {
+     "$excludes": [
+      "Intimidate"
+     ]
+    }
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "cee85485-598f-4dfc-aa0b-7b1de86c7788",
+     "oracle_id": "e97f9c2b-b41e-4f36-9245-77c0ac125647",
+     "multiverse_ids": [],
+     "resource_id": "5B509C85A66B304B18C9C518564197AF33437C1C532D9AC73CBF0CF98E7E5C82",
+     "mtgo_id": 148889,
+     "tcgplayer_id": 687391,
+     "cardmarket_id": 881530,
+     "name": "Bloodghast",
+     "lang": "en",
+     "released_at": "2026-04-24",
+     "uri": "https://api.scryfall.com/cards/cee85485-598f-4dfc-aa0b-7b1de86c7788",
+     "scryfall_uri": "https://scryfall.com/card/soc/210/bloodghast?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T00:49:46Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/c/e/cee85485-598f-4dfc-aa0b-7b1de86c7788.jpg?1783903786",
+      "normal": "https://cards.scryfall.io/normal/front/c/e/cee85485-598f-4dfc-aa0b-7b1de86c7788.jpg?1783903786",
+      "large": "https://cards.scryfall.io/large/front/c/e/cee85485-598f-4dfc-aa0b-7b1de86c7788.jpg?1783903786",
+      "png": "https://cards.scryfall.io/png/front/c/e/cee85485-598f-4dfc-aa0b-7b1de86c7788.png?1783903786",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/c/e/cee85485-598f-4dfc-aa0b-7b1de86c7788.jpg?1783903786",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/c/e/cee85485-598f-4dfc-aa0b-7b1de86c7788.jpg?1783903786",
+      "thumb": "https://cards.scryfall.io/thumb/front/c/e/cee85485-598f-4dfc-aa0b-7b1de86c7788.webp?1783903786",
+      "grid": "https://cards.scryfall.io/grid/front/c/e/cee85485-598f-4dfc-aa0b-7b1de86c7788.webp?1783903786",
+      "display": "https://cards.scryfall.io/display/front/c/e/cee85485-598f-4dfc-aa0b-7b1de86c7788.webp?1783903786",
+      "art": "https://cards.scryfall.io/art/front/c/e/cee85485-598f-4dfc-aa0b-7b1de86c7788.webp?1783903786",
+      "crop": "https://cards.scryfall.io/crop/front/c/e/cee85485-598f-4dfc-aa0b-7b1de86c7788.webp?1783903786"
+     },
+     "mana_cost": "{B}{B}",
+     "cmc": 2,
+     "type_line": "Creature — Vampire Spirit",
+     "oracle_text": "This creature can't block.\nThis creature has haste as long as an opponent has 10 or less life.\nLandfall — Whenever a land you control enters, you may return this card from your graveyard to the battlefield.",
+     "power": "2",
+     "toughness": "1",
+     "colors": [
+      "B"
+     ],
+     "color_identity": [
+      "B"
+     ],
+     "keywords": [
+      "Landfall"
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "97fab8d1-480a-419d-ab14-663968e29b9c",
+     "set": "soc",
+     "set_name": "Secrets of Strixhaven Commander",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/97fab8d1-480a-419d-ab14-663968e29b9c",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Asoc&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/soc?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/cee85485-598f-4dfc-aa0b-7b1de86c7788/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ae97f9c2b-b41e-4f36-9245-77c0ac125647&unique=prints",
+     "collector_number": "210",
+     "digital": false,
+     "rarity": "rare",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Lixin Yin",
+     "artist_ids": [
+      "25645c87-71be-400b-8522-618a52c37454"
+     ],
+     "illustration_id": "5c3af549-b8b8-4fec-92fa-926b4a64e1ad",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 1007,
+     "penny_rank": 396,
+     "prices": {
+      "usd": "0.94",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "1.50",
+      "eur_foil": null,
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DBloodghast",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DBloodghast",
+      "edhrec": "https://edhrec.com/route/?cc=Bloodghast"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F687391%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=881530&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/148889?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "56955e63-db6f-4f1d-b3c4-dd268c902653",
+     "oracle_id": "326adf88-3f6d-4bc2-aafa-dd55c6c95784",
+     "multiverse_ids": [
+      438761
+     ],
+     "mtgo_id": 66269,
+     "mtgo_foil_id": 66270,
+     "tcgplayer_id": 145302,
+     "cardmarket_id": 301509,
+     "name": "Blood Baron of Vizkopa",
+     "lang": "en",
+     "released_at": "2017-11-17",
+     "uri": "https://api.scryfall.com/cards/56955e63-db6f-4f1d-b3c4-dd268c902653",
+     "scryfall_uri": "https://scryfall.com/card/ima/195/blood-baron-of-vizkopa?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T09:38:33Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/5/6/56955e63-db6f-4f1d-b3c4-dd268c902653.jpg?1783935513",
+      "normal": "https://cards.scryfall.io/normal/front/5/6/56955e63-db6f-4f1d-b3c4-dd268c902653.jpg?1783935513",
+      "large": "https://cards.scryfall.io/large/front/5/6/56955e63-db6f-4f1d-b3c4-dd268c902653.jpg?1783935513",
+      "png": "https://cards.scryfall.io/png/front/5/6/56955e63-db6f-4f1d-b3c4-dd268c902653.png?1783935513",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/5/6/56955e63-db6f-4f1d-b3c4-dd268c902653.jpg?1783935513",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/5/6/56955e63-db6f-4f1d-b3c4-dd268c902653.jpg?1783935513",
+      "thumb": "https://cards.scryfall.io/thumb/front/5/6/56955e63-db6f-4f1d-b3c4-dd268c902653.webp?1783935513",
+      "grid": "https://cards.scryfall.io/grid/front/5/6/56955e63-db6f-4f1d-b3c4-dd268c902653.webp?1783935513",
+      "display": "https://cards.scryfall.io/display/front/5/6/56955e63-db6f-4f1d-b3c4-dd268c902653.webp?1783935513",
+      "art": "https://cards.scryfall.io/art/front/5/6/56955e63-db6f-4f1d-b3c4-dd268c902653.webp?1783935513",
+      "crop": "https://cards.scryfall.io/crop/front/5/6/56955e63-db6f-4f1d-b3c4-dd268c902653.webp?1783935513"
+     },
+     "mana_cost": "{3}{W}{B}",
+     "cmc": 5,
+     "type_line": "Creature — Vampire",
+     "oracle_text": "Lifelink, protection from white and from black\nAs long as you have 30 or more life and an opponent has 10 or less life, this creature gets +6/+6 and has flying.",
+     "power": "4",
+     "toughness": "4",
+     "colors": [
+      "B",
+      "W"
+     ],
+     "color_identity": [
+      "B",
+      "W"
+     ],
+     "keywords": [
+      "Lifelink",
+      "Protection"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "741bcd30-7709-4133-8919-f4b46483bed7",
+     "set": "ima",
+     "set_name": "Iconic Masters",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/741bcd30-7709-4133-8919-f4b46483bed7",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aima&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/ima?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/56955e63-db6f-4f1d-b3c4-dd268c902653/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A326adf88-3f6d-4bc2-aafa-dd55c6c95784&unique=prints",
+     "collector_number": "195",
+     "digital": false,
+     "rarity": "rare",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Anthony Palumbo",
+     "artist_ids": [
+      "afd2d541-4140-41ae-a28f-862436458fcb"
+     ],
+     "illustration_id": "9b79cb25-f9a8-4611-b4d8-f12e67dabe0c",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 16646,
+     "penny_rank": 5572,
+     "prices": {
+      "usd": "0.46",
+      "usd_foil": "1.10",
+      "usd_etched": null,
+      "eur": "0.40",
+      "eur_foil": "1.18",
+      "tix": "0.30"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=438761&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DBlood%2BBaron%2Bof%2BVizkopa",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DBlood%2BBaron%2Bof%2BVizkopa",
+      "edhrec": "https://edhrec.com/route/?cc=Blood+Baron+of+Vizkopa"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F145302%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=301509&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/66269?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "1da2dc92-0352-4757-8249-67f08a2464d1",
+     "oracle_id": "b7748ad6-a8cd-45e7-a4d6-4ee747722657",
+     "multiverse_ids": [
+      194678
+     ],
+     "mtgo_id": 35651,
+     "mtgo_foil_id": 35652,
+     "tcgplayer_id": 34427,
+     "cardmarket_id": 22121,
+     "name": "Ruthless Cullblade",
+     "lang": "en",
+     "released_at": "2010-02-05",
+     "uri": "https://api.scryfall.com/cards/1da2dc92-0352-4757-8249-67f08a2464d1",
+     "scryfall_uri": "https://scryfall.com/card/wwk/65/ruthless-cullblade?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:27:34Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/1/d/1da2dc92-0352-4757-8249-67f08a2464d1.jpg?1783942054",
+      "normal": "https://cards.scryfall.io/normal/front/1/d/1da2dc92-0352-4757-8249-67f08a2464d1.jpg?1783942054",
+      "large": "https://cards.scryfall.io/large/front/1/d/1da2dc92-0352-4757-8249-67f08a2464d1.jpg?1783942054",
+      "png": "https://cards.scryfall.io/png/front/1/d/1da2dc92-0352-4757-8249-67f08a2464d1.png?1783942054",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/1/d/1da2dc92-0352-4757-8249-67f08a2464d1.jpg?1783942054",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/1/d/1da2dc92-0352-4757-8249-67f08a2464d1.jpg?1783942054",
+      "thumb": "https://cards.scryfall.io/thumb/front/1/d/1da2dc92-0352-4757-8249-67f08a2464d1.webp?1783942054",
+      "grid": "https://cards.scryfall.io/grid/front/1/d/1da2dc92-0352-4757-8249-67f08a2464d1.webp?1783942054",
+      "display": "https://cards.scryfall.io/display/front/1/d/1da2dc92-0352-4757-8249-67f08a2464d1.webp?1783942054",
+      "art": "https://cards.scryfall.io/art/front/1/d/1da2dc92-0352-4757-8249-67f08a2464d1.webp?1783942054",
+      "crop": "https://cards.scryfall.io/crop/front/1/d/1da2dc92-0352-4757-8249-67f08a2464d1.webp?1783942054"
+     },
+     "mana_cost": "{1}{B}",
+     "cmc": 2,
+     "type_line": "Creature — Vampire Warrior",
+     "oracle_text": "This creature gets +2/+1 as long as an opponent has 10 or less life.",
+     "power": "2",
+     "toughness": "1",
+     "colors": [
+      "B"
+     ],
+     "color_identity": [
+      "B"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "2f248ce6-c2a5-4c6f-a2be-0c593fbe173c",
+     "set": "wwk",
+     "set_name": "Worldwake",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/2f248ce6-c2a5-4c6f-a2be-0c593fbe173c",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Awwk&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/wwk?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/1da2dc92-0352-4757-8249-67f08a2464d1/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ab7748ad6-a8cd-45e7-a4d6-4ee747722657&unique=prints",
+     "collector_number": "65",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "She wields a blade as bloodthirsty and elegant as herself.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "rk post",
+     "artist_ids": [
+      "81ae0f3f-1d88-4125-9aeb-b15b4c734c82"
+     ],
+     "illustration_id": "aa0d86b2-3a0a-4b36-b0a6-75d64ec708b7",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 29379,
+     "penny_rank": 11523,
+     "prices": {
+      "usd": "0.13",
+      "usd_foil": "0.61",
+      "usd_etched": null,
+      "eur": "0.08",
+      "eur_foil": "0.50",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=194678&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DRuthless%2BCullblade",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DRuthless%2BCullblade",
+      "edhrec": "https://edhrec.com/route/?cc=Ruthless+Cullblade"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F34427%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=22121&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/35651?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "f3c92575-1c97-48bf-801b-22f34040cf9a",
+     "oracle_id": "00d3fcdf-6959-4437-9bad-93a8625510a1",
+     "multiverse_ids": [
+      180498
+     ],
+     "mtgo_id": 34370,
+     "mtgo_foil_id": 34371,
+     "tcgplayer_id": 33316,
+     "cardmarket_id": 21903,
+     "name": "Guul Draz Vampire",
+     "lang": "en",
+     "released_at": "2009-10-02",
+     "uri": "https://api.scryfall.com/cards/f3c92575-1c97-48bf-801b-22f34040cf9a",
+     "scryfall_uri": "https://scryfall.com/card/zen/93/guul-draz-vampire?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:29:13Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/f/3/f3c92575-1c97-48bf-801b-22f34040cf9a.jpg?1783942153",
+      "normal": "https://cards.scryfall.io/normal/front/f/3/f3c92575-1c97-48bf-801b-22f34040cf9a.jpg?1783942153",
+      "large": "https://cards.scryfall.io/large/front/f/3/f3c92575-1c97-48bf-801b-22f34040cf9a.jpg?1783942153",
+      "png": "https://cards.scryfall.io/png/front/f/3/f3c92575-1c97-48bf-801b-22f34040cf9a.png?1783942153",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/f/3/f3c92575-1c97-48bf-801b-22f34040cf9a.jpg?1783942153",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/f/3/f3c92575-1c97-48bf-801b-22f34040cf9a.jpg?1783942153",
+      "thumb": "https://cards.scryfall.io/thumb/front/f/3/f3c92575-1c97-48bf-801b-22f34040cf9a.webp?1783942153",
+      "grid": "https://cards.scryfall.io/grid/front/f/3/f3c92575-1c97-48bf-801b-22f34040cf9a.webp?1783942153",
+      "display": "https://cards.scryfall.io/display/front/f/3/f3c92575-1c97-48bf-801b-22f34040cf9a.webp?1783942153",
+      "art": "https://cards.scryfall.io/art/front/f/3/f3c92575-1c97-48bf-801b-22f34040cf9a.webp?1783942153",
+      "crop": "https://cards.scryfall.io/crop/front/f/3/f3c92575-1c97-48bf-801b-22f34040cf9a.webp?1783942153"
+     },
+     "mana_cost": "{B}",
+     "cmc": 1,
+     "type_line": "Creature — Vampire Rogue",
+     "oracle_text": "As long as an opponent has 10 or less life, this creature gets +2/+1 and has intimidate. (It can't be blocked except by artifact creatures and/or creatures that share a color with it.)",
+     "power": "1",
+     "toughness": "1",
+     "colors": [
+      "B"
+     ],
+     "color_identity": [
+      "B"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "eb16a2bd-a218-4e4e-8339-4aa1afc0c8d2",
+     "set": "zen",
+     "set_name": "Zendikar",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/eb16a2bd-a218-4e4e-8339-4aa1afc0c8d2",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Azen&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/zen?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/f3c92575-1c97-48bf-801b-22f34040cf9a/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A00d3fcdf-6959-4437-9bad-93a8625510a1&unique=prints",
+     "collector_number": "93",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"A creature's bloodscent is a beacon that cannot be disguised.\"",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Steve Argyle",
+     "artist_ids": [
+      "a44ddda4-5331-4f83-aac9-3e00ed36bd7b"
+     ],
+     "illustration_id": "08d0c629-84f0-4d01-a98a-80ab9b57a2dd",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 22831,
+     "penny_rank": 5298,
+     "prices": {
+      "usd": "0.25",
+      "usd_foil": "2.14",
+      "usd_etched": null,
+      "eur": "0.10",
+      "eur_foil": "1.64",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=180498&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGuul%2BDraz%2BVampire",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGuul%2BDraz%2BVampire",
+      "edhrec": "https://edhrec.com/route/?cc=Guul+Draz+Vampire"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F33316%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=21903&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/34370?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_1",
+    "controller": "player_1",
+    "timestamp": 4,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 30,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   },
+   {
+    "id": "player_1",
+    "name": "Player 2",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 8,
+     "isYourTurn": false,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   },
+   {
+    "id": "player_2",
+    "name": "Player 3",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": false,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 3,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Bloodghast",
+    "final": {
+     "name": "Bloodghast",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Vampire",
+      "Spirit"
+     ],
+     "power": 2,
+     "toughness": 1,
+     "colors": [
+      "B"
+     ],
+     "abilities": [
+      "This creature can't block.",
+      "Landfall — Whenever a land you control enters, you may return this card from your graveyard to the battlefield.",
+      "Haste"
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "Bloodghast"
+     ]
+    }
+   },
+   {
+    "perm": "Blood Baron of Vizkopa",
+    "final": {
+     "name": "Blood Baron of Vizkopa",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Vampire"
+     ],
+     "power": 10,
+     "toughness": 10,
+     "colors": [
+      "B",
+      "W"
+     ],
+     "abilities": [
+      "Lifelink, protection from white and from black",
+      "Flying"
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "Blood Baron of Vizkopa"
+     ],
+     "7c": [
+      "Blood Baron of Vizkopa"
+     ]
+    }
+   },
+   {
+    "perm": "Ruthless Cullblade",
+    "final": {
+     "name": "Ruthless Cullblade",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Vampire",
+      "Warrior"
+     ],
+     "power": 4,
+     "toughness": 2,
+     "colors": [
+      "B"
+     ],
+     "abilities": []
+    },
+    "changedBy": {
+     "7c": [
+      "Ruthless Cullblade"
+     ]
+    }
+   },
+   {
+    "perm": "Guul Draz Vampire",
+    "final": {
+     "name": "Guul Draz Vampire",
+     "controller": "player_1",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Vampire",
+      "Rogue"
+     ],
+     "power": 1,
+     "toughness": 1,
+     "colors": [
+      "B"
+     ],
+     "abilities": []
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "6": [
+    "Bloodghast",
+    "Blood Baron of Vizkopa",
+    "Guul Draz Vampire"
+   ],
+   "7c": [
+    "Blood Baron of Vizkopa",
+    "Ruthless Cullblade",
+    "Guul Draz Vampire"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Bloodghast",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "ability": "Haste"
+    }
+   },
+   {
+    "source": "Blood Baron of Vizkopa",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "power": 6,
+     "toughness": 6
+    }
+   },
+   {
+    "source": "Blood Baron of Vizkopa",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "ability": "Flying"
+    }
+   },
+   {
+    "source": "Ruthless Cullblade",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "power": 2,
+     "toughness": 1
+    }
+   },
+   {
+    "source": "Guul Draz Vampire",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "power": 2,
+     "toughness": 1
+    }
+   },
+   {
+    "source": "Guul Draz Vampire",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "ability": "Intimidate"
+    }
+   }
+  ]
+ }
+}

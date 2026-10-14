@@ -1,0 +1,116 @@
+{
+  "name": "\"An opponent has 10 or less life\" reads the opponents' life totals",
+  "notes": "The generic 'has [ability]' condition branch read 'an opponent has 10 or less life' as an ability named '10 or less life', so the condition was never true. A life branch now reads any opponent (or a / each player) of the source's controller, and the 'X and Y' split recognises 'an opponent has', so Blood Baron of Vizkopa reads both halves. Life: Player 1 30, Player 2 8, Player 3 20; Player 2's tab is open. Player 1's Bloodghast has haste, Ruthless Cullblade 4/2, Blood Baron 10/10 with flying. Player 2's Guul Draz Vampire (opponents at 30 and 20) stays 1/1 without intimidate. Memory: project_opponent_life_conditions_2026-10-14.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Player 2"
+      ]
+    },
+    {
+      "call": [
+        "addPlayer",
+        "Player 3"
+      ]
+    },
+    {
+      "call": [
+        "setActivePlayer",
+        "p1"
+      ]
+    },
+    {
+      "call": [
+        "updateGameState",
+        "currentLife",
+        30
+      ]
+    },
+    {
+      "call": [
+        "setActivePlayer",
+        "p3"
+      ]
+    },
+    {
+      "call": [
+        "updateGameState",
+        "currentLife",
+        20
+      ]
+    },
+    {
+      "call": [
+        "setActivePlayer",
+        "p2"
+      ]
+    },
+    {
+      "call": [
+        "updateGameState",
+        "currentLife",
+        8
+      ]
+    },
+    {
+      "add": "Bloodghast",
+      "controller": "p1"
+    },
+    {
+      "add": "Blood Baron of Vizkopa",
+      "controller": "p1"
+    },
+    {
+      "add": "Ruthless Cullblade",
+      "controller": "p1"
+    },
+    {
+      "add": "Guul Draz Vampire",
+      "controller": "p2"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Bloodghast",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Haste"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Ruthless Cullblade",
+      "final": {
+        "power": 4,
+        "toughness": 2
+      }
+    },
+    {
+      "perm": "Blood Baron of Vizkopa",
+      "final": {
+        "power": 10,
+        "toughness": 10,
+        "abilities": {
+          "$includes": [
+            "Flying"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Guul Draz Vampire",
+      "final": {
+        "power": 1,
+        "toughness": 1,
+        "abilities": {
+          "$excludes": [
+            "Intimidate"
+          ]
+        }
+      }
+    }
+  ]
+}
