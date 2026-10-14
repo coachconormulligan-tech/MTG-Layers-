@@ -1,0 +1,17 @@
+{
+  "name": "Toxrill — creatures you don't control get -1/-1 for each slime counter on them",
+  "notes": "Fixed in _computeForEachCount (engine-compute.js): 'slime counter on them' was read off Toxrill. Memory: project_counters_on_it_and_cast_a_commander_2026-10-14.",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"] },
+    { "add": "Grizzly Bears", "as": "theirs", "controller": "p2" },
+    { "add": "Kitesail Freebooter", "as": "mine" },
+    { "add": "Toxrill, the Corrosive", "as": "tox" },
+    { "call": ["addCounter", "@theirs", "slime", 1] },
+    { "call": ["addCounter", "@mine", "slime", 1] },
+    { "call": ["addCounter", "@tox", "slime", 2] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": 1, "toughness": 1 } },
+    { "perm": "Kitesail Freebooter", "final": { "power": 1, "toughness": 2 } }
+  ]
+}

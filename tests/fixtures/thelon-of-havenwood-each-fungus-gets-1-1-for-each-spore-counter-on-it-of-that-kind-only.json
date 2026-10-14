@@ -1,0 +1,592 @@
+{
+ "name": "Thelon of Havenwood — each Fungus gets +1/+1 for each spore counter on it, of that kind only",
+ "notes": "Fixed in _computeForEachCount (engine-compute.js): 'spore counter on it' counted every counter on Thelon. Now spore counters on the Fungus itself; its +1/+1 counter is not a spore counter. Memory: project_counters_on_it_and_cast_a_commander_2026-10-14.",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Thallid",
+    "as": "thallid"
+   },
+   {
+    "add": "Thelon of Havenwood",
+    "as": "thelon"
+   },
+   {
+    "call": [
+     "addCounter",
+     "@thallid",
+     "spore",
+     2
+    ]
+   },
+   {
+    "call": [
+     "addCounter",
+     "@thallid",
+     "+1/+1",
+     1
+    ]
+   },
+   {
+    "call": [
+     "addCounter",
+     "@thelon",
+     "spore",
+     3
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Thallid",
+   "final": {
+    "power": 4,
+    "toughness": 4
+   }
+  },
+  {
+   "perm": "Thelon of Havenwood",
+   "final": {
+    "power": 2,
+    "toughness": 2
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "69d20d28-76e9-4e6e-95c3-f88c51dfabfd",
+     "oracle_id": "46abaabe-7015-4d82-a5aa-2706b1f51bed",
+     "multiverse_ids": [
+      370352
+     ],
+     "mtgo_id": 48878,
+     "mtgo_foil_id": 48879,
+     "tcgplayer_id": 68236,
+     "cardmarket_id": 261913,
+     "name": "Thallid",
+     "lang": "en",
+     "released_at": "2013-06-07",
+     "uri": "https://api.scryfall.com/cards/69d20d28-76e9-4e6e-95c3-f88c51dfabfd",
+     "scryfall_uri": "https://scryfall.com/card/mma/167/thallid?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T10:52:50Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/6/9/69d20d28-76e9-4e6e-95c3-f88c51dfabfd.jpg?1783939970",
+      "normal": "https://cards.scryfall.io/normal/front/6/9/69d20d28-76e9-4e6e-95c3-f88c51dfabfd.jpg?1783939970",
+      "large": "https://cards.scryfall.io/large/front/6/9/69d20d28-76e9-4e6e-95c3-f88c51dfabfd.jpg?1783939970",
+      "png": "https://cards.scryfall.io/png/front/6/9/69d20d28-76e9-4e6e-95c3-f88c51dfabfd.png?1783939970",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/6/9/69d20d28-76e9-4e6e-95c3-f88c51dfabfd.jpg?1783939970",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/6/9/69d20d28-76e9-4e6e-95c3-f88c51dfabfd.jpg?1783939970",
+      "thumb": "https://cards.scryfall.io/thumb/front/6/9/69d20d28-76e9-4e6e-95c3-f88c51dfabfd.webp?1783939970",
+      "grid": "https://cards.scryfall.io/grid/front/6/9/69d20d28-76e9-4e6e-95c3-f88c51dfabfd.webp?1783939970",
+      "display": "https://cards.scryfall.io/display/front/6/9/69d20d28-76e9-4e6e-95c3-f88c51dfabfd.webp?1783939970",
+      "art": "https://cards.scryfall.io/art/front/6/9/69d20d28-76e9-4e6e-95c3-f88c51dfabfd.webp?1783939970",
+      "crop": "https://cards.scryfall.io/crop/front/6/9/69d20d28-76e9-4e6e-95c3-f88c51dfabfd.webp?1783939970"
+     },
+     "mana_cost": "{G}",
+     "cmc": 1,
+     "type_line": "Creature — Fungus",
+     "oracle_text": "At the beginning of your upkeep, put a spore counter on this creature.\nRemove three spore counters from this creature: Create a 1/1 green Saproling creature token.",
+     "power": "1",
+     "toughness": "1",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "15854c49-14fd-4947-8444-c5ab614cb416",
+       "component": "token",
+       "name": "Saproling",
+       "type_line": "Token Creature — Saproling",
+       "uri": "https://api.scryfall.com/cards/15854c49-14fd-4947-8444-c5ab614cb416"
+      },
+      {
+       "object": "related_card",
+       "id": "69d20d28-76e9-4e6e-95c3-f88c51dfabfd",
+       "component": "combo_piece",
+       "name": "Thallid",
+       "type_line": "Creature — Fungus",
+       "uri": "https://api.scryfall.com/cards/69d20d28-76e9-4e6e-95c3-f88c51dfabfd"
+      }
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "0b7020f2-336d-4706-9ce6-f6710b9ebd5c",
+     "set": "mma",
+     "set_name": "Modern Masters",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/0b7020f2-336d-4706-9ce6-f6710b9ebd5c",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Amma&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/mma?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/69d20d28-76e9-4e6e-95c3-f88c51dfabfd/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A46abaabe-7015-4d82-a5aa-2706b1f51bed&unique=prints",
+     "collector_number": "167",
+     "digital": false,
+     "rarity": "common",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Trevor Claxton",
+     "artist_ids": [
+      "35d39e75-5d6c-4318-9136-38cdfff34a05"
+     ],
+     "illustration_id": "c5e63c9c-3c6d-473a-8af9-ac3260ea6a24",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 9307,
+     "penny_rank": 10886,
+     "prices": {
+      "usd": "0.38",
+      "usd_foil": "2.70",
+      "usd_etched": null,
+      "eur": "0.29",
+      "eur_foil": "0.61",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=370352&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DThallid",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DThallid",
+      "edhrec": "https://edhrec.com/route/?cc=Thallid"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F68236%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=261913&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/48878?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {
+     "spore": 2,
+     "+1/+1": 1
+    },
+    "counterTimestamps": {
+     "spore": 3,
+     "+1/+1": 4
+    },
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "783f1b9f-9866-4ead-96cf-88babf459ce2",
+     "oracle_id": "c673b7b0-c1e7-4bcd-8fe0-66d83f22ecb9",
+     "multiverse_ids": [
+      509603
+     ],
+     "mtgo_id": 86851,
+     "tcgplayer_id": 234015,
+     "cardmarket_id": 547621,
+     "name": "Thelon of Havenwood",
+     "lang": "en",
+     "released_at": "2021-03-19",
+     "uri": "https://api.scryfall.com/cards/783f1b9f-9866-4ead-96cf-88babf459ce2",
+     "scryfall_uri": "https://scryfall.com/card/tsr/238/thelon-of-havenwood?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T07:29:28Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/7/8/783f1b9f-9866-4ead-96cf-88babf459ce2.jpg?1783927768",
+      "normal": "https://cards.scryfall.io/normal/front/7/8/783f1b9f-9866-4ead-96cf-88babf459ce2.jpg?1783927768",
+      "large": "https://cards.scryfall.io/large/front/7/8/783f1b9f-9866-4ead-96cf-88babf459ce2.jpg?1783927768",
+      "png": "https://cards.scryfall.io/png/front/7/8/783f1b9f-9866-4ead-96cf-88babf459ce2.png?1783927768",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/7/8/783f1b9f-9866-4ead-96cf-88babf459ce2.jpg?1783927768",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/7/8/783f1b9f-9866-4ead-96cf-88babf459ce2.jpg?1783927768",
+      "thumb": "https://cards.scryfall.io/thumb/front/7/8/783f1b9f-9866-4ead-96cf-88babf459ce2.webp?1783927768",
+      "grid": "https://cards.scryfall.io/grid/front/7/8/783f1b9f-9866-4ead-96cf-88babf459ce2.webp?1783927768",
+      "display": "https://cards.scryfall.io/display/front/7/8/783f1b9f-9866-4ead-96cf-88babf459ce2.webp?1783927768",
+      "art": "https://cards.scryfall.io/art/front/7/8/783f1b9f-9866-4ead-96cf-88babf459ce2.webp?1783927768",
+      "crop": "https://cards.scryfall.io/crop/front/7/8/783f1b9f-9866-4ead-96cf-88babf459ce2.webp?1783927768"
+     },
+     "mana_cost": "{G}{G}",
+     "cmc": 2,
+     "type_line": "Legendary Creature — Elf Druid",
+     "oracle_text": "Each Fungus creature gets +1/+1 for each spore counter on it.\n{B}{G}, Exile a Fungus card from a graveyard: Put a spore counter on each Fungus on the battlefield.",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "B",
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "11e90d1b-0502-43e6-b056-e24836523c13",
+     "set": "tsr",
+     "set_name": "Time Spiral Remastered",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/11e90d1b-0502-43e6-b056-e24836523c13",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Atsr&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/tsr?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/783f1b9f-9866-4ead-96cf-88babf459ce2/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ac673b7b0-c1e7-4bcd-8fe0-66d83f22ecb9&unique=prints",
+     "collector_number": "238",
+     "digital": false,
+     "rarity": "rare",
+     "flavor_text": "\"The sight of my thallids still thriving is a bittersweet welcome to this cold waste.\"",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Kev Walker",
+     "artist_ids": [
+      "f366a0ee-a0cd-466d-ba6a-90058c7a31a6"
+     ],
+     "illustration_id": "2eefdb6d-31b4-4a7b-b3aa-6f8bb4e40288",
+     "border_color": "black",
+     "frame": "2015",
+     "frame_effects": [
+      "legendary"
+     ],
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 14340,
+     "penny_rank": 12174,
+     "preview": {
+      "source": "Magic C'est Chic",
+      "source_uri": "https://www.youtube.com/watch?v=CFCjTwQi7A4",
+      "previewed_at": "2021-03-03"
+     },
+     "prices": {
+      "usd": "0.41",
+      "usd_foil": "0.59",
+      "usd_etched": null,
+      "eur": "0.20",
+      "eur_foil": "0.55",
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=509603&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DThelon%2Bof%2BHavenwood",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DThelon%2Bof%2BHavenwood",
+      "edhrec": "https://edhrec.com/route/?cc=Thelon+of+Havenwood"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F234015%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=547621&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/86851?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {
+     "spore": 3
+    },
+    "counterTimestamps": {
+     "spore": 5
+    },
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Thallid",
+    "final": {
+     "name": "Thallid",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Fungus"
+     ],
+     "power": 4,
+     "toughness": 4,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "At the beginning of your upkeep, put a spore counter on this creature.",
+      "Remove three spore counters from this creature: Create a 1/1 green Saproling creature token."
+     ],
+     "counters": {
+      "+1/+1": 1,
+      "spore": 2
+     }
+    },
+    "changedBy": {
+     "7c": [
+      "Thelon of Havenwood",
+      "Thallid"
+     ]
+    }
+   },
+   {
+    "perm": "Thelon of Havenwood",
+    "final": {
+     "name": "Thelon of Havenwood",
+     "controller": "player_0",
+     "supertypes": [
+      "Legendary"
+     ],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Elf",
+      "Druid"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "Each Fungus creature gets +1/+1 for each spore counter on it.",
+      "{B}{G}, Exile a Fungus card from a graveyard: Put a spore counter on each Fungus on the battlefield."
+     ],
+     "counters": {
+      "spore": 3
+     }
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "7c": [
+    "Thelon of Havenwood",
+    "Thallid"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Thallid",
+    "layer": "7c",
+    "type": "add_counters",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "count": 1,
+     "counterType": "+1/+1",
+     "powerMod": 1,
+     "toughnessMod": 1
+    }
+   },
+   {
+    "source": "Thelon of Havenwood",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "global",
+    "params": {
+     "basePower": 1,
+     "baseToughness": 1,
+     "forEachDesc": "spore counter on it",
+     "isGraveyardCount": false,
+     "power": 1,
+     "toughness": 1,
+     "userAdjustable": false
+    }
+   }
+  ]
+ }
+}

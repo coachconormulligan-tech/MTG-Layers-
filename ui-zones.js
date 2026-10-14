@@ -181,9 +181,7 @@ function removeCommander(index) {
 }
 
 function modifyCommanderCast(index, delta) {
-  const c = Battlefield.commanders[index];
-  if (!c) return;
-  c.castCount = Math.max(0, (c.castCount || 0) + delta);
+  Battlefield.modifyCommanderCast(index, delta);
   renderCommanderPanel();
 }
 
