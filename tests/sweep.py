@@ -650,7 +650,8 @@ SUBJECT_VERDICTS = ('ok', 'unread', 'wrong side', 'nobody', 'inert', 'error')
 SUBJECT_FOUND = ('unread', 'wrong side', 'nobody', 'error')
 SUBJECT_LABEL = {'controller': 'Controller', 'other': '"Other"', 'color': 'Colour', 'card type': 'Card type',
                  'subtype': 'Subtype', 'token': 'Token', 'legendary': 'Legendary', 'has keyword': 'With keyword',
-                 'size': 'Power / toughness N', 'reach': 'Reaches somebody', 'error': 'Error'}
+                 'size': 'Power / toughness N', 'reach': 'Reaches somebody', 'amount': 'Amount on the board',
+                 'error': 'Error'}
 
 
 def subject_label(k):
@@ -676,7 +677,7 @@ def write_subject(records):
                 findings.append({'card': r['name'], 'rank': ranks.get(r['name']), 'where': s['ctx'], 'sentence': s['text'],
                                  'check': row['k'], 'word': row.get('what', ''), 'verdict': row['verdict'],
                                  'reaches': row.get('hit'), 'tried': row.get('tried'), 'reaches_after': row.get('hitAfter'),
-                                 'stand_in': row.get('standIn'), 'witness': row.get('witness'),
+                                 'stand_in': row.get('standIn'), 'witness': row.get('witness'), 'amount': row.get('amount'),
                                  'error': row.get('msg')})
     findings.sort(key=lambda f: (f['rank'] is None, f['rank'] or 0, f['card'], f['sentence']))
     kinds = sorted({k for k, _ in tally}, key=lambda k: (k != 'side', k))
@@ -693,7 +694,11 @@ def write_subject(records):
          'with that mode picked, a Saga with every chapter reached, and a sentence behind something the site asks '
          'with that answered Yes; a sentence that reaches nobody because no witness has its subtype is judged with a witness '
          'of that subtype added to each side, and failing that with a subtype of the board standing in for it), or '
-         'when the card itself is not one of the group "other" leaves it out of; an inert check '
+         'when the card itself is not one of the group "other" leaves it out of. A sentence whose amount is zero on the board '
+         '("for each charge counter on this artifact", "where X is the number of experience counters you have") is judged '
+         'again with some of that amount set up as its own words ask (counters on the card or on the creatures it reaches, '
+         'experience, commander casts, the Equipment attached, graveyard cards, a permanent of the counted kind, a count '
+         'typed in); a plain +N/+N that still reaches nobody then is a finding ("amount"). An inert check '
          'says nothing either way. A finding means "check this card".\n',
          '%d checks on %d cards; %d findings on %d cards.%s\n' % (
              total, len(cards), len(findings), len({f['card'] for f in findings}),
@@ -713,7 +718,8 @@ def write_subject(records):
             what = ('Error: %s' % f['error']) if f['verdict'] == 'error' else \
                 '%s, %s: %s' % (f['verdict'].capitalize(), subject_label(f['check']).lower(), f['word'])
             sentence = f['sentence'] + (' (judged as: %s)' % f['stand_in'] if f.get('stand_in') else '') + \
-                (' (witness added: %s)' % f['witness'] if f.get('witness') else '')
+                (' (witness added: %s)' % f['witness'] if f.get('witness') else '') + \
+                (' (amount set up: %s)' % f['amount'] if f.get('amount') else '')
             S.append('| %s | %s | %s | %s | %s | %s |' % (f['rank'] or '', md(f['card']), md(what), md(sentence),
                                                     md(f['reaches'] or ''), md(f['tried'] or '')))
     with open(os.path.join(OUT_DIR, 'subject.md'), 'w', encoding='utf-8') as f:
@@ -792,6 +798,8 @@ def main():
                         print('                      judged as: %s' % row['standIn'])
                     if row.get('asked'):
                         print('                      answered Yes: %s' % row['asked'])
+                    if row.get('amount'):
+                        print('                      amount set up: %s' % row['amount'])
                     print('                      reaches: %s' % row.get('hit', row.get('msg', '')))
                     if row.get('tried'):
                         print('                      swapped: %s' % row['tried'])

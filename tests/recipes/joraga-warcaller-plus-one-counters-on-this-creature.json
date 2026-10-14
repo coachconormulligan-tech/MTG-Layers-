@@ -1,0 +1,31 @@
+{
+  "name": "Joraga Warcaller — other Elves get +1/+1 for each +1/+1 counter on this creature",
+  "notes": "Fixed in _computeForEachCount (engine-compute.js): words before a card-type word were all read as one subtype, so the count was 0. Memory: project_suspected_menace_and_for_each_inert_diagnosis_2026-10-14.",
+  "steps": [
+    {
+      "add": "Llanowar Elves",
+      "as": "elves"
+    },
+    {
+      "add": "Joraga Warcaller",
+      "as": "jw"
+    },
+    {
+      "call": [
+        "addCounter",
+        "@jw",
+        "+1/+1",
+        2
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Llanowar Elves",
+      "final": {
+        "power": 3,
+        "toughness": 3
+      }
+    }
+  ]
+}

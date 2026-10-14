@@ -1,0 +1,46 @@
+{
+  "name": "Tears of Rage — X is the number of attacking creatures",
+  "notes": "Fixed in _computeForEachCount (engine-compute.js): words before a card-type word were all read as one subtype, so the count was 0. Memory: project_suspected_menace_and_for_each_inert_diagnosis_2026-10-14.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "a"
+    },
+    {
+      "add": "Llanowar Elves",
+      "as": "b"
+    },
+    {
+      "call": [
+        "toggleAttacking",
+        "@a"
+      ]
+    },
+    {
+      "call": [
+        "toggleAttacking",
+        "@b"
+      ]
+    },
+    {
+      "add": "Tears of Rage",
+      "spell": true
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 4,
+        "toughness": 2
+      }
+    },
+    {
+      "perm": "Llanowar Elves",
+      "final": {
+        "power": 3,
+        "toughness": 1
+      }
+    }
+  ]
+}

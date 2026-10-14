@@ -1,0 +1,35 @@
+{
+  "name": "Faerie Swarm — power and toughness count blue permanents you control",
+  "notes": "Fixed in _computeForEachCount (engine-compute.js): words before a card-type word were all read as one subtype, so the count was 0. Memory: project_suspected_menace_and_for_each_inert_diagnosis_2026-10-14.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Merfolk of the Pearl Trident"
+    },
+    {
+      "add": "Island"
+    },
+    {
+      "add": "Faerie Swarm"
+    },
+    {
+      "add": "Merfolk of the Pearl Trident",
+      "controller": "p2",
+      "as": "theirs"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Faerie Swarm",
+      "final": {
+        "power": 2,
+        "toughness": 2
+      }
+    }
+  ]
+}

@@ -744,6 +744,11 @@ function subjectClauses(text) {
 function subjectParts(text, m, a, v) {
   const S = ' '.repeat(a) + m.slice(a, v), lead = S.search(/\S/);
   if (lead < 0 || S_NOT_SUBJECT.test(S) || S_NOT_GROUP.test(S.slice(lead))) return null;
+  // One permanent, not a group: the card's own power and toughness, or the card by name
+  // ("Faerie Swarm's power and toughness are each equal to …", "Winter Soldier gets +2/+0 …").
+  // (Not "Creatures with power less than this creature's power", a group compared with the card.)
+  const own = S.trim().toLowerCase().match(/^(.+?)'s\s+(?:base\s+)?(?:power|toughness)\b/);
+  if ((own && (/^(?:this \w+|it)$/.test(own[1]) || subjectCardNames.includes(own[1]))) || subjectCardNames.some(n => n && S.trim().toLowerCase() === n)) return null;
   const lower = text.toLowerCase(), parts = [];
   let x;
   const each = (re, fn) => { re.lastIndex = 0; while ((x = re.exec(S))) fn(x); };
@@ -802,6 +807,8 @@ function subjectParts(text, m, a, v) {
   return { parts, side, S };
 }
 
+// The card being probed, by its full and short name, lower case (set by subjectFace).
+let subjectCardNames = [];
 const _capFirst = (t) => t.replace(/^\s*[a-z]/, ch => ch.toUpperCase());
 
 // The singular of a subtype's plural, worked out here and not by the parser's own helper: a
@@ -859,6 +866,93 @@ function subjectWitness(S, ps, st) {
     subs, has(/\btokens?\b/i) ? ['token'] : [], how.filter(h => /^with/.test(h))).join(' ');
   const text = kw ? kw[0].toUpperCase() + kw.slice(1) : '';
   return [name + (kw ? ' with ' + kw : '') + (pt ? ' ' + pt.join('/') : ''), line, colors, text, st, pt];
+}
+
+// A sentence whose amount is zero on the witness board ("+1/+1 for each charge counter on this
+// artifact", "+X/+X, where X is the number of experience counters you have") reaches nobody and
+// says nothing. amountSetup reads the amount's own words, not the parser's, and returns what
+// puts some of it on the board: { early(card), late(perm), what } or null. early runs on the
+// card and the board before the sentence is read (for a fired ability, before it is fired,
+// as X is counted then); late on the permanent the sentence is on (the spell, the card or
+// the fired ability). The setup is the one the words ask for: counters "on this creature" go
+// on the card and counters "on it" on the creatures it reaches, so an amount read off the
+// wrong permanent still reaches nobody.
+const AMOUNT_RE = /\b(?:for each|where (?:X|\d+) is(?: the (?:total )?number of)?|equal to the (?:total )?number of)\s+([^.;"]+)/i;
+const AMOUNT_GRAVEYARD = [
+  { name: 'Graveyard Bear', type_line: 'Creature — Bear', mana_cost: '{1}{G}', cmc: 2, layout: 'normal', oracle_text: '', colors: ['G'], power: '2', toughness: '2' },
+  { name: 'Graveyard Shock', type_line: 'Instant', mana_cost: '{R}', cmc: 1, layout: 'normal', oracle_text: '', colors: ['R'] },
+  { name: 'Graveyard Land', type_line: 'Land', mana_cost: '', cmc: 0, layout: 'normal', oracle_text: '', colors: [] },
+  { name: 'Graveyard Relic', type_line: 'Artifact', mana_cost: '{3}', cmc: 3, layout: 'normal', oracle_text: '', colors: [] },
+];
+function amountSetup(text, shortName) {
+  const am = text.match(AMOUNT_RE);
+  if (!am) return null;
+  const A = am[1], early = [], late = [], what = [];
+  const self = new RegExp("^(?:this \\w+|him|her|" + (shortName ? shortName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') : 'this') + ")\\b", 'i');
+  const c = A.match(/(?:(?:^|\s)([+-]\d+\/[+-]\d+|[a-z]+)\s+)?counters?\s+on\s+(.+)$/i);
+  if (c && !/^(?:experience|poison|energy|rad|lore)$/i.test(c[1] || '') && !/\bamong\b/i.test(A)) {
+    const kind = c[1] && !/^(?:of|the|a|an|each|more)$/i.test(c[1]) ? c[1].toLowerCase() : 'charge';
+    if (/^(?:it|them)\b/i.test(c[2])) {
+      what.push(kind + ' counter on each creature witness');
+      early.push(() => { for (const id of witnessIds) { const p = Battlefield.getPermById(id); if (p && (p.printedTypes || []).includes('Creature')) Battlefield.addCounter(id, kind, 1); } });
+    } else if (self.test(c[2].trim())) {
+      what.push('2 ' + kind + ' counters on the card');
+      early.push((card) => Battlefield.addCounter(card.id, kind, 2));
+    }
+  }
+  if (/\bexperience counters?\b/i.test(A)) {
+    what.push('2 experience counters');
+    early.push(() => { Battlefield.gameState.experienceCounters = 2; for (const pl of Battlefield.players) if (pl.gameState) pl.gameState.experienceCounters = 2; });
+  }
+  if (/\bcast (?:your|a) commander\b/i.test(A)) {
+    what.push('a commander cast twice');
+    early.push(() => Battlefield.commanders.push({ card: null, name: 'Amount Commander', imageUri: null, castCount: 2, linkedPermId: null }));
+  }
+  const att = A.match(/\battached to (.+)$/i);
+  if (att) {
+    // The board's Equipment (the Gear), each side's own, looked up on the board as it is then.
+    const gears = () => witnessIds.filter(id => /Gear/.test((Battlefield.getPermById(id) || {}).name || ''));
+    if (/^(?:it|them)\b/i.test(att[1])) {
+      what.push('the Gear attached to a creature witness');
+      early.push(() => gears().forEach((g, i) => Battlefield.applyEquipAttachment(g, 0, witnessIds[i * (witnessIds.length / 2)])));
+    } else if (self.test(att[1].trim())) {
+      what.push('the Gear attached to the card');
+      early.push((card) => { const g = gears()[0]; if (g) Battlefield.applyEquipAttachment(g, 0, card.id); });
+    }
+  }
+  if (/\bgraveyards?\b/i.test(A)) {
+    what.push('four cards in each graveyard');
+    early.push(() => { for (const pl of Battlefield.players) for (const gc of AMOUNT_GRAVEYARD) Battlefield.addToGraveyard(pl.id, JSON.parse(JSON.stringify(gc))); });
+  }
+  // A permanent the board does not have: one on each side ("Swamp you control", "Vampires you
+  // control", "snow permanents", "Cowards your opponents control").
+  if (!/\bgraveyards?\b|\bcards?\b|\bcounters?\b|\battached\b/i.test(A)) {
+    const made = [];
+    for (const m of A.matchAll(/[A-Z][A-Za-z'\-]*/g)) {
+      let sing = m[0], kind = _subtypeOf(sing);
+      if (!kind) { sing = _ownSingular(m[0]); kind = _subtypeOf(sing); }
+      if (!kind || W_CARDS.some(w => w[1].endsWith('— ' + sing))) continue;
+      const basic = kind === 'landTypes' && ['Plains', 'Island', 'Swamp', 'Mountain', 'Forest'].includes(sing);
+      made.push([sing, { creatureTypes: 'Creature', landTypes: basic ? 'Basic Land' : 'Land', artifactTypes: 'Artifact', enchantmentTypes: 'Enchantment' }[kind] + ' — ' + sing, kind === 'creatureTypes' ? ['B'] : [], '']);
+    }
+    if (/(?<!non)\bsnow\b/i.test(A)) made.push(['Snow Clue', 'Snow Artifact — Clue', [], '']);
+    if (made.length) {
+      what.push(made.map(w => w[1]).join('; ') + ' on each side');
+      early.push(() => {
+        const sides = Battlefield.players.map(pl => pl.id), was = Battlefield.activePlayerId;
+        for (const side of sides) { Battlefield.activePlayerId = side; for (const w of made) Battlefield.addPermanent(witnessCard(w, side), { suppressPrompt: true, controller: side, owner: side }); }
+        Battlefield.activePlayerId = was;
+      });
+    }
+  }
+  // A count the site asks for by hand ("for each card discarded this way").
+  late.push((p) => { if (Battlefield.effects.some(e => e.sourceId === p.id && e.params && e.params.byHandCount)) { Battlefield.setCDAValue(p.id, 2); what.includes('a count of 2 typed in') || what.push('a count of 2 typed in'); } });
+  const run = (fns, p) => { for (const f of fns) f(p); Battlefield._invalidate(); };
+  const setup = (p) => { run(early, p); run(late, p); };
+  setup.early = (card) => run(early, card);
+  setup.late = (p) => run(late, p);
+  setup.what = what;
+  return setup;
 }
 
 // A sentence a made-to-fit witness must show: its subject is made only of words the witness
@@ -1022,6 +1116,7 @@ function subjectFace(card, faceIndex) {
   // A legend's short name that is also a creature type ("Fear Gas — Wraith can't be blocked",
   // Wraith, Vicious Vigilante) is the card, not a group: its subtype check says nothing.
   const shortName = (card.name || '').split(/,| \/\/ /)[0].trim().toLowerCase();
+  subjectCardNames = [shortName, (_resolveCardFace(card, faceIndex).name || '').toLowerCase()];
   const notOwnName = (rows) => rows.filter(r => !(r.k === 'subtype' && String(r.what || '').toLowerCase() === shortName));
   const probe = (ctx, text, sigOf, labelsOf) => {
     const settled = (r) => r.verdict !== 'inert' && r.verdict !== 'error';
@@ -1040,6 +1135,33 @@ function subjectFace(card, faceIndex) {
         if (again.length !== rows.length) continue;
         rows = rows.map((r, i) => !settled(r) && again[i].k === r.k && settled(again[i]) ? Object.assign({}, again[i], { asked: ask.join(' + ') }) : r);
         if (rows.every(settled)) break;
+      }
+    }
+    // Still nobody, and the sentence has an amount: judged again with some of it on the board.
+    const amt = rows.length && !rows.every(settled) ? amountSetup(text, shortName) : null;
+    if (amt) {
+      let again = [];
+      try { again = notOwnName(probeSubject(text, (t) => sigOf(t, amt))); } catch (e) { again = []; }
+      // ("When you do, each other creature gets -X/-X …, where X is the number of cards exiled
+      // this way": the amount and what the site asks, together.)
+      let asked = [];
+      try { asked = [...new Set(labelsOf().map(l => l[1]))]; } catch (e) { /* nothing is asked */ }
+      if (asked.length && again.length === rows.length && !again.some(settled)) {
+        const both = (p) => { amt(p); for (const [slot, label] of toggles(p)) if (asked.includes(label)) Battlefield.setAdditionalCostPaid(p.id, true, slot); };
+        both.early = amt.early;
+        both.late = (p) => { amt.late(p); for (const [slot, label] of toggles(p)) if (asked.includes(label)) Battlefield.setAdditionalCostPaid(p.id, true, slot); };
+        try {
+          const withAsked = notOwnName(probeSubject(text, (t) => sigOf(t, both)));
+          if (withAsked.length === rows.length) again = withAsked.map(r => Object.assign(r, { asked: asked.join(' + ') }));
+        } catch (e) { /* keep the first answer */ }
+      }
+      if (again.length === rows.length && amt.what.length) {
+        rows = rows.map((r, i) => !settled(r) && again[i].k === r.k && settled(again[i]) ? Object.assign({}, again[i], { amount: amt.what.join('; ') }) : r);
+        // A plain +N/+N by an amount that the board now has, and still nobody is reached: the
+        // amount was not read, or read off the wrong permanent.
+        const side = rows.find(r => /^side: /.test(r.k));
+        if (!rows.some(settled) && side && /\bgets? [+-](?:\d+|X)\/[+-](?:\d+|X)\b/i.test(text) && !/—/.test(text))
+          rows.push({ k: 'amount', what: side.what, verdict: 'nobody', hit: 'nothing', amount: amt.what.join('; ') });
       }
     }
     if (rows.length) out.push({ ctx, text, rows });
@@ -1085,8 +1207,11 @@ function subjectFace(card, faceIndex) {
             const lead = unit.slice(s.start, s.end).search(/\S/), at = s.start + Math.max(0, lead);
             probe(kind, unit.slice(at, s.end), (t, setup) => {
               const u = unit.slice(0, at) + t + unit.slice(s.end);
-              onBoard();
-              return fireAbility(base, withText(ab, unit, u), kind, u, states, null, (pseudo) => { if (setup) setup(pseudo); return boardSig(base.id); });
+              // An amount set up on the board is there before the ability is fired: X is counted then.
+              let at0;
+              if (setup && setup.early) { base = addCard(withOracle(card, faceIndex, W), faceIndex, isSpell); setup.early(base); at0 = Battlefield.getAllFinalStates(); boardOf = null; }
+              else { onBoard(); at0 = states; }
+              return fireAbility(base, withText(ab, unit, u), kind, u, at0, null, (pseudo) => { if (setup) (setup.late || setup)(pseudo); return boardSig(base.id); });
             }, () => { onBoard(); return fireAbility(base, ab, kind, unit, states, null, toggles); });
           }
         }

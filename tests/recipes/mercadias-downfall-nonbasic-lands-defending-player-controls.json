@@ -1,0 +1,46 @@
+{
+  "name": "Mercadia's Downfall — counts the defending player's nonbasic lands only",
+  "notes": "Fixed in _computeForEachCount (engine-compute.js): words before a card-type word were all read as one subtype, so the count was 0. Memory: project_suspected_menace_and_for_each_inert_diagnosis_2026-10-14.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Command Tower",
+      "controller": "p2"
+    },
+    {
+      "add": "Forest",
+      "controller": "p2"
+    },
+    {
+      "add": "Command Tower"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "call": [
+        "toggleAttacking",
+        "@bears"
+      ]
+    },
+    {
+      "add": "Mercadia's Downfall",
+      "spell": true
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 3,
+        "toughness": 2
+      }
+    }
+  ]
+}

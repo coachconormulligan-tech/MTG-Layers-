@@ -1,0 +1,35 @@
+{
+  "name": "Armament Master — Equipment attached to this creature is the Master's, not the Kor's",
+  "notes": "Fixed in _computeForEachCount (engine-compute.js): words before a card-type word were all read as one subtype, so the count was 0. Memory: project_suspected_menace_and_for_each_inert_diagnosis_2026-10-14.",
+  "steps": [
+    {
+      "add": "Kor Skyfisher",
+      "as": "kor"
+    },
+    {
+      "add": "Armament Master",
+      "as": "am"
+    },
+    {
+      "add": "Bonesplitter",
+      "as": "bs"
+    },
+    {
+      "call": [
+        "applyEquipAttachment",
+        "@bs",
+        0,
+        "@am"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Kor Skyfisher",
+      "final": {
+        "power": 4,
+        "toughness": 5
+      }
+    }
+  ]
+}
