@@ -91,12 +91,12 @@ function _gsOfController(srcId, state, allStates) {
   const pl = src && (Battlefield.players || []).find(p => p.id === src.controller);
   return pl && pl.gameState ? pl.gameState : (Battlefield.gameState || null);
 }
-/* Game states of the players a hand condition names: "an opponent has no cards in hand" (Guul
-   Draz Specter) is any opponent of the source's controller, "a player" / "each player" any or every
+/* Game states of the players a hand or life condition names: "an opponent has no cards in hand"
+   (Guul Draz Specter) is any opponent of the source's controller, "a player" / "each player" any or every
    player; otherwise the source's controller. Returns { states, every } or null with no board. */
 function _gsOfNamedPlayers(ct, srcId, state, allStates) {
   if (typeof Battlefield === 'undefined') return null;
-  const m = ct.match(/\b(an|each) (opponent|player) (?:has|have)\b/);
+  const m = ct.match(/\b(an?|each) (opponent|player) (?:has|have)\b/);
   if (!m) { const gs = _gsOfController(srcId, state, allStates); return gs ? { states: [gs], every: true } : null; }
   const src = (allStates && allStates.get(srcId)) || Battlefield.getPermById(srcId) || state;
   const you = src ? src.controller : Battlefield.activePlayerId;
@@ -359,6 +359,19 @@ const CONDITION_PARSERS = [
     if (!m) return null;
     const threshold = _wordThresh(m[1]);
     return (state, allStates) => { const gs = _gsOfController(srcId, state, allStates); return gs ? gs.currentLife <= threshold : false; };
+  },
+  // "an opponent has 10 or less life" (Bloodghast, Ruthless Cullblade), "a player has 13 or less
+  // life", "each player has …": the life total of any or every such player (_gsOfNamedPlayers).
+  // Must precede the generic "has [ability]" branch, which would read "10 or less life" as an ability.
+  (ct, srcId) => {
+    const m = ct.match(/\b(?:an|a|each) (?:opponent|player) has (\w+)\s+or\s+(more|less|fewer)\s+life\b/);
+    if (!m) return null;
+    const threshold = _wordThresh(m[1]), atLeast = m[2] === 'more';
+    return (state, allStates) => {
+      const r = _anyOrEvery(_gsOfNamedPlayers(ct, srcId, state, allStates),
+        gs => atLeast ? gs.currentLife >= threshold : gs.currentLife <= threshold);
+      return r === null ? false : r;
+    };
   },
   // "you have [at least] N life more than your starting life total" (Leyline of Hope).
   (ct, srcId) => {
@@ -1070,7 +1083,7 @@ function parseCardEffects(permanent, card, opts = {}) {
     }
     // Compound "X and Y" — split when "and" is followed by another condition-like
     // phrase, recurse on each half, AND the resulting predicates.
-    const andParts = ct.split(/\s+and\s+(?=(?:it(?:\s+is|'s)?\s|this\s|you\s|there|during|on\s|\w+\s+(?:is|has)\s))/i);
+    const andParts = ct.split(/\s+and\s+(?=(?:it(?:\s+is|'s)?\s|this\s|you\s|there|during|on\s|(?:an?|each)\s+(?:opponent|player)\s+has\s|\w+\s+(?:is|has)\s))/i);
     if (andParts.length >= 2) {
       const subs = andParts.map(p => _parseCondition(p.trim())).filter(Boolean);
       if (subs.length >= 2) return (state, allStates) => subs.every(c => c(state, allStates));

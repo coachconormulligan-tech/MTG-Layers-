@@ -1,0 +1,13 @@
+{
+  "name": "Blood Baron of Vizkopa — \"you have 30 or more life and an opponent has 10 or less life\" reads both halves",
+  "notes": "The 'X and Y' condition split did not recognise 'an opponent has', so the whole condition went to the 'you have N or more life' branch and the opponent half was dropped: at 30 life Blood Baron got +6/+6 and flying with every opponent at 20. Player 1 30 life, Player 2 20: Blood Baron stays 4/4 without flying. The positive case is in opponent-life-conditions. Memory: project_opponent_life_conditions_2026-10-14.",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"] },
+    { "call": ["setActivePlayer", "p1"] },
+    { "call": ["updateGameState", "currentLife", 30] },
+    { "add": "Blood Baron of Vizkopa", "controller": "p1" }
+  ],
+  "asserts": [
+    { "perm": "Blood Baron of Vizkopa", "final": { "power": 4, "toughness": 4, "abilities": { "$excludes": ["Flying"] } } }
+  ]
+}
