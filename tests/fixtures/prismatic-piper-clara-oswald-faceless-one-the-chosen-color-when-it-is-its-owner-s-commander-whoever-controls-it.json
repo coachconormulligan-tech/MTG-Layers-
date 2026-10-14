@@ -1,0 +1,1346 @@
+{
+ "name": "Prismatic Piper, Clara Oswald, Faceless One — the chosen color when it is its owner's commander, whoever controls it",
+ "notes": "Conor, 2026-10-14: these cards are the color their owner chose if the card is the owner's commander. 'If The Prismatic Piper is your commander, choose a color before the game begins. The Prismatic Piper is the chosen color.' The 'your commander' condition (cards-parser.js CONDITION_PARSERS) is now Battlefield.isCommander alone, which reads the owner's command zone; for a while it also required the source's controller to own it, so a stolen Piper lost its color. Player 2's commanders are The Prismatic Piper (chose red) and Clara Oswald (chose blue); Player 1 takes the Piper with Control Magic and it stays red; Clara is blue (read from Player 1's tab). Player 1's Faceless One (chose green) is not Player 1's commander and stays colorless. Memory: project_commander_identity_by_owner_2026-10-14.",
+ "recipe": {
+  "steps": [
+   {
+    "call": [
+     "addPlayer",
+     "Player 2"
+    ]
+   },
+   {
+    "call": [
+     "setActivePlayer",
+     "p2"
+    ]
+   },
+   {
+    "call": [
+     "addCommander",
+     "card:The Prismatic Piper"
+    ]
+   },
+   {
+    "call": [
+     "addCommander",
+     "card:Clara Oswald"
+    ]
+   },
+   {
+    "add": "The Prismatic Piper",
+    "as": "piper",
+    "controller": "p2"
+   },
+   {
+    "call": [
+     "setChosenColor",
+     "@piper",
+     "Red"
+    ]
+   },
+   {
+    "add": "Clara Oswald",
+    "as": "clara",
+    "controller": "p2"
+   },
+   {
+    "call": [
+     "setChosenColor",
+     "@clara",
+     "Blue"
+    ]
+   },
+   {
+    "add": "Faceless One",
+    "as": "faceless",
+    "controller": "p1"
+   },
+   {
+    "call": [
+     "setChosenColor",
+     "@faceless",
+     "Green"
+    ]
+   },
+   {
+    "add": "Control Magic",
+    "as": "steal",
+    "controller": "p1"
+   },
+   {
+    "call": [
+     "setTarget",
+     "@steal",
+     "@piper"
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "The Prismatic Piper",
+   "final": {
+    "controller": "player_0",
+    "colors": [
+     "R"
+    ]
+   }
+  },
+  {
+   "perm": "Clara Oswald",
+   "final": {
+    "colors": [
+     "U"
+    ]
+   }
+  },
+  {
+   "perm": "Faceless One",
+   "final": {
+    "colors": {
+     "$excludes": [
+      "G"
+     ]
+    }
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "c78c2713-39e7-4a6e-a132-027099a89665",
+     "oracle_id": "b2aeee90-7b8d-47a6-9167-cc21f7fbfd43",
+     "multiverse_ids": [
+      629305
+     ],
+     "mtgo_id": 114631,
+     "tcgplayer_id": 503412,
+     "cardmarket_id": 721739,
+     "name": "The Prismatic Piper",
+     "lang": "en",
+     "released_at": "2023-08-04",
+     "uri": "https://api.scryfall.com/cards/c78c2713-39e7-4a6e-a132-027099a89665",
+     "scryfall_uri": "https://scryfall.com/card/cmm/1/the-prismatic-piper?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T04:08:51Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/c/7/c78c2713-39e7-4a6e-a132-027099a89665.jpg?1783915731",
+      "normal": "https://cards.scryfall.io/normal/front/c/7/c78c2713-39e7-4a6e-a132-027099a89665.jpg?1783915731",
+      "large": "https://cards.scryfall.io/large/front/c/7/c78c2713-39e7-4a6e-a132-027099a89665.jpg?1783915731",
+      "png": "https://cards.scryfall.io/png/front/c/7/c78c2713-39e7-4a6e-a132-027099a89665.png?1783915731",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/c/7/c78c2713-39e7-4a6e-a132-027099a89665.jpg?1783915731",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/c/7/c78c2713-39e7-4a6e-a132-027099a89665.jpg?1783915731",
+      "thumb": "https://cards.scryfall.io/thumb/front/c/7/c78c2713-39e7-4a6e-a132-027099a89665.webp?1783915731",
+      "grid": "https://cards.scryfall.io/grid/front/c/7/c78c2713-39e7-4a6e-a132-027099a89665.webp?1783915731",
+      "display": "https://cards.scryfall.io/display/front/c/7/c78c2713-39e7-4a6e-a132-027099a89665.webp?1783915731",
+      "art": "https://cards.scryfall.io/art/front/c/7/c78c2713-39e7-4a6e-a132-027099a89665.webp?1783915731",
+      "crop": "https://cards.scryfall.io/crop/front/c/7/c78c2713-39e7-4a6e-a132-027099a89665.webp?1783915731"
+     },
+     "mana_cost": "{5}",
+     "cmc": 5,
+     "type_line": "Legendary Creature — Shapeshifter",
+     "oracle_text": "If The Prismatic Piper is your commander, choose a color before the game begins. The Prismatic Piper is the chosen color.\nPartner (You can have two commanders if both have partner.)",
+     "power": "3",
+     "toughness": "3",
+     "colors": [],
+     "color_identity": [],
+     "keywords": [
+      "Partner"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "cd05036f-2698-43e6-a48e-5c8d82f0a551",
+     "set": "cmm",
+     "set_name": "Commander Masters",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/cd05036f-2698-43e6-a48e-5c8d82f0a551",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Acmm&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/cmm?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/c78c2713-39e7-4a6e-a132-027099a89665/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ab2aeee90-7b8d-47a6-9167-cc21f7fbfd43&unique=prints",
+     "collector_number": "1",
+     "digital": false,
+     "rarity": "special",
+     "flavor_text": "It is everything and nothing.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Seb McKinnon",
+     "artist_ids": [
+      "ad4caca0-8d89-44ce-a1a6-d5ca905bd6fb"
+     ],
+     "illustration_id": "2c5e6f58-2fb7-4e04-940c-08443748c060",
+     "border_color": "black",
+     "frame": "2015",
+     "frame_effects": [
+      "legendary"
+     ],
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 28378,
+     "prices": {
+      "usd": "0.21",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.07",
+      "eur_foil": null,
+      "tix": "0.30"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=629305&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DThe%2BPrismatic%2BPiper",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DThe%2BPrismatic%2BPiper",
+      "edhrec": "https://edhrec.com/route/?cc=The+Prismatic+Piper"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F503412%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=721739&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/114631?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_1",
+    "controller": "player_1",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": "Red",
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "9a1ee042-6713-4e9e-9901-9b94d99d33f1",
+     "oracle_id": "542eae01-058d-4959-92a8-49d6b1e33ecd",
+     "multiverse_ids": [
+      634704
+     ],
+     "tcgplayer_id": 518910,
+     "cardmarket_id": 738485,
+     "name": "Clara Oswald",
+     "lang": "en",
+     "released_at": "2023-10-13",
+     "uri": "https://api.scryfall.com/cards/9a1ee042-6713-4e9e-9901-9b94d99d33f1",
+     "scryfall_uri": "https://scryfall.com/card/who/9/clara-oswald?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T03:51:25Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/9/a/9a1ee042-6713-4e9e-9901-9b94d99d33f1.jpg?1783914685",
+      "normal": "https://cards.scryfall.io/normal/front/9/a/9a1ee042-6713-4e9e-9901-9b94d99d33f1.jpg?1783914685",
+      "large": "https://cards.scryfall.io/large/front/9/a/9a1ee042-6713-4e9e-9901-9b94d99d33f1.jpg?1783914685",
+      "png": "https://cards.scryfall.io/png/front/9/a/9a1ee042-6713-4e9e-9901-9b94d99d33f1.png?1783914685",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/9/a/9a1ee042-6713-4e9e-9901-9b94d99d33f1.jpg?1783914685",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/9/a/9a1ee042-6713-4e9e-9901-9b94d99d33f1.jpg?1783914685",
+      "thumb": "https://cards.scryfall.io/thumb/front/9/a/9a1ee042-6713-4e9e-9901-9b94d99d33f1.webp?1783914685",
+      "grid": "https://cards.scryfall.io/grid/front/9/a/9a1ee042-6713-4e9e-9901-9b94d99d33f1.webp?1783914685",
+      "display": "https://cards.scryfall.io/display/front/9/a/9a1ee042-6713-4e9e-9901-9b94d99d33f1.webp?1783914685",
+      "art": "https://cards.scryfall.io/art/front/9/a/9a1ee042-6713-4e9e-9901-9b94d99d33f1.webp?1783914685",
+      "crop": "https://cards.scryfall.io/crop/front/9/a/9a1ee042-6713-4e9e-9901-9b94d99d33f1.webp?1783914685"
+     },
+     "mana_cost": "{6}",
+     "cmc": 6,
+     "type_line": "Legendary Creature — Human Advisor",
+     "oracle_text": "Impossible Girl — If Clara Oswald is your commander, choose a color before the game begins. Clara Oswald is the chosen color.\nIf a triggered ability of a Doctor you control triggers, that ability triggers an additional time.\nDoctor's companion (You can have two commanders if the other is the Doctor.)",
+     "power": "2",
+     "toughness": "6",
+     "colors": [],
+     "color_identity": [],
+     "keywords": [
+      "Impossible Girl",
+      "Doctor's companion"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "efdfdd99-cee7-4c11-a5e9-03d60f88bdd6",
+     "set": "who",
+     "set_name": "Doctor Who",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/efdfdd99-cee7-4c11-a5e9-03d60f88bdd6",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Awho&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/who?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/9a1ee042-6713-4e9e-9901-9b94d99d33f1/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A542eae01-058d-4959-92a8-49d6b1e33ecd&unique=prints",
+     "collector_number": "9",
+     "digital": false,
+     "rarity": "rare",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Marta Nael",
+     "artist_ids": [
+      "266ab861-ed64-4ba5-865c-f18758421cc3"
+     ],
+     "illustration_id": "f5de3244-6cd8-4c67-bc07-7699c9fad5c7",
+     "border_color": "black",
+     "frame": "2015",
+     "frame_effects": [
+      "legendary"
+     ],
+     "security_stamp": "triangle",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "universesbeyond"
+     ],
+     "edhrec_rank": 13370,
+     "preview": {
+      "source": "Wizards of the Coast",
+      "source_uri": "",
+      "previewed_at": "2023-10-03"
+     },
+     "prices": {
+      "usd": "0.32",
+      "usd_foil": "2.30",
+      "usd_etched": null,
+      "eur": "0.44",
+      "eur_foil": "0.94",
+      "tix": null
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=634704&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DClara%2BOswald",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DClara%2BOswald",
+      "edhrec": "https://edhrec.com/route/?cc=Clara+Oswald"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F518910%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=738485&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Clara+Oswald&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_1",
+    "controller": "player_1",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": "Blue",
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "25564fba-5765-457b-8dd3-f26b877221b8",
+     "oracle_id": "ef220170-c01a-4ca5-b887-f248c50227ee",
+     "multiverse_ids": [
+      570184
+     ],
+     "tcgplayer_id": 272628,
+     "cardmarket_id": 658695,
+     "name": "Faceless One",
+     "lang": "en",
+     "released_at": "2022-06-10",
+     "uri": "https://api.scryfall.com/cards/25564fba-5765-457b-8dd3-f26b877221b8",
+     "scryfall_uri": "https://scryfall.com/card/clb/1/faceless-one?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T06:07:02Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/2/5/25564fba-5765-457b-8dd3-f26b877221b8.jpg?1783922822",
+      "normal": "https://cards.scryfall.io/normal/front/2/5/25564fba-5765-457b-8dd3-f26b877221b8.jpg?1783922822",
+      "large": "https://cards.scryfall.io/large/front/2/5/25564fba-5765-457b-8dd3-f26b877221b8.jpg?1783922822",
+      "png": "https://cards.scryfall.io/png/front/2/5/25564fba-5765-457b-8dd3-f26b877221b8.png?1783922822",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/2/5/25564fba-5765-457b-8dd3-f26b877221b8.jpg?1783922822",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/2/5/25564fba-5765-457b-8dd3-f26b877221b8.jpg?1783922822",
+      "thumb": "https://cards.scryfall.io/thumb/front/2/5/25564fba-5765-457b-8dd3-f26b877221b8.webp?1783922822",
+      "grid": "https://cards.scryfall.io/grid/front/2/5/25564fba-5765-457b-8dd3-f26b877221b8.webp?1783922822",
+      "display": "https://cards.scryfall.io/display/front/2/5/25564fba-5765-457b-8dd3-f26b877221b8.webp?1783922822",
+      "art": "https://cards.scryfall.io/art/front/2/5/25564fba-5765-457b-8dd3-f26b877221b8.webp?1783922822",
+      "crop": "https://cards.scryfall.io/crop/front/2/5/25564fba-5765-457b-8dd3-f26b877221b8.webp?1783922822"
+     },
+     "mana_cost": "{5}",
+     "cmc": 5,
+     "type_line": "Legendary Enchantment Creature — Background",
+     "oracle_text": "If Faceless One is your commander, choose a color before the game begins. Faceless One is the chosen color.\nChoose a Background (You can have a Background as a second commander.)",
+     "power": "3",
+     "toughness": "3",
+     "colors": [],
+     "color_identity": [],
+     "keywords": [
+      "Choose a background"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "5e4c3fe8-fd57-4b20-ad56-c03790a16cea",
+     "set": "clb",
+     "set_name": "Commander Legends: Battle for Baldur's Gate",
+     "set_type": "draft_innovation",
+     "set_uri": "https://api.scryfall.com/sets/5e4c3fe8-fd57-4b20-ad56-c03790a16cea",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aclb&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/clb?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/25564fba-5765-457b-8dd3-f26b877221b8/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aef220170-c01a-4ca5-b887-f248c50227ee&unique=prints",
+     "collector_number": "1",
+     "digital": false,
+     "rarity": "special",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Gaboleps",
+     "artist_ids": [
+      "0c37cdfe-5651-4ae6-a3c8-e7153509f970"
+     ],
+     "illustration_id": "354229a3-a99f-478f-b5bf-ed7a05e6c00a",
+     "border_color": "black",
+     "frame": "2015",
+     "frame_effects": [
+      "legendary",
+      "enchantment"
+     ],
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 25999,
+     "preview": {
+      "source": "Wizards of the Coast",
+      "source_uri": "https://www.twitch.tv/videos/1486418408",
+      "previewed_at": "2022-05-17"
+     },
+     "prices": {
+      "usd": "0.16",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.12",
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=570184&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DFaceless%2BOne",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DFaceless%2BOne",
+      "edhrec": "https://edhrec.com/route/?cc=Faceless+One"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F272628%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=658695&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Faceless+One&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": "Green",
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "84992800-9bad-4598-afd4-f1e59d2e0956",
+     "oracle_id": "cd0d7141-46d2-4aa3-bc77-6b3b4513803e",
+     "multiverse_ids": [
+      430253
+     ],
+     "tcgplayer_id": 132002,
+     "cardmarket_id": 297981,
+     "name": "Control Magic",
+     "lang": "en",
+     "released_at": "2017-06-09",
+     "uri": "https://api.scryfall.com/cards/84992800-9bad-4598-afd4-f1e59d2e0956",
+     "scryfall_uri": "https://scryfall.com/card/cma/34/control-magic?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T09:51:37Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/8/4/84992800-9bad-4598-afd4-f1e59d2e0956.jpg?1783936297",
+      "normal": "https://cards.scryfall.io/normal/front/8/4/84992800-9bad-4598-afd4-f1e59d2e0956.jpg?1783936297",
+      "large": "https://cards.scryfall.io/large/front/8/4/84992800-9bad-4598-afd4-f1e59d2e0956.jpg?1783936297",
+      "png": "https://cards.scryfall.io/png/front/8/4/84992800-9bad-4598-afd4-f1e59d2e0956.png?1783936297",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/8/4/84992800-9bad-4598-afd4-f1e59d2e0956.jpg?1783936297",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/8/4/84992800-9bad-4598-afd4-f1e59d2e0956.jpg?1783936297",
+      "thumb": "https://cards.scryfall.io/thumb/front/8/4/84992800-9bad-4598-afd4-f1e59d2e0956.webp?1783936297",
+      "grid": "https://cards.scryfall.io/grid/front/8/4/84992800-9bad-4598-afd4-f1e59d2e0956.webp?1783936297",
+      "display": "https://cards.scryfall.io/display/front/8/4/84992800-9bad-4598-afd4-f1e59d2e0956.webp?1783936297",
+      "art": "https://cards.scryfall.io/art/front/8/4/84992800-9bad-4598-afd4-f1e59d2e0956.webp?1783936297",
+      "crop": "https://cards.scryfall.io/crop/front/8/4/84992800-9bad-4598-afd4-f1e59d2e0956.webp?1783936297"
+     },
+     "mana_cost": "{2}{U}{U}",
+     "cmc": 4,
+     "type_line": "Enchantment — Aura",
+     "oracle_text": "Enchant creature\nYou control enchanted creature.",
+     "colors": [
+      "U"
+     ],
+     "color_identity": [
+      "U"
+     ],
+     "keywords": [
+      "Enchant"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "fd4d8463-0156-4c60-a40e-778762bb90e4",
+     "set": "cma",
+     "set_name": "Commander Anthology",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/fd4d8463-0156-4c60-a40e-778762bb90e4",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Acma&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/cma?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/84992800-9bad-4598-afd4-f1e59d2e0956/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Acd0d7141-46d2-4aa3-bc77-6b3b4513803e&unique=prints",
+     "collector_number": "34",
+     "digital": false,
+     "rarity": "uncommon",
+     "flavor_text": "\"Do as I think, not as I do.\"\n—Jace Beleren",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Clint Cearley",
+     "artist_ids": [
+      "03b75350-d5a0-4e3a-b3b4-8d4a5554385b"
+     ],
+     "illustration_id": "dbf4fcd3-2dfb-4e7e-aed5-8335d4ba7aff",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 6988,
+     "penny_rank": 2047,
+     "prices": {
+      "usd": "0.79",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.96",
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=430253&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DControl%2BMagic",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DControl%2BMagic",
+      "edhrec": "https://edhrec.com/route/?cc=Control+Magic"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F132002%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=297981&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Control+Magic&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 4,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": "perm_1",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 5,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   },
+   {
+    "id": "player_1",
+    "name": "Player 2",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": false,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [
+     {
+      "card": {
+       "object": "card",
+       "id": "c78c2713-39e7-4a6e-a132-027099a89665",
+       "oracle_id": "b2aeee90-7b8d-47a6-9167-cc21f7fbfd43",
+       "multiverse_ids": [
+        629305
+       ],
+       "mtgo_id": 114631,
+       "tcgplayer_id": 503412,
+       "cardmarket_id": 721739,
+       "name": "The Prismatic Piper",
+       "lang": "en",
+       "released_at": "2023-08-04",
+       "uri": "https://api.scryfall.com/cards/c78c2713-39e7-4a6e-a132-027099a89665",
+       "scryfall_uri": "https://scryfall.com/card/cmm/1/the-prismatic-piper?utm_source=api",
+       "layout": "normal",
+       "highres_image": true,
+       "image_status": "highres_scan",
+       "image_updated_at": "2026-07-13T04:08:51Z",
+       "image_uris": {
+        "small": "https://cards.scryfall.io/small/front/c/7/c78c2713-39e7-4a6e-a132-027099a89665.jpg?1783915731",
+        "normal": "https://cards.scryfall.io/normal/front/c/7/c78c2713-39e7-4a6e-a132-027099a89665.jpg?1783915731",
+        "large": "https://cards.scryfall.io/large/front/c/7/c78c2713-39e7-4a6e-a132-027099a89665.jpg?1783915731",
+        "png": "https://cards.scryfall.io/png/front/c/7/c78c2713-39e7-4a6e-a132-027099a89665.png?1783915731",
+        "art_crop": "https://cards.scryfall.io/art_crop/front/c/7/c78c2713-39e7-4a6e-a132-027099a89665.jpg?1783915731",
+        "border_crop": "https://cards.scryfall.io/border_crop/front/c/7/c78c2713-39e7-4a6e-a132-027099a89665.jpg?1783915731",
+        "thumb": "https://cards.scryfall.io/thumb/front/c/7/c78c2713-39e7-4a6e-a132-027099a89665.webp?1783915731",
+        "grid": "https://cards.scryfall.io/grid/front/c/7/c78c2713-39e7-4a6e-a132-027099a89665.webp?1783915731",
+        "display": "https://cards.scryfall.io/display/front/c/7/c78c2713-39e7-4a6e-a132-027099a89665.webp?1783915731",
+        "art": "https://cards.scryfall.io/art/front/c/7/c78c2713-39e7-4a6e-a132-027099a89665.webp?1783915731",
+        "crop": "https://cards.scryfall.io/crop/front/c/7/c78c2713-39e7-4a6e-a132-027099a89665.webp?1783915731"
+       },
+       "mana_cost": "{5}",
+       "cmc": 5,
+       "type_line": "Legendary Creature — Shapeshifter",
+       "oracle_text": "If The Prismatic Piper is your commander, choose a color before the game begins. The Prismatic Piper is the chosen color.\nPartner (You can have two commanders if both have partner.)",
+       "power": "3",
+       "toughness": "3",
+       "colors": [],
+       "color_identity": [],
+       "keywords": [
+        "Partner"
+       ],
+       "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "not_legal",
+        "timeless": "not_legal",
+        "gladiator": "not_legal",
+        "pioneer": "not_legal",
+        "modern": "not_legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "not_legal",
+        "competitivebrawl": "not_legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "not_legal"
+       },
+       "games": [
+        "paper",
+        "mtgo"
+       ],
+       "reserved": false,
+       "game_changer": false,
+       "foil": false,
+       "nonfoil": true,
+       "finishes": [
+        "nonfoil"
+       ],
+       "oversized": false,
+       "promo": false,
+       "reprint": true,
+       "variation": false,
+       "set_id": "cd05036f-2698-43e6-a48e-5c8d82f0a551",
+       "set": "cmm",
+       "set_name": "Commander Masters",
+       "set_type": "masters",
+       "set_uri": "https://api.scryfall.com/sets/cd05036f-2698-43e6-a48e-5c8d82f0a551",
+       "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Acmm&unique=prints",
+       "scryfall_set_uri": "https://scryfall.com/sets/cmm?utm_source=api",
+       "rulings_uri": "https://api.scryfall.com/cards/c78c2713-39e7-4a6e-a132-027099a89665/rulings",
+       "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ab2aeee90-7b8d-47a6-9167-cc21f7fbfd43&unique=prints",
+       "collector_number": "1",
+       "digital": false,
+       "rarity": "special",
+       "flavor_text": "It is everything and nothing.",
+       "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+       "artist": "Seb McKinnon",
+       "artist_ids": [
+        "ad4caca0-8d89-44ce-a1a6-d5ca905bd6fb"
+       ],
+       "illustration_id": "2c5e6f58-2fb7-4e04-940c-08443748c060",
+       "border_color": "black",
+       "frame": "2015",
+       "frame_effects": [
+        "legendary"
+       ],
+       "full_art": false,
+       "textless": false,
+       "booster": true,
+       "story_spotlight": false,
+       "edhrec_rank": 28378,
+       "prices": {
+        "usd": "0.21",
+        "usd_foil": null,
+        "usd_etched": null,
+        "eur": "0.07",
+        "eur_foil": null,
+        "tix": "0.30"
+       },
+       "related_uris": {
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=629305&printed=false",
+        "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DThe%2BPrismatic%2BPiper",
+        "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DThe%2BPrismatic%2BPiper",
+        "edhrec": "https://edhrec.com/route/?cc=The+Prismatic+Piper"
+       },
+       "purchase_uris": {
+        "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F503412%3Fpage%3D1",
+        "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=721739&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+        "cardhoarder": "https://www.cardhoarder.com/cards/114631?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+       }
+      },
+      "castCount": 0,
+      "linkedPermId": null
+     },
+     {
+      "card": {
+       "object": "card",
+       "id": "9a1ee042-6713-4e9e-9901-9b94d99d33f1",
+       "oracle_id": "542eae01-058d-4959-92a8-49d6b1e33ecd",
+       "multiverse_ids": [
+        634704
+       ],
+       "tcgplayer_id": 518910,
+       "cardmarket_id": 738485,
+       "name": "Clara Oswald",
+       "lang": "en",
+       "released_at": "2023-10-13",
+       "uri": "https://api.scryfall.com/cards/9a1ee042-6713-4e9e-9901-9b94d99d33f1",
+       "scryfall_uri": "https://scryfall.com/card/who/9/clara-oswald?utm_source=api",
+       "layout": "normal",
+       "highres_image": true,
+       "image_status": "highres_scan",
+       "image_updated_at": "2026-07-13T03:51:25Z",
+       "image_uris": {
+        "small": "https://cards.scryfall.io/small/front/9/a/9a1ee042-6713-4e9e-9901-9b94d99d33f1.jpg?1783914685",
+        "normal": "https://cards.scryfall.io/normal/front/9/a/9a1ee042-6713-4e9e-9901-9b94d99d33f1.jpg?1783914685",
+        "large": "https://cards.scryfall.io/large/front/9/a/9a1ee042-6713-4e9e-9901-9b94d99d33f1.jpg?1783914685",
+        "png": "https://cards.scryfall.io/png/front/9/a/9a1ee042-6713-4e9e-9901-9b94d99d33f1.png?1783914685",
+        "art_crop": "https://cards.scryfall.io/art_crop/front/9/a/9a1ee042-6713-4e9e-9901-9b94d99d33f1.jpg?1783914685",
+        "border_crop": "https://cards.scryfall.io/border_crop/front/9/a/9a1ee042-6713-4e9e-9901-9b94d99d33f1.jpg?1783914685",
+        "thumb": "https://cards.scryfall.io/thumb/front/9/a/9a1ee042-6713-4e9e-9901-9b94d99d33f1.webp?1783914685",
+        "grid": "https://cards.scryfall.io/grid/front/9/a/9a1ee042-6713-4e9e-9901-9b94d99d33f1.webp?1783914685",
+        "display": "https://cards.scryfall.io/display/front/9/a/9a1ee042-6713-4e9e-9901-9b94d99d33f1.webp?1783914685",
+        "art": "https://cards.scryfall.io/art/front/9/a/9a1ee042-6713-4e9e-9901-9b94d99d33f1.webp?1783914685",
+        "crop": "https://cards.scryfall.io/crop/front/9/a/9a1ee042-6713-4e9e-9901-9b94d99d33f1.webp?1783914685"
+       },
+       "mana_cost": "{6}",
+       "cmc": 6,
+       "type_line": "Legendary Creature — Human Advisor",
+       "oracle_text": "Impossible Girl — If Clara Oswald is your commander, choose a color before the game begins. Clara Oswald is the chosen color.\nIf a triggered ability of a Doctor you control triggers, that ability triggers an additional time.\nDoctor's companion (You can have two commanders if the other is the Doctor.)",
+       "power": "2",
+       "toughness": "6",
+       "colors": [],
+       "color_identity": [],
+       "keywords": [
+        "Impossible Girl",
+        "Doctor's companion"
+       ],
+       "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "not_legal",
+        "timeless": "not_legal",
+        "gladiator": "not_legal",
+        "pioneer": "not_legal",
+        "modern": "not_legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "not_legal",
+        "competitivebrawl": "not_legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "not_legal"
+       },
+       "games": [
+        "paper"
+       ],
+       "reserved": false,
+       "game_changer": false,
+       "foil": true,
+       "nonfoil": true,
+       "finishes": [
+        "nonfoil",
+        "foil"
+       ],
+       "oversized": false,
+       "promo": false,
+       "reprint": false,
+       "variation": false,
+       "set_id": "efdfdd99-cee7-4c11-a5e9-03d60f88bdd6",
+       "set": "who",
+       "set_name": "Doctor Who",
+       "set_type": "commander",
+       "set_uri": "https://api.scryfall.com/sets/efdfdd99-cee7-4c11-a5e9-03d60f88bdd6",
+       "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Awho&unique=prints",
+       "scryfall_set_uri": "https://scryfall.com/sets/who?utm_source=api",
+       "rulings_uri": "https://api.scryfall.com/cards/9a1ee042-6713-4e9e-9901-9b94d99d33f1/rulings",
+       "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A542eae01-058d-4959-92a8-49d6b1e33ecd&unique=prints",
+       "collector_number": "9",
+       "digital": false,
+       "rarity": "rare",
+       "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+       "artist": "Marta Nael",
+       "artist_ids": [
+        "266ab861-ed64-4ba5-865c-f18758421cc3"
+       ],
+       "illustration_id": "f5de3244-6cd8-4c67-bc07-7699c9fad5c7",
+       "border_color": "black",
+       "frame": "2015",
+       "frame_effects": [
+        "legendary"
+       ],
+       "security_stamp": "triangle",
+       "full_art": false,
+       "textless": false,
+       "booster": false,
+       "story_spotlight": false,
+       "promo_types": [
+        "universesbeyond"
+       ],
+       "edhrec_rank": 13370,
+       "preview": {
+        "source": "Wizards of the Coast",
+        "source_uri": "",
+        "previewed_at": "2023-10-03"
+       },
+       "prices": {
+        "usd": "0.32",
+        "usd_foil": "2.30",
+        "usd_etched": null,
+        "eur": "0.44",
+        "eur_foil": "0.94",
+        "tix": null
+       },
+       "related_uris": {
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=634704&printed=false",
+        "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DClara%2BOswald",
+        "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DClara%2BOswald",
+        "edhrec": "https://edhrec.com/route/?cc=Clara+Oswald"
+       },
+       "purchase_uris": {
+        "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F518910%3Fpage%3D1",
+        "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=738485&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+        "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Clara+Oswald&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+       }
+      },
+      "castCount": 0,
+      "linkedPermId": null
+     }
+    ],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 2,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "The Prismatic Piper",
+    "final": {
+     "name": "The Prismatic Piper",
+     "controller": "player_0",
+     "supertypes": [
+      "Legendary"
+     ],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Shapeshifter"
+     ],
+     "power": 3,
+     "toughness": 3,
+     "colors": [
+      "R"
+     ],
+     "abilities": [
+      "Partner"
+     ],
+     "traits": [
+      "Enchanted"
+     ]
+    },
+    "changedBy": {
+     "2": [
+      "Control Magic"
+     ],
+     "5": [
+      "The Prismatic Piper"
+     ]
+    }
+   },
+   {
+    "perm": "Clara Oswald",
+    "final": {
+     "name": "Clara Oswald",
+     "controller": "player_1",
+     "supertypes": [
+      "Legendary"
+     ],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Human",
+      "Advisor"
+     ],
+     "power": 2,
+     "toughness": 6,
+     "colors": [
+      "U"
+     ],
+     "abilities": [
+      "Doctor's companion"
+     ]
+    },
+    "changedBy": {
+     "5": [
+      "Clara Oswald"
+     ]
+    }
+   },
+   {
+    "perm": "Faceless One",
+    "final": {
+     "name": "Faceless One",
+     "controller": "player_0",
+     "supertypes": [
+      "Legendary"
+     ],
+     "types": [
+      "Enchantment",
+      "Creature"
+     ],
+     "subtypes": [
+      "Background"
+     ],
+     "power": 3,
+     "toughness": 3,
+     "colors": [],
+     "abilities": [
+      "Choose a Background"
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Control Magic",
+    "final": {
+     "name": "Control Magic",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Enchantment"
+     ],
+     "subtypes": [
+      "Aura"
+     ],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "U"
+     ],
+     "abilities": [
+      "Enchant creature",
+      "You control enchanted creature."
+     ]
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "2": [
+    "Control Magic"
+   ],
+   "5": [
+    "The Prismatic Piper",
+    "Clara Oswald",
+    "Faceless One"
+   ]
+  },
+  "effects": [
+   {
+    "source": "The Prismatic Piper",
+    "layer": "5",
+    "type": "set_color",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "colors": [
+      "R"
+     ]
+    }
+   },
+   {
+    "source": "Clara Oswald",
+    "layer": "5",
+    "type": "set_color",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "colors": [
+      "U"
+     ]
+    }
+   },
+   {
+    "source": "Faceless One",
+    "layer": "5",
+    "type": "set_color",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "colors": [
+      "G"
+     ]
+    }
+   },
+   {
+    "source": "Control Magic",
+    "layer": "2",
+    "type": "control",
+    "scope": "targeted",
+    "target": "The Prismatic Piper",
+    "params": {
+     "newController": "player_0",
+     "useSourceController": true
+    }
+   }
+  ]
+ }
+}

@@ -472,14 +472,10 @@ const CONDITION_PARSERS = [
         return all.some(s => s.isCommander && s.owner === you && s.controller === you);
       }
     : null,
-  // "is your commander" / "enchanted creature is your commander": a commander the source's
-  // controller owns.
-  (ct, srcId) => /\b(?:is\s+)?your\s+commander\b/.test(ct)
-    ? (s, allStates) => {
-        if (!s.isCommander) return false;
-        const src = (allStates && allStates.get(srcId)) || (typeof Battlefield !== 'undefined' && Battlefield.getPermById(srcId)) || s;
-        return s.owner === (src.controller || src.owner || 'player_0');
-      }
+  // "If The Prismatic Piper is your commander, … is the chosen color" (Clara Oswald, Faceless One):
+  // its owner's commander, whoever controls it now (isCommander reads the owner's command zone).
+  (ct) => /\b(?:is\s+)?your\s+commander\b/.test(ct)
+    ? (s) => s.isCommander || false
     : null,
 
   // --- Generic "has [ability]" — must come AFTER counter checks so "has a +1/+1
