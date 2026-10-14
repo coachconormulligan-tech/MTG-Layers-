@@ -462,12 +462,24 @@ const CONDITION_PARSERS = [
       }
     : null,
   // Lieutenant: "you control your commander" — must precede the generic "your commander" check.
-  (ct) => /\byou control your commander\b/.test(ct)
-    ? () => (typeof Battlefield !== 'undefined') ? Battlefield.commanders.some(c => c.linkedPermId !== null) : true
+  // A commander the source's controller both owns and controls, on any tab (isCommander).
+  (ct, srcId) => /\byou control your commander\b/.test(ct)
+    ? (state, allStates) => {
+        if (typeof Battlefield === 'undefined') return true;
+        const src = (allStates && allStates.get(srcId)) || Battlefield.getPermById(srcId) || state;
+        const you = src && src.controller;
+        const all = allStates ? [...allStates.values()] : Battlefield.permanents.map(p => ({ ...p, isCommander: Battlefield.isCommander(p.id) }));
+        return all.some(s => s.isCommander && s.owner === you && s.controller === you);
+      }
     : null,
-  // "is your commander" / "enchanted creature is your commander".
-  (ct) => /\b(?:is\s+)?your\s+commander\b/.test(ct)
-    ? (s) => s.isCommander || false
+  // "is your commander" / "enchanted creature is your commander": a commander the source's
+  // controller owns.
+  (ct, srcId) => /\b(?:is\s+)?your\s+commander\b/.test(ct)
+    ? (s, allStates) => {
+        if (!s.isCommander) return false;
+        const src = (allStates && allStates.get(srcId)) || (typeof Battlefield !== 'undefined' && Battlefield.getPermById(srcId)) || s;
+        return s.owner === (src.controller || src.owner || 'player_0');
+      }
     : null,
 
   // --- Generic "has [ability]" — must come AFTER counter checks so "has a +1/+1

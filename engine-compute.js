@@ -214,9 +214,11 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
   // Matches patterns like: "time you've cast your commander from the command zone";
   // "cast a commander" (Captain Vargus Wrath) counts the same casts.
   if (/\btimes?\s+you(?:'ve|'ve|\s+have)\s+cast\s+(?:your|a)\s+commander\b/.test(desc)) {
-    if (typeof Battlefield !== 'undefined' && Battlefield.commanders) {
+    // The commanders of the effect's controller, not of the player whose tab is open.
+    const caster = typeof Battlefield !== 'undefined' && Battlefield.getPlayer && Battlefield.getPlayer(ctrlId);
+    if (caster) {
       let totalCasts = 0;
-      for (const cmd of Battlefield.commanders) {
+      for (const cmd of caster.commanders || []) {
         totalCasts += (cmd.castCount || 0);
       }
       return totalCasts;

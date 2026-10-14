@@ -161,11 +161,8 @@ function selectCommander(index) {
 }
 
 function putCommanderOnBattlefield(index) {
-  const commander = Battlefield.commanders[index];
-  if (!commander) return;
-  const isToken = _isTokenCard(commander.card);
-  const perm = Battlefield.addPermanent(commander.card, { isToken });
-  commander.linkedPermId = perm.id;
+  const perm = Battlefield.putCommanderOnBattlefield(index);
+  if (!perm) return;
   document.getElementById('card-search-input').value = '';
   document.getElementById('search-results').innerHTML = '';
   Battlefield.evaluate();

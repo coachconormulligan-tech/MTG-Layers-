@@ -1,0 +1,1249 @@
+{
+ "name": "A commander added from search is known by its owner's command zone; a stolen commander is still a commander but not its new controller's",
+ "notes": "Companion to commander-identity-reads-every-player-not-the-open-tab. Player 2's commander Kalemne is added from search, not put onto the battlefield from the command zone, so it is known by name among its owner's commanders. Player 1 enchants it with Control Magic. Player 1's Bastion Protector ('Commander creatures you control') then gives it +2/+2 and indestructible: it is a commander and Player 1 controls it. Player 2's Thunderfoot Baloth ('As long as you control your commander') does nothing: Player 2 no longer controls it. Evaluated from Player 1's tab. Kalemne 5/5 indestructible, Baloth 5/5, Bastion 3/3. Memory: project_commander_identity_by_owner_2026-10-14.",
+ "recipe": {
+  "steps": [
+   {
+    "call": [
+     "addPlayer",
+     "Player 2"
+    ]
+   },
+   {
+    "call": [
+     "setActivePlayer",
+     "p2"
+    ]
+   },
+   {
+    "call": [
+     "addCommander",
+     "card:Kalemne, Disciple of Iroas"
+    ]
+   },
+   {
+    "add": "Kalemne, Disciple of Iroas",
+    "as": "kalemne",
+    "controller": "p2"
+   },
+   {
+    "add": "Thunderfoot Baloth",
+    "controller": "p2"
+   },
+   {
+    "add": "Bastion Protector",
+    "controller": "p1"
+   },
+   {
+    "add": "Control Magic",
+    "as": "steal",
+    "controller": "p1"
+   },
+   {
+    "call": [
+     "setTarget",
+     "@steal",
+     "@kalemne"
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Kalemne, Disciple of Iroas",
+   "final": {
+    "controller": "player_0",
+    "power": 5,
+    "toughness": 5,
+    "abilities": {
+     "$includes": [
+      "Indestructible"
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Thunderfoot Baloth",
+   "final": {
+    "power": 5,
+    "toughness": 5
+   }
+  },
+  {
+   "perm": "Bastion Protector",
+   "final": {
+    "power": 3,
+    "toughness": 3
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "3c718940-dc07-4449-ba35-4029f366c3eb",
+     "oracle_id": "e100f9fc-b6fb-42ab-b9b3-796bede6804d",
+     "multiverse_ids": [
+      446743
+     ],
+     "tcgplayer_id": 166684,
+     "cardmarket_id": 357022,
+     "name": "Kalemne, Disciple of Iroas",
+     "lang": "en",
+     "released_at": "2018-06-08",
+     "uri": "https://api.scryfall.com/cards/3c718940-dc07-4449-ba35-4029f366c3eb",
+     "scryfall_uri": "https://scryfall.com/card/cm2/7/kalemne-disciple-of-iroas?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T09:26:19Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/3/c/3c718940-dc07-4449-ba35-4029f366c3eb.jpg?1783934779",
+      "normal": "https://cards.scryfall.io/normal/front/3/c/3c718940-dc07-4449-ba35-4029f366c3eb.jpg?1783934779",
+      "large": "https://cards.scryfall.io/large/front/3/c/3c718940-dc07-4449-ba35-4029f366c3eb.jpg?1783934779",
+      "png": "https://cards.scryfall.io/png/front/3/c/3c718940-dc07-4449-ba35-4029f366c3eb.png?1783934779",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/3/c/3c718940-dc07-4449-ba35-4029f366c3eb.jpg?1783934779",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/3/c/3c718940-dc07-4449-ba35-4029f366c3eb.jpg?1783934779",
+      "thumb": "https://cards.scryfall.io/thumb/front/3/c/3c718940-dc07-4449-ba35-4029f366c3eb.webp?1783934779",
+      "grid": "https://cards.scryfall.io/grid/front/3/c/3c718940-dc07-4449-ba35-4029f366c3eb.webp?1783934779",
+      "display": "https://cards.scryfall.io/display/front/3/c/3c718940-dc07-4449-ba35-4029f366c3eb.webp?1783934779",
+      "art": "https://cards.scryfall.io/art/front/3/c/3c718940-dc07-4449-ba35-4029f366c3eb.webp?1783934779",
+      "crop": "https://cards.scryfall.io/crop/front/3/c/3c718940-dc07-4449-ba35-4029f366c3eb.webp?1783934779"
+     },
+     "mana_cost": "{2}{R}{W}",
+     "cmc": 4,
+     "type_line": "Legendary Creature — Giant Soldier",
+     "oracle_text": "Double strike, vigilance\nWhenever you cast a creature spell with mana value 5 or greater, you get an experience counter.\nKalemne gets +1/+1 for each experience counter you have.",
+     "power": "3",
+     "toughness": "3",
+     "colors": [
+      "R",
+      "W"
+     ],
+     "color_identity": [
+      "R",
+      "W"
+     ],
+     "keywords": [
+      "Vigilance",
+      "Double strike"
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "1374bfa2-9714-486d-90aa-7a9b8d8ef3a8",
+       "component": "combo_piece",
+       "name": "Experience",
+       "type_line": "Card",
+       "uri": "https://api.scryfall.com/cards/1374bfa2-9714-486d-90aa-7a9b8d8ef3a8"
+      },
+      {
+       "object": "related_card",
+       "id": "3c718940-dc07-4449-ba35-4029f366c3eb",
+       "component": "combo_piece",
+       "name": "Kalemne, Disciple of Iroas",
+       "type_line": "Legendary Creature — Giant Soldier",
+       "uri": "https://api.scryfall.com/cards/3c718940-dc07-4449-ba35-4029f366c3eb"
+      }
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": false,
+     "finishes": [
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "2ba5b1a3-40ed-422e-981d-56753004dfc6",
+     "set": "cm2",
+     "set_name": "Commander Anthology Volume II",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/2ba5b1a3-40ed-422e-981d-56753004dfc6",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Acm2&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/cm2?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/3c718940-dc07-4449-ba35-4029f366c3eb/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ae100f9fc-b6fb-42ab-b9b3-796bede6804d&unique=prints",
+     "collector_number": "7",
+     "digital": false,
+     "rarity": "mythic",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Jason Chan",
+     "artist_ids": [
+      "8062d5a9-51b6-4822-933f-fa9e9dba8416"
+     ],
+     "illustration_id": "cacad3d4-f792-4fbb-812d-012df03ad017",
+     "border_color": "black",
+     "frame": "2015",
+     "frame_effects": [
+      "legendary"
+     ],
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 8478,
+     "prices": {
+      "usd": null,
+      "usd_foil": "13.74",
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": "8.98",
+      "tix": null
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=446743&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DKalemne%252C%2BDisciple%2Bof%2BIroas",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DKalemne%252C%2BDisciple%2Bof%2BIroas",
+      "edhrec": "https://edhrec.com/route/?cc=Kalemne%2C+Disciple+of+Iroas"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F166684%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=357022&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Kalemne%2C+Disciple+of+Iroas&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_1",
+    "controller": "player_1",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "80c1b1ea-2459-4986-8846-4db916d6b771",
+     "oracle_id": "f55334d9-1ec2-4667-bf28-5a0384d6f053",
+     "multiverse_ids": [
+      676074
+     ],
+     "mtgo_id": 131027,
+     "tcgplayer_id": 577834,
+     "cardmarket_id": 788917,
+     "name": "Thunderfoot Baloth",
+     "lang": "en",
+     "released_at": "2024-09-27",
+     "uri": "https://api.scryfall.com/cards/80c1b1ea-2459-4986-8846-4db916d6b771",
+     "scryfall_uri": "https://scryfall.com/card/dsc/201/thunderfoot-baloth?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T02:26:39Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/8/0/80c1b1ea-2459-4986-8846-4db916d6b771.jpg?1783909599",
+      "normal": "https://cards.scryfall.io/normal/front/8/0/80c1b1ea-2459-4986-8846-4db916d6b771.jpg?1783909599",
+      "large": "https://cards.scryfall.io/large/front/8/0/80c1b1ea-2459-4986-8846-4db916d6b771.jpg?1783909599",
+      "png": "https://cards.scryfall.io/png/front/8/0/80c1b1ea-2459-4986-8846-4db916d6b771.png?1783909599",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/8/0/80c1b1ea-2459-4986-8846-4db916d6b771.jpg?1783909599",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/8/0/80c1b1ea-2459-4986-8846-4db916d6b771.jpg?1783909599",
+      "thumb": "https://cards.scryfall.io/thumb/front/8/0/80c1b1ea-2459-4986-8846-4db916d6b771.webp?1783909599",
+      "grid": "https://cards.scryfall.io/grid/front/8/0/80c1b1ea-2459-4986-8846-4db916d6b771.webp?1783909599",
+      "display": "https://cards.scryfall.io/display/front/8/0/80c1b1ea-2459-4986-8846-4db916d6b771.webp?1783909599",
+      "art": "https://cards.scryfall.io/art/front/8/0/80c1b1ea-2459-4986-8846-4db916d6b771.webp?1783909599",
+      "crop": "https://cards.scryfall.io/crop/front/8/0/80c1b1ea-2459-4986-8846-4db916d6b771.webp?1783909599"
+     },
+     "mana_cost": "{4}{G}{G}",
+     "cmc": 6,
+     "type_line": "Creature — Beast",
+     "oracle_text": "Trample\nLieutenant — As long as you control your commander, this creature gets +2/+2 and other creatures you control get +2/+2 and have trample.",
+     "power": "5",
+     "toughness": "5",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [
+      "Trample",
+      "Lieutenant"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "4c822528-83c3-42c7-8708-dd1d37166819",
+     "set": "dsc",
+     "set_name": "Duskmourn: House of Horror Commander",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/4c822528-83c3-42c7-8708-dd1d37166819",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Adsc&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/dsc?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/80c1b1ea-2459-4986-8846-4db916d6b771/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Af55334d9-1ec2-4667-bf28-5a0384d6f053&unique=prints",
+     "collector_number": "201",
+     "digital": false,
+     "rarity": "rare",
+     "flavor_text": "\"Odd. I didn't see any lightning . . . .\"\n—Herreth, poacher, last words",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Nicholas Gregory",
+     "artist_ids": [
+      "a1bba8ff-63b4-4786-b1c4-f1bfe5d3ab1c"
+     ],
+     "illustration_id": "b7ca1d05-2de0-4784-aca9-0b09dcda0271",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 2031,
+     "prices": {
+      "usd": "0.52",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.87",
+      "eur_foil": null,
+      "tix": "2.42"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=676074&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DThunderfoot%2BBaloth",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DThunderfoot%2BBaloth",
+      "edhrec": "https://edhrec.com/route/?cc=Thunderfoot+Baloth"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F577834%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=788917&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/131027?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_1",
+    "controller": "player_1",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "1582488a-ad15-487e-9271-6d9330b46fb4",
+     "oracle_id": "858f53ef-3fec-4aa0-867d-b7f040614b3c",
+     "multiverse_ids": [],
+     "resource_id": "2D8C99101521C804C0395C86DE375440C8A3E2384033483263AAB563A6751C71",
+     "mtgo_id": 150713,
+     "tcgplayer_id": 697103,
+     "cardmarket_id": 891654,
+     "name": "Bastion Protector",
+     "lang": "en",
+     "released_at": "2026-06-26",
+     "uri": "https://api.scryfall.com/cards/1582488a-ad15-487e-9271-6d9330b46fb4",
+     "scryfall_uri": "https://scryfall.com/card/msc/122/bastion-protector?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T00:40:54Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/1/5/1582488a-ad15-487e-9271-6d9330b46fb4.jpg?1783903254",
+      "normal": "https://cards.scryfall.io/normal/front/1/5/1582488a-ad15-487e-9271-6d9330b46fb4.jpg?1783903254",
+      "large": "https://cards.scryfall.io/large/front/1/5/1582488a-ad15-487e-9271-6d9330b46fb4.jpg?1783903254",
+      "png": "https://cards.scryfall.io/png/front/1/5/1582488a-ad15-487e-9271-6d9330b46fb4.png?1783903254",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/1/5/1582488a-ad15-487e-9271-6d9330b46fb4.jpg?1783903254",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/1/5/1582488a-ad15-487e-9271-6d9330b46fb4.jpg?1783903254",
+      "thumb": "https://cards.scryfall.io/thumb/front/1/5/1582488a-ad15-487e-9271-6d9330b46fb4.webp?1783903254",
+      "grid": "https://cards.scryfall.io/grid/front/1/5/1582488a-ad15-487e-9271-6d9330b46fb4.webp?1783903254",
+      "display": "https://cards.scryfall.io/display/front/1/5/1582488a-ad15-487e-9271-6d9330b46fb4.webp?1783903254",
+      "art": "https://cards.scryfall.io/art/front/1/5/1582488a-ad15-487e-9271-6d9330b46fb4.webp?1783903254",
+      "crop": "https://cards.scryfall.io/crop/front/1/5/1582488a-ad15-487e-9271-6d9330b46fb4.webp?1783903254"
+     },
+     "mana_cost": "{2}{W}",
+     "cmc": 3,
+     "type_line": "Creature — Human Soldier",
+     "oracle_text": "Commander creatures you control get +2/+2 and have indestructible.",
+     "power": "3",
+     "toughness": "3",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "9d739461-c5ac-43a1-af41-3d5a585b5c8d",
+     "set": "msc",
+     "set_name": "Marvel Super Heroes Commander",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/9d739461-c5ac-43a1-af41-3d5a585b5c8d",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Amsc&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/msc?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/1582488a-ad15-487e-9271-6d9330b46fb4/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A858f53ef-3fec-4aa0-867d-b7f040614b3c&unique=prints",
+     "collector_number": "122",
+     "digital": false,
+     "rarity": "rare",
+     "flavor_text": "\"Director Fury's not receiving visitors today.\"\n—Agent Gabe Jones",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Uzuri",
+     "artist_ids": [
+      "7c474b1b-e31e-4266-b6ad-821f00e4b03d"
+     ],
+     "illustration_id": "1787d676-f3ed-451b-acf5-c2e0324638c6",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "surgefoil",
+      "universesbeyond"
+     ],
+     "edhrec_rank": 934,
+     "prices": {
+      "usd": "0.36",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.31",
+      "eur_foil": null,
+      "tix": "0.10"
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DBastion%2BProtector",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DBastion%2BProtector",
+      "edhrec": "https://edhrec.com/route/?cc=Bastion+Protector"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F697103%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=891654&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/150713?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "84992800-9bad-4598-afd4-f1e59d2e0956",
+     "oracle_id": "cd0d7141-46d2-4aa3-bc77-6b3b4513803e",
+     "multiverse_ids": [
+      430253
+     ],
+     "tcgplayer_id": 132002,
+     "cardmarket_id": 297981,
+     "name": "Control Magic",
+     "lang": "en",
+     "released_at": "2017-06-09",
+     "uri": "https://api.scryfall.com/cards/84992800-9bad-4598-afd4-f1e59d2e0956",
+     "scryfall_uri": "https://scryfall.com/card/cma/34/control-magic?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T09:51:37Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/8/4/84992800-9bad-4598-afd4-f1e59d2e0956.jpg?1783936297",
+      "normal": "https://cards.scryfall.io/normal/front/8/4/84992800-9bad-4598-afd4-f1e59d2e0956.jpg?1783936297",
+      "large": "https://cards.scryfall.io/large/front/8/4/84992800-9bad-4598-afd4-f1e59d2e0956.jpg?1783936297",
+      "png": "https://cards.scryfall.io/png/front/8/4/84992800-9bad-4598-afd4-f1e59d2e0956.png?1783936297",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/8/4/84992800-9bad-4598-afd4-f1e59d2e0956.jpg?1783936297",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/8/4/84992800-9bad-4598-afd4-f1e59d2e0956.jpg?1783936297",
+      "thumb": "https://cards.scryfall.io/thumb/front/8/4/84992800-9bad-4598-afd4-f1e59d2e0956.webp?1783936297",
+      "grid": "https://cards.scryfall.io/grid/front/8/4/84992800-9bad-4598-afd4-f1e59d2e0956.webp?1783936297",
+      "display": "https://cards.scryfall.io/display/front/8/4/84992800-9bad-4598-afd4-f1e59d2e0956.webp?1783936297",
+      "art": "https://cards.scryfall.io/art/front/8/4/84992800-9bad-4598-afd4-f1e59d2e0956.webp?1783936297",
+      "crop": "https://cards.scryfall.io/crop/front/8/4/84992800-9bad-4598-afd4-f1e59d2e0956.webp?1783936297"
+     },
+     "mana_cost": "{2}{U}{U}",
+     "cmc": 4,
+     "type_line": "Enchantment — Aura",
+     "oracle_text": "Enchant creature\nYou control enchanted creature.",
+     "colors": [
+      "U"
+     ],
+     "color_identity": [
+      "U"
+     ],
+     "keywords": [
+      "Enchant"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "fd4d8463-0156-4c60-a40e-778762bb90e4",
+     "set": "cma",
+     "set_name": "Commander Anthology",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/fd4d8463-0156-4c60-a40e-778762bb90e4",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Acma&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/cma?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/84992800-9bad-4598-afd4-f1e59d2e0956/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Acd0d7141-46d2-4aa3-bc77-6b3b4513803e&unique=prints",
+     "collector_number": "34",
+     "digital": false,
+     "rarity": "uncommon",
+     "flavor_text": "\"Do as I think, not as I do.\"\n—Jace Beleren",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Clint Cearley",
+     "artist_ids": [
+      "03b75350-d5a0-4e3a-b3b4-8d4a5554385b"
+     ],
+     "illustration_id": "dbf4fcd3-2dfb-4e7e-aed5-8335d4ba7aff",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 6988,
+     "penny_rank": 2047,
+     "prices": {
+      "usd": "0.79",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.96",
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=430253&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DControl%2BMagic",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DControl%2BMagic",
+      "edhrec": "https://edhrec.com/route/?cc=Control+Magic"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F132002%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=297981&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Control+Magic&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 4,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": "perm_1",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 5,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   },
+   {
+    "id": "player_1",
+    "name": "Player 2",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": false,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [
+     {
+      "card": {
+       "object": "card",
+       "id": "3c718940-dc07-4449-ba35-4029f366c3eb",
+       "oracle_id": "e100f9fc-b6fb-42ab-b9b3-796bede6804d",
+       "multiverse_ids": [
+        446743
+       ],
+       "tcgplayer_id": 166684,
+       "cardmarket_id": 357022,
+       "name": "Kalemne, Disciple of Iroas",
+       "lang": "en",
+       "released_at": "2018-06-08",
+       "uri": "https://api.scryfall.com/cards/3c718940-dc07-4449-ba35-4029f366c3eb",
+       "scryfall_uri": "https://scryfall.com/card/cm2/7/kalemne-disciple-of-iroas?utm_source=api",
+       "layout": "normal",
+       "highres_image": true,
+       "image_status": "highres_scan",
+       "image_updated_at": "2026-07-13T09:26:19Z",
+       "image_uris": {
+        "small": "https://cards.scryfall.io/small/front/3/c/3c718940-dc07-4449-ba35-4029f366c3eb.jpg?1783934779",
+        "normal": "https://cards.scryfall.io/normal/front/3/c/3c718940-dc07-4449-ba35-4029f366c3eb.jpg?1783934779",
+        "large": "https://cards.scryfall.io/large/front/3/c/3c718940-dc07-4449-ba35-4029f366c3eb.jpg?1783934779",
+        "png": "https://cards.scryfall.io/png/front/3/c/3c718940-dc07-4449-ba35-4029f366c3eb.png?1783934779",
+        "art_crop": "https://cards.scryfall.io/art_crop/front/3/c/3c718940-dc07-4449-ba35-4029f366c3eb.jpg?1783934779",
+        "border_crop": "https://cards.scryfall.io/border_crop/front/3/c/3c718940-dc07-4449-ba35-4029f366c3eb.jpg?1783934779",
+        "thumb": "https://cards.scryfall.io/thumb/front/3/c/3c718940-dc07-4449-ba35-4029f366c3eb.webp?1783934779",
+        "grid": "https://cards.scryfall.io/grid/front/3/c/3c718940-dc07-4449-ba35-4029f366c3eb.webp?1783934779",
+        "display": "https://cards.scryfall.io/display/front/3/c/3c718940-dc07-4449-ba35-4029f366c3eb.webp?1783934779",
+        "art": "https://cards.scryfall.io/art/front/3/c/3c718940-dc07-4449-ba35-4029f366c3eb.webp?1783934779",
+        "crop": "https://cards.scryfall.io/crop/front/3/c/3c718940-dc07-4449-ba35-4029f366c3eb.webp?1783934779"
+       },
+       "mana_cost": "{2}{R}{W}",
+       "cmc": 4,
+       "type_line": "Legendary Creature — Giant Soldier",
+       "oracle_text": "Double strike, vigilance\nWhenever you cast a creature spell with mana value 5 or greater, you get an experience counter.\nKalemne gets +1/+1 for each experience counter you have.",
+       "power": "3",
+       "toughness": "3",
+       "colors": [
+        "R",
+        "W"
+       ],
+       "color_identity": [
+        "R",
+        "W"
+       ],
+       "keywords": [
+        "Vigilance",
+        "Double strike"
+       ],
+       "all_parts": [
+        {
+         "object": "related_card",
+         "id": "1374bfa2-9714-486d-90aa-7a9b8d8ef3a8",
+         "component": "combo_piece",
+         "name": "Experience",
+         "type_line": "Card",
+         "uri": "https://api.scryfall.com/cards/1374bfa2-9714-486d-90aa-7a9b8d8ef3a8"
+        },
+        {
+         "object": "related_card",
+         "id": "3c718940-dc07-4449-ba35-4029f366c3eb",
+         "component": "combo_piece",
+         "name": "Kalemne, Disciple of Iroas",
+         "type_line": "Legendary Creature — Giant Soldier",
+         "uri": "https://api.scryfall.com/cards/3c718940-dc07-4449-ba35-4029f366c3eb"
+        }
+       ],
+       "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "not_legal",
+        "timeless": "not_legal",
+        "gladiator": "not_legal",
+        "pioneer": "not_legal",
+        "modern": "not_legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "not_legal",
+        "competitivebrawl": "not_legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "not_legal"
+       },
+       "games": [
+        "paper"
+       ],
+       "reserved": false,
+       "game_changer": false,
+       "foil": true,
+       "nonfoil": false,
+       "finishes": [
+        "foil"
+       ],
+       "oversized": false,
+       "promo": false,
+       "reprint": true,
+       "variation": false,
+       "set_id": "2ba5b1a3-40ed-422e-981d-56753004dfc6",
+       "set": "cm2",
+       "set_name": "Commander Anthology Volume II",
+       "set_type": "commander",
+       "set_uri": "https://api.scryfall.com/sets/2ba5b1a3-40ed-422e-981d-56753004dfc6",
+       "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Acm2&unique=prints",
+       "scryfall_set_uri": "https://scryfall.com/sets/cm2?utm_source=api",
+       "rulings_uri": "https://api.scryfall.com/cards/3c718940-dc07-4449-ba35-4029f366c3eb/rulings",
+       "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ae100f9fc-b6fb-42ab-b9b3-796bede6804d&unique=prints",
+       "collector_number": "7",
+       "digital": false,
+       "rarity": "mythic",
+       "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+       "artist": "Jason Chan",
+       "artist_ids": [
+        "8062d5a9-51b6-4822-933f-fa9e9dba8416"
+       ],
+       "illustration_id": "cacad3d4-f792-4fbb-812d-012df03ad017",
+       "border_color": "black",
+       "frame": "2015",
+       "frame_effects": [
+        "legendary"
+       ],
+       "security_stamp": "oval",
+       "full_art": false,
+       "textless": false,
+       "booster": false,
+       "story_spotlight": false,
+       "edhrec_rank": 8478,
+       "prices": {
+        "usd": null,
+        "usd_foil": "13.74",
+        "usd_etched": null,
+        "eur": null,
+        "eur_foil": "8.98",
+        "tix": null
+       },
+       "related_uris": {
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=446743&printed=false",
+        "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DKalemne%252C%2BDisciple%2Bof%2BIroas",
+        "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DKalemne%252C%2BDisciple%2Bof%2BIroas",
+        "edhrec": "https://edhrec.com/route/?cc=Kalemne%2C+Disciple+of+Iroas"
+       },
+       "purchase_uris": {
+        "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F166684%3Fpage%3D1",
+        "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=357022&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+        "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Kalemne%2C+Disciple+of+Iroas&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+       }
+      },
+      "castCount": 0,
+      "linkedPermId": null
+     }
+    ],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 2,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Kalemne, Disciple of Iroas",
+    "final": {
+     "name": "Kalemne, Disciple of Iroas",
+     "controller": "player_0",
+     "supertypes": [
+      "Legendary"
+     ],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Giant",
+      "Soldier"
+     ],
+     "power": 5,
+     "toughness": 5,
+     "colors": [
+      "R",
+      "W"
+     ],
+     "abilities": [
+      "Double strike, vigilance",
+      "Whenever you cast a creature spell with mana value 5 or greater, you get an experience counter.",
+      "This card gets +1/+1 for each experience counter you have.",
+      "Indestructible"
+     ],
+     "traits": [
+      "Enchanted"
+     ]
+    },
+    "changedBy": {
+     "2": [
+      "Control Magic"
+     ],
+     "6": [
+      "Bastion Protector"
+     ],
+     "7c": [
+      "Bastion Protector"
+     ]
+    }
+   },
+   {
+    "perm": "Thunderfoot Baloth",
+    "final": {
+     "name": "Thunderfoot Baloth",
+     "controller": "player_1",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Beast"
+     ],
+     "power": 5,
+     "toughness": 5,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "Trample"
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Bastion Protector",
+    "final": {
+     "name": "Bastion Protector",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Human",
+      "Soldier"
+     ],
+     "power": 3,
+     "toughness": 3,
+     "colors": [
+      "W"
+     ],
+     "abilities": [
+      "Commander creatures you control get +2/+2 and have indestructible."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Control Magic",
+    "final": {
+     "name": "Control Magic",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Enchantment"
+     ],
+     "subtypes": [
+      "Aura"
+     ],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "U"
+     ],
+     "abilities": [
+      "Enchant creature",
+      "You control enchanted creature."
+     ]
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "2": [
+    "Control Magic"
+   ],
+   "6": [
+    "Thunderfoot Baloth",
+    "Bastion Protector"
+   ],
+   "7c": [
+    "Kalemne, Disciple of Iroas",
+    "Thunderfoot Baloth",
+    "Thunderfoot Baloth",
+    "Bastion Protector"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Kalemne, Disciple of Iroas",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "basePower": 1,
+     "baseToughness": 1,
+     "forEachDesc": "experience counter you have",
+     "isGraveyardCount": false,
+     "power": 1,
+     "toughness": 1,
+     "userAdjustable": false
+    }
+   },
+   {
+    "source": "Thunderfoot Baloth",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "power": 2,
+     "toughness": 2
+    }
+   },
+   {
+    "source": "Thunderfoot Baloth",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "global",
+    "params": {
+     "power": 2,
+     "toughness": 2
+    }
+   },
+   {
+    "source": "Thunderfoot Baloth",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "global",
+    "params": {
+     "ability": "Trample"
+    }
+   },
+   {
+    "source": "Bastion Protector",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "global",
+    "params": {
+     "power": 2,
+     "toughness": 2
+    }
+   },
+   {
+    "source": "Bastion Protector",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "global",
+    "params": {
+     "ability": "Indestructible"
+    }
+   },
+   {
+    "source": "Control Magic",
+    "layer": "2",
+    "type": "control",
+    "scope": "targeted",
+    "target": "Kalemne, Disciple of Iroas",
+    "params": {
+     "newController": "player_0",
+     "useSourceController": true
+    }
+   }
+  ]
+ }
+}

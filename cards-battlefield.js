@@ -1956,9 +1956,9 @@ const Battlefield = {
       if (targetId === id) this.bestowTargets.delete(bestowId);
     }
     if (this.inspectedId === id) this.inspectedId = null;
-    // Unlink commander if this permanent was the linked instance
-    for (const cmd of this.commanders) {
-      if (cmd.linkedPermId === id) cmd.linkedPermId = null;
+    // Unlink commander if this permanent was the linked instance (any player's)
+    for (const pl of this.players || []) {
+      for (const cmd of pl.commanders || []) if (cmd.linkedPermId === id) cmd.linkedPermId = null;
     }
     // Clear exile tags pointing at the removed permanent
     if (this.exile) {
@@ -3320,6 +3320,16 @@ const Battlefield = {
     if (c) c.castCount = Math.max(0, (c.castCount || 0) + delta);
   },
 
+  // The commander at this index of the open tab's command zone onto the battlefield, as that
+  // player's permanent; it is that commander from then on (isCommander).
+  putCommanderOnBattlefield(index) {
+    const commander = this.commanders[index];
+    if (!commander) return null;
+    const perm = this.addPermanent(commander.card, { isToken: _isTokenCard(commander.card) });
+    if (perm) commander.linkedPermId = perm.id;
+    return perm;
+  },
+
   removeCommander(index) {
     this.commanders.splice(index, 1);
   },
@@ -3382,13 +3392,15 @@ const Battlefield = {
     this.updateLabels();
   },
 
+  // Every player's commanders, not just the open tab's: a commander is the permanent put onto the
+  // battlefield from its owner's command zone, else (added from search) a permanent with the name
+  // of one of its OWNER's commanders not yet on the battlefield. A stolen commander stays one.
   isCommander(permId) {
-    // First check: exact ID match (when commander was put onto battlefield via the zone)
-    if (this.commanders.some(c => c.linkedPermId === permId)) return true;
-    // Fallback: name match, but only for commanders not yet linked to any specific permanent
+    if ((this.players || []).some(pl => (pl.commanders || []).some(c => c.linkedPermId === permId))) return true;
     const perm = this.getPermById(permId);
     if (!perm) return false;
-    return this.commanders.some(c => c.linkedPermId === null && c.name === perm.name);
+    const owner = this.getPlayer(perm.owner || 'player_0');
+    return !!owner && (owner.commanders || []).some(c => !c.linkedPermId && c.name === perm.name);
   },
 
   getCommanderNames() {
@@ -3600,7 +3612,9 @@ const Battlefield = {
       id: pl.id,
       name: pl.name,
       gameState: JSON.parse(JSON.stringify(pl.gameState || {})),
-      commanders: (pl.commanders || []).map(c => ({ card: c.card, castCount: c.castCount || 0 })),
+      // (linkedPermId: the commander's permanent when it was put onto the battlefield from the
+      // command zone; translated through idMap on restore.)
+      commanders: (pl.commanders || []).map(c => ({ card: c.card, castCount: c.castCount || 0, linkedPermId: c.linkedPermId || null })),
       graveyard: (pl.graveyard || []).slice(),
       libraryTop: pl.libraryTop || null,
       emblems: (pl.emblems || []).map(em => ({ card: em.card })),
@@ -3770,6 +3784,15 @@ const Battlefield = {
       // Re-stamp the ability's effects to its saved timestamp so layer ordering matches.
       for (const e of this.effects) { if (e.sourceId === pseudo.id) e.timestamp = f.timestamp; }
     }
+
+    // Each commander that was put onto the battlefield is that permanent again.
+    (data.players || []).forEach((pl, i) => {
+      (pl.commanders || []).forEach((c, j) => {
+        const cmd = this.players[i] && this.players[i].commanders[j];
+        if (cmd && c.linkedPermId && idMap[c.linkedPermId]) cmd.linkedPermId = idMap[c.linkedPermId];
+      });
+    });
+    this._invalidate();
 
     // Re-add emblems (addEmblem pushes a pseudo-perm + a player.emblems entry).
     for (const pl of data.players || []) {
