@@ -1,0 +1,197 @@
+{
+  "name": "Reaper of Night — \"if defending player has two or fewer cards in hand\" reads the attacked player's hand as the trigger resolves",
+  "notes": "Found in project_command_zone_controller_and_defending_player_hand_2026-10-14: the condition was never read, so the fired trigger gave flying at any hand size. _addAbilityPseudo strips a trigger's leading 'if [condition],' from the fired text; the site reads it at fire time (_evaluateTriggerCondition, called by fireTriggeredAbility and by this harness's fire step) and fires nothing when it is false. It now reads the hand of the player the creature attacks (_attackedPlayerId). Three players; Player 1, Reaper's controller, has no cards in hand throughout. With Player 2 at five cards and Player 3 at one, Reaper A attacks Player 3 (picked on the card) and fires: flying. Then Player 2 goes to two and Player 3 to four. Reaper B attacks Player 3: nothing fires, no flying. Reaper C attacks Player 2 (the default): flying. Reaper A keeps flying (decided as its trigger resolved). The triggerCondition asserts check the fire-time reading on the saved board, so the suite guards it without a rebuild. Memory: project_reaper_of_night_defending_player_hand_2026-10-14.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Player 2"
+      ]
+    },
+    {
+      "call": [
+        "addPlayer",
+        "Player 3"
+      ]
+    },
+    {
+      "call": [
+        "setActivePlayer",
+        "p1"
+      ]
+    },
+    {
+      "call": [
+        "updateGameState",
+        "handSize",
+        0
+      ]
+    },
+    {
+      "call": [
+        "setActivePlayer",
+        "p2"
+      ]
+    },
+    {
+      "call": [
+        "updateGameState",
+        "handSize",
+        5
+      ]
+    },
+    {
+      "call": [
+        "setActivePlayer",
+        "p3"
+      ]
+    },
+    {
+      "call": [
+        "updateGameState",
+        "handSize",
+        1
+      ]
+    },
+    {
+      "call": [
+        "setActivePlayer",
+        "p1"
+      ]
+    },
+    {
+      "add": "Reaper of Night",
+      "as": "a"
+    },
+    {
+      "call": [
+        "toggleAttacking",
+        "@a"
+      ]
+    },
+    {
+      "call": [
+        "setAttackingPlayer",
+        "@a",
+        "p3"
+      ]
+    },
+    {
+      "fire": "@a",
+      "trigger": 0
+    },
+    {
+      "call": [
+        "setActivePlayer",
+        "p2"
+      ]
+    },
+    {
+      "call": [
+        "updateGameState",
+        "handSize",
+        2
+      ]
+    },
+    {
+      "call": [
+        "setActivePlayer",
+        "p3"
+      ]
+    },
+    {
+      "call": [
+        "updateGameState",
+        "handSize",
+        4
+      ]
+    },
+    {
+      "call": [
+        "setActivePlayer",
+        "p1"
+      ]
+    },
+    {
+      "add": "Reaper of Night",
+      "as": "b"
+    },
+    {
+      "call": [
+        "toggleAttacking",
+        "@b"
+      ]
+    },
+    {
+      "call": [
+        "setAttackingPlayer",
+        "@b",
+        "p3"
+      ]
+    },
+    {
+      "fire": "@b",
+      "trigger": 0
+    },
+    {
+      "add": "Reaper of Night",
+      "as": "c"
+    },
+    {
+      "call": [
+        "toggleAttacking",
+        "@c"
+      ]
+    },
+    {
+      "fire": "@c",
+      "trigger": 0
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Reaper of Night A",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Flying"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Reaper of Night B",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Flying"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Reaper of Night C",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Flying"
+          ]
+        }
+      }
+    },
+    {
+      "triggerCondition": {
+        "perm": "Reaper of Night B",
+        "trigger": 0
+      },
+      "is": false
+    },
+    {
+      "triggerCondition": {
+        "perm": "Reaper of Night C",
+        "trigger": 0
+      },
+      "is": true
+    }
+  ]
+}

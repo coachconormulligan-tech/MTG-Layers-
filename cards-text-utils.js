@@ -2364,6 +2364,18 @@ function _evaluateTriggerCondition(condText, sourceState) {
   if (/\byou(?:'re| are)\s+the\s+monarch\b/.test(ct)) {
     return gs ? !!gs.isMonarch : null;
   }
+  // "if defending player has two or fewer cards in hand" (Reaper of Night): the hand of the
+  // player the source is attacking, as the trigger resolves (now); nobody's when it is not
+  // attacking. (_addAbilityPseudo strips the clause from the fired text, so it is read only here.)
+  const handMatch = ct.match(/\bdefending player has (no|(\w+) or (fewer|less|more|greater)) cards? in (?:their )?hand\b/);
+  if (handMatch) {
+    const k = handMatch[1] === 'no' ? 0 : (WORD_TO_NUM[handMatch[2]] !== undefined ? WORD_TO_NUM[handMatch[2]] : parseInt(handMatch[2], 10));
+    if (isNaN(k) || typeof Battlefield === 'undefined') return null;
+    const pl = Battlefield.getPlayer(_attackedPlayerId(sourceState));
+    if (!pl || !pl.gameState) return false;
+    const n = pl.gameState.handSize || 0;
+    return handMatch[1] === 'no' ? n === 0 : /^(?:fewer|less)$/.test(handMatch[3]) ? n <= k : n >= k;
+  }
   // "if she was a nonland creature" (Princess Yue): only qualifies while the source is
   // a creature that isn't a land. Once she's already a land, the trigger does nothing.
   if (/\bnonland\s+creature\b/.test(ct)) {

@@ -1,0 +1,107 @@
+{
+  "name": "Command-zone abilities and emblems are controlled by the player who owns them, not the open tab",
+  "notes": "Checked in project_command_zone_controller_and_defending_player_hand_2026-10-14 (not a bug; this recipe confirms it). addEmblem and addCommandZoneAbility take controller: activePlayerId, which is right because the site lists only the open tab's commanders and emblems, so the open tab when one is added is its owner. Player 2's Gideon, Ally of Zendikar Emblem pumps only Player 2's creatures; Player 2's Arahbo, fired from the command zone, gives +3/+3 to Player 2's Leonin Skyhunter. The board is evaluated from Player 1's tab (the harness ends there). Leonin Skyhunter 2/2 +3/+3 +1/+1 = 6/6; Gray Ogre (Player 2) 3/3; Player 1's Savannah Lions stays 2/1 and Grizzly Bears 2/2.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Player 2"
+      ]
+    },
+    {
+      "call": [
+        "setActivePlayer",
+        "p2"
+      ]
+    },
+    {
+      "call": [
+        "addCommander",
+        "card:Arahbo, Roar of the World"
+      ]
+    },
+    {
+      "call": [
+        "addEmblem",
+        "card:Gideon, Ally of Zendikar Emblem"
+      ]
+    },
+    {
+      "add": "Leonin Skyhunter",
+      "as": "cat2",
+      "controller": "p2"
+    },
+    {
+      "add": "Gray Ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Savannah Lions",
+      "controller": "p1"
+    },
+    {
+      "add": "Grizzly Bears",
+      "controller": "p1"
+    },
+    {
+      "call": [
+        "setActivePlayer",
+        "p2"
+      ]
+    },
+    {
+      "call": [
+        "addCommandZoneAbility",
+        0,
+        0,
+        "if Arahbo is in the command zone or on the battlefield, another target Cat you control gets +3/+3 until end of turn.",
+        "Eminence — At the beginning of combat on your turn, if Arahbo is in the command zone or on the battlefield, another target Cat you control gets +3/+3 until end of turn.",
+        "trigger"
+      ],
+      "as": "eminence"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@eminence",
+        "@cat2"
+      ]
+    },
+    {
+      "call": [
+        "setActivePlayer",
+        "p1"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Leonin Skyhunter",
+      "final": {
+        "power": 6,
+        "toughness": 6
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "power": 3,
+        "toughness": 3
+      }
+    },
+    {
+      "perm": "Savannah Lions",
+      "final": {
+        "power": 2,
+        "toughness": 1
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 2,
+        "toughness": 2
+      }
+    }
+  ]
+}
