@@ -211,12 +211,10 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
     return null;
   }
 
-  // "cards in hand" / "cards in all players' hands" — use gameState.handSize
+  // Cards in a hand: the hand of the player the words name, never that of the player whose tab
+  // is open (_countCardsInHand).
   if (/\bcards?\s+in\s+.*\bhands?\b/.test(desc)) {
-    if (typeof Battlefield !== 'undefined' && Battlefield.gameState) {
-      return Battlefield.gameState.handSize || 0;
-    }
-    return null;
+    return _countCardsInHand(desc, ctrlId, selfState, effect);
   }
 
   // "time you've cast your commander from the command zone this game" (Commander's Insignia, etc.)
@@ -792,6 +790,44 @@ function _computeDevotionCounts(allStates, controller) {
     }
   }
   return devotion;
+}
+/* Number of cards in the hand(s) a count names, each player's "Cards in Hand" from their own
+   game state. `ctrlId` is the effect's controller, `selfState` the permanent being modified.
+   - "your hand", "cards in hand": the effect's controller (Ensnaring Bridge, Maro).
+   - "its / that creature's / enchanted creature's controller's hand": the modified permanent's
+     controller (Righteous Authority, Flunk).
+   - "defending player's hand": the player the modified creature attacks (Mr. Foxglove).
+   - "all players' hands" (Multani), "your opponents' hands" (Enemy of Enlightenment), "the hand
+     of the opponent with the most cards in hand" (Adamaro).
+   - a chosen or targeted player or opponent ("the chosen player's hand" — Nyxathid, Entropic
+     Specter; "target opponent's", "an opponent's", "that player's", "their"): the player picked
+     on the source, else the first opponent. */
+function _countCardsInHand(desc, ctrlId, selfState, effect) {
+  if (typeof Battlefield === 'undefined' || !Array.isArray(Battlefield.players)) return null;
+  const players = Battlefield.players;
+  const handOf = (id) => {
+    const pl = players.find(p => p.id === id);
+    return pl && pl.gameState ? (pl.gameState.handSize || 0) : 0;
+  };
+  const opps = players.filter(p => p.id !== ctrlId).map(p => p.id);
+  const sum = (ids) => ids.reduce((n, id) => n + handOf(id), 0);
+  if (/\ball players' hands\b|\beach player's hand\b/.test(desc)) return sum(players.map(p => p.id));
+  if (/\bopponent with the most cards in hand\b/.test(desc)) return opps.length ? Math.max(...opps.map(handOf)) : 0;
+  if (/\b(?:your )?opponents' hands\b|\beach opponent's hand\b/.test(desc)) return sum(opps);
+  if (/\b(?:its|that creature's|that permanent's|enchanted creature's|equipped creature's) controller's hand\b/.test(desc)) {
+    return handOf((selfState && selfState.controller) || ctrlId);
+  }
+  if (/\bdefending player's hand\b/.test(desc)) {
+    const defending = _attackedPlayerId(selfState);
+    return defending ? handOf(defending) : 0;
+  }
+  if (/\b(?:(?:the )?chosen (?:player|opponent)'s|target (?:player|opponent)'s|an opponent's|that player's|their) hand\b/.test(desc)) {
+    const src = effect && effect.sourceId && typeof Battlefield.getPermById === 'function' ? Battlefield.getPermById(effect.sourceId) : null;
+    const picked = src && (src._targetOpponentPlayerId || src._targetPlayerId || src._enchantedPlayerId);
+    if (picked) return handOf(picked);
+    return opps.length ? handOf(opps[0]) : 0;
+  }
+  return handOf(ctrlId);
 }
 /* [END: FOR-EACH-COMPUTE] */
 
