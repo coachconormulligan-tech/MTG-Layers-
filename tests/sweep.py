@@ -29,7 +29,7 @@ tests/sweep/report.md and tests/sweep/singletons.md. No network. Two kinds of re
      card type, subtype, token, legendary, "with <keyword>", "power N or less") is swapped for
      another of its kind: a word no swap of which changes who is affected was not read.
      Listed in tests/sweep/subject.md, most-played cards first; cards legal in no format are
-     left out. A check on a sentence that reaches no witness says nothing ("inert").
+     left out (not cards that are only unreleased yet). A check on a sentence that reaches no witness says nothing ("inert").
 
 A cluster shared by many cards is a generic parser gap; one that appears on a single card is
 a special-case candidate. tests/sweep.js does the parsing; this file filters and clusters.
@@ -440,9 +440,19 @@ PART_LABEL = {'clause': 'Clause', 'quoted ability': 'Quoted ability', 'keyword':
               'card type': 'Card type', 'subtype': 'Subtype', 'color': 'Colour'}
 
 
+def legal_or_unreleased(c):
+    """Legal in at least one format, or not released yet: Scryfall lists a previewed card as
+    not legal anywhere until its release date, and such cards must work. Cards legal in no
+    format for good (Astral, Un-cards, memorabilia) are left out of the findings."""
+    if any(v in ('legal', 'restricted') for v in (c.get('legalities') or {}).values()):
+        return True
+    return (c.get('released_at') or '') > time.strftime('%Y-%m-%d')
+
+
 def load_ranks(legal=None):
     """Card name (and each face's name) -> EDHREC rank; unranked cards are absent.
-    legal, when given, is filled with the names of cards legal in at least one format."""
+    legal, when given, is filled with the names of cards legal in at least one format or
+    not released yet (legal_or_unreleased)."""
     ranks = {}
     if not os.path.exists(CARD_CACHE):
         return ranks
@@ -452,7 +462,7 @@ def load_ranks(legal=None):
                 continue
             c = json.loads(line)
             names = [c['name']] + c['name'].split(' // ')
-            if legal is not None and any(v in ('legal', 'restricted') for v in (c.get('legalities') or {}).values()):
+            if legal is not None and legal_or_unreleased(c):
                 legal.update(names)
             if c.get('edhrec_rank') is not None:
                 for n in names:

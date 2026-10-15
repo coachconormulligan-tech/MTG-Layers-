@@ -1,0 +1,64 @@
+{
+  "name": "I'm a Doctor, Not a . . . — \"it gets +1/+1 and becomes a Doctor\" sets the target's creature type",
+  "notes": "Memory: project_im_a_doctor_pronoun_subject_2026-10-14. setTypeRegex's subject ran back over 'Put a +1/+1 counter on target creature you control. Untap it. Until end of turn, it gets +1/+1 and', 88 characters, and the 80-character guard dropped it, so only the +1/+1 applied. A bare 'it' after earlier sentences now takes the last 'target …' phrase among them as the subject. Unreleased card (trk, 2026-11-13).",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "I'm a Doctor, Not a . . .",
+      "as": "spell",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTarget",
+        "@spell",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "types": ["Creature"],
+        "subtypes": ["Doctor"],
+        "power": 3,
+        "toughness": 3
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "subtypes": ["Giant"],
+        "power": 3,
+        "toughness": 3
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "subtypes": ["Ogre"],
+        "power": 2,
+        "toughness": 2
+      }
+    }
+  ]
+}

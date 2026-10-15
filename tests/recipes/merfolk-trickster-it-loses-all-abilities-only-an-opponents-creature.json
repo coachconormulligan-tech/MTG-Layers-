@@ -1,0 +1,14 @@
+{
+  "name": "Merfolk Trickster — fired \"It loses all abilities\" takes only a creature an opponent controls",
+  "notes": "Memory: project_pronoun_target_antecedent_restriction_2026-10-14. 'Tap target creature an opponent controls. It loses all abilities until end of turn.' When fired, 'It' is rewritten as the target it stands for (_abilityTargetBefore), but _TARGET_PHRASE_RE kept only a closing 'you control / own', so it became plain 'target creature' and the picker listed your creatures and the Trickster itself. 'an opponent controls', 'you don't control' and 'your opponents control' are now part of the phrase.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Gray Ogre", "as": "ogre", "controller": "p2" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Merfolk Trickster", "as": "mt" },
+    { "fire": "@mt", "trigger": 1, "as": "t" }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Merfolk Trickster (trigger)" }, "are": ["Gray Ogre"] }
+  ]
+}

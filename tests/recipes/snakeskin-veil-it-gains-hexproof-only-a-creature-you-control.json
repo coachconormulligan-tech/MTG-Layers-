@@ -1,0 +1,67 @@
+{
+  "name": "Snakeskin Veil — \"It gains hexproof\" takes only a creature you control",
+  "notes": "Memory: project_pronoun_target_antecedent_restriction_2026-10-14. 'Put a +1/+1 counter on target creature you control. It gains hexproof until end of turn.' The 'It' effect became the spell's target with no restriction, so the picker offered every permanent (the opponent's creatures, lands). It now takes the restriction of its antecedent, 'target creature you control'.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Forest",
+      "as": "forest"
+    },
+    {
+      "add": "Snakeskin Veil",
+      "as": "spell",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTarget",
+        "@spell",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "targetCandidates": {
+        "perm": "Snakeskin Veil"
+      },
+      "are": [
+        "Grizzly Bears"
+      ]
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Hexproof"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Hexproof"
+          ]
+        }
+      }
+    }
+  ]
+}

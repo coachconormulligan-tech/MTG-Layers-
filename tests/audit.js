@@ -205,6 +205,11 @@ function extractPhrase(after) {
 
 const ONE_SHOT_VERBS = /\b(?:create|creates|destroy|destroys|exile|exiles|put|puts|return|returns|untap|tap|taps|sacrifice|deals?|draw|choose|attach|fights?|regenerate|counter|search|reveal|goad|transform|flip|amass|bolster|manifest|populate|copy|copies|proliferate|remove|move)\b/;
 const CONTINUOUS_VERBS = /^(?:gets?|gains?|has|have|becomes?|become|loses?|lose|can|can't|cannot|assumes|is|are|isn't)\b/;
+// One-shot verbs after which the target is still the same permanent on the battlefield.
+const SAME_PERMANENT_VERBS = /^(?:put|puts|untap|tap|taps|attach|choose|goad)$/;
+// A later sentence whose subject is the target, through a pronoun ("…. Untap it. Until end of turn,
+// it gets +1/+1 and becomes a Doctor").
+const LATER_PRONOUN_EFFECT = /\.\s+(?:until end of turn,\s*)?(?:it|that (?:creature|permanent|land|artifact))\s+(?:also\s+)?(?:gets?|gains?|has|becomes?|loses?|is)\b/;
 
 /* Is this unit's text a "singular permanent target" unit? Returns { singular: true, phrase,
    excludeSource, targetIndex } or { skip: '<reason code>' }. Works from the text alone. */
@@ -234,7 +239,16 @@ function classifyUnitText(text) {
   const verbAfter = after.slice(phrase.length).trim();
   // (Gaining control is a continuous effect, layer 2.)
   const takesControl = /\bgains? control of (?:another |that |the )?$/.test(clauseBefore);
-  if (!takesControl && (ONE_SHOT_VERBS.test(clauseBefore) || !CONTINUOUS_VERBS.test(verbAfter))) return { skip: 'one-shot-action' };
+  // "Put a +1/+1 counter on target creature you control. It gains hexproof until end of turn"
+  // (Snakeskin Veil): the action leaves the target where it is and a later sentence makes it the
+  // subject of a continuous verb, so that sentence is a targeted effect. Not "create a token that's
+  // a copy of target …. It gains haste" (the token is "it") nor return / exile / destroy (the target
+  // leaves or changes zones): every one-shot verb before the target must be one of these.
+  const actionVerbs = [...clauseBefore.replace(/\bputs? [^.;]*?\bcounters? (?:and [^.;]*?\bcounters? )?on $/, 'put on ')
+    .matchAll(new RegExp(ONE_SHOT_VERBS.source, 'g'))].map(m => m[0]);
+  const keepsTarget = actionVerbs.length > 0 && actionVerbs.every(v => SAME_PERMANENT_VERBS.test(v));
+  const pronounEffect = keepsTarget && LATER_PRONOUN_EFFECT.test(verbAfter);
+  if (!takesControl && !pronounEffect && (ONE_SHOT_VERBS.test(clauseBefore) || !CONTINUOUS_VERBS.test(verbAfter))) return { skip: 'one-shot-action' };
   // "Target creature can't be blocked this turn" / "can't be regenerated" / "can attack as though
   // it didn't have defender": a rule about the target, not a change to what it is. The site does
   // not model these, so there is no targeted effect to expect.

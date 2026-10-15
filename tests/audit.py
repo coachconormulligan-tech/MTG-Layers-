@@ -73,7 +73,7 @@ PILOT_SIZE = 300
 PILOT_ALWAYS = ('Armored Guardian',)
 # Read for choosing and ranking cards only. They are not passed to the engine: a card object that ends up
 # inside a parsed effect (a copy source) would carry them into the results.
-EXTRA_FIELDS = ('legalities', 'edhrec_rank')
+EXTRA_FIELDS = ('legalities', 'edhrec_rank', 'released_at')
 
 # "target ... creature|permanent|... ... gets|gains|..." within one sentence.
 PILOT_RE = re.compile(r'\btarget\b[^.\n]*?\b(?:creature|permanent|artifact|enchantment|land|planeswalker)\b'
@@ -106,10 +106,10 @@ def card_text(c):
 
 
 def is_legal_somewhere(c):
-    lg = c.get('legalities')
-    if not lg:
+    """Legal in some format, or not released yet (sweep.legal_or_unreleased)."""
+    if not c.get('legalities'):
         return True          # field not available: do not exclude
-    return any(v in ('legal', 'restricted') for v in lg.values())
+    return sweep.legal_or_unreleased(c)
 
 
 def rank_key(c):

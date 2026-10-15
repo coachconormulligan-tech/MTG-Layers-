@@ -78,8 +78,10 @@ const _COPY_THEN_PAIR_RE = /\bbecomes? a copy of (?:another |up to one (?:other 
 const _TARGET_PHRASE_WORD = String.raw`non-?[\w-]+|attacking|blocking|tapped|untapped|legendary|nonlegendary|basic|snow|white|blue|black|red|green|colorless|multicolored`;
 const _TARGET_PHRASE_NOUN = String.raw`creature|land|artifact|enchantment|planeswalker|permanent|battle|token`;
 // Case-sensitive on purpose: a capitalised word is a subtype ("target Mount or Vehicle").
+// ("Tap target creature an opponent controls. It loses all abilities …" — Merfolk Trickster: the
+// controller words are part of the target, or the pronoun's rewrite lost them.)
 const _TARGET_PHRASE_RE = new RegExp(
-  String.raw`^target\s+((?:(?:${_TARGET_PHRASE_WORD}|${_TARGET_PHRASE_NOUN}|or|[A-Z][\w'-]*),?\s+)*(?:${_TARGET_PHRASE_NOUN}|[A-Z][\w'-]*)\b)(\s+you (?:control|own)\b)?`);
+  String.raw`^target\s+((?:(?:${_TARGET_PHRASE_WORD}|${_TARGET_PHRASE_NOUN}|or|[A-Z][\w'-]*),?\s+)*(?:${_TARGET_PHRASE_NOUN}|[A-Z][\w'-]*)\b)(\s+(?:you (?:control|own|don't control)|an opponent controls|your opponents control)\b)?`);
 function _isKnownSubtypeWord(word) {
   if (typeof TypeCatalog === 'undefined') return false;
   return ['creatureTypes', 'landTypes', 'artifactTypes', 'enchantmentTypes', 'planeswalkerTypes', 'battleTypes']
