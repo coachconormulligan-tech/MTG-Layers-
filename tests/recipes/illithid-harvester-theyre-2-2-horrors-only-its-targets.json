@@ -1,0 +1,19 @@
+{
+  "name": "Illithid Harvester — \"They're 2/2 Horror creatures\" reaches only the targets",
+  "notes": "Memory: project_im_a_doctor_pronoun_subject_2026-10-14. The fired trigger's 'They're' subject ran back over the previous sentence and made every creature a 2/2 Horror. A bare 'it / they' now takes the earlier 'target …' phrase, without its closing 'face down' (read as two required subtypes, which emptied the picker). The site offers a single-target picker for 'any number of target', so one target is set here.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Gray Ogre", "as": "ogre", "controller": "p2" },
+    { "add": "Hill Giant", "as": "giant" },
+    { "call": ["toggleTapped", "@giant"] },
+    { "add": "Craw Wurm", "as": "wurm" },
+    { "add": "Illithid Harvester", "as": "ih" },
+    { "fire": "@ih", "trigger": 0, "as": "t" },
+    { "call": ["setTarget", "@t", "@giant"] }
+  ],
+  "asserts": [
+    { "perm": "Hill Giant", "final": { "subtypes": ["Horror"], "power": 2, "toughness": 2 } },
+    { "perm": "Craw Wurm", "final": { "subtypes": ["Wurm"], "power": 6, "toughness": 4 } },
+    { "perm": "Gray Ogre", "final": { "subtypes": ["Ogre"], "power": 2, "toughness": 2 } }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "Sauron, Dino Devotee — \"It's a green Dinosaur with base power and toughness 5/5\" goes to the target",
+  "notes": "Memory: project_im_a_doctor_pronoun_subject_2026-10-14. The second mode, 'Put a saurian counter on another target creature. It's a green Dinosaur with base power and toughness 5/5 for as long as it has a saurian counter on it.', produced nothing: the 'It's' subject ran back over the counter sentence. A bare 'it / they' now takes the earlier 'target …' phrase. The site does not place the counter, so it is added by hand; without it the condition is false.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Gray Ogre", "as": "ogre", "controller": "p2" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Hill Giant", "as": "giant" },
+    { "add": "Sauron, Dino Devotee", "as": "sauron" },
+    { "fire": "@sauron", "trigger": 1, "mode": 1, "as": "t" },
+    { "call": ["setTarget", "@t", "@bears"] },
+    { "call": ["addCounter", "@bears", "saurian", 1] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "subtypes": ["Dinosaur"], "colors": ["G"], "power": 5, "toughness": 5 } },
+    { "perm": "Hill Giant", "final": { "subtypes": ["Giant"], "colors": ["R"], "power": 3, "toughness": 3 } },
+    { "perm": "Gray Ogre", "final": { "subtypes": ["Ogre"], "power": 2, "toughness": 2 } }
+  ]
+}

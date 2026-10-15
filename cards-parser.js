@@ -3156,6 +3156,17 @@ function parseCardEffects(permanent, card, opts = {}) {
       // Felon, fired: the duration comes before the subject.)
       else if (/^this (?:card|creature|permanent|token)$/i.test(stripDurationPrefix(_lastSentence)) &&
                !_isInTriggeredSentence(mStart + setTypeMatch[0].search(/\S/))) filterText = stripDurationPrefix(_lastSentence);
+      // "Put a +1/+1 counter on target creature you control. Untap it. Until end of turn, it gets
+      // +1/+1 and becomes a Doctor" (I'm a Doctor, Not a . . .): "it" is the target named earlier,
+      // which is the subject. Left whole, the run of sentences failed the length check below.
+      else if (/^(?:it|they)(?:\s+gets?\s+[+-][\dX]+\/[+-][\dX]+\s+and)?$/i.test(stripDurationPrefix(_lastSentence)) &&
+               !_isInTriggeredSentence(mStart + setTypeMatch[0].search(/\S/))) {
+        const _earlier = filterText.split(/\.\s+/).slice(0, -1).join('. ');
+        const _targets = [..._earlier.matchAll(/\b(?:(?:up to \w+|another|other)\s+)*target\s+[^.;]+/gi)];
+        // ("turn any number of target tapped nontoken creatures face down. They're 2/2 Horror
+        // creatures" — Illithid Harvester: "face down" says what the verb does, not which creatures.)
+        if (_targets.length) filterText = _targets[_targets.length - 1][0].replace(/\s+face (?:down|up)$/i, '').trim();
+      }
     }
     // "You may have target land become a Plains" (Graceful Antelope): the land is the subject.
     filterText = filterText.replace(/^you may have\s+(?=(?:up to \w+\s+)?(?:another\s+|other\s+)?target\b)/i, '');
@@ -7053,6 +7064,34 @@ function parseCardEffects(permanent, card, opts = {}) {
   // show appropriate target dropdowns with type filtering.
   // Real spells come from Battlefield.addSpell, which clears isManualEffect so the spell joins
   // evaluation; they are recognised by isSpell instead.
+  // The restriction of the last "target …" before a pronoun effect's position (outside quotes),
+  // or null when there is none or it is not a permanent on the battlefield ("return target
+  // creature card …. It gains haste": the card is the antecedent, not a permanent yet).
+  // (The position can be 0 for an effect read from its sentence alone; then the text must name
+  // exactly one target.)
+  // Only for a text whose sentence has a pronoun for its subject: "This creature and up to one
+  // other target creature each get +3/+3" (Razorgrass Invoker) is the source's own effect.
+  const _pronounSubjectSentence = /(?:^|[.;]\s*|\n)(?:(?:until end of turn|then|if you do|when you do),?\s+)?(?:it|they|that (?:creature|permanent|land|artifact|enchantment))\s+(?:also\s+)?(?:gets?|gains?|has|have|becomes?|loses?|is|are|can't)\b/i;
+  function _pronounAntecedentRestriction(pos) {
+    if (!_pronounSubjectSentence.test(oracle.replace(/["“][^"”]*["”]/g, '""'))) return null;
+    const _targetRe = /\b((?:(?:up to \w+|another|other)\s+)*target\s+[^.;"\n]+)/gi;
+    const masked = oracle.replace(/["“][^"”]*["”]/g, (q) => ' '.repeat(q.length));
+    let hits = pos ? [...masked.slice(0, pos).matchAll(_targetRe)] : [];
+    if (!hits.length) {
+      hits = [...masked.matchAll(_targetRe)];
+      if (hits.length !== 1) return null;
+    }
+    const phrase = hits[hits.length - 1][1]
+      // "… and gain control of it", "… and untap it", ", where X is …": what is done to it.
+      .replace(/,?\s+(?:and|then)\s+(?:gain|gains|untap|untaps|tap|taps|put|puts|attach|it|that|you|return|exile|destroy|sacrifice|draw|create)\b.*$/i, '')
+      .replace(/,\s+(?:where|then)\b.*$/i, '')
+      // "Gain control of target creature until end of turn": how long, not which creature.
+      .replace(/\s+(?:until|for as long as|this turn|during)\b.*$/i, '')
+      .replace(/\s+face (?:down|up)$/i, '').trim();
+    if (/\b(?:player|opponent|spell|card|cards|ability)\b/i.test(phrase.replace(/\b(?:an? )?opponents? controls?$|\byou (?:don't )?control$/i, ''))) return null;
+    const info = buildAppliesToFromText(phrase);
+    return info && info.isTargeted && typeof info.fn === 'function' ? info.fn : null;
+  }
   if (permanent.isManualEffect || permanent.isSpell) {
     // Tag all effects from spells so the engine can enforce timestamp-order targeting:
     // spell effects only affect permanents that existed before the spell was cast.
@@ -7077,6 +7116,13 @@ function parseCardEffects(permanent, card, opts = {}) {
         eff.selfTarget = false;
         eff._pronounTarget = true; // same target as the sentence before, never a slot of its own
         eff.appliesTo = null;
+        // The pronoun takes its target's words: "Put a +1/+1 counter on target creature you
+        // control. It gains hexproof until end of turn" (Snakeskin Veil). With no restriction the
+        // picker offered every permanent, the opponent's and lands included.
+        if (!eff.targetRestriction) {
+          const _r = _pronounAntecedentRestriction(eff._oraclePos);
+          if (_r) eff.targetRestriction = _r;
+        }
       }
     }
     // The same in a fired ability, where the pronoun was already written out as the target: "If a

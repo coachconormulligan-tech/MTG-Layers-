@@ -87,6 +87,23 @@ function triggerConditions() {
   return out;
 }
 
+// What the site's target picker lists now for each spell or fired ability with a single or
+// multi-target picker (cards-targeting.js, which ui-targeting.js renders from): the permanents'
+// names, sorted. Kept out of the summary like triggerConditions; "targetCandidates" asserts read it.
+function targetCandidateLists() {
+  const finalStates = Battlefield.getAllFinalStates();
+  const out = [];
+  for (const p of Battlefield.permanents) {
+    if (!p.isManualEffect && !p.isSpell) continue;
+    const pk = getTargetPickerKind(p.id, finalStates.get(p.id));
+    if (!pk || (pk.kind !== 'single' && pk.kind !== 'multi')) continue;
+    const r = getTargetCandidates(p.id, pk);
+    const names = r.blocked ? [] : (r.candidates || []).map(c => c.perm.name + (c.perm.label ? ' ' + c.perm.label : '')).sort();
+    out.push({ perm: p.name + (p.label ? ' ' + p.label : ''), kind: pk.kind, candidates: names });
+  }
+  return out;
+}
+
 function summarizeBoard() {
   const finalStates = Battlefield.getAllFinalStates();
   const realPerms = Battlefield.permanents.filter(p => !p.isManualEffect)
@@ -264,6 +281,7 @@ function buildFromRecipe(recipe, cards) {
       if (!Battlefield.restore(board)) throw new Error('Battlefield.restore() rejected the board');
       out.actual = summarizeBoard();
       out.triggerConditions = triggerConditions();
+      out.targetCandidates = targetCandidateLists();
     } catch (e) {
       out.error = String(e) + (e && e.stack ? '\n' + String(e.stack).split('\n').slice(0, 6).join('\n') : '');
     }
