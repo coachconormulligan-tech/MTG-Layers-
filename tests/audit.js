@@ -656,6 +656,22 @@ function boardAdjustments(ctx, u, unitId, pseudo, tryIds) {
       } });
     }
   }
+  // "Put a flood counter on target land. That land is an Island … for as long as it has a flood counter
+  // on it" (Aquitect's Will): the site leaves placing the counter to the player, so every listed
+  // permanent is given the counters the target's words ask for. Each target must still change only itself.
+  const onTarget = u.text.match(/\b(it|that [a-z]+) has (a|an|one|two|three|four|five|six|seven|eight|nine|ten|\d+)(?: or more)? ([\w+/]+) counters? on it\b/i);
+  if (onTarget && tryIds.length && /\btarget\b/i.test(u.text.slice(0, onTarget.index))) {
+    const word = onTarget[2].toLowerCase();
+    const n = word === 'a' || word === 'an' ? 1 : WORD_COUNT[word] || parseInt(word, 10);
+    const kind = onTarget[3].toLowerCase();
+    const given = tryIds.map(tid => [tid, Math.max(0, n - (((Battlefield.getPermById(tid) || {}).counters || {})[kind] || 0))]).filter(g => g[1] > 0);
+    if (given.length) {
+      out.push({ what: n + ' ' + kind + ' counter' + (n > 1 ? 's' : '') + ' put on every listed permanent', apply: () => {
+        given.forEach(([tid, k]) => Battlefield.addCounter(tid, kind, k));
+        return () => given.forEach(([tid, k]) => Battlefield.removeCounter(tid, kind, k));
+      } });
+    }
+  }
   // "Gain control of target artifact" when every artifact is already yours: one becomes the opponent's.
   if (/\bgains? control of\b/i.test(u.text) && others.length) {
     const p = Battlefield.getPermById(others[0]);
