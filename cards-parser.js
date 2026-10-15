@@ -7134,6 +7134,12 @@ function parseCardEffects(permanent, card, opts = {}) {
     const oLines = oracle.split('\n');
     const sortedModes = [..._modalModeLineMap.entries()].sort((a, b) => a[0] - b[0]);
     for (const eff of effects) {
+      // On a permanent, a characteristic-defining ability is a static ability of the card
+      // (CR 604.3), never a mode. Guessed into one by its words, "Domain — this card's power and
+      // toughness are each equal to …" went with the modes of "Whenever this creature attacks,
+      // choose one —" (Territorial Kavu).
+      if ((eff.type === EFFECT_TYPE.CDA_PT || eff.isCDA) &&
+          !permanent.isSpell && !permanent.abilitySourceId && !permanent.isManualEffect) continue;
       // Primary: use _oraclePos if available (set by boost/haveAbility/loseAll parsers)
       if (eff._oraclePos !== undefined) {
         const mode = _getModalModeForPos(eff._oraclePos);
