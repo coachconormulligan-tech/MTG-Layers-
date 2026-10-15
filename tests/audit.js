@@ -175,6 +175,7 @@ function diffSummaries(before, after) {
 /* ═════════════════════════ Classification from the text ═════════════════════════ */
 
 const NUMBER_WORDS = '(?:one|two|three|four|five|six|seven|eight|nine|ten|x|\\d+)';
+const WORD_COUNT = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10 };
 const PERMANENT_NOUNS = new Set(['creature', 'artifact', 'enchantment', 'land', 'planeswalker', 'permanent', 'battle']);
 
 function stripReminder(text) {
@@ -640,6 +641,20 @@ function boardAdjustments(ctx, u, unitId, pseudo, tryIds) {
       slots.forEach(n => Battlefield.setAdditionalCostPaid(unitId, true, n));
       return () => slots.forEach(n => Battlefield.setAdditionalCostPaid(unitId, false, n));
     } });
+  }
+  // "When you do, if it has four or more quest counters on it, …" (Earthbender Ascension): the
+  // counters the source's own words ask for. "It" is the source only before any "target" in the text.
+  const onSelf = u.text.match(/\b(this [a-z]+|it) has (one|two|three|four|five|six|seven|eight|nine|ten|\d+) or more ([\w+/]+) counters? on it\b/i);
+  if (onSelf && src && !(onSelf[1].toLowerCase() === 'it' && /\btarget\b/i.test(u.text.slice(0, onSelf.index)))) {
+    const n = WORD_COUNT[onSelf[2].toLowerCase()] || parseInt(onSelf[2], 10);
+    const kind = onSelf[3].toLowerCase();
+    const have = (src.counters || {})[kind] || 0;
+    if (n > have) {
+      out.push({ what: (n - have) + ' ' + kind + ' counters put on the source', apply: () => {
+        Battlefield.addCounter(src.id, kind, n - have);
+        return () => Battlefield.removeCounter(src.id, kind, n - have);
+      } });
+    }
   }
   // "Gain control of target artifact" when every artifact is already yours: one becomes the opponent's.
   if (/\bgains? control of\b/i.test(u.text) && others.length) {

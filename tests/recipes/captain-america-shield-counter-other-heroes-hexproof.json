@@ -1,0 +1,14 @@
+{
+  "name": "Captain America, Super-Soldier — a shield counter on him gives other Heroes you control hexproof",
+  "notes": "Fixed with _counterHolder (cards-parser.js): 'As long as Captain America has a shield counter on him' was checked against each Hero the hexproof reaches, so it never applied. Ant-Man (a Hero) gains hexproof, Grizzly Bears does not. Memory: project_counter_condition_on_the_source_2026-10-15.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Ant-Man, Scott Lang", "as": "antman" },
+    { "add": "Captain America, Super-Soldier", "as": "cap" },
+    { "call": ["addCounter", "@cap", "shield", 1] }
+  ],
+  "asserts": [
+    { "perm": "Ant-Man, Scott Lang", "final": { "abilities": { "$includes": ["Hexproof"] } } },
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$excludes": ["Hexproof"] } } }
+  ]
+}

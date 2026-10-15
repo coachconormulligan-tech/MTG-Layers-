@@ -1,0 +1,17 @@
+{
+  "name": "Beastmaster Ascension — seven or more quest counters on the enchantment gives creatures you control +5/+5",
+  "notes": "Fixed with _counterHolder (cards-parser.js): 'As long as this enchantment has seven or more quest counters on it' was checked against each creature the +5/+5 reaches, so it never applied. A has 7 quest counters, B has 6: Grizzly Bears gets +5/+5 once, from A only. Memory: project_counter_condition_on_the_source_2026-10-15.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Gray Ogre", "as": "ogre", "controller": "p2" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Beastmaster Ascension", "as": "ba7" },
+    { "call": ["addCounter", "@ba7", "quest", 7] },
+    { "add": "Beastmaster Ascension", "as": "ba6" },
+    { "call": ["addCounter", "@ba6", "quest", 6] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": 7, "toughness": 7 } },
+    { "perm": "Gray Ogre", "final": { "power": 2, "toughness": 2 } }
+  ]
+}

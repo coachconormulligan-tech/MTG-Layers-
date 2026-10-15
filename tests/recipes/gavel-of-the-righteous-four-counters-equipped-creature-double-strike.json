@@ -1,0 +1,18 @@
+{
+  "name": "Gavel of the Righteous — four or more counters on the Equipment gives the equipped creature double strike",
+  "notes": "Fixed with _counterHolder (cards-parser.js): 'As long as this Equipment has four or more counters on it' was checked against the equipped creature, which has none. A (4 charge counters) on Grizzly Bears gives double strike and +4/+4; B (3) on Runeclaw Bear gives +3/+3 and no double strike. Memory: project_counter_condition_on_the_source_2026-10-15.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Runeclaw Bear", "as": "runeclaw" },
+    { "add": "Gavel of the Righteous", "as": "g4" },
+    { "call": ["addCounter", "@g4", "charge", 4] },
+    { "add": "Gavel of the Righteous", "as": "g3" },
+    { "call": ["addCounter", "@g3", "charge", 3] },
+    { "call": ["applyEquipAttachment", "@g4", 0, "@bears"] },
+    { "call": ["applyEquipAttachment", "@g3", 0, "@runeclaw"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": 6, "toughness": 6, "abilities": { "$includes": ["Double strike"] } } },
+    { "perm": "Runeclaw Bear", "final": { "power": 5, "toughness": 5, "abilities": { "$excludes": ["Double strike"] } } }
+  ]
+}

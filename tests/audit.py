@@ -27,8 +27,9 @@ A unit whose own text names one permanent target ("singular") is checked twice:
            Before target-changes-nothing is reported, the board is adjusted in the one way the text
            asks for and the targets are tried again: a listed permanent is handed to the opponent
            ("gain control of"), given the keyword being removed ("loses first strike"), the source
-           is tapped ("for as long as this creature remains tapped"), the chosen land type becomes
-           Island, or the spell's Kicked / Bargained toggle is switched on. A unit that then changes
+           is tapped ("for as long as this creature remains tapped"), the source is given the
+           counters its text asks for ("if it has four or more quest counters on it"), the chosen
+           land type becomes Island, or the spell's Kicked / Bargained toggle is switched on. A unit that then changes
            its target is information (shown-on-adjusted-board). board-cannot-show, also
            information: every listed permanent already has the keywords given or is already yours,
            or the only continuous effect sits in a sentence with its own "if".

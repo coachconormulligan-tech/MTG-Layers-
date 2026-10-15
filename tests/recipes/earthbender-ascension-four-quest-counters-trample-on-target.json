@@ -1,0 +1,24 @@
+{
+  "name": "Earthbender Ascension — \"if this enchantment has four or more quest counters\" reads the enchantment's counters",
+  "notes": "Fixed with _counterHolder (cards-parser.js): the counter condition was checked against the creature the fired trigger reaches, which has no quest counters, so 'It gains trample' never applied. A (4 quest counters) gives Grizzly Bears trample; B (3) gives Runeclaw Bear nothing. The trigger's picker lists only your creatures. Memory: project_counter_condition_on_the_source_2026-10-15.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Gray Ogre", "as": "ogre", "controller": "p2" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Runeclaw Bear", "as": "runeclaw" },
+    { "add": "Earthbender Ascension", "as": "ea4" },
+    { "call": ["addCounter", "@ea4", "quest", 4] },
+    { "add": "Earthbender Ascension", "as": "ea3" },
+    { "call": ["addCounter", "@ea3", "quest", 3] },
+    { "fire": "@ea4", "trigger": 1, "as": "fired4" },
+    { "fire": "@ea3", "trigger": 1, "as": "fired3" },
+    { "call": ["setTarget", "@fired4", "@bears"] },
+    { "call": ["setTarget", "@fired3", "@runeclaw"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Earthbender Ascension A (trigger)" }, "are": ["Grizzly Bears", "Runeclaw Bear"] },
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$includes": ["Trample"] } } },
+    { "perm": "Runeclaw Bear", "final": { "abilities": { "$excludes": ["Trample"] } } },
+    { "perm": "Gray Ogre", "final": { "abilities": { "$excludes": ["Trample"] } } }
+  ]
+}

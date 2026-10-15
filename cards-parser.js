@@ -103,6 +103,16 @@ function _gsOfNamedPlayers(ct, srcId, state, allStates) {
   const players = (Battlefield.players || []).filter(pl => m[2] === 'player' || pl.id !== you);
   return { states: players.map(pl => pl.gameState || {}), every: m[1] === 'each' };
 }
+/* Whose counters a counter condition reads. "This enchantment has seven or more quest counters on
+   it, creatures you control get +5/+5" (Beastmaster Ascension; Earthbender Ascension's fired
+   "if this enchantment has four or more …") is the card's own, whatever permanent the effect
+   reaches; for a fired ability that is the card it was fired from (selfId). Any other subject
+   ("it", "enchanted creature") is the permanent being modified. `at` is where "has" stands in ct. */
+function _counterHolder(ct, at, selfId) {
+  if (!selfId || !/\bthis [\w-]+\s+$/.test(ct.slice(0, at))) return (s) => s;
+  return (s, allStates) => (allStates && allStates.get(selfId)) ||
+    (typeof Battlefield !== 'undefined' && Battlefield.getPermById(selfId)) || {};
+}
 function _anyOrEvery(named, test) {
   if (!named) return null;
   return named.every ? named.states.every(test) : named.states.some(test);
@@ -244,12 +254,15 @@ const CONDITION_PARSERS = [
   },
 
   // --- Counter conditions ---
+  // Each reads the counters of _counterHolder: the source for "this enchantment has …", else the
+  // permanent being modified.
   // "has N or more counters on it" — counters of any kind (Ezio, Brash Novice; Hero of Bretagard).
-  (ct) => {
+  (ct, srcId, selfId) => {
     const m = ct.match(/has\s+(\w+)\s+or\s+more\s+counters\b/);
     if (!m) return null;
     const threshold = _wordThresh(m[1]);
-    return (s) => Object.values(s.counters || {}).reduce((n, v) => n + (v > 0 ? v : 0), 0) >= threshold;
+    const holder = _counterHolder(ct, m.index, selfId);
+    return (s, allStates) => Object.values(holder(s, allStates).counters || {}).reduce((n, v) => n + (v > 0 ? v : 0), 0) >= threshold;
   },
   // "an opponent has three or more poison counters" (Corrupted — Zealot's Conviction, Bonepicker
   // Skirge): the Poison counters of every other player in Game State.
@@ -267,32 +280,38 @@ const CONDITION_PARSERS = [
     };
   },
   // "has N or more [type] counters on it".
-  (ct) => {
+  (ct, srcId, selfId) => {
     const m = ct.match(/has\s+(\w+)\s+or\s+more\s+([\w+/]+)\s+counter/);
     if (!m) return null;
     const threshold = _wordThresh(m[1]);
     const counterType = m[2];
-    return (s) => ((s.counters && s.counters[counterType]) || 0) >= threshold;
+    const holder = _counterHolder(ct, m.index, selfId);
+    return (s, allStates) => { const h = holder(s, allStates); return ((h.counters && h.counters[counterType]) || 0) >= threshold; };
   },
   // "has N or fewer [type] counters on it" (Evolved Spinoderm).
-  (ct) => {
+  (ct, srcId, selfId) => {
     const m = ct.match(/has\s+(\w+)\s+or\s+fewer\s+([\w+/]+)\s+counter/);
     if (!m) return null;
     const threshold = WORD_TO_NUM[m[1]] !== undefined ? WORD_TO_NUM[m[1]] : parseInt(m[1]);
     if (isNaN(threshold)) return null;
     const counterType = m[2];
-    return (s) => ((s.counters && s.counters[counterType]) || 0) <= threshold;
+    const holder = _counterHolder(ct, m.index, selfId);
+    return (s, allStates) => { const h = holder(s, allStates); return ((h.counters && h.counters[counterType]) || 0) <= threshold; };
   },
   // "has a counter on it" — any counter type present.
-  (ct) => (/\bhas\s+a\s+counter\b/.test(ct) && !/has\s+a\s+[\w+/]+\s+counter/.test(ct))
-    ? (s) => Object.values(s.counters || {}).some(v => v > 0)
-    : null,
+  (ct, srcId, selfId) => {
+    const at = ct.search(/\bhas\s+a\s+counter\b/);
+    if (at < 0 || /has\s+a\s+[\w+/]+\s+counter/.test(ct)) return null;
+    const holder = _counterHolder(ct, at, selfId);
+    return (s, allStates) => Object.values(holder(s, allStates).counters || {}).some(v => v > 0);
+  },
   // "has a [type] counter on it" ("an ice counter" — Woolly Razorback).
-  (ct) => {
+  (ct, srcId, selfId) => {
     const m = ct.match(/has\s+an?\s+([\w+/]+)\s+counter\b/);
     if (!m) return null;
     const counterType = m[1];
-    return (s) => ((s.counters && s.counters[counterType]) || 0) > 0;
+    const holder = _counterHolder(ct, m.index, selfId);
+    return (s, allStates) => { const h = holder(s, allStates); return ((h.counters && h.counters[counterType]) || 0) > 0; };
   },
 
   // --- Optional additional cost of a spell (kicker, bargain, madness / mayhem cost) ---
@@ -1133,8 +1152,10 @@ function parseCardEffects(permanent, card, opts = {}) {
     // Sequential branch table (CONDITION_PARSERS at module top). First non-null wins.
     // Returns null when no entry matches — "always true" semantics applied by callers.
     const srcId = permanent.id;
+    // "This enchantment" in a fired ability is the card it was fired from.
+    const selfId = permanent.abilitySourceId || permanent.id;
     for (const parse of CONDITION_PARSERS) {
-      const pred = parse(ct, srcId);
+      const pred = parse(ct, srcId, selfId);
       if (pred) return pred;
     }
     return null;
