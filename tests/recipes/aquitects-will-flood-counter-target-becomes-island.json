@@ -1,0 +1,20 @@
+{
+  "name": "Aquitect's Will — the target with a flood counter is an Island, an untargeted land with one is not",
+  "notes": "Memory: project_aquitects_will_counter_on_target_audit_2026-10-15. 'Put a flood counter on target land. That land is an Island in addition to its other types for as long as it has a flood counter on it.' The site leaves placing the counter to the player. The audit reported target-changes-nothing because no land on its board had a flood counter; it now puts the counter on every listed target first. This locks the site's behaviour: any land can be targeted, the targeted land with a flood counter becomes an Island with {U}, and another land with a flood counter is untouched.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Forest", "as": "forest" },
+    { "add": "Forest", "as": "forest2" },
+    { "add": "Mountain", "as": "mountain", "controller": "p2" },
+    { "add": "Aquitect's Will", "as": "spell", "spell": true },
+    { "call": ["setTarget", "@spell", "@forest"] },
+    { "call": ["addCounter", "@forest", "flood", 1] },
+    { "call": ["addCounter", "@forest2", "flood", 1] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Aquitect's Will" }, "are": ["Forest A", "Forest B", "Mountain"] },
+    { "perm": "Forest A", "final": { "subtypes": { "$includes": ["Forest", "Island"] }, "abilities": { "$includes": ["{T}: Add {G}.", "{T}: Add {U}."] } } },
+    { "perm": "Forest B", "final": { "subtypes": { "$excludes": ["Island"] }, "abilities": { "$excludes": ["{T}: Add {U}."] } } },
+    { "perm": "Mountain", "final": { "subtypes": { "$excludes": ["Island"] } } }
+  ]
+}
