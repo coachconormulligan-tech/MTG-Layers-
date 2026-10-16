@@ -1,0 +1,16 @@
+{
+  "name": "Auriok Steelshaper — while it is equipped, Soldiers and Knights you control get +1/+1",
+  "notes": "Fixed in _parseCondition (cards-parser.js): a condition opening 'this <word> is / has …' is read as 'it …' against the card's own state. 'As long as this creature is equipped' was checked against each Soldier the boost reaches, which wears no Equipment, so Elite Vanguard stayed 2/1. Raksha Golden Cub, Patriot, Young Avenger and Gate Hound had the same fault. Memory: project_condition_on_the_source_tapped_equipped_2026-10-15.",
+  "steps": [
+    { "add": "Auriok Steelshaper", "as": "a" },
+    { "add": "Elite Vanguard" },
+    { "add": "Grizzly Bears" },
+    { "add": "Bonesplitter", "as": "b" },
+    { "call": ["applyEquipAttachment", "@b", 0, "@a"] }
+  ],
+  "asserts": [
+    { "perm": "Elite Vanguard", "final": { "power": 3, "toughness": 2 } },
+    { "perm": "Auriok Steelshaper", "final": { "power": 4, "toughness": 2 } },
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2 } }
+  ]
+}
