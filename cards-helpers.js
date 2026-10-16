@@ -288,6 +288,23 @@ function _abilitiesFromOtherObject(text) {
   return { text: text.replace(m[0], plain), plain, original: m[0], pick };
 }
 
+// "Put a +1/+1 counter on target creature you control. It gains this card's other abilities"
+// (Symbiote Spider-Man, used from the graveyard): the abilities are the card's printed lines
+// other than the one being activated. They are written out as quoted abilities, which the parser
+// already grants to the target ('It gains "…" and "…"'), lasting as long as the card says.
+// abilityLines are the card's printed ability lines (reminder text removed, self-references as
+// "this creature"); a line with quotes of its own cannot be nested and leaves the text as it is.
+// Returns { text, plain, original } or null.
+function _otherAbilitiesOfThisCard(text, abilityLines, fullText) {
+  const m = text.match(/\b(gains?|ha(?:s|ve)) this card's other abilities\b/i);
+  if (!m) return null;
+  const others = (abilityLines || []).map(l => String(l).trim()).filter(l => l &&
+    l !== String(fullText || '').trim() && !/\bthis card's other abilities\b/i.test(l));
+  if (!others.length || others.some(l => /["“”]/.test(l))) return null;
+  const plain = `${m[1]} ${others.map(l => `"${l}"`).join(' and ')}`;
+  return { text: text.replace(m[0], plain), plain, original: m[0] };
+}
+
 // Fire-time values for "base power/toughness becomes equal to …" abilities. The effect locks in
 // a number as the ability resolves (CR 608.2h), so the text is rewritten with that number from
 // the snapshot the ability was fired against and then parsed as a plain "has base power N".

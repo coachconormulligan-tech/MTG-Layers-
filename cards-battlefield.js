@@ -560,6 +560,9 @@ const Battlefield = {
     // "…gains all activated abilities of target creature" (Quicksilver Elemental): likewise.
     const refAb = refPT ? null : _abilitiesFromOtherObject(parsedEffectText);
     if (refAb) parsedEffectText = refAb.text;
+    // "It gains this card's other abilities" (Symbiote Spider-Man): its printed abilities, quoted.
+    const otherAb = _otherAbilitiesOfThisCard(parsedEffectText, sourcePerm.printedAbilities, fullText);
+    if (otherAb) parsedEffectText = otherAb.text;
 
     // "where X is the number of [gameState desc]" — snapshot count at fire time so the
     // displayed effect text and the P/T boost are both frozen to the board state at resolution,
@@ -863,8 +866,10 @@ const Battlefield = {
     // Sync oracleText with the fully-processed parsedEffectText (X substituted, "if" stripped, etc.)
     // (A "…becomes equal to that creature's power" sentence keeps its own words on display and
     // in a save, which replays this text; only the parser sees the placeholder.)
-    const refText = refPT || refAb;
-    pseudoPerm.oracleText = refText ? parsedEffectText.replace(refText.plain, refText.original) : parsedEffectText;
+    // So does "It gains this card's other abilities".
+    let shownText = parsedEffectText;
+    for (const r of [refPT || refAb, otherAb]) if (r) shownText = shownText.replace(r.plain, r.original);
+    pseudoPerm.oracleText = shownText;
     const fakeCard = { name: sourcePerm.name, oracle_text: parsedEffectText, type_line: 'Instant', colors: sourcePerm.printedColors, cmc: 0 };
     // Detect "basic land type of your choice" in the ability text so the land-type
     // dropdown appears on the activated-ability pseudo-permanent (not on the source card).

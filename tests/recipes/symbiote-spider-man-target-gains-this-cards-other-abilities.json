@@ -1,0 +1,75 @@
+{
+  "name": "Symbiote Spider-Man — Find New Host's target gains the card's combat damage trigger",
+  "notes": "\"Put a +1/+1 counter on target creature you control. It gains this card's other abilities.\" The sentence parsed to nothing: no effect and no target picker. The other abilities are now written out as quoted abilities at fire time. The picker still lists Symbiote Spider-Man itself, though the card is exiled from the graveyard as the cost (open follow-up shared with Venom, Evil Unleashed and Beetle, Legacy Criminal); update the list here when that is fixed.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant",
+      "controller": "p2"
+    },
+    {
+      "add": "Symbiote Spider-Man",
+      "as": "symbiote"
+    },
+    {
+      "fire": "@symbiote",
+      "activated": 1,
+      "as": "fired"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@fired",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "targetCandidates": {
+        "perm": "Symbiote Spider-Man (activated)"
+      },
+      "are": [
+        "Grizzly Bears",
+        "Symbiote Spider-Man"
+      ]
+    },
+    {
+      "effect": {
+        "source": "Symbiote Spider-Man (activated)",
+        "layer": "6",
+        "type": "add_ability"
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Whenever this creature deals combat damage to a player, look at that many cards from the top of your library. Put one of them into your hand and the rest into your graveyard."
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Whenever this creature deals combat damage to a player, look at that many cards from the top of your library. Put one of them into your hand and the rest into your graveyard."
+          ]
+        }
+      }
+    }
+  ]
+}
