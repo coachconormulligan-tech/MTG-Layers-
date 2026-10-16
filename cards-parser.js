@@ -3808,10 +3808,12 @@ function parseCardEffects(permanent, card, opts = {}) {
       filterText = stripDurationPrefix(segments[segments.length - 1].trim());
       // "Untap target creature. It gets +3/+3" — resolve "It" pronoun to "target [type]"
       // from the prior sentence, mirroring the same resolution in haveAbilityRegex.
+      // The controller words go with it: "Untap target creature you control. It gets +2/+2"
+      // (Vow to Erebor) offered the opponent's creatures too.
       if (/^it$/i.test(filterText) && segments.length >= 2) {
         const prevSeg = segments[segments.length - 2].trim();
-        const tRef = prevSeg.match(/(?:^(?:choose\s+(?:a|an|one)|target)|\btarget)\s+([\w][\w\s]*?)(?:\s+you\s+(?:control|own))?$/i);
-        if (tRef) filterText = 'target ' + tRef[1].trim();
+        const tRef = prevSeg.match(/(?:^(?:choose\s+(?:a|an|one)|target)|\btarget)\s+([\w][\w\s]*?)(\s+you\s+(?:control|own))?$/i);
+        if (tRef) filterText = 'target ' + tRef[1].trim() + (tRef[2] || '');
       }
       if (!filterText) continue;
     }
