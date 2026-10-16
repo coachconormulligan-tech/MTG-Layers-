@@ -1,0 +1,61 @@
+{
+  "name": "Vow to Erebor — \"It gets +2/+2\" takes only a creature you control",
+  "notes": "Memory: project_vow_to_erebor_it_gets_you_control_2026-10-16. 'Untap target creature you control. It gets +2/+2 until end of turn. If it's a Dwarf, you may attach an Equipment you control to it.' The boost reader resolved 'It' to 'target creature' and dropped 'you control', so the picker offered the opponent's creatures too. The Equipment attach is an action and is not modelled.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Forest",
+      "as": "forest"
+    },
+    {
+      "add": "Vow to Erebor",
+      "as": "spell",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTarget",
+        "@spell",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "targetCandidates": {
+        "perm": "Vow to Erebor"
+      },
+      "are": [
+        "Grizzly Bears"
+      ]
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 4,
+        "toughness": 4
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "power": 2,
+        "toughness": 2
+      }
+    }
+  ]
+}
