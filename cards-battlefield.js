@@ -505,6 +505,14 @@ const Battlefield = {
     // Likewise from the hand ("{1}{R}, Discard this card: …", channel, forecast, "When you cycle
     // this card, …") and once the card has left ("When this creature dies, target creature …").
     if (_abilityUsedOffTheBattlefield(fullText, kind)) pseudoPerm._excludeAbilitySource = true;
+    // And when its one target is a card returned from your graveyard to the battlefield (Carnage,
+    // Crimson Chaos; Geth, Thane of Contracts): never the source, which is on the battlefield.
+    // (Read in the ability as printed: a saved board's effect text has its pronoun written out.)
+    {
+      const printed = String(fullText || effectText || '').replace(/"[^"]*"/g, '""');
+      if ((printed.match(/\btarget\b/gi) || []).length === 1 &&
+          /\btarget\b[^.]*\bcards?\b[^.]*\bfrom your graveyard to the battlefield\b/i.test(printed)) pseudoPerm._excludeAbilitySource = true;
+    }
     // For triggered/activated abilities, convert "it" / "that creature" subject pronouns
     // to "target [type]" so effects like "Whenever a Cat attacks, it gains trample" become
     // targeted and require user selection.

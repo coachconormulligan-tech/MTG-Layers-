@@ -87,6 +87,27 @@ function _isKnownSubtypeWord(word) {
   return ['creatureTypes', 'landTypes', 'artifactTypes', 'enchantmentTypes', 'planeswalkerTypes', 'battleTypes']
     .some(k => TypeCatalog[k] && TypeCatalog[k].has(word));
 }
+/* "Return target creature card with mana value 3 or less from your graveyard to the battlefield.
+   It gains …" (Carnage, Crimson Chaos): what the pronoun stands for is that card once it is on
+   the battlefield, which the picker offers as the permanent it became. Returned as the filter
+   that permanent meets, "target creature with mana value 3 or less you control" (it returns under
+   your control): the card's kinds (types, subtypes, colours, legendary, "nonland permanent"),
+   "with mana value N or less / greater" and "named …". Words a permanent filter cannot read
+   ("with mana value X", "less than X", "with a sticker on it") are dropped, so the list can admit
+   too much but never turns the returned card away. A bare "card" is any permanent. Null when the
+   phrase is not a card returned from your graveyard to the battlefield. */
+const _RETURNED_CARD_RE = /^(?:(?:up to \w+|another)\s+)?target\s+(.*?)\bcards?\b([^.]*?)\s+from your graveyard to the battlefield\b/i;
+function _returnedCardTargetPhrase(phrase) {
+  const m = String(phrase || '').match(_RETURNED_CARD_RE);
+  if (!m) return null;
+  let kinds = m[1].trim();
+  const km = kinds && ('target ' + kinds).match(_TARGET_PHRASE_RE);
+  if (!km || km[0] !== 'target ' + kinds || (km[1].match(/\b[A-Z][\w'-]*/g) || []).some(w => !_isKnownSubtypeWord(w))) kinds = 'permanent';
+  const mv = m[2].match(/\bwith mana value (\d+) or (less|greater)\b/i);
+  const named = m[2].match(/\bnamed\s+(.+)$/);
+  return 'target ' + kinds + (mv ? ` with mana value ${mv[1]} or ${mv[2].toLowerCase()}` : '') +
+    (named ? ' named ' + named[1].trim() : '') + ' you control';
+}
 function _abilityTargetBefore(text, offset) {
   const before = text.slice(0, offset);
   const starts = [];
@@ -95,6 +116,8 @@ function _abilityTargetBefore(text, offset) {
   for (let i = starts.length - 1; i >= 0; i--) {
     const rest = 't' + before.slice(starts[i] + 1);
     if (/^target\s+(?:players?|opponents?)\b/i.test(rest) || /\bany\s+$/i.test(before.slice(0, starts[i]))) continue;
+    const returned = _returnedCardTargetPhrase(rest);
+    if (returned) return /\bcreates?\b/i.test(before.slice(starts[i])) || /\bexcept\b[^.]*$/i.test(before.slice(starts[i])) ? null : returned;
     const m = rest.match(_TARGET_PHRASE_RE);
     if (!m) return null;
     if ((m[1].match(/\b[A-Z][\w'-]*/g) || []).some(w => !_isKnownSubtypeWord(w))) return null;

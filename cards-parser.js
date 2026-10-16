@@ -7133,6 +7133,13 @@ function parseCardEffects(permanent, card, opts = {}) {
       // "Gain control of target creature until end of turn": how long, not which creature.
       .replace(/\s+(?:until|for as long as|this turn|during)\b.*$/i, '')
       .replace(/\s+face (?:down|up)$/i, '').trim();
+    // "Return target creature card with mana value 3 or less from your graveyard to the
+    // battlefield. It gains …" (Can't Stay Away): the card as the permanent it became.
+    const _returned = _returnedCardTargetPhrase(phrase);
+    if (_returned) {
+      const info = buildAppliesToFromText(_returned);
+      return info && info.isTargeted && typeof info.fn === 'function' ? info.fn : null;
+    }
     if (/\b(?:player|opponent|spell|card|cards|ability)\b/i.test(phrase.replace(/\b(?:an? )?opponents? controls?$|\byou (?:don't )?control$/i, ''))) return null;
     const info = buildAppliesToFromText(phrase);
     return info && info.isTargeted && typeof info.fn === 'function' ? info.fn : null;

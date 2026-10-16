@@ -1,0 +1,41 @@
+{
+  "name": "Carnage, Crimson Chaos and Can't Stay Away — a card returned from your graveyard is picked by its own words",
+  "notes": "Memory: project_carnage_returned_card_picker_2026-10-16. 'Return target creature card with mana value 3 or less from your graveyard to the battlefield. It gains \"…\"'. The fired trigger rewrote 'It' as plain 'target creature' (_abilityTargetBefore stopped at the type word) and the spell's pronoun got no restriction at all (_pronounAntecedentRestriction refused any phrase with 'card'), so both pickers listed Hill Giant (mana value 4), the opponent's Gray Ogre, and for the trigger Carnage itself. Now the returned card is read as 'target creature with mana value 3 or less you control', and a fired ability whose one target comes from your graveyard never lists its source. Carnage's trigger is fired once more at Grizzly Bears: the Bears gain both quoted abilities and Carnage neither.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Gray Ogre", "as": "ogre", "controller": "p2" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Hill Giant", "as": "giant" },
+    { "add": "Carnage, Crimson Chaos", "as": "carnage" },
+    { "fire": "@carnage", "trigger": 1, "as": "etb" },
+    { "add": "Can't Stay Away", "as": "csa", "spell": true },
+    { "fire": "@carnage", "trigger": 1, "as": "etb2" },
+    { "call": ["setTarget", "@etb2", "@bears"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Carnage, Crimson Chaos (trigger) A" }, "are": ["Grizzly Bears"] },
+    { "targetCandidates": { "perm": "Can't Stay Away" }, "are": ["Grizzly Bears"] },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "This creature attacks each combat if able",
+            "When this creature deals combat damage to a player, sacrifice it."
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Carnage, Crimson Chaos",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "This creature attacks each combat if able",
+            "When this creature deals combat damage to a player, sacrifice it."
+          ]
+        }
+      }
+    }
+  ]
+}
