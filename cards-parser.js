@@ -5343,6 +5343,9 @@ function parseCardEffects(permanent, card, opts = {}) {
       const andEff = pushEff('6', EFFECT_TYPE.ADD_ABILITY, { ability: contAbility },
         { isSelf, isTargeted, fn, selfAffect },
         `${filterText} have "${contAbility}". ${desc}`);
+      // The same target as the first quoted ability: without its restriction a fired ability's
+      // effect is taken for the source's own and pinned to it (Elemental Expressionist).
+      _applyTargetInfo(andEff, { isSpellTarget: !!_ftNTS, maxTargets: _ftMaxT || 1 }, fn);
       if (ftMatchCond) andEff.asLongAsCondition = ftMatchCond;
       // Advance the main regex past this and-continuation
       fullTextAbilityRegex.lastIndex = ftMatch.index + ftMatch[0].length + andMatch.index + andMatch[0].length;
