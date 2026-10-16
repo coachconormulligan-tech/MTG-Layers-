@@ -498,6 +498,10 @@ const Battlefield = {
     if (firedAtStates) pseudoPerm._firedAtStates = firedAtStates;
     pseudoPerm._firedAtSnapshot = this._buildFiredAtSnapshot(firedAtStates);
     this.permanents.push(pseudoPerm);
+    // "{2}{B}, Exile this card from your graveyard: Put two +1/+1 counters on target creature"
+    // (Venom, Evil Unleashed; Renew): the ability is used from the graveyard, so the card is
+    // not on the battlefield to be targeted.
+    if (kind === 'activated' && _exilesThisCardFromGraveyardAsCost(fullText)) pseudoPerm._excludeAbilitySource = true;
     // For triggered/activated abilities, convert "it" / "that creature" subject pronouns
     // to "target [type]" so effects like "Whenever a Cat attacks, it gains trample" become
     // targeted and require user selection.

@@ -977,6 +977,10 @@ function auditFace(card, faceIndex) {
       const cls = classifyUnitText(text);
       if (!cls.singular) { skip(kind, ab.index, plan.label, text, cls.skip); continue; }
       const u = newUnit(kind, ab.index, plan.label, text, cls);
+      // "{2}{B}, Exile this card from your graveyard: … target creature" (CR 602.2, 601.2h): the
+      // ability is used from the graveyard and the card is exiled as its cost, so it is never on
+      // the battlefield to be a target.
+      if (kind === 'activated' && /\bexile this (?:card|creature) from your graveyard\b/i.test(ab.costText || '')) u.excludeSource = true;
       run(u, plan.fire);
     }
   };
