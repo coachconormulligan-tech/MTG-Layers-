@@ -2376,6 +2376,24 @@ function _evaluateTriggerCondition(condText, sourceState) {
     const n = pl.gameState.handSize || 0;
     return handMatch[1] === 'no' ? n === 0 : /^(?:fewer|less)$/.test(handMatch[3]) ? n <= k : n >= k;
   }
+  // "if this creature is tapped" (the Survival cycle, Mana Vault, Kalamax), "if this artifact is
+  // untapped" (Howling Mine, Genesis Chamber): the card's own Tap and Attacking toggles. Only a
+  // subject that is the card itself ("this <word>", "it", its name or short name), never
+  // "enchanted creature is untapped" (Narcolepsy), which is about another permanent.
+  const selfStateMatch = ct.match(/^(.+?)\s+(?:is|'s)\s+(not\s+)?(tapped|untapped|attacking)$|^(.+?)\s+isn't\s+(tapped|untapped|attacking)$/);
+  if (selfStateMatch && sourceState) {
+    const subj = (selfStateMatch[1] || selfStateMatch[4]).trim();
+    const negated = !!(selfStateMatch[2] || selfStateMatch[4]);
+    const word = selfStateMatch[3] || selfStateMatch[5];
+    const name = String(sourceState.name || '').toLowerCase().replace(/’/g, "'");
+    const shortNames = [name, name.split(',')[0].trim(), name.split(/[\s,]/)[0]].filter(n => n.length > 2);
+    const isSelf = /^(?:this\s+[a-z]+|it|~)$/.test(subj) || shortNames.includes(subj);
+    if (isSelf) {
+      const tapped = !!sourceState.tapped || traits.includes('Tapped');
+      const holds = word === 'tapped' ? tapped : word === 'untapped' ? !tapped : traits.includes('Attacking');
+      return negated ? !holds : holds;
+    }
+  }
   // "if she was a nonland creature" (Princess Yue): only qualifies while the source is
   // a creature that isn't a land. Once she's already a land, the trigger does nothing.
   if (/\bnonland\s+creature\b/.test(ct)) {

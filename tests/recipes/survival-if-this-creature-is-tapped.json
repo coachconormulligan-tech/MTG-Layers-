@@ -1,0 +1,20 @@
+{
+  "name": "Survival — \"if this creature is tapped\" is read at fire time: Reluctant Role Model, Kona, Howling Mine, Mana Vault",
+  "notes": "The site's fire-time check (_evaluateTriggerCondition in cards-text-utils.js) did not read \"if this creature / this artifact / <card name> is tapped / untapped\", so it returned null and the trigger always fired. It now reads the card's own Tap toggle (state.tapped or the 'Tapped' trait) and Attacking toggle, for a subject that is the card itself only (never \"enchanted creature is untapped\", Narcolepsy). Reluctant Role Model A is tapped and B untapped; Kona, Rescue Beastie (\"if Kona is tapped\", its short name) is tapped; Howling Mine (\"if this artifact is untapped\") is untapped; Mana Vault (\"if this artifact is tapped\") is untapped. Memory: project_trigger_condition_source_tapped_2026-10-15.",
+  "steps": [
+    { "add": "Reluctant Role Model", "as": "a" },
+    { "call": ["toggleTapped", "@a"] },
+    { "add": "Reluctant Role Model", "as": "b" },
+    { "add": "Kona, Rescue Beastie", "as": "k" },
+    { "call": ["toggleTapped", "@k"] },
+    { "add": "Howling Mine" },
+    { "add": "Mana Vault" }
+  ],
+  "asserts": [
+    { "triggerCondition": { "perm": "Reluctant Role Model A", "trigger": 0 }, "is": true },
+    { "triggerCondition": { "perm": "Reluctant Role Model B", "trigger": 0 }, "is": false },
+    { "triggerCondition": { "perm": "Kona, Rescue Beastie" }, "is": true },
+    { "triggerCondition": { "perm": "Howling Mine" }, "is": true },
+    { "triggerCondition": { "perm": "Mana Vault" }, "is": false }
+  ]
+}
