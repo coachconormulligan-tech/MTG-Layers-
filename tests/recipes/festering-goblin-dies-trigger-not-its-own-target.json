@@ -1,0 +1,17 @@
+{
+  "name": "Festering Goblin — the dies trigger's picker leaves out the card that died",
+  "notes": "\"When this creature dies, target creature gets -1/-1 until end of turn.\" The card is in the graveyard when the trigger is put on the stack, so it cannot be a target; the picker listed Festering Goblin itself. A condition with another event (\"enters or dies\", \"this creature or another creature you control dies\") still lists the card.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Hill Giant", "as": "giant", "controller": "p2" },
+    { "add": "Festering Goblin", "as": "goblin" },
+    { "fire": "@goblin", "trigger": 0, "as": "fired" },
+    { "call": ["setTarget", "@fired", "@giant"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Festering Goblin (trigger)" }, "are": ["Grizzly Bears", "Hill Giant"] },
+    { "perm": "Hill Giant", "final": { "power": 2, "toughness": 2 } },
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2 } }
+  ]
+}

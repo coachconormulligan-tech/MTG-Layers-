@@ -502,6 +502,9 @@ const Battlefield = {
     // (Venom, Evil Unleashed; Renew): the ability is used from the graveyard, so the card is
     // not on the battlefield to be targeted.
     if (kind === 'activated' && _exilesThisCardFromGraveyardAsCost(fullText)) pseudoPerm._excludeAbilitySource = true;
+    // Likewise from the hand ("{1}{R}, Discard this card: …", channel, forecast, "When you cycle
+    // this card, …") and once the card has left ("When this creature dies, target creature …").
+    if (_abilityUsedOffTheBattlefield(fullText, kind)) pseudoPerm._excludeAbilitySource = true;
     // For triggered/activated abilities, convert "it" / "that creature" subject pronouns
     // to "target [type]" so effects like "Whenever a Cat attacks, it gains trample" become
     // targeted and require user selection.
