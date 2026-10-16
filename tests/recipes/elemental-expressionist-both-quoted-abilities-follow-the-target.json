@@ -1,0 +1,45 @@
+{
+  "name": "Elemental Expressionist — both quoted abilities go to the chosen target, neither to the source",
+  "notes": "Memory: project_elemental_expressionist_and_quoted_follows_target_2026-10-16. 'Choose target creature you control. Until end of turn, it gains \"If this creature would leave the battlefield, exile it instead …\" and \"When this creature is put into exile, create a 4/4 blue and red Elemental creature token.\"' The second quoted ability (the 'and \"…\"' continuation) was built without the target's restriction, so the fired trigger pinned it to Elemental Expressionist itself. Fired twice: once with no target chosen (nothing changes), once at Grizzly Bears (the Bears gain both).",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Gray Ogre", "as": "ogre", "controller": "p2" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Elemental Expressionist", "as": "ee" },
+    { "fire": "@ee", "trigger": 0, "as": "untargeted" },
+    { "fire": "@ee", "trigger": 0, "as": "targeted" },
+    { "call": ["setTarget", "@targeted", "@bears"] }
+  ],
+  "asserts": [
+    {
+      "targetCandidates": { "perm": "Elemental Expressionist (trigger) A" },
+      "are": ["Elemental Expressionist", "Grizzly Bears"]
+    },
+    {
+      "perm": "Elemental Expressionist",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "If this creature would leave the battlefield, exile it instead of putting it anywhere else",
+            "When this creature is put into exile, create a 4/4 blue and red Elemental creature token."
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "If this creature would leave the battlefield, exile it instead of putting it anywhere else",
+            "When this creature is put into exile, create a 4/4 blue and red Elemental creature token."
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": { "abilities": [] }
+    }
+  ]
+}
