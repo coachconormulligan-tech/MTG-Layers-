@@ -1,0 +1,173 @@
+{
+  "name": "Extraction Specialist, Aegis Angel and Kyodai — \"for as long as you control this creature\" holds while you control it",
+  "notes": "Memory: project_for_as_long_as_you_control_this_creature_2026-10-16. 'That creature can't attack or block for as long as you control this creature' (Extraction Specialist) and 'another target permanent gains indestructible for as long as you control this creature' (Aegis Angel), fired at a target, changed nothing: the condition went to the 'you control a [type]' catch-all, which counted permanents of the subtype 'This'. It is now true while the card the ability came from is on the battlefield under the control of whoever controls the ability. The same trailing 'as long as' on a triggered or activated line had also been filed as the line's condition, so the trigger itself was left out of the card's abilities whenever the board had an effect (it seemed to vanish once fired, and Aegis Angel could not be fired after Extraction Specialist): it is now kept. A second Specialist removed and Kyodai (the same words, with its name) taken by the opponent's Act of Treason show the duration ending.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Gilded Goose",
+      "as": "goose"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Llanowar Elves",
+      "as": "elves"
+    },
+    {
+      "add": "Extraction Specialist",
+      "as": "es"
+    },
+    {
+      "fire": "@es",
+      "trigger": 1,
+      "as": "esEtb"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@esEtb",
+        "@bears"
+      ]
+    },
+    {
+      "add": "Aegis Angel",
+      "as": "angel"
+    },
+    {
+      "fire": "@angel",
+      "trigger": 1,
+      "as": "angelEtb"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@angelEtb",
+        "@ogre"
+      ]
+    },
+    {
+      "add": "Extraction Specialist",
+      "as": "es2"
+    },
+    {
+      "fire": "@es2",
+      "trigger": 1,
+      "as": "es2Etb"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@es2Etb",
+        "@goose"
+      ]
+    },
+    {
+      "call": [
+        "removePermanent",
+        "@es2"
+      ]
+    },
+    {
+      "add": "Kyodai, Soul of Kamigawa",
+      "as": "kyodai"
+    },
+    {
+      "fire": "@kyodai",
+      "trigger": 2,
+      "as": "kyodaiEtb"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@kyodaiEtb",
+        "@giant"
+      ]
+    },
+    {
+      "add": "Act of Treason",
+      "as": "treason",
+      "controller": "p2",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTarget",
+        "@treason",
+        "@kyodai"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "traits": {
+          "$includes": [
+            "Can't attack or block"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Indestructible"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Gilded Goose",
+      "final": {
+        "traits": {
+          "$excludes": [
+            "Can't attack or block"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Indestructible"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Llanowar Elves",
+      "final": {
+        "traits": {
+          "$excludes": [
+            "Can't attack or block"
+          ]
+        },
+        "abilities": {
+          "$excludes": [
+            "Indestructible"
+          ]
+        }
+      }
+    }
+  ]
+}
