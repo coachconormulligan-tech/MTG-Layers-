@@ -1,0 +1,74 @@
+{
+  "name": "Extraction Specialist and Wrap in Flames — a pronoun's \"can't\" rule takes its target's words",
+  "notes": "Memory: project_extraction_specialist_cant_pronoun_2026-10-16. 'Return target creature card with mana value 2 or less from your graveyard to the battlefield. That creature can't attack or block …' and 'Wrap in Flames deals 1 damage to each of up to three target creatures. Those creatures can't block this turn.' The can't rule on a pronoun was given a restriction that let every permanent through, and with nothing else restricting the target (returning a card and dealing damage leave no effect) the picker listed Sol Ring, Smuggler's Copter, Hill Giant (mana value 4) and the opponent's Gray Ogre. The rule now takes the restriction of the target it stands for (the returned card read as the permanent it became).",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Gilded Goose",
+      "as": "goose"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Sol Ring",
+      "as": "ring"
+    },
+    {
+      "add": "Smuggler's Copter",
+      "as": "copter"
+    },
+    {
+      "add": "Extraction Specialist",
+      "as": "es"
+    },
+    {
+      "fire": "@es",
+      "trigger": 1,
+      "as": "etb"
+    },
+    {
+      "add": "Wrap in Flames",
+      "as": "wrap",
+      "spell": true
+    }
+  ],
+  "asserts": [
+    {
+      "targetCandidates": {
+        "perm": "Extraction Specialist (trigger)"
+      },
+      "are": [
+        "Grizzly Bears",
+        "Gilded Goose"
+      ]
+    },
+    {
+      "targetCandidates": {
+        "perm": "Wrap in Flames"
+      },
+      "are": [
+        "Extraction Specialist",
+        "Grizzly Bears",
+        "Gilded Goose",
+        "Hill Giant",
+        "Gray Ogre"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,2786 @@
+{
+ "name": "Extraction Specialist and Wrap in Flames — a pronoun's \"can't\" rule takes its target's words",
+ "notes": "Memory: project_extraction_specialist_cant_pronoun_2026-10-16. 'Return target creature card with mana value 2 or less from your graveyard to the battlefield. That creature can't attack or block …' and 'Wrap in Flames deals 1 damage to each of up to three target creatures. Those creatures can't block this turn.' The can't rule on a pronoun was given a restriction that let every permanent through, and with nothing else restricting the target (returning a card and dealing damage leave no effect) the picker listed Sol Ring, Smuggler's Copter, Hill Giant (mana value 4) and the opponent's Gray Ogre. The rule now takes the restriction of the target it stands for (the returned card read as the permanent it became).",
+ "recipe": {
+  "steps": [
+   {
+    "call": [
+     "addPlayer",
+     "Opponent"
+    ]
+   },
+   {
+    "add": "Gray Ogre",
+    "as": "ogre",
+    "controller": "p2"
+   },
+   {
+    "add": "Grizzly Bears",
+    "as": "bears"
+   },
+   {
+    "add": "Gilded Goose",
+    "as": "goose"
+   },
+   {
+    "add": "Hill Giant",
+    "as": "giant"
+   },
+   {
+    "add": "Sol Ring",
+    "as": "ring"
+   },
+   {
+    "add": "Smuggler's Copter",
+    "as": "copter"
+   },
+   {
+    "add": "Extraction Specialist",
+    "as": "es"
+   },
+   {
+    "fire": "@es",
+    "trigger": 1,
+    "as": "etb"
+   },
+   {
+    "add": "Wrap in Flames",
+    "as": "wrap",
+    "spell": true
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "targetCandidates": {
+    "perm": "Extraction Specialist (trigger)"
+   },
+   "are": [
+    "Grizzly Bears",
+    "Gilded Goose"
+   ]
+  },
+  {
+   "targetCandidates": {
+    "perm": "Wrap in Flames"
+   },
+   "are": [
+    "Extraction Specialist",
+    "Grizzly Bears",
+    "Gilded Goose",
+    "Hill Giant",
+    "Gray Ogre"
+   ]
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "11bf2cc0-799f-4eb8-b338-ed7543f469e7",
+     "oracle_id": "83c8a3a6-2e1a-4e26-8847-6d066f42d906",
+     "multiverse_ids": [
+      2283
+     ],
+     "tcgplayer_id": 1777,
+     "cardmarket_id": 6053,
+     "name": "Gray Ogre",
+     "lang": "en",
+     "released_at": "1995-04-01",
+     "uri": "https://api.scryfall.com/cards/11bf2cc0-799f-4eb8-b338-ed7543f469e7",
+     "scryfall_uri": "https://scryfall.com/card/4ed/200/gray-ogre?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T13:03:48Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+      "normal": "https://cards.scryfall.io/normal/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+      "large": "https://cards.scryfall.io/large/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+      "png": "https://cards.scryfall.io/png/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.png?1783947828",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+      "thumb": "https://cards.scryfall.io/thumb/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.webp?1783947828",
+      "grid": "https://cards.scryfall.io/grid/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.webp?1783947828",
+      "display": "https://cards.scryfall.io/display/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.webp?1783947828",
+      "art": "https://cards.scryfall.io/art/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.webp?1783947828",
+      "crop": "https://cards.scryfall.io/crop/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.webp?1783947828"
+     },
+     "mana_cost": "{2}{R}",
+     "cmc": 3,
+     "type_line": "Creature — Ogre",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "R"
+     ],
+     "color_identity": [
+      "R"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "2dd259d4-dc13-4956-a2dc-3e1d70b4a743",
+     "set": "4ed",
+     "set_name": "Fourth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/2dd259d4-dc13-4956-a2dc-3e1d70b4a743",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A4ed&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/4ed?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/11bf2cc0-799f-4eb8-b338-ed7543f469e7/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A83c8a3a6-2e1a-4e26-8847-6d066f42d906&unique=prints",
+     "collector_number": "200",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "The Ogre philosopher Gnerdel believed the purpose of life was to live as high on the food chain as possible. She refused to eat vegetarians, preferring to live entirely on creatures that preyed on sentient beings.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Dan Frazier",
+     "artist_ids": [
+      "059bba56-5feb-42e4-8c2e-e2f1e6ba11f9"
+     ],
+     "illustration_id": "a7399345-c36e-4a91-a4f5-22a2a0eeffaa",
+     "border_color": "white",
+     "frame": "1993",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 30971,
+     "prices": {
+      "usd": "0.06",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.05",
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=2283&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGray%2BOgre",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGray%2BOgre",
+      "edhrec": "https://edhrec.com/route/?cc=Gray+Ogre"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F1777%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=6053&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Gray+Ogre&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_1",
+    "controller": "player_1",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+     "multiverse_ids": [
+      129586
+     ],
+     "mtgo_id": 27400,
+     "mtgo_foil_id": 27401,
+     "tcgplayer_id": 15153,
+     "cardmarket_id": 16432,
+     "name": "Grizzly Bears",
+     "lang": "en",
+     "released_at": "2007-07-13",
+     "uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "scryfall_uri": "https://scryfall.com/card/10e/268/grizzly-bears?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:43:21Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "normal": "https://cards.scryfall.io/normal/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "large": "https://cards.scryfall.io/large/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "png": "https://cards.scryfall.io/png/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.png?1783943001",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "grid": "https://cards.scryfall.io/grid/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "display": "https://cards.scryfall.io/display/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "art": "https://cards.scryfall.io/art/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "crop": "https://cards.scryfall.io/crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001"
+     },
+     "mana_cost": "{1}{G}",
+     "cmc": 2,
+     "type_line": "Creature — Bear",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set": "10e",
+     "set_name": "Tenth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A14c8f55d-d177-4c25-a931-ebeb9e6062a0&unique=prints",
+     "collector_number": "268",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"We cannot forget that among all of Dominaria's wonders, a system of life exists, with prey and predators that will never fight wars nor vie for ancient power.\"\n—Jolrael, empress of beasts",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "D. J. Cleland-Hura",
+     "artist_ids": [
+      "87d21070-2432-4167-8aab-5968af1c14f3"
+     ],
+     "illustration_id": "066bfe81-0f53-43da-a074-b2ecc5dcda72",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 8114,
+     "penny_rank": 10982,
+     "prices": {
+      "usd": "0.22",
+      "usd_foil": "3.29",
+      "usd_etched": null,
+      "eur": "0.11",
+      "eur_foil": "1.97",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129586&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "edhrec": "https://edhrec.com/route/?cc=Grizzly+Bears"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15153%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16432&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27400?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "5ea59511-24b1-4925-9948-9d4c0d27d1c5",
+     "oracle_id": "f2f09757-1931-47c0-a5f0-39280445489d",
+     "multiverse_ids": [],
+     "resource_id": "657914CD7C4569EBFA2A0A0EDBD92914992A3B64535E6FC4AF040081AAD89BC4",
+     "mtgo_id": 149005,
+     "tcgplayer_id": 687509,
+     "cardmarket_id": 881599,
+     "name": "Gilded Goose",
+     "lang": "en",
+     "released_at": "2026-04-24",
+     "uri": "https://api.scryfall.com/cards/5ea59511-24b1-4925-9948-9d4c0d27d1c5",
+     "scryfall_uri": "https://scryfall.com/card/soc/269/gilded-goose?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T00:49:26Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/5/e/5ea59511-24b1-4925-9948-9d4c0d27d1c5.jpg?1783903766",
+      "normal": "https://cards.scryfall.io/normal/front/5/e/5ea59511-24b1-4925-9948-9d4c0d27d1c5.jpg?1783903766",
+      "large": "https://cards.scryfall.io/large/front/5/e/5ea59511-24b1-4925-9948-9d4c0d27d1c5.jpg?1783903766",
+      "png": "https://cards.scryfall.io/png/front/5/e/5ea59511-24b1-4925-9948-9d4c0d27d1c5.png?1783903766",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/5/e/5ea59511-24b1-4925-9948-9d4c0d27d1c5.jpg?1783903766",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/5/e/5ea59511-24b1-4925-9948-9d4c0d27d1c5.jpg?1783903766",
+      "thumb": "https://cards.scryfall.io/thumb/front/5/e/5ea59511-24b1-4925-9948-9d4c0d27d1c5.webp?1783903766",
+      "grid": "https://cards.scryfall.io/grid/front/5/e/5ea59511-24b1-4925-9948-9d4c0d27d1c5.webp?1783903766",
+      "display": "https://cards.scryfall.io/display/front/5/e/5ea59511-24b1-4925-9948-9d4c0d27d1c5.webp?1783903766",
+      "art": "https://cards.scryfall.io/art/front/5/e/5ea59511-24b1-4925-9948-9d4c0d27d1c5.webp?1783903766",
+      "crop": "https://cards.scryfall.io/crop/front/5/e/5ea59511-24b1-4925-9948-9d4c0d27d1c5.webp?1783903766"
+     },
+     "mana_cost": "{G}",
+     "cmc": 1,
+     "type_line": "Creature — Bird",
+     "oracle_text": "Flying\nWhen this creature enters, create a Food token. (It's an artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")\n{1}{G}, {T}: Create a Food token.\n{T}, Sacrifice a Food: Add one mana of any color.",
+     "power": "0",
+     "toughness": "2",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [
+      "Flying",
+      "Food"
+     ],
+     "produced_mana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "651be3e2-0d26-4def-98c1-3e526e650fe5",
+       "component": "combo_piece",
+       "name": "A Golden Opportunity",
+       "type_line": "Enchantment — Saga",
+       "uri": "https://api.scryfall.com/cards/651be3e2-0d26-4def-98c1-3e526e650fe5"
+      },
+      {
+       "object": "related_card",
+       "id": "da1fca2e-4ea7-4c5f-bd58-f9529dfb6f37",
+       "component": "token",
+       "name": "Food",
+       "type_line": "Token Artifact — Food",
+       "uri": "https://api.scryfall.com/cards/da1fca2e-4ea7-4c5f-bd58-f9529dfb6f37"
+      },
+      {
+       "object": "related_card",
+       "id": "5ea59511-24b1-4925-9948-9d4c0d27d1c5",
+       "component": "combo_piece",
+       "name": "Gilded Goose",
+       "type_line": "Creature — Bird",
+       "uri": "https://api.scryfall.com/cards/5ea59511-24b1-4925-9948-9d4c0d27d1c5"
+      }
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "97fab8d1-480a-419d-ab14-663968e29b9c",
+     "set": "soc",
+     "set_name": "Secrets of Strixhaven Commander",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/97fab8d1-480a-419d-ab14-663968e29b9c",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Asoc&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/soc?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/5ea59511-24b1-4925-9948-9d4c0d27d1c5/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Af2f09757-1931-47c0-a5f0-39280445489d&unique=prints",
+     "collector_number": "269",
+     "digital": false,
+     "rarity": "rare",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Lindsey Look",
+     "artist_ids": [
+      "95bc132d-37aa-4063-8ed8-04d489e826cd"
+     ],
+     "illustration_id": "e20ca2b1-1bc4-45f4-b22a-cfb95d3b4af1",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 806,
+     "prices": {
+      "usd": "0.41",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.53",
+      "eur_foil": null,
+      "tix": "0.52"
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGilded%2BGoose",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGilded%2BGoose",
+      "edhrec": "https://edhrec.com/route/?cc=Gilded+Goose"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F687509%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=881599&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/149005?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8",
+     "oracle_id": "342199e0-15b6-4824-83da-25caef2592b3",
+     "multiverse_ids": [
+      129591
+     ],
+     "mtgo_id": 27040,
+     "mtgo_foil_id": 27041,
+     "tcgplayer_id": 15162,
+     "cardmarket_id": 16376,
+     "name": "Hill Giant",
+     "lang": "en",
+     "released_at": "2007-07-13",
+     "uri": "https://api.scryfall.com/cards/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8",
+     "scryfall_uri": "https://scryfall.com/card/10e/212/hill-giant?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:43:38Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+      "normal": "https://cards.scryfall.io/normal/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+      "large": "https://cards.scryfall.io/large/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+      "png": "https://cards.scryfall.io/png/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.png?1783943018",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+      "thumb": "https://cards.scryfall.io/thumb/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018",
+      "grid": "https://cards.scryfall.io/grid/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018",
+      "display": "https://cards.scryfall.io/display/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018",
+      "art": "https://cards.scryfall.io/art/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018",
+      "crop": "https://cards.scryfall.io/crop/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018"
+     },
+     "mana_cost": "{3}{R}",
+     "cmc": 4,
+     "type_line": "Creature — Giant",
+     "oracle_text": "",
+     "power": "3",
+     "toughness": "3",
+     "colors": [
+      "R"
+     ],
+     "color_identity": [
+      "R"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set": "10e",
+     "set_name": "Tenth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A342199e0-15b6-4824-83da-25caef2592b3&unique=prints",
+     "collector_number": "212",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "Fortunately, hill giants have large blind spots in which a human can easily hide. Unfortunately, these blind spots are beneath the bottoms of their feet.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Kev Walker",
+     "artist_ids": [
+      "f366a0ee-a0cd-466d-ba6a-90058c7a31a6"
+     ],
+     "illustration_id": "fd46160d-4dd0-4ab6-b452-cff004f5e6f2",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 29148,
+     "prices": {
+      "usd": "0.04",
+      "usd_foil": "0.83",
+      "usd_etched": null,
+      "eur": "0.02",
+      "eur_foil": "0.28",
+      "tix": "0.04"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129591&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DHill%2BGiant",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DHill%2BGiant",
+      "edhrec": "https://edhrec.com/route/?cc=Hill+Giant"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15162%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16376&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27040?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 4,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_5",
+    "scryfallData": {
+     "object": "card",
+     "id": "8ee443cc-e17a-493b-9c93-1f9e141a30e4",
+     "oracle_id": "6ad8011d-3471-4369-9d68-b264cc027487",
+     "multiverse_ids": [],
+     "resource_id": "B12151C9CD0511F86702A215428AAE1A3170DF60AA4DE769D4FA59EDC207CA20",
+     "mtgo_id": 156438,
+     "tcgplayer_id": 717788,
+     "cardmarket_id": 909814,
+     "name": "Sol Ring",
+     "lang": "en",
+     "released_at": "2026-10-02",
+     "uri": "https://api.scryfall.com/cards/8ee443cc-e17a-493b-9c93-1f9e141a30e4",
+     "scryfall_uri": "https://scryfall.com/card/frc/21/sol-ring?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-09-17T11:27:26Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.jpg?1789644446",
+      "normal": "https://cards.scryfall.io/normal/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.jpg?1789644446",
+      "large": "https://cards.scryfall.io/large/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.jpg?1789644446",
+      "png": "https://cards.scryfall.io/png/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.png?1789644446",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.jpg?1789644446",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.jpg?1789644446",
+      "thumb": "https://cards.scryfall.io/thumb/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.webp?1789644446",
+      "grid": "https://cards.scryfall.io/grid/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.webp?1789644446",
+      "display": "https://cards.scryfall.io/display/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.webp?1789644446",
+      "art": "https://cards.scryfall.io/art/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.webp?1789644446",
+      "crop": "https://cards.scryfall.io/crop/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.webp?1789644446"
+     },
+     "mana_cost": "{1}",
+     "cmc": 1,
+     "type_line": "Artifact",
+     "oracle_text": "{T}: Add {C}{C}.",
+     "colors": [],
+     "color_identity": [],
+     "keywords": [],
+     "produced_mana": [
+      "C"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "banned",
+      "pauper": "not_legal",
+      "vintage": "restricted",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "banned",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "banned",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "banned"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "cfd10490-7397-4143-bda7-d388b877636f",
+     "set": "frc",
+     "set_name": "Reality Fracture Commander",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/cfd10490-7397-4143-bda7-d388b877636f",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Afrc&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/frc?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/8ee443cc-e17a-493b-9c93-1f9e141a30e4/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A6ad8011d-3471-4369-9d68-b264cc027487&unique=prints",
+     "collector_number": "21",
+     "digital": false,
+     "rarity": "uncommon",
+     "flavor_text": "Jace could see the sunlight in his Multiverse, but somewhere along the way, he lost the feel of its warmth.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Titus Lunter",
+     "artist_ids": [
+      "b11e6b3a-f4ca-4cf1-8fd7-475696de5f5c"
+     ],
+     "illustration_id": "f142ba5f-999f-42f6-b56e-26164a3b6b87",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 1,
+     "preview": {
+      "source": "Wizards of the Coast",
+      "source_uri": "https://youtu.be/mvTyHbTbfBo",
+      "previewed_at": "2026-09-16"
+     },
+     "prices": {
+      "usd": "1.13",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "1.13",
+      "eur_foil": null,
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DSol%2BRing",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DSol%2BRing",
+      "edhrec": "https://edhrec.com/route/?cc=Sol+Ring"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F717788%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=909814&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/156438?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 5,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_6",
+    "scryfallData": {
+     "object": "card",
+     "id": "2680ed41-da35-475a-9d80-ae2f4686feed",
+     "oracle_id": "49136bdc-bc50-49a2-999a-1ef9c16ea130",
+     "multiverse_ids": [
+      554242
+     ],
+     "mtgo_id": 97700,
+     "tcgplayer_id": 263086,
+     "cardmarket_id": 608974,
+     "name": "Smuggler's Copter",
+     "lang": "en",
+     "released_at": "2022-02-18",
+     "uri": "https://api.scryfall.com/cards/2680ed41-da35-475a-9d80-ae2f4686feed",
+     "scryfall_uri": "https://scryfall.com/card/nec/160/smugglers-copter?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T06:25:37Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/2/6/2680ed41-da35-475a-9d80-ae2f4686feed.jpg?1783923937",
+      "normal": "https://cards.scryfall.io/normal/front/2/6/2680ed41-da35-475a-9d80-ae2f4686feed.jpg?1783923937",
+      "large": "https://cards.scryfall.io/large/front/2/6/2680ed41-da35-475a-9d80-ae2f4686feed.jpg?1783923937",
+      "png": "https://cards.scryfall.io/png/front/2/6/2680ed41-da35-475a-9d80-ae2f4686feed.png?1783923937",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/2/6/2680ed41-da35-475a-9d80-ae2f4686feed.jpg?1783923937",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/2/6/2680ed41-da35-475a-9d80-ae2f4686feed.jpg?1783923937",
+      "thumb": "https://cards.scryfall.io/thumb/front/2/6/2680ed41-da35-475a-9d80-ae2f4686feed.webp?1783923937",
+      "grid": "https://cards.scryfall.io/grid/front/2/6/2680ed41-da35-475a-9d80-ae2f4686feed.webp?1783923937",
+      "display": "https://cards.scryfall.io/display/front/2/6/2680ed41-da35-475a-9d80-ae2f4686feed.webp?1783923937",
+      "art": "https://cards.scryfall.io/art/front/2/6/2680ed41-da35-475a-9d80-ae2f4686feed.webp?1783923937",
+      "crop": "https://cards.scryfall.io/crop/front/2/6/2680ed41-da35-475a-9d80-ae2f4686feed.webp?1783923937"
+     },
+     "mana_cost": "{2}",
+     "cmc": 2,
+     "type_line": "Artifact — Vehicle",
+     "oracle_text": "Flying\nWhenever this Vehicle attacks or blocks, you may draw a card. If you do, discard a card.\nCrew 1 (Tap any number of creatures you control with total power 1 or more: This Vehicle becomes an artifact creature until end of turn.)",
+     "power": "3",
+     "toughness": "3",
+     "colors": [],
+     "color_identity": [],
+     "keywords": [
+      "Flying",
+      "Crew"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "5b4d929d-bdf9-4bbf-858e-e248f53325ad",
+     "set": "nec",
+     "set_name": "Neon Dynasty Commander",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/5b4d929d-bdf9-4bbf-858e-e248f53325ad",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Anec&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/nec?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/2680ed41-da35-475a-9d80-ae2f4686feed/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A49136bdc-bc50-49a2-999a-1ef9c16ea130&unique=prints",
+     "collector_number": "160",
+     "digital": false,
+     "rarity": "rare",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Florian de Gesincourt",
+     "artist_ids": [
+      "f28c54ff-bbe3-485d-81a4-b2cb49430a52"
+     ],
+     "illustration_id": "d7a7b98f-125c-41bc-bded-eae1ed4e57b4",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 1918,
+     "penny_rank": 139,
+     "prices": {
+      "usd": "1.76",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "1.31",
+      "eur_foil": null,
+      "tix": "0.40"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=554242&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DSmuggler%2527s%2BCopter",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DSmuggler%2527s%2BCopter",
+      "edhrec": "https://edhrec.com/route/?cc=Smuggler%27s+Copter"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F263086%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=608974&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/97700?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 6,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_7",
+    "scryfallData": {
+     "object": "card",
+     "id": "b404d6c7-0b65-4c6a-b141-9dffbeb120db",
+     "oracle_id": "4164034a-5e59-4e40-a150-2c1000b0bd0d",
+     "multiverse_ids": [
+      555213
+     ],
+     "mtgo_id": 98243,
+     "arena_id": 80163,
+     "tcgplayer_id": 268761,
+     "cardmarket_id": 651689,
+     "name": "Extraction Specialist",
+     "lang": "en",
+     "released_at": "2022-04-29",
+     "uri": "https://api.scryfall.com/cards/b404d6c7-0b65-4c6a-b141-9dffbeb120db",
+     "scryfall_uri": "https://scryfall.com/card/snc/12/extraction-specialist?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T06:12:39Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/b/4/b404d6c7-0b65-4c6a-b141-9dffbeb120db.jpg?1783923159",
+      "normal": "https://cards.scryfall.io/normal/front/b/4/b404d6c7-0b65-4c6a-b141-9dffbeb120db.jpg?1783923159",
+      "large": "https://cards.scryfall.io/large/front/b/4/b404d6c7-0b65-4c6a-b141-9dffbeb120db.jpg?1783923159",
+      "png": "https://cards.scryfall.io/png/front/b/4/b404d6c7-0b65-4c6a-b141-9dffbeb120db.png?1783923159",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/b/4/b404d6c7-0b65-4c6a-b141-9dffbeb120db.jpg?1783923159",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/b/4/b404d6c7-0b65-4c6a-b141-9dffbeb120db.jpg?1783923159",
+      "thumb": "https://cards.scryfall.io/thumb/front/b/4/b404d6c7-0b65-4c6a-b141-9dffbeb120db.webp?1783923159",
+      "grid": "https://cards.scryfall.io/grid/front/b/4/b404d6c7-0b65-4c6a-b141-9dffbeb120db.webp?1783923159",
+      "display": "https://cards.scryfall.io/display/front/b/4/b404d6c7-0b65-4c6a-b141-9dffbeb120db.webp?1783923159",
+      "art": "https://cards.scryfall.io/art/front/b/4/b404d6c7-0b65-4c6a-b141-9dffbeb120db.webp?1783923159",
+      "crop": "https://cards.scryfall.io/crop/front/b/4/b404d6c7-0b65-4c6a-b141-9dffbeb120db.webp?1783923159"
+     },
+     "mana_cost": "{2}{W}",
+     "cmc": 3,
+     "type_line": "Creature — Human Rogue",
+     "oracle_text": "Lifelink\nWhen this creature enters, return target creature card with mana value 2 or less from your graveyard to the battlefield. That creature can't attack or block for as long as you control this creature.",
+     "power": "3",
+     "toughness": "2",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [
+      "Lifelink"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo",
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "df837242-8c15-42e4-b049-c933a02dc501",
+     "set": "snc",
+     "set_name": "Streets of New Capenna",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/df837242-8c15-42e4-b049-c933a02dc501",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Asnc&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/snc?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/b404d6c7-0b65-4c6a-b141-9dffbeb120db/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A4164034a-5e59-4e40-a150-2c1000b0bd0d&unique=prints",
+     "collector_number": "12",
+     "digital": false,
+     "rarity": "rare",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Irina Nordsol",
+     "artist_ids": [
+      "1e4cb52d-476e-4c68-ac87-2e620aede6d4"
+     ],
+     "illustration_id": "a35a92c8-357d-45cd-854b-be2a72473381",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 13550,
+     "penny_rank": 1649,
+     "prices": {
+      "usd": "0.32",
+      "usd_foil": "0.31",
+      "usd_etched": null,
+      "eur": "0.34",
+      "eur_foil": "0.57",
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=555213&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DExtraction%2BSpecialist",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DExtraction%2BSpecialist",
+      "edhrec": "https://edhrec.com/route/?cc=Extraction+Specialist"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F268761%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=651689&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/98243?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 7,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_8",
+    "scryfallData": {
+     "object": "card",
+     "id": "b5f7ff4f-3fd6-4084-aaf7-9f290ecc0181",
+     "oracle_id": "b46efd59-eda7-4fe6-ace7-67ca8f6c088d",
+     "multiverse_ids": [
+      476415
+     ],
+     "mtgo_id": 79452,
+     "arena_id": 70675,
+     "tcgplayer_id": 207153,
+     "cardmarket_id": 432349,
+     "name": "Wrap in Flames",
+     "lang": "en",
+     "released_at": "2020-01-24",
+     "uri": "https://api.scryfall.com/cards/b5f7ff4f-3fd6-4084-aaf7-9f290ecc0181",
+     "scryfall_uri": "https://scryfall.com/card/thb/164/wrap-in-flames?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T08:32:22Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/b/5/b5f7ff4f-3fd6-4084-aaf7-9f290ecc0181.jpg?1783931542",
+      "normal": "https://cards.scryfall.io/normal/front/b/5/b5f7ff4f-3fd6-4084-aaf7-9f290ecc0181.jpg?1783931542",
+      "large": "https://cards.scryfall.io/large/front/b/5/b5f7ff4f-3fd6-4084-aaf7-9f290ecc0181.jpg?1783931542",
+      "png": "https://cards.scryfall.io/png/front/b/5/b5f7ff4f-3fd6-4084-aaf7-9f290ecc0181.png?1783931542",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/b/5/b5f7ff4f-3fd6-4084-aaf7-9f290ecc0181.jpg?1783931542",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/b/5/b5f7ff4f-3fd6-4084-aaf7-9f290ecc0181.jpg?1783931542",
+      "thumb": "https://cards.scryfall.io/thumb/front/b/5/b5f7ff4f-3fd6-4084-aaf7-9f290ecc0181.webp?1783931542",
+      "grid": "https://cards.scryfall.io/grid/front/b/5/b5f7ff4f-3fd6-4084-aaf7-9f290ecc0181.webp?1783931542",
+      "display": "https://cards.scryfall.io/display/front/b/5/b5f7ff4f-3fd6-4084-aaf7-9f290ecc0181.webp?1783931542",
+      "art": "https://cards.scryfall.io/art/front/b/5/b5f7ff4f-3fd6-4084-aaf7-9f290ecc0181.webp?1783931542",
+      "crop": "https://cards.scryfall.io/crop/front/b/5/b5f7ff4f-3fd6-4084-aaf7-9f290ecc0181.webp?1783931542"
+     },
+     "mana_cost": "{3}{R}",
+     "cmc": 4,
+     "type_line": "Sorcery",
+     "oracle_text": "Wrap in Flames deals 1 damage to each of up to three target creatures. Those creatures can't block this turn.",
+     "colors": [
+      "R"
+     ],
+     "color_identity": [
+      "R"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "arena",
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "5f23a78d-cda1-462a-8be3-a62b40c34913",
+     "set": "thb",
+     "set_name": "Theros Beyond Death",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/5f23a78d-cda1-462a-8be3-a62b40c34913",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Athb&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/thb?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/b5f7ff4f-3fd6-4084-aaf7-9f290ecc0181/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ab46efd59-eda7-4fe6-ace7-67ca8f6c088d&unique=prints",
+     "collector_number": "164",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "Bright flames quell the darkest nightmares.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Kari Christensen",
+     "artist_ids": [
+      "77f6cd9e-e625-4526-bfc5-97039f21375e"
+     ],
+     "illustration_id": "6960403f-7d27-4a1d-ad01-7322918b7e3d",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 24493,
+     "prices": {
+      "usd": "0.05",
+      "usd_foil": "0.29",
+      "usd_etched": null,
+      "eur": "0.02",
+      "eur_foil": "0.12",
+      "tix": "0.04"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=476415&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DWrap%2Bin%2BFlames",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DWrap%2Bin%2BFlames",
+      "edhrec": "https://edhrec.com/route/?cc=Wrap+in+Flames"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F207153%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=432349&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/79452?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": true,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 9,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": {
+     "states": [
+      [
+       "perm_1",
+       {
+        "name": "Gray Ogre",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Ogre"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "basePower": 2,
+        "baseToughness": 2,
+        "abilities": [],
+        "colors": [
+         "R"
+        ],
+        "manaValue": 3,
+        "manaCost": "{2}{R}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "attackingPlayerId": null,
+        "timesAttackedThisTurn": 0,
+        "allPrintedAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_1",
+        "controller": "player_1",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_2",
+       {
+        "name": "Grizzly Bears",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Bear"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "basePower": 2,
+        "baseToughness": 2,
+        "abilities": [],
+        "colors": [
+         "G"
+        ],
+        "manaValue": 2,
+        "manaCost": "{1}{G}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "attackingPlayerId": null,
+        "timesAttackedThisTurn": 0,
+        "allPrintedAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_3",
+       {
+        "name": "Gilded Goose",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Bird"
+        ],
+        "power": 0,
+        "toughness": 2,
+        "basePower": 0,
+        "baseToughness": 2,
+        "abilities": [
+         "Flying",
+         "When this creature enters, create a Food token.",
+         "{1}{G}, {T}: Create a Food token.",
+         "{T}, Sacrifice a Food: Add one mana of any color."
+        ],
+        "colors": [
+         "G"
+        ],
+        "manaValue": 1,
+        "manaCost": "{G}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "Flying\nWhen this creature enters, create a Food token.\n{1}{G}, {T}: Create a Food token.\n{T}, Sacrifice a Food: Add one mana of any color.",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "attackingPlayerId": null,
+        "timesAttackedThisTurn": 0,
+        "allPrintedAbilities": [
+         "Flying",
+         "When this creature enters, create a Food token.",
+         "{1}{G}, {T}: Create a Food token.",
+         "{T}, Sacrifice a Food: Add one mana of any color."
+        ],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_4",
+       {
+        "name": "Hill Giant",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Giant"
+        ],
+        "power": 3,
+        "toughness": 3,
+        "basePower": 3,
+        "baseToughness": 3,
+        "abilities": [],
+        "colors": [
+         "R"
+        ],
+        "manaValue": 4,
+        "manaCost": "{3}{R}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "attackingPlayerId": null,
+        "timesAttackedThisTurn": 0,
+        "allPrintedAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_5",
+       {
+        "name": "Sol Ring",
+        "types": [
+         "Artifact"
+        ],
+        "supertypes": [],
+        "subtypes": [],
+        "power": null,
+        "toughness": null,
+        "basePower": null,
+        "baseToughness": null,
+        "abilities": [
+         "{T}: Add {C}{C}."
+        ],
+        "colors": [],
+        "manaValue": 1,
+        "manaCost": "{1}",
+        "isCreature": false,
+        "isToken": false,
+        "oracleText": "{T}: Add {C}{C}.",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "attackingPlayerId": null,
+        "timesAttackedThisTurn": 0,
+        "allPrintedAbilities": [
+         "{T}: Add {C}{C}."
+        ],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_6",
+       {
+        "name": "Smuggler's Copter",
+        "types": [
+         "Artifact"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Vehicle"
+        ],
+        "power": 3,
+        "toughness": 3,
+        "basePower": 3,
+        "baseToughness": 3,
+        "abilities": [
+         "Flying",
+         "Whenever this Vehicle attacks or blocks, you may draw a card. If you do, discard a card.",
+         "Crew 1"
+        ],
+        "colors": [],
+        "manaValue": 2,
+        "manaCost": "{2}",
+        "isCreature": false,
+        "isToken": false,
+        "oracleText": "Flying\nWhenever this Vehicle attacks or blocks, you may draw a card. If you do, discard a card.\nCrew 1",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "attackingPlayerId": null,
+        "timesAttackedThisTurn": 0,
+        "allPrintedAbilities": [
+         "Flying",
+         "Whenever this Vehicle attacks or blocks, you may draw a card. If you do, discard a card.",
+         "Crew 1"
+        ],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_7",
+       {
+        "name": "Extraction Specialist",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Human",
+         "Rogue"
+        ],
+        "power": 3,
+        "toughness": 2,
+        "basePower": 3,
+        "baseToughness": 2,
+        "abilities": [
+         "Lifelink"
+        ],
+        "colors": [
+         "W"
+        ],
+        "manaValue": 3,
+        "manaCost": "{2}{W}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "Lifelink\nWhen this creature enters, return target creature card with mana value 2 or less from your graveyard to the battlefield. That creature can't attack or block for as long as you control this creature.",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "attackingPlayerId": null,
+        "timesAttackedThisTurn": 0,
+        "allPrintedAbilities": [
+         "Lifelink",
+         "When this creature enters, return target creature card with mana value 2 or less from your graveyard to the battlefield. That creature can't attack or block for as long as you control this creature."
+        ],
+        "conditionalAbilityIndices": {},
+        "conditionalAbilityConditions": {},
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ]
+     ],
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Gray Ogre",
+       "imageUri": "https://cards.scryfall.io/small/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Ogre"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Gilded Goose",
+       "imageUri": "https://cards.scryfall.io/small/front/5/e/5ea59511-24b1-4925-9948-9d4c0d27d1c5.jpg?1783903766",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bird"
+       ],
+       "printedPower": 0,
+       "printedToughness": 2,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Hill Giant",
+       "imageUri": "https://cards.scryfall.io/small/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Giant"
+       ],
+       "printedPower": 3,
+       "printedToughness": 3,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_5",
+       "name": "Sol Ring",
+       "imageUri": "https://cards.scryfall.io/small/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.jpg?1789644446",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Artifact"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 5
+      },
+      {
+       "id": "perm_6",
+       "name": "Smuggler's Copter",
+       "imageUri": "https://cards.scryfall.io/small/front/2/6/2680ed41-da35-475a-9d80-ae2f4686feed.jpg?1783923937",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Artifact"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Vehicle"
+       ],
+       "printedPower": 3,
+       "printedToughness": 3,
+       "timestamp": 6
+      },
+      {
+       "id": "perm_7",
+       "name": "Extraction Specialist",
+       "imageUri": "https://cards.scryfall.io/small/front/b/4/b404d6c7-0b65-4c6a-b141-9dffbeb120db.jpg?1783923159",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Human",
+        "Rogue"
+       ],
+       "printedPower": 3,
+       "printedToughness": 2,
+       "timestamp": 7
+      },
+      {
+       "id": "trig_perm_7_1_8",
+       "name": "Extraction Specialist (trigger)",
+       "imageUri": "https://cards.scryfall.io/small/front/b/4/b404d6c7-0b65-4c6a-b141-9dffbeb120db.jpg?1783923159",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": true,
+       "isTriggeredAbility": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "abilitySourceId": "perm_7",
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 8
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      },
+      {
+       "id": "player_1",
+       "name": "Opponent"
+      }
+     ]
+    }
+   }
+  ],
+  "firedAbilities": [
+   {
+    "id": "trig_perm_7_1_8",
+    "kind": "trigger",
+    "pseudoKind": "ability",
+    "sourceId": "perm_7",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 1,
+    "timestamp": 8,
+    "effectText": "Return target creature card with mana value 2 or less from your graveyard to the battlefield. That creature can't attack or block for as long as you control this creature.",
+    "xValue": null,
+    "hasXValue": false,
+    "cdaUserValue": null,
+    "linkedCards": null,
+    "fullText": "When this creature enters, return target creature card with mana value 2 or less from your graveyard to the battlefield. That creature can't attack or block for as long as you control this creature.",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "guessedTargetSubjects": [],
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Gray Ogre",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Ogre"
+       ],
+       "power": 2,
+       "toughness": 2,
+       "colors": [
+        "R"
+       ],
+       "abilities": [],
+       "oracleText": "",
+       "manaValue": 3,
+       "manaCost": "{2}{R}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_2",
+      {
+       "name": "Grizzly Bears",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Bear"
+       ],
+       "power": 2,
+       "toughness": 2,
+       "colors": [
+        "G"
+       ],
+       "abilities": [],
+       "oracleText": "",
+       "manaValue": 2,
+       "manaCost": "{1}{G}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_3",
+      {
+       "name": "Gilded Goose",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Bird"
+       ],
+       "power": 0,
+       "toughness": 2,
+       "colors": [
+        "G"
+       ],
+       "abilities": [
+        "Flying",
+        "When this creature enters, create a Food token.",
+        "{1}{G}, {T}: Create a Food token.",
+        "{T}, Sacrifice a Food: Add one mana of any color."
+       ],
+       "oracleText": "Flying\nWhen this creature enters, create a Food token.\n{1}{G}, {T}: Create a Food token.\n{T}, Sacrifice a Food: Add one mana of any color.",
+       "manaValue": 1,
+       "manaCost": "{G}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_4",
+      {
+       "name": "Hill Giant",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Giant"
+       ],
+       "power": 3,
+       "toughness": 3,
+       "colors": [
+        "R"
+       ],
+       "abilities": [],
+       "oracleText": "",
+       "manaValue": 4,
+       "manaCost": "{3}{R}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_5",
+      {
+       "name": "Sol Ring",
+       "types": [
+        "Artifact"
+       ],
+       "supertypes": [],
+       "subtypes": [],
+       "power": null,
+       "toughness": null,
+       "colors": [],
+       "abilities": [
+        "{T}: Add {C}{C}."
+       ],
+       "oracleText": "{T}: Add {C}{C}.",
+       "manaValue": 1,
+       "manaCost": "{1}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_6",
+      {
+       "name": "Smuggler's Copter",
+       "types": [
+        "Artifact"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Vehicle"
+       ],
+       "power": 3,
+       "toughness": 3,
+       "colors": [],
+       "abilities": [
+        "Flying",
+        "Whenever this Vehicle attacks or blocks, you may draw a card. If you do, discard a card.",
+        "Crew 1"
+       ],
+       "oracleText": "Flying\nWhenever this Vehicle attacks or blocks, you may draw a card. If you do, discard a card.\nCrew 1",
+       "manaValue": 2,
+       "manaCost": "{2}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_7",
+      {
+       "name": "Extraction Specialist",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Human",
+        "Rogue"
+       ],
+       "power": 3,
+       "toughness": 2,
+       "colors": [
+        "W"
+       ],
+       "abilities": [
+        "Lifelink",
+        "When this creature enters, return target creature card with mana value 2 or less from your graveyard to the battlefield. That creature can't attack or block for as long as you control this creature."
+       ],
+       "oracleText": "Lifelink\nWhen this creature enters, return target creature card with mana value 2 or less from your graveyard to the battlefield. That creature can't attack or block for as long as you control this creature.",
+       "manaValue": 3,
+       "manaCost": "{2}{W}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Gray Ogre",
+       "imageUri": "https://cards.scryfall.io/small/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Ogre"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Gilded Goose",
+       "imageUri": "https://cards.scryfall.io/small/front/5/e/5ea59511-24b1-4925-9948-9d4c0d27d1c5.jpg?1783903766",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bird"
+       ],
+       "printedPower": 0,
+       "printedToughness": 2,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Hill Giant",
+       "imageUri": "https://cards.scryfall.io/small/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Giant"
+       ],
+       "printedPower": 3,
+       "printedToughness": 3,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_5",
+       "name": "Sol Ring",
+       "imageUri": "https://cards.scryfall.io/small/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.jpg?1789644446",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Artifact"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 5
+      },
+      {
+       "id": "perm_6",
+       "name": "Smuggler's Copter",
+       "imageUri": "https://cards.scryfall.io/small/front/2/6/2680ed41-da35-475a-9d80-ae2f4686feed.jpg?1783923937",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Artifact"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Vehicle"
+       ],
+       "printedPower": 3,
+       "printedToughness": 3,
+       "timestamp": 6
+      },
+      {
+       "id": "perm_7",
+       "name": "Extraction Specialist",
+       "imageUri": "https://cards.scryfall.io/small/front/b/4/b404d6c7-0b65-4c6a-b141-9dffbeb120db.jpg?1783923159",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Human",
+        "Rogue"
+       ],
+       "printedPower": 3,
+       "printedToughness": 2,
+       "timestamp": 7
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      },
+      {
+       "id": "player_1",
+       "name": "Opponent"
+      }
+     ]
+    },
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null
+   }
+  ],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   },
+   {
+    "id": "player_1",
+    "name": "Opponent",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": false,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 2,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Gray Ogre",
+    "final": {
+     "name": "Gray Ogre",
+     "controller": "player_1",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Ogre"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "R"
+     ],
+     "abilities": []
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Grizzly Bears",
+    "final": {
+     "name": "Grizzly Bears",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Bear"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "G"
+     ],
+     "abilities": []
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Gilded Goose",
+    "final": {
+     "name": "Gilded Goose",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Bird"
+     ],
+     "power": 0,
+     "toughness": 2,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "Flying",
+      "When this creature enters, create a Food token.",
+      "{1}{G}, {T}: Create a Food token.",
+      "{T}, Sacrifice a Food: Add one mana of any color."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Hill Giant",
+    "final": {
+     "name": "Hill Giant",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Giant"
+     ],
+     "power": 3,
+     "toughness": 3,
+     "colors": [
+      "R"
+     ],
+     "abilities": []
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Sol Ring",
+    "final": {
+     "name": "Sol Ring",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Artifact"
+     ],
+     "subtypes": [],
+     "power": null,
+     "toughness": null,
+     "colors": [],
+     "abilities": [
+      "{T}: Add {C}{C}."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Smuggler's Copter",
+    "final": {
+     "name": "Smuggler's Copter",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Artifact"
+     ],
+     "subtypes": [
+      "Vehicle"
+     ],
+     "power": 3,
+     "toughness": 3,
+     "colors": [],
+     "abilities": [
+      "Flying",
+      "Whenever this Vehicle attacks or blocks, you may draw a card. If you do, discard a card.",
+      "Crew 1"
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Extraction Specialist",
+    "final": {
+     "name": "Extraction Specialist",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Human",
+      "Rogue"
+     ],
+     "power": 3,
+     "toughness": 2,
+     "colors": [
+      "W"
+     ],
+     "abilities": [
+      "Lifelink"
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Wrap in Flames",
+    "final": {
+     "name": "Wrap in Flames",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Sorcery"
+     ],
+     "subtypes": [],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "R"
+     ],
+     "abilities": [
+      "This card deals 1 damage to each of up to three target creatures. Those creatures can't block this turn."
+     ]
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "6": [
+    "Extraction Specialist (trigger)",
+    "Wrap in Flames"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Wrap in Flames",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "params": {
+     "ability": "Can't block",
+     "isTrait": true,
+     "traitOnly": true,
+     "traitPlayers": true
+    }
+   },
+   {
+    "source": "Extraction Specialist (trigger)",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "params": {
+     "ability": "Can't attack or block",
+     "isTrait": true,
+     "traitOnly": true,
+     "traitPlayers": true
+    }
+   }
+  ]
+ }
+}
