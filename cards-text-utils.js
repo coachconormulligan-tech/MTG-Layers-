@@ -551,13 +551,21 @@ function _resolveItPronoun(text) {
     line = line.replace(/^([^."]*\btarget\s+[^.,"]*?)\s+and it (gains?|gets?)\s/i,
       (all, head, verb) => /^(?:target|up to|any number)\b/i.test(head.trim()) ? all : `${head}. It ${verb} `);
     const sentences = _splitSentencesOutsideQuotes(line);
+    // "Return target creature card with mana value 3 or less from your graveyard to the
+    // battlefield. It gains "…"" (Can't Stay Away): the subject is that card as the permanent it
+    // became, by its own words (_returnedCardTargetPhrase), not any creature.
+    const returnedIn = (j) => {
+      const t = sentences[j].match(/\b(?:(?:up to \w+|another)\s+)?target\b[\s\S]*$/i);
+      return t ? _returnedCardTargetPhrase(t[0]) : null;
+    };
     for (let i = 1; i < sentences.length; i++) {
       // "You may put a creature card from your hand onto the battlefield. That creature gains
       // haste." (Cauldron Dance): the card just put there is a pick of its own.
       const moved = sentences[i].match(/^that\s+(creature|land|artifact|enchantment|permanent)\s+(?=(?:gains?|gets?|has|loses?)\b)/i);
       if (moved && !/\bcreates?\b|\btokens?\b/i.test(sentences[i - 1])
           && new RegExp('\\b' + (moved[1].toLowerCase() === 'permanent' ? '\\w+' : moved[1]) + '\\s+card\\b[^.]*\\b(?:on)?to the battlefield\\b', 'i').test(sentences[i - 1])) {
-        sentences[i] = 'Target ' + moved[1].toLowerCase() + ' ' + sentences[i].slice(moved[0].length);
+        const returned = returnedIn(i - 1);
+        sentences[i] = (returned ? 'T' + returned.slice(1) : 'Target ' + moved[1].toLowerCase()) + ' ' + sentences[i].slice(moved[0].length);
         continue;
       }
       const m = sentences[i].match(/^((?:until end of turn|if you do|when you do|then),?\s+)?(it's|it|(?:that|the)\s+(\w+))\s+([\s\S]*)$/i);
@@ -572,17 +580,20 @@ function _resolveItPronoun(text) {
       }
       if (m[3] && !_IT_TYPE_NOUN_RE.test(m[3])) continue;
       let noun = m[3] ? m[3].toLowerCase() : null;
+      let returned = null;
       if (!noun) {
         for (let j = i - 1; j >= 0 && !noun; j--) {
           const prev = sentences[j];
           if (/\bcreates?\b[^.]*\btokens?\b|\bcopy target\b/i.test(prev)) break;
           const t = prev.match(/\b(?:target|an?|that)\s+(?:[\w'-]+\s+){0,4}?(creature|land|artifact|enchantment|planeswalker|permanent)\b/i);
-          if (t) noun = t[1].toLowerCase();
+          if (t) { noun = t[1].toLowerCase(); returned = returnedIn(j); }
         }
+      } else if (_IT_TYPE_NOUN_RE.test(noun)) {
+        returned = returnedIn(i - 1);
       }
       if (!noun) continue;
       const lead = m[1] || '';
-      sentences[i] = lead + (lead ? 'target ' : 'Target ') + noun + ' ' + rest;
+      sentences[i] = lead + (lead ? 't' : 'T') + (returned ? returned.slice(1) : 'arget ' + noun) + ' ' + rest;
     }
     return sentences.join(' ');
   }).join('\n');
