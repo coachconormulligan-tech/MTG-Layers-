@@ -1066,6 +1066,23 @@ function parseCardEffects(permanent, card, opts = {}) {
       for (const k of ['_toggle', '_onResolution', '_finalPT']) if (inner[k]) onSelf[k] = inner[k];
       return onSelf;
     }
+    // "… can't attack or block for as long as you control this creature" (Extraction
+    // Specialist), "gains indestructible …" (Aegis Angel), "gain control of target creature …"
+    // (Mind Flayer; the card's name is already "this card"): true while the card the ability
+    // comes from is on the battlefield under the control of whoever controls the spell or
+    // ability. Left to the "you control a [type]" catch-all it counted permanents of the
+    // subtype "This", and the effect never applied.
+    if (/^you control this [\w-]+$/.test(ct)) {
+      const selfId = permanent.abilitySourceId || permanent.id;
+      const srcId = permanent.id;
+      return (state, allStates) => {
+        if (!allStates) return true;
+        const self = allStates.get(selfId);
+        if (!self) return false;
+        const you = (allStates.get(srcId) || {}).controller || permanent.controller;
+        return !you || self.controller === you;
+      };
+    }
     // "you control creatures named Mine Worker and Tower Worker" (Power Plant Worker), "a
     // creature named Bogbrew Witch" (Festering Newt), "four or more creatures named
     // Biovisionary", "exactly two permanents named Mothers Yamazaki": permanents by name.
@@ -1925,6 +1942,15 @@ function parseCardEffects(permanent, card, opts = {}) {
     if (cond) {
       const idx = _asLongAsConditions.length;
       _asLongAsConditions.push(cond);
+      // On a triggered or activated line ("When this creature enters, … can't attack or block
+      // for as long as you control this creature" — Extraction Specialist, Aegis Angel, Mind
+      // Flayer) it is how long the ability's effect lasts, read when it is fired; the ability
+      // itself is always there. Filed as the line's condition, the trigger was left out of the
+      // card's abilities whenever the board had any effect, and could not be fired.
+      // An ability word ("Dominate Monster — When …", "Landfall — Whenever …") comes first.
+      const linePrefix = full.substring(full.lastIndexOf('\n', offset) + 1, offset).trimStart()
+        .replace(/^[^\n."—]+—\s*/, '');
+      if (_isTriggeredSentence(linePrefix) || /:/.test(linePrefix.replace(/"[^"]*"/g, '').replace(/\{[^}]+\}/g, ''))) _midAbilityConditions.add(idx);
       // Insert the marker at this position (it's mid-sentence, attach to current line)
       return `\x04${idx}\x04`;
     }
