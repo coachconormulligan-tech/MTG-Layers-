@@ -1,0 +1,13 @@
+{
+  "name": "Adanto Vanguard — 'As long as this creature is attacking, it gets +2/+0' applies to the attacking copy only",
+  "notes": "Fixed with the source-subject reading in _parseCondition and the attacking entries of SIMPLE_TRAIT_CONDITIONS (cards-parser.js): only '^it is attacking$' was read, so 'this creature is attacking' fell to the 'is [subtype]' catch-all and was never true. A attacking is 3/1, B is 1/1. Memory: project_condition_on_the_source_tapped_equipped_2026-10-15.",
+  "steps": [
+    { "add": "Adanto Vanguard", "as": "a" },
+    { "add": "Adanto Vanguard" },
+    { "call": ["toggleAttacking", "@a"] }
+  ],
+  "asserts": [
+    { "perm": "Adanto Vanguard A", "final": { "power": 3, "toughness": 1 } },
+    { "perm": "Adanto Vanguard B", "final": { "power": 1, "toughness": 1 } }
+  ]
+}

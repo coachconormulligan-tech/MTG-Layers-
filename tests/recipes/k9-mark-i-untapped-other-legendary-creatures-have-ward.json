@@ -1,0 +1,54 @@
+{
+  "name": "K-9, Mark I — while untapped, other legendary creatures get ward {1}; tapped Juniper Order Advocate gives nothing",
+  "notes": "Fixed with the tapped / untapped entries of SIMPLE_TRAIT_CONDITIONS (cards-parser.js): 'this creature is untapped' had no entry and fell to the 'is [subtype]' catch-all (a subtype 'Untapped'), so it was never true, even for the card itself. Untapped K-9 gives Isamaru ward {1}; the tapped Juniper Order Advocate does not give Llanowar Elves +1/+1. Memory: project_condition_on_the_source_tapped_equipped_2026-10-15.",
+  "steps": [
+    {
+      "add": "K-9, Mark I"
+    },
+    {
+      "add": "Isamaru, Hound of Konda"
+    },
+    {
+      "add": "Juniper Order Advocate",
+      "as": "j"
+    },
+    {
+      "add": "Llanowar Elves"
+    },
+    {
+      "call": [
+        "toggleTapped",
+        "@j"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Isamaru, Hound of Konda",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Ward {1}"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "K-9, Mark I",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Ward {1}"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Llanowar Elves",
+      "final": {
+        "power": 1,
+        "toughness": 1
+      }
+    }
+  ]
+}

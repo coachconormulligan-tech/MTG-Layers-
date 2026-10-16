@@ -33,7 +33,12 @@ const SIMPLE_TRAIT_CONDITIONS = [
   { re: /\bisn'?t crewed\b|\bis not crewed\b/, fn: s => !(s.traits || []).includes('Crewed') },
   // "If it's blocking, …" (Will of the All-Hunter): the Attacking / Blocking toggles.
   { re: /^it is attacking$/, fn: s => (s.traits || []).includes('Attacking') },
+  { re: /^it (?:isn'?t|is not) attacking$/, fn: s => !(s.traits || []).includes('Attacking') },
   { re: /^it is blocking$/, fn: s => (s.traits || []).includes('Blocking') },
+  { re: /^it (?:isn'?t|is not) blocking$/, fn: s => !(s.traits || []).includes('Blocking') },
+  // "As long as this creature is untapped, …" (K-9, Mark I; Pristine Angel): the Tap toggle.
+  { re: /^it is tapped$|^it (?:isn'?t|is not) untapped$/, fn: s => !!s.tapped || (s.traits || []).includes('Tapped') },
+  { re: /^it is untapped$|^it (?:isn'?t|is not) tapped$/, fn: s => !s.tapped && !(s.traits || []).includes('Tapped') },
 ];
 
 /* Shared lookup tables hoisted to module scope (were duplicated inline in 5+ sections). */
@@ -1046,6 +1051,20 @@ function parseCardEffects(permanent, card, opts = {}) {
     if (notMatch) {
       const inner = _parseCondition(notMatch[1]);
       return inner ? (state, allStates) => !inner(state, allStates) : null;
+    }
+    // "As long as this creature is equipped, each creature you control that's a Soldier or a
+    // Knight gets +1/+1" (Auriok Steelshaper), "this creature is untapped" (K-9, Mark I), "this
+    // creature is enchanted" (Gate Hound): the card itself, whatever permanent the effect
+    // reaches; for a fired ability, the card it was fired from. Read as "it …" against that
+    // card's state, never the permanent being changed.
+    const selfSubject = ct.match(/^this [\w-]+ ((?:is|isn't|has|was)\b.*)$/);
+    if (selfSubject) {
+      const inner = _parseCondition('it ' + selfSubject[1]);
+      if (!inner) return null;
+      const selfId = permanent.abilitySourceId || permanent.id;
+      const onSelf = (state, allStates) => inner((allStates && allStates.get(selfId)) || state, allStates);
+      for (const k of ['_toggle', '_onResolution', '_finalPT']) if (inner[k]) onSelf[k] = inner[k];
+      return onSelf;
     }
     // "you control creatures named Mine Worker and Tower Worker" (Power Plant Worker), "a
     // creature named Bogbrew Witch" (Festering Newt), "four or more creatures named

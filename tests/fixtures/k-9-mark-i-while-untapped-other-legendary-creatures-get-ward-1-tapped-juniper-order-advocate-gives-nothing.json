@@ -1,0 +1,994 @@
+{
+ "name": "K-9, Mark I — while untapped, other legendary creatures get ward {1}; tapped Juniper Order Advocate gives nothing",
+ "notes": "Fixed with the tapped / untapped entries of SIMPLE_TRAIT_CONDITIONS (cards-parser.js): 'this creature is untapped' had no entry and fell to the 'is [subtype]' catch-all (a subtype 'Untapped'), so it was never true, even for the card itself. Untapped K-9 gives Isamaru ward {1}; the tapped Juniper Order Advocate does not give Llanowar Elves +1/+1. Memory: project_condition_on_the_source_tapped_equipped_2026-10-15.",
+ "recipe": {
+  "steps": [
+   {
+    "add": "K-9, Mark I"
+   },
+   {
+    "add": "Isamaru, Hound of Konda"
+   },
+   {
+    "add": "Juniper Order Advocate",
+    "as": "j"
+   },
+   {
+    "add": "Llanowar Elves"
+   },
+   {
+    "call": [
+     "toggleTapped",
+     "@j"
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Isamaru, Hound of Konda",
+   "final": {
+    "abilities": {
+     "$includes": [
+      "Ward {1}"
+     ]
+    }
+   }
+  },
+  {
+   "perm": "K-9, Mark I",
+   "final": {
+    "abilities": {
+     "$excludes": [
+      "Ward {1}"
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Llanowar Elves",
+   "final": {
+    "power": 1,
+    "toughness": 1
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "b2e46695-7bd3-448c-a5ea-6d544943ec5f",
+     "oracle_id": "413bc18b-1579-41b5-a778-3a29def52bb0",
+     "multiverse_ids": [
+      634742
+     ],
+     "tcgplayer_id": 518807,
+     "cardmarket_id": 738563,
+     "name": "K-9, Mark I",
+     "lang": "en",
+     "released_at": "2023-10-13",
+     "uri": "https://api.scryfall.com/cards/b2e46695-7bd3-448c-a5ea-6d544943ec5f",
+     "scryfall_uri": "https://scryfall.com/card/who/47/k-9-mark-i?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T03:51:08Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/b/2/b2e46695-7bd3-448c-a5ea-6d544943ec5f.jpg?1783914668",
+      "normal": "https://cards.scryfall.io/normal/front/b/2/b2e46695-7bd3-448c-a5ea-6d544943ec5f.jpg?1783914668",
+      "large": "https://cards.scryfall.io/large/front/b/2/b2e46695-7bd3-448c-a5ea-6d544943ec5f.jpg?1783914668",
+      "png": "https://cards.scryfall.io/png/front/b/2/b2e46695-7bd3-448c-a5ea-6d544943ec5f.png?1783914668",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/b/2/b2e46695-7bd3-448c-a5ea-6d544943ec5f.jpg?1783914668",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/b/2/b2e46695-7bd3-448c-a5ea-6d544943ec5f.jpg?1783914668",
+      "thumb": "https://cards.scryfall.io/thumb/front/b/2/b2e46695-7bd3-448c-a5ea-6d544943ec5f.webp?1783914668",
+      "grid": "https://cards.scryfall.io/grid/front/b/2/b2e46695-7bd3-448c-a5ea-6d544943ec5f.webp?1783914668",
+      "display": "https://cards.scryfall.io/display/front/b/2/b2e46695-7bd3-448c-a5ea-6d544943ec5f.webp?1783914668",
+      "art": "https://cards.scryfall.io/art/front/b/2/b2e46695-7bd3-448c-a5ea-6d544943ec5f.webp?1783914668",
+      "crop": "https://cards.scryfall.io/crop/front/b/2/b2e46695-7bd3-448c-a5ea-6d544943ec5f.webp?1783914668"
+     },
+     "mana_cost": "{U}",
+     "cmc": 1,
+     "type_line": "Legendary Artifact Creature — Robot Dog",
+     "oracle_text": "Negative — As long as K-9 is untapped, other legendary creatures you control have ward {1}.\nAffirmative — {1}{U}, {T}: Target legendary creature can't be blocked this turn.\nDoctor's companion (You can have two commanders if the other is the Doctor.)",
+     "power": "1",
+     "toughness": "1",
+     "colors": [
+      "U"
+     ],
+     "color_identity": [
+      "U"
+     ],
+     "keywords": [
+      "Negative",
+      "Affirmative",
+      "Doctor's companion"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "efdfdd99-cee7-4c11-a5e9-03d60f88bdd6",
+     "set": "who",
+     "set_name": "Doctor Who",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/efdfdd99-cee7-4c11-a5e9-03d60f88bdd6",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Awho&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/who?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/b2e46695-7bd3-448c-a5ea-6d544943ec5f/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A413bc18b-1579-41b5-a778-3a29def52bb0&unique=prints",
+     "collector_number": "47",
+     "digital": false,
+     "rarity": "rare",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Narendra Bintara Adi",
+     "artist_ids": [
+      "1be2b84d-99c5-4a51-b741-105cbeb53078"
+     ],
+     "illustration_id": "6e59d51d-d890-41f2-a625-e520aa41eaa7",
+     "border_color": "black",
+     "frame": "2015",
+     "frame_effects": [
+      "legendary"
+     ],
+     "security_stamp": "triangle",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "universesbeyond"
+     ],
+     "edhrec_rank": 3495,
+     "prices": {
+      "usd": "3.47",
+      "usd_foil": "5.05",
+      "usd_etched": null,
+      "eur": "1.54",
+      "eur_foil": "2.77",
+      "tix": null
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=634742&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DK-9%252C%2BMark%2BI",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DK-9%252C%2BMark%2BI",
+      "edhrec": "https://edhrec.com/route/?cc=K-9%2C+Mark+I"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F518807%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=738563&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=K-9%2C+Mark+I&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "6afead32-3542-44c4-82d6-b6a81beb9f90",
+     "oracle_id": "cfb756dd-6fe1-430a-8f04-8b10cac62a86",
+     "multiverse_ids": [
+      489597
+     ],
+     "arena_id": 72175,
+     "tcgplayer_id": 216011,
+     "cardmarket_id": 472669,
+     "name": "Isamaru, Hound of Konda",
+     "lang": "en",
+     "released_at": "2020-07-17",
+     "uri": "https://api.scryfall.com/cards/6afead32-3542-44c4-82d6-b6a81beb9f90",
+     "scryfall_uri": "https://scryfall.com/card/jmp/113/isamaru-hound-of-konda?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T08:14:30Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/6/a/6afead32-3542-44c4-82d6-b6a81beb9f90.jpg?1783930470",
+      "normal": "https://cards.scryfall.io/normal/front/6/a/6afead32-3542-44c4-82d6-b6a81beb9f90.jpg?1783930470",
+      "large": "https://cards.scryfall.io/large/front/6/a/6afead32-3542-44c4-82d6-b6a81beb9f90.jpg?1783930470",
+      "png": "https://cards.scryfall.io/png/front/6/a/6afead32-3542-44c4-82d6-b6a81beb9f90.png?1783930470",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/6/a/6afead32-3542-44c4-82d6-b6a81beb9f90.jpg?1783930470",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/6/a/6afead32-3542-44c4-82d6-b6a81beb9f90.jpg?1783930470",
+      "thumb": "https://cards.scryfall.io/thumb/front/6/a/6afead32-3542-44c4-82d6-b6a81beb9f90.webp?1783930470",
+      "grid": "https://cards.scryfall.io/grid/front/6/a/6afead32-3542-44c4-82d6-b6a81beb9f90.webp?1783930470",
+      "display": "https://cards.scryfall.io/display/front/6/a/6afead32-3542-44c4-82d6-b6a81beb9f90.webp?1783930470",
+      "art": "https://cards.scryfall.io/art/front/6/a/6afead32-3542-44c4-82d6-b6a81beb9f90.webp?1783930470",
+      "crop": "https://cards.scryfall.io/crop/front/6/a/6afead32-3542-44c4-82d6-b6a81beb9f90.webp?1783930470"
+     },
+     "mana_cost": "{W}",
+     "cmc": 1,
+     "type_line": "Legendary Creature — Dog",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "arena",
+      "paper"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "0f6ccf25-a627-4263-86df-5757137f1696",
+     "set": "jmp",
+     "set_name": "Jumpstart",
+     "set_type": "draft_innovation",
+     "set_uri": "https://api.scryfall.com/sets/0f6ccf25-a627-4263-86df-5757137f1696",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Ajmp&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/jmp?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/6afead32-3542-44c4-82d6-b6a81beb9f90/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Acfb756dd-6fe1-430a-8f04-8b10cac62a86&unique=prints",
+     "collector_number": "113",
+     "digital": false,
+     "rarity": "rare",
+     "flavor_text": "The hound sniffed the air and let slip a low growl. General Takeno looked down at the faithful Isamaru and calmed him with a touch. \"Alert the guard. The kami are coming.\"",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Christopher Moeller",
+     "artist_ids": [
+      "21e10012-06ae-44f2-b38d-3824dd2e73d4"
+     ],
+     "illustration_id": "fd026360-3680-43e3-9403-7a7bf8092f40",
+     "border_color": "black",
+     "frame": "2015",
+     "frame_effects": [
+      "legendary"
+     ],
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 7279,
+     "penny_rank": 987,
+     "preview": {
+      "source": "Wizards of the Coast",
+      "source_uri": "https://twitter.com/wizards_magic/status/1273364353744375808",
+      "previewed_at": "2020-06-17"
+     },
+     "prices": {
+      "usd": "2.30",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.86",
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=489597&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DIsamaru%252C%2BHound%2Bof%2BKonda",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DIsamaru%252C%2BHound%2Bof%2BKonda",
+      "edhrec": "https://edhrec.com/route/?cc=Isamaru%2C+Hound+of+Konda"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F216011%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=472669&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Isamaru%2C+Hound+of+Konda&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "4552650d-242e-4f8b-9359-d4aa19207fac",
+     "oracle_id": "ded2fc21-1a69-48f8-865a-467e21b2758b",
+     "multiverse_ids": [
+      184552
+     ],
+     "mtgo_id": 30678,
+     "mtgo_foil_id": 30679,
+     "name": "Juniper Order Advocate",
+     "lang": "en",
+     "released_at": "2008-09-22",
+     "uri": "https://api.scryfall.com/cards/4552650d-242e-4f8b-9359-d4aa19207fac",
+     "scryfall_uri": "https://scryfall.com/card/me2/20/juniper-order-advocate?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:37:20Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/5/4552650d-242e-4f8b-9359-d4aa19207fac.jpg?1783942640",
+      "normal": "https://cards.scryfall.io/normal/front/4/5/4552650d-242e-4f8b-9359-d4aa19207fac.jpg?1783942640",
+      "large": "https://cards.scryfall.io/large/front/4/5/4552650d-242e-4f8b-9359-d4aa19207fac.jpg?1783942640",
+      "png": "https://cards.scryfall.io/png/front/4/5/4552650d-242e-4f8b-9359-d4aa19207fac.png?1783942640",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/5/4552650d-242e-4f8b-9359-d4aa19207fac.jpg?1783942640",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/5/4552650d-242e-4f8b-9359-d4aa19207fac.jpg?1783942640",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/5/4552650d-242e-4f8b-9359-d4aa19207fac.webp?1783942640",
+      "grid": "https://cards.scryfall.io/grid/front/4/5/4552650d-242e-4f8b-9359-d4aa19207fac.webp?1783942640",
+      "display": "https://cards.scryfall.io/display/front/4/5/4552650d-242e-4f8b-9359-d4aa19207fac.webp?1783942640",
+      "art": "https://cards.scryfall.io/art/front/4/5/4552650d-242e-4f8b-9359-d4aa19207fac.webp?1783942640",
+      "crop": "https://cards.scryfall.io/crop/front/4/5/4552650d-242e-4f8b-9359-d4aa19207fac.webp?1783942640"
+     },
+     "mana_cost": "{2}{W}",
+     "cmc": 3,
+     "type_line": "Creature — Human Knight",
+     "oracle_text": "As long as this creature is untapped, green creatures you control get +1/+1.",
+     "power": "1",
+     "toughness": "2",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "7d51a13b-dcd2-4ec2-b3a7-c89288e00b4e",
+     "set": "me2",
+     "set_name": "Masters Edition II",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/7d51a13b-dcd2-4ec2-b3a7-c89288e00b4e",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Ame2&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/me2?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/4552650d-242e-4f8b-9359-d4aa19207fac/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aded2fc21-1a69-48f8-865a-467e21b2758b&unique=prints",
+     "collector_number": "20",
+     "digital": true,
+     "rarity": "uncommon",
+     "flavor_text": "\"In these troubled times, we alone carry the hope of reconciliation between Elf and Human.\"\n—Jaeuhl Carthalion, Juniper Order advocate",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Douglas Shuler",
+     "artist_ids": [
+      "a9ddb513-51c7-455c-ab8f-5b90aae9f75b"
+     ],
+     "illustration_id": "973f74f8-789e-4866-a411-700e85dcc364",
+     "border_color": "black",
+     "frame": "1997",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 30891,
+     "prices": {
+      "usd": null,
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": null,
+      "tix": "0.06"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=184552&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DJuniper%2BOrder%2BAdvocate",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DJuniper%2BOrder%2BAdvocate",
+      "edhrec": "https://edhrec.com/route/?cc=Juniper+Order+Advocate"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fmagic%2Fproduct%3FproductLineName%3Dmagic%26q%3DJuniper%2BOrder%2BAdvocate%26view%3Dgrid",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products/Search?referrer=scryfall&searchString=Juniper+Order+Advocate&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/30678?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 3,
+    "tapped": true,
+    "traits": [
+     "Tapped"
+    ],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "6a0b230b-d391-4998-a3f7-7b158a0ec2cd",
+     "oracle_id": "68954295-54e3-4303-a6bc-fc4547a4e3a3",
+     "multiverse_ids": [
+      679969
+     ],
+     "mtgo_id": 133480,
+     "arena_id": 93940,
+     "tcgplayer_id": 557921,
+     "cardmarket_id": 795132,
+     "name": "Llanowar Elves",
+     "lang": "en",
+     "released_at": "2024-11-15",
+     "uri": "https://api.scryfall.com/cards/6a0b230b-d391-4998-a3f7-7b158a0ec2cd",
+     "scryfall_uri": "https://scryfall.com/card/fdn/227/llanowar-elves?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T02:17:37Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+      "normal": "https://cards.scryfall.io/normal/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+      "large": "https://cards.scryfall.io/large/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+      "png": "https://cards.scryfall.io/png/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.png?1783909057",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+      "thumb": "https://cards.scryfall.io/thumb/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.webp?1783909057",
+      "grid": "https://cards.scryfall.io/grid/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.webp?1783909057",
+      "display": "https://cards.scryfall.io/display/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.webp?1783909057",
+      "art": "https://cards.scryfall.io/art/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.webp?1783909057",
+      "crop": "https://cards.scryfall.io/crop/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.webp?1783909057"
+     },
+     "mana_cost": "{G}",
+     "cmc": 1,
+     "type_line": "Creature — Elf Druid",
+     "oracle_text": "{T}: Add {G}.",
+     "power": "1",
+     "toughness": "1",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "produced_mana": [
+      "G"
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "11bd6cef-f887-4b07-a957-4c53cb3c9c87",
+       "component": "combo_piece",
+       "name": "Llanowar Elves",
+       "type_line": "Creature — Elf Druid",
+       "uri": "https://api.scryfall.com/cards/11bd6cef-f887-4b07-a957-4c53cb3c9c87"
+      },
+      {
+       "object": "related_card",
+       "id": "8ef95e7a-9f07-41f8-908b-2df93e03d391",
+       "component": "combo_piece",
+       "name": "Marwyn's Kindred",
+       "type_line": "Sorcery",
+       "uri": "https://api.scryfall.com/cards/8ef95e7a-9f07-41f8-908b-2df93e03d391"
+      }
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "arena",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a7ecb771-d1b6-4dec-8cf5-8d45179f21e0",
+     "set": "fdn",
+     "set_name": "Foundations",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a7ecb771-d1b6-4dec-8cf5-8d45179f21e0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Afdn&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/fdn?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/6a0b230b-d391-4998-a3f7-7b158a0ec2cd/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A68954295-54e3-4303-a6bc-fc4547a4e3a3&unique=prints",
+     "collector_number": "227",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "The elves of the Llanowar forest have defended it for generations. It is their sacred duty to keep outside influences from corrupting their ancestral home.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Kev Walker",
+     "artist_ids": [
+      "f366a0ee-a0cd-466d-ba6a-90058c7a31a6"
+     ],
+     "illustration_id": "96ffb0f9-113f-4fff-a45f-69cbb8d60890",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "promo_types": [
+      "beginnerbox",
+      "startercollection"
+     ],
+     "edhrec_rank": 58,
+     "penny_rank": 282,
+     "preview": {
+      "source": "Wizards of the Coast",
+      "source_uri": "https://twitter.com/wizards_magic/status/1806644973263302981",
+      "previewed_at": "2024-06-28"
+     },
+     "prices": {
+      "usd": "0.28",
+      "usd_foil": "1.59",
+      "usd_etched": null,
+      "eur": "0.21",
+      "eur_foil": "0.52",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=679969&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DLlanowar%2BElves",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DLlanowar%2BElves",
+      "edhrec": "https://edhrec.com/route/?cc=Llanowar+Elves"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F557921%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=795132&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/133480?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 4,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "K-9, Mark I",
+    "final": {
+     "name": "K-9, Mark I",
+     "controller": "player_0",
+     "supertypes": [
+      "Legendary"
+     ],
+     "types": [
+      "Artifact",
+      "Creature"
+     ],
+     "subtypes": [
+      "Robot",
+      "Dog"
+     ],
+     "power": 1,
+     "toughness": 1,
+     "colors": [
+      "U"
+     ],
+     "abilities": [
+      "Affirmative — {1}{U}, {T}: Target legendary creature can't be blocked this turn.",
+      "Doctor's companion"
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Isamaru, Hound of Konda",
+    "final": {
+     "name": "Isamaru, Hound of Konda",
+     "controller": "player_0",
+     "supertypes": [
+      "Legendary"
+     ],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Dog"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "W"
+     ],
+     "abilities": [
+      "Ward {1}"
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "K-9, Mark I"
+     ]
+    }
+   },
+   {
+    "perm": "Juniper Order Advocate",
+    "final": {
+     "name": "Juniper Order Advocate",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Human",
+      "Knight"
+     ],
+     "power": 1,
+     "toughness": 2,
+     "colors": [
+      "W"
+     ],
+     "abilities": [],
+     "traits": [
+      "Tapped"
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Llanowar Elves",
+    "final": {
+     "name": "Llanowar Elves",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Elf",
+      "Druid"
+     ],
+     "power": 1,
+     "toughness": 1,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "{T}: Add {G}."
+     ]
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "6": [
+    "K-9, Mark I"
+   ],
+   "7c": [
+    "Juniper Order Advocate"
+   ]
+  },
+  "effects": [
+   {
+    "source": "K-9, Mark I",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "global",
+    "params": {
+     "ability": "Ward {1}"
+    }
+   },
+   {
+    "source": "Juniper Order Advocate",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "global",
+    "params": {
+     "power": 1,
+     "toughness": 1
+    }
+   }
+  ]
+ }
+}
