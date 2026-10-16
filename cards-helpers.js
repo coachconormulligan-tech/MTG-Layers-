@@ -288,6 +288,16 @@ function _abilitiesFromOtherObject(text) {
   return { text: text.replace(m[0], plain), plain, original: m[0], pick };
 }
 
+// Whether an activated ability's cost (the words before its colon, after any ability word)
+// exiles the card itself from the graveyard: "Renew — {1}{G}, Exile this card from your
+// graveyard: …". Such an ability is used while the card is in the graveyard.
+function _exilesThisCardFromGraveyardAsCost(fullText) {
+  const line = String(fullText || '').split('\n')[0].replace(/^[^{\n.;"——]+[——]\s*/, '');
+  const colon = line.indexOf(':');
+  if (colon < 0) return false;
+  return /\bexile this (?:card|creature) from your graveyard\b/i.test(line.slice(0, colon));
+}
+
 // "Put a +1/+1 counter on target creature you control. It gains this card's other abilities"
 // (Symbiote Spider-Man, used from the graveyard): the abilities are the card's printed lines
 // other than the one being activated. They are written out as quoted abilities, which the parser

@@ -1,0 +1,68 @@
+{
+  "name": "Venom, Evil Unleashed — the graveyard ability's picker leaves out the card exiled as its cost",
+  "notes": "\"{2}{B}, Exile this card from your graveyard: Put two +1/+1 counters on target creature. It gains deathtouch until end of turn.\" The card is in the graveyard when the ability is used and is exiled as the cost, so it cannot be a target; the picker listed Venom itself. Same for every \"Exile this card from your graveyard:\" cost (Renew, Beetle, Legacy Criminal, Symbiote Spider-Man).",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant",
+      "controller": "p2"
+    },
+    {
+      "add": "Venom, Evil Unleashed",
+      "as": "venom"
+    },
+    {
+      "fire": "@venom",
+      "activated": 1,
+      "as": "fired"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@fired",
+        "@giant"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "targetCandidates": {
+        "perm": "Venom, Evil Unleashed (activated)"
+      },
+      "are": [
+        "Grizzly Bears",
+        "Hill Giant"
+      ]
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Deathtouch"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Deathtouch"
+          ]
+        }
+      }
+    }
+  ]
+}
