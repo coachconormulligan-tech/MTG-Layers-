@@ -1,0 +1,17 @@
+{
+  "name": "Windcaller Aven — the cycling trigger's picker leaves out the card cycled",
+  "notes": "\"When you cycle this card, target creature gains flying until end of turn.\" The card is cycled from the hand, so it cannot be a target; the picker listed Windcaller Aven itself. Same for \"When you discard this card\" and for a trigger whose every event takes the card off the battlefield (dies, leaves the battlefield, \"When you cycle this card and when this creature dies\").",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Hill Giant", "as": "giant", "controller": "p2" },
+    { "add": "Windcaller Aven", "as": "aven" },
+    { "fire": "@aven", "trigger": 2, "as": "fired" },
+    { "call": ["setTarget", "@fired", "@giant"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Windcaller Aven (trigger)" }, "are": ["Grizzly Bears", "Hill Giant"] },
+    { "perm": "Hill Giant", "final": { "abilities": { "$includes": ["Flying"] } } },
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$excludes": ["Flying"] } } }
+  ]
+}

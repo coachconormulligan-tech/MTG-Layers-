@@ -212,6 +212,21 @@ const SAME_PERMANENT_VERBS = /^(?:put|puts|untap|tap|taps|attach|choose|goad)$/;
 // it gets +1/+1 and becomes a Doctor").
 const LATER_PRONOUN_EFFECT = /\.\s+(?:until end of turn,\s*)?(?:it|that (?:creature|permanent|land|artifact))\s+(?:also\s+)?(?:gets?|gains?|has|becomes?|loses?|is)\b/;
 
+/* Does every event of a trigger's condition happen with the card in the hand or off the
+   battlefield ("When you cycle this card", "When this creature dies", "When you cycle this card and
+   when this creature dies")? Then the card cannot be one of its targets. Read from the text alone,
+   event by event; "enters or dies" and "this or another creature dies" keep the card. */
+function offBattlefieldTrigger(fullText) {
+  const line = String(fullText || '').split('\n')[0].replace(/’/g, "'").replace(/^[^{\n.;"—]+—\s*/, '');
+  const m = line.match(/^when(?:ever)?\s+([^,]+),/i);
+  if (!m) return false;
+  const events = m[1].replace(/\bcycle or discard\b/gi, 'cycle').replace(/\bdies or is put into exile\b/gi, 'dies')
+    .split(/,?\s+(?:and|or)\s+(?:when(?:ever)?\s+)?/i);
+  return events.every(e => /^you (?:cycle|discard) this \w+$/i.test(e) ||
+    /causes you to discard this \w+$/i.test(e) ||
+    /^this \w+ (?:dies|leaves the battlefield|is put into (?:a|your) graveyard from the battlefield)(?: while .+)?$/i.test(e));
+}
+
 /* Is this unit's text a "singular permanent target" unit? Returns { singular: true, phrase,
    excludeSource, targetIndex } or { skip: '<reason code>' }. Works from the text alone. */
 function classifyUnitText(text) {
@@ -981,6 +996,12 @@ function auditFace(card, faceIndex) {
       // ability is used from the graveyard and the card is exiled as its cost, so it is never on
       // the battlefield to be a target.
       if (kind === 'activated' && /\bexile this (?:card|creature) from your graveyard\b/i.test(ab.costText || '')) u.excludeSource = true;
+      // Likewise "{1}{R}, Discard this card: …" and "Reveal this card from your hand: …" (used from
+      // the hand), and a trigger whose every event finds the card in the hand or gone from the
+      // battlefield: "When you cycle this card", "When this creature dies", "When you cycle this
+      // card and when this creature dies".
+      if (kind === 'activated' && /\b(?:discard this|reveal this \w+ from your hand)\b/i.test(ab.costText || '')) u.excludeSource = true;
+      if (kind === 'trigger' && offBattlefieldTrigger(ab.fullText)) u.excludeSource = true;
       run(u, plan.fire);
     }
   };

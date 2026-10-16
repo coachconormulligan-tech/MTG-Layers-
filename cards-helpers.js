@@ -298,6 +298,37 @@ function _exilesThisCardFromGraveyardAsCost(fullText) {
   return /\bexile this (?:card|creature) from your graveyard\b/i.test(line.slice(0, colon));
 }
 
+// Whether an ability is used, or resolves, while the card is not on the battlefield, so the
+// card cannot be one of its targets:
+//   activated, cost "Discard this card" or "Reveal this card from your hand" (channel, forecast,
+//     Stegron's Dinosaur Formula), used from the hand;
+//   triggered, every event of the condition one that takes the card off the battlefield or happens
+//     in the hand: "When you cycle this card" (Windcaller Aven), "When you discard this card",
+//     "When this creature dies", "… leaves the battlefield", "… is put into a graveyard from the
+//     battlefield", "When you cycle this card and when this creature dies" (Naya Sojourners).
+// A condition with another event ("enters or dies", "this creature or another creature you control
+// dies", "cycle another card while this enchantment is on the battlefield") can find the card on the
+// battlefield and is left alone. fullText is the ability's line with self-references as "this …".
+function _abilityUsedOffTheBattlefield(fullText, kind) {
+  const line = String(fullText || '').split('\n')[0].trim();
+  if (kind === 'activated') {
+    const ab = line.replace(/^[^{\n.;"——]+[——]\s*/, '');
+    const colon = ab.indexOf(':');
+    return colon >= 0 && /\b(?:discard this (?:card|creature|permanent)|reveal this (?:card|creature|permanent) from your hand)\b/i.test(ab.slice(0, colon));
+  }
+  if (kind !== 'trigger') return false;
+  const head = (_modalTriggerHeader(line) || line).replace(/^[^{\n.;"——]+[——]\s*/, '');
+  const comma = _triggerConditionCommaIndex(head);
+  if (comma < 0) return false;
+  const cond = head.slice(0, comma).replace(/^when(?:ever)?\s+/i, '');
+  const SELF = "this (?:card|creature|permanent|artifact|enchantment|land|token|planeswalker|vehicle|equipment|aura|battle)";
+  const EVENT = `(?:you (?:cycle|discard|cycle or discard) ${SELF}` +
+    `|a spell or ability (?:an opponent controls )?causes you to discard ${SELF}` +
+    `|${SELF} (?:dies|leaves the battlefield|is put into (?:a|your) graveyard from the battlefield)(?: or is put into exile(?: from the battlefield)?)?)` +
+    `(?: while [^,]+?)?`;
+  return new RegExp(`^${EVENT}(?:,? (?:and|or) (?:when(?:ever)? )?${EVENT})*$`, 'i').test(cond);
+}
+
 // "Put a +1/+1 counter on target creature you control. It gains this card's other abilities"
 // (Symbiote Spider-Man, used from the graveyard): the abilities are the card's printed lines
 // other than the one being activated. They are written out as quoted abilities, which the parser

@@ -1,0 +1,16 @@
+{
+  "name": "Stegron the Dinosaur Man — the discard ability's picker leaves out the card discarded as its cost",
+  "notes": "\"Dinosaur Formula — {1}{R}, Discard this card: Until end of turn, target creature you control gets +3/+1 and becomes a Dinosaur in addition to its other types.\" The ability is used from the hand and the card is discarded as its cost, so it cannot be a target; the picker listed Stegron itself. Same for every \"Discard this card:\" cost (channel) and \"Reveal this card from your hand:\" cost (forecast).",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Hill Giant", "as": "giant", "controller": "p2" },
+    { "add": "Stegron the Dinosaur Man", "as": "stegron" },
+    { "fire": "@stegron", "activated": 1, "as": "fired" },
+    { "call": ["setTarget", "@fired", "@bears"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Stegron the Dinosaur Man (activated)" }, "are": ["Grizzly Bears"] },
+    { "perm": "Grizzly Bears", "final": { "power": 5, "toughness": 3, "subtypes": { "$includes": ["Dinosaur"] } } }
+  ]
+}
