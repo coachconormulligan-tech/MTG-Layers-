@@ -6352,6 +6352,44 @@ function parseCardEffects(permanent, card, opts = {}) {
     }
   }
 
+  // (Defined ahead of the trait sections below, whose pronouns use it too.)
+  // The restriction of the last "target …" before a pronoun effect's position (outside quotes),
+  // or null when there is none or it is not a permanent on the battlefield ("return target
+  // creature card …. It gains haste": the card is the antecedent, not a permanent yet).
+  // (The position can be 0 for an effect read from its sentence alone; then the text must name
+  // exactly one target.)
+  // Only for a text whose sentence has a pronoun for its subject: "This creature and up to one
+  // other target creature each get +3/+3" (Razorgrass Invoker) is the source's own effect.
+  // ("Those creatures can't block this turn" after "up to three target creatures" — Wrap in Flames.)
+  const _pronounSubjectSentence = /(?:^|[.;]\s*|\n)(?:(?:until end of turn|then|if you do|when you do),?\s+)?(?:it|they|that (?:creature|permanent|land|artifact|enchantment)|those (?:creatures|permanents))\s+(?:also\s+)?(?:gets?|gains?|has|have|becomes?|loses?|is|are|can't)\b/i;
+  function _pronounAntecedentRestriction(pos) {
+    if (!_pronounSubjectSentence.test(oracle.replace(/["“][^"”]*["”]/g, '""'))) return null;
+    const _targetRe = /\b((?:(?:up to \w+|another|other)\s+)*target\s+[^.;"\n]+)/gi;
+    const masked = oracle.replace(/["“][^"”]*["”]/g, (q) => ' '.repeat(q.length));
+    let hits = pos ? [...masked.slice(0, pos).matchAll(_targetRe)] : [];
+    if (!hits.length) {
+      hits = [...masked.matchAll(_targetRe)];
+      if (hits.length !== 1) return null;
+    }
+    const phrase = hits[hits.length - 1][1]
+      // "… and gain control of it", "… and untap it", ", where X is …": what is done to it.
+      .replace(/,?\s+(?:and|then)\s+(?:gain|gains|untap|untaps|tap|taps|put|puts|attach|it|that|you|return|exile|destroy|sacrifice|draw|create)\b.*$/i, '')
+      .replace(/,\s+(?:where|then)\b.*$/i, '')
+      // "Gain control of target creature until end of turn": how long, not which creature.
+      .replace(/\s+(?:until|for as long as|this turn|during)\b.*$/i, '')
+      .replace(/\s+face (?:down|up)$/i, '').trim();
+    // "Return target creature card with mana value 3 or less from your graveyard to the
+    // battlefield. It gains …" (Can't Stay Away): the card as the permanent it became.
+    const _returned = _returnedCardTargetPhrase(phrase);
+    if (_returned) {
+      const info = buildAppliesToFromText(_returned);
+      return info && info.isTargeted && typeof info.fn === 'function' ? info.fn : null;
+    }
+    if (/\b(?:player|opponent|spell|card|cards|ability)\b/i.test(phrase.replace(/\b(?:an? )?opponents? controls?$|\byou (?:don't )?control$/i, ''))) return null;
+    const info = buildAppliesToFromText(phrase);
+    return info && info.isTargeted && typeof info.fn === 'function' ? info.fn : null;
+  }
+
   // --- Trait parsing: goaded, suspected, and similar status traits ---
   // Matches patterns like: "goads target creature", "suspect it", "becomes goaded",
   // "is goaded", "[filter] are goaded", "[filter] becomes suspected"
@@ -6382,7 +6420,7 @@ function parseCardEffects(permanent, card, opts = {}) {
       const named = /\btarget\b/i.test(oracle.slice(0, traitStatePos));
       const eff = pushEff('6', EFFECT_TYPE.ADD_ABILITY, { ability: traitName, isTrait: true, traitOnly: true },
         { appliesTo: null, scope: 'targeted', selfTarget: false }, traitStateDesc, { _oraclePos: traitStatePos });
-      if (named) { eff.targetRestriction = () => true; eff._pronounTarget = true; }
+      if (named) { eff.targetRestriction = _pronounAntecedentRestriction(traitStatePos) || (() => true); eff._pronounTarget = true; }
       if (traitStateCond) eff.asLongAsCondition = traitStateCond;
       continue;
     }
@@ -6548,7 +6586,12 @@ function parseCardEffects(permanent, card, opts = {}) {
         } else {
           eff = pushEff('6', EFFECT_TYPE.ADD_ABILITY, params,
             { appliesTo: null, scope: 'targeted', selfTarget: false }, ruleDesc, { _oraclePos: cantPos });
-          if (/\btarget\b/i.test(before)) { eff.targetRestriction = () => true; eff._pronounTarget = true; }
+          // It takes its target's words: "Return target creature card with mana value 2 or less
+          // from your graveyard to the battlefield. That creature can't attack or block …"
+          // (Extraction Specialist), "… deals 2 damage to target creature. That creature can't
+          // block this turn" (Mugging). With nothing else to restrict the target, the picker
+          // offered every permanent.
+          if (/\btarget\b/i.test(before)) { eff.targetRestriction = _pronounAntecedentRestriction(contentStart) || (() => true); eff._pronounTarget = true; }
         }
       } else {
         // "This creature and up to one other target creature can't be blocked this turn"
@@ -7109,41 +7152,6 @@ function parseCardEffects(permanent, card, opts = {}) {
   // show appropriate target dropdowns with type filtering.
   // Real spells come from Battlefield.addSpell, which clears isManualEffect so the spell joins
   // evaluation; they are recognised by isSpell instead.
-  // The restriction of the last "target …" before a pronoun effect's position (outside quotes),
-  // or null when there is none or it is not a permanent on the battlefield ("return target
-  // creature card …. It gains haste": the card is the antecedent, not a permanent yet).
-  // (The position can be 0 for an effect read from its sentence alone; then the text must name
-  // exactly one target.)
-  // Only for a text whose sentence has a pronoun for its subject: "This creature and up to one
-  // other target creature each get +3/+3" (Razorgrass Invoker) is the source's own effect.
-  const _pronounSubjectSentence = /(?:^|[.;]\s*|\n)(?:(?:until end of turn|then|if you do|when you do),?\s+)?(?:it|they|that (?:creature|permanent|land|artifact|enchantment))\s+(?:also\s+)?(?:gets?|gains?|has|have|becomes?|loses?|is|are|can't)\b/i;
-  function _pronounAntecedentRestriction(pos) {
-    if (!_pronounSubjectSentence.test(oracle.replace(/["“][^"”]*["”]/g, '""'))) return null;
-    const _targetRe = /\b((?:(?:up to \w+|another|other)\s+)*target\s+[^.;"\n]+)/gi;
-    const masked = oracle.replace(/["“][^"”]*["”]/g, (q) => ' '.repeat(q.length));
-    let hits = pos ? [...masked.slice(0, pos).matchAll(_targetRe)] : [];
-    if (!hits.length) {
-      hits = [...masked.matchAll(_targetRe)];
-      if (hits.length !== 1) return null;
-    }
-    const phrase = hits[hits.length - 1][1]
-      // "… and gain control of it", "… and untap it", ", where X is …": what is done to it.
-      .replace(/,?\s+(?:and|then)\s+(?:gain|gains|untap|untaps|tap|taps|put|puts|attach|it|that|you|return|exile|destroy|sacrifice|draw|create)\b.*$/i, '')
-      .replace(/,\s+(?:where|then)\b.*$/i, '')
-      // "Gain control of target creature until end of turn": how long, not which creature.
-      .replace(/\s+(?:until|for as long as|this turn|during)\b.*$/i, '')
-      .replace(/\s+face (?:down|up)$/i, '').trim();
-    // "Return target creature card with mana value 3 or less from your graveyard to the
-    // battlefield. It gains …" (Can't Stay Away): the card as the permanent it became.
-    const _returned = _returnedCardTargetPhrase(phrase);
-    if (_returned) {
-      const info = buildAppliesToFromText(_returned);
-      return info && info.isTargeted && typeof info.fn === 'function' ? info.fn : null;
-    }
-    if (/\b(?:player|opponent|spell|card|cards|ability)\b/i.test(phrase.replace(/\b(?:an? )?opponents? controls?$|\byou (?:don't )?control$/i, ''))) return null;
-    const info = buildAppliesToFromText(phrase);
-    return info && info.isTargeted && typeof info.fn === 'function' ? info.fn : null;
-  }
   if (permanent.isManualEffect || permanent.isSpell) {
     // Tag all effects from spells so the engine can enforce timestamp-order targeting:
     // spell effects only affect permanents that existed before the spell was cast.
