@@ -1057,7 +1057,18 @@ function parseCardEffects(permanent, card, opts = {}) {
     // creature is enchanted" (Gate Hound): the card itself, whatever permanent the effect
     // reaches; for a fired ability, the card it was fired from. Read as "it …" against that
     // card's state, never the permanent being changed.
-    const selfSubject = ct.match(/^this [\w-]+ ((?:is|isn't|has|was)\b.*)$/);
+    // "… gain control of target creature for as long as this creature remains on the battlefield"
+    // (Sower of Temptation, Scarwood Bandits, Giant's Grasp): true while the card the ability
+    // comes from is on the battlefield, whoever controls it.
+    if (/^this [\w-]+ remains on the battlefield$/.test(ct)) {
+      const selfId = permanent.abilitySourceId || permanent.id;
+      return (state, allStates) => !allStates || allStates.has(selfId);
+    }
+    // "… for as long as you control this creature and this creature remains tapped" (Seasinger,
+    // Willow Satyr): read as the card being tapped now. That it ends for good once the card
+    // untaps is not modelled, as a regained control is not (CR 611.2b).
+    const selfSubject = ct.replace(/^(this [\w-]+) remains ((?:un)?tapped)$/, '$1 is $2')
+      .match(/^this [\w-]+ ((?:is|isn't|has|was)\b.*)$/);
     if (selfSubject) {
       const inner = _parseCondition('it ' + selfSubject[1]);
       if (!inner) return null;
@@ -2026,15 +2037,51 @@ function parseCardEffects(permanent, card, opts = {}) {
   // Clean condition markers from oracle text used by downstream parsers,
   // but track which lines have conditions for attaching to effects later.
   const _lineConditionMap = new Map(); // line text snippet → condition index
+  // Where each marker stood in its line once the markers are gone: "line:column" → condition
+  // index. A line keeps only its first condition, so a parser that knows the spot its own
+  // condition was cut from asks for that one (_conditionAtPos).
+  const _markerAt = new Map();
   const oracleLines = oracle.split('\n');
   for (let i = 0; i < oracleLines.length; i++) {
     const markerMatch = oracleLines[i].match(/\x04(\d+)\x04/);
     if (markerMatch) {
       _lineConditionMap.set(i, parseInt(markerMatch[1]));
+      const lead = oracleLines[i].replace(/\x04\d+\x04/g, '').match(/^\s*/)[0].length;
+      let removed = 0;
+      for (const mm of oracleLines[i].matchAll(/\x04(\d+)\x04/g)) {
+        _markerAt.set(`${i}:${Math.max(0, mm.index - removed - lead)}`, parseInt(mm[1]));
+        removed += mm[0].length;
+      }
       oracleLines[i] = oracleLines[i].replace(/\x04\d+\x04/g, '').trim();
     }
   }
   oracle = oracleLines.join('\n');
+  function _conditionAtPos(pos) {
+    const lineStart = oracle.lastIndexOf('\n', pos - 1) + 1;
+    const lineNum = oracle.substring(0, lineStart).split('\n').length - 1;
+    const idx = _markerAt.get(`${lineNum}:${pos - lineStart}`);
+    return idx === undefined ? null : _asLongAsConditions[idx];
+  }
+  // The line's condition, unless its marker stood in another sentence of the line ("…, suspect
+  // target creature an opponent controls. As long as this enchantment remains on the
+  // battlefield, that creature is also goaded." — Hot Pursuit: the suspect lasts). A toggle
+  // ("If you do, …" — Slicer, Hired Muscle) still reaches the sentences after it.
+  function _getConditionForSentence(pos) {
+    const cond = _getConditionForPos(pos);
+    if (!cond || cond._toggle) return cond;
+    const p = _getMatchContentPos(pos);
+    const lineStart = oracle.lastIndexOf('\n', p - 1) + 1;
+    const lineNum = oracle.substring(0, lineStart).split('\n').length - 1;
+    const idx = _lineConditionMap.get(lineNum);
+    for (const [key, i] of _markerAt) {
+      if (i !== idx || !key.startsWith(lineNum + ':')) continue;
+      const at = lineStart + Number(key.slice(key.indexOf(':') + 1));
+      // (Pattern B leaves "controls., that creature …" where it cut a sentence that opened "As long as".)
+      if (/[.;](?=[\s,]|$)/.test(oracle.slice(Math.min(p, at), Math.max(p, at)))) return null;
+      break;
+    }
+    return cond;
+  }
 
   // Inject saga chapter lore counter conditions into _lineConditionMap.
   // These lines were detected before em-dash stripping; now attach conditions
@@ -6510,7 +6557,7 @@ function parseCardEffects(permanent, card, opts = {}) {
     }
     // A condition on its line gates it like any other effect ("When you do, … Goad that creature."
     // behind the toggle for what was done — Kitt Kanto).
-    const traitVerbCond = _getConditionForPos(traitVerbMatch.index);
+    const traitVerbCond = _getConditionForSentence(traitVerbMatch.index);
     if (traitVerbCond) eff.asLongAsCondition = traitVerbCond;
   }
 
@@ -6738,7 +6785,14 @@ function parseCardEffects(permanent, card, opts = {}) {
       const toggle = _gcPrev ? _getConditionForPos(_gcPrev.pos) : null;
       if (!toggle || !toggle._toggle) return;
       for (let k = _gcPrev.from; k < effects.length; k++) {
-        if (effects[k].type === EFFECT_TYPE.CONTROL && !effects[k].asLongAsCondition) effects[k].asLongAsCondition = toggle;
+        if (effects[k].type !== EFFECT_TYPE.CONTROL) continue;
+        const dur = effects[k].asLongAsCondition;
+        if (!dur) effects[k].asLongAsCondition = toggle;
+        else if (dur._controlDuration && dur !== toggle) {
+          const both = (state, allStates) => toggle(state, allStates) && dur(state, allStates);
+          both._toggle = true;
+          effects[k].asLongAsCondition = both;
+        }
       }
     };
     while ((gcMatch = gainControlRegex.exec(oracle)) !== null) {
@@ -6770,7 +6824,8 @@ function parseCardEffects(permanent, card, opts = {}) {
 
       // Everything after "gain(s) control of " in this sentence, minus duration and trailing
       // clauses: the thing being taken.
-      const objectText = oracle.slice(gcMatch.index + gcMatch[0].match(/^gains? control of /i)[0].length, sentenceEnd)
+      const objectStart = gcMatch.index + gcMatch[0].match(/^gains? control of /i)[0].length;
+      let objectText = oracle.slice(objectStart, sentenceEnd)
         .replace(/[.,;]?\s*$/, '')
         .replace(/\s+(?:until end of turn|until the end of [^,]+|for as long as\b.*|this turn)(?=,|\s|$).*$/i, '')
         .replace(/,\s+(?:then|untap|and)\b.*$/i, '')
@@ -6778,6 +6833,15 @@ function parseCardEffects(permanent, card, opts = {}) {
         .replace(/,\s+(?:it|they|target [^,]+?)\s+(?:loses?|gains?|gets?|has|have|becomes?)\b.*$/i, '')
         .replace(/\s+and\s+(?:it|they|untap|that)\b.*$/i, '')
         .trim();
+      // "… for as long as you control this creature" (Mind Flayer, Master Thief, Merieke Ri
+      // Berit): Pattern B has already cut "as long as …" out and left "for", which the target's
+      // words took as a subtype "For", so the picker listed nothing and the pick was refused.
+      // The condition cut from that spot is how long the control lasts.
+      let controlDuration = null;
+      if (/\s+for$/i.test(objectText)) {
+        controlDuration = _conditionAtPos(objectStart + objectText.length);
+        objectText = objectText.replace(/\s+for$/i, '');
+      }
       const subjectText = oracle.slice(_clauseStart(gcMatch.index), gcMatch.index);
       // "other players can't gain control of them" (Guardian Beast) grants no control.
       if (/\bcan't\s+$/i.test(subjectText)) continue;
@@ -7020,6 +7084,11 @@ function parseCardEffects(permanent, card, opts = {}) {
       // "all lands target player controls" (Gilt-Leaf Archdruid): scoped to the chosen player.
       if (globalTargetPlayerScoped) _applyTargetInfo(controlEff, { isTargetPlayerControl: true }, null);
       if (controlRestriction) controlEff.targetRestriction = controlRestriction;
+      if (controlDuration) {
+        const dur = (state, allStates) => controlDuration(state, allStates);
+        dur._controlDuration = true;
+        controlEff.asLongAsCondition = dur;
+      }
       if (controlMaxTargets > 1) { controlEff.maxTargets = controlMaxTargets; controlEff.targetIds = []; }
       emittedControl = true;
       // "Gain control of target creature if its toughness is 2 or less. If this spell's madness
