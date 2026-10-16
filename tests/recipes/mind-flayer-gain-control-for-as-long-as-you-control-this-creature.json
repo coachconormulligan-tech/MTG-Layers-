@@ -1,0 +1,181 @@
+{
+  "name": "Mind Flayer, Master Thief, Willow Satyr, Sower of Temptation — gain control for as long as",
+  "notes": "Memory: project_gain_control_for_as_long_as_2026-10-16. Pattern B cut 'as long as you control this creature' out of 'gain control of target creature for as long as you control this creature' and left 'for', which the control parser kept in the target's words ('creature for'): 'for' became a required subtype, so the fired trigger's picker listed nothing and a target set anyway was refused by the fire-time check. The control effect also never got its duration, so Dragonlord Silumgar and Willbreaker kept the creature after they left. The control now takes the condition cut from that spot. 'This creature remains tapped' (Willow Satyr, Rubinia Soulsinger) is read as the card being tapped, and 'this creature remains on the battlefield' (Sower of Temptation) as the card being on the battlefield.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Sol Ring",
+      "as": "ring",
+      "controller": "p2"
+    },
+    {
+      "add": "Isamaru, Hound of Konda",
+      "as": "isamaru",
+      "controller": "p2"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears",
+      "controller": "p2"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant",
+      "controller": "p2"
+    },
+    {
+      "add": "Mind Flayer",
+      "as": "flayer"
+    },
+    {
+      "fire": "@flayer",
+      "trigger": 0,
+      "as": "flayerEtb"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@flayerEtb",
+        "@ogre"
+      ]
+    },
+    {
+      "add": "Master Thief",
+      "as": "thief"
+    },
+    {
+      "fire": "@thief",
+      "trigger": 0,
+      "as": "thiefEtb"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@thiefEtb",
+        "@ring"
+      ]
+    },
+    {
+      "add": "Willow Satyr",
+      "as": "satyr"
+    },
+    {
+      "fire": "@satyr",
+      "activated": 1,
+      "as": "satyrTap"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@satyrTap",
+        "@isamaru"
+      ]
+    },
+    {
+      "call": [
+        "toggleTapped",
+        "@satyr"
+      ]
+    },
+    {
+      "add": "Rubinia Soulsinger",
+      "as": "rubinia"
+    },
+    {
+      "fire": "@rubinia",
+      "activated": 1,
+      "as": "rubiniaTap"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@rubiniaTap",
+        "@giant"
+      ]
+    },
+    {
+      "add": "Sower of Temptation",
+      "as": "sower"
+    },
+    {
+      "fire": "@sower",
+      "trigger": 1,
+      "as": "sowerEtb"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@sowerEtb",
+        "@bears"
+      ]
+    },
+    {
+      "call": [
+        "removePermanent",
+        "@sower"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "targetCandidates": {
+        "perm": "Mind Flayer (trigger)"
+      },
+      "are": [
+        "Gray Ogre",
+        "Grizzly Bears",
+        "Hill Giant",
+        "Isamaru, Hound of Konda",
+        "Mind Flayer"
+      ]
+    },
+    {
+      "targetCandidates": {
+        "perm": "Master Thief (trigger)"
+      },
+      "are": [
+        "Sol Ring"
+      ]
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "controller": "player_0"
+      }
+    },
+    {
+      "perm": "Sol Ring",
+      "final": {
+        "controller": "player_0"
+      }
+    },
+    {
+      "perm": "Isamaru, Hound of Konda",
+      "final": {
+        "controller": "player_0"
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "controller": "player_1"
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "controller": "player_1"
+      }
+    }
+  ]
+}
