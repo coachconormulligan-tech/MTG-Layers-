@@ -537,6 +537,12 @@ function evaluatePermanent(permanent, allPermanents, allEffects, inspectedId) {
   const abilityGroupAffectedPerms = new Map(); // abilityGroupId → Set<permId>
   const abilityGroupRejectedPerms = new Map(); // abilityGroupId → Set<permId> rejected in earlier layers
 
+  // Rules kept as traits whose subject compares with the source's power or toughness ("Creatures
+  // with power less than this creature's power can't block it" — Wandering Wolf; Baeloth
+  // Barrityl's goad) are not characteristics: they are judged on P/T as layer 7 leaves it, and
+  // shown with layer 6 (_judgedAfterPT, set by _sourceComparedSubject's callers in the parser).
+  let afterPTEffects = [], layer6Result = null;
+
   for (const layerDef of LAYERS) {
     const layerResult = {
       id: layerDef.id,
@@ -561,7 +567,12 @@ function evaluatePermanent(permanent, allPermanents, allEffects, inspectedId) {
     // ALL effects in this layer  —  do NOT pre-filter by applicability.
     // Aura attachment trackers only record what an Aura is attached to (read above, when
     // stamping the Enchanted trait); they are not effects and must not appear in a layer.
-    const layerEffects = workingEffects.filter(e => e.layer === layerDef.id && !e._isAttachTracker);
+    let layerEffects = workingEffects.filter(e => e.layer === layerDef.id && !e._isAttachTracker);
+    if (layerDef.id === '6') {
+      layer6Result = layerResult;
+      afterPTEffects = layerEffects.filter(e => e._judgedAfterPT);
+      layerEffects = layerEffects.filter(e => !e._judgedAfterPT);
+    }
 
     // At the start of Layer 4, sync hasChangeling from current ability state.
     // isAllCreatureTypes is now set by the Changeling ADD_TYPE effect generated
@@ -640,6 +651,24 @@ function evaluatePermanent(permanent, allPermanents, allEffects, inspectedId) {
     // This implements the "refactoring" behavior: changed text → changed effects.
     if (layerDef.id === '3') {
       workingEffects = _reParseAfterTextChange(allStates, allPermanents, workingEffects);
+    }
+  }
+
+  if (afterPTEffects.length && layer6Result) {
+    const { log, logReasons, applicationLog } = applyLayerGlobal(
+      afterPTEffects, allStates, allPermanents, inspectedId, appliedSourceIds, abilityGroupAffectedPerms, abilityGroupRejectedPerms
+    );
+    if (!layer6Result.applicationLog.length) layer6Result.orderLog = [];
+    layer6Result.orderLog.push(...log);
+    Object.assign(layer6Result.orderLogReasons, logReasons);
+    layer6Result.applicationLog.push(...applicationLog);
+    // The traits now stand from layer 6 on in the inspector's before/after states.
+    const traits = (allStates.get(inspectedId) || {}).traits || [];
+    let from6 = false;
+    for (const L of result.layers) {
+      if (from6 && L.stateBefore) L.stateBefore.traits = traits.slice();
+      if (L === layer6Result) from6 = true;
+      if (from6 && L.stateAfter) L.stateAfter.traits = traits.slice();
     }
   }
 

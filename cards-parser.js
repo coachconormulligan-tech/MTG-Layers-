@@ -6497,12 +6497,16 @@ function parseCardEffects(permanent, card, opts = {}) {
       if (traitStateCond) eff.asLongAsCondition = traitStateCond;
       continue;
     }
-    const { fn, desc: filterDesc } = buildAppliesToFromText(filterText);
+    // "Creatures your opponents control with power less than Baeloth Barrityl's power are goaded":
+    // measured against the source.
+    const vsSource = _sourceComparedSubject(filterText, permanent);
+    const { fn, desc: filterDesc } = vsSource || buildAppliesToFromText(filterText);
     const eff = pushEff('6', EFFECT_TYPE.ADD_ABILITY,
       { ability: traitName, isTrait: true, traitOnly: true },
       { appliesTo: fn, scope: fn ? 'global' : 'targeted', selfTarget: !fn },
       `${traitStateDesc} ${filterDesc}`,
       { _oraclePos: traitStateMatch.index });
+    if (vsSource) eff._judgedAfterPT = true;
     if (traitStateCond && traitStateCond._toggle) eff.asLongAsCondition = traitStateCond;
   }
   // "Target Mount you control becomes saddled until end of turn" (Guidelight Matrix): the same
@@ -6673,43 +6677,10 @@ function parseCardEffects(permanent, card, opts = {}) {
         for (const part of conj ? [conj[1], conj[2]] : [subj]) {
           if (!filterReferencesPermanents(part) && !/^this\s+[\w-]+$/i.test(part)) continue;
           let b = buildAppliesToFromText(part);
-          // "Creatures with power less than this creature's power" (Aura Gnarlid): measured
-          // against the source as it is now.
-          const vsSource = part.match(/^(.+?)\s+with\s+(power|toughness)\s+(less|greater)\s+than\s+this\s+[\w-]+'s\s+(power|toughness)$/i);
-          if (vsSource) {
-            const base = buildAppliesToFromText(vsSource[1]);
-            const stat = vsSource[2].toLowerCase(), less = /less/i.test(vsSource[3]), srcStat = vsSource[4].toLowerCase();
-            const srcId = permanent.id, printed = srcStat === 'power' ? permanent.printedPower : permanent.printedToughness;
-            if (base.fn) b = Object.assign({}, base, {
-              fn: (st, all, ctrl) => {
-                if (!base.fn(st, all, ctrl) || st[stat] === null || st[stat] === undefined) return false;
-                const src = all && all.get ? all.get(srcId) : null;
-                const ref = src ? src[srcStat] : printed;
-                return ref !== null && ref !== undefined && (less ? st[stat] < ref : st[stat] > ref);
-              },
-              desc: `${base.desc} with ${stat} ${less ? 'less' : 'greater'} than this creature's ${srcStat}`,
-            });
-          }
-          // "Creatures with power greater than the number of cards in your hand" (Ensnaring
-          // Bridge), "… less than the number of Islands you control" (Kraken of the Straits): the
-          // amount is counted for the source as it is now, "you" being its controller. Only the
-          // words before "with" say whose creatures; the "you control" in the amount does not.
-          const vsAmount = part.match(/^(.+?)\s+with\s+(power|toughness)\s+(less|greater)\s+than\s+(or\s+equal\s+to\s+)?the\s+number\s+of\s+(.+)$/i);
-          if (vsAmount) {
-            const base = buildAppliesToFromText(vsAmount[1]);
-            const stat = vsAmount[2].toLowerCase(), less = /less/i.test(vsAmount[3]), orEqual = !!vsAmount[4], amount = vsAmount[5];
-            const srcId = permanent.id;
-            if (base.fn) b = Object.assign({}, base, {
-              fn: (st, all, ctrl) => {
-                if (!base.fn(st, all, ctrl) || st[stat] === null || st[stat] === undefined) return false;
-                const src = all && all.get ? all.get(srcId) : null;
-                const n = _computeForEachCount(amount, all || new Map(), src || st, { sourceId: srcId });
-                if (n === null || n === undefined) return false;
-                return less ? (orEqual ? st[stat] <= n : st[stat] < n) : (orEqual ? st[stat] >= n : st[stat] > n);
-              },
-              desc: `${base.desc} with ${stat} ${less ? 'less' : 'greater'} than ${orEqual ? 'or equal to ' : ''}the number of ${amount}`,
-            });
-          }
+          // "Creatures with power less than this creature's power" (Aura Gnarlid), "… less than the
+          // number of Islands you control" (Kraken of the Straits): measured against the source.
+          const vsSource = _sourceComparedSubject(part, permanent);
+          if (vsSource) b = vsSource;
           if (b.isSelf && !_cantFired) continue;
           if (!b.isSelf && !b.isTargeted && !b.needsTargetSelection && !b.fn) continue;
           eff = pushEff('6', EFFECT_TYPE.ADD_ABILITY, params,
@@ -6717,6 +6688,7 @@ function parseCardEffects(permanent, card, opts = {}) {
             `${ruleDesc} ${b.desc || ''}`.trim(), { _oraclePos: cantPos });
           _applyTargetInfo(eff, { isSpellTarget: !!b.needsTargetSelection, maxTargets: b.maxTargets || 1, isTargetPlayerControl: !!b.isTargetPlayerControl }, b.fn);
           if (conj && b.isSelf) eff._sourceHalf = true;
+          if (b.judgedAfterPT) eff._judgedAfterPT = true;
           if (cantCond) eff.asLongAsCondition = cantCond;
         }
         continue;

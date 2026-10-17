@@ -1,0 +1,28 @@
+{
+  "name": "Wandering Wolf, Champion of Lambholt, Kraken of the Straits — 'creatures with power less than …' can't block, judged on P/T after layer 7",
+  "notes": "Memory: project_source_compared_subjects_judged_after_layer_7_2026-10-16. The blocking rules were applied in layer 6, so both sides' power was read before layer 7: Glorious Anthem and +1/+1 counters were not counted. They are now judged after layer 7. Wolf 3/2 with the Anthem: Grizzly Bears (2) can't block it. Champion 4/4 (two counters and the Anthem): every creature but itself has less power, so none of them can block Player 1's creatures, and the Champion no longer can't block the Wolf. Kraken with three Islands: Grizzly Bears (2) can't block it, Gray Ogre (3 with its counter) can.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears", "as": "bears", "controller": "p2" },
+    { "add": "Hill Giant", "as": "giant", "controller": "p2" },
+    { "add": "Gray Ogre", "as": "ogre", "controller": "p2" },
+    { "call": ["addCounter", "@ogre", "+1/+1", 1] },
+    { "add": "Island", "as": "island1" },
+    { "add": "Island", "as": "island2" },
+    { "add": "Island", "as": "island3" },
+    { "add": "Wandering Wolf", "as": "wolf" },
+    { "add": "Champion of Lambholt", "as": "champion" },
+    { "call": ["addCounter", "@champion", "+1/+1", 2] },
+    { "add": "Kraken of the Straits", "as": "kraken" },
+    { "add": "Glorious Anthem", "as": "anthem" }
+  ],
+  "asserts": [
+    { "perm": "Wandering Wolf", "final": { "power": 3 } },
+    { "perm": "Champion of Lambholt", "final": { "power": 4 } },
+    { "perm": "Grizzly Bears", "final": { "traits": { "$includes": ["Can't block Wandering Wolf", "Can't block Kraken of the Straits", "Can't block creatures Player 1 controls"] } } },
+    { "perm": "Hill Giant", "final": { "traits": { "$includes": ["Can't block creatures Player 1 controls"] } } },
+    { "perm": "Hill Giant", "final": { "traits": { "$excludes": ["Can't block Wandering Wolf", "Can't block Kraken of the Straits"] } } },
+    { "perm": "Gray Ogre", "final": { "traits": { "$excludes": ["Can't block Wandering Wolf", "Can't block Kraken of the Straits"] } } },
+    { "perm": "Champion of Lambholt", "final": { "traits": { "$excludes": ["Can't block Wandering Wolf"] } } }
+  ]
+}

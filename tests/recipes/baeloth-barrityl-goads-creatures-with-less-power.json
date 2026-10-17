@@ -1,0 +1,20 @@
+{
+  "name": "Baeloth Barrityl, Entertainer — goads the opponents' creatures with less power than Baeloth has now",
+  "notes": "Memory: project_source_compared_subjects_judged_after_layer_7_2026-10-16. 'Creatures your opponents control with power less than Baeloth Barrityl's power are goaded': 'with power less than this card's power' was not in the filter vocabulary, so it became a required subtype and nothing was goaded. The subject now compares with Baeloth's power as it is now, and the trait is judged after layer 7, so the +1/+1 counter (layer 7d) that makes Baeloth 3/6 counts: Grizzly Bears (2) is goaded, Hill Giant (3) is not, and nothing of Baeloth's controller is.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Llanowar Elves", "as": "elves", "controller": "p2" },
+    { "add": "Grizzly Bears", "as": "bears", "controller": "p2" },
+    { "add": "Hill Giant", "as": "giant", "controller": "p2" },
+    { "add": "Elvish Mystic", "as": "mystic" },
+    { "add": "Baeloth Barrityl, Entertainer", "as": "baeloth" },
+    { "call": ["addCounter", "@baeloth", "+1/+1", 1] }
+  ],
+  "asserts": [
+    { "perm": "Baeloth Barrityl, Entertainer", "final": { "power": 3 } },
+    { "perm": "Llanowar Elves", "final": { "traits": { "$includes": ["Goaded by Player 1"] } } },
+    { "perm": "Grizzly Bears", "final": { "traits": { "$includes": ["Goaded by Player 1"] } } },
+    { "perm": "Hill Giant", "final": { "traits": { "$excludes": ["Goaded by Player 1"] } } },
+    { "perm": "Elvish Mystic", "final": { "traits": { "$excludes": ["Goaded by Player 1"] } } }
+  ]
+}
