@@ -1,0 +1,235 @@
+{
+  "name": "Rangers of Ithilien, Vodalian Mindsinger, Old Man of the Sea, Vedalken Shackles, Seasinger — target words that compare power or ask for an Island",
+  "notes": "Memory: project_lesser_power_and_island_target_words_2026-10-16. The target words 'with lesser power' (Rangers of Ithilien), 'with power less than [or equal to] this creature's power' (Vodalian Mindsinger, Old Man of the Sea), 'with power less than or equal to the number of Islands you control' (Vedalken Shackles) and 'whose controller controls an Island' (Seasinger) were not in the filter vocabulary, so each became a required subtype: the fired ability's picker listed nothing and a target set anyway was refused by the fire-time check. The power bound is now written out as a number from the fire-time snapshot (Seasinger 0/1, Mindsinger 2/2, Rangers 3/3, Old Man 2/3, one Island of yours when Shackles fires), and 'whose controller controls an Island' asks whether the permanent's controller has one. Seasinger fires before you have an Island, so it is not its own candidate. Each card is fired right after it is added, so its list holds only what came before it.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Llanowar Elves",
+      "as": "elves",
+      "controller": "p2"
+    },
+    {
+      "add": "Elvish Mystic",
+      "as": "mystic",
+      "controller": "p2"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears",
+      "controller": "p2"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant",
+      "controller": "p2"
+    },
+    {
+      "add": "Island",
+      "as": "oppIsland",
+      "controller": "p2"
+    },
+    {
+      "add": "Seasinger",
+      "as": "seasinger"
+    },
+    {
+      "fire": "@seasinger",
+      "activated": 2,
+      "as": "seasingerTap"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@seasingerTap",
+        "@giant"
+      ]
+    },
+    {
+      "call": [
+        "toggleTapped",
+        "@seasinger"
+      ]
+    },
+    {
+      "add": "Island",
+      "as": "myIsland"
+    },
+    {
+      "add": "Vedalken Shackles",
+      "as": "shackles"
+    },
+    {
+      "fire": "@shackles",
+      "activated": 1,
+      "as": "shacklesTap"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@shacklesTap",
+        "@elves"
+      ]
+    },
+    {
+      "call": [
+        "toggleTapped",
+        "@shackles"
+      ]
+    },
+    {
+      "add": "Vodalian Mindsinger",
+      "as": "mindsinger"
+    },
+    {
+      "fire": "@mindsinger",
+      "trigger": 2,
+      "as": "mindsingerEtb"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@mindsingerEtb",
+        "@mystic"
+      ]
+    },
+    {
+      "add": "Rangers of Ithilien",
+      "as": "rangers"
+    },
+    {
+      "fire": "@rangers",
+      "trigger": 1,
+      "as": "rangersEtb"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@rangersEtb",
+        "@ogre"
+      ]
+    },
+    {
+      "add": "Old Man of the Sea",
+      "as": "oldman"
+    },
+    {
+      "fire": "@oldman",
+      "activated": 1,
+      "as": "oldmanTap"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@oldmanTap",
+        "@bears"
+      ]
+    },
+    {
+      "call": [
+        "toggleTapped",
+        "@oldman"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "targetCandidates": {
+        "perm": "Seasinger (activated)"
+      },
+      "are": [
+        "Elvish Mystic",
+        "Gray Ogre",
+        "Grizzly Bears",
+        "Hill Giant",
+        "Llanowar Elves"
+      ]
+    },
+    {
+      "targetCandidates": {
+        "perm": "Vedalken Shackles (activated)"
+      },
+      "are": [
+        "Elvish Mystic",
+        "Llanowar Elves",
+        "Seasinger"
+      ]
+    },
+    {
+      "targetCandidates": {
+        "perm": "Vodalian Mindsinger (trigger)"
+      },
+      "are": [
+        "Elvish Mystic",
+        "Llanowar Elves",
+        "Seasinger"
+      ]
+    },
+    {
+      "targetCandidates": {
+        "perm": "Rangers of Ithilien (trigger)"
+      },
+      "are": [
+        "Elvish Mystic",
+        "Gray Ogre",
+        "Grizzly Bears",
+        "Llanowar Elves",
+        "Seasinger",
+        "Vodalian Mindsinger"
+      ]
+    },
+    {
+      "targetCandidates": {
+        "perm": "Old Man of the Sea (activated)"
+      },
+      "are": [
+        "Elvish Mystic",
+        "Gray Ogre",
+        "Grizzly Bears",
+        "Llanowar Elves",
+        "Old Man of the Sea",
+        "Seasinger",
+        "Vodalian Mindsinger"
+      ]
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "controller": "player_0"
+      }
+    },
+    {
+      "perm": "Llanowar Elves",
+      "final": {
+        "controller": "player_0"
+      }
+    },
+    {
+      "perm": "Elvish Mystic",
+      "final": {
+        "controller": "player_0"
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "controller": "player_0"
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "controller": "player_0"
+      }
+    }
+  ]
+}

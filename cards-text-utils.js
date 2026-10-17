@@ -1411,6 +1411,22 @@ function _buildAppliesToFromTextInner(filterText) {
     }
   }
 
+  // "Target creature whose controller controls an Island" (Seasinger; Dwarven Sea Clan's "attacking
+  // or blocking creature whose …"): the permanent's controller has one on the battlefield. (Read
+  // ahead of the "or" split, which would leave the words to "blocking creature" alone.)
+  const whoseCtrl = f.match(/^(.+?)\s+whose controller controls\s+(?:an?\s+)?([a-z-]+)$/);
+  if (whoseCtrl) {
+    const inner = _buildAppliesToFromTextInner(whoseCtrl[1]);
+    const thing = _buildAppliesToFromTextInner(whoseCtrl[2]);
+    if (inner && inner.fn && !inner.isSelf && !inner.isFallback && thing && thing.fn && !thing.isSelf && !thing.isFallback) {
+      return {
+        fn: (p, allStates, effectCtrl) => !!allStates && inner.fn(p, allStates, effectCtrl) &&
+          [...allStates.values()].some(s => s.controller === p.controller && thing.fn(s, allStates, effectCtrl)),
+        desc: `${inner.desc} whose controller controls ${whoseCtrl[2]}`,
+      };
+    }
+  }
+
   // "Each other creature you control with base power and toughness 1/1" (Bess, Soul Nourisher),
   // "with base power 1" (Rapid Augmenter), "with base power or toughness 1" (Sword of the
   // Squeak). Base P/T is what layers 7a and 7b leave: the engine records it on each state as
@@ -1679,7 +1695,7 @@ function _buildAppliesToFromTextInner(filterText) {
 
   // --- Power/toughness filters: "creatures with power 4 or greater" ---
   // ("with power 3 or less" — Whalebone Glider; "with toughness 2 or less" — Goblin Kites.)
-  const ptLessFilter = f.match(/^(.+?)\s+with\s+(power|toughness)\s+(\d+)\s+or\s+(?:less|fewer)$/);
+  const ptLessFilter = f.match(/^(.+?)\s+with\s+(power|toughness)\s+(-?\d+)\s+or\s+(?:less|fewer)$/);
   if (ptLessFilter) {
     const baseFilter = buildAppliesToFromText(ptLessFilter[1]);
     const stat = ptLessFilter[2], max = parseInt(ptLessFilter[3]);
