@@ -1332,6 +1332,40 @@ function buildAppliesToFromText(filterText) {
   return _result;
 }
 
+/* A subject that compares with its source: "Creatures with power less than this creature's power"
+   (Wandering Wolf, Aura Gnarlid), "Creatures your opponents control with power less than Baeloth
+   Barrityl's power" (the name already read as "this card"), "Creatures with power greater than the
+   number of cards in your hand" (Ensnaring Bridge), "… less than the number of Islands you control"
+   (Kraken of the Straits). The source is read as it is now, from the states the engine passes the
+   filter, "you" being its controller; only the words before "with" say whose creatures. Returns
+   buildAppliesToFromText's result with the comparison folded into fn, or null for any other
+   subject. Who it reaches depends on P/T as layer 7 leaves it, so the result carries judgedAfterPT
+   and the effect is judged after layer 7 (evaluatePermanent). */
+function _sourceComparedSubject(part, sourcePerm) {
+  const vsSource = part.match(/^(.+?)\s+with\s+(power|toughness)\s+(less|greater)\s+than\s+(or\s+equal\s+to\s+)?this\s+[\w-]+'s\s+(power|toughness)$/i);
+  const vsAmount = !vsSource && part.match(/^(.+?)\s+with\s+(power|toughness)\s+(less|greater)\s+than\s+(or\s+equal\s+to\s+)?the\s+number\s+of\s+(.+)$/i);
+  const m = vsSource || vsAmount;
+  if (!m) return null;
+  const base = buildAppliesToFromText(m[1]);
+  if (!base.fn) return null;
+  const stat = m[2].toLowerCase(), less = /less/i.test(m[3]), orEqual = !!m[4];
+  const srcId = sourcePerm.id, srcStat = vsSource ? m[5].toLowerCase() : null, amount = vsAmount ? m[5] : null;
+  const printed = srcStat === 'power' ? sourcePerm.printedPower : sourcePerm.printedToughness;
+  return Object.assign({}, base, {
+    fn: (st, all, ctrl) => {
+      if (!base.fn(st, all, ctrl) || st[stat] === null || st[stat] === undefined) return false;
+      const src = all && all.get ? all.get(srcId) : null;
+      const ref = vsSource ? (src ? src[srcStat] : printed)
+        : _computeForEachCount(amount, all || new Map(), src || st, { sourceId: srcId });
+      if (ref === null || ref === undefined) return false;
+      return less ? (orEqual ? st[stat] <= ref : st[stat] < ref) : (orEqual ? st[stat] >= ref : st[stat] > ref);
+    },
+    desc: `${base.desc} with ${stat} ${less ? 'less' : 'greater'} than ${orEqual ? 'or equal to ' : ''}` +
+      (vsSource ? `this creature's ${srcStat}` : `the number of ${amount}`),
+    judgedAfterPT: true,
+  });
+}
+
 /* "base power and toughness 1/1", "base power or toughness 1", "base power 1" / "base toughness 1"
    → { test(state), words }, or null for any other wording. Base P/T is what layers 7a and 7b
    leave: the engine records it on each state (basePower / baseToughness) as layer 7c begins,

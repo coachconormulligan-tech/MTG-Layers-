@@ -1,0 +1,20 @@
+{
+  "name": "Lena, Selfless Champion — the fired ability reaches only your creatures with less power than Lena",
+  "notes": "Memory: project_source_compared_subjects_judged_after_layer_7_2026-10-16. 'Sacrifice Lena: Creatures you control with power less than Lena's power gain indestructible until end of turn': the fire-time power bound was only written in after 'target', so 'with power less than this card's power' stayed a required subtype and nothing gained indestructible. It is now written as 'with power 2 or less' from the fire-time snapshot (Lena 3/3): Elvish Mystic (1) and Grizzly Bears (2) gain it, Hill Giant (3), Lena and the opponent's Llanowar Elves do not.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Llanowar Elves", "as": "elves", "controller": "p2" },
+    { "add": "Elvish Mystic", "as": "mystic" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Hill Giant", "as": "giant" },
+    { "add": "Lena, Selfless Champion", "as": "lena" },
+    { "fire": "@lena", "activated": 1, "as": "lenaSac" }
+  ],
+  "asserts": [
+    { "perm": "Elvish Mystic", "final": { "abilities": { "$includes": ["Indestructible"] } } },
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$includes": ["Indestructible"] } } },
+    { "perm": "Hill Giant", "final": { "abilities": { "$excludes": ["Indestructible"] } } },
+    { "perm": "Lena, Selfless Champion", "final": { "abilities": { "$excludes": ["Indestructible"] } } },
+    { "perm": "Llanowar Elves", "final": { "abilities": { "$excludes": ["Indestructible"] } } }
+  ]
+}

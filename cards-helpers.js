@@ -440,11 +440,17 @@ function _lockFireTimeBasePT(text, states, sourceId) {
 //    Mindsinger, Old Man of the Sea; Yasova Dragonclaw's own name)
 //   "target creature with power less than or equal to the number of Islands you control"
 //    (Vedalken Shackles; Beguiler of Wills)
-// Not "that creature's power" (another target: Spawnbroker), a cost paid ("removed this way") or a
-// count the snapshot cannot give.
+//   "Creatures you control with power less than Lena's power gain indestructible" (Lena, Selfless
+//    Champion): not a target, but the group is judged as the ability resolves all the same
+// Not "that creature's power" (another target: Spawnbroker), a cost paid ("removed this way"), a
+// count the snapshot cannot give, or a quoted ability, granted to something else whose own power
+// its "this creature" means (Firja's Retribution's Angels).
 function _fireTimeTargetPowerBound(text, states, sourceId) {
   const src = states && states.get(sourceId);
   if (!src || !/\b(?:lesser power|power less than)\b/i.test(text)) return text;
+  if (text.includes('"')) {
+    return text.split('"').map((seg, i) => i % 2 ? seg : _fireTimeTargetPowerBound(seg, states, sourceId)).join('"');
+  }
   const p = src.power || 0;
   const bound = (n) => `with power ${n} or less`;
   text = text.replace(/\b(target\b[^.;\n]*?)\bwith (equal or )?lesser power\b/gi,
@@ -452,8 +458,8 @@ function _fireTimeTargetPowerBound(text, states, sourceId) {
   const name = String(src.name || '').toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const short = name.split(',')[0];
   const self = `this (?:creature|card|permanent|artifact|enchantment)|${name}${short !== name ? '|' + short : ''}`;
-  text = text.replace(new RegExp(`\\b(target\\b[^.;\\n]*?)\\bwith power less than (or equal to )?(?:${self})'s power\\b`, 'gi'),
-    (_, pre, eq) => pre + bound(eq ? p : p - 1));
+  text = text.replace(new RegExp(`\\bwith power less than (or equal to )?(?:${self})'s power\\b`, 'gi'),
+    (_, eq) => bound(eq ? p : p - 1));
   return text.replace(/\b(target\b[^.;\n]*?)\bwith power less than (or equal to )?the number of ([^.;,\n]+?)(?=\s+(?:for as long as|until|and)\b|[.;,\n]|$)/gi,
     (whole, pre, eq, desc) => {
       // ("… the number of +1/+1 counters removed this way" — Simic Manipulator — is a cost paid.)
