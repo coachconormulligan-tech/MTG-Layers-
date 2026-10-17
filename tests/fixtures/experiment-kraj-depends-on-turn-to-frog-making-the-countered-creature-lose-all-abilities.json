@@ -1,0 +1,1058 @@
+{
+ "name": "Experiment Kraj — depends on Turn to Frog making the countered creature lose all abilities",
+ "notes": "Turn to Frog on a Llanowar Elves with a +1/+1 counter takes away the ability Kraj would gain. Kraj's layer-6 effect depends on Turn to Frog's (CR 613.8a: applying Turn to Frog changes what Kraj's effect does), so it waits, and Kraj gains nothing; the same as with Darksteel Mutation.",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Experiment Kraj",
+    "as": "kraj"
+   },
+   {
+    "add": "Llanowar Elves",
+    "as": "elves"
+   },
+   {
+    "call": [
+     "addCounter",
+     "@elves",
+     "+1/+1",
+     1
+    ]
+   },
+   {
+    "add": "Turn to Frog",
+    "spell": true,
+    "as": "frog"
+   },
+   {
+    "call": [
+     "setTarget",
+     "@frog",
+     "@elves"
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "order": {
+    "6": [
+     "Turn to Frog",
+     "Experiment Kraj"
+    ]
+   }
+  },
+  {
+   "perm": "Experiment Kraj",
+   "final": {
+    "abilities": {
+     "$excludes": [
+      "{T}: Add {G}."
+     ],
+     "$includes": [
+      "{T}: Put a +1/+1 counter on target creature."
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Llanowar Elves",
+   "final": {
+    "power": 2,
+    "toughness": 2,
+    "subtypes": [
+     "Frog"
+    ],
+    "abilities": {
+     "$excludes": [
+      "{T}: Add {G}."
+     ]
+    }
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "6d938197-2557-421a-985e-5add932d4bac",
+     "oracle_id": "93cfa771-067f-44ed-9e29-6caf698ee9aa",
+     "multiverse_ids": [
+      627801
+     ],
+     "mtgo_id": 114903,
+     "tcgplayer_id": 504069,
+     "cardmarket_id": 721858,
+     "name": "Experiment Kraj",
+     "lang": "en",
+     "released_at": "2023-08-04",
+     "uri": "https://api.scryfall.com/cards/6d938197-2557-421a-985e-5add932d4bac",
+     "scryfall_uri": "https://scryfall.com/card/cmm/337/experiment-kraj?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T04:06:56Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/6/d/6d938197-2557-421a-985e-5add932d4bac.jpg?1783915616",
+      "normal": "https://cards.scryfall.io/normal/front/6/d/6d938197-2557-421a-985e-5add932d4bac.jpg?1783915616",
+      "large": "https://cards.scryfall.io/large/front/6/d/6d938197-2557-421a-985e-5add932d4bac.jpg?1783915616",
+      "png": "https://cards.scryfall.io/png/front/6/d/6d938197-2557-421a-985e-5add932d4bac.png?1783915616",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/6/d/6d938197-2557-421a-985e-5add932d4bac.jpg?1783915616",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/6/d/6d938197-2557-421a-985e-5add932d4bac.jpg?1783915616",
+      "thumb": "https://cards.scryfall.io/thumb/front/6/d/6d938197-2557-421a-985e-5add932d4bac.webp?1783915616",
+      "grid": "https://cards.scryfall.io/grid/front/6/d/6d938197-2557-421a-985e-5add932d4bac.webp?1783915616",
+      "display": "https://cards.scryfall.io/display/front/6/d/6d938197-2557-421a-985e-5add932d4bac.webp?1783915616",
+      "art": "https://cards.scryfall.io/art/front/6/d/6d938197-2557-421a-985e-5add932d4bac.webp?1783915616",
+      "crop": "https://cards.scryfall.io/crop/front/6/d/6d938197-2557-421a-985e-5add932d4bac.webp?1783915616"
+     },
+     "mana_cost": "{2}{G}{G}{U}{U}",
+     "cmc": 6,
+     "type_line": "Legendary Creature — Ooze Mutant",
+     "oracle_text": "Experiment Kraj has all activated abilities of each other creature with a +1/+1 counter on it.\n{T}: Put a +1/+1 counter on target creature.",
+     "power": "4",
+     "toughness": "6",
+     "colors": [
+      "G",
+      "U"
+     ],
+     "color_identity": [
+      "G",
+      "U"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "cd05036f-2698-43e6-a48e-5c8d82f0a551",
+     "set": "cmm",
+     "set_name": "Commander Masters",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/cd05036f-2698-43e6-a48e-5c8d82f0a551",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Acmm&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/cmm?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/6d938197-2557-421a-985e-5add932d4bac/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A93cfa771-067f-44ed-9e29-6caf698ee9aa&unique=prints",
+     "collector_number": "337",
+     "digital": false,
+     "rarity": "rare",
+     "flavor_text": "\"Of course it will grow beyond control—it was designed to choose its own evolution.\"\n—Momir Vig",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Mark Tedin",
+     "artist_ids": [
+      "9ee9a9cc-c09e-486f-918b-69f80cbc4188"
+     ],
+     "illustration_id": "3711b793-fd75-412f-a6e8-029fab00aa39",
+     "border_color": "black",
+     "frame": "2015",
+     "frame_effects": [
+      "legendary"
+     ],
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 10631,
+     "penny_rank": 16882,
+     "prices": {
+      "usd": "0.35",
+      "usd_foil": "0.90",
+      "usd_etched": null,
+      "eur": "0.13",
+      "eur_foil": "0.39",
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=627801&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DExperiment%2BKraj",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DExperiment%2BKraj",
+      "edhrec": "https://edhrec.com/route/?cc=Experiment+Kraj"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F504069%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=721858&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/114903?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "6a0b230b-d391-4998-a3f7-7b158a0ec2cd",
+     "oracle_id": "68954295-54e3-4303-a6bc-fc4547a4e3a3",
+     "multiverse_ids": [
+      679969
+     ],
+     "mtgo_id": 133480,
+     "arena_id": 93940,
+     "tcgplayer_id": 557921,
+     "cardmarket_id": 795132,
+     "name": "Llanowar Elves",
+     "lang": "en",
+     "released_at": "2024-11-15",
+     "uri": "https://api.scryfall.com/cards/6a0b230b-d391-4998-a3f7-7b158a0ec2cd",
+     "scryfall_uri": "https://scryfall.com/card/fdn/227/llanowar-elves?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T02:17:37Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+      "normal": "https://cards.scryfall.io/normal/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+      "large": "https://cards.scryfall.io/large/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+      "png": "https://cards.scryfall.io/png/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.png?1783909057",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+      "thumb": "https://cards.scryfall.io/thumb/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.webp?1783909057",
+      "grid": "https://cards.scryfall.io/grid/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.webp?1783909057",
+      "display": "https://cards.scryfall.io/display/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.webp?1783909057",
+      "art": "https://cards.scryfall.io/art/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.webp?1783909057",
+      "crop": "https://cards.scryfall.io/crop/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.webp?1783909057"
+     },
+     "mana_cost": "{G}",
+     "cmc": 1,
+     "type_line": "Creature — Elf Druid",
+     "oracle_text": "{T}: Add {G}.",
+     "power": "1",
+     "toughness": "1",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "produced_mana": [
+      "G"
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "11bd6cef-f887-4b07-a957-4c53cb3c9c87",
+       "component": "combo_piece",
+       "name": "Llanowar Elves",
+       "type_line": "Creature — Elf Druid",
+       "uri": "https://api.scryfall.com/cards/11bd6cef-f887-4b07-a957-4c53cb3c9c87"
+      },
+      {
+       "object": "related_card",
+       "id": "8ef95e7a-9f07-41f8-908b-2df93e03d391",
+       "component": "combo_piece",
+       "name": "Marwyn's Kindred",
+       "type_line": "Sorcery",
+       "uri": "https://api.scryfall.com/cards/8ef95e7a-9f07-41f8-908b-2df93e03d391"
+      }
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "arena",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a7ecb771-d1b6-4dec-8cf5-8d45179f21e0",
+     "set": "fdn",
+     "set_name": "Foundations",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a7ecb771-d1b6-4dec-8cf5-8d45179f21e0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Afdn&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/fdn?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/6a0b230b-d391-4998-a3f7-7b158a0ec2cd/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A68954295-54e3-4303-a6bc-fc4547a4e3a3&unique=prints",
+     "collector_number": "227",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "The elves of the Llanowar forest have defended it for generations. It is their sacred duty to keep outside influences from corrupting their ancestral home.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Kev Walker",
+     "artist_ids": [
+      "f366a0ee-a0cd-466d-ba6a-90058c7a31a6"
+     ],
+     "illustration_id": "96ffb0f9-113f-4fff-a45f-69cbb8d60890",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "promo_types": [
+      "beginnerbox",
+      "startercollection"
+     ],
+     "edhrec_rank": 58,
+     "penny_rank": 282,
+     "preview": {
+      "source": "Wizards of the Coast",
+      "source_uri": "https://twitter.com/wizards_magic/status/1806644973263302981",
+      "previewed_at": "2024-06-28"
+     },
+     "prices": {
+      "usd": "0.28",
+      "usd_foil": "1.59",
+      "usd_etched": null,
+      "eur": "0.21",
+      "eur_foil": "0.52",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=679969&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DLlanowar%2BElves",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DLlanowar%2BElves",
+      "edhrec": "https://edhrec.com/route/?cc=Llanowar+Elves"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F557921%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=795132&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/133480?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {
+     "+1/+1": 1
+    },
+    "counterTimestamps": {
+     "+1/+1": 3
+    },
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "5c2410cc-4094-48c4-a219-b4fc385b3746",
+     "oracle_id": "74c4c1e2-c50d-4c8f-889a-0d5674dc6d67",
+     "multiverse_ids": [
+      651838
+     ],
+     "mtgo_id": 122990,
+     "tcgplayer_id": 535184,
+     "cardmarket_id": 753170,
+     "name": "Turn to Frog",
+     "lang": "en",
+     "released_at": "2024-02-23",
+     "uri": "https://api.scryfall.com/cards/5c2410cc-4094-48c4-a219-b4fc385b3746",
+     "scryfall_uri": "https://scryfall.com/card/clu/103/turn-to-frog?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T03:15:50Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/5/c/5c2410cc-4094-48c4-a219-b4fc385b3746.jpg?1783912550",
+      "normal": "https://cards.scryfall.io/normal/front/5/c/5c2410cc-4094-48c4-a219-b4fc385b3746.jpg?1783912550",
+      "large": "https://cards.scryfall.io/large/front/5/c/5c2410cc-4094-48c4-a219-b4fc385b3746.jpg?1783912550",
+      "png": "https://cards.scryfall.io/png/front/5/c/5c2410cc-4094-48c4-a219-b4fc385b3746.png?1783912550",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/5/c/5c2410cc-4094-48c4-a219-b4fc385b3746.jpg?1783912550",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/5/c/5c2410cc-4094-48c4-a219-b4fc385b3746.jpg?1783912550",
+      "thumb": "https://cards.scryfall.io/thumb/front/5/c/5c2410cc-4094-48c4-a219-b4fc385b3746.webp?1783912550",
+      "grid": "https://cards.scryfall.io/grid/front/5/c/5c2410cc-4094-48c4-a219-b4fc385b3746.webp?1783912550",
+      "display": "https://cards.scryfall.io/display/front/5/c/5c2410cc-4094-48c4-a219-b4fc385b3746.webp?1783912550",
+      "art": "https://cards.scryfall.io/art/front/5/c/5c2410cc-4094-48c4-a219-b4fc385b3746.webp?1783912550",
+      "crop": "https://cards.scryfall.io/crop/front/5/c/5c2410cc-4094-48c4-a219-b4fc385b3746.webp?1783912550"
+     },
+     "mana_cost": "{1}{U}",
+     "cmc": 2,
+     "type_line": "Instant",
+     "oracle_text": "Until end of turn, target creature loses all abilities and becomes a blue Frog with base power and toughness 1/1.",
+     "colors": [
+      "U"
+     ],
+     "color_identity": [
+      "U"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "d4bfabcf-a859-43a4-9d8a-665533c8b174",
+     "set": "clu",
+     "set_name": "Ravnica: Clue Edition",
+     "set_type": "draft_innovation",
+     "set_uri": "https://api.scryfall.com/sets/d4bfabcf-a859-43a4-9d8a-665533c8b174",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aclu&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/clu?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/5c2410cc-4094-48c4-a219-b4fc385b3746/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A74c4c1e2-c50d-4c8f-889a-0d5674dc6d67&unique=prints",
+     "collector_number": "103",
+     "digital": false,
+     "rarity": "uncommon",
+     "flavor_text": "\"Ribbit.\"",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Warren Mahy",
+     "artist_ids": [
+      "002c739e-aa1f-4c1d-921b-37cb2d1b1c5b"
+     ],
+     "illustration_id": "65a1a475-35e5-424e-8385-7cbf528c803e",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 9003,
+     "penny_rank": 14446,
+     "prices": {
+      "usd": "0.35",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.37",
+      "eur_foil": null,
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=651838&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DTurn%2Bto%2BFrog",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DTurn%2Bto%2BFrog",
+      "edhrec": "https://edhrec.com/route/?cc=Turn+to+Frog"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F535184%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=753170&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/122990?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": true,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 4,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": "perm_2",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 5,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": {
+     "states": [
+      [
+       "perm_1",
+       {
+        "name": "Experiment Kraj",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [
+         "Legendary"
+        ],
+        "subtypes": [
+         "Ooze",
+         "Mutant"
+        ],
+        "power": 4,
+        "toughness": 6,
+        "basePower": 4,
+        "baseToughness": 6,
+        "abilities": [
+         "This card has all activated abilities of each other creature with a +1/+1 counter on it.",
+         "{T}: Put a +1/+1 counter on target creature.",
+         "{T}: Add {G}."
+        ],
+        "colors": [
+         "G",
+         "U"
+        ],
+        "manaValue": 6,
+        "manaCost": "{2}{G}{G}{U}{U}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "This card has all activated abilities of each other creature with a +1/+1 counter on it.\n{T}: Put a +1/+1 counter on target creature.",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "attackingPlayerId": null,
+        "timesAttackedThisTurn": 0,
+        "allPrintedAbilities": [
+         "This card has all activated abilities of each other creature with a +1/+1 counter on it.",
+         "{T}: Put a +1/+1 counter on target creature."
+        ],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_2",
+       {
+        "name": "Llanowar Elves",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Elf",
+         "Druid"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "basePower": 1,
+        "baseToughness": 1,
+        "abilities": [
+         "{T}: Add {G}."
+        ],
+        "colors": [
+         "G"
+        ],
+        "manaValue": 1,
+        "manaCost": "{G}",
+        "isCreature": true,
+        "isToken": false,
+        "oracleText": "{T}: Add {G}.",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {
+         "+1/+1": 1
+        },
+        "traits": [],
+        "attackingPlayerId": null,
+        "timesAttackedThisTurn": 0,
+        "allPrintedAbilities": [
+         "{T}: Add {G}."
+        ],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ]
+     ],
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Experiment Kraj",
+       "imageUri": "https://cards.scryfall.io/small/front/6/d/6d938197-2557-421a-985e-5add932d4bac.jpg?1783915616",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [
+        "Legendary"
+       ],
+       "printedSubtypes": [
+        "Ooze",
+        "Mutant"
+       ],
+       "printedPower": 4,
+       "printedToughness": 6,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Llanowar Elves",
+       "imageUri": "https://cards.scryfall.io/small/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {
+        "+1/+1": 1
+       },
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Elf",
+        "Druid"
+       ],
+       "printedPower": 1,
+       "printedToughness": 1,
+       "timestamp": 2
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    }
+   }
+  ],
+  "firedAbilities": [],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Experiment Kraj",
+    "final": {
+     "name": "Experiment Kraj",
+     "controller": "player_0",
+     "supertypes": [
+      "Legendary"
+     ],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Ooze",
+      "Mutant"
+     ],
+     "power": 4,
+     "toughness": 6,
+     "colors": [
+      "G",
+      "U"
+     ],
+     "abilities": [
+      "This card has all activated abilities of each other creature with a +1/+1 counter on it.",
+      "{T}: Put a +1/+1 counter on target creature."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Llanowar Elves",
+    "final": {
+     "name": "Llanowar Elves",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Frog"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "U"
+     ],
+     "abilities": [],
+     "allAbilitiesRemoved": true,
+     "counters": {
+      "+1/+1": 1
+     }
+    },
+    "changedBy": {
+     "4": [
+      "Turn to Frog"
+     ],
+     "5": [
+      "Turn to Frog"
+     ],
+     "6": [
+      "Turn to Frog"
+     ],
+     "7b": [
+      "Turn to Frog"
+     ],
+     "7c": [
+      "Llanowar Elves"
+     ]
+    }
+   },
+   {
+    "perm": "Turn to Frog",
+    "final": {
+     "name": "Turn to Frog",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Instant"
+     ],
+     "subtypes": [],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "U"
+     ],
+     "abilities": [
+      "Until end of turn, target creature loses all abilities and becomes a blue Frog with base power and toughness 1/1."
+     ]
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "4": [
+    "Turn to Frog"
+   ],
+   "5": [
+    "Turn to Frog"
+   ],
+   "6": [
+    "Turn to Frog",
+    "Experiment Kraj"
+   ],
+   "7b": [
+    "Turn to Frog"
+   ],
+   "7c": [
+    "Llanowar Elves"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Experiment Kraj",
+    "layer": "6",
+    "type": "gain_activated_from_others",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "differentName": false,
+     "includeTriggered": false,
+     "requireCounter": "+1/+1",
+     "requireType": "Creature",
+     "sameController": false
+    }
+   },
+   {
+    "source": "Llanowar Elves",
+    "layer": "7c",
+    "type": "add_counters",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "count": 1,
+     "counterType": "+1/+1",
+     "powerMod": 1,
+     "toughnessMod": 1
+    }
+   },
+   {
+    "source": "Turn to Frog",
+    "layer": "4",
+    "type": "set_types",
+    "scope": "targeted",
+    "target": "Llanowar Elves",
+    "params": {
+     "keepSupertypes": true,
+     "keepTypes": true,
+     "replaceSubtypeCategory": "creature",
+     "subtypes": [
+      "Frog"
+     ]
+    }
+   },
+   {
+    "source": "Turn to Frog",
+    "layer": "6",
+    "type": "remove_abilities",
+    "scope": "targeted",
+    "target": "Llanowar Elves",
+    "params": {}
+   },
+   {
+    "source": "Turn to Frog",
+    "layer": "7b",
+    "type": "set_pt",
+    "scope": "targeted",
+    "target": "Llanowar Elves",
+    "params": {
+     "power": 1,
+     "toughness": 1
+    }
+   },
+   {
+    "source": "Turn to Frog",
+    "layer": "5",
+    "type": "set_color",
+    "scope": "targeted",
+    "target": "Llanowar Elves",
+    "params": {
+     "colors": [
+      "U"
+     ]
+    }
+   }
+  ]
+ }
+}

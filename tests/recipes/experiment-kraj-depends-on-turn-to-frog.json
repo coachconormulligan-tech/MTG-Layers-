@@ -1,0 +1,16 @@
+{
+  "name": "Experiment Kraj — depends on Turn to Frog making the countered creature lose all abilities",
+  "notes": "Turn to Frog on a Llanowar Elves with a +1/+1 counter takes away the ability Kraj would gain. Kraj's layer-6 effect depends on Turn to Frog's (CR 613.8a: applying Turn to Frog changes what Kraj's effect does), so it waits, and Kraj gains nothing; the same as with Darksteel Mutation.",
+  "steps": [
+    { "add": "Experiment Kraj", "as": "kraj" },
+    { "add": "Llanowar Elves", "as": "elves" },
+    { "call": ["addCounter", "@elves", "+1/+1", 1] },
+    { "add": "Turn to Frog", "spell": true, "as": "frog" },
+    { "call": ["setTarget", "@frog", "@elves"] }
+  ],
+  "asserts": [
+    { "order": { "6": ["Turn to Frog", "Experiment Kraj"] } },
+    { "perm": "Experiment Kraj", "final": { "abilities": { "$excludes": ["{T}: Add {G}."], "$includes": ["{T}: Put a +1/+1 counter on target creature."] } } },
+    { "perm": "Llanowar Elves", "final": { "power": 2, "toughness": 2, "subtypes": ["Frog"], "abilities": { "$excludes": ["{T}: Add {G}."] } } }
+  ]
+}

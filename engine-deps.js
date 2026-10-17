@@ -939,8 +939,11 @@ function getDependencyReason(A, B, allStates, realPerms) {
 }
 
 /* Detect all pairwise dependencies among effects using current global state.
-   Spell effects (isSpellEffect) are excluded — they always resolve in strict
-   timestamp order with no dependency reordering (CR: spells resolve on the stack). */
+   A spell effect (isSpellEffect: a resolved spell or fired ability) is never the dependent one —
+   it keeps its timestamp place — but another effect can depend on it (CR 613.8 covers every
+   continuous effect): Turn to Frog making a creature with a +1/+1 counter lose all abilities
+   changes what Experiment Kraj gains from it, so Kraj's effect waits, as it does for
+   Darksteel Mutation. */
 function detectDependenciesGlobal(effects, allStates, realPerms, appliedSourceIds) {
   // Build an id→perm Map once so the O(N²) pair loop below does O(1) perm lookups
   // instead of O(N) realPerms.find() per call. Stashed on doesBInfluenceA_global as a
@@ -953,7 +956,6 @@ function detectDependenciesGlobal(effects, allStates, realPerms, appliedSourceId
     if (effects[i].isSpellEffect) continue;
     for (let j = 0; j < effects.length; j++) {
       if (i === j) continue;
-      if (effects[j].isSpellEffect) continue;
       if (doesBInfluenceA_global(effects[i], effects[j], allStates, realPerms, appliedSourceIds)) {
         deps.push({ dependent: i, dependsOn: j });
       }
