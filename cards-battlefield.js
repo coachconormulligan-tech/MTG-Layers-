@@ -568,6 +568,7 @@ const Battlefield = {
     }
 
     if (firedAtStates && sourcePermId) parsedEffectText = _lockFireTimeBasePT(parsedEffectText, firedAtStates, sourcePermId);
+    if (firedAtStates && sourcePermId) parsedEffectText = _fireTimeTargetPowerBound(parsedEffectText, firedAtStates, sourcePermId);
     // "…base power becomes equal to that creature's power" (Belligerent Yearling): the number
     // is another object's, picked after firing.
     const refPT = _basePTFromOtherObject(parsedEffectText, kind === 'trigger' ? fullText : '');
