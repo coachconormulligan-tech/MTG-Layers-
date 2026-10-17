@@ -201,7 +201,8 @@ function _reParseAfterTextChange(allStates, allPermanents, currentEffects) {
     // so they will correctly match abilities in the modified/copied oracle text.
     if (typeof parseCardEffects === 'function') {
       const savedTargetId = removedTargetIds.get(id);
-      const newEffects = parseCardEffects(perm, fakeCard);
+      // A copy of a Saga reads its chapters as a Saga's, gated by its own lore counters.
+      const newEffects = parseCardEffects(perm, fakeCard, { isSaga: (state.subtypes || []).includes('Saga') });
       for (const ne of newEffects) {
         if (!['1', '2', '3'].includes(ne.layer)) {
           // Carry over the targetId from the original effects so the re-parsed

@@ -1306,11 +1306,15 @@ function parseCardEffects(permanent, card, opts = {}) {
 
   // "Untap all attacking creatures. They gain trample …" → "All attacking creatures gain trample …"
   oracle = _resolveTheyPronoun(oracle);
+  // Text read as a Saga's: the card's own, or a Saga's it now has as a copy (Thespian's Stage
+  // copying Urza's Saga, opts.isSaga from _reParseAfterTextChange), whose chapters wait for
+  // this permanent's own lore counters.
+  const _readsAsSaga = !!opts.isSaga || !!(permanent._sagaChapterThresholds && permanent._sagaChapterThresholds.size > 0);
   if (permanent.isSpell) oracle = _resolveItPronoun(oracle);
   // A Saga chapter happens once, as a spell does: "III — Return target creature card from your
   // graveyard to the battlefield …. That creature is an Angel Warrior in addition to its other
   // types." (Ascent of the Worthy) is about the creature just returned.
-  else if (permanent._sagaChapterThresholds && permanent._sagaChapterThresholds.size > 0) {
+  else if (_readsAsSaga) {
     oracle = oracle.split('\n').map(line => /^[IVXLC]+(?:\s*,\s*[IVXLC]+)*\s*\u2014/.test(line) ? _resolveItPronoun(line) : line).join('\n');
   }
 
@@ -1374,7 +1378,7 @@ function parseCardEffects(permanent, card, opts = {}) {
   // detect saga chapter lines and store their thresholds by line index.
   // After all condition parsing, these will be injected into _lineConditionMap.
   const _sagaLineThresholds = new Map(); // lineIndex → minLoreThreshold
-  if (permanent._sagaChapterThresholds && permanent._sagaChapterThresholds.size > 0) {
+  if (_readsAsSaga) {
     const chapterRegex = /^([IVXLC]+(?:\s*,\s*[IVXLC]+)*)\s*\u2014/;
     const oLines = oracle.split('\n');
     for (let li = 0; li < oLines.length; li++) {
