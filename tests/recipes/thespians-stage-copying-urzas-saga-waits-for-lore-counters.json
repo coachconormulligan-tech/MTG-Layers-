@@ -1,0 +1,95 @@
+{
+  "name": "Thespian's Stage copying Urza's Saga — chapter abilities wait for the Stage's own lore counters",
+  "notes": "A copy is re-parsed from the copied text (_reParseAfterTextChange), and the parser gated Saga chapter lines only when the parsed permanent was itself printed as a Saga (_sagaChapterThresholds). Thespian's Stage that became a copy of Urza's Saga with no lore counters gained both chapter abilities in Layer 6. The re-parse now passes isSaga when the copy is a Saga, so each chapter waits for the Stage's own lore counters: with none it gains neither, with one it gains only chapter I. Urza's Saga with two counters keeps both.",
+  "steps": [
+    {
+      "add": "Urza's Saga",
+      "as": "saga"
+    },
+    {
+      "call": [
+        "addCounter",
+        "@saga",
+        "lore",
+        2
+      ]
+    },
+    {
+      "add": "Thespian's Stage",
+      "as": "stage"
+    },
+    {
+      "fire": "@stage",
+      "activated": 1,
+      "as": "firedStage"
+    },
+    {
+      "copy": [
+        "@firedStage",
+        "@saga"
+      ]
+    },
+    {
+      "add": "Thespian's Stage",
+      "as": "stage2"
+    },
+    {
+      "call": [
+        "addCounter",
+        "@stage2",
+        "lore",
+        1
+      ]
+    },
+    {
+      "fire": "@stage2",
+      "activated": 1,
+      "as": "firedStage2"
+    },
+    {
+      "copy": [
+        "@firedStage2",
+        "@saga"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Urza's Saga",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "{T}: Add {C}.",
+            "{2}, {T}: Create a 0/0 colorless Construct artifact creature token with 'This token gets +1/+1 for each artifact you control.'"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Thespian's Stage A",
+      "final": {
+        "name": "Urza's Saga",
+        "abilities": {
+          "$excludes": [
+            "{T}: Add {C}.",
+            "{2}, {T}: Create a 0/0 colorless Construct artifact creature token with 'This token gets +1/+1 for each artifact you control.'"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Thespian's Stage B",
+      "final": {
+        "name": "Urza's Saga",
+        "abilities": {
+          "$includes": [
+            "{T}: Add {C}."
+          ],
+          "$excludes": [
+            "{2}, {T}: Create a 0/0 colorless Construct artifact creature token with 'This token gets +1/+1 for each artifact you control.'"
+          ]
+        }
+      }
+    }
+  ]
+}

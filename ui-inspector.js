@@ -425,16 +425,28 @@ function renderLayerBody(layer, isRulesMode, cardName, baseState) {
   return html;
 }
 
+/* Rewrite text except a quote inside a quoted ability: in "{2}, {T}: Create a 0/0 … Construct
+   artifact creature token with 'This token gets +1/+1 for each artifact you control.'" (Urza's
+   Saga) the inner quote is the token's own ability, so "this token" and "you" are the token's,
+   not the card's name or its controller. An inner quote opens after a space or bracket and
+   closes before a space, punctuation or the outer quote, so "Urza's" is not one. */
+function _rewriteOutsideNestedQuotes(text, rewrite) {
+  const kept = [];
+  const masked = text.replace(/"[^"]*"/g, outer => outer.replace(/(^|[\s(])'(.+?)'(?=[\s.,;:)"]|$)/g,
+    (m, pre) => { kept.push(m.slice(pre.length)); return pre + '\u0000' + (kept.length - 1) + '\u0000'; }));
+  return rewrite(masked).replace(/\u0000(\d+)\u0000/g, (_, i) => kept[+i]);
+}
+
 function _replaceThisCard(text, cardName) {
   if (!cardName || !text) return text;
-  return text.replace(/\bthis (?:card|token)\b/gi, cardName);
+  return _rewriteOutsideNestedQuotes(text, t => t.replace(/\bthis (?:card|token)\b/gi, cardName));
 }
 
 function _replaceYouForPlayer(text, playerId) {
   if (!text || !playerId) return text;
   const name = Battlefield.getPlayerName(playerId);
   if (!name) return text;
-  return text
+  return _rewriteOutsideNestedQuotes(text, t => t
     .replace(/\byou control\b/gi, `${name} controls`)
     .replace(/\byour control\b/gi, `${name}'s control`)
     .replace(/\byou own\b/gi, `${name} owns`)
@@ -445,7 +457,7 @@ function _replaceYouForPlayer(text, playerId) {
     .replace(/\byou pay\b/gi, `${name} pays`)
     .replace(/\byou may\b/gi, `${name} may`)
     .replace(/\byour\b/gi, `${name}'s`)
-    .replace(/\byou\b/gi, name);
+    .replace(/\byou\b/gi, name));
 }
 
 function _replaceYouControl(text, sourceId) {
