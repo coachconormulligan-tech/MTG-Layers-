@@ -1,0 +1,19 @@
+{
+  "name": "Stone Giant — the fired picker lists only your creatures with toughness less than its power",
+  "notes": "Memory: project_stone_giant_toughness_less_than_source_power_2026-10-18. '{T}: Target creature you control with toughness less than this creature's power gains flying until end of turn': the fire-time bound only wrote out a power bound, so 'with toughness less than this creature's power' stayed a required subtype and the picker listed nothing. It is now written as 'with toughness N or less' from the fire-time snapshot. Stone Giant is 3/4, and a +1/+1 counter makes it 4/5 before it fires, so the bound is toughness 3 or less: Grizzly Bears (toughness 2) and Hill Giant (3) are listed; Craw Wurm (4), Stone Giant itself (5) and the opponent's Llanowar Elves are not. The counter shows the bound reads the power after layer 7.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Llanowar Elves", "as": "elves", "controller": "p2" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Hill Giant", "as": "giant" },
+    { "add": "Craw Wurm", "as": "wurm" },
+    { "add": "Stone Giant", "as": "stone" },
+    { "call": ["addCounter", "@stone", "+1/+1", 1] },
+    { "fire": "@stone", "activated": 0, "as": "stoneTap" },
+    { "call": ["setTarget", "@stoneTap", "@giant"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Stone Giant (activated)" }, "are": ["Grizzly Bears", "Hill Giant"] },
+    { "perm": "Hill Giant", "final": { "abilities": { "$includes": ["Flying"] } } }
+  ]
+}

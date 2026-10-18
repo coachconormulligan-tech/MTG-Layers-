@@ -431,7 +431,7 @@ function _lockFireTimeBasePT(text, states, sourceId) {
   });
 }
 
-// A target's power bound that a fired ability takes from its source or the board, written out as
+// A target's power or toughness bound that a fired ability takes from its source or the board, written out as
 // a number from the snapshot the ability was fired against, so the target words read "with power
 // N or less" (CR 608.2h: the comparison is made as the ability resolves; the site's model of that
 // moment is the fire-time snapshot). Each result no longer matches, so a saved board replays it.
@@ -442,30 +442,35 @@ function _lockFireTimeBasePT(text, states, sourceId) {
 //    (Vedalken Shackles; Beguiler of Wills)
 //   "Creatures you control with power less than Lena's power gain indestructible" (Lena, Selfless
 //    Champion): not a target, but the group is judged as the ability resolves all the same
+//   "target creature you control with toughness less than this creature's power" (Stone Giant):
+//    the target's toughness against the source's power, "with toughness N or less"
 // Not "that creature's power" (another target: Spawnbroker), a cost paid ("removed this way"), a
 // count the snapshot cannot give, or a quoted ability, granted to something else whose own power
 // its "this creature" means (Firja's Retribution's Angels).
 function _fireTimeTargetPowerBound(text, states, sourceId) {
   const src = states && states.get(sourceId);
-  if (!src || !/\b(?:lesser power|power less than)\b/i.test(text)) return text;
+  if (!src || !/\b(?:lesser power|(?:power|toughness) less than)\b/i.test(text)) return text;
   if (text.includes('"')) {
     return text.split('"').map((seg, i) => i % 2 ? seg : _fireTimeTargetPowerBound(seg, states, sourceId)).join('"');
   }
   const p = src.power || 0;
-  const bound = (n) => `with power ${n} or less`;
+  const bound = (n, stat) => `with ${(stat || 'power').toLowerCase()} ${n} or less`;
   text = text.replace(/\b(target\b[^.;\n]*?)\bwith (equal or )?lesser power\b/gi,
     (_, pre, eq) => pre + bound(eq ? p : p - 1));
   const name = String(src.name || '').toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const short = name.split(',')[0];
   const self = `this (?:creature|card|permanent|artifact|enchantment)|${name}${short !== name ? '|' + short : ''}`;
-  text = text.replace(new RegExp(`\\bwith power less than (or equal to )?(?:${self})'s power\\b`, 'gi'),
-    (_, eq) => bound(eq ? p : p - 1));
-  return text.replace(/\b(target\b[^.;\n]*?)\bwith power less than (or equal to )?the number of ([^.;,\n]+?)(?=\s+(?:for as long as|until|and)\b|[.;,\n]|$)/gi,
-    (whole, pre, eq, desc) => {
+  text = text.replace(new RegExp(`\\bwith (power|toughness) less than (or equal to )?(?:${self})'s (power|toughness)\\b`, 'gi'),
+    (_, stat, eq, srcStat) => {
+      const v = /^t/i.test(srcStat) ? (src.toughness || 0) : p;
+      return bound(eq ? v : v - 1, stat);
+    });
+  return text.replace(/\b(target\b[^.;\n]*?)\bwith (power|toughness) less than (or equal to )?the number of ([^.;,\n]+?)(?=\s+(?:for as long as|until|and)\b|[.;,\n]|$)/gi,
+    (whole, pre, stat, eq, desc) => {
       // ("… the number of +1/+1 counters removed this way" — Simic Manipulator — is a cost paid.)
       if (/\bthis way\b/i.test(desc)) return whole;
       const n = _computeForEachCount(desc.trim(), states, src, null);
-      return n === null || n === undefined ? whole : pre + bound(eq ? n : n - 1);
+      return n === null || n === undefined ? whole : pre + bound(eq ? n : n - 1, stat);
     });
 }
 

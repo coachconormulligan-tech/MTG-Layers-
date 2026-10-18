@@ -1,0 +1,23 @@
+{
+  "name": "Immobilizer Eldrazi — 'each creature with toughness greater than its power can't block', judged on P/T after layer 7",
+  "notes": "Memory: project_stone_giant_toughness_less_than_source_power_2026-10-18. '{2}{C}: Each creature with toughness greater than its power can't block this turn': 'with toughness greater than its power' was not in the filter vocabulary, so it became a required subtype and the fired rule reached nobody. The subject now compares each creature with itself, after layer 7. Wall of Wood (0/3) and the opponent's Horned Turtle (1/4) can't block; Grizzly Bears (2/2) and Immobilizer Eldrazi (2/1) can; Storm Crow (1/2) can, because Brute Strength makes it 4/3.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Horned Turtle", "as": "turtle", "controller": "p2" },
+    { "add": "Wall of Wood", "as": "wall" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Storm Crow", "as": "crow" },
+    { "add": "Brute Strength", "spell": true, "as": "brute" },
+    { "call": ["setTarget", "@brute", "@crow"] },
+    { "add": "Immobilizer Eldrazi", "as": "eldrazi" },
+    { "fire": "@eldrazi", "activated": 1, "as": "eldraziFire" }
+  ],
+  "asserts": [
+    { "perm": "Storm Crow", "final": { "power": 4, "toughness": 3 } },
+    { "perm": "Wall of Wood", "final": { "traits": { "$includes": ["Can't block"] } } },
+    { "perm": "Horned Turtle", "final": { "traits": { "$includes": ["Can't block"] } } },
+    { "perm": "Grizzly Bears", "final": { "traits": { "$excludes": ["Can't block"] } } },
+    { "perm": "Storm Crow", "final": { "traits": { "$excludes": ["Can't block"] } } },
+    { "perm": "Immobilizer Eldrazi", "final": { "traits": { "$excludes": ["Can't block"] } } }
+  ]
+}
