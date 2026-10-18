@@ -415,3 +415,158 @@ function _modalTargetCandidates(sourceId, modeIdx) {
   }
   return { candidates, currentTarget, currentTargets: currentTarget ? [currentTarget] : [], isNonTargeting, isAttached: false };
 }
+
+/* ===== Exchange control of two targets =====
+   "Exchange control of target creature you control and target creature with power less than or
+   equal to that creature's power an opponent controls" (Spawnbroker). The exchange-control modal
+   (ui-modal-text-change.js) lists from getExchangeControlCandidates and warns with
+   exchangeControlPairProblem, and the engine (effectAppliesToPerm) refuses a pair the latter says
+   no to, so a pair set some other way (a saved board, a recipe) exchanges nothing either
+   (CR 701.12b). Every rule is read off the board as the spell was cast or the ability fired, the
+   live board only where the source has no snapshot. */
+
+function _exchangeControlEffect(sourceId) {
+  return Battlefield.effects.find(e => e.sourceId === sourceId && e.type === EFFECT_TYPE.CONTROL && e.params && e.params.exchangeControl) || null;
+}
+
+/* The states of the board as the source was cast or fired (a Map by id), or null. */
+function _exchangeControlSnapshot(sourceId) {
+  const src = Battlefield.getPermById(sourceId);
+  return (src && (src._firedAtStates || src._castStates || (src._firedAtSnapshot && src._firedAtSnapshot.states))) || null;
+}
+
+/* The player "you" means: the controller of the spell or ability. */
+function _exchangeControlYou(sourceId) {
+  const src = Battlefield.getPermById(sourceId);
+  return (src && (src.controller || src.owner)) || Battlefield.activePlayerId;
+}
+
+const _EXCHANGE_CONTROLLER_WORDS = { you: 'one you control', opponent: 'one an opponent controls', notYou: "one you don't control" };
+const _EXCHANGE_STAT_WORDS = { power: 'power', toughness: 'toughness', manaValue: 'mana value' };
+
+/* What a target in slot 'a' or 'b' must be, as a filter on a _restrictionState, and the words
+   for it: the slot's own type text when the parser split "target X and target Y" (Oko, Thief of
+   Crowns' B is "creature with power 3 or less", Shrewd Negotiation's B "artifact or creature"),
+   otherwise the effect's one targetRestriction for both. { fn, words } or null. */
+const _exchangeSlotRestrictionCache = new Map();
+function _exchangeControlSlotRestriction(effect, slot) {
+  // "Exchange control of this artifact and target creature": A is the source, not a target.
+  if (slot === 'a' && effect.params.exchangeMode !== 'two_targets') return null;
+  const rules = effect.params.exchangeSlotRules;
+  const text = rules && (slot === 'a' ? rules.typeA : rules.typeB);
+  if (!text) return effect.targetRestriction ? { fn: effect.targetRestriction, words: null } : null;
+  if (!_exchangeSlotRestrictionCache.has(text)) {
+    const built = buildAppliesToFromText(text);
+    _exchangeSlotRestrictionCache.set(text, built && built.fn && !built.isSelf
+      ? { fn: (st) => built.fn(st), words: text } : null);
+  }
+  return _exchangeSlotRestrictionCache.get(text);
+}
+
+/* What is wrong with a target in slot 'a' or 'b' on its own (what it is, who controls it), or
+   null. perm, when given, fills in what a state lacks (token, printed P/T). */
+function _exchangeControlSlotProblem(effect, slot, st, you, perm) {
+  if (!st) return null;
+  const restriction = _exchangeControlSlotRestriction(effect, slot);
+  if (restriction && !restriction.fn(_restrictionState(st, st, perm || {}))) {
+    const w = restriction.words;
+    return w ? `Permanent ${slot.toUpperCase()} must be ${/^[aeiou]/i.test(w) ? 'an' : 'a'} ${w}.`
+      : `Permanent ${slot.toUpperCase()} is not a legal target.`;
+  }
+  const rules = effect.params.exchangeSlotRules;
+  // Gauntlets of Chaos: B can share one of the named types with some A only if it has one.
+  const among = slot === 'b' && rules && rules.shareTypesWithA;
+  if (among && !(st.types || []).some(t => among.includes(t))) {
+    return `Permanent B must be ${among.map(t => t.toLowerCase()).join(', ').replace(/, ([^,]+)$/, ', or $1')}.`;
+  }
+  const rule = rules && (slot === 'a' ? rules.controllerA : rules.controllerB);
+  if (!rule || !st.controller) return null;
+  const ok = rule === 'you' ? st.controller === you : st.controller !== you;
+  return ok ? null : `Permanent ${slot.toUpperCase()} must be ${_EXCHANGE_CONTROLLER_WORDS[rule]}.`;
+}
+
+/* What is wrong with exchanging aId and bId, as a sentence, or null. stateOf(id) gives a
+   permanent's state, or null when it is not known (a rule needing it is then not checked); you
+   is the source's controller. */
+function exchangeControlPairProblem(effect, aId, bId, stateOf, you) {
+  if (!effect || !aId || !bId) return null;
+  if (aId === bId) return 'Cannot exchange with itself.';
+  const p = effect.params;
+  const stA = stateOf(aId), stB = stateOf(bId);
+  if (p.shareTypeRequired && stA && stB) {
+    const typesA = new Set(stA.types || []);
+    if (!(stB.types || []).some(t => typesA.has(t))) return 'These permanents do not share a card type.';
+  }
+  // "… that shares one of those types with it" (Gauntlets of Chaos): one of the types named
+  // for A that A has.
+  const among = p.exchangeSlotRules && p.exchangeSlotRules.shareTypesWithA;
+  if (among && stA && stB) {
+    const typesA = new Set((stA.types || []).filter(t => among.includes(t)));
+    if (!(stB.types || []).some(t => typesA.has(t))) {
+      return `Permanent B must share one of these types with permanent A: ${among.map(t => t.toLowerCase()).join(', ')}.`;
+    }
+  }
+  if (p.differentPlayersRequired && stA && stB && stA.controller && stA.controller === stB.controller) {
+    return 'These permanents must be controlled by different players.';
+  }
+  const permOf = (id) => (typeof Battlefield !== 'undefined' && Battlefield.getPermById(id)) || null;
+  const slotProblem = _exchangeControlSlotProblem(effect, 'a', stA, you, permOf(aId)) ||
+    _exchangeControlSlotProblem(effect, 'b', stB, you, permOf(bId));
+  if (slotProblem) return slotProblem;
+  const bound = p.exchangeSlotRules && p.exchangeSlotRules.boundByA;
+  if (bound && stA && stB) {
+    const v = stA[bound.refStat], x = stB[bound.stat];
+    const ok = v !== null && v !== undefined && x !== null && x !== undefined &&
+      (bound.less ? (bound.orEqual ? x <= v : x < v) : (bound.orEqual ? x >= v : x > v));
+    if (!ok) {
+      const num = (n) => (n !== null && n !== undefined ? ` (${n})` : '');
+      return `Permanent B's ${_EXCHANGE_STAT_WORDS[bound.stat]}${num(x)} must be ${bound.less ? 'less' : 'greater'} than ` +
+        `${bound.orEqual ? 'or equal to ' : ''}permanent A's ${_EXCHANGE_STAT_WORDS[bound.refStat]}${num(v)}.`;
+    }
+  }
+  return null;
+}
+
+/* The same check as the modal makes it: the source's snapshot where it holds the permanent,
+   otherwise the live board (finalStates). */
+function exchangeControlPairProblemFor(sourceId, aId, bId, finalStates) {
+  const effect = _exchangeControlEffect(sourceId);
+  if (!effect) return null;
+  const snap = _exchangeControlSnapshot(sourceId);
+  const live = finalStates || Battlefield.getAllFinalStates();
+  return exchangeControlPairProblem(effect, aId, bId,
+    (id) => (snap && snap.has(id)) ? snap.get(id) : (live.get(id) || null), _exchangeControlYou(sourceId));
+}
+
+/* The permanents the exchange-control modal offers for Permanent A (slot 'a') or Permanent B
+   (slot 'b'; with aId, only those that make a legal pair with it). Each is
+   { id, perm, state, displayName }. Only permanents on the board as the spell was cast or the
+   ability fired are offered (a current pick stays), judged by their state then. Hexproof, shroud
+   and protection are not checked, as before. */
+function getExchangeControlCandidates(sourceId, slot, aId) {
+  const effect = _exchangeControlEffect(sourceId);
+  if (!effect) return [];
+  const finalStates = Battlefield.getAllFinalStates();
+  const snap = _exchangeControlSnapshot(sourceId);
+  const stateOf = (id) => (snap && snap.has(id)) ? snap.get(id) : (finalStates.get(id) || null);
+  const you = _exchangeControlYou(sourceId);
+  const current = slot === 'a' ? effect.params.exchangeTargetA : effect.params.exchangeTargetB;
+  const out = [];
+  for (const t of Battlefield.permanents) {
+    if (t.isManualEffect || t.isSpell) continue;
+    const stack = Battlefield.getStack(t.id);
+    if (stack && stack.length >= 2 && stack[0] !== t.id) continue;
+    if (snap && !snap.has(t.id) && t.id !== current) continue;
+    const fs = stateOf(t.id);
+    const tState = fs
+      ? { types: fs.types || [], supertypes: fs.supertypes || [], subtypes: fs.subtypes || [], colors: fs.colors || [], isAllCreatureTypes: fs.isAllCreatureTypes }
+      : { types: t.printedTypes || [], supertypes: t.printedSupertypes || [], subtypes: t.printedSubtypes || [], colors: t.printedColors || [], isAllCreatureTypes: false };
+    const rState = _restrictionState(tState, fs, t);
+    const restriction = _exchangeControlSlotRestriction(effect, slot);
+    if (restriction && !restriction.fn(rState, snap || finalStates, you)) continue;
+    if (_exchangeControlSlotProblem(effect, slot, rState, you, t)) continue;
+    if (slot === 'b' && aId && exchangeControlPairProblem(effect, aId, t.id, stateOf, you)) continue;
+    out.push({ id: t.id, perm: t, state: fs || tState, displayName: _targetPickerName(t, finalStates.get(t.id), true) });
+  }
+  return out;
+}

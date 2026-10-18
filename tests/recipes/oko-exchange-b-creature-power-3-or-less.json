@@ -1,0 +1,22 @@
+{
+  "name": "Oko, Thief of Crowns — Permanent B of the -5 is a creature an opponent controls with power 3 or less",
+  "notes": "\"−5: Exchange control of target artifact or creature you control and target creature an opponent controls with power 3 or less.\" (2026-10-18.) Both targets were held to A's \"artifact or creature\", so B listed the opponent's Mind Stone and Craw Wurm. A lists Hill Giant and Sol Ring; B lists Grizzly Bears and Centaur Courser (3/3), not Craw Wurm (6/4) or Mind Stone. The pair Hill Giant / Craw Wurm set anyway is refused by the engine.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Hill Giant", "as": "giant" },
+    { "add": "Sol Ring", "as": "ring" },
+    { "add": "Grizzly Bears", "as": "bears", "controller": "p2" },
+    { "add": "Centaur Courser", "as": "courser", "controller": "p2" },
+    { "add": "Craw Wurm", "as": "wurm", "controller": "p2" },
+    { "add": "Mind Stone", "as": "stone", "controller": "p2" },
+    { "add": "Oko, Thief of Crowns", "as": "oko" },
+    { "fire": "@oko", "activated": 2, "as": "t" },
+    { "call": ["setExchangeControlTargets", "@t", "@giant", "@wurm"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Oko, Thief of Crowns (activated)", "slot": "a" }, "are": ["Hill Giant", "Sol Ring"] },
+    { "targetCandidates": { "perm": "Oko, Thief of Crowns (activated)", "slot": "b" }, "are": ["Grizzly Bears", "Centaur Courser"] },
+    { "perm": "Hill Giant", "final": { "controller": "player_0" } },
+    { "perm": "Craw Wurm", "final": { "controller": "player_1" } }
+  ]
+}

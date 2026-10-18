@@ -101,6 +101,16 @@ function targetCandidateLists() {
     const names = r.blocked ? [] : (r.candidates || []).map(c => c.perm.name + (c.perm.label ? ' ' + c.perm.label : '')).sort();
     out.push({ perm: p.name + (p.label ? ' ' + p.label : ''), kind: pk.kind, candidates: names });
   }
+  // The exchange-control modal's two lists (getExchangeControlCandidates): "slot" "a", and "b" as
+  // narrowed by the current Permanent A, if any.
+  for (const p of Battlefield.permanents) {
+    const ex = Battlefield.effects.find(e => e.sourceId === p.id && e.type === EFFECT_TYPE.CONTROL && e.params.exchangeControl && e.params.exchangeMode === 'two_targets');
+    if (!ex) continue;
+    const label = p.name + (p.label ? ' ' + p.label : '');
+    const names = (list) => list.map(c => c.perm.name + (c.perm.label ? ' ' + c.perm.label : '')).sort();
+    out.push({ perm: label, kind: 'exchange', slot: 'a', candidates: names(getExchangeControlCandidates(p.id, 'a')) });
+    out.push({ perm: label, kind: 'exchange', slot: 'b', candidates: names(getExchangeControlCandidates(p.id, 'b', ex.params.exchangeTargetA || null)) });
+  }
   return out;
 }
 

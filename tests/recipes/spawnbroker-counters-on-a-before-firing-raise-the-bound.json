@@ -1,0 +1,19 @@
+{
+  "name": "Spawnbroker — counters on Permanent A before the trigger is fired raise B's bound",
+  "notes": "Spawnbroker's B is bounded by A's power as the trigger was fired (resolution-moment model: counters go on before firing). Hill Giant with three +1/+1 counters is 6/6 at fire time, so Craw Wurm (6) is a legal B and the two change controllers.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Hill Giant", "as": "giant" },
+    { "call": ["addCounter", "@giant", "+1/+1", 3] },
+    { "add": "Grizzly Bears", "as": "bears", "controller": "p2" },
+    { "add": "Craw Wurm", "as": "wurm", "controller": "p2" },
+    { "add": "Spawnbroker", "as": "s" },
+    { "fire": "@s", "trigger": 0, "as": "t" },
+    { "call": ["setExchangeControlTargets", "@t", "@giant", "@wurm"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Spawnbroker (trigger)", "slot": "b" }, "are": ["Craw Wurm", "Grizzly Bears"] },
+    { "perm": "Hill Giant", "final": { "controller": "player_1" } },
+    { "perm": "Craw Wurm", "final": { "controller": "player_0" } }
+  ]
+}

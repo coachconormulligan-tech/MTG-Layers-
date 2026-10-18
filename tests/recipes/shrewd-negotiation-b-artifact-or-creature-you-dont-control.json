@@ -1,0 +1,20 @@
+{
+  "name": "Shrewd Negotiation — Permanent A is an artifact you control, B an artifact or creature you don't control",
+  "notes": "\"Exchange control of target artifact you control and target artifact or creature you don't control.\" (2026-10-18.) Both targets were held to A's \"artifact\", so B listed only the opponent's Mind Stone. A lists Sol Ring (not Hill Giant); B lists Grizzly Bears and Mind Stone, not the opponent's Island. The pair Sol Ring / Island set anyway is refused by the engine.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Hill Giant", "as": "giant" },
+    { "add": "Sol Ring", "as": "ring" },
+    { "add": "Grizzly Bears", "as": "bears", "controller": "p2" },
+    { "add": "Mind Stone", "as": "stone", "controller": "p2" },
+    { "add": "Island", "as": "island", "controller": "p2" },
+    { "add": "Shrewd Negotiation", "as": "s", "spell": true },
+    { "call": ["setExchangeControlTargets", "@s", "@ring", "@island"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Shrewd Negotiation", "slot": "a" }, "are": ["Sol Ring"] },
+    { "targetCandidates": { "perm": "Shrewd Negotiation", "slot": "b" }, "are": ["Grizzly Bears", "Mind Stone"] },
+    { "perm": "Sol Ring", "final": { "controller": "player_0" } },
+    { "perm": "Island", "final": { "controller": "player_1" } }
+  ]
+}

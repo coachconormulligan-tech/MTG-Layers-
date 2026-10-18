@@ -294,7 +294,10 @@ function openExchangeControlModal(permId) {
   } else {
     const currentA = effect.params.exchangeTargetA || '';
     const currentB = effect.params.exchangeTargetB || '';
-    const filtered = candidates.filter(p => filterCandidate(p));
+    // Who may be A and who B, and what B must be against A, come from cards-targeting.js; the
+    // B list is narrowed to A's partners in exchCtrlTargetChanged.
+    const listA = getExchangeControlCandidates(permId, 'a');
+    const listB = getExchangeControlCandidates(permId, 'b');
     const optHtml = (p, selectedId) => {
       const fs = finalStates.get(p.id);
       const typeLine = fs ? [...(fs.supertypes||[]), ...(fs.types||[])].join(' ') : [...(p.printedSupertypes||[]), ...(p.printedTypes||[])].join(' ');
@@ -302,21 +305,30 @@ function openExchangeControlModal(permId) {
       const playerTag = Battlefield.players.length > 1 && Battlefield.getPlayerName ? ` [${Battlefield.getPlayerName(ctrl)}]` : '';
       return `<option value="${p.id}" ${p.id === selectedId ? 'selected' : ''}>${escapeHtml(permDisplayName(p))} \u2014 ${escapeHtml(typeLine)}${playerTag}</option>`;
     };
+    const rules = effect.params.exchangeSlotRules || {};
+    const ctrlWords = { you: 'you control', opponent: 'an opponent controls', notYou: "you don't control" };
+    const bound = rules.boundByA;
+    const statWords = { power: 'power', toughness: 'toughness', manaValue: 'mana value' };
+    const boundNote = bound
+      ? `<div class="dim" style="margin-bottom:8px;">Permanent B's ${statWords[bound.stat]} must be ${bound.less ? 'less' : 'greater'} than ${bound.orEqual ? 'or equal to ' : ''}permanent A's ${statWords[bound.refStat]}, as they were when the ${sourcePerm?.isSpell ? 'spell was cast' : 'ability was fired'}.</div>`
+      : '';
     overlay.innerHTML = _modalShell({
       title: '\u21c4 Exchange Control',
       closeFn: 'closeExchangeControlModal',
       body: `
         ${effect.params.shareTypeRequired ? '<div class="dim" style="margin-bottom:8px;">Targets must share a card type.</div>' : ''}
+        ${rules.shareTypesWithA ? `<div class="dim" style="margin-bottom:8px;">Permanent B must share one of these types with permanent A: ${rules.shareTypesWithA.map(t => t.toLowerCase()).join(', ')}.</div>` : ''}
         ${effect.params.differentPlayersRequired ? '<div class="dim" style="margin-bottom:8px;">Targets must be controlled by different players.</div>' : ''}
-        <div class="modal-section-title">Permanent A</div>
+        ${boundNote}
+        <div class="modal-section-title">Permanent A${rules.controllerA ? ` (${ctrlWords[rules.controllerA]})` : ''}</div>
         <select id="exchctrl-target-a" onchange="exchCtrlTargetChanged('${permId}')" style="width:100%;padding:7px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:4px;">
           <option value="">\u2014 Select \u2014</option>
-          ${filtered.map(p => optHtml(p, currentA)).join('')}
+          ${listA.map(c => optHtml(c.perm, currentA)).join('') || '<option disabled>No valid targets</option>'}
         </select>
-        <div class="modal-section-title" style="margin-top:10px;">Permanent B</div>
+        <div class="modal-section-title" style="margin-top:10px;">Permanent B${rules.controllerB ? ` (${ctrlWords[rules.controllerB]})` : ''}</div>
         <select id="exchctrl-target-b" onchange="exchCtrlTargetChanged('${permId}')" style="width:100%;padding:7px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:4px;">
           <option value="">\u2014 Select \u2014</option>
-          ${filtered.map(p => optHtml(p, currentB)).join('')}
+          ${listB.map(c => optHtml(c.perm, currentB)).join('') || '<option disabled>No valid targets</option>'}
         </select>
         <div id="exchctrl-warning" class="dim" style="margin-top:8px;color:var(--red);display:none;"></div>`,
       footer: `
@@ -326,7 +338,7 @@ function openExchangeControlModal(permId) {
   }
 
   document.body.appendChild(overlay);
-  // Re-filter B options if share-type is required and A is already selected
+  // Narrow the B list to A's partners when A is already picked
   if (mode === 'two_targets' && effect.params.exchangeTargetA) exchCtrlTargetChanged(permId);
 }
 
@@ -341,34 +353,9 @@ function exchCtrlTargetChanged(permId) {
   const warn = document.getElementById('exchctrl-warning');
   const btn = document.getElementById('exchctrl-apply-btn');
 
-  const effect = Battlefield.effects.find(e =>
-    e.sourceId === permId && e.type === EFFECT_TYPE.CONTROL && e.params.exchangeControl);
-
-  let warningText = '';
-  if (a && b && a === b) {
-    warningText = 'Cannot exchange with itself.';
-  }
-
-  // Share-type validation
-  if (a && b && a !== b && effect?.params?.shareTypeRequired) {
-    const finalStates = Battlefield.getAllFinalStates();
-    const stA = finalStates.get(a);
-    const stB = finalStates.get(b);
-    if (stA && stB) {
-      const typesA = new Set(stA.types || []);
-      const shares = (stB.types || []).some(t => typesA.has(t));
-      if (!shares) warningText = 'These permanents do not share a card type.';
-    }
-  }
-
-  // Different-players validation
-  if (a && b && a !== b && effect?.params?.differentPlayersRequired) {
-    const finalStates = Battlefield.getAllFinalStates();
-    const ctrlA = finalStates.get(a)?.controller;
-    const ctrlB = finalStates.get(b)?.controller;
-    if (ctrlA && ctrlB && ctrlA === ctrlB) warningText = 'These permanents must be controlled by different players.';
-  }
-
+  // Every rule on the pair (shared type, different players, who controls each, B's bound
+  // against A) is exchangeControlPairProblem in cards-targeting.js, which the engine also obeys.
+  const warningText = (a && b) ? exchangeControlPairProblemFor(permId, a, b) : null;
   if (warningText) {
     if (warn) { warn.textContent = warningText; warn.style.display = ''; }
     if (btn) btn.disabled = true;
@@ -377,19 +364,13 @@ function exchCtrlTargetChanged(permId) {
     if (btn) btn.disabled = false;
   }
 
-  // Dynamic B-dropdown filtering for share-type: re-filter options based on A's types
-  if (effect?.params?.shareTypeRequired && a) {
-    const finalStates = Battlefield.getAllFinalStates();
-    const stA = finalStates.get(a);
-    const typesA = new Set(stA?.types || []);
-    const selB = document.getElementById('exchctrl-target-b');
-    if (selB) {
-      for (const opt of selB.options) {
-        if (!opt.value) continue; // skip placeholder
-        const stOpt = finalStates.get(opt.value);
-        const shares = stOpt ? (stOpt.types || []).some(t => typesA.has(t)) : true;
-        opt.style.display = (opt.value === a || !shares) ? 'none' : '';
-      }
+  // Only A's partners stay in the B list.
+  const selB = document.getElementById('exchctrl-target-b');
+  if (selB) {
+    const partners = new Set(getExchangeControlCandidates(permId, 'b', a || null).map(c => c.id));
+    for (const opt of selB.options) {
+      if (!opt.value) continue; // skip placeholder
+      opt.style.display = partners.has(opt.value) || opt.value === b ? '' : 'none';
     }
   }
 }
@@ -406,7 +387,7 @@ function applyExchangeControlSelf(sourceId, selfId) {
 function applyExchangeControlTwo(sourceId) {
   const a = document.getElementById('exchctrl-target-a')?.value;
   const b = document.getElementById('exchctrl-target-b')?.value;
-  if (!a || !b || a === b) return;
+  if (!a || !b || exchangeControlPairProblemFor(sourceId, a, b)) return;
   Battlefield.setExchangeControlTargets(sourceId, a, b);
   closeExchangeControlModal();
   Battlefield.evaluate();

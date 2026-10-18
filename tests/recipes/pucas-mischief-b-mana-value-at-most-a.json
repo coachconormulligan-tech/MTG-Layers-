@@ -1,0 +1,22 @@
+{
+  "name": "Puca's Mischief — Permanent B is an opponent's nonland permanent with equal or lesser mana value than A",
+  "notes": "\"At the beginning of your upkeep, you may exchange control of target nonland permanent you control and target nonland permanent an opponent controls with equal or lesser mana value.\" (2026-10-18, with Spawnbroker: the same bound on mana value.) A lists your nonland permanents (Hill Giant 4, Puca's Mischief 4, not your Forest); with Hill Giant as A, B lists Grizzly Bears (2) and Llanowar Elves (1), not Craw Wurm (6) or the opponent's Island. Hill Giant and Grizzly Bears change controllers.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Hill Giant", "as": "giant" },
+    { "add": "Forest", "as": "forest" },
+    { "add": "Grizzly Bears", "as": "bears", "controller": "p2" },
+    { "add": "Llanowar Elves", "as": "elves", "controller": "p2" },
+    { "add": "Craw Wurm", "as": "wurm", "controller": "p2" },
+    { "add": "Island", "as": "island", "controller": "p2" },
+    { "add": "Puca's Mischief", "as": "pm" },
+    { "fire": "@pm", "trigger": 0, "as": "t" },
+    { "call": ["setExchangeControlTargets", "@t", "@giant", "@bears"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Puca's Mischief (trigger)", "slot": "a" }, "are": ["Hill Giant", "Puca's Mischief"] },
+    { "targetCandidates": { "perm": "Puca's Mischief (trigger)", "slot": "b" }, "are": ["Grizzly Bears", "Llanowar Elves"] },
+    { "perm": "Hill Giant", "final": { "controller": "player_1" } },
+    { "perm": "Grizzly Bears", "final": { "controller": "player_0" } }
+  ]
+}

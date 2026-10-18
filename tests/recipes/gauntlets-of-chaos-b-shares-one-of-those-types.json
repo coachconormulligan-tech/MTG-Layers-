@@ -1,0 +1,21 @@
+{
+  "name": "Gauntlets of Chaos — Permanent B shares with A one of artifact, creature or land",
+  "notes": "\"{5}, Sacrifice this artifact: Exchange control of target artifact, creature, or land you control and target permanent an opponent controls that shares one of those types with it.\" (2026-10-18.) No shared-type rule was set and B was held to A's \"artifact, creature, or land\". With Forest as A, B lists only the opponent's Island (not their Grizzly Bears, Mind Stone or Glorious Anthem), and the pair Forest / Mind Stone set anyway is refused by the engine.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Hill Giant", "as": "giant" },
+    { "add": "Forest", "as": "forest" },
+    { "add": "Grizzly Bears", "as": "bears", "controller": "p2" },
+    { "add": "Island", "as": "island", "controller": "p2" },
+    { "add": "Mind Stone", "as": "stone", "controller": "p2" },
+    { "add": "Glorious Anthem", "as": "anthem", "controller": "p2" },
+    { "add": "Gauntlets of Chaos", "as": "g" },
+    { "fire": "@g", "activated": 0, "as": "t" },
+    { "call": ["setExchangeControlTargets", "@t", "@forest", "@stone"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Gauntlets of Chaos (activated)", "slot": "b" }, "are": ["Island"] },
+    { "perm": "Forest", "final": { "controller": "player_0" } },
+    { "perm": "Mind Stone", "final": { "controller": "player_1" } }
+  ]
+}

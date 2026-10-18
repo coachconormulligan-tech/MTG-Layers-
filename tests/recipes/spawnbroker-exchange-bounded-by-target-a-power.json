@@ -1,0 +1,21 @@
+{
+  "name": "Spawnbroker — Permanent A is a creature you control, Permanent B an opponent's creature with power at most A's",
+  "notes": "\"When this creature enters, you may exchange control of target creature you control and target creature with power less than or equal to that creature's power an opponent controls.\" (2026-10-18, stage 3 of the bounded-by-another-pick design.) The exchange-control modal's lists come from getExchangeControlCandidates (cards-targeting.js), read off the fire-time snapshot: A lists only your creatures (Hill Giant, Spawnbroker); with Hill Giant (3) as A, B lists the opponent's Grizzly Bears (2) and Trained Armodon (3), not Craw Wurm (6) and none of yours. Hill Giant and Trained Armodon change controllers. Before, both lists held every creature on the board and nothing bounded B.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Hill Giant", "as": "giant" },
+    { "add": "Grizzly Bears", "as": "bears", "controller": "p2" },
+    { "add": "Trained Armodon", "as": "armodon", "controller": "p2" },
+    { "add": "Craw Wurm", "as": "wurm", "controller": "p2" },
+    { "add": "Spawnbroker", "as": "s" },
+    { "fire": "@s", "trigger": 0, "as": "t" },
+    { "call": ["setExchangeControlTargets", "@t", "@giant", "@armodon"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Spawnbroker (trigger)", "slot": "a" }, "are": ["Hill Giant", "Spawnbroker"] },
+    { "targetCandidates": { "perm": "Spawnbroker (trigger)", "slot": "b" }, "are": ["Grizzly Bears", "Trained Armodon"] },
+    { "perm": "Hill Giant", "final": { "controller": "player_1" } },
+    { "perm": "Trained Armodon", "final": { "controller": "player_0" } },
+    { "perm": "Craw Wurm", "final": { "controller": "player_1" } }
+  ]
+}

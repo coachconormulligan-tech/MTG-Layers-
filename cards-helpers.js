@@ -343,6 +343,45 @@ function _forEachOpponentReflexiveText(text) {
   return rest.charAt(0).toUpperCase() + rest.slice(1);
 }
 
+// "Exchange control of target creature you control and target creature with power less than or
+// equal to that creature's power an opponent controls" (Spawnbroker), "… target nonland permanent
+// an opponent controls with equal or lesser mana value" (Puca's Mischief), "… target land you
+// control and target land an opponent controls" (Vedalken Plotter): who must control each of the
+// two targets ('you', 'opponent', 'notYou' or null), the bound the second sets against the
+// first, in _withinChosenObjectBound's shape, and what each target must be, with the controller
+// and the bound cut out (typeA, typeB: "artifact or creature" and "creature with power 3 or
+// less" for Oko, Thief of Crowns; "artifact" and "artifact or creature" for Shrewd Negotiation).
+// "… and target permanent an opponent controls that shares one of those types with it"
+// (Gauntlets of Chaos): B must have one of the card types named for A that A has
+// (shareTypesWithA, e.g. ['Artifact', 'Creature', 'Land']). Read by exchangeControlPairProblem
+// (cards-targeting.js). Returns { controllerA, controllerB, boundByA, typeA, typeB,
+// shareTypesWithA? } or null.
+function _exchangeControlSlotRules(text) {
+  const m = String(text || '').match(/\btarget\s+(.+?)\s+and\s+target\s+([^.;\n]+)/i);
+  if (!m) return null;
+  const ctrl = (s) => /\byou\s+(?:don'?t\s+control|neither\s+own\s+nor\s+control)\b/i.test(s) ? 'notYou'
+    : /\byou\s+control\b/i.test(s) ? 'you'
+    : /\ban?\s+opponents?\s+controls?\b/i.test(s) ? 'opponent' : null;
+  let boundByA = null;
+  const pm = m[2].match(/\bwith\s+(power|toughness)\s+(less|greater)\s+than\s+(or\s+equal\s+to\s+)?that\s+(?:creature|permanent)'s\s+(power|toughness)\b/i);
+  if (pm) boundByA = { stat: pm[1].toLowerCase(), refStat: pm[4].toLowerCase(), less: /less/i.test(pm[2]), orEqual: !!pm[3] };
+  else if (/\bwith\s+equal\s+or\s+lesser\s+mana\s+value\b/i.test(m[2])) boundByA = { stat: 'manaValue', refStat: 'manaValue', less: true, orEqual: true };
+  const controllerA = ctrl(m[1]), controllerB = ctrl(m[2]);
+  const typeOf = (s) => s
+    .replace(/\s+with\s+(?:power|toughness)\s+(?:less|greater)\s+than\s+(?:or\s+equal\s+to\s+)?that\s+(?:creature|permanent)'s\s+(?:power|toughness)\b/i, '')
+    .replace(/\s+with\s+equal\s+or\s+lesser\s+mana\s+value\b/i, '')
+    .replace(/\s+that\s+shares?\s+(?:a|one of those)\s+(?:(?:permanent|card)\s+)?types?\s+with\s+it\b/i, '')
+    .replace(/\s+(?:you\s+(?:don'?t\s+control|neither\s+own\s+nor\s+control|control)|an?\s+opponents?\s+controls?)\b/i, '')
+    .replace(/[.,;\s]+$/, '').trim() || null;
+  const rules = { controllerA, controllerB, boundByA, typeA: typeOf(m[1]), typeB: typeOf(m[2]) };
+  if (/\bthat\s+shares?\s+one\s+of\s+those\s+types\s+with\s+it\b/i.test(m[2])) {
+    const named = (rules.typeA || '').toLowerCase().split(/[\s,]+/).map(w => normalizeTypeWord(w))
+      .filter(t => t && t.check === 'type').map(t => t.value);
+    if (named.length) rules.shareTypesWithA = [...new Set(named)];
+  }
+  return rules;
+}
+
 // Whether an activated ability's cost (the words before its colon, after any ability word)
 // exiles the card itself from the graveyard: "Renew — {1}{G}, Exile this card from your
 // graveyard: …". Such an ability is used while the card is in the graveyard.

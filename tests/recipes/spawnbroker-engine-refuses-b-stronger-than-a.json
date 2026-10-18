@@ -1,0 +1,19 @@
+{
+  "name": "Spawnbroker — the engine refuses a Permanent B stronger than A at fire time (counters after firing do not count)",
+  "notes": "Hill Giant is 3/3 when Spawnbroker's trigger is fired and gets three +1/+1 counters afterwards. B is judged on the fire-time snapshot, so Craw Wurm (6) is still not listed, and a pair set anyway (a saved board, a recipe) exchanges nothing: effectAppliesToPerm refuses a pair exchangeControlPairProblem rejects (CR 701.12b). Before, Hill Giant and Craw Wurm swapped.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Hill Giant", "as": "giant" },
+    { "add": "Grizzly Bears", "as": "bears", "controller": "p2" },
+    { "add": "Craw Wurm", "as": "wurm", "controller": "p2" },
+    { "add": "Spawnbroker", "as": "s" },
+    { "fire": "@s", "trigger": 0, "as": "t" },
+    { "call": ["addCounter", "@giant", "+1/+1", 3] },
+    { "call": ["setExchangeControlTargets", "@t", "@giant", "@wurm"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Spawnbroker (trigger)", "slot": "b" }, "are": ["Grizzly Bears"] },
+    { "perm": "Hill Giant", "final": { "controller": "player_0", "power": 6 } },
+    { "perm": "Craw Wurm", "final": { "controller": "player_1" } }
+  ]
+}

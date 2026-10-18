@@ -7170,7 +7170,7 @@ function parseCardEffects(permanent, card, opts = {}) {
       const dotIdx = oracle.indexOf('.', exchMatch.index);
       const sentenceEnd = dotIdx === -1 ? oracle.length : dotIdx + 1;
       const fullSentence = oracle.slice(sentenceStart, sentenceEnd);
-      if (/\bshare\s+a\s+(?:permanent|card)\s+type\b/i.test(fullSentence)) shareTypeRequired = true;
+      if (/\bshares?\s+a\s+(?:permanent|card)\s+type\b/i.test(fullSentence)) shareTypeRequired = true;
       if (/\bcontrolled\s+by\s+different\s+players\b/i.test(fullSentence)) differentPlayersRequired = true;
       if (/\bopponent(?:'?s?)?\s+controls?\b/i.test(fullSentence)) opponentCtrlRequired = true;
       if (/\byou\s+don'?t\s+control\b/i.test(fullSentence)) opponentCtrlRequired = true;
@@ -7182,17 +7182,16 @@ function parseCardEffects(permanent, card, opts = {}) {
         .replace(/\s+(?:an?\s+)?(?:opponent(?:'?s?)?\s+controls?|you\s+(?:control|don'?t\s+control)).*$/i, '')
         .replace(/\s+you\s+neither\s+(?:own|control)\b.*$/i, '') // e.g. "target permanent you neither own nor control"
         .replace(/\s+controlled\s+by\s+different\s+players.*$/i, '')
-        .replace(/\s+that\s+share\s+a\s+(?:permanent|card)\s+type.*$/i, '')
+        .replace(/\s+that\s+shares?\s+a\s+(?:permanent|card)\s+type.*$/i, '')
         .replace(/\s+(?:its|their)\s+controller\s+controls\b.*$/i, '') // e.g. "target permanent its controller controls"
         .replace(/^(?:up\s+to\s+\w+\s+)?(?:target\s+)?/i, '')
         .replace(/[.,;]\s*$/, '')
         .trim();
-      // For "target X and target Y" split, use first type for restriction
+      // For "target X and target Y" this is X. Each target's own type text (Oko, Thief of
+      // Crowns' B "creature with power 3 or less") is exchangeSlotRules.typeA / typeB, which the
+      // exchange-control picker and the engine use in its place (cards-targeting.js).
       const splitTargets = cleanTypeText.match(/^(.+?)\s+and\s+target\s+(.+)$/i);
-      if (splitTargets) {
-        cleanTypeText = splitTargets[1].trim();
-        // Could use splitTargets[2] for second target type — for now treat uniformly
-      }
+      if (splitTargets) cleanTypeText = splitTargets[1].trim();
       if (cleanTypeText) {
         const btResult = buildAppliesToFromText(cleanTypeText);
         if (btResult && btResult.fn) {
@@ -7200,6 +7199,8 @@ function parseCardEffects(permanent, card, opts = {}) {
         }
       }
 
+      // Who controls each of two targets, and a bound B sets against A (Spawnbroker).
+      const exchangeSlotRules = exchangeMode === 'two_targets' ? _exchangeControlSlotRules(captured) : null;
       pushEff('2', EFFECT_TYPE.CONTROL, {
           exchangeControl: true,
           exchangeMode,
@@ -7210,6 +7211,7 @@ function parseCardEffects(permanent, card, opts = {}) {
           exchangeSelfId,
           shareTypeRequired,
           differentPlayersRequired,
+          ...(exchangeSlotRules ? { exchangeSlotRules } : {}),
         },
         { scope: 'targeted', selfTarget: false },
         `Exchange control of ${captured}.`,

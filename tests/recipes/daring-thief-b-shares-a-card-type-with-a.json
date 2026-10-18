@@ -1,0 +1,19 @@
+{
+  "name": "Daring Thief — Permanent B must share a card type with A; a pair that does not exchanges nothing",
+  "notes": "\"Inspired — Whenever this creature becomes untapped, you may exchange control of target nonland permanent you control and target permanent an opponent controls that shares a card type with it.\" (2026-10-18, with Spawnbroker.) The parser only read \"share a card type\", so \"shares\" set no rule. With Hill Giant as A, B lists only the opponent's Grizzly Bears (not their Island or Glorious Anthem), and the pair Hill Giant / Glorious Anthem set anyway is refused by the engine.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Hill Giant", "as": "giant" },
+    { "add": "Grizzly Bears", "as": "bears", "controller": "p2" },
+    { "add": "Island", "as": "island", "controller": "p2" },
+    { "add": "Glorious Anthem", "as": "anthem", "controller": "p2" },
+    { "add": "Daring Thief", "as": "d" },
+    { "fire": "@d", "trigger": 0, "as": "t" },
+    { "call": ["setExchangeControlTargets", "@t", "@giant", "@anthem"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Daring Thief (trigger)", "slot": "b" }, "are": ["Grizzly Bears"] },
+    { "perm": "Hill Giant", "final": { "controller": "player_0" } },
+    { "perm": "Glorious Anthem", "final": { "controller": "player_1" } }
+  ]
+}

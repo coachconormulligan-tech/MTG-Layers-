@@ -180,7 +180,16 @@ function effectAppliesToPerm(effect, permState, permanent, permId, allStates, ab
     if (effect.type === EFFECT_TYPE.CONTROL && effect.params.exchangeControl) {
       const { exchangeTargetA, exchangeTargetB } = effect.params;
       if (exchangeTargetA && exchangeTargetB) {
-        return permId === exchangeTargetA || permId === exchangeTargetB;
+        if (permId !== exchangeTargetA && permId !== exchangeTargetB) return false;
+        // A pair the text does not allow (Spawnbroker: B's power above A's) exchanges nothing
+        // (CR 701.12b). Judged on the board as the spell was cast or the ability fired; without
+        // that snapshot nothing is refused here.
+        if (typeof exchangeControlPairProblem === 'function' && typeof Battlefield !== 'undefined') {
+          const snap = _exchangeControlSnapshot(effect.sourceId);
+          if (snap && exchangeControlPairProblem(effect, exchangeTargetA, exchangeTargetB,
+              (id) => snap.get(id) || null, _exchangeControlYou(effect.sourceId))) return false;
+        }
+        return true;
       }
       return false;
     }

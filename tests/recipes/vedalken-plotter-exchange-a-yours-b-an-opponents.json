@@ -1,0 +1,18 @@
+{
+  "name": "Vedalken Plotter — Permanent A is a land you control, B a land an opponent controls; a pair the other way round exchanges nothing",
+  "notes": "\"When this creature enters, exchange control of target land you control and target land an opponent controls.\" (2026-10-18, with Spawnbroker.) The modal's A list holds only your lands and B only the opponent's (_exchangeControlSlotRules, read from the fire-time snapshot). A pair set with the opponent's Island as A is refused by the engine. Before, both lists held every land and any pair was exchanged.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Forest", "as": "forest" },
+    { "add": "Island", "as": "island", "controller": "p2" },
+    { "add": "Mountain", "as": "mountain", "controller": "p2" },
+    { "add": "Vedalken Plotter", "as": "v" },
+    { "fire": "@v", "trigger": 0, "as": "t" },
+    { "call": ["setExchangeControlTargets", "@t", "@island", "@forest"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Vedalken Plotter (trigger)", "slot": "a" }, "are": ["Forest"] },
+    { "perm": "Forest", "final": { "controller": "player_0" } },
+    { "perm": "Island", "final": { "controller": "player_1" } }
+  ]
+}
