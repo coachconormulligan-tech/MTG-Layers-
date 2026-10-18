@@ -687,6 +687,21 @@ function boardAdjustments(ctx, u, unitId, pseudo, tryIds) {
       } });
     }
   }
+  // "Gain control of target creature for as long as that creature is enchanted" (Rootwater
+  // Matriarch): the board has no Aura, so every listed permanent is made enchanted (or equipped) as
+  // the target's words ask. Each target must still change only itself.
+  const attached = u.text.match(/\b(?:it|that [a-z]+) is (enchanted|equipped)\b/i);
+  if (attached && tryIds.length && /\btarget\b/i.test(u.text.slice(0, attached.index))) {
+    const trait = cap1(attached[1].toLowerCase());
+    const given = tryIds.map(tid => Battlefield.getPermById(tid)).filter(p => p && !(p.traits || []).includes(trait));
+    if (given.length) {
+      out.push({ what: 'every listed permanent made ' + trait.toLowerCase(), apply: () => {
+        const saved = given.map(p => p.traits);
+        given.forEach(p => { p.traits = (p.traits || []).concat([trait]); });
+        return () => given.forEach((p, k) => { p.traits = saved[k]; });
+      } });
+    }
+  }
   // "Gain control of target artifact" when every artifact is already yours: one becomes the opponent's.
   if (/\bgains? control of\b/i.test(u.text) && others.length) {
     const p = Battlefield.getPermById(others[0]);

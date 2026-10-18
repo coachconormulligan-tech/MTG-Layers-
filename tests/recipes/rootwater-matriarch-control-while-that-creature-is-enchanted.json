@@ -1,0 +1,26 @@
+{
+  "name": "Rootwater Matriarch — gain control of target creature for as long as that creature is enchanted",
+  "notes": "Memory: project_rootwater_matriarch_that_creature_is_enchanted_2026-10-18. \"{T}: Gain control of target creature for as long as that creature is enchanted.\" The condition is the target's, not the Matriarch's: the opponent's Gray Ogre enchanted with Pacifism comes under Player 1's control; the opponent's Giant Spider, also enchanted but not the target, and the Matriarch's untargeted neighbours stay where they are. A target with no Aura stays with its owner (second fire), even with the Matriarch itself enchanted.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Gray Ogre", "as": "ogre", "controller": "p2" },
+    { "add": "Giant Spider", "as": "spider", "controller": "p2" },
+    { "add": "Hill Giant", "as": "giant", "controller": "p2" },
+    { "add": "Pacifism", "as": "pac1", "controller": "p2" },
+    { "add": "Pacifism", "as": "pac2", "controller": "p2" },
+    { "call": ["setTarget", "@pac1", "@ogre"] },
+    { "call": ["setTarget", "@pac2", "@spider"] },
+    { "add": "Rootwater Matriarch", "as": "mat" },
+    { "add": "Pacifism", "as": "pac3" },
+    { "call": ["setTarget", "@pac3", "@mat"] },
+    { "fire": "@mat", "activated": 0, "as": "fired" },
+    { "call": ["setTarget", "@fired", "@ogre"] },
+    { "fire": "@mat", "activated": 0, "as": "fired2" },
+    { "call": ["setTarget", "@fired2", "@giant"] }
+  ],
+  "asserts": [
+    { "perm": "Gray Ogre", "final": { "controller": "player_0" } },
+    { "perm": "Giant Spider", "final": { "controller": "player_1" } },
+    { "perm": "Hill Giant", "final": { "controller": "player_1" } }
+  ]
+}

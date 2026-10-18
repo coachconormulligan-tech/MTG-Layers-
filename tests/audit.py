@@ -30,7 +30,8 @@ A unit whose own text names one permanent target ("singular") is checked twice:
            is tapped ("for as long as this creature remains tapped"), the source is given the
            counters its text asks for ("if it has four or more quest counters on it"), every listed
            permanent is given the counters its target's words ask for ("for as long as it has a flood
-           counter on it": the site leaves placing a spell's counter to the player), the chosen
+           counter on it": the site leaves placing a spell's counter to the player), every listed permanent is
+           made enchanted or equipped ("for as long as that creature is enchanted"), the chosen
            land type becomes Island, or the spell's Kicked / Bargained toggle is switched on. A unit that then changes
            its target is information (shown-on-adjusted-board). board-cannot-show, also
            information: every listed permanent already has the keywords given or is already yours,
