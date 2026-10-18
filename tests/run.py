@@ -145,6 +145,8 @@ def write_fixture(path, fx):
 
 
 CARD_CACHE = os.path.expanduser('~/Library/Caches/layer-inspector/oracle-cards.jsonl.gz')
+if not os.path.exists(CARD_CACHE):   # the copy kept in the repo
+    CARD_CACHE = os.path.join(ROOT, 'tests', 'cards', 'oracle-cards.jsonl.gz')
 _card_index = None
 
 

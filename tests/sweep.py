@@ -50,6 +50,10 @@ from concurrent.futures import ThreadPoolExecutor
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CACHE_DIR = os.path.expanduser('~/Library/Caches/layer-inspector')
 CARD_CACHE = os.path.join(CACHE_DIR, 'oracle-cards.jsonl.gz')
+BULK_META = os.path.join(CACHE_DIR, 'bulk-meta.json')
+if not os.path.exists(CARD_CACHE):   # the copy kept in the repo
+    CARD_CACHE = os.path.join(ROOT, 'tests', 'cards', 'oracle-cards.jsonl.gz')
+    BULK_META = os.path.join(ROOT, 'tests', 'cards', 'bulk-meta.json')
 RAW = os.path.join(CACHE_DIR, 'sweep-raw.jsonl.gz')
 OUT_DIR = os.path.join(ROOT, 'tests', 'sweep')
 JSC = '/System/Library/Frameworks/JavaScriptCore.framework/Versions/A/Helpers/jsc'
@@ -183,6 +187,7 @@ def run_sweep(cards):
 
 
 def save_raw(records, keywords, meta):
+    os.makedirs(CACHE_DIR, exist_ok=True)
     with gzip.open(RAW, 'wt', encoding='utf-8') as f:
         f.write(json.dumps({'keywords': keywords, 'meta': meta}) + '\n')
         for r in records:
@@ -824,7 +829,7 @@ def main():
         records, keywords = run_sweep(cards)
         meta = {'cards': len(cards)}
         try:
-            meta['cards_updated'] = json.load(open(os.path.join(CACHE_DIR, 'bulk-meta.json')))['updated_at'][:10]
+            meta['cards_updated'] = json.load(open(BULK_META))['updated_at'][:10]
         except (OSError, KeyError, ValueError):
             pass
         save_raw(records, keywords, meta)

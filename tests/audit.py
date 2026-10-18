@@ -230,6 +230,7 @@ def add_ranks(records, cards):
 
 
 def save_raw(records, keywords, meta):
+    os.makedirs(CACHE_DIR, exist_ok=True)
     with gzip.open(RAW, 'wt', encoding='utf-8') as f:
         f.write(json.dumps({'keywords': keywords, 'meta': meta}) + '\n')
         for r in records:
@@ -545,7 +546,7 @@ def main():
         add_ranks(records, cards)
         meta = {'cards': len(cards), 'scope': scope}
         try:
-            meta['cards_updated'] = json.load(open(os.path.join(CACHE_DIR, 'bulk-meta.json')))['updated_at'][:10]
+            meta['cards_updated'] = json.load(open(sweep.BULK_META))['updated_at'][:10]
         except (OSError, KeyError, ValueError):
             pass
         save_raw(records, keywords, meta)
