@@ -3050,9 +3050,6 @@ const Battlefield = {
     return result;
   },
 
-  /* Return Map<permId, finalState> for ALL real permanents.
-     Calls evaluatePermanent exactly once (it already runs the full global pipeline),
-     then reads finalStates from the result. Previously called it once per permanent. */
   /* Effects on "that creature" of a fired "…becomes a copy of another target creature …. If you
      do, this card and that creature each get +2/+0" (Gogo, Mysterious Mime) sit on whatever
      the same ability's copy picker holds, and on nothing until it holds something. */
@@ -3064,6 +3061,8 @@ const Battlefield = {
     }
   },
 
+  /* Return Map<permId, finalState> for ALL real permanents. Runs the pipeline once
+     (evaluateAllPermanents), which also records every permanent's inspector trace. */
   getAllFinalStates() {
     if (this._cachedFinalStatesVersion === this._cacheVersion && this._cachedFinalStates !== null) {
       return this._cachedFinalStates;
@@ -3084,10 +3083,9 @@ const Battlefield = {
       this._cachedFinalStatesVersion = this._cacheVersion;
       return this._cachedFinalStates;
     }
-    // Single evaluation pass — use the inspected (or first) perm as anchor so the pipeline runs once.
-    const anchorId = (this.inspectedId && realPerms.some(p => p.id === this.inspectedId))
-      ? this.inspectedId : realPerms[0].id;
-    const r = evaluatePermanent(realPerms.find(p => p.id === anchorId), realPerms, this.effects, anchorId);
+    // One pipeline run gives every permanent's final state and its inspector trace.
+    const traces = evaluateAllPermanents(realPerms, this.effects);
+    const r = traces.get(realPerms[0].id);
     if (!r || !r.finalStates) {
       const map = new Map();
       for (const p of realPerms) map.set(p.id, _fallback(p));
@@ -3099,15 +3097,9 @@ const Battlefield = {
     for (const p of realPerms) map.set(p.id, r.finalStates.get(p.id) || _fallback(p));
     this._cachedFinalStates = map;
     this._cachedFinalStatesVersion = this._cacheVersion;
-    // Precompute inspector traces for ALL perms so card clicks require no dependency work.
-    this._inspectorCache.clear();
+    // Keep every permanent's inspector trace so card clicks require no dependency work.
+    this._inspectorCache = traces;
     this._inspectorCacheVersion = this._cacheVersion;
-    this._inspectorCache.set(anchorId, r);
-    for (const p of realPerms) {
-      if (p.id === anchorId) continue;
-      const tr = evaluatePermanent(p, realPerms, this.effects, p.id);
-      this._inspectorCache.set(p.id, tr);
-    }
     return this._cachedFinalStates;
   },
 

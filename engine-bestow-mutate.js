@@ -1,8 +1,9 @@
 /* engine-bestow-mutate.js — special-mechanic layer hooks called from engine-layer.js.
 
    Public functions:
-     _applyBestowLayer4(Battlefield, allStates, inspectedId, layerResult)
-     _applyMutateLayer1(Battlefield, allStates, inspectedId, layerResult)
+     _applyBestowLayer4(Battlefield, allStates, layerResults)
+     _applyMutateLayer1(Battlefield, allStates, layerResults)
+   layerResults maps each traced permanent id to its trace of the layer.
      _reParseAfterTextChange(allStates, allPermanents, currentEffects) → effects[]
 
    Extracted from engine-helpers.js. */
@@ -11,7 +12,7 @@
    When a bestow creature has an active bestow target, it loses Creature type,
    loses creature subtypes, retains Enchantment, gains Aura subtype,
    and gains "Enchant creature" ability. */
-function _applyBestowLayer4(Battlefield, allStates, inspectedId, layerResult) {
+function _applyBestowLayer4(Battlefield, allStates, layerResults) {
   if (typeof Battlefield === 'undefined' || !Battlefield.bestowTargets || !Battlefield.bestowTargets.size) return;
   for (const [bestowPermId, targetPermId] of Battlefield.bestowTargets) {
     const st = allStates.get(bestowPermId);
@@ -42,7 +43,8 @@ function _applyBestowLayer4(Battlefield, allStates, inspectedId, layerResult) {
       st.abilities.push('Enchant creature');
     }
 
-    if (bestowPermId === inspectedId) {
+    const layerResult = layerResults.get(bestowPermId);
+    if (layerResult) {
       const targetName = targetPerm.name || targetPermId;
       const changes = [];
       if (JSON.stringify(beforeTypes) !== JSON.stringify(st.types)) {
@@ -68,7 +70,7 @@ function _applyBestowLayer4(Battlefield, allStates, inspectedId, layerResult) {
 /* Helper: apply mutate stacks within Layer 1 (after COPY effects).
    CR 702.140: Top card's name/types/P/T are authoritative; ability pools merged.
    Called from both the "has effects" and "no effects" paths of Layer 1. */
-function _applyMutateLayer1(Battlefield, allStates, inspectedId, layerResult) {
+function _applyMutateLayer1(Battlefield, allStates, layerResults) {
   if (typeof Battlefield === 'undefined' || !Battlefield.mutateStacks || !Battlefield.mutateStacks.length) return;
   for (const stack of Battlefield.mutateStacks) {
     if (stack.length < 2) continue;
@@ -112,7 +114,8 @@ function _applyMutateLayer1(Battlefield, allStates, inspectedId, layerResult) {
       // that target any member of this stack operate on the full merged ability pool.
       st.oracleText = mergedAbilities.join('\n');
 
-      if (permId === inspectedId) {
+      const layerResult = layerResults.get(permId);
+      if (layerResult) {
         const topPerm = Battlefield.getPermById(stack[0]);
         const stackNames = stack.map(id => {
           const p = Battlefield.getPermById(id);
