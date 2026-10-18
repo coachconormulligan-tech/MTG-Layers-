@@ -5030,7 +5030,10 @@ function parseCardEffects(permanent, card, opts = {}) {
     if (/\byou (?:control|own)\b/i.test(_haveMatchNoCount) && !/\byou (?:control|own)\b/i.test(filterText)) {
       filterText += ' you control';
     }
-    const { fn, desc, isSelf, isTargeted, needsTargetSelection: _haveNTS, maxTargets: _haveMaxT, isTargetPlayerControl: _haveTPC } = buildAppliesToFromText(filterText);
+    // "Then each creature you control with power less than or equal to that land's power gains …"
+    // (Earthshape): measured against what the spell picked, on the spell's snapshot.
+    const _havePick = (permanent.isSpell || permanent.isManualEffect) ? _pickComparedSubject(filterText, permanent, haveMatch.index) : null;
+    const { fn, desc, isSelf, isTargeted, needsTargetSelection: _haveNTS, maxTargets: _haveMaxT, isTargetPlayerControl: _haveTPC } = _havePick || buildAppliesToFromText(filterText);
     const _haveBuildResult = { isSpellTarget: !!_haveNTS, maxTargets: _haveMaxT || 1, isTargetPlayerControl: !!_haveTPC };
     const _haveNeedsTarget = isTargeted;
     const selfAffect = isSelf ? true : detectSelfAffect(filterText);
@@ -5137,6 +5140,7 @@ function parseCardEffects(permanent, card, opts = {}) {
         _applyTargetInfo(eff, rcpt.build, rcpt.fn);
         // The source's half keeps to the source when the other half's target is chosen.
         if (rcpt.sourceHalf) eff._sourceHalf = true;
+        if (_havePick && !_haveTargeted) eff._judgedOnSnapshot = true;
       }
     }
   }

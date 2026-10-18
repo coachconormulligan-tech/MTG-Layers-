@@ -1368,6 +1368,32 @@ function _sourceComparedSubject(part, sourcePerm) {
   });
 }
 
+/* A subject a spell or fired ability compares with an object it picked earlier in its text:
+   "Then each creature you control with power less than or equal to that land's power" (Earthshape,
+   the land being its target). The object's power is read off the snapshot as the spell had left
+   it (_pickedReferenceStat), and the effect is judged on the snapshot too (_judgedOnSnapshot), so
+   the group is fixed as the spell resolves. Returns buildAppliesToFromText's result with the
+   comparison folded into fn, or null for any other subject. `pos` is the effect's _oraclePos. */
+function _pickComparedSubject(part, sourcePerm, pos) {
+  const m = part.replace(/^then\s+/i, '')
+    .match(/^(.+?)\s+with\s+(power|toughness)\s+(less|greater)\s+than\s+(or\s+equal\s+to\s+)?that\s+([\w-]+)'s\s+(power|toughness)$/i);
+  if (!m) return null;
+  const base = buildAppliesToFromText(m[1]);
+  if (!base.fn) return null;
+  const stat = m[2].toLowerCase(), less = /less/i.test(m[3]), orEqual = !!m[4];
+  const noun = m[5].toLowerCase(), refStat = m[6].toLowerCase(), srcId = sourcePerm.id;
+  return Object.assign({}, base, {
+    fn: (st, all, ctrl) => {
+      if (!base.fn(st, all, ctrl) || st[stat] === null || st[stat] === undefined) return false;
+      const ref = _pickedReferenceStat(srcId, pos, refStat);
+      if (ref === null) return false;
+      return less ? (orEqual ? st[stat] <= ref : st[stat] < ref) : (orEqual ? st[stat] >= ref : st[stat] > ref);
+    },
+    desc: `${base.desc} with ${stat} ${less ? 'less' : 'greater'} than ${orEqual ? 'or equal to ' : ''}that ${noun}'s ${refStat}`,
+    judgedOnSnapshot: true,
+  });
+}
+
 /* "base power and toughness 1/1", "base power or toughness 1", "base power 1" / "base toughness 1"
    → { test(state), words }, or null for any other wording. Base P/T is what layers 7a and 7b
    leave: the engine records it on each state (basePower / baseToughness) as layer 7c begins,

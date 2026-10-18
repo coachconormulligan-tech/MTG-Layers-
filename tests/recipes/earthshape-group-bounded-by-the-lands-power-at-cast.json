@@ -1,0 +1,22 @@
+{
+  "name": "Earthshape — each creature you control with power up to the earthbent land's gains hexproof and indestructible",
+  "notes": "\"Earthbend 3. Then each creature you control with power less than or equal to that land's power gains hexproof and indestructible until end of turn.\" (2026-10-18) Earthbend is written out as the land becoming a 0/0 creature; the site places no counters, so the three +1/+1 counters are put on the Forest before the spell is added (Conor: an instant reads its snapshot). The land's power is its snapshot state as the spell leaves it (0/0 creature + 3 counters = 3), and the group is fixed from the snapshot: the Forest itself, Grizzly Bears and Hill Giant, not Craw Wurm (6) or the opponent's Llanowar Elves. Before the fix the comparison was a required subtype and nobody was reached.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Forest", "as": "forest" },
+    { "call": ["addCounter", "@forest", "+1/+1", 3] },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Hill Giant", "as": "giant" },
+    { "add": "Craw Wurm", "as": "wurm" },
+    { "add": "Llanowar Elves", "as": "elves", "controller": "p2" },
+    { "add": "Earthshape", "as": "e", "spell": true },
+    { "call": ["setTarget", "@e", "@forest"] }
+  ],
+  "asserts": [
+    { "perm": "Forest", "final": { "power": 3, "toughness": 3, "abilities": { "$includes": ["Haste", "Hexproof", "Indestructible"] } } },
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$includes": ["Hexproof", "Indestructible"] } } },
+    { "perm": "Hill Giant", "final": { "abilities": { "$includes": ["Hexproof", "Indestructible"] } } },
+    { "perm": "Craw Wurm", "final": { "abilities": { "$excludes": ["Hexproof", "Indestructible"] } } },
+    { "perm": "Llanowar Elves", "final": { "abilities": { "$excludes": ["Hexproof", "Indestructible"] } } }
+  ]
+}

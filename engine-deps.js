@@ -281,15 +281,7 @@ function effectAppliesToPerm(effect, permState, permanent, permId, allStates, ab
         const src = typeof Battlefield !== 'undefined' ? Battlefield.getPermById(effect.sourceId) : null;
         if (!snapState && src && src._castStates) snapState = src._castStates.get(permId) || null;
         if (!snapState) return false;
-        let dp = 0, dt = 0;
-        for (const e of Battlefield.effects) {
-          if (e === effect || e.sourceId !== effect.sourceId || e.type !== EFFECT_TYPE.MODIFY_PT || e.asLongAsCondition || e.disabled) continue;
-          if (e.targetId !== permId && !(e.targetIds || []).includes(permId)) continue;
-          if (e._oraclePos !== undefined && effect._oraclePos !== undefined && e._oraclePos >= effect._oraclePos) continue;
-          if (e.params.forEachDesc !== undefined || e.params.doublePower || e.params.doubleToughness) continue;
-          dp += e.params.power || 0; dt += e.params.toughness || 0;
-        }
-        if (dp || dt) snapState = { ...snapState, power: (snapState.power || 0) + dp, toughness: (snapState.toughness || 0) + dt };
+        snapState = _stateAsResolved(snapState, permId, effect);
       }
       if (snapState) {
         if (!effect.asLongAsCondition(snapState, effect._firedAtStates)) return false;
@@ -339,7 +331,14 @@ function effectAppliesToPerm(effect, permState, permanent, permId, allStates, ab
       // If only the accumulated state matches, verify an earlier-timestamped continuous
       // effect on THIS permanent caused the match; otherwise block.
       if (effect.isSpellEffect && permanent) {
-        if (effect._firedAtStates) {
+        if (effect._judgedOnSnapshot) {
+          // "Each creature you control with power less than or equal to that land's power gains …"
+          // (Earthshape): the group is fixed as the spell resolves (CR 611.2c), from its snapshot
+          // and what it did earlier in its text (the land a 0/0 creature with its counters).
+          const snaps = _resolutionStates(effect);
+          const snapState = _stateAsResolved(snaps && snaps.get(permId), permId, effect);
+          if (!snapState || !effect.appliesTo(snapState, snaps, ctrlForFilter)) return false;
+        } else if (effect._firedAtStates) {
           // Triggered/activated ability: check appliesTo against the frozen board state
           // captured at the moment the ability fired. That snapshot is authoritative for
           // determining which permanents qualify — live state only governs what happens to

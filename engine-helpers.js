@@ -211,12 +211,83 @@ function _linkedCardsPT(sourceId) {
 /* Who controlled a permanent as the spell or ability behind this effect resolved: the board
    kept when it was added to the timeline, failing that the permanent's own controller. */
 function _controllerAtResolution(effect, permId) {
-  const src = typeof Battlefield !== 'undefined' ? Battlefield.getPermById(effect.sourceId) : null;
-  const snaps = effect._firedAtStates || (src && src._castStates) || null;
+  const snaps = _resolutionStates(effect);
   const snap = snaps && snaps.get ? snaps.get(permId) : null;
   if (snap && snap.controller) return snap.controller;
   const perm = typeof Battlefield !== 'undefined' ? Battlefield.getPermById(permId) : null;
   return perm ? (perm.controller || perm.owner || null) : null;
+}
+
+/* The board a spell or fired ability resolved against: the states kept when it was added to the
+   timeline (a fired ability's fire-time states, a spell's cast-time states), or null. */
+function _resolutionStates(effect) {
+  const src = typeof Battlefield !== 'undefined' ? Battlefield.getPermById(effect.sourceId) : null;
+  return effect._firedAtStates || (src && (src._firedAtStates || src._castStates)) || null;
+}
+
+/* A permanent as a spell or ability had left it just before `effect`: its snapshot state plus
+   what the same spell or ability did to it earlier in its text — types added, P/T set, P/T
+   modified ("gets +1/+1. Then if that creature has power 4 or greater, …" — Strider, Ranger of
+   the North; earthbend's "becomes a 0/0 creature" before Earthshape's "that land's power"). A
+   set P/T keeps what modified it in the snapshot (counters, anthems); for an object that was no
+   creature there, that is its P/T counters alone. Counters a spell or ability places are put on
+   by hand before it is added, so the snapshot holds them. */
+function _stateAsResolved(snapState, permId, effect) {
+  if (!snapState || typeof Battlefield === 'undefined') return snapState;
+  let types = null, subtypes = null, set = null, dp = 0, dt = 0;
+  for (const e of Battlefield.effects) {
+    if (e === effect || e.sourceId !== effect.sourceId || e.asLongAsCondition || e.disabled) continue;
+    if (e.targetId !== permId && !(e.targetIds || []).includes(permId)) continue;
+    if (e._oraclePos !== undefined && effect._oraclePos !== undefined && e._oraclePos >= effect._oraclePos) continue;
+    const p = e.params || {};
+    if (e.type === EFFECT_TYPE.ADD_TYPE) {
+      types = [...new Set([...(types || snapState.types || []), ...(p.types || [])])];
+      subtypes = [...new Set([...(subtypes || snapState.subtypes || []), ...(p.subtypes || [])])];
+    } else if (e.type === EFFECT_TYPE.SET_PT && typeof p.power === 'number' && typeof p.toughness === 'number') {
+      set = { power: p.power, toughness: p.toughness };
+    } else if (e.type === EFFECT_TYPE.MODIFY_PT) {
+      if (p.forEachDesc !== undefined || p.doublePower || p.doubleToughness) continue;
+      dp += p.power || 0; dt += p.toughness || 0;
+    }
+  }
+  if (!types && !set && !dp && !dt) return snapState;
+  const st = { ...snapState };
+  if (types) { st.types = types; st.subtypes = subtypes; }
+  if (set) {
+    let onP = 0, onT = 0;
+    if ((snapState.types || []).includes('Creature') && snapState.power != null) {
+      onP = snapState.power - (snapState.basePower != null ? snapState.basePower : snapState.power);
+      onT = snapState.toughness - (snapState.baseToughness != null ? snapState.baseToughness : snapState.toughness);
+    } else {
+      for (const [kind, n] of Object.entries(snapState.counters || {})) {
+        const m = kind.match(/^([+-]\d+)\/([+-]\d+)$/);
+        if (m) { onP += parseInt(m[1], 10) * n; onT += parseInt(m[2], 10) * n; }
+      }
+    }
+    st.power = set.power + onP; st.toughness = set.toughness + onT;
+  }
+  if (dp || dt) { st.power = (st.power || 0) + dp; st.toughness = (st.toughness || 0) + dt; }
+  return st;
+}
+
+/* The power or toughness of the object a spell or ability picked earlier in its text, as it had
+   left that object ("Earthbend 3. Then each creature you control with power less than or equal
+   to that land's power …" — Earthshape: the land is its target). The pick is the target of the
+   same source's nearest targeted effect before `pos`, read from the snapshot (_stateAsResolved).
+   Null while nothing is picked. */
+function _pickedReferenceStat(sourceId, pos, stat) {
+  if (typeof Battlefield === 'undefined') return null;
+  let pick = null;
+  for (const e of Battlefield.effects) {
+    if (e.sourceId !== sourceId || e.scope !== 'targeted' || e.selfTarget || !e.targetId || e.disabled) continue;
+    if (e._oraclePos !== undefined && pos !== undefined && e._oraclePos >= pos) continue;
+    if (!pick || (e._oraclePos ?? -1) > (pick._oraclePos ?? -1)) pick = e;
+  }
+  if (!pick) return null;
+  const at = { sourceId, _oraclePos: pos };
+  const snaps = _resolutionStates(at);
+  const st = _stateAsResolved(snaps && snaps.get(pick.targetId), pick.targetId, at);
+  return st && st[stat] != null ? st[stat] : null;
 }
 
 /* The id of the permanent a state object belongs to (states carry no id of their own). */
