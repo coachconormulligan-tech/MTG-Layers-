@@ -528,7 +528,9 @@ function _gatheredPermChangedByB(A, B, allStates, realPerms) {
   return null;
 }
 
-function doesBInfluenceA_global(A, B, allStates, realPerms, appliedSourceIds) {
+/* bReach and aReach, when given, are the sets of permanent ids B and A apply to on allStates
+   (see detectDependenciesGlobal): a permanent B does not reach is the same with B and without it. */
+function doesBInfluenceA_global(A, B, allStates, realPerms, appliedSourceIds, bReach, aReach) {
   // Special case: a GAIN_ACTIVATED_FROM_* effect reads the abilities of cards in a hidden zone
   // — Necrotic Ooze from graveyards, Mairsil / Agatha's Soul Cauldron from exile. If B removes
   // all abilities from cards in that zone (Yixlid Jailer), applying B first leaves nothing to
@@ -597,6 +599,8 @@ function doesBInfluenceA_global(A, B, allStates, realPerms, appliedSourceIds) {
   }
 
   for (const perm of realPerms) {
+    // Where B does not apply, A applies and does the same with B as without it.
+    if (!isGlobalB && bReach && !bReach.has(perm.id)) continue;
     const baseState = allStates.get(perm.id);
     if (!baseState) continue;
 
@@ -607,12 +611,13 @@ function doesBInfluenceA_global(A, B, allStates, realPerms, appliedSourceIds) {
       stateWithB = statesWithB.get(perm.id) || snapshotState(baseState);
     } else {
       stateWithB = snapshotState(baseState);
-      if (effectAppliesToPerm(B, stateWithB, perm, perm.id, allStates)) {
+      if (bReach || effectAppliesToPerm(B, stateWithB, perm, perm.id, allStates)) {
         applyEffect(stateWithB, B);
       }
     }
 
-    const aWithout = effectAppliesToPerm(A, stateWithoutB, perm, perm.id, allStates);
+    // (aReach, like bReach, is A tested on a fresh copy of each permanent's state.)
+    const aWithout = aReach ? aReach.has(perm.id) : effectAppliesToPerm(A, stateWithoutB, perm, perm.id, allStates);
     const aWith    = effectAppliesToPerm(A, stateWithB, perm, perm.id, allStates);
 
     // Applicability changed on this permanent
@@ -719,7 +724,7 @@ function doesBInfluenceA_global(A, B, allStates, realPerms, appliedSourceIds) {
   if (A.sourceId && A.sourceId !== 'manual') {
     const srcState = allStates.get(A.sourceId);
     if (srcState) {
-      const srcWithout = snapshotState(srcState);
+      const srcWithout = srcState;   // (only read, never changed)
       // For global effects, use the pre-computed "with B" snapshot
       const srcWith = isGlobalB && statesWithB && statesWithB.has(A.sourceId)
         ? snapshotState(statesWithB.get(A.sourceId))
@@ -950,12 +955,27 @@ function detectDependenciesGlobal(effects, allStates, realPerms, appliedSourceId
   const realPermsById = new Map();
   for (const p of realPerms) realPermsById.set(p.id, p);
   _realPermsByIdCache = realPermsById;
+  // The permanents each effect applies to, worked out once per pass rather than once per pair:
+  // a board of 32 creatures with a +1/+1 counter each and "Each creature you control gets
+  // +1/+1 for each +1/+1 counter on it" (Clamavus) is 35 effects in layer 7c, and testing
+  // every pair on every permanent after each effect applied took half a second a board.
+  const reach = new Array(effects.length);
+  const reachOf = (j) => {
+    if (!reach[j]) {
+      reach[j] = new Set();
+      for (const p of realPerms) {
+        const st = allStates.get(p.id);
+        if (st && effectAppliesToPerm(effects[j], snapshotState(st), p, p.id, allStates)) reach[j].add(p.id);
+      }
+    }
+    return reach[j];
+  };
   const deps = [];
   for (let i = 0; i < effects.length; i++) {
     if (effects[i].isSpellEffect) continue;
     for (let j = 0; j < effects.length; j++) {
       if (i === j) continue;
-      if (doesBInfluenceA_global(effects[i], effects[j], allStates, realPerms, appliedSourceIds)) {
+      if (doesBInfluenceA_global(effects[i], effects[j], allStates, realPerms, appliedSourceIds, reachOf(j), reachOf(i))) {
         deps.push({ dependent: i, dependsOn: j });
       }
     }
