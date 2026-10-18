@@ -1625,8 +1625,12 @@ const Battlefield = {
     let xValue = null;
     const hasManaX = manaCost.includes('{X}');
     // Check if X in oracle is fully covered by auto-computable "where X is" clauses
-    const hasAutoX = typeof _allXAreAutoComputable === 'function' && _allXAreAutoComputable(oracleText);
-    const hasX = hasManaX || (/\bX\b/.test(oracleText) && !hasAutoX);
+    // The X of an activation cost is chosen each time the ability is activated, and is asked
+    // when it is fired ("{X}: Until end of turn, creatures you control have base power and
+    // toughness X/X …" on Mirror Entity), so a line with {X} in its cost does not count here.
+    const cardXText = oracleText.replace(/^[^:\n]*\{X\}[^:\n]*:.*$/gm, '');
+    const hasAutoX = typeof _allXAreAutoComputable === 'function' && _allXAreAutoComputable(cardXText);
+    const hasX = hasManaX || (/\bX\b/.test(cardXText) && !hasAutoX);
     if (hasX) {
       // During restore (suppressPrompt) use the saved value instead of prompting.
       const xVal = opts.suppressPrompt

@@ -56,8 +56,55 @@ function _fireTriggeredWithText(permId, abilityIdx, effectText, fullText, finalS
   // targets, move timestamp to last, then rename (L3) / become a land (L4) / gain the
   // quoted ability (L6). No-op for any other trigger text.
   if (pseudo) Battlefield.injectTriggeredBecomesLand(pseudo, permId, effectText);
+  _finishFire(pseudo);
+}
+
+/* After a triggered or activated ability is put in the timeline: re-render, and when its effect
+   reads an X the player chooses ("{X}: … base power and toughness X/X" on Mirror Entity, "pay
+   {1}{G} any number of times" on Primal Adversary), ask for X now. Each activation is its own
+   ability with its own X. Closing the prompt leaves X as the letter, still editable in the
+   timestamp panel. */
+function _finishFire(pseudo) {
   Battlefield.evaluate();
   renderAll();
+  if (pseudo && pseudo.hasXValue && pseudo.xValue == null) openXValuePopup(pseudo);
+}
+
+function openXValuePopup(pseudo) {
+  let overlay = document.getElementById('x-value-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'x-value-overlay';
+    overlay.className = 'modal-overlay';
+  }
+  // Last in the body, so it sits above any popup the ability was fired from.
+  document.body.appendChild(overlay);
+  const close = () => { overlay.style.display = 'none'; };
+  window._xValueConfirm = () => {
+    const raw = overlay.querySelector('input').value.trim();
+    if (!/^\d+$/.test(raw)) return;
+    close();
+    setXValue(pseudo.id, raw);
+  };
+  overlay.onclick = (e) => { if (e.target === overlay) close(); };
+  overlay.style.display = 'flex';
+  const promptText = pseudo.abilityFullText || pseudo.originalOracleText || '';
+  overlay.innerHTML = `
+    <div class="modal ability-popup">
+      <div class="modal-header">
+        <h3>Choose X</h3>
+        <button class="modal-close" onclick="document.getElementById('x-value-overlay').style.display='none'">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="color:var(--text-dim);margin-bottom:8px;font-size:13px;">${escapeHtml(_replaceYouControl(promptText, pseudo.abilitySourceId || pseudo.id))}</div>
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;">X =
+          <input type="number" min="0" step="1" inputmode="numeric" style="width:70px;text-align:center;"
+            onkeydown="if (event.key === 'Enter') window._xValueConfirm(); else if (event.key === 'Escape') document.getElementById('x-value-overlay').style.display='none';"></label>
+        <button class="ability-popup-fire-btn" style="display:block;width:100%;margin-top:10px;"
+          onclick="window._xValueConfirm()">Confirm</button>
+      </div>
+    </div>`;
+  overlay.querySelector('input').focus();
 }
 
 /* Fire an activated ability: look up the ability from the final computed state,
@@ -134,9 +181,7 @@ function fireActivatedAbility(permId, abilityIdx) {
     openColorChoicePopup(a.fullText, (chosen) => {
       const colorName = { W: 'white', U: 'blue', B: 'black', R: 'red', G: 'green' }[chosen] || chosen.toLowerCase();
       const newText = a.effectText.replace(/the\s+color\s+of\s+your\s+choice/i, colorName);
-      Battlefield.addActivatedAbility(permId, abilityIdx, newText, a.fullText);
-      Battlefield.evaluate();
-      renderAll();
+      _finishFire(Battlefield.addActivatedAbility(permId, abilityIdx, newText, a.fullText));
     });
     return;
   }
@@ -146,24 +191,18 @@ function fireActivatedAbility(permId, abilityIdx) {
     openColorChoicePopup(a.fullText, (chosen) => {
       const colorName = { W: 'white', U: 'blue', B: 'black', R: 'red', G: 'green' }[chosen] || chosen.toLowerCase();
       const newText = a.effectText.replace(/^choose a color\.\s*/i, '').replace(/\bthat color\b/gi, colorName);
-      Battlefield.addActivatedAbility(permId, abilityIdx, newText, a.fullText, finalStates);
-      Battlefield.evaluate();
-      renderAll();
+      _finishFire(Battlefield.addActivatedAbility(permId, abilityIdx, newText, a.fullText, finalStates));
     });
     return;
   }
   const vote = parseVoteOptions(a.effectText);
   if (vote && vote.decidedByMost) {
     openVotePopup(a.fullText, vote.options, (winners) => {
-      Battlefield.addActivatedAbility(permId, abilityIdx, resolveVoteText(a.effectText, winners), a.fullText, finalStates);
-      Battlefield.evaluate();
-      renderAll();
+      _finishFire(Battlefield.addActivatedAbility(permId, abilityIdx, resolveVoteText(a.effectText, winners), a.fullText, finalStates));
     });
     return;
   }
-  Battlefield.addActivatedAbility(permId, abilityIdx, a.effectText, a.fullText, finalStates);
-  Battlefield.evaluate();
-  renderAll();
+  _finishFire(Battlefield.addActivatedAbility(permId, abilityIdx, a.effectText, a.fullText, finalStates));
 }
 
 /* Vote result chooser: one checkbox per option of "each player votes for A, B, or C".
@@ -294,18 +333,16 @@ function _chooseActivateOption(permId, abilityIdx, optionIdx) {
   if (/gains?\s+protection\s+from\s+the\s+color\s+of\s+your\s+choice/i.test(chosen)) {
     openColorChoicePopup(a.fullText, (color) => {
       const colorName = { W: 'white', U: 'blue', B: 'black', R: 'red', G: 'green' }[color] || color.toLowerCase();
-      Battlefield.addActivatedAbility(permId, abilityIdx, chosen.replace(/the\s+color\s+of\s+your\s+choice/i, colorName), a.fullText, finalStates);
+      const pseudo = Battlefield.addActivatedAbility(permId, abilityIdx, chosen.replace(/the\s+color\s+of\s+your\s+choice/i, colorName), a.fullText, finalStates);
       if (_abilityPopupPermId) _updateAbilityPopupContent();
-      Battlefield.evaluate();
-      renderAll();
+      _finishFire(pseudo);
     });
     return;
   }
-  Battlefield.addActivatedAbility(permId, abilityIdx, chosen, a.fullText, finalStates);
+  const pseudo = Battlefield.addActivatedAbility(permId, abilityIdx, chosen, a.fullText, finalStates);
   // Also refresh the parent ability popup if open.
   if (_abilityPopupPermId) _updateAbilityPopupContent();
-  Battlefield.evaluate();
-  renderAll();
+  _finishFire(pseudo);
 }
 
 /* Remove a triggered or activated ability pseudo-permanent from the timeline. */
