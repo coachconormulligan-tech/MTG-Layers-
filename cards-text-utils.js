@@ -1370,10 +1370,11 @@ function _sourceComparedSubject(part, sourcePerm) {
 
 /* A subject a spell or fired ability compares with an object it picked earlier in its text:
    "Then each creature you control with power less than or equal to that land's power" (Earthshape,
-   the land being its target). The object's power is read off the snapshot as the spell had left
-   it (_pickedReferenceStat), and the effect is judged on the snapshot too (_judgedOnSnapshot), so
-   the group is fixed as the spell resolves. Returns buildAppliesToFromText's result with the
-   comparison folded into fn, or null for any other subject. `pos` is the effect's _oraclePos. */
+   the land being its target, _pickedTargetId). Both sides are read from the states the filter is
+   passed; the effect is marked _judgedOnSnapshot, so the engine passes it the board the spell
+   resolved against (_resolutionBoard) and the group is fixed as the spell resolves. Returns
+   buildAppliesToFromText's result with the comparison folded into fn, or null for any other
+   subject. `pos` is the effect's _oraclePos. */
 function _pickComparedSubject(part, sourcePerm, pos) {
   const m = part.replace(/^then\s+/i, '')
     .match(/^(.+?)\s+with\s+(power|toughness)\s+(less|greater)\s+than\s+(or\s+equal\s+to\s+)?that\s+([\w-]+)'s\s+(power|toughness)$/i);
@@ -1385,8 +1386,10 @@ function _pickComparedSubject(part, sourcePerm, pos) {
   return Object.assign({}, base, {
     fn: (st, all, ctrl) => {
       if (!base.fn(st, all, ctrl) || st[stat] === null || st[stat] === undefined) return false;
-      const ref = _pickedReferenceStat(srcId, pos, refStat);
-      if (ref === null) return false;
+      const pickId = _pickedTargetId(srcId, pos);
+      const picked = pickId && all && all.get ? all.get(pickId) : null;
+      const ref = picked ? picked[refStat] : null;
+      if (ref === null || ref === undefined) return false;
       return less ? (orEqual ? st[stat] <= ref : st[stat] < ref) : (orEqual ? st[stat] >= ref : st[stat] > ref);
     },
     desc: `${base.desc} with ${stat} ${less ? 'less' : 'greater'} than ${orEqual ? 'or equal to ' : ''}that ${noun}'s ${refStat}`,

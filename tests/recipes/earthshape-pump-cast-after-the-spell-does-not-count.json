@@ -1,0 +1,19 @@
+{
+  "name": "Earthshape — a pump cast on the land after the spell does not raise the bound",
+  "notes": "(2026-10-18) The board Earthshape resolved against holds only what came before it in the timeline: Giant Growth cast on the Forest afterwards makes it 6/6 on the board, but the bound stays 3 (a 0/0 creature with the three counters put on before the spell), so Hill Giant qualifies and Craw Wurm (6/4) does not.",
+  "steps": [
+    { "add": "Forest", "as": "forest" },
+    { "call": ["addCounter", "@forest", "+1/+1", 3] },
+    { "add": "Hill Giant", "as": "giant" },
+    { "add": "Craw Wurm", "as": "wurm" },
+    { "add": "Earthshape", "as": "e", "spell": true },
+    { "call": ["setTarget", "@e", "@forest"] },
+    { "add": "Giant Growth", "as": "g", "spell": true },
+    { "call": ["setTarget", "@g", "@forest"] }
+  ],
+  "asserts": [
+    { "perm": "Forest", "final": { "power": 6, "toughness": 6, "abilities": { "$includes": ["Hexproof", "Indestructible"] } } },
+    { "perm": "Hill Giant", "final": { "abilities": { "$includes": ["Hexproof", "Indestructible"] } } },
+    { "perm": "Craw Wurm", "final": { "abilities": { "$excludes": ["Hexproof", "Indestructible"] } } }
+  ]
+}

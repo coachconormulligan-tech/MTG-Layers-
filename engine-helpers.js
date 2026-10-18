@@ -228,9 +228,10 @@ function _resolutionStates(effect) {
 /* A permanent as a spell or ability had left it just before `effect`: its snapshot state plus
    what the same spell or ability did to it earlier in its text — types added, P/T set, P/T
    modified ("gets +1/+1. Then if that creature has power 4 or greater, …" — Strider, Ranger of
-   the North; earthbend's "becomes a 0/0 creature" before Earthshape's "that land's power"). A
-   set P/T keeps what modified it in the snapshot (counters, anthems); for an object that was no
-   creature there, that is its P/T counters alone. Counters a spell or ability places are put on
+   the North; "if its toughness is 2 or less" — Welcome to the Fold). A set P/T keeps what
+   modified it in the snapshot (counters, anthems); for an object that was no creature there,
+   that is its P/T counters alone (an anthem it would now get is not seen: a group fixed as a
+   spell resolves uses _resolutionBoard instead). Counters a spell or ability places are put on
    by hand before it is added, so the snapshot holds them. */
 function _stateAsResolved(snapState, permId, effect) {
   if (!snapState || typeof Battlefield === 'undefined') return snapState;
@@ -270,12 +271,11 @@ function _stateAsResolved(snapState, permId, effect) {
   return st;
 }
 
-/* The power or toughness of the object a spell or ability picked earlier in its text, as it had
-   left that object ("Earthbend 3. Then each creature you control with power less than or equal
-   to that land's power …" — Earthshape: the land is its target). The pick is the target of the
-   same source's nearest targeted effect before `pos`, read from the snapshot (_stateAsResolved).
-   Null while nothing is picked. */
-function _pickedReferenceStat(sourceId, pos, stat) {
+/* The object a spell or ability picked earlier in its text ("Earthbend 3. Then each creature you
+   control with power less than or equal to that land's power …" — Earthshape: the land is its
+   target): the target of the same source's nearest targeted effect before `pos`. Null while
+   nothing is picked. */
+function _pickedTargetId(sourceId, pos) {
   if (typeof Battlefield === 'undefined') return null;
   let pick = null;
   for (const e of Battlefield.effects) {
@@ -283,11 +283,7 @@ function _pickedReferenceStat(sourceId, pos, stat) {
     if (e._oraclePos !== undefined && pos !== undefined && e._oraclePos >= pos) continue;
     if (!pick || (e._oraclePos ?? -1) > (pick._oraclePos ?? -1)) pick = e;
   }
-  if (!pick) return null;
-  const at = { sourceId, _oraclePos: pos };
-  const snaps = _resolutionStates(at);
-  const st = _stateAsResolved(snaps && snaps.get(pick.targetId), pick.targetId, at);
-  return st && st[stat] != null ? st[stat] : null;
+  return pick ? pick.targetId : null;
 }
 
 /* The id of the permanent a state object belongs to (states carry no id of their own). */

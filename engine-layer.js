@@ -369,6 +369,46 @@ function applyEffectGlobally(effect, allStates, realPerms, inspectedId, applicat
 }
 /* [END: DEPENDENCY] */
 
+/* The board a spell or fired ability resolved against, for a group it fixes as it resolves ("each
+   creature you control with power less than or equal to that land's power" — Earthshape; CR
+   611.2c): the permanents and effects that come before it in the timeline, each permanent with
+   the counters it had when the spell was added (its snapshot: counters a spell places are put on
+   by hand beforehand), and the spell's own effects before this one (earthbend's 0/0 creature).
+   Run through every layer, so an anthem already on the board reaches the land the spell has just
+   made a creature, and a pump cast later does not. Map of final states, kept for one board
+   version; null when the source is not on the board. */
+const _resolutionBoardCache = new Map();
+function _resolutionBoard(effect, allPermanents, allEffects) {
+  const src = typeof Battlefield !== 'undefined' ? Battlefield.getPermById(effect.sourceId) : null;
+  if (!src) return null;
+  const key = `${effect.sourceId}|${effect._oraclePos}`;
+  const hit = _resolutionBoardCache.get(key);
+  if (hit && hit.version === Battlefield._cacheVersion) return hit.states;
+  const snaps = _resolutionStates(effect);
+  const perms = [];
+  for (const p of allPermanents) {
+    if (p.id !== src.id && !(p.timestamp < src.timestamp)) continue;
+    const snap = !p.isManualEffect && snaps && snaps.get(p.id);
+    perms.push(snap ? { ...p, counters: { ...(snap.counters || {}) } } : p);
+  }
+  const keptIds = new Set(perms.map(p => p.id));
+  const effects = [];
+  for (const e of allEffects) {
+    if (e._isCounterEffect) continue;
+    if (e.sourceId === src.id) {
+      if (e._judgedOnSnapshot) continue;
+      if (e._oraclePos !== undefined && effect._oraclePos !== undefined && e._oraclePos >= effect._oraclePos) continue;
+    } else if (Battlefield.getPermById(e.sourceId) && !keptIds.has(e.sourceId)) continue;
+    effects.push(e);
+  }
+  for (const p of perms) if (!p.isManualEffect) effects.push(...Battlefield._counterEffectsFor(p));
+  const anchor = perms.find(p => !p.isManualEffect);
+  const r = anchor ? evaluatePermanent(anchor, perms, effects, anchor.id) : null;
+  const states = (r && r.finalStates) || null;
+  _resolutionBoardCache.set(key, { version: Battlefield._cacheVersion, states });
+  return states;
+}
+
 /* [KEY: EVALUATE]  —  Full GLOBAL evaluation pipeline.
    Builds states for ALL permanents, then applies effects layer-by-layer
    across the entire battlefield. Returns result for the inspected permanent. */
@@ -406,6 +446,11 @@ function evaluatePermanent(permanent, allPermanents, allEffects, inspectedId) {
       }
     }
     workingEffects.push({ ...e });
+  }
+  // A group a spell fixes as it resolves is judged on the board it resolved against (computed
+  // here, before this pass starts, as it runs a pass of its own).
+  for (const e of workingEffects) {
+    if (e._judgedOnSnapshot) e._resolutionBoard = _resolutionBoard(e, allPermanents, allEffects);
   }
 
   // Set "Equipped" / "Enchanted" traits on targeted permanents based on source type

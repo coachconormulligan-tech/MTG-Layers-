@@ -2855,7 +2855,14 @@ const Battlefield = {
     const perm = this.getPermById(permId);
     if (!perm) return;
     this.effects = this.effects.filter(e => !(e.sourceId === permId && e._isCounterEffect));
+    this.effects.push(...this._counterEffectsFor(perm));
+  },
 
+  /* The effects a permanent's counters make (P/T counters in layer 7c, keyword counters in layer
+     6), from `perm.counters`; the engine's resolution board passes a permanent with the counters
+     it had when a spell was added. */
+  _counterEffectsFor(perm) {
+    const permId = perm.id, out = [];
     const KW_COUNTERS = [
       'flying','first strike','double strike','deathtouch','haste',
       'hexproof','indestructible','lifelink','menace','reach',
@@ -2868,7 +2875,7 @@ const Battlefield = {
       // Match any P/T counter pattern: +N/+N, -N/-N, +N/-N, +N/+0, etc.
       const ptMatch = type.match(/^([+-]\d+)\/([+-]\d+)$/);
       if (ptMatch) {
-        this.effects.push({
+        out.push({
           id: `${permId}_counter_${type}`, layer: '7c', type: EFFECT_TYPE.ADD_COUNTERS,
           params: { counterType: type, count, powerMod: parseInt(ptMatch[1]), toughnessMod: parseInt(ptMatch[2]) },
           appliesTo: null, scope: 'targeted', selfTarget: true,
@@ -2878,7 +2885,7 @@ const Battlefield = {
         });
       } else if (KW_COUNTERS.includes(type.toLowerCase())) {
         const keyword = type.charAt(0).toUpperCase() + type.slice(1);
-        this.effects.push({
+        out.push({
           id: `${permId}_counter_${type}`, layer: '6', type: EFFECT_TYPE.KEYWORD_COUNTER,
           params: { keyword },
           appliesTo: null, scope: 'targeted', selfTarget: true,
@@ -2888,6 +2895,7 @@ const Battlefield = {
         });
       }
     }
+    return out;
   },
 
   /* Flip a transformable card to its other face. Re-creates permanent properties from the new face. */

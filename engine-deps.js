@@ -333,11 +333,12 @@ function effectAppliesToPerm(effect, permState, permanent, permId, allStates, ab
       if (effect.isSpellEffect && permanent) {
         if (effect._judgedOnSnapshot) {
           // "Each creature you control with power less than or equal to that land's power gains …"
-          // (Earthshape): the group is fixed as the spell resolves (CR 611.2c), from its snapshot
-          // and what it did earlier in its text (the land a 0/0 creature with its counters).
-          const snaps = _resolutionStates(effect);
-          const snapState = _stateAsResolved(snaps && snaps.get(permId), permId, effect);
-          if (!snapState || !effect.appliesTo(snapState, snaps, ctrlForFilter)) return false;
+          // (Earthshape): the group is fixed as the spell resolves (CR 611.2c), on the board it
+          // resolved against (_resolutionBoard: the land a 0/0 creature with its counters and
+          // the anthems already there).
+          const board = effect._resolutionBoard;
+          const resolvedState = board && board.get(permId);
+          if (!resolvedState || !effect.appliesTo(resolvedState, board, ctrlForFilter)) return false;
         } else if (effect._firedAtStates) {
           // Triggered/activated ability: check appliesTo against the frozen board state
           // captured at the moment the ability fired. That snapshot is authoritative for
