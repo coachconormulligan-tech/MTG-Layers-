@@ -22,11 +22,24 @@ function _reStampAttachmentTraits(workingEffects, allStates) {
   }
 }
 
-function applyLayerGlobal(effects, allStates, allPermanents, inspectedId, appliedSourceIds, abilityGroupAffectedPerms, abilityGroupRejectedPerms) {
+/* One layer's inspector logs for every traced permanent. A line about the board (a dependency,
+   a loop, a skipped source) goes into every permanent's orderLog at the same place; an effect's
+   own line and applicationLog entry say what it did to that permanent. */
+function _makeLayerTrace(ids) {
+  const tr = { ids, idSet: new Set(ids), logs: new Map(), apps: new Map(), boardLines: new Set(), lines: 0 };
+  for (const id of ids) { tr.logs.set(id, []); tr.apps.set(id, []); }
+  return tr;
+}
+function _traceBoardLine(tr, text) {
+  for (const log of tr.logs.values()) log.push(text);
+  tr.boardLines.add(text);
+  tr.lines++;
+}
+
+function applyLayerGlobal(effects, allStates, allPermanents, tracedIds, appliedSourceIds, abilityGroupAffectedPerms, abilityGroupRejectedPerms) {
   const realPerms = allPermanents.filter(p => !p.isManualEffect);
-  const log = [];
+  const tr = _makeLayerTrace(tracedIds);
   const logReasons = {}; // maps log-entry text → human-readable reason string
-  const applicationLog = [];
   let remaining = [...effects];
   let iteration = 0;
   const MAX_ITER = 50;
@@ -61,8 +74,8 @@ function applyLayerGlobal(effects, allStates, allPermanents, inspectedId, applie
         : '';
 
       const key = `Dependency loop: ${loopNames}: applied in timestamp order (CR 613.8).`;
-      if (!log.includes(key)) {
-        log.push(key);
+      if (!tr.boardLines.has(key)) {
+        _traceBoardLine(tr, key);
         logReasons[key] =
           `A dependency loop (circular dependency) was detected among these effects: ${loopNames}.\n\n` +
           interactionDesc +
@@ -78,8 +91,8 @@ function applyLayerGlobal(effects, allStates, allPermanents, inspectedId, applie
         const onEff  = remaining[d.dependsOn];
         const dd  = `"${depEff ? _effectDisplayName(depEff, allStates) : '?'}" depends on "${onEff ? _effectDisplayName(onEff, allStates) : '?'}"`;
         const key = `Dependency: ${dd}`;
-        if (!log.includes(key)) {
-          log.push(key);
+        if (!tr.boardLines.has(key)) {
+          _traceBoardLine(tr, key);
           // Compute an explanation for the '?' popup in the layer inspector
           if (depEff && onEff) {
             logReasons[key] = getDependencyReason(depEff, onEff, allStates, realPerms);
@@ -105,10 +118,10 @@ function applyLayerGlobal(effects, allStates, allPermanents, inspectedId, applie
 
     if (!chosen) {
       // Fallback: all have deps  —  apply in timestamp order
-      log.push('Fallback: remaining effects applied in timestamp order.');
+      _traceBoardLine(tr, 'Fallback: remaining effects applied in timestamp order.');
       const sorted = [...remaining].sort((a, b) => a.timestamp - b.timestamp);
       for (const eff of sorted) {
-        applyEffectGlobally(eff, allStates, realPerms, inspectedId, applicationLog, log, appliedSourceIds, abilityGroupAffectedPerms, abilityGroupRejectedPerms);
+        applyEffectGlobally(eff, allStates, realPerms, tr, appliedSourceIds, abilityGroupAffectedPerms, abilityGroupRejectedPerms);
       }
       break;
     }
@@ -117,20 +130,20 @@ function applyLayerGlobal(effects, allStates, allPermanents, inspectedId, applie
     remaining.splice(chosenIdx, 1);
 
     // Step 6: apply chosen to ALL matching permanents
-    applyEffectGlobally(chosen, allStates, realPerms, inspectedId, applicationLog, log, appliedSourceIds, abilityGroupAffectedPerms, abilityGroupRejectedPerms);
+    applyEffectGlobally(chosen, allStates, realPerms, tr, appliedSourceIds, abilityGroupAffectedPerms, abilityGroupRejectedPerms);
 
     // Step 7: loop  —  re-detect deps with fresh global state
   }
 
-  if (remaining.length === 0 && log.length === 0) {
-    log.push('No dependencies detected. Applied in timestamp order.');
+  if (remaining.length === 0 && tr.lines === 0) {
+    _traceBoardLine(tr, 'No dependencies detected. Applied in timestamp order.');
   }
 
-  return { log, logReasons, applicationLog };
+  return { logs: tr.logs, logReasons, applicationLogs: tr.apps };
 }
 
-/* Apply one effect to every matching permanent. Log changes for inspected. */
-function applyEffectGlobally(effect, allStates, realPerms, inspectedId, applicationLog, log, appliedSourceIds, abilityGroupAffectedPerms, abilityGroupRejectedPerms) {
+/* Apply one effect to every matching permanent. Log what it did to each traced permanent. */
+function applyEffectGlobally(effect, allStates, realPerms, tr, appliedSourceIds, abilityGroupAffectedPerms, abilityGroupRejectedPerms) {
   // Source-viability: if source lost abilities (305.7 or REMOVE_ABILITIES), effect is dead
   // EXCEPTION: If this source already applied effects in an earlier layer, the entire ability
   // continues to apply even if the source lost its ability in a later layer (CR 613.7a).
@@ -153,20 +166,21 @@ function applyEffectGlobally(effect, allStates, realPerms, inspectedId, applicat
         ? `Rule 305.7: "${displayName}" lost its abilities`
         : `"${displayName}" lost all abilities`;
       const effSrcIdSkip = _effectiveSourceId(effect, allStates);
-      applicationLog.push({
-        source: allStates.get(effSrcIdSkip)?.name || effect.sourceName,
-        sourceId: effSrcIdSkip, timestamp: effect.timestamp,
-        reason: `${reasonText} \u2014 effect no longer exists.`,
-        changes: [],
-      });
-      log.push(`Skipped "${displayName}" \u2014 source lost abilities.`);
+      for (const appLog of tr.apps.values()) {
+        appLog.push({
+          source: allStates.get(effSrcIdSkip)?.name || effect.sourceName,
+          sourceId: effSrcIdSkip, timestamp: effect.timestamp,
+          reason: `${reasonText} \u2014 effect no longer exists.`,
+          changes: [],
+        });
+      }
+      _traceBoardLine(tr, `Skipped "${displayName}" \u2014 source lost abilities.`);
       return;
     }
   }
 
   let appliedAnywhere = false;
-  let appliedToInspected = false;
-  let inspectedChanges = [];
+  const tracedChanges = new Map(); // traced permanent id → changes this effect made to it
 
   // Context for exchange_text guard: tracks which exchange effects have already swapped
   const applyContext = { exchangeApplied: new Set() };
@@ -316,10 +330,7 @@ function applyEffectGlobally(effect, allStates, realPerms, inspectedId, applicat
       abilityGroupAffectedPerms.get(effect.abilityGroupId).add(perm.id);
     }
 
-    if (perm.id === inspectedId) {
-      appliedToInspected = true;
-      inspectedChanges = changes;
-    }
+    if (tr.idSet.has(perm.id)) tracedChanges.set(perm.id, changes);
   }
 
   // Resolve the effective source: accounts for text exchange (Exchange of Words) and
@@ -327,44 +338,46 @@ function applyEffectGlobally(effect, allStates, realPerms, inspectedId, applicat
   const effSrcId = _effectiveSourceId(effect, allStates);
   const computedSourceName = allStates.get(effSrcId)?.name || effect.sourceName;
 
-  if (inspectedChanges.length > 0) {
-    const displayName = _effectDisplayName(effect, allStates);
-    applicationLog.push({
-      source: computedSourceName, sourceId: effSrcId, timestamp: effect.timestamp,
-      reason: effect.desc || `Effect from "${displayName}"`,
-      changes: inspectedChanges,
-    });
-    log.push(`Applied "${displayName}" (ts:${effect.timestamp})`);
-  } else if (appliedToInspected) {
-    // Effect targets this permanent but produces no state change (e.g. CONTROL effect where
-    // the permanent is already controlled by the correct player). Still show it in the inspector
-    // so the user can see the Layer 2 effect is present even when it has no visible delta.
-    const displayName = _effectDisplayName(effect, allStates);
-    applicationLog.push({
-      source: computedSourceName, sourceId: effSrcId, timestamp: effect.timestamp,
-      reason: effect.desc || `Effect from "${displayName}"`,
-      changes: [],
-      appliedToInspected: true,
-    });
-    log.push(`Applied "${displayName}" (ts:${effect.timestamp})`);
-  } else if (appliedAnywhere) {
-    const displayName = _effectDisplayName(effect, allStates);
-    applicationLog.push({
-      source: computedSourceName, sourceId: effSrcId, timestamp: effect.timestamp,
-      reason: `${effect.desc || displayName} (affected other permanents, not inspected)`,
-      changes: [],
-    });
-    log.push(`Applied "${displayName}" (ts:${effect.timestamp}) — affected other permanents.`);
-  } else {
-    // Effect is in this layer but matched no permanents currently on the battlefield.
-    // Still record it so "show all" mode can display it.
-    const displayName = _effectDisplayName(effect, allStates);
-    applicationLog.push({
-      source: computedSourceName, sourceId: effSrcId, timestamp: effect.timestamp,
-      reason: `${effect.desc || displayName} (no matching permanents)`,
-      changes: [],
-    });
-    log.push(`Applied "${displayName}" (ts:${effect.timestamp}) — no matching permanents.`);
+  const displayName = _effectDisplayName(effect, allStates);
+  tr.lines++;
+  for (const id of tr.ids) {
+    const changes = tracedChanges.get(id);
+    const log = tr.logs.get(id), applicationLog = tr.apps.get(id);
+    if (changes && changes.length > 0) {
+      applicationLog.push({
+        source: computedSourceName, sourceId: effSrcId, timestamp: effect.timestamp,
+        reason: effect.desc || `Effect from "${displayName}"`,
+        changes,
+      });
+      log.push(`Applied "${displayName}" (ts:${effect.timestamp})`);
+    } else if (changes) {
+      // Effect applies to this permanent but produces no state change (e.g. CONTROL effect where
+      // the permanent is already controlled by the correct player). Still show it in the inspector
+      // so the user can see the Layer 2 effect is present even when it has no visible delta.
+      applicationLog.push({
+        source: computedSourceName, sourceId: effSrcId, timestamp: effect.timestamp,
+        reason: effect.desc || `Effect from "${displayName}"`,
+        changes: [],
+        appliedToInspected: true,
+      });
+      log.push(`Applied "${displayName}" (ts:${effect.timestamp})`);
+    } else if (appliedAnywhere) {
+      applicationLog.push({
+        source: computedSourceName, sourceId: effSrcId, timestamp: effect.timestamp,
+        reason: `${effect.desc || displayName} (affected other permanents, not inspected)`,
+        changes: [],
+      });
+      log.push(`Applied "${displayName}" (ts:${effect.timestamp}) — affected other permanents.`);
+    } else {
+      // Effect is in this layer but matched no permanents currently on the battlefield.
+      // Still record it so "show all" mode can display it.
+      applicationLog.push({
+        source: computedSourceName, sourceId: effSrcId, timestamp: effect.timestamp,
+        reason: `${effect.desc || displayName} (no matching permanents)`,
+        changes: [],
+      });
+      log.push(`Applied "${displayName}" (ts:${effect.timestamp}) — no matching permanents.`);
+    }
   }
 }
 /* [END: DEPENDENCY] */
@@ -413,6 +426,18 @@ function _resolutionBoard(effect, allPermanents, allEffects) {
    Builds states for ALL permanents, then applies effects layer-by-layer
    across the entire battlefield. Returns result for the inspected permanent. */
 function evaluatePermanent(permanent, allPermanents, allEffects, inspectedId) {
+  return _evaluateBoard(allPermanents, allEffects, [inspectedId], permanent).get(inspectedId);
+}
+
+/* One pipeline run that records the inspector trace of every real permanent:
+   Map<permId, result>, each result shaped as evaluatePermanent's. The traces only read the
+   board, so each is the one a run inspecting that permanent alone would give. */
+function evaluateAllPermanents(allPermanents, allEffects) {
+  const ids = allPermanents.filter(p => !p.isManualEffect).map(p => p.id);
+  return _evaluateBoard(allPermanents, allEffects, ids, null);
+}
+
+function _evaluateBoard(allPermanents, allEffects, tracedIds, permanent) {
   // Build mutable states for ALL real permanents
   const allStates = new Map();
   for (const p of allPermanents) {
@@ -425,10 +450,13 @@ function evaluatePermanent(permanent, allPermanents, allEffects, inspectedId) {
   // Mutate is applied at the end of Layer 1, after COPY effects.
   // See _applyMutateInLayer1 below.
 
-  const result = {
-    base: allStates.has(inspectedId) ? snapshotState(allStates.get(inspectedId)) : createBaseState(permanent),
-    layers: [],
-  };
+  const results = new Map();
+  for (const id of tracedIds) {
+    results.set(id, {
+      base: allStates.has(id) ? snapshotState(allStates.get(id)) : createBaseState(permanent),
+      layers: [],
+    });
+  }
 
   // Working copy of effects  —  may be mutated after Layer 3 text changes
   // Shallow-copy each effect object so mutations (bestow redirect, text-change) don't affect originals
@@ -564,9 +592,11 @@ function evaluatePermanent(permanent, allPermanents, allEffects, inspectedId) {
     }
   }
   // Also update result.base if the inspected perm is targeted
-  const inspectedBase = allStates.get(inspectedId);
-  if (inspectedBase) {
-    result.base.traits = [...inspectedBase.traits];
+  for (const [id, result] of results) {
+    const inspectedBase = allStates.get(id);
+    if (inspectedBase) {
+      result.base.traits = [...inspectedBase.traits];
+    }
   }
 
   // (Exchange guard is now handled via context in applyEffectGlobally, not effect mutation)
@@ -586,26 +616,34 @@ function evaluatePermanent(permanent, allPermanents, allEffects, inspectedId) {
   // with power less than this creature's power can't block it" — Wandering Wolf; Baeloth
   // Barrityl's goad) are not characteristics: they are judged on P/T as layer 7 leaves it, and
   // shown with layer 6 (_judgedAfterPT, set by _sourceComparedSubject's callers in the parser).
-  let afterPTEffects = [], layer6Result = null;
+  let afterPTEffects = [], layer6Results = null;
+  const closeLayer = (layerResults) => {
+    for (const [id, layerResult] of layerResults) {
+      layerResult.stateAfter = snapshotState(allStates.get(id));
+      results.get(id).layers.push(layerResult);
+    }
+  };
 
   for (const layerDef of LAYERS) {
-    const layerResult = {
-      id: layerDef.id,
-      name: layerDef.name,
-      cr: layerDef.cr,
-      active: layerDef.active,
-      effects: [],
-      orderLog: [],
-      orderLogReasons: {},
-      applicationLog: [],
-      stateBefore: snapshotState(allStates.get(inspectedId)),
-      stateAfter: null,
-    };
+    const layerResults = new Map(); // traced permanent id → its trace of this layer
+    for (const id of tracedIds) {
+      layerResults.set(id, {
+        id: layerDef.id,
+        name: layerDef.name,
+        cr: layerDef.cr,
+        active: layerDef.active,
+        effects: [],
+        orderLog: [],
+        orderLogReasons: {},
+        applicationLog: [],
+        stateBefore: snapshotState(allStates.get(id)),
+        stateAfter: null,
+      });
+    }
 
     if (!layerDef.active) {
-      layerResult.stateAfter = snapshotState(allStates.get(inspectedId));
-      layerResult.orderLog.push('(Layer not yet active in MVP)');
-      result.layers.push(layerResult);
+      for (const layerResult of layerResults.values()) layerResult.orderLog.push('(Layer not yet active in MVP)');
+      closeLayer(layerResults);
       continue;
     }
 
@@ -614,7 +652,7 @@ function evaluatePermanent(permanent, allPermanents, allEffects, inspectedId) {
     // stamping the Enchanted trait); they are not effects and must not appear in a layer.
     let layerEffects = workingEffects.filter(e => e.layer === layerDef.id && !e._isAttachTracker);
     if (layerDef.id === '6') {
-      layer6Result = layerResult;
+      layer6Results = layerResults;
       afterPTEffects = layerEffects.filter(e => e._judgedAfterPT);
       layerEffects = layerEffects.filter(e => !e._judgedAfterPT);
     }
@@ -639,18 +677,19 @@ function evaluatePermanent(permanent, allPermanents, allEffects, inspectedId) {
     if (layerEffects.length === 0) {
       // For Layer 1, still apply mutate even if no COPY effects exist
       if (layerDef.id === '1') {
-        _applyMutateLayer1(Battlefield, allStates, inspectedId, layerResult);
+        _applyMutateLayer1(Battlefield, allStates, layerResults);
       }
       // For Layer 4, apply bestow even if no other type effects exist
       if (layerDef.id === '4') {
-        _applyBestowLayer4(Battlefield, allStates, inspectedId, layerResult);
+        _applyBestowLayer4(Battlefield, allStates, layerResults);
         _reStampAttachmentTraits(workingEffects, allStates);
       }
-      layerResult.stateAfter = snapshotState(allStates.get(inspectedId));
-      if (!layerResult.applicationLog.length) {
-        layerResult.orderLog.push('No effects exist in this layer.');
+      for (const layerResult of layerResults.values()) {
+        if (!layerResult.applicationLog.length) {
+          layerResult.orderLog.push('No effects exist in this layer.');
+        }
       }
-      result.layers.push(layerResult);
+      closeLayer(layerResults);
       // Post-Layer-3 re-parse
       if (layerDef.id === '3') {
         workingEffects = _reParseAfterTextChange(allStates, allPermanents, workingEffects);
@@ -659,22 +698,24 @@ function evaluatePermanent(permanent, allPermanents, allEffects, inspectedId) {
     }
 
     // Apply with full CR 613.8 global dependency resolution
-    const { log, logReasons, applicationLog } = applyLayerGlobal(
-      layerEffects, allStates, allPermanents, inspectedId, appliedSourceIds, abilityGroupAffectedPerms, abilityGroupRejectedPerms
+    const { logs, logReasons, applicationLogs } = applyLayerGlobal(
+      layerEffects, allStates, allPermanents, tracedIds, appliedSourceIds, abilityGroupAffectedPerms, abilityGroupRejectedPerms
     );
-    layerResult.orderLog = log;
-    layerResult.orderLogReasons = logReasons;
-    layerResult.applicationLog = applicationLog;
+    for (const [id, layerResult] of layerResults) {
+      layerResult.orderLog = logs.get(id);
+      layerResult.orderLogReasons = logReasons;
+      layerResult.applicationLog = applicationLogs.get(id);
+    }
 
     // MUTATE (CR 702.140): Applied at end of Layer 1, after COPY effects.
     if (layerDef.id === '1') {
-      _applyMutateLayer1(Battlefield, allStates, inspectedId, layerResult);
+      _applyMutateLayer1(Battlefield, allStates, layerResults);
     }
 
     // BESTOW (CR 702.102): Applied at end of Layer 4, after other type effects.
     // Crew type gain is now handled via injected ADD_TYPE effects above.
     if (layerDef.id === '4') {
-      _applyBestowLayer4(Battlefield, allStates, inspectedId, layerResult);
+      _applyBestowLayer4(Battlefield, allStates, layerResults);
       _reStampAttachmentTraits(workingEffects, allStates);
     }
 
@@ -689,8 +730,7 @@ function evaluatePermanent(permanent, allPermanents, allEffects, inspectedId) {
       }
     }
 
-    layerResult.stateAfter = snapshotState(allStates.get(inspectedId));
-    result.layers.push(layerResult);
+    closeLayer(layerResults);
 
     // After Layer 3 (Text), re-parse effects from permanents whose text was modified.
     // This implements the "refactoring" behavior: changed text → changed effects.
@@ -699,52 +739,57 @@ function evaluatePermanent(permanent, allPermanents, allEffects, inspectedId) {
     }
   }
 
-  if (afterPTEffects.length && layer6Result) {
-    const { log, logReasons, applicationLog } = applyLayerGlobal(
-      afterPTEffects, allStates, allPermanents, inspectedId, appliedSourceIds, abilityGroupAffectedPerms, abilityGroupRejectedPerms
+  if (afterPTEffects.length && layer6Results) {
+    const { logs, logReasons, applicationLogs } = applyLayerGlobal(
+      afterPTEffects, allStates, allPermanents, tracedIds, appliedSourceIds, abilityGroupAffectedPerms, abilityGroupRejectedPerms
     );
-    if (!layer6Result.applicationLog.length) layer6Result.orderLog = [];
-    layer6Result.orderLog.push(...log);
-    Object.assign(layer6Result.orderLogReasons, logReasons);
-    layer6Result.applicationLog.push(...applicationLog);
-    // The traits now stand from layer 6 on in the inspector's before/after states.
-    const traits = (allStates.get(inspectedId) || {}).traits || [];
-    let from6 = false;
-    for (const L of result.layers) {
-      if (from6 && L.stateBefore) L.stateBefore.traits = traits.slice();
-      if (L === layer6Result) from6 = true;
-      if (from6 && L.stateAfter) L.stateAfter.traits = traits.slice();
+    for (const [id, layer6Result] of layer6Results) {
+      if (!layer6Result.applicationLog.length) layer6Result.orderLog = [];
+      layer6Result.orderLog.push(...logs.get(id));
+      Object.assign(layer6Result.orderLogReasons, logReasons);
+      layer6Result.applicationLog.push(...applicationLogs.get(id));
+      // The traits now stand from layer 6 on in the inspector's before/after states.
+      const traits = (allStates.get(id) || {}).traits || [];
+      let from6 = false;
+      for (const L of results.get(id).layers) {
+        if (from6 && L.stateBefore) L.stateBefore.traits = traits.slice();
+        if (L === layer6Result) from6 = true;
+        if (from6 && L.stateAfter) L.stateAfter.traits = traits.slice();
+      }
     }
   }
 
-  result.final = snapshotState(allStates.get(inspectedId));
+  for (const [id, result] of results) {
+    result.final = snapshotState(allStates.get(id));
 
-  // Evaluate which conditional abilities have their conditions met
-  // so the UI can show them as active/inactive
-  const finalState = result.final;
-  if (finalState.conditionalAbilityConditions && finalState.conditionalAbilityConditions.size > 0) {
-    const metSet = new Set();
-    const inspState = allStates.get(inspectedId);
-    for (const [idx, condFn] of finalState.conditionalAbilityConditions) {
-      try {
-        if (condFn(inspState, allStates)) metSet.add(idx);
-      } catch(e) { /* condition eval failed, leave as unmet */ }
-    }
-    result.final.conditionalAbilitiesMet = metSet;
-    result.base.conditionalAbilitiesMet = metSet;
-    // Propagate to layer stateAfter snapshots
-    for (const layer of result.layers) {
-      if (layer.stateAfter) layer.stateAfter.conditionalAbilitiesMet = metSet;
+    // Evaluate which conditional abilities have their conditions met
+    // so the UI can show them as active/inactive
+    const finalState = result.final;
+    if (finalState.conditionalAbilityConditions && finalState.conditionalAbilityConditions.size > 0) {
+      const metSet = new Set();
+      const inspState = allStates.get(id);
+      for (const [idx, condFn] of finalState.conditionalAbilityConditions) {
+        try {
+          if (condFn(inspState, allStates)) metSet.add(idx);
+        } catch(e) { /* condition eval failed, leave as unmet */ }
+      }
+      result.final.conditionalAbilitiesMet = metSet;
+      result.base.conditionalAbilitiesMet = metSet;
+      // Propagate to layer stateAfter snapshots
+      for (const layer of result.layers) {
+        if (layer.stateAfter) layer.stateAfter.conditionalAbilitiesMet = metSet;
+      }
     }
   }
 
   // Snapshot every permanent's final state so callers can avoid re-running the pipeline.
-  result.finalStates = new Map();
+  const finalStates = new Map();
   for (const [pid, st] of allStates) {
-    result.finalStates.set(pid, snapshotState(st));
+    finalStates.set(pid, snapshotState(st));
   }
+  for (const result of results.values()) result.finalStates = finalStates;
 
-  return result;
+  return results;
 }
 
 /* Run the layer engine on a single card sitting in a non-battlefield zone (graveyard / exile /
