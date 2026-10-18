@@ -1,0 +1,87 @@
+{
+  "name": "Grishnákh, Brash Instigator — a target stronger than the Army is not taken",
+  "notes": "(2026-10-18) Hill Giant (3) set as the target although the 2/2 Army does not allow it: the engine checks the bound again as the ability resolves, so the Giant stays with its owner and gains no haste.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Orc Army",
+      "as": "army"
+    },
+    {
+      "call": [
+        "addCounter",
+        "@army",
+        "+1/+1",
+        2
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears",
+      "controller": "p2"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant",
+      "controller": "p2"
+    },
+    {
+      "add": "Llanowar Elves",
+      "as": "elves",
+      "controller": "p2"
+    },
+    {
+      "add": "Isamaru, Hound of Konda",
+      "as": "isamaru",
+      "controller": "p2"
+    },
+    {
+      "add": "Grishnákh, Brash Instigator",
+      "as": "g"
+    },
+    {
+      "fire": "@g",
+      "trigger": 0,
+      "as": "t"
+    },
+    {
+      "call": [
+        "setRefPerm",
+        "@t",
+        "@army"
+      ]
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@t",
+        true
+      ]
+    },
+    {
+      "call": [
+        "setTarget",
+        "@t",
+        "@giant"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "controller": "player_1",
+        "abilities": {
+          "$excludes": [
+            "Haste"
+          ]
+        }
+      }
+    }
+  ]
+}

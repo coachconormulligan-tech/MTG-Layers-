@@ -1046,7 +1046,10 @@ function _splitConditionalBranches(text, isSpell, canParse) {
             !/\bbecomes a 0\/0 creature with haste that(?:'s| is) still a land\b/i.test(prev) &&
             !(i > 1 && /^(?:then\s+)?(?:you may\s+)?(?:have\s+)?(?:it|that|those|they)\b/i.test(prev)) ? prev : null;
           if (label) {
-            const own = _branchIsContinuous(body) ? _branchResolveSubject(body, sentences, i, true) : null;
+            // (So is a gain of control with no subject of its own: "Amass Orcs 2. When you do,
+            // until end of turn, gain control of target …" — Grishnákh, Brash Instigator.)
+            const own = _branchIsContinuous(body) ? _branchResolveSubject(body, sentences, i, true)
+              : /^(?:until end of turn,\s+)?(?:gain|exchange) control of\b/i.test(body) ? body : null;
             if (own) gated.push([i, own]);
             for (let j = i + 1; j < sentences.length; j++) {
               const next = sentences[j].replace(/\.$/, '');

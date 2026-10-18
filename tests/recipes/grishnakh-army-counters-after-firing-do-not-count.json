@@ -1,0 +1,84 @@
+{
+  "name": "Grishnákh, Brash Instigator — counters put on the Army after firing do not raise the bound",
+  "notes": "(2026-10-18) The Army had one +1/+1 counter when the ability was fired, two more were put on afterwards: it is 3/3 on the board, but the bound is its fire-time power, 1, so the picker lists only Llanowar Elves.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Orc Army",
+      "as": "army"
+    },
+    {
+      "call": [
+        "addCounter",
+        "@army",
+        "+1/+1",
+        1
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears",
+      "controller": "p2"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant",
+      "controller": "p2"
+    },
+    {
+      "add": "Llanowar Elves",
+      "as": "elves",
+      "controller": "p2"
+    },
+    {
+      "add": "Isamaru, Hound of Konda",
+      "as": "isamaru",
+      "controller": "p2"
+    },
+    {
+      "add": "Grishnákh, Brash Instigator",
+      "as": "g"
+    },
+    {
+      "fire": "@g",
+      "trigger": 0,
+      "as": "t"
+    },
+    {
+      "call": [
+        "setRefPerm",
+        "@t",
+        "@army"
+      ]
+    },
+    {
+      "call": [
+        "addCounter",
+        "@army",
+        "+1/+1",
+        2
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "targetCandidates": {
+        "perm": "Grishnákh, Brash Instigator (trigger)"
+      },
+      "are": [
+        "Llanowar Elves"
+      ]
+    },
+    {
+      "perm": "Orc Army",
+      "final": {
+        "power": 3
+      }
+    }
+  ]
+}

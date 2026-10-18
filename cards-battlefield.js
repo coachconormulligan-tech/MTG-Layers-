@@ -468,7 +468,7 @@ const Battlefield = {
   queueRandomPicks(...picks) { this._queuedRandomPicks = picks; },
 
   /* Shared: create a pseudo-permanent for a triggered/activated ability and parse its effects. */
-  _addAbilityPseudo(sourcePermId, abilityIdx, effectText, fullText, kind, firedAtStates, savedGuesses) {
+  _addAbilityPseudo(sourcePermId, abilityIdx, effectText, fullText, kind, firedAtStates, savedGuesses, opts = {}) {
     const sourcePerm = this.getPermById(sourcePermId);
     if (!sourcePerm) return null;
     const countMap = kind === 'trigger' ? this.triggerCounts : this.activateCounts;
@@ -481,7 +481,10 @@ const Battlefield = {
     const sourceBaseName = sourcePerm.label ? `${sourcePerm.name} ${sourcePerm.label}` : sourcePerm.name;
     const pseudoPerm = {
       id: prefix + '_' + sourcePermId + '_' + abilityIdx + '_' + ts,
-      name: sourceBaseName + ' (' + label + ')',
+      // (One of a "for each opponent" ability's reflexive abilities names its opponent when there
+      // are several: Nihiloor.)
+      name: sourceBaseName + ' (' + label + ')'
+        + (opts.forPlayerId && this.players.length > 2 ? ' for ' + this.getPlayerName(opts.forPlayerId) : ''),
       timestamp: ts,
       owner: sourcePerm.owner || 'player_0',
       controller: sourcePerm.controller || sourcePerm.owner || 'player_0',
@@ -497,6 +500,7 @@ const Battlefield = {
     };
     if (firedAtStates) pseudoPerm._firedAtStates = firedAtStates;
     pseudoPerm._firedAtSnapshot = this._buildFiredAtSnapshot(firedAtStates);
+    if (opts.forPlayerId) pseudoPerm._forPlayerId = opts.forPlayerId;
     this.permanents.push(pseudoPerm);
     // "{2}{B}, Exile this card from your graveyard: Put two +1/+1 counters on target creature"
     // (Venom, Evil Unleashed; Renew): the ability is used from the graveyard, so the card is
@@ -576,6 +580,10 @@ const Battlefield = {
     // "…gains all activated abilities of target creature" (Quicksilver Elemental): likewise.
     const refAb = refPT ? null : _abilitiesFromOtherObject(parsedEffectText);
     if (refAb) parsedEffectText = refAb.text;
+    // "… with power less than or equal to the amassed Army's power" (Grishnákh, Brash
+    // Instigator; Nihiloor): the target is bounded by an object the ability chose.
+    const refBound = (refPT || refAb) ? null : _powerBoundFromChosenObject(parsedEffectText);
+    if (refBound) parsedEffectText = refBound.text;
     // "It gains this card's other abilities" (Symbiote Spider-Man): its printed abilities, quoted.
     const otherAb = _otherAbilitiesOfThisCard(parsedEffectText, sourcePerm.printedAbilities, fullText);
     if (otherAb) parsedEffectText = otherAb.text;
@@ -883,8 +891,11 @@ const Battlefield = {
     // (A "…becomes equal to that creature's power" sentence keeps its own words on display and
     // in a save, which replays this text; only the parser sees the placeholder.)
     // So does "It gains this card's other abilities".
+    // (A pronoun written out as its target starts its sentence with a capital: "Untap that
+    // creature. Target nonlegendary creature an opponent controls gains haste" — Grishnákh.)
+    parsedEffectText = parsedEffectText.replace(/(^|\.\s+|\n)target\b/g, '$1Target');
     let shownText = parsedEffectText;
-    for (const r of [refPT || refAb, otherAb]) if (r) shownText = shownText.replace(r.plain, r.original);
+    for (const r of [refPT || refAb || refBound, otherAb]) if (r) shownText = shownText.replace(r.plain, r.original);
     pseudoPerm.oracleText = shownText;
     const fakeCard = { name: sourcePerm.name, oracle_text: parsedEffectText, type_line: 'Instant', colors: sourcePerm.printedColors, cmc: 0 };
     // Detect "basic land type of your choice" in the ability text so the land-type
@@ -1007,6 +1018,24 @@ const Battlefield = {
         pseudoPerm._refPick = refPT.pick;
       }
     }
+    if (refBound || pseudoPerm._forPlayerId) {
+      // Each target is bounded by the picked object's power as the ability was fired, and one of
+      // a "for each opponent" ability's reflexive abilities targets only that opponent's
+      // permanents. Both are read off the fire-time snapshot the restriction is passed.
+      const pseudoId = pseudoPerm.id, forPlayerId = pseudoPerm._forPlayerId || null;
+      const within = (st) => {
+        if (forPlayerId && st.controller !== forPlayerId) return false;
+        return !refBound || _withinChosenObjectBound(st, pseudoId, refBound.bound);
+      };
+      const bounded = (fn) => (st, states, ctrl) => (!fn || fn(st, states, ctrl)) && within(st);
+      for (const e of newEffects) {
+        if (e.scope !== 'targeted' || e.selfTarget) continue;
+        e.targetRestriction = bounded(e.targetRestriction);
+        if (e._abilityTargetRestriction) e._abilityTargetRestriction = bounded(e._abilityTargetRestriction);
+        if (refBound) { e.params.powerBoundFromRef = refBound.bound; e.params.refPermId = null; }
+      }
+      if (refBound) pseudoPerm._refPick = refBound.pick;
+    }
     if (refAb) {
       const abEff = newEffects.find(e => e.type === EFFECT_TYPE.GAIN_ACTIVATED_FROM_OTHERS);
       if (abEff) {
@@ -1090,6 +1119,22 @@ const Battlefield = {
   },
 
   addTriggeredAbility(sourcePermId, abilityIdx, effectText, fullText, firedAtStates, savedGuesses) {
+    // "For each opponent, tap up to one untapped creature you control. When you do, gain control
+    // of target creature that player controls …" (Nihiloor): one ability for each opponent
+    // (with no opponent on the board, one that can target nothing). Returns the first.
+    const eachText = _forEachOpponentReflexiveText(effectText);
+    if (eachText) {
+      const src = this.getPermById(sourcePermId);
+      const ctrl = src ? (src.controller || src.owner || 'player_0') : this.activePlayerId;
+      const opponents = this.players.filter(pl => pl.id !== ctrl);
+      if (!opponents.length) return this._addAbilityPseudo(sourcePermId, abilityIdx, eachText, fullText, 'trigger', firedAtStates, savedGuesses);
+      let first = null;
+      for (const pl of opponents) {
+        const pseudo = this._addAbilityPseudo(sourcePermId, abilityIdx, eachText, fullText, 'trigger', firedAtStates, savedGuesses, { forPlayerId: pl.id });
+        first = first || pseudo;
+      }
+      return first;
+    }
     return this._addAbilityPseudo(sourcePermId, abilityIdx, effectText, fullText, 'trigger', firedAtStates, savedGuesses);
   },
 
@@ -3081,7 +3126,9 @@ const Battlefield = {
       subtypes: p.printedSubtypes || [], power: p.printedPower, toughness: p.printedToughness,
       colors: p.printedColors || [], abilities: p.printedAbilities || [], oracleText: p.oracleText || '',
       manaValue: p.manaValue || 0, manaCost: p.manaCost || '', timesAttackedThisTurn: p.timesAttackedThisTurn || 0,
-      owner: p.owner || 'player_0', controller: p.owner || 'player_0', isToken: !!p.isToken });
+      owner: p.owner || 'player_0', controller: p.owner || 'player_0', isToken: !!p.isToken,
+      // ("Tap up to one untapped creature you control" — Nihiloor — reads tapped off these.)
+      tapped: !!p.tapped, traits: [...(p.traits || [])], counters: { ...(p.counters || {}) } });
     const hasTraits = realPerms.some(rp => rp.traits && rp.traits.length > 0);
     if (realPerms.length === 0) { this._cachedFinalStates = new Map(); this._cachedFinalStatesVersion = this._cacheVersion; return this._cachedFinalStates; }
     if (this.effects.length === 0 && !hasTraits) {
@@ -3605,6 +3652,8 @@ const Battlefield = {
         targetOpponentPlayerId: p._targetOpponentPlayerId || null,
         targetPlayerId: p._targetPlayerId || null,
         enchantedPlayerId: p._enchantedPlayerId || null,
+        // The opponent one of a "for each opponent" ability's reflexive abilities is for (Nihiloor).
+        forPlayerId: p._forPlayerId || null,
         // Fire-time board snapshot (CR 611.2c): a triggered/activated ability's continuous
         // effect locks in WHICH permanents it affects when it resolves. The engine evaluates
         // membership against this frozen snapshot, not live state. It MUST be persisted —
@@ -3778,7 +3827,8 @@ const Battlefield = {
         pseudo = this.addCommandZoneAbility(f.commanderIdx, f.abilityIndex, f.effectText, f.fullText, f.kind, states, f.guessedTargetSubjects || null);
       } else {
         if (!srcId) continue;
-        pseudo = this._addAbilityPseudo(srcId, f.abilityIndex, f.effectText, f.fullText, f.kind, states, f.guessedTargetSubjects || null);
+        pseudo = this._addAbilityPseudo(srcId, f.abilityIndex, f.effectText, f.fullText, f.kind, states, f.guessedTargetSubjects || null,
+          { forPlayerId: f.forPlayerId || null });
         // Re-inject exchange-text / exchange-control effects (no-op for other text).
         if (pseudo) this.injectTriggeredExchange(pseudo, srcId, f.effectText);
         // Re-inject Princess Yue-style becomes-a-land transform effects. The board's

@@ -311,6 +311,38 @@ function _abilitiesFromOtherObject(text) {
   return { text: text.replace(m[0], plain), plain, original: m[0], pick };
 }
 
+// "… target creature that player controls with power less than or equal to the tapped
+// creature's power" (Nihiloor), "… target nonlegendary creature an opponent controls with power
+// less than or equal to the amassed Army's power" (Grishnákh, Brash Instigator): the target is
+// bounded by an object the ability chose, which the user picks after firing, as the "value
+// from" creature above. It is read from the fire-time snapshot, so it must be on the board (with
+// its counters) and, for "untapped", untapped when the ability is fired; the player taps it or
+// puts the counters on by hand. The comparison is cut from the target for the parser, and
+// _addAbilityPseudo bounds each target by the picked object (params.powerBoundFromRef).
+// Returns { text, plain, original, bound: { stat, refStat, less, orEqual }, pick } or null.
+function _powerBoundFromChosenObject(text) {
+  const m = text.match(/\b(target [^.;\n]+?)\s+with (power|toughness) (less|greater) than (or equal to )?(the tapped creature|the amassed Army)'s (power|toughness)/i);
+  if (!m) return null;
+  const tapped = /tapped/i.test(m[5]);
+  const pick = tapped
+    ? { filter: 'untapped creature', isTarget: false, excludeSource: false, youControl: true, label: 'Tapped creature' }
+    : { filter: 'Army', isTarget: false, excludeSource: false, youControl: true, label: 'Amassed Army' };
+  const bound = { stat: m[2].toLowerCase(), refStat: m[6].toLowerCase(), less: /less/i.test(m[3]), orEqual: !!m[4] };
+  return { text: text.replace(m[0], m[1]), plain: m[1], original: m[0], bound, pick };
+}
+
+// "For each opponent, tap up to one untapped creature you control. When you do, gain control of
+// target creature that player controls …" (Nihiloor): one reflexive ability for each opponent,
+// each picking its own tapped creature and its own target among that opponent's creatures.
+// Returns the text one of them resolves ("Gain control of target creature an opponent controls
+// …"), or null. Battlefield.addTriggeredAbility fires it once an opponent.
+function _forEachOpponentReflexiveText(text) {
+  const m = String(text || '').match(/^for each opponent, tap up to one untapped creature you control\.\s+When you do,\s*([^]+)$/i);
+  if (!m || !/\btarget \w+ that player controls\b/i.test(m[1])) return null;
+  const rest = m[1].replace(/\b(target \w+) that player controls\b/i, '$1 an opponent controls');
+  return rest.charAt(0).toUpperCase() + rest.slice(1);
+}
+
 // Whether an activated ability's cost (the words before its colon, after any ability word)
 // exiles the card itself from the graveyard: "Renew — {1}{G}, Exile this card from your
 // graveyard: …". Such an ability is used while the card is in the graveyard.

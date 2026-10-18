@@ -1,0 +1,130 @@
+{
+  "name": "Nihiloor — each opponent's ability takes its own target, tapped by hand after firing",
+  "notes": "(2026-10-18) The board of the recipe above with the picks made, both picked creatures tapped by hand after firing (the site does not tap them), and a target taken for each opponent: Grizzly Bears and Llanowar Elves come under Player 1's control; Craw Wurm and Centaur Courser stay with their owners.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opp A"
+      ]
+    },
+    {
+      "call": [
+        "addPlayer",
+        "Opp B"
+      ]
+    },
+    {
+      "add": "Trained Armodon",
+      "as": "armodon"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears",
+      "controller": "p2"
+    },
+    {
+      "add": "Craw Wurm",
+      "as": "wurm",
+      "controller": "p2"
+    },
+    {
+      "add": "Centaur Courser",
+      "as": "courser",
+      "controller": "p3"
+    },
+    {
+      "add": "Llanowar Elves",
+      "as": "elves",
+      "controller": "p3"
+    },
+    {
+      "add": "Nihiloor",
+      "as": "n"
+    },
+    {
+      "fire": "@n",
+      "trigger": 0,
+      "asEach": [
+        "ta",
+        "tb"
+      ]
+    },
+    {
+      "call": [
+        "setRefPerm",
+        "@ta",
+        "@armodon"
+      ]
+    },
+    {
+      "call": [
+        "setRefPerm",
+        "@tb",
+        "@ogre"
+      ]
+    },
+    {
+      "call": [
+        "toggleTapped",
+        "@armodon"
+      ]
+    },
+    {
+      "call": [
+        "toggleTapped",
+        "@ogre"
+      ]
+    },
+    {
+      "call": [
+        "setTarget",
+        "@ta",
+        "@bears"
+      ]
+    },
+    {
+      "call": [
+        "setTarget",
+        "@tb",
+        "@elves"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "controller": "player_0"
+      }
+    },
+    {
+      "perm": "Llanowar Elves",
+      "final": {
+        "controller": "player_0"
+      }
+    },
+    {
+      "perm": "Craw Wurm",
+      "final": {
+        "controller": "player_1"
+      }
+    },
+    {
+      "perm": "Centaur Courser",
+      "final": {
+        "controller": "player_2"
+      }
+    },
+    {
+      "perm": "Trained Armodon",
+      "final": {
+        "controller": "player_0"
+      }
+    }
+  ]
+}

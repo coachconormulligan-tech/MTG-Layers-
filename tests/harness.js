@@ -163,6 +163,8 @@ function summarizeBoard() {
    "vote" lists the option(s) that got the most votes, as picked in the site's vote pop-up.
    "mode" is the 0-based mode picked in the site's pop-up for a "choose one —" trigger.
    "color" is the colour picked in the site's pop-up for "protection from the color of your choice".
+   "asEach" names every ability one fire makes, in order: a "for each opponent" ability fires once
+   an opponent (Nihiloor), and "as" names only the first.
    A trigger whose "if [condition]," the site reads as false at fire time (_evaluateTriggerCondition,
    as fireTriggeredAbility does) fires nothing, and "as" names nothing.
    "as" on a call names what the method returns (the pseudo-permanent of a fired ability).
@@ -236,10 +238,15 @@ function buildFromRecipe(recipe, cards) {
       }
       // "color": the colour picked in the site's pop-up for "protection from the color of your choice".
       if (step.color) effectText = effectText.replace(/the\s+color\s+of\s+your\s+choice/i, step.color);
+      const before = new Set(Battlefield.permanents.map(p => p.id));
       const ret = isTrigger
         ? Battlefield.addTriggeredAbility(id, ab.index, effectText, ab.fullText, states)
         : Battlefield.addActivatedAbility(id, ab.index, effectText, ab.fullText, states);
       if (step.as && ret && ret.id) alias[step.as] = ret.id;
+      if (step.asEach) {
+        const made = Battlefield.permanents.filter(p => !before.has(p.id) && p.isManualEffect).map(p => p.id);
+        step.asEach.forEach((name, i) => { if (made[i]) alias[name] = made[i]; });
+      }
     } else if (step.call) {
       const [method, ...rest] = step.call;
       if (typeof Battlefield[method] !== 'function') throw new Error('No Battlefield method: ' + method);

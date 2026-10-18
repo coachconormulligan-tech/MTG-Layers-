@@ -1,0 +1,93 @@
+{
+  "name": "Grishnákh, Brash Instigator — with the amass toggle on, the target is taken and gains haste",
+  "notes": "(2026-10-18) \"When you do, …\" is asked with the \"Amass Orcs 2\" toggle (Conor: every if/when you do is asked). The gain of control was not behind it, only the haste: the splitter's continuous-effect test needs a subject before the verb, so \"until end of turn, gain control of target …\" stayed on the line without the toggle. Now both are: at Yes Grizzly Bears comes under Player 1's control with haste. The saved text also writes the pronoun \"It\" out as \"Target nonlegendary creature …\" with a capital.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Orc Army",
+      "as": "army"
+    },
+    {
+      "call": [
+        "addCounter",
+        "@army",
+        "+1/+1",
+        2
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears",
+      "controller": "p2"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant",
+      "controller": "p2"
+    },
+    {
+      "add": "Llanowar Elves",
+      "as": "elves",
+      "controller": "p2"
+    },
+    {
+      "add": "Isamaru, Hound of Konda",
+      "as": "isamaru",
+      "controller": "p2"
+    },
+    {
+      "add": "Grishnákh, Brash Instigator",
+      "as": "g"
+    },
+    {
+      "fire": "@g",
+      "trigger": 0,
+      "as": "t"
+    },
+    {
+      "call": [
+        "setRefPerm",
+        "@t",
+        "@army"
+      ]
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@t",
+        true
+      ]
+    },
+    {
+      "call": [
+        "setTarget",
+        "@t",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "controller": "player_0",
+        "abilities": {
+          "$includes": [
+            "Haste"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "controller": "player_1"
+      }
+    }
+  ]
+}

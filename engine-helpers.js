@@ -180,7 +180,20 @@ function additiveDeltaDiffers(before1, after1, before2, after2) {
 // (params.refPermId)? Base P/T from another creature (Belligerent Yearling) and activated
 // abilities of a target (Quicksilver Elemental). The effect itself stays on its own subject.
 function _takesFromRef(effect) {
-  return !!(effect && effect.params && (effect.params.ptFromRef || effect.params.abilitiesFromRef));
+  return !!(effect && effect.params && (effect.params.ptFromRef || effect.params.abilitiesFromRef || effect.params.powerBoundFromRef));
+}
+
+// Whether a target's state is within the bound a fired ability takes from the object picked for
+// it ("… with power less than or equal to the amassed Army's power" — Grishnákh, Brash Instigator;
+// "… the tapped creature's power" — Nihiloor). The picked object is read off the ability's
+// fire-time snapshot; nothing is within the bound until it is picked.
+function _withinChosenObjectBound(st, sourceId, bound) {
+  const src = typeof Battlefield !== 'undefined' ? Battlefield.getPermById(sourceId) : null;
+  const refId = src && src._chosenRefPermId;
+  const ref = refId && src._firedAtStates ? src._firedAtStates.get(refId) : null;
+  const v = ref ? ref[bound.refStat] : null, x = st ? st[bound.stat] : null;
+  if (v === null || v === undefined || x === null || x === undefined) return false;
+  return bound.less ? (bound.orEqual ? x <= v : x < v) : (bound.orEqual ? x >= v : x > v);
 }
 
 // The card a mass copy reads off its fired ability's "Linked card" slot (Deceiver of Form:

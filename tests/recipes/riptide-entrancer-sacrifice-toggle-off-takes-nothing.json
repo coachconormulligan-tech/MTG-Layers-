@@ -1,0 +1,14 @@
+{
+  "name": "Riptide Entrancer — \"If you do, gain control of …\" waits for its toggle",
+  "notes": "\"Whenever this creature deals combat damage to a player, you may sacrifice it. If you do, gain control of target creature that player controls.\" (2026-10-18) Every \"if you do\" is asked (Conor, 2026-10-11), but a gain of control with no subject of its own was not continuous to the splitter (its test needs a subject before the verb), so it applied with the toggle at No. Found with Grishnákh, Brash Instigator; Confiscation Coup and Thalakos Deceiver changed the same way. Fired and targeted, toggle left at No: Grizzly Bears stays with its owner.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears", "as": "bears", "controller": "p2" },
+    { "add": "Riptide Entrancer", "as": "r" },
+    { "fire": "@r", "trigger": 0, "as": "t" },
+    { "call": ["setTarget", "@t", "@bears"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "controller": "player_1" } }
+  ]
+}

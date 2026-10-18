@@ -98,6 +98,11 @@ function renderInspector() {
       html += `<div class="insp-section">
         <div class="insp-section-head"><h3>Effects Produced (${spellEffects.length})</h3></div>
         <div class="insp-section-body"><div class="state-block">`;
+      // The object the ability takes a number from comes first when the targets depend on it
+      // ("Amassed Army" — Grishnákh, Brash Instigator; "Tapped creature" — Nihiloor).
+      if (inspPerm._refPick) {
+        html += `<div class="state-row"><span class="state-label">${escapeHtml(inspPerm._refPick.label || 'Value from')}:</span> ${renderRefPermSelect(inspPerm.id)}</div>`;
+      }
       if (needsTargetPicker) {
         html += `<div class="state-row"><span class="state-label">Target:</span> ${renderTargetSelect(inspPerm.id)}</div>`;
       }

@@ -1,0 +1,90 @@
+{
+  "name": "Nihiloor — one ability for each opponent, each target bounded by its own tapped creature",
+  "notes": "\"When Nihiloor enters, for each opponent, tap up to one untapped creature you control. When you do, gain control of target creature that player controls with power less than or equal to the tapped creature's power for as long as you control Nihiloor.\" (2026-10-18, Conor: one pick and one target for each opponent; the site does not tap, the player taps after firing.) Firing it with two opponents makes one ability for each, each with a \"Tapped creature\" pick (read off the fire-time snapshot, so it must be untapped then) and a target among that opponent's creatures only. Opp A's, with Trained Armodon (3) picked, lists Grizzly Bears but not Craw Wurm (6) or anything of Opp B's; Opp B's, with Gray Ogre (2), lists Llanowar Elves but not Centaur Courser (3). Before, the comparison was a required subtype and both lists were empty.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opp A"
+      ]
+    },
+    {
+      "call": [
+        "addPlayer",
+        "Opp B"
+      ]
+    },
+    {
+      "add": "Trained Armodon",
+      "as": "armodon"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears",
+      "controller": "p2"
+    },
+    {
+      "add": "Craw Wurm",
+      "as": "wurm",
+      "controller": "p2"
+    },
+    {
+      "add": "Centaur Courser",
+      "as": "courser",
+      "controller": "p3"
+    },
+    {
+      "add": "Llanowar Elves",
+      "as": "elves",
+      "controller": "p3"
+    },
+    {
+      "add": "Nihiloor",
+      "as": "n"
+    },
+    {
+      "fire": "@n",
+      "trigger": 0,
+      "asEach": [
+        "ta",
+        "tb"
+      ]
+    },
+    {
+      "call": [
+        "setRefPerm",
+        "@ta",
+        "@armodon"
+      ]
+    },
+    {
+      "call": [
+        "setRefPerm",
+        "@tb",
+        "@ogre"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "targetCandidates": {
+        "perm": "Nihiloor (trigger) for Opp A"
+      },
+      "are": [
+        "Grizzly Bears"
+      ]
+    },
+    {
+      "targetCandidates": {
+        "perm": "Nihiloor (trigger) for Opp B"
+      },
+      "are": [
+        "Llanowar Elves"
+      ]
+    }
+  ]
+}

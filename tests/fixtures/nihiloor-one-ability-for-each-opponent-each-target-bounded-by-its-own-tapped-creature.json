@@ -1,0 +1,2564 @@
+{
+ "name": "Nihiloor — one ability for each opponent, each target bounded by its own tapped creature",
+ "notes": "\"When Nihiloor enters, for each opponent, tap up to one untapped creature you control. When you do, gain control of target creature that player controls with power less than or equal to the tapped creature's power for as long as you control Nihiloor.\" (2026-10-18, Conor: one pick and one target for each opponent; the site does not tap, the player taps after firing.) Firing it with two opponents makes one ability for each, each with a \"Tapped creature\" pick (read off the fire-time snapshot, so it must be untapped then) and a target among that opponent's creatures only. Opp A's, with Trained Armodon (3) picked, lists Grizzly Bears but not Craw Wurm (6) or anything of Opp B's; Opp B's, with Gray Ogre (2), lists Llanowar Elves but not Centaur Courser (3). Before, the comparison was a required subtype and both lists were empty.",
+ "recipe": {
+  "steps": [
+   {
+    "call": [
+     "addPlayer",
+     "Opp A"
+    ]
+   },
+   {
+    "call": [
+     "addPlayer",
+     "Opp B"
+    ]
+   },
+   {
+    "add": "Trained Armodon",
+    "as": "armodon"
+   },
+   {
+    "add": "Gray Ogre",
+    "as": "ogre"
+   },
+   {
+    "add": "Grizzly Bears",
+    "as": "bears",
+    "controller": "p2"
+   },
+   {
+    "add": "Craw Wurm",
+    "as": "wurm",
+    "controller": "p2"
+   },
+   {
+    "add": "Centaur Courser",
+    "as": "courser",
+    "controller": "p3"
+   },
+   {
+    "add": "Llanowar Elves",
+    "as": "elves",
+    "controller": "p3"
+   },
+   {
+    "add": "Nihiloor",
+    "as": "n"
+   },
+   {
+    "fire": "@n",
+    "trigger": 0,
+    "asEach": [
+     "ta",
+     "tb"
+    ]
+   },
+   {
+    "call": [
+     "setRefPerm",
+     "@ta",
+     "@armodon"
+    ]
+   },
+   {
+    "call": [
+     "setRefPerm",
+     "@tb",
+     "@ogre"
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "targetCandidates": {
+    "perm": "Nihiloor (trigger) for Opp A"
+   },
+   "are": [
+    "Grizzly Bears"
+   ]
+  },
+  {
+   "targetCandidates": {
+    "perm": "Nihiloor (trigger) for Opp B"
+   },
+   "are": [
+    "Llanowar Elves"
+   ]
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "b55e0487-3abb-4f2b-b34c-d6ad49164e73",
+     "oracle_id": "4c9f5359-249e-488b-9a7e-db1a43c2b1f4",
+     "multiverse_ids": [
+      397448
+     ],
+     "mtgo_id": 56470,
+     "mtgo_foil_id": 56471,
+     "name": "Trained Armodon",
+     "lang": "en",
+     "released_at": "2015-05-06",
+     "uri": "https://api.scryfall.com/cards/b55e0487-3abb-4f2b-b34c-d6ad49164e73",
+     "scryfall_uri": "https://scryfall.com/card/tpr/200/trained-armodon?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T10:27:33Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/b/5/b55e0487-3abb-4f2b-b34c-d6ad49164e73.jpg?1783938453",
+      "normal": "https://cards.scryfall.io/normal/front/b/5/b55e0487-3abb-4f2b-b34c-d6ad49164e73.jpg?1783938453",
+      "large": "https://cards.scryfall.io/large/front/b/5/b55e0487-3abb-4f2b-b34c-d6ad49164e73.jpg?1783938453",
+      "png": "https://cards.scryfall.io/png/front/b/5/b55e0487-3abb-4f2b-b34c-d6ad49164e73.png?1783938453",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/b/5/b55e0487-3abb-4f2b-b34c-d6ad49164e73.jpg?1783938453",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/b/5/b55e0487-3abb-4f2b-b34c-d6ad49164e73.jpg?1783938453",
+      "thumb": "https://cards.scryfall.io/thumb/front/b/5/b55e0487-3abb-4f2b-b34c-d6ad49164e73.webp?1783938453",
+      "grid": "https://cards.scryfall.io/grid/front/b/5/b55e0487-3abb-4f2b-b34c-d6ad49164e73.webp?1783938453",
+      "display": "https://cards.scryfall.io/display/front/b/5/b55e0487-3abb-4f2b-b34c-d6ad49164e73.webp?1783938453",
+      "art": "https://cards.scryfall.io/art/front/b/5/b55e0487-3abb-4f2b-b34c-d6ad49164e73.webp?1783938453",
+      "crop": "https://cards.scryfall.io/crop/front/b/5/b55e0487-3abb-4f2b-b34c-d6ad49164e73.webp?1783938453"
+     },
+     "mana_cost": "{1}{G}{G}",
+     "cmc": 3,
+     "type_line": "Creature — Elephant",
+     "oracle_text": "",
+     "power": "3",
+     "toughness": "3",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "41b3e002-ab58-46a0-8024-056ee843e267",
+     "set": "tpr",
+     "set_name": "Tempest Remastered",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/41b3e002-ab58-46a0-8024-056ee843e267",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Atpr&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/tpr?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/b55e0487-3abb-4f2b-b34c-d6ad49164e73/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A4c9f5359-249e-488b-9a7e-db1a43c2b1f4&unique=prints",
+     "collector_number": "200",
+     "digital": true,
+     "rarity": "common",
+     "flavor_text": "These are its last days. Better to grow broad and heavy. Better that the enemy is crushed beneath its carcass.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Gary Leach",
+     "artist_ids": [
+      "fb608209-fd37-435a-b2fb-a158aeb3f927"
+     ],
+     "illustration_id": "523a3b81-5156-4a01-8735-63bb14f8ac69",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 25365,
+     "penny_rank": 18010,
+     "prices": {
+      "usd": null,
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": null,
+      "tix": "0.05"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=397448&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DTrained%2BArmodon",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DTrained%2BArmodon",
+      "edhrec": "https://edhrec.com/route/?cc=Trained+Armodon"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fmagic%2Fproduct%3FproductLineName%3Dmagic%26q%3DTrained%2BArmodon%26view%3Dgrid",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products/Search?referrer=scryfall&searchString=Trained+Armodon&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/56470?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "11bf2cc0-799f-4eb8-b338-ed7543f469e7",
+     "oracle_id": "83c8a3a6-2e1a-4e26-8847-6d066f42d906",
+     "multiverse_ids": [
+      2283
+     ],
+     "tcgplayer_id": 1777,
+     "cardmarket_id": 6053,
+     "name": "Gray Ogre",
+     "lang": "en",
+     "released_at": "1995-04-01",
+     "uri": "https://api.scryfall.com/cards/11bf2cc0-799f-4eb8-b338-ed7543f469e7",
+     "scryfall_uri": "https://scryfall.com/card/4ed/200/gray-ogre?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T13:03:48Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+      "normal": "https://cards.scryfall.io/normal/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+      "large": "https://cards.scryfall.io/large/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+      "png": "https://cards.scryfall.io/png/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.png?1783947828",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+      "thumb": "https://cards.scryfall.io/thumb/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.webp?1783947828",
+      "grid": "https://cards.scryfall.io/grid/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.webp?1783947828",
+      "display": "https://cards.scryfall.io/display/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.webp?1783947828",
+      "art": "https://cards.scryfall.io/art/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.webp?1783947828",
+      "crop": "https://cards.scryfall.io/crop/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.webp?1783947828"
+     },
+     "mana_cost": "{2}{R}",
+     "cmc": 3,
+     "type_line": "Creature — Ogre",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "R"
+     ],
+     "color_identity": [
+      "R"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "2dd259d4-dc13-4956-a2dc-3e1d70b4a743",
+     "set": "4ed",
+     "set_name": "Fourth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/2dd259d4-dc13-4956-a2dc-3e1d70b4a743",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A4ed&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/4ed?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/11bf2cc0-799f-4eb8-b338-ed7543f469e7/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A83c8a3a6-2e1a-4e26-8847-6d066f42d906&unique=prints",
+     "collector_number": "200",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "The Ogre philosopher Gnerdel believed the purpose of life was to live as high on the food chain as possible. She refused to eat vegetarians, preferring to live entirely on creatures that preyed on sentient beings.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Dan Frazier",
+     "artist_ids": [
+      "059bba56-5feb-42e4-8c2e-e2f1e6ba11f9"
+     ],
+     "illustration_id": "a7399345-c36e-4a91-a4f5-22a2a0eeffaa",
+     "border_color": "white",
+     "frame": "1993",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 30971,
+     "prices": {
+      "usd": "0.06",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.05",
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=2283&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGray%2BOgre",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGray%2BOgre",
+      "edhrec": "https://edhrec.com/route/?cc=Gray+Ogre"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F1777%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=6053&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Gray+Ogre&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+     "multiverse_ids": [
+      129586
+     ],
+     "mtgo_id": 27400,
+     "mtgo_foil_id": 27401,
+     "tcgplayer_id": 15153,
+     "cardmarket_id": 16432,
+     "name": "Grizzly Bears",
+     "lang": "en",
+     "released_at": "2007-07-13",
+     "uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "scryfall_uri": "https://scryfall.com/card/10e/268/grizzly-bears?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:43:21Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "normal": "https://cards.scryfall.io/normal/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "large": "https://cards.scryfall.io/large/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "png": "https://cards.scryfall.io/png/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.png?1783943001",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "grid": "https://cards.scryfall.io/grid/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "display": "https://cards.scryfall.io/display/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "art": "https://cards.scryfall.io/art/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "crop": "https://cards.scryfall.io/crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001"
+     },
+     "mana_cost": "{1}{G}",
+     "cmc": 2,
+     "type_line": "Creature — Bear",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set": "10e",
+     "set_name": "Tenth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A14c8f55d-d177-4c25-a931-ebeb9e6062a0&unique=prints",
+     "collector_number": "268",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"We cannot forget that among all of Dominaria's wonders, a system of life exists, with prey and predators that will never fight wars nor vie for ancient power.\"\n—Jolrael, empress of beasts",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "D. J. Cleland-Hura",
+     "artist_ids": [
+      "87d21070-2432-4167-8aab-5968af1c14f3"
+     ],
+     "illustration_id": "066bfe81-0f53-43da-a074-b2ecc5dcda72",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 8114,
+     "penny_rank": 10982,
+     "prices": {
+      "usd": "0.22",
+      "usd_foil": "3.29",
+      "usd_etched": null,
+      "eur": "0.11",
+      "eur_foil": "1.97",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129586&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "edhrec": "https://edhrec.com/route/?cc=Grizzly+Bears"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15153%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16432&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27400?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_1",
+    "controller": "player_1",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "3875f73d-6108-488b-bd34-4cf2c23ce6b3",
+     "oracle_id": "6a462a69-3e42-41de-a3aa-a488d9f38d69",
+     "multiverse_ids": [
+      189903
+     ],
+     "mtgo_id": 33063,
+     "mtgo_foil_id": 33064,
+     "tcgplayer_id": 32579,
+     "cardmarket_id": 21219,
+     "name": "Craw Wurm",
+     "lang": "en",
+     "released_at": "2009-07-17",
+     "uri": "https://api.scryfall.com/cards/3875f73d-6108-488b-bd34-4cf2c23ce6b3",
+     "scryfall_uri": "https://scryfall.com/card/m10/173/craw-wurm?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:32:44Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.jpg?1783942364",
+      "normal": "https://cards.scryfall.io/normal/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.jpg?1783942364",
+      "large": "https://cards.scryfall.io/large/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.jpg?1783942364",
+      "png": "https://cards.scryfall.io/png/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.png?1783942364",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.jpg?1783942364",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.jpg?1783942364",
+      "thumb": "https://cards.scryfall.io/thumb/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.webp?1783942364",
+      "grid": "https://cards.scryfall.io/grid/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.webp?1783942364",
+      "display": "https://cards.scryfall.io/display/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.webp?1783942364",
+      "art": "https://cards.scryfall.io/art/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.webp?1783942364",
+      "crop": "https://cards.scryfall.io/crop/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.webp?1783942364"
+     },
+     "mana_cost": "{4}{G}{G}",
+     "cmc": 6,
+     "type_line": "Creature — Wurm",
+     "oracle_text": "",
+     "power": "6",
+     "toughness": "4",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "0dba38a9-6b9d-4768-9831-4e03e8970a0b",
+     "set": "m10",
+     "set_name": "Magic 2010",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/0dba38a9-6b9d-4768-9831-4e03e8970a0b",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Am10&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/m10?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/3875f73d-6108-488b-bd34-4cf2c23ce6b3/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A6a462a69-3e42-41de-a3aa-a488d9f38d69&unique=prints",
+     "collector_number": "173",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "The most terrifying thing about the craw wurm is probably the horrible crashing sound it makes as it speeds through the forest. This noise is so loud it echoes through the trees and seems to come from all directions at once.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Richard Sardinha",
+     "artist_ids": [
+      "a3cce4f0-fbf5-4883-aac7-fb28b993b132"
+     ],
+     "illustration_id": "296615a8-58e7-4f90-9c56-01d83b85849b",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 22392,
+     "prices": {
+      "usd": "0.12",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.02",
+      "eur_foil": "0.29",
+      "tix": "0.04"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=189903&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DCraw%2BWurm",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DCraw%2BWurm",
+      "edhrec": "https://edhrec.com/route/?cc=Craw+Wurm"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F32579%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=21219&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/33063?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_1",
+    "controller": "player_1",
+    "timestamp": 4,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_5",
+    "scryfallData": {
+     "object": "card",
+     "id": "e8b67ee8-3189-4426-8b1a-b540267768fd",
+     "oracle_id": "2f5bf099-2e01-4e1c-9ebf-0ce0ac66939e",
+     "multiverse_ids": [
+      466922
+     ],
+     "mtgo_id": 73235,
+     "arena_id": 69953,
+     "tcgplayer_id": 192901,
+     "cardmarket_id": 379533,
+     "name": "Centaur Courser",
+     "lang": "en",
+     "released_at": "2019-07-12",
+     "uri": "https://api.scryfall.com/cards/e8b67ee8-3189-4426-8b1a-b540267768fd",
+     "scryfall_uri": "https://scryfall.com/card/m20/168/centaur-courser?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T08:56:06Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/e/8/e8b67ee8-3189-4426-8b1a-b540267768fd.jpg?1783932966",
+      "normal": "https://cards.scryfall.io/normal/front/e/8/e8b67ee8-3189-4426-8b1a-b540267768fd.jpg?1783932966",
+      "large": "https://cards.scryfall.io/large/front/e/8/e8b67ee8-3189-4426-8b1a-b540267768fd.jpg?1783932966",
+      "png": "https://cards.scryfall.io/png/front/e/8/e8b67ee8-3189-4426-8b1a-b540267768fd.png?1783932966",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/e/8/e8b67ee8-3189-4426-8b1a-b540267768fd.jpg?1783932966",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/e/8/e8b67ee8-3189-4426-8b1a-b540267768fd.jpg?1783932966",
+      "thumb": "https://cards.scryfall.io/thumb/front/e/8/e8b67ee8-3189-4426-8b1a-b540267768fd.webp?1783932966",
+      "grid": "https://cards.scryfall.io/grid/front/e/8/e8b67ee8-3189-4426-8b1a-b540267768fd.webp?1783932966",
+      "display": "https://cards.scryfall.io/display/front/e/8/e8b67ee8-3189-4426-8b1a-b540267768fd.webp?1783932966",
+      "art": "https://cards.scryfall.io/art/front/e/8/e8b67ee8-3189-4426-8b1a-b540267768fd.webp?1783932966",
+      "crop": "https://cards.scryfall.io/crop/front/e/8/e8b67ee8-3189-4426-8b1a-b540267768fd.webp?1783932966"
+     },
+     "mana_cost": "{2}{G}",
+     "cmc": 3,
+     "type_line": "Creature — Centaur Warrior",
+     "oracle_text": "",
+     "power": "3",
+     "toughness": "3",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "arena",
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "4a787360-9767-4f44-80b1-2405dc5e39c7",
+     "set": "m20",
+     "set_name": "Core Set 2020",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/4a787360-9767-4f44-80b1-2405dc5e39c7",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Am20&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/m20?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/e8b67ee8-3189-4426-8b1a-b540267768fd/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A2f5bf099-2e01-4e1c-9ebf-0ce0ac66939e&unique=prints",
+     "collector_number": "168",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"The centaurs are truly free. Never will they be tamed by temptation or controlled by fear. They live in total harmony, a feat not yet achieved by our kind.\"\n—Ramal, sage of Westgate",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Vance Kovacs",
+     "artist_ids": [
+      "b5516011-4722-4fc8-8542-102cecc52b71"
+     ],
+     "illustration_id": "a4cf897d-8da5-4d63-97dc-d717b4392acb",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 20177,
+     "penny_rank": 16649,
+     "prices": {
+      "usd": "0.12",
+      "usd_foil": "0.23",
+      "usd_etched": null,
+      "eur": "0.05",
+      "eur_foil": "0.09",
+      "tix": "0.05"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=466922&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DCentaur%2BCourser",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DCentaur%2BCourser",
+      "edhrec": "https://edhrec.com/route/?cc=Centaur+Courser"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F192901%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=379533&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/73235?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_2",
+    "controller": "player_2",
+    "timestamp": 5,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_6",
+    "scryfallData": {
+     "object": "card",
+     "id": "6a0b230b-d391-4998-a3f7-7b158a0ec2cd",
+     "oracle_id": "68954295-54e3-4303-a6bc-fc4547a4e3a3",
+     "multiverse_ids": [
+      679969
+     ],
+     "mtgo_id": 133480,
+     "arena_id": 93940,
+     "tcgplayer_id": 557921,
+     "cardmarket_id": 795132,
+     "name": "Llanowar Elves",
+     "lang": "en",
+     "released_at": "2024-11-15",
+     "uri": "https://api.scryfall.com/cards/6a0b230b-d391-4998-a3f7-7b158a0ec2cd",
+     "scryfall_uri": "https://scryfall.com/card/fdn/227/llanowar-elves?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T02:17:37Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+      "normal": "https://cards.scryfall.io/normal/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+      "large": "https://cards.scryfall.io/large/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+      "png": "https://cards.scryfall.io/png/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.png?1783909057",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+      "thumb": "https://cards.scryfall.io/thumb/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.webp?1783909057",
+      "grid": "https://cards.scryfall.io/grid/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.webp?1783909057",
+      "display": "https://cards.scryfall.io/display/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.webp?1783909057",
+      "art": "https://cards.scryfall.io/art/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.webp?1783909057",
+      "crop": "https://cards.scryfall.io/crop/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.webp?1783909057"
+     },
+     "mana_cost": "{G}",
+     "cmc": 1,
+     "type_line": "Creature — Elf Druid",
+     "oracle_text": "{T}: Add {G}.",
+     "power": "1",
+     "toughness": "1",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "produced_mana": [
+      "G"
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "11bd6cef-f887-4b07-a957-4c53cb3c9c87",
+       "component": "combo_piece",
+       "name": "Llanowar Elves",
+       "type_line": "Creature — Elf Druid",
+       "uri": "https://api.scryfall.com/cards/11bd6cef-f887-4b07-a957-4c53cb3c9c87"
+      },
+      {
+       "object": "related_card",
+       "id": "8ef95e7a-9f07-41f8-908b-2df93e03d391",
+       "component": "combo_piece",
+       "name": "Marwyn's Kindred",
+       "type_line": "Sorcery",
+       "uri": "https://api.scryfall.com/cards/8ef95e7a-9f07-41f8-908b-2df93e03d391"
+      }
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "arena",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a7ecb771-d1b6-4dec-8cf5-8d45179f21e0",
+     "set": "fdn",
+     "set_name": "Foundations",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a7ecb771-d1b6-4dec-8cf5-8d45179f21e0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Afdn&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/fdn?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/6a0b230b-d391-4998-a3f7-7b158a0ec2cd/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A68954295-54e3-4303-a6bc-fc4547a4e3a3&unique=prints",
+     "collector_number": "227",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "The elves of the Llanowar forest have defended it for generations. It is their sacred duty to keep outside influences from corrupting their ancestral home.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Kev Walker",
+     "artist_ids": [
+      "f366a0ee-a0cd-466d-ba6a-90058c7a31a6"
+     ],
+     "illustration_id": "96ffb0f9-113f-4fff-a45f-69cbb8d60890",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "promo_types": [
+      "beginnerbox",
+      "startercollection"
+     ],
+     "edhrec_rank": 58,
+     "penny_rank": 282,
+     "preview": {
+      "source": "Wizards of the Coast",
+      "source_uri": "https://twitter.com/wizards_magic/status/1806644973263302981",
+      "previewed_at": "2024-06-28"
+     },
+     "prices": {
+      "usd": "0.28",
+      "usd_foil": "1.59",
+      "usd_etched": null,
+      "eur": "0.21",
+      "eur_foil": "0.52",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=679969&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DLlanowar%2BElves",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DLlanowar%2BElves",
+      "edhrec": "https://edhrec.com/route/?cc=Llanowar+Elves"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F557921%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=795132&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/133480?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_2",
+    "controller": "player_2",
+    "timestamp": 6,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_7",
+    "scryfallData": {
+     "object": "card",
+     "id": "a652ac92-4e61-45ec-866e-baafefd355e5",
+     "oracle_id": "148271de-3351-41a1-bcf5-3ecaadc51540",
+     "multiverse_ids": [
+      531872
+     ],
+     "tcgplayer_id": 243765,
+     "cardmarket_id": 572218,
+     "name": "Nihiloor",
+     "lang": "en",
+     "released_at": "2021-07-23",
+     "uri": "https://api.scryfall.com/cards/a652ac92-4e61-45ec-866e-baafefd355e5",
+     "scryfall_uri": "https://scryfall.com/card/afc/53/nihiloor?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T07:03:58Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/a/6/a652ac92-4e61-45ec-866e-baafefd355e5.jpg?1783926238",
+      "normal": "https://cards.scryfall.io/normal/front/a/6/a652ac92-4e61-45ec-866e-baafefd355e5.jpg?1783926238",
+      "large": "https://cards.scryfall.io/large/front/a/6/a652ac92-4e61-45ec-866e-baafefd355e5.jpg?1783926238",
+      "png": "https://cards.scryfall.io/png/front/a/6/a652ac92-4e61-45ec-866e-baafefd355e5.png?1783926238",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/a/6/a652ac92-4e61-45ec-866e-baafefd355e5.jpg?1783926238",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/a/6/a652ac92-4e61-45ec-866e-baafefd355e5.jpg?1783926238",
+      "thumb": "https://cards.scryfall.io/thumb/front/a/6/a652ac92-4e61-45ec-866e-baafefd355e5.webp?1783926238",
+      "grid": "https://cards.scryfall.io/grid/front/a/6/a652ac92-4e61-45ec-866e-baafefd355e5.webp?1783926238",
+      "display": "https://cards.scryfall.io/display/front/a/6/a652ac92-4e61-45ec-866e-baafefd355e5.webp?1783926238",
+      "art": "https://cards.scryfall.io/art/front/a/6/a652ac92-4e61-45ec-866e-baafefd355e5.webp?1783926238",
+      "crop": "https://cards.scryfall.io/crop/front/a/6/a652ac92-4e61-45ec-866e-baafefd355e5.webp?1783926238"
+     },
+     "mana_cost": "{2}{W}{U}{B}",
+     "cmc": 5,
+     "type_line": "Legendary Creature — Horror",
+     "oracle_text": "When Nihiloor enters, for each opponent, tap up to one untapped creature you control. When you do, gain control of target creature that player controls with power less than or equal to the tapped creature's power for as long as you control Nihiloor.\nWhenever you attack with a creature an opponent owns, you gain 2 life and that player loses 2 life.",
+     "power": "3",
+     "toughness": "5",
+     "colors": [
+      "B",
+      "U",
+      "W"
+     ],
+     "color_identity": [
+      "B",
+      "U",
+      "W"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": false,
+     "finishes": [
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "db1b46f9-893c-4623-9465-985ff6e4472c",
+     "set": "afc",
+     "set_name": "Forgotten Realms Commander",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/db1b46f9-893c-4623-9465-985ff6e4472c",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aafc&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/afc?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/a652ac92-4e61-45ec-866e-baafefd355e5/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A148271de-3351-41a1-bcf5-3ecaadc51540&unique=prints",
+     "collector_number": "53",
+     "digital": false,
+     "rarity": "mythic",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Chris Rallis",
+     "artist_ids": [
+      "a8e7b854-b15a-421a-b66d-6e68187ae285"
+     ],
+     "illustration_id": "2a045595-a0d5-4b5c-944d-782735c3df58",
+     "border_color": "black",
+     "frame": "2015",
+     "frame_effects": [
+      "legendary"
+     ],
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 16940,
+     "preview": {
+      "source": "MTG Muddstah",
+      "source_uri": "https://www.youtube.com/watch?v=JuG8gigPnlM",
+      "previewed_at": "2021-07-10"
+     },
+     "prices": {
+      "usd": null,
+      "usd_foil": "0.40",
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": "0.39",
+      "tix": null
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=531872&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DNihiloor",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DNihiloor",
+      "edhrec": "https://edhrec.com/route/?cc=Nihiloor"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F243765%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=572218&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Nihiloor&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 7,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [
+   {
+    "id": "trig_perm_7_0_8",
+    "kind": "trigger",
+    "pseudoKind": "ability",
+    "sourceId": "perm_7",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 0,
+    "timestamp": 8,
+    "effectText": "Gain control of target creature an opponent controls with power less than or equal to the tapped creature's power for as long as you control this card.",
+    "xValue": null,
+    "hasXValue": false,
+    "cdaUserValue": null,
+    "linkedCards": null,
+    "fullText": "When this card enters, for each opponent, tap up to one untapped creature you control. When you do, gain control of target creature that player controls with power less than or equal to the tapped creature's power for as long as you control this card.",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "guessedTargetSubjects": [],
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "forPlayerId": "player_1",
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Trained Armodon",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Elephant"
+       ],
+       "power": 3,
+       "toughness": 3,
+       "colors": [
+        "G"
+       ],
+       "abilities": [],
+       "oracleText": "",
+       "manaValue": 3,
+       "manaCost": "{1}{G}{G}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "tapped": false,
+       "traits": [],
+       "counters": {}
+      }
+     ],
+     [
+      "perm_2",
+      {
+       "name": "Gray Ogre",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Ogre"
+       ],
+       "power": 2,
+       "toughness": 2,
+       "colors": [
+        "R"
+       ],
+       "abilities": [],
+       "oracleText": "",
+       "manaValue": 3,
+       "manaCost": "{2}{R}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "tapped": false,
+       "traits": [],
+       "counters": {}
+      }
+     ],
+     [
+      "perm_3",
+      {
+       "name": "Grizzly Bears",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Bear"
+       ],
+       "power": 2,
+       "toughness": 2,
+       "colors": [
+        "G"
+       ],
+       "abilities": [],
+       "oracleText": "",
+       "manaValue": 2,
+       "manaCost": "{1}{G}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "tapped": false,
+       "traits": [],
+       "counters": {},
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_4",
+      {
+       "name": "Craw Wurm",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Wurm"
+       ],
+       "power": 6,
+       "toughness": 4,
+       "colors": [
+        "G"
+       ],
+       "abilities": [],
+       "oracleText": "",
+       "manaValue": 6,
+       "manaCost": "{4}{G}{G}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "tapped": false,
+       "traits": [],
+       "counters": {},
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_5",
+      {
+       "name": "Centaur Courser",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Centaur",
+        "Warrior"
+       ],
+       "power": 3,
+       "toughness": 3,
+       "colors": [
+        "G"
+       ],
+       "abilities": [],
+       "oracleText": "",
+       "manaValue": 3,
+       "manaCost": "{2}{G}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_2",
+       "controller": "player_2",
+       "isToken": false,
+       "tapped": false,
+       "traits": [],
+       "counters": {},
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_6",
+      {
+       "name": "Llanowar Elves",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Elf",
+        "Druid"
+       ],
+       "power": 1,
+       "toughness": 1,
+       "colors": [
+        "G"
+       ],
+       "abilities": [
+        "{T}: Add {G}."
+       ],
+       "oracleText": "{T}: Add {G}.",
+       "manaValue": 1,
+       "manaCost": "{G}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_2",
+       "controller": "player_2",
+       "isToken": false,
+       "tapped": false,
+       "traits": [],
+       "counters": {},
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_7",
+      {
+       "name": "Nihiloor",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [
+        "Legendary"
+       ],
+       "subtypes": [
+        "Horror"
+       ],
+       "power": 3,
+       "toughness": 5,
+       "colors": [
+        "B",
+        "U",
+        "W"
+       ],
+       "abilities": [
+        "When this card enters, for each opponent, tap up to one untapped creature you control. When you do, gain control of target creature that player controls with power less than or equal to the tapped creature's power for as long as you control this card.",
+        "Whenever you attack with a creature an opponent owns, you gain 2 life and that player loses 2 life."
+       ],
+       "oracleText": "When this card enters, for each opponent, tap up to one untapped creature you control. When you do, gain control of target creature that player controls with power less than or equal to the tapped creature's power for as long as you control this card.\nWhenever you attack with a creature an opponent owns, you gain 2 life and that player loses 2 life.",
+       "manaValue": 5,
+       "manaCost": "{2}{W}{U}{B}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "tapped": false,
+       "traits": [],
+       "counters": {}
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Trained Armodon",
+       "imageUri": "https://cards.scryfall.io/small/front/b/5/b55e0487-3abb-4f2b-b34c-d6ad49164e73.jpg?1783938453",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Elephant"
+       ],
+       "printedPower": 3,
+       "printedToughness": 3,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Gray Ogre",
+       "imageUri": "https://cards.scryfall.io/small/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Ogre"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Craw Wurm",
+       "imageUri": "https://cards.scryfall.io/small/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.jpg?1783942364",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Wurm"
+       ],
+       "printedPower": 6,
+       "printedToughness": 4,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_5",
+       "name": "Centaur Courser",
+       "imageUri": "https://cards.scryfall.io/small/front/e/8/e8b67ee8-3189-4426-8b1a-b540267768fd.jpg?1783932966",
+       "owner": "player_2",
+       "controller": "player_2",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Centaur",
+        "Warrior"
+       ],
+       "printedPower": 3,
+       "printedToughness": 3,
+       "timestamp": 5
+      },
+      {
+       "id": "perm_6",
+       "name": "Llanowar Elves",
+       "imageUri": "https://cards.scryfall.io/small/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+       "owner": "player_2",
+       "controller": "player_2",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Elf",
+        "Druid"
+       ],
+       "printedPower": 1,
+       "printedToughness": 1,
+       "timestamp": 6
+      },
+      {
+       "id": "perm_7",
+       "name": "Nihiloor",
+       "imageUri": "https://cards.scryfall.io/small/front/a/6/a652ac92-4e61-45ec-866e-baafefd355e5.jpg?1783926238",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [
+        "Legendary"
+       ],
+       "printedSubtypes": [
+        "Horror"
+       ],
+       "printedPower": 3,
+       "printedToughness": 5,
+       "timestamp": 7
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      },
+      {
+       "id": "player_1",
+       "name": "Opp A"
+      },
+      {
+       "id": "player_2",
+       "name": "Opp B"
+      }
+     ]
+    },
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": "perm_1",
+    "choices": null
+   },
+   {
+    "id": "trig_perm_7_0_9",
+    "kind": "trigger",
+    "pseudoKind": "ability",
+    "sourceId": "perm_7",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 0,
+    "timestamp": 9,
+    "effectText": "Gain control of target creature an opponent controls with power less than or equal to the tapped creature's power for as long as you control this card.",
+    "xValue": null,
+    "hasXValue": false,
+    "cdaUserValue": null,
+    "linkedCards": null,
+    "fullText": "When this card enters, for each opponent, tap up to one untapped creature you control. When you do, gain control of target creature that player controls with power less than or equal to the tapped creature's power for as long as you control this card.",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "guessedTargetSubjects": [],
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "forPlayerId": "player_2",
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Trained Armodon",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Elephant"
+       ],
+       "power": 3,
+       "toughness": 3,
+       "colors": [
+        "G"
+       ],
+       "abilities": [],
+       "oracleText": "",
+       "manaValue": 3,
+       "manaCost": "{1}{G}{G}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "tapped": false,
+       "traits": [],
+       "counters": {}
+      }
+     ],
+     [
+      "perm_2",
+      {
+       "name": "Gray Ogre",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Ogre"
+       ],
+       "power": 2,
+       "toughness": 2,
+       "colors": [
+        "R"
+       ],
+       "abilities": [],
+       "oracleText": "",
+       "manaValue": 3,
+       "manaCost": "{2}{R}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "tapped": false,
+       "traits": [],
+       "counters": {}
+      }
+     ],
+     [
+      "perm_3",
+      {
+       "name": "Grizzly Bears",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Bear"
+       ],
+       "power": 2,
+       "toughness": 2,
+       "colors": [
+        "G"
+       ],
+       "abilities": [],
+       "oracleText": "",
+       "manaValue": 2,
+       "manaCost": "{1}{G}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "tapped": false,
+       "traits": [],
+       "counters": {},
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_4",
+      {
+       "name": "Craw Wurm",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Wurm"
+       ],
+       "power": 6,
+       "toughness": 4,
+       "colors": [
+        "G"
+       ],
+       "abilities": [],
+       "oracleText": "",
+       "manaValue": 6,
+       "manaCost": "{4}{G}{G}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "tapped": false,
+       "traits": [],
+       "counters": {},
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_5",
+      {
+       "name": "Centaur Courser",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Centaur",
+        "Warrior"
+       ],
+       "power": 3,
+       "toughness": 3,
+       "colors": [
+        "G"
+       ],
+       "abilities": [],
+       "oracleText": "",
+       "manaValue": 3,
+       "manaCost": "{2}{G}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_2",
+       "controller": "player_2",
+       "isToken": false,
+       "tapped": false,
+       "traits": [],
+       "counters": {},
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_6",
+      {
+       "name": "Llanowar Elves",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Elf",
+        "Druid"
+       ],
+       "power": 1,
+       "toughness": 1,
+       "colors": [
+        "G"
+       ],
+       "abilities": [
+        "{T}: Add {G}."
+       ],
+       "oracleText": "{T}: Add {G}.",
+       "manaValue": 1,
+       "manaCost": "{G}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_2",
+       "controller": "player_2",
+       "isToken": false,
+       "tapped": false,
+       "traits": [],
+       "counters": {},
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_7",
+      {
+       "name": "Nihiloor",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [
+        "Legendary"
+       ],
+       "subtypes": [
+        "Horror"
+       ],
+       "power": 3,
+       "toughness": 5,
+       "colors": [
+        "B",
+        "U",
+        "W"
+       ],
+       "abilities": [
+        "When this card enters, for each opponent, tap up to one untapped creature you control. When you do, gain control of target creature that player controls with power less than or equal to the tapped creature's power for as long as you control this card.",
+        "Whenever you attack with a creature an opponent owns, you gain 2 life and that player loses 2 life."
+       ],
+       "oracleText": "When this card enters, for each opponent, tap up to one untapped creature you control. When you do, gain control of target creature that player controls with power less than or equal to the tapped creature's power for as long as you control this card.\nWhenever you attack with a creature an opponent owns, you gain 2 life and that player loses 2 life.",
+       "manaValue": 5,
+       "manaCost": "{2}{W}{U}{B}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "tapped": false,
+       "traits": [],
+       "counters": {}
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Trained Armodon",
+       "imageUri": "https://cards.scryfall.io/small/front/b/5/b55e0487-3abb-4f2b-b34c-d6ad49164e73.jpg?1783938453",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Elephant"
+       ],
+       "printedPower": 3,
+       "printedToughness": 3,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Gray Ogre",
+       "imageUri": "https://cards.scryfall.io/small/front/1/1/11bf2cc0-799f-4eb8-b338-ed7543f469e7.jpg?1783947828",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Ogre"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Craw Wurm",
+       "imageUri": "https://cards.scryfall.io/small/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.jpg?1783942364",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Wurm"
+       ],
+       "printedPower": 6,
+       "printedToughness": 4,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_5",
+       "name": "Centaur Courser",
+       "imageUri": "https://cards.scryfall.io/small/front/e/8/e8b67ee8-3189-4426-8b1a-b540267768fd.jpg?1783932966",
+       "owner": "player_2",
+       "controller": "player_2",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Centaur",
+        "Warrior"
+       ],
+       "printedPower": 3,
+       "printedToughness": 3,
+       "timestamp": 5
+      },
+      {
+       "id": "perm_6",
+       "name": "Llanowar Elves",
+       "imageUri": "https://cards.scryfall.io/small/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+       "owner": "player_2",
+       "controller": "player_2",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Elf",
+        "Druid"
+       ],
+       "printedPower": 1,
+       "printedToughness": 1,
+       "timestamp": 6
+      },
+      {
+       "id": "perm_7",
+       "name": "Nihiloor",
+       "imageUri": "https://cards.scryfall.io/small/front/a/6/a652ac92-4e61-45ec-866e-baafefd355e5.jpg?1783926238",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [
+        "Legendary"
+       ],
+       "printedSubtypes": [
+        "Horror"
+       ],
+       "printedPower": 3,
+       "printedToughness": 5,
+       "timestamp": 7
+      },
+      {
+       "id": "trig_perm_7_0_8",
+       "name": "Nihiloor (trigger) for Opp A",
+       "imageUri": "https://cards.scryfall.io/small/front/a/6/a652ac92-4e61-45ec-866e-baafefd355e5.jpg?1783926238",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": true,
+       "isTriggeredAbility": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "abilitySourceId": "perm_7",
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 8
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      },
+      {
+       "id": "player_1",
+       "name": "Opp A"
+      },
+      {
+       "id": "player_2",
+       "name": "Opp B"
+      }
+     ]
+    },
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": "perm_2",
+    "choices": null
+   }
+  ],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   },
+   {
+    "id": "player_1",
+    "name": "Opp A",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": false,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   },
+   {
+    "id": "player_2",
+    "name": "Opp B",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": false,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 3,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Trained Armodon",
+    "final": {
+     "name": "Trained Armodon",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Elephant"
+     ],
+     "power": 3,
+     "toughness": 3,
+     "colors": [
+      "G"
+     ],
+     "abilities": []
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Gray Ogre",
+    "final": {
+     "name": "Gray Ogre",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Ogre"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "R"
+     ],
+     "abilities": []
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Grizzly Bears",
+    "final": {
+     "name": "Grizzly Bears",
+     "controller": "player_1",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Bear"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "G"
+     ],
+     "abilities": []
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Craw Wurm",
+    "final": {
+     "name": "Craw Wurm",
+     "controller": "player_1",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Wurm"
+     ],
+     "power": 6,
+     "toughness": 4,
+     "colors": [
+      "G"
+     ],
+     "abilities": []
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Centaur Courser",
+    "final": {
+     "name": "Centaur Courser",
+     "controller": "player_2",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Centaur",
+      "Warrior"
+     ],
+     "power": 3,
+     "toughness": 3,
+     "colors": [
+      "G"
+     ],
+     "abilities": []
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Llanowar Elves",
+    "final": {
+     "name": "Llanowar Elves",
+     "controller": "player_2",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Elf",
+      "Druid"
+     ],
+     "power": 1,
+     "toughness": 1,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "{T}: Add {G}."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Nihiloor",
+    "final": {
+     "name": "Nihiloor",
+     "controller": "player_0",
+     "supertypes": [
+      "Legendary"
+     ],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Horror"
+     ],
+     "power": 3,
+     "toughness": 5,
+     "colors": [
+      "B",
+      "U",
+      "W"
+     ],
+     "abilities": [
+      "When this card enters, for each opponent, tap up to one untapped creature you control. When you do, gain control of target creature that player controls with power less than or equal to the tapped creature's power for as long as you control this card.",
+      "Whenever you attack with a creature an opponent owns, you gain 2 life and that player loses 2 life."
+     ]
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "2": [
+    "Nihiloor (trigger) for Opp A",
+    "Nihiloor (trigger) for Opp B"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Nihiloor (trigger) for Opp A",
+    "layer": "2",
+    "type": "control",
+    "scope": "targeted",
+    "params": {
+     "newController": "player_0",
+     "powerBoundFromRef": {
+      "less": true,
+      "orEqual": true,
+      "refStat": "power",
+      "stat": "power"
+     },
+     "refPermId": "@Trained Armodon",
+     "untilEndOfTurn": false
+    }
+   },
+   {
+    "source": "Nihiloor (trigger) for Opp B",
+    "layer": "2",
+    "type": "control",
+    "scope": "targeted",
+    "params": {
+     "newController": "player_0",
+     "powerBoundFromRef": {
+      "less": true,
+      "orEqual": true,
+      "refStat": "power",
+      "stat": "power"
+     },
+     "refPermId": "@Gray Ogre",
+     "untilEndOfTurn": false
+    }
+   }
+  ]
+ }
+}
