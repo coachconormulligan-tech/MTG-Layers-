@@ -382,6 +382,24 @@ function _exchangeControlSlotRules(text) {
   return rules;
 }
 
+// Which of an exchange's two objects are targets, from the words after "exchange control of":
+// "this creature and up to one target creature an opponent controls" (Gilded Drake) targets only
+// B, and with "up to one" B may be left unchosen; "this creature and that spell" (Perplexing
+// Chimera) and "those permanents" (Confusion in the Ranks) target neither; "two target
+// creatures", "target X and another target Y" both. Only a target can be refused for shroud,
+// hexproof or protection (cards-targeting.js). Returns { a, b, upToOneB }.
+function _exchangeControlTargeted(text) {
+  const m = String(text || '').match(/\bexchange control of\s+([^.;\n]+)/i);
+  const s = (m ? m[1] : String(text || '')).trim();
+  if (/^this\s+\w+\s+and\s+/i.test(s)) {
+    const rest = s.replace(/^this\s+\w+\s+and\s+/i, '');
+    return { a: false, b: /^(?:up\s+to\s+one\s+)?(?:another\s+)?target\b/i.test(rest), upToOneB: /^up\s+to\s+one\s+target\b/i.test(rest) };
+  }
+  if (/^two\s+(?:other\s+)?target\b/i.test(s)) return { a: true, b: true, upToOneB: false };
+  if (/^target\b/i.test(s)) return { a: true, b: /\band\s+(?:another\s+)?target\b/i.test(s), upToOneB: false };
+  return { a: false, b: false, upToOneB: false };
+}
+
 // Whether an activated ability's cost (the words before its colon, after any ability word)
 // exiles the card itself from the graveyard: "Renew — {1}{G}, Exile this card from your
 // graveyard: …". Such an ability is used while the card is in the graveyard.

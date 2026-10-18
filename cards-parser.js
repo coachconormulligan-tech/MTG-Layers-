@@ -7212,6 +7212,7 @@ function parseCardEffects(permanent, card, opts = {}) {
           shareTypeRequired,
           differentPlayersRequired,
           ...(exchangeSlotRules ? { exchangeSlotRules } : {}),
+          exchangeTargeted: _exchangeControlTargeted(captured),
         },
         { scope: 'targeted', selfTarget: false },
         `Exchange control of ${captured}.`,

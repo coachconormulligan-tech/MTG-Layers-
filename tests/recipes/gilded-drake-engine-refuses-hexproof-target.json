@@ -1,0 +1,16 @@
+{
+  "name": "Gilded Drake — an exchange with an opponent's hexproof creature exchanges nothing",
+  "notes": "\"… exchange control of this creature and up to one target creature an opponent controls.\" (2026-10-18.) A pair set some other way than the modal (a saved board, a recipe) with the opponent's Gladecover Scout (hexproof) as B is refused by effectAppliesToPerm through exchangeControlPairProblem's targeting check (CR 702.11), judged on the fire-time snapshot. Before, the two were exchanged.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Gladecover Scout", "as": "scout", "controller": "p2" },
+    { "add": "Gilded Drake", "as": "d" },
+    { "fire": "@d", "trigger": 1, "as": "t" },
+    { "call": ["setExchangeControlTargets", "@t", "@d", "@scout"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Gilded Drake (trigger)", "slot": "b" }, "are": [] },
+    { "perm": "Gilded Drake", "final": { "controller": "player_0" } },
+    { "perm": "Gladecover Scout", "final": { "controller": "player_1" } }
+  ]
+}

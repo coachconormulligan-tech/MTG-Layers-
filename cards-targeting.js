@@ -441,7 +441,53 @@ function _exchangeControlYou(sourceId) {
   return (src && (src.controller || src.owner)) || Battlefield.activePlayerId;
 }
 
-const _EXCHANGE_CONTROLLER_WORDS = { you: 'one you control', opponent: 'one an opponent controls', notYou: "one you don't control" };
+const _EXCHANGE_CONTROLLER_WORDS = { you: 'one you control', opponent: 'one an opponent controls', notYou: "one you don't control", neither: 'one you neither own nor control' };
+
+/* Whether slot 'a' or 'b' is a target of the spell or ability (params.exchangeTargeted, from
+   _exchangeControlTargeted; an effect without it: both of two targets, B of "this … and target
+   …"). Only a target is refused for shroud, hexproof or protection. */
+function _exchangeControlSlotTargeted(effect, slot) {
+  const t = effect.params.exchangeTargeted;
+  if (t) return !!t[slot];
+  return slot === 'b' || effect.params.exchangeMode === 'two_targets';
+}
+
+/* Who must control the permanent in slot 'a' or 'b': for two targets, the slot's own words
+   (exchangeSlotRules); for "this creature and target creature an opponent controls" (Gilded
+   Drake, Volatile Stormdrake) or "… target permanent you neither own nor control" (Conjured
+   Currency), B's from the effect's flags. 'you' | 'opponent' | 'notYou' | 'neither' | null. */
+function getExchangeControlSlotController(effect, slot) {
+  const rules = effect.params.exchangeSlotRules;
+  const rule = rules && (slot === 'a' ? rules.controllerA : rules.controllerB);
+  if (rule) return rule;
+  if (slot === 'b' && effect.params.exchangeMode === 'self_and_target') {
+    if (effect.neitherOwnNorControl) return 'neither';
+    if (effect.opponentControlRequired) return 'opponent';
+  }
+  return null;
+}
+
+/* What keeps the permanent in a targeted slot from being a target of the source, as a sentence,
+   or null: shroud, hexproof when someone other than the source's controller controls it, or
+   protection from the source (CR 702.18, 702.11, 702.16), as _singleTargetCandidates checks
+   them. The source's state is read through stateOf as well, so the engine can ask during an
+   evaluation (the snapshot) without evaluating the board again. */
+function _exchangeControlTargetingProblem(effect, slot, st, you, perm, stateOf) {
+  if (!st || !_exchangeControlSlotTargeted(effect, slot)) return null;
+  const which = `Permanent ${slot.toUpperCase()}`;
+  const abilities = st.abilities || [];
+  if (_hasKeywordAbility(abilities, 'shroud')) return `${which} has shroud and cannot be targeted.`;
+  if (st.controller && st.controller !== you && _hasKeywordAbility(abilities, 'hexproof')) {
+    return `${which} has hexproof and cannot be targeted.`;
+  }
+  if (typeof _isProtectedFromSource === 'function' && typeof Battlefield !== 'undefined') {
+    const srcPerm = Battlefield.getPermById(effect.sourceId);
+    // A copy: _getStateProtection keeps what it finds on the state it is given.
+    const prot = srcPerm && _isProtectedFromSource({ ...st }, stateOf(effect.sourceId), srcPerm, perm || null, { get: (id) => stateOf(id) });
+    if (prot) return `${which} has ${_formatProtectionEntry(prot)} and cannot be targeted.`;
+  }
+  return null;
+}
 const _EXCHANGE_STAT_WORDS = { power: 'power', toughness: 'toughness', manaValue: 'mana value' };
 
 /* What a target in slot 'a' or 'b' must be, as a filter on a _restrictionState, and the words
@@ -479,9 +525,12 @@ function _exchangeControlSlotProblem(effect, slot, st, you, perm) {
   if (among && !(st.types || []).some(t => among.includes(t))) {
     return `Permanent B must be ${among.map(t => t.toLowerCase()).join(', ').replace(/, ([^,]+)$/, ', or $1')}.`;
   }
-  const rule = rules && (slot === 'a' ? rules.controllerA : rules.controllerB);
+  const rule = getExchangeControlSlotController(effect, slot);
   if (!rule || !st.controller) return null;
-  const ok = rule === 'you' ? st.controller === you : st.controller !== you;
+  const owner = st.owner || (perm && perm.owner) || null;
+  const ok = rule === 'you' ? st.controller === you
+    : rule === 'neither' ? st.controller !== you && owner !== you
+    : st.controller !== you;
   return ok ? null : `Permanent ${slot.toUpperCase()} must be ${_EXCHANGE_CONTROLLER_WORDS[rule]}.`;
 }
 
@@ -511,7 +560,9 @@ function exchangeControlPairProblem(effect, aId, bId, stateOf, you) {
   }
   const permOf = (id) => (typeof Battlefield !== 'undefined' && Battlefield.getPermById(id)) || null;
   const slotProblem = _exchangeControlSlotProblem(effect, 'a', stA, you, permOf(aId)) ||
-    _exchangeControlSlotProblem(effect, 'b', stB, you, permOf(bId));
+    _exchangeControlSlotProblem(effect, 'b', stB, you, permOf(bId)) ||
+    _exchangeControlTargetingProblem(effect, 'a', stA, you, permOf(aId), stateOf) ||
+    _exchangeControlTargetingProblem(effect, 'b', stB, you, permOf(bId), stateOf);
   if (slotProblem) return slotProblem;
   const bound = p.exchangeSlotRules && p.exchangeSlotRules.boundByA;
   if (bound && stA && stB) {
@@ -541,11 +592,17 @@ function exchangeControlPairProblemFor(sourceId, aId, bId, finalStates) {
 /* The permanents the exchange-control modal offers for Permanent A (slot 'a') or Permanent B
    (slot 'b'; with aId, only those that make a legal pair with it). Each is
    { id, perm, state, displayName }. Only permanents on the board as the spell was cast or the
-   ability fired are offered (a current pick stays), judged by their state then. Hexproof, shroud
-   and protection are not checked, as before. */
+   ability fired are offered (a current pick stays), judged by their state then; a target with
+   shroud, hexproof or protection from the source is not. "Exchange control of this creature and
+   target creature …" (Gilded Drake) has only B, its A being the source. */
 function getExchangeControlCandidates(sourceId, slot, aId) {
   const effect = _exchangeControlEffect(sourceId);
   if (!effect) return [];
+  const selfMode = effect.params.exchangeMode === 'self_and_target';
+  if (selfMode && slot === 'b' && !aId) aId = effect.params.exchangeSelfId || null;
+  // "This creature and that spell" (Perplexing Chimera): the spell becomes a permanent after
+  // the trigger, so B is not limited to the board it fired on.
+  const laterOk = selfMode && slot === 'b' && !_exchangeControlSlotTargeted(effect, 'b');
   const finalStates = Battlefield.getAllFinalStates();
   const snap = _exchangeControlSnapshot(sourceId);
   const stateOf = (id) => (snap && snap.has(id)) ? snap.get(id) : (finalStates.get(id) || null);
@@ -556,7 +613,7 @@ function getExchangeControlCandidates(sourceId, slot, aId) {
     if (t.isManualEffect || t.isSpell) continue;
     const stack = Battlefield.getStack(t.id);
     if (stack && stack.length >= 2 && stack[0] !== t.id) continue;
-    if (snap && !snap.has(t.id) && t.id !== current) continue;
+    if (snap && !snap.has(t.id) && t.id !== current && !laterOk) continue;
     const fs = stateOf(t.id);
     const tState = fs
       ? { types: fs.types || [], supertypes: fs.supertypes || [], subtypes: fs.subtypes || [], colors: fs.colors || [], isAllCreatureTypes: fs.isAllCreatureTypes }
@@ -565,6 +622,7 @@ function getExchangeControlCandidates(sourceId, slot, aId) {
     const restriction = _exchangeControlSlotRestriction(effect, slot);
     if (restriction && !restriction.fn(rState, snap || finalStates, you)) continue;
     if (_exchangeControlSlotProblem(effect, slot, rState, you, t)) continue;
+    if (_exchangeControlTargetingProblem(effect, slot, rState, you, t, stateOf)) continue;
     if (slot === 'b' && aId && exchangeControlPairProblem(effect, aId, t.id, stateOf, you)) continue;
     out.push({ id: t.id, perm: t, state: fs || tState, displayName: _targetPickerName(t, finalStates.get(t.id), true) });
   }

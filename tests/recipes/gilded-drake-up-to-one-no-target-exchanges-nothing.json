@@ -1,0 +1,17 @@
+{
+  "name": "Gilded Drake — up to one target: with the target cleared, nothing is exchanged",
+  "notes": "\"… exchange control of this creature and up to one target creature an opponent controls.\" (2026-10-18.) params.exchangeTargeted.upToOneB lets the modal's Apply clear B (\"No target\"), which sets the pair to the Drake and nothing; the engine then exchanges nothing. Here a target is chosen and then cleared, as the modal does.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Hill Giant", "as": "giant", "controller": "p2" },
+    { "add": "Gilded Drake", "as": "d" },
+    { "fire": "@d", "trigger": 1, "as": "t" },
+    { "call": ["setExchangeControlTargets", "@t", "@d", "@giant"] },
+    { "call": ["setExchangeControlTargets", "@t", "@d", null] }
+  ],
+  "asserts": [
+    { "effect": { "source": "Gilded Drake (trigger)", "layer": "2", "type": "control", "params": { "exchangeTargeted": { "a": false, "b": true, "upToOneB": true } } } },
+    { "perm": "Gilded Drake", "final": { "controller": "player_0" } },
+    { "perm": "Hill Giant", "final": { "controller": "player_1" } }
+  ]
+}

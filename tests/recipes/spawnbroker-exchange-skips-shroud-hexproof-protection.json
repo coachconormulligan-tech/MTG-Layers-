@@ -1,0 +1,22 @@
+{
+  "name": "Spawnbroker — A leaves out your shroud creature, B the opponent's hexproof and protection-from-blue creatures",
+  "notes": "\"When this creature enters, you may exchange control of target creature you control and target creature with power less than or equal to that creature's power an opponent controls.\" (2026-10-18, exchange-control targeting part 2.) Both are targets, so shroud keeps Argothian Enchantress out of A, while your own Gladecover Scout stays (hexproof only stops opponents). With Hill Giant as A, B holds Grizzly Bears, not the opponent's Gladecover Scout (hexproof) or Karoo Meerkat (protection from blue). Before, all of them were listed.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Hill Giant", "as": "giant" },
+    { "add": "Argothian Enchantress", "as": "ench" },
+    { "add": "Gladecover Scout", "as": "myscout" },
+    { "add": "Grizzly Bears", "as": "bears", "controller": "p2" },
+    { "add": "Gladecover Scout", "as": "scout", "controller": "p2" },
+    { "add": "Karoo Meerkat", "as": "meerkat", "controller": "p2" },
+    { "add": "Spawnbroker", "as": "s" },
+    { "fire": "@s", "trigger": 0, "as": "t" },
+    { "call": ["setExchangeControlTargets", "@t", "@giant", "@meerkat"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Spawnbroker (trigger)", "slot": "a" }, "are": ["Gladecover Scout", "Hill Giant", "Spawnbroker"] },
+    { "targetCandidates": { "perm": "Spawnbroker (trigger)", "slot": "b" }, "are": ["Grizzly Bears"] },
+    { "perm": "Hill Giant", "final": { "controller": "player_0" } },
+    { "perm": "Karoo Meerkat", "final": { "controller": "player_1" } }
+  ]
+}

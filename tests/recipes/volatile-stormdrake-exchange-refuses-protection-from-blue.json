@@ -1,0 +1,18 @@
+{
+  "name": "Volatile Stormdrake — B is an opponent's creature without protection from blue; a protected one exchanges nothing",
+  "notes": "\"When this creature enters, exchange control of this creature and target creature an opponent controls.\" (2026-10-18.) The list (getExchangeControlCandidates, fire-time snapshot) holds the opponent's Hill Giant, not your Grizzly Bears and not Karoo Meerkat (protection from blue; the Stormdrake is blue, CR 702.16). A pair set with the Meerkat is refused by the engine. Before, the list held your own creatures too and the Meerkat was exchanged.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Hill Giant", "as": "giant", "controller": "p2" },
+    { "add": "Karoo Meerkat", "as": "meerkat", "controller": "p2" },
+    { "add": "Volatile Stormdrake", "as": "d" },
+    { "fire": "@d", "trigger": 1, "as": "t" },
+    { "call": ["setExchangeControlTargets", "@t", "@d", "@meerkat"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Volatile Stormdrake (trigger)", "slot": "b" }, "are": ["Hill Giant"] },
+    { "perm": "Volatile Stormdrake", "final": { "controller": "player_0" } },
+    { "perm": "Karoo Meerkat", "final": { "controller": "player_1" } }
+  ]
+}

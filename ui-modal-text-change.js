@@ -222,55 +222,27 @@ function openExchangeControlModal(permId) {
   const mode = effect.params.exchangeMode;
   const finalStates = Battlefield.getAllFinalStates();
 
-  // Build candidate list: all non-manual permanents
-  const candidates = Battlefield.permanents.filter(p => {
-    if (p.isManualEffect) return false;
-    const stack = Battlefield.getStack(p.id);
-    if (stack && stack.length >= 2 && stack[0] !== p.id) return false;
-    return true;
-  });
-
-  // Apply targeting restriction to get final state and filter
-  const filterCandidate = (p) => {
-    if (!effect.targetRestriction) return true;
-    const fs = finalStates.get(p.id);
-    const st = fs || {
-      types: p.printedTypes || [], supertypes: p.printedSupertypes || [],
-      subtypes: p.printedSubtypes || [], colors: p.printedColors || [],
-      isAllCreatureTypes: false,
-    };
-    return effect.targetRestriction(st);
-  };
-
   const overlay = _createModalOverlay('exchange-control-overlay', closeExchangeControlModal);
   const sourcePerm = Battlefield.getPermById(permId);
-  const activePlayerId = sourcePerm?.controller || sourcePerm?.owner || Battlefield.activePlayerId;
+  const optHtml = (p, selectedId) => {
+    const fs = finalStates.get(p.id);
+    const typeLine = fs ? [...(fs.supertypes||[]), ...(fs.types||[])].join(' ') : [...(p.printedSupertypes||[]), ...(p.printedTypes||[])].join(' ');
+    const ctrl = fs?.controller || p.controller || p.owner;
+    const playerTag = Battlefield.players.length > 1 && Battlefield.getPlayerName ? ` [${Battlefield.getPlayerName(ctrl)}]` : '';
+    return `<option value="${p.id}" ${p.id === selectedId ? 'selected' : ''}>${escapeHtml(permDisplayName(p))} \u2014 ${escapeHtml(typeLine)}${playerTag}</option>`;
+  };
+  const ctrlWords = { you: 'you control', opponent: 'an opponent controls', notYou: "you don't control", neither: 'you neither own nor control' };
+  const ctrlB = getExchangeControlSlotController(effect, 'b');
 
   if (mode === 'self_and_target') {
-    // Pattern A: source permanent is auto-selected as A, user picks B
+    // Pattern A: the source is A, the player picks B. Who may be B (who controls it, shroud,
+    // hexproof, protection from the source) comes from cards-targeting.js, judged on the board
+    // as the ability fired, and the engine refuses the same pairs.
     const selfId = effect.params.exchangeSelfId || permId;
     const selfPerm = Battlefield.getPermById(selfId);
-    const targets = candidates.filter(p => {
-      if (p.id === selfId) return false;
-      if (!filterCandidate(p)) return false;
-      if (effect.opponentControlRequired) {
-        const ctrl = finalStates.get(p.id)?.controller || p.controller || p.owner;
-        if (ctrl === activePlayerId) return false;
-      }
-      if (effect.neitherOwnNorControl) {
-        const owner = p.owner || activePlayerId;
-        if (owner === activePlayerId) return false;
-      }
-      return true;
-    });
+    const targets = getExchangeControlCandidates(permId, 'b');
     const currentB = effect.params.exchangeTargetB || '';
-    const optHtml = (p, selectedId) => {
-      const fs = finalStates.get(p.id);
-      const typeLine = fs ? [...(fs.supertypes||[]), ...(fs.types||[])].join(' ') : [...(p.printedSupertypes||[]), ...(p.printedTypes||[])].join(' ');
-      const ctrl = fs?.controller || p.controller || p.owner;
-      const playerTag = Battlefield.players.length > 1 && Battlefield.getPlayerName ? ` [${Battlefield.getPlayerName(ctrl)}]` : '';
-      return `<option value="${p.id}" ${p.id === selectedId ? 'selected' : ''}>${escapeHtml(permDisplayName(p))} \u2014 ${escapeHtml(typeLine)}${playerTag}</option>`;
-    };
+    const upToOne = !!(effect.params.exchangeTargeted && effect.params.exchangeTargeted.upToOneB);
     overlay.innerHTML = _modalShell({
       title: '\u21c4 Exchange Control',
       closeFn: 'closeExchangeControlModal',
@@ -282,14 +254,17 @@ function openExchangeControlModal(permId) {
             <div class="perm-name">${escapeHtml(selfPerm ? permDisplayName(selfPerm) : '?')}</div>
           </div>
         </div>
-        <div class="modal-section-title">Exchange with:</div>
-        <select id="exchctrl-target-b" style="width:100%;padding:7px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:4px;">
-          <option value="">\u2014 Select target \u2014</option>
-          ${targets.map(p => optHtml(p, currentB)).join('') || '<option disabled>No valid targets</option>'}
-        </select>`,
+        ${upToOne ? '<div class="dim" style="margin-bottom:8px;">Up to one target: with no target chosen, nothing is exchanged.</div>' : ''}
+        <div class="modal-section-title">Exchange with${ctrlB ? ` (${ctrlWords[ctrlB]})` : ''}:</div>
+        <input type="hidden" id="exchctrl-target-a" value="${escapeAttr(selfId)}">
+        <select id="exchctrl-target-b" onchange="exchCtrlTargetChanged('${permId}')" style="width:100%;padding:7px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:4px;">
+          <option value="">${upToOne ? '\u2014 No target \u2014' : '\u2014 Select target \u2014'}</option>
+          ${targets.map(c => optHtml(c.perm, currentB)).join('') || '<option disabled>No valid targets</option>'}
+        </select>
+        <div id="exchctrl-warning" class="dim" style="margin-top:8px;color:var(--red);display:none;"></div>`,
       footer: `
         <button class="btn btn-sm" onclick="closeExchangeControlModal()">Cancel</button>
-        <button class="btn-accent" onclick="applyExchangeControlSelf('${permId}', '${selfId}')">Apply</button>`,
+        <button class="btn-accent" id="exchctrl-apply-btn" onclick="applyExchangeControlSelf('${permId}', '${selfId}', ${upToOne})">Apply</button>`,
     });
   } else {
     const currentA = effect.params.exchangeTargetA || '';
@@ -298,15 +273,8 @@ function openExchangeControlModal(permId) {
     // B list is narrowed to A's partners in exchCtrlTargetChanged.
     const listA = getExchangeControlCandidates(permId, 'a');
     const listB = getExchangeControlCandidates(permId, 'b');
-    const optHtml = (p, selectedId) => {
-      const fs = finalStates.get(p.id);
-      const typeLine = fs ? [...(fs.supertypes||[]), ...(fs.types||[])].join(' ') : [...(p.printedSupertypes||[]), ...(p.printedTypes||[])].join(' ');
-      const ctrl = fs?.controller || p.controller || p.owner;
-      const playerTag = Battlefield.players.length > 1 && Battlefield.getPlayerName ? ` [${Battlefield.getPlayerName(ctrl)}]` : '';
-      return `<option value="${p.id}" ${p.id === selectedId ? 'selected' : ''}>${escapeHtml(permDisplayName(p))} \u2014 ${escapeHtml(typeLine)}${playerTag}</option>`;
-    };
     const rules = effect.params.exchangeSlotRules || {};
-    const ctrlWords = { you: 'you control', opponent: 'an opponent controls', notYou: "you don't control" };
+    const ctrlA = getExchangeControlSlotController(effect, 'a');
     const bound = rules.boundByA;
     const statWords = { power: 'power', toughness: 'toughness', manaValue: 'mana value' };
     const boundNote = bound
@@ -320,12 +288,12 @@ function openExchangeControlModal(permId) {
         ${rules.shareTypesWithA ? `<div class="dim" style="margin-bottom:8px;">Permanent B must share one of these types with permanent A: ${rules.shareTypesWithA.map(t => t.toLowerCase()).join(', ')}.</div>` : ''}
         ${effect.params.differentPlayersRequired ? '<div class="dim" style="margin-bottom:8px;">Targets must be controlled by different players.</div>' : ''}
         ${boundNote}
-        <div class="modal-section-title">Permanent A${rules.controllerA ? ` (${ctrlWords[rules.controllerA]})` : ''}</div>
+        <div class="modal-section-title">Permanent A${ctrlA ? ` (${ctrlWords[ctrlA]})` : ''}</div>
         <select id="exchctrl-target-a" onchange="exchCtrlTargetChanged('${permId}')" style="width:100%;padding:7px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:4px;">
           <option value="">\u2014 Select \u2014</option>
           ${listA.map(c => optHtml(c.perm, currentA)).join('') || '<option disabled>No valid targets</option>'}
         </select>
-        <div class="modal-section-title" style="margin-top:10px;">Permanent B${rules.controllerB ? ` (${ctrlWords[rules.controllerB]})` : ''}</div>
+        <div class="modal-section-title" style="margin-top:10px;">Permanent B${ctrlB ? ` (${ctrlWords[ctrlB]})` : ''}</div>
         <select id="exchctrl-target-b" onchange="exchCtrlTargetChanged('${permId}')" style="width:100%;padding:7px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:4px;">
           <option value="">\u2014 Select \u2014</option>
           ${listB.map(c => optHtml(c.perm, currentB)).join('') || '<option disabled>No valid targets</option>'}
@@ -338,8 +306,8 @@ function openExchangeControlModal(permId) {
   }
 
   document.body.appendChild(overlay);
-  // Narrow the B list to A's partners when A is already picked
-  if (mode === 'two_targets' && effect.params.exchangeTargetA) exchCtrlTargetChanged(permId);
+  // Narrow the B list to A's partners when A is already picked, and warn about a kept pick
+  if (effect.params.exchangeTargetA) exchCtrlTargetChanged(permId);
 }
 
 function closeExchangeControlModal() {
@@ -353,8 +321,9 @@ function exchCtrlTargetChanged(permId) {
   const warn = document.getElementById('exchctrl-warning');
   const btn = document.getElementById('exchctrl-apply-btn');
 
-  // Every rule on the pair (shared type, different players, who controls each, B's bound
-  // against A) is exchangeControlPairProblem in cards-targeting.js, which the engine also obeys.
+  // Every rule on the pair (shared type, different players, who controls each, shroud, hexproof
+  // and protection, B's bound against A) is exchangeControlPairProblem in cards-targeting.js,
+  // which the engine also obeys.
   const warningText = (a && b) ? exchangeControlPairProblemFor(permId, a, b) : null;
   if (warningText) {
     if (warn) { warn.textContent = warningText; warn.style.display = ''; }
@@ -375,10 +344,13 @@ function exchCtrlTargetChanged(permId) {
   }
 }
 
-function applyExchangeControlSelf(sourceId, selfId) {
+/* "Up to one target" (Gilded Drake): Apply with no target clears the pick, and nothing is
+   exchanged. */
+function applyExchangeControlSelf(sourceId, selfId, upToOne) {
   const targetId = document.getElementById('exchctrl-target-b')?.value;
-  if (!targetId) return;
-  Battlefield.setExchangeControlTargets(sourceId, selfId, targetId);
+  if (!targetId && !upToOne) return;
+  if (targetId && exchangeControlPairProblemFor(sourceId, selfId, targetId)) return;
+  Battlefield.setExchangeControlTargets(sourceId, selfId, targetId || null);
   closeExchangeControlModal();
   Battlefield.evaluate();
   renderAll();

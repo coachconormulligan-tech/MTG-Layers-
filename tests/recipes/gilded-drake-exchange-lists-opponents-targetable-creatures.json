@@ -1,0 +1,22 @@
+{
+  "name": "Gilded Drake — the exchange lists only creatures an opponent controls that its trigger can target",
+  "notes": "\"When this creature enters, exchange control of this creature and up to one target creature an opponent controls.\" (2026-10-18, exchange-control targeting part 2.) The self-exchange modal now lists from getExchangeControlCandidates (cards-targeting.js), judged on the fire-time snapshot: the opponent's Hill Giant only. Not the Drake itself, not your Grizzly Bears, not Gladecover Scout (hexproof), Argothian Enchantress (shroud) or Karoo Meerkat (protection from blue, and the Drake is blue), not the Forest, and not Craw Wurm, added after the trigger fired. Before, the list held every creature but the Drake, yours included, with live states. Exchanging with Hill Giant swaps the two.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Hill Giant", "as": "giant", "controller": "p2" },
+    { "add": "Gladecover Scout", "as": "scout", "controller": "p2" },
+    { "add": "Argothian Enchantress", "as": "ench", "controller": "p2" },
+    { "add": "Karoo Meerkat", "as": "meerkat", "controller": "p2" },
+    { "add": "Forest", "as": "forest", "controller": "p2" },
+    { "add": "Gilded Drake", "as": "d" },
+    { "fire": "@d", "trigger": 1, "as": "t" },
+    { "add": "Craw Wurm", "as": "wurm", "controller": "p2" },
+    { "call": ["setExchangeControlTargets", "@t", "@d", "@giant"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Gilded Drake (trigger)", "slot": "b" }, "are": ["Hill Giant"] },
+    { "perm": "Gilded Drake", "final": { "controller": "player_1" } },
+    { "perm": "Hill Giant", "final": { "controller": "player_0" } }
+  ]
+}

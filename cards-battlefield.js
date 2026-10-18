@@ -1291,6 +1291,7 @@ const Battlefield = {
             shareTypeRequired: /\bshare[s]?\s+a\s+(?:permanent|card)\s+type\b/i.test(effectText),
             differentPlayersRequired: false,
             ...(!isSelfExch && _exchangeControlSlotRules(effectText) ? { exchangeSlotRules: _exchangeControlSlotRules(effectText) } : {}),
+            exchangeTargeted: _exchangeControlTargeted(effectText),
           },
           scope: 'targeted',
           timestamp: pseudo.timestamp,

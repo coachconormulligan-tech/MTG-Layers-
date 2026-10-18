@@ -102,12 +102,18 @@ function targetCandidateLists() {
     out.push({ perm: p.name + (p.label ? ' ' + p.label : ''), kind: pk.kind, candidates: names });
   }
   // The exchange-control modal's two lists (getExchangeControlCandidates): "slot" "a", and "b" as
-  // narrowed by the current Permanent A, if any.
+  // narrowed by the current Permanent A, if any. "Exchange control of this creature and target
+  // creature …" (Gilded Drake) has only "b", A being the source.
   for (const p of Battlefield.permanents) {
-    const ex = Battlefield.effects.find(e => e.sourceId === p.id && e.type === EFFECT_TYPE.CONTROL && e.params.exchangeControl && e.params.exchangeMode === 'two_targets');
+    const ex = Battlefield.effects.find(e => e.sourceId === p.id && e.type === EFFECT_TYPE.CONTROL && e.params.exchangeControl &&
+      (e.params.exchangeMode === 'two_targets' || e.params.exchangeMode === 'self_and_target'));
     if (!ex) continue;
     const label = p.name + (p.label ? ' ' + p.label : '');
     const names = (list) => list.map(c => c.perm.name + (c.perm.label ? ' ' + c.perm.label : '')).sort();
+    if (ex.params.exchangeMode === 'self_and_target') {
+      out.push({ perm: label, kind: 'exchange', slot: 'b', candidates: names(getExchangeControlCandidates(p.id, 'b')) });
+      continue;
+    }
     out.push({ perm: label, kind: 'exchange', slot: 'a', candidates: names(getExchangeControlCandidates(p.id, 'a')) });
     out.push({ perm: label, kind: 'exchange', slot: 'b', candidates: names(getExchangeControlCandidates(p.id, 'b', ex.params.exchangeTargetA || null)) });
   }
