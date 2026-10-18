@@ -354,14 +354,20 @@ function _forEachOpponentReflexiveText(text) {
 // "… and target permanent an opponent controls that shares one of those types with it"
 // (Gauntlets of Chaos): B must have one of the card types named for A that A has
 // (shareTypesWithA, e.g. ['Artifact', 'Creature', 'Land']). Read by exchangeControlPairProblem
-// (cards-targeting.js). Returns { controllerA, controllerB, boundByA, typeA, typeB,
-// shareTypesWithA? } or null.
+// (cards-targeting.js). "Two target creatures you don't control" (Visions of Duplicity): the
+// controller words are both targets', typeA and typeB null. Returns { controllerA, controllerB,
+// boundByA, typeA, typeB, shareTypesWithA? } or null.
 function _exchangeControlSlotRules(text) {
-  const m = String(text || '').match(/\btarget\s+(.+?)\s+and\s+target\s+([^.;\n]+)/i);
-  if (!m) return null;
   const ctrl = (s) => /\byou\s+(?:don'?t\s+control|neither\s+own\s+nor\s+control)\b/i.test(s) ? 'notYou'
     : /\byou\s+control\b/i.test(s) ? 'you'
     : /\ban?\s+opponents?\s+controls?\b/i.test(s) ? 'opponent' : null;
+  const two = String(text || '').match(/^(?:.*?\bexchange\s+control\s+of\s+)?two\s+(?:other\s+)?target\s+([^.;\n]+)/i);
+  if (two) {
+    const c = /\byou\s+neither\s+own\s+nor\s+control\b/i.test(two[1]) ? 'neither' : ctrl(two[1]);
+    return c ? { controllerA: c, controllerB: c, boundByA: null, typeA: null, typeB: null } : null;
+  }
+  const m = String(text || '').match(/\btarget\s+(.+?)\s+and\s+target\s+([^.;\n]+)/i);
+  if (!m) return null;
   let boundByA = null;
   const pm = m[2].match(/\bwith\s+(power|toughness)\s+(less|greater)\s+than\s+(or\s+equal\s+to\s+)?that\s+(?:creature|permanent)'s\s+(power|toughness)\b/i);
   if (pm) boundByA = { stat: pm[1].toLowerCase(), refStat: pm[4].toLowerCase(), less: /less/i.test(pm[2]), orEqual: !!pm[3] };

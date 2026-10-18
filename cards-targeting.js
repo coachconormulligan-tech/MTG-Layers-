@@ -263,7 +263,7 @@ function _singleTargetCandidates(sourceId) {
     const tAbilities = !isNonTargeting && fs ? (fs.abilities || []) : [];
     const hasShroud = _hasKeywordAbility(tAbilities, 'shroud');
     const tCtrl = t.controller || t.owner || 'player_0';
-    const hasHexproof = tCtrl !== sourceCtrl && _hasKeywordAbility(tAbilities, 'hexproof');
+    const hasHexproof = tCtrl !== sourceCtrl && !!_hexproofFromSource(tAbilities, fs || tState, finalStates.get(sourceId), sourcePerm);
     // CR 702.16 — protection: skip if target is protected from this source.
     // Auras/equipment ALWAYS check (attachment counts); other non-targeting selections bypass.
     const isAttachment = !!auraRestriction || isEquipment;
@@ -321,7 +321,7 @@ function _multiTargetCandidates(sourceId, slotIndex) {
     const tAbilities = !isNonTargeting && fs ? (fs.abilities || []) : [];
     const hasShroud = _hasKeywordAbility(tAbilities, 'shroud');
     const tCtrl = t.controller || t.owner || 'player_0';
-    const hasHexproof = tCtrl !== sourceCtrl && _hasKeywordAbility(tAbilities, 'hexproof');
+    const hasHexproof = tCtrl !== sourceCtrl && !!_hexproofFromSource(tAbilities, fs || tState, finalStates.get(sourceId), sourcePerm);
     if (valid && !hasShroud && !hasHexproof) {
       candidates.push({ id: t.id, perm: t, state: fs || tState, displayName: _targetPickerName(t, fs, true) });
     }
@@ -363,7 +363,7 @@ function _slottedTargetCandidates(sourceId, slot) {
     const tAbilities = fs ? (fs.abilities || []) : [];
     const hasShroud = _hasKeywordAbility(tAbilities, 'shroud');
     const tCtrl = t.controller || t.owner || 'player_0';
-    const hasHexproof = tCtrl !== sourceCtrl && _hasKeywordAbility(tAbilities, 'hexproof');
+    const hasHexproof = tCtrl !== sourceCtrl && !!_hexproofFromSource(tAbilities, fs || tState, finalStates.get(sourceId), sourcePerm);
     const sourceFs = finalStates.get(sourceId);
     const isProtected = (typeof _isProtectedFromSource === 'function')
       ? !!_isProtectedFromSource(fs || tState, sourceFs, sourcePerm, t)
@@ -408,7 +408,7 @@ function _modalTargetCandidates(sourceId, modeIdx) {
     const tAbilities = !isNonTargeting && fs ? (fs.abilities || []) : [];
     const hasShroud = _hasKeywordAbility(tAbilities, 'shroud');
     const tCtrl = t.controller || t.owner || 'player_0';
-    const hasHexproof = tCtrl !== sourceCtrl && _hasKeywordAbility(tAbilities, 'hexproof');
+    const hasHexproof = tCtrl !== sourceCtrl && !!_hexproofFromSource(tAbilities, fs || tState, finalStates.get(sourceId), sourcePerm);
     if (valid && !hasShroud && !hasHexproof) {
       candidates.push({ id: t.id, perm: t, state: fs || tState, displayName: _targetPickerName(t, fs, false) });
     }
@@ -470,18 +470,21 @@ function getExchangeControlSlotController(effect, slot) {
 /* What keeps the permanent in a targeted slot from being a target of the source, as a sentence,
    or null: shroud, hexproof when someone other than the source's controller controls it, or
    protection from the source (CR 702.18, 702.11, 702.16), as _singleTargetCandidates checks
-   them. The source's state is read through stateOf as well, so the engine can ask during an
+   them; "hexproof from [quality]" only against a source of that quality (_hexproofFromSource).
+   The source's state is read through stateOf as well, so the engine can ask during an
    evaluation (the snapshot) without evaluating the board again. */
 function _exchangeControlTargetingProblem(effect, slot, st, you, perm, stateOf) {
   if (!st || !_exchangeControlSlotTargeted(effect, slot)) return null;
   const which = `Permanent ${slot.toUpperCase()}`;
   const abilities = st.abilities || [];
   if (_hasKeywordAbility(abilities, 'shroud')) return `${which} has shroud and cannot be targeted.`;
-  if (st.controller && st.controller !== you && _hasKeywordAbility(abilities, 'hexproof')) {
-    return `${which} has hexproof and cannot be targeted.`;
-  }
-  if (typeof _isProtectedFromSource === 'function' && typeof Battlefield !== 'undefined') {
-    const srcPerm = Battlefield.getPermById(effect.sourceId);
+  const srcPerm = (typeof Battlefield !== 'undefined' && Battlefield.getPermById(effect.sourceId)) || null;
+  // "Hexproof from activated and triggered abilities" (Volatile Stormdrake) stops Gilded Drake's
+  // trigger but not Switcheroo.
+  const hexproof = st.controller && st.controller !== you &&
+    _hexproofFromSource(abilities, st, stateOf(effect.sourceId), srcPerm, { get: (id) => stateOf(id) });
+  if (hexproof) return `${which} has ${hexproof.words} and cannot be targeted.`;
+  if (typeof _isProtectedFromSource === 'function' && srcPerm) {
     // A copy: _getStateProtection keeps what it finds on the state it is given.
     const prot = srcPerm && _isProtectedFromSource({ ...st }, stateOf(effect.sourceId), srcPerm, perm || null, { get: (id) => stateOf(id) });
     if (prot) return `${which} has ${_formatProtectionEntry(prot)} and cannot be targeted.`;

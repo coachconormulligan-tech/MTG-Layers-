@@ -1,0 +1,22 @@
+{
+  "name": "Volatile Stormdrake — hexproof from activated and triggered abilities stops Gilded Drake's trigger, not Switcheroo",
+  "notes": "\"Flying, hexproof from activated and triggered abilities\" (CR 702.11d). The opponent's Stormdrake can be a target of your Switcheroo (a spell) and is exchanged, but not of Gilded Drake's enters trigger, whose list leaves it out and whose pair with it the engine refuses. Before (2026-10-18), \"hexproof from …\" counted as full hexproof, so Switcheroo could not take the Stormdrake either.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Volatile Stormdrake", "as": "storm", "controller": "p2" },
+    { "add": "Hill Giant", "as": "giant", "controller": "p2" },
+    { "add": "Gilded Drake", "as": "gd" },
+    { "fire": "@gd", "trigger": 1, "as": "t" },
+    { "call": ["setExchangeControlTargets", "@t", "@gd", "@storm"] },
+    { "add": "Switcheroo", "as": "sw", "spell": true },
+    { "call": ["setExchangeControlTargets", "@sw", "@bears", "@storm"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Gilded Drake (trigger)", "slot": "b" }, "are": ["Hill Giant"] },
+    { "targetCandidates": { "perm": "Switcheroo", "slot": "a" }, "are": ["Gilded Drake", "Grizzly Bears", "Hill Giant", "Volatile Stormdrake"] },
+    { "perm": "Volatile Stormdrake", "final": { "controller": "player_0" } },
+    { "perm": "Grizzly Bears", "final": { "controller": "player_1" } },
+    { "perm": "Gilded Drake", "final": { "controller": "player_0" } }
+  ]
+}

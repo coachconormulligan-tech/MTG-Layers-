@@ -1,0 +1,18 @@
+{
+  "name": "Visions of Duplicity — both targets are creatures you don't control; a pair with your own creature exchanges nothing",
+  "notes": "\"Exchange control of two target creatures you don't control.\" Before (2026-10-18) the controller words were read only for \"target X and target Y\" (exchangeSlotRules), so both lists held your own Grizzly Bears and a pair with it was exchanged. _exchangeControlSlotRules now gives both slots 'notYou' for \"two target … you don't control\".",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "call": ["addPlayer", "Third"] },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Hill Giant", "as": "giant", "controller": "p2" },
+    { "add": "Gray Ogre", "as": "ogre", "controller": "p3" },
+    { "add": "Visions of Duplicity", "as": "v", "spell": true },
+    { "call": ["setExchangeControlTargets", "@v", "@bears", "@giant"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Visions of Duplicity", "slot": "a" }, "are": ["Gray Ogre", "Hill Giant"] },
+    { "perm": "Grizzly Bears", "final": { "controller": "player_0" } },
+    { "perm": "Hill Giant", "final": { "controller": "player_1" } }
+  ]
+}

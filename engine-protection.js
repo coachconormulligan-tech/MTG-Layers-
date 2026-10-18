@@ -10,6 +10,8 @@
      _protectionGrantTimestamp(targetPerm, protEntry) → timestamp
      _isProtectedFromSource(targetState, sourceState, sourcePerm, targetPerm) → entry|null
      _formatProtectionEntry(p) → string
+     _parseHexproofEntries(abilities) → entry[]   (CR 702.11 "hexproof" / "hexproof from X")
+     _hexproofFromSource(targetAbilities, targetState, sourceState, sourcePerm, allStates) → entry|null
 */
 
 const _COLOR_NAME_TO_CODE = { white: 'W', blue: 'U', black: 'B', red: 'R', green: 'G' };
@@ -132,6 +134,29 @@ function _protectionGrantTimestamp(targetPerm, protEntry) {
   return printedTs;
 }
 
+/* CR 113.7: the source of a fired triggered or activated ability (a pseudo-permanent) is the
+   permanent that has the ability, read from allStates when given (inside evaluation), else
+   from the final states. { perm, state }. */
+function _protectionRealSource(sourceState, sourcePerm, allStates) {
+  let realSourcePerm = sourcePerm;
+  let realSourceState = sourceState;
+  if (sourcePerm && sourcePerm.abilitySourceId &&
+      (sourcePerm.isTriggeredAbility || sourcePerm.isActivatedAbility) &&
+      typeof Battlefield !== 'undefined') {
+    const orig = Battlefield.getPermById(sourcePerm.abilitySourceId);
+    if (orig) {
+      realSourcePerm = orig;
+      // Use the real source's state: the in-progress one during evaluation, otherwise
+      // its final state via Battlefield.
+      const fs = allStates || (typeof Battlefield.getAllFinalStates === 'function'
+        ? Battlefield.getAllFinalStates() : null);
+      const rs = fs && fs.get && fs.get(orig.id);
+      if (rs) realSourceState = rs;
+    }
+  }
+  return { perm: realSourcePerm, state: realSourceState };
+}
+
 /* CR 702.16: returns a protection entry that matches `sourceState`/`sourcePerm`,
    or null if the target isn't protected from the source.
    Manual-effect spells (instants/sorceries fired as pseudo-perms) aren't tracked
@@ -154,23 +179,7 @@ function _protectionGrantTimestamp(targetPerm, protEntry) {
 function _isProtectedFromSource(targetState, sourceState, sourcePerm, targetPerm, allStates) {
   const prots = _getStateProtection(targetState);
   if (!prots.length) return null;
-  // Resolve the real ability-source perm for triggered/activated pseudo-perms.
-  let realSourcePerm = sourcePerm;
-  let realSourceState = sourceState;
-  if (sourcePerm && sourcePerm.abilitySourceId &&
-      (sourcePerm.isTriggeredAbility || sourcePerm.isActivatedAbility) &&
-      typeof Battlefield !== 'undefined') {
-    const orig = Battlefield.getPermById(sourcePerm.abilitySourceId);
-    if (orig) {
-      realSourcePerm = orig;
-      // Use the real source's state: the in-progress one during evaluation, otherwise
-      // its final state via Battlefield.
-      const fs = allStates || (typeof Battlefield.getAllFinalStates === 'function'
-        ? Battlefield.getAllFinalStates() : null);
-      const rs = fs && fs.get && fs.get(orig.id);
-      if (rs) realSourceState = rs;
-    }
-  }
+  const { perm: realSourcePerm, state: realSourceState } = _protectionRealSource(sourceState, sourcePerm, allStates);
   // One-time-effect bypass: filter out protection entries acquired AFTER this source's timestamp.
   // Use the pseudo-perm's timestamp for the bypass (that's when the ability was activated/triggered),
   // not the real-source perm's timestamp.
@@ -184,42 +193,96 @@ function _isProtectedFromSource(targetState, sourceState, sourcePerm, targetPerm
     });
   }
   if (!activeProts.length) return null;
+  return activeProts.find(p => _sourceHasQuality(p, realSourcePerm, realSourceState)) || null;
+}
+
+/* Is the source (the permanent whose spell or ability it is, as _protectionRealSource gives
+   it) of the quality a protection or hexproof entry names? */
+function _sourceHasQuality(p, realSourcePerm, realSourceState) {
   const sColors = (realSourceState && realSourceState.colors) || (realSourcePerm && realSourcePerm.printedColors) || [];
   const sTypes = (realSourceState && realSourceState.types) || (realSourcePerm && realSourcePerm.printedTypes) || [];
   const sSubs = (realSourceState && realSourceState.subtypes) || (realSourcePerm && realSourcePerm.printedSubtypes) || [];
   const sName = (realSourceState && realSourceState.name) || (realSourcePerm && realSourcePerm.name) || '';
   const sIsAllCreatureTypes = !!(realSourceState && realSourceState.isAllCreatureTypes);
-  for (const p of activeProts) {
-    switch (p.kind) {
-      case 'everything': return p;
-      case 'colorless':
-        if (sColors.length === 0) return p;
-        break;
-      case 'all_colors':
-        if (sColors.length > 0) return p;
-        break;
-      case 'monocolored':
-        if (sColors.length === 1) return p;
-        break;
-      case 'multicolored':
-        if (sColors.length >= 2) return p;
-        break;
-      case 'color':
-        if (sColors.includes(p.value)) return p;
-        break;
-      case 'cardType':
-        if (sTypes.includes(p.value)) return p;
-        break;
-      case 'subtype':
-        if (sSubs.includes(p.value)) return p;
-        // Changeling / "is every creature type"
-        if (sIsAllCreatureTypes && typeof TypeCatalog !== 'undefined' &&
-            TypeCatalog.creatureTypes && TypeCatalog.creatureTypes.has(p.value)) return p;
-        break;
-      case 'name':
-        if (sName === p.value) return p;
-        break;
+  switch (p.kind) {
+    case 'everything': return true;
+    case 'colorless': return sColors.length === 0;
+    case 'all_colors': return sColors.length > 0;
+    case 'monocolored': return sColors.length === 1;
+    case 'multicolored': return sColors.length >= 2;
+    case 'color': return sColors.includes(p.value);
+    case 'cardType': return sTypes.includes(p.value);
+    case 'subtype':
+      if (sSubs.includes(p.value)) return true;
+      // Changeling / "is every creature type"
+      return sIsAllCreatureTypes && typeof TypeCatalog !== 'undefined' &&
+        !!TypeCatalog.creatureTypes && TypeCatalog.creatureTypes.has(p.value);
+    case 'name': return sName === p.value;
+  }
+  return false;
+}
+
+/* CR 702.11: "hexproof" and "hexproof from [quality]". Returns the entries of the hexproof
+   keywords among a state's abilities: { kind: 'all' } for plain hexproof, a quality as
+   _parseOneProtectionClause reads it ("hexproof from black", "from monocolored", "from
+   artifacts, creatures, and enchantments", "from each color"), { kind: 'abilityKind', value:
+   ['activated', 'triggered'] } (Volatile Stormdrake), { kind: 'its_colors' } ("from each of its
+   colors", Tam), and { kind: 'all' } as well for a quality not read ("from that color" left
+   unresolved), so it is refused as before. Each entry carries words, the keyword as written.
+   A keyword is a line of its own or an item of a keyword list, as _hasKeywordAbility has it;
+   "hexproof from" always ends its list. */
+const _HEXPROOF_QUALITY_KINDS = new Set(['everything', 'all_colors', 'monocolored', 'multicolored', 'colorless', 'color', 'cardType']);
+function _parseHexproofEntries(abilities) {
+  const out = [];
+  for (const a of abilities || []) {
+    const line = String(a).trim().replace(/\s*\(.*$/, '');
+    if (/[:"\u201c]/.test(line) || /^(?:when|whenever|at|as long as|if)\b/i.test(line)) continue;
+    const m = line.match(/(?:^|,\s*)(hexproof)\b(?!\s*[:\u2014])(?:\s+from\s+(.+?))?\s*\.?$/i)
+      || line.match(/(?:^|,\s*)(hexproof)\b(?!\s*[:\u2014])(?=\s*(?:,|$))/i);
+    if (!m) continue;
+    const body = (m[2] || '').replace(/\s+(?:until\s+(?:end\s+of\s+turn|your\s+next\s+turn)|this\s+turn)\s*$/i, '').trim();
+    if (!body) { out.push({ kind: 'all', words: 'hexproof' }); continue; }
+    const words = 'hexproof from ' + body.toLowerCase();
+    const kinds = body.toLowerCase().match(/^(activated|triggered)(?:\s+and\s+(activated|triggered))?\s+abilities$/);
+    if (kinds) { out.push({ kind: 'abilityKind', value: [kinds[1], kinds[2]].filter(Boolean), words }); continue; }
+    if (/^each of its colors$/i.test(body)) { out.push({ kind: 'its_colors', words }); continue; }
+    const parts = body.split(/\s*,\s*(?:and\s+|or\s+)?(?:from\s+)?|\s+(?:and|or)\s+(?:from\s+)?/i).filter(Boolean);
+    const parsed = parts.map(_parseOneProtectionClause);
+    if (!parsed.length || parsed.some(q => !q || !_HEXPROOF_QUALITY_KINDS.has(q.kind))) {
+      out.push({ kind: 'all', words });
+      continue;
     }
+    for (const q of parsed) out.push({ ...q, words });
+  }
+  return out;
+}
+
+/* The hexproof entry that keeps the target from being targeted by this source, or null.
+   Hexproof only stops an opponent's spells and abilities (the caller checks controllers);
+   "hexproof from [quality]" only those of that quality, an ability's quality being its
+   source's (CR 702.11d, as for protection, CR 113.7). Only abilities are of the
+   'abilityKind' kinds: a fired triggered or activated ability (a pseudo-permanent flagged
+   isTriggeredAbility / isActivatedAbility). allStates as for _isProtectedFromSource. */
+function _hexproofFromSource(targetAbilities, targetState, sourceState, sourcePerm, allStates) {
+  const entries = _parseHexproofEntries(targetAbilities);
+  if (!entries.length) return null;
+  let src = null;
+  const source = () => src || (src = _protectionRealSource(sourceState, sourcePerm, allStates));
+  for (const h of entries) {
+    if (h.kind === 'all') return h;
+    if (h.kind === 'abilityKind') {
+      if ((sourcePerm && sourcePerm.isTriggeredAbility && h.value.includes('triggered')) ||
+          (sourcePerm && sourcePerm.isActivatedAbility && h.value.includes('activated'))) return h;
+      continue;
+    }
+    const s = source();
+    if (h.kind === 'its_colors') {
+      const own = (targetState && targetState.colors) || [];
+      const sColors = (s.state && s.state.colors) || (s.perm && s.perm.printedColors) || [];
+      if (own.some(c => sColors.includes(c))) return h;
+      continue;
+    }
+    if (_sourceHasQuality(h, s.perm, s.state)) return h;
   }
   return null;
 }

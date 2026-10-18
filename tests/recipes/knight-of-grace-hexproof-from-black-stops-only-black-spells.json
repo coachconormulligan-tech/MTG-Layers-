@@ -1,0 +1,20 @@
+{
+  "name": "Knight of Grace — hexproof from black stops a black spell but not a red one; Sphinx of the Guildpact's hexproof from monocolored stops both",
+  "notes": "\"Hexproof from black\" (CR 702.11d): the opponent's Knight of Grace cannot be the target of your black spells, but can be of your red ones. Before (2026-10-18), every picker read any \"Hexproof from …\" as full hexproof, so Brute Force left the Knight out. Sphinx of the Guildpact (hexproof from monocolored) is left out of both mono-coloured spells, Gladecover Scout (hexproof) out of both, and your own Grizzly Bears is in both. The Knight reads 6/5: +1/+0 for the black Grasp of Darkness on the board, +3/+3 from Brute Force.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Knight of Grace", "as": "knight", "controller": "p2" },
+    { "add": "Sphinx of the Guildpact", "as": "sphinx", "controller": "p2" },
+    { "add": "Gladecover Scout", "as": "scout", "controller": "p2" },
+    { "add": "Hill Giant", "as": "giant", "controller": "p2" },
+    { "add": "Grasp of Darkness", "as": "grasp", "spell": true },
+    { "add": "Brute Force", "as": "brute", "spell": true },
+    { "call": ["setTarget", "@brute", "@knight"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Grasp of Darkness" }, "are": ["Grizzly Bears", "Hill Giant"] },
+    { "targetCandidates": { "perm": "Brute Force" }, "are": ["Grizzly Bears", "Hill Giant", "Knight of Grace"] },
+    { "perm": "Knight of Grace", "final": { "power": 6, "toughness": 5 } }
+  ]
+}
