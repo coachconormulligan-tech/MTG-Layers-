@@ -1,0 +1,15 @@
+{
+  "name": "Karametra — Gemrazer mutated on top isn't a creature below seven devotion",
+  "notes": "Gemrazer is mutated over Karametra, God of Harvests. The merged permanent has Gemrazer's characteristics plus Karametra's abilities (CR 702.140e), so 'Karametra isn't a creature' refers to the merged permanent itself (CR 201.5); the effect used to stay on the buried card's state. Its mana cost is Gemrazer's {3}{G}, so devotion is 1 + Leatherback Baloth 3 + Llanowar Elves 1 = 5: less than seven (counting the buried Karametra's {G}{W} too made it 7).",
+  "steps": [
+    { "add": "Karametra, God of Harvests", "as": "kara" },
+    { "add": "Gemrazer", "as": "gemrazer" },
+    { "call": ["applyMutate", "@gemrazer", "@kara", "top"] },
+    { "add": "Leatherback Baloth" },
+    { "add": "Llanowar Elves" }
+  ],
+  "asserts": [
+    { "perm": "Gemrazer", "final": { "types": [], "subtypes": [] } },
+    { "perm": "Leatherback Baloth", "final": { "types": ["Creature"] } }
+  ]
+}

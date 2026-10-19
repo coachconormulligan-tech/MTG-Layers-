@@ -6,13 +6,53 @@
 
    Extracted from engine-helpers.js. */
 
+/* A mutated permanent is one permanent (CR 702.140e), but each card of its stack keeps a state
+   of its own in allStates. Counts read it once, as its top card: the cards under it are left out. */
+function _buriedMutateIds() {
+  const ids = new Set();
+  if (typeof Battlefield === 'undefined' || !Battlefield.mutateStacks) return ids;
+  for (const stack of Battlefield.mutateStacks) {
+    for (let i = 1; i < stack.length; i++) ids.add(stack[i]);
+  }
+  return ids;
+}
+
+/* The permanent a card is part of: the top card of its mutate stack, or the card itself. */
+function _mutateTopId(id) {
+  const stack = (id && typeof Battlefield !== 'undefined' && Battlefield.getStack) ? Battlefield.getStack(id) : null;
+  return stack && stack.length >= 2 ? stack[0] : id;
+}
+
+/* allStates without the cards under a mutated permanent's top card (allStates itself when none). */
+function _withoutBuriedMutateCards(allStates) {
+  if (!allStates) return allStates;
+  const buried = _buriedMutateIds();
+  if (![...buried].some(id => allStates.has(id))) return allStates;
+  const out = new Map();
+  for (const [id, st] of allStates) if (!buried.has(id)) out.set(id, st);
+  return out;
+}
+
 /* [KEY: FOR-EACH-COMPUTE]  —  Auto-compute "for each" counts from battlefield state */
 function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
+  // A mutated permanent counts once, as its top card, and a card under it that says "this
+  // creature" or "other" means the whole permanent, read from the top card's state.
+  const srcPermId = effect && effect.sourceId ? _mutateTopId(effect.sourceId) : null;
+  const fullStates = allStates;
+  allStates = _withoutBuriedMutateCards(allStates);
+  if (selfState && allStates !== fullStates) {
+    for (const [id, st] of fullStates) {
+      if (st !== selfState) continue;
+      const topId = _mutateTopId(id);
+      if (topId !== id && fullStates.get(topId)) selfState = fullStates.get(topId);
+      break;
+    }
+  }
   // Resolve the SOURCE permanent's state for self-references like "counter on this creature".
   // When an effect says "for each counter on [source name]", selfState is the TARGET being
   // modified, but counters are on the SOURCE. Look up source state from allStates.
-  const sourceState = (effect && effect.sourceId && allStates)
-    ? (allStates.get(effect.sourceId) || selfState) : selfState;
+  const sourceState = (srcPermId && allStates)
+    ? (allStates.get(srcPermId) || selfState) : selfState;
 
   // Detect "you control" / "your opponents control" before stripping them from desc.
   const rawDesc = forEachDesc.toLowerCase().trim();
@@ -129,7 +169,7 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
     const baseTypes = { artifact: 'Artifact', creature: 'Creature', enchantment: 'Enchantment', land: 'Land', planeswalker: 'Planeswalker' };
     let total = 0;
     for (const [pid, st] of allStates) {
-      if (excludeSelf && effect.sourceId && pid === effect.sourceId) continue;
+      if (excludeSelf && srcPermId && pid === srcPermId) continue;
       if (youControl && st.controller !== ctrlId) continue;
       if (opponentsControl && st.controller === ctrlId) continue;
       let matches = false;
@@ -528,7 +568,7 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
       }
       if (subOk) {
         for (const [pid, st] of pool) {
-          if (notSource && effect && pid === effect.sourceId) continue;
+          if (notSource && srcPermId && pid === srcPermId) continue;
           if (youControl && st.controller !== ctrlId) continue;
           if (opponentsControl && st.controller === ctrlId) continue;
           if (checks.every(fn => fn(st))) count++;
@@ -777,7 +817,8 @@ function _computeCountClause(clause, allStates, selfState) {
 function _computeDevotionCounts(allStates, controller) {
   const devotion = { W: 0, U: 0, B: 0, R: 0, G: 0 };
   const colorMap = { W: 'W', U: 'U', B: 'B', R: 'R', G: 'G' };
-  for (const [, st] of allStates) {
+  // A mutated permanent's mana cost is its top card's (CR 702.140e): cards under it add nothing.
+  for (const [, st] of _withoutBuriedMutateCards(allStates)) {
     if (controller && st.controller !== controller) continue;
     const cost = st.manaCost || '';
     for (const ch of cost) {

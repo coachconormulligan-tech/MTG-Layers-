@@ -1,0 +1,16 @@
+{
+  "name": "Mutate — a merged permanent counts once in creature counts and mana value totals",
+  "notes": "Gemrazer is mutated over Grizzly Bears: one permanent with Gemrazer's characteristics (CR 702.140e), though the engine keeps a state for each card. _computeForEachCount counted every card of the stack, so Crusader of Odric saw four creatures (4/4) and Ancient Ooze added the buried Bears' mana value 2 (9/9). Now the cards under the top card are left out of counts: Crusader counts itself, Gemrazer and the Ooze (3/3), and the Ooze adds Crusader 3 and Gemrazer 4 (7/7).",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Gemrazer", "as": "gemrazer" },
+    { "call": ["applyMutate", "@gemrazer", "@bears", "top"] },
+    { "add": "Crusader of Odric" },
+    { "add": "Ancient Ooze" }
+  ],
+  "asserts": [
+    { "perm": "Crusader of Odric", "final": { "power": 3, "toughness": 3 } },
+    { "perm": "Ancient Ooze", "final": { "power": 7, "toughness": 7 } },
+    { "perm": "Gemrazer", "final": { "power": 4, "toughness": 4 } }
+  ]
+}

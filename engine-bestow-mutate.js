@@ -68,7 +68,8 @@ function _applyBestowLayer4(Battlefield, allStates, layerResults) {
 
 
 /* Helper: apply mutate stacks within Layer 1 (after COPY effects).
-   CR 702.140: Top card's name/types/P/T are authoritative; ability pools merged.
+   CR 702.140: Top card's name/types/P/T/colors/mana cost are authoritative; ability pools
+   and counters merged.
    Called from both the "has effects" and "no effects" paths of Layer 1. */
 function _applyMutateLayer1(Battlefield, allStates, layerResults) {
   if (typeof Battlefield === 'undefined' || !Battlefield.mutateStacks || !Battlefield.mutateStacks.length) return;
@@ -83,6 +84,16 @@ function _applyMutateLayer1(Battlefield, allStates, layerResults) {
     const topSubtypes = [...topState.subtypes];
     const topPower = topState.power;
     const topToughness = topState.toughness;
+    const topColors = [...(topState.colors || [])];
+    const topManaCost = topState.manaCost;
+    const topManaValue = topState.manaValue;
+    // Counters on any card of the stack are on the one merged permanent.
+    const mergedCounters = {};
+    for (const permId of stack) {
+      const st = allStates.get(permId);
+      if (!st) continue;
+      for (const [k, n] of Object.entries(st.counters || {})) mergedCounters[k] = (mergedCounters[k] || 0) + n;
+    }
 
     const mergedAbilities = [];
     const seen = new Set();
@@ -109,6 +120,10 @@ function _applyMutateLayer1(Battlefield, allStates, layerResults) {
       st.subtypes = [...topSubtypes];
       st.power = topPower;
       st.toughness = topToughness;
+      st.colors = [...topColors];
+      st.manaCost = topManaCost;
+      st.manaValue = topManaValue;
+      st.counters = { ...mergedCounters };
       st.abilities = [...mergedAbilities];
       // Also sync oracleText to the merged abilities so Layer 3 text-change effects
       // that target any member of this stack operate on the full merged ability pool.
@@ -128,7 +143,7 @@ function _applyMutateLayer1(Battlefield, allStates, layerResults) {
         layerResult.applicationLog.push({
           source: 'Mutate Stack (' + stackNames.join(' / ') + ')',
           timestamp: topPerm ? topPerm.timestamp : 0,
-          reason: 'CR 702.140: Top card’s name/types/P/T are used; all abilities in the stack are merged. Stack order (top→bottom): ' + stackNames.join(', ') + '.',
+          reason: 'CR 702.140: Top card’s name, types, P/T, colors and mana cost are used; all abilities and counters in the stack are merged. Stack order (top→bottom): ' + stackNames.join(', ') + '.',
           changes,
         });
       }

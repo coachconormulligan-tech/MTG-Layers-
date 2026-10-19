@@ -521,9 +521,16 @@ function _evaluateBoard(allPermanents, allEffects, tracedIds, permanent) {
         const nonTopId = stack[i];
         for (const eff of workingEffects) {
           if (eff.sourceId === nonTopId) {
-            // Effect originates FROM a non-top card
-            if (!eff._isCounterEffect) continue;
-            // Redirect own counter effects to the top card
+            // Effect originates FROM a non-top card. Its counters, and what it says of
+            // itself ("Karametra isn't a creature"), are about the merged permanent, whose
+            // characteristics are the top card's (CR 702.140e).
+            const selfEffect = eff._isCounterEffect ||
+              (eff.selfTarget && eff.type !== EFFECT_TYPE.COPY && eff.type !== EFFECT_TYPE.TEXT_CHANGE);
+            if (!selfEffect) {
+              // "Other creatures you control": the card's "self" is the whole permanent.
+              if (eff.scope === 'global' && eff.affectsSelf === false && !eff._excludeSourceId) eff._excludeSourceId = topId;
+              continue;
+            }
             eff.selfTarget = false;
             eff.targetId = topId;
           } else if (eff.targetId === nonTopId) {
@@ -770,7 +777,7 @@ function _evaluateBoard(allPermanents, allEffects, tracedIds, permanent) {
       const inspState = allStates.get(id);
       for (const [idx, condFn] of finalState.conditionalAbilityConditions) {
         try {
-          if (condFn(inspState, allStates)) metSet.add(idx);
+          if (condFn(inspState, _withoutBuriedMutateCards(allStates))) metSet.add(idx);
         } catch(e) { /* condition eval failed, leave as unmet */ }
       }
       result.final.conditionalAbilitiesMet = metSet;

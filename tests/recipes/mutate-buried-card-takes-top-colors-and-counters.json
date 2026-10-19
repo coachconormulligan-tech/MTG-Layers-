@@ -1,0 +1,15 @@
+{
+  "name": "Mutate — a card under the top takes the top card's colors, and the stack's counters are on the merged permanent",
+  "notes": "Gemrazer is mutated over Serra Angel, which has a +1/+1 counter. The merged permanent has Gemrazer's colors and mana cost (CR 702.140e), and every counter on any of its cards. _applyMutateLayer1 copied name, types, P/T and abilities from the top card but not colors or mana cost, so the buried Angel's state stayed white and Crusade gave it +1/+1; its counter was not on the top card's state (counts read only the top card since mutate-stack-counts-as-one-creature).",
+  "steps": [
+    { "add": "Serra Angel", "as": "angel" },
+    { "call": ["addCounter", "@angel", "+1/+1", 1] },
+    { "add": "Gemrazer", "as": "gemrazer" },
+    { "call": ["applyMutate", "@gemrazer", "@angel", "top"] },
+    { "add": "Crusade" }
+  ],
+  "asserts": [
+    { "perm": "Gemrazer", "final": { "colors": ["G"], "power": 5, "toughness": 5, "counters": { "+1/+1": 1 } } },
+    { "perm": "Serra Angel", "final": { "colors": ["G"] } }
+  ]
+}

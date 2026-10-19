@@ -1,0 +1,14 @@
+{
+  "name": "Karametra — Gemrazer mutated on top stays a 4/4 creature at seven devotion",
+  "notes": "Companion to karametra-mutated-under-gemrazer-not-a-creature: devotion is Gemrazer's {G} plus two Leatherback Baloths' {G}{G}{G} each = 7, so the merged permanent is Gemrazer's 4/4 Beast creature.",
+  "steps": [
+    { "add": "Karametra, God of Harvests", "as": "kara" },
+    { "add": "Gemrazer", "as": "gemrazer" },
+    { "call": ["applyMutate", "@gemrazer", "@kara", "top"] },
+    { "add": "Leatherback Baloth" },
+    { "add": "Leatherback Baloth" }
+  ],
+  "asserts": [
+    { "perm": "Gemrazer", "final": { "types": ["Creature"], "subtypes": ["Beast"], "power": 4, "toughness": 4 } }
+  ]
+}

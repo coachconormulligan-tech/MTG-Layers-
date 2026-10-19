@@ -1,0 +1,14 @@
+{
+  "name": "Mutate — a buried card's 'other creatures you control' does not reach the merged permanent",
+  "notes": "Gemrazer is mutated over Angel of Jubilation. 'Other nonblack creatures you control get +1/+1' now belongs to the merged permanent, which is 'this' creature, so it is not 'other' (CR 702.140e). The effect excluded only the buried Angel's own id, so the top card's state (Gemrazer) got +1/+1 too (5/5). Gemrazer stays 4/4; Grizzly Bears gets +1/+1.",
+  "steps": [
+    { "add": "Angel of Jubilation", "as": "angel" },
+    { "add": "Gemrazer", "as": "gemrazer" },
+    { "call": ["applyMutate", "@gemrazer", "@angel", "top"] },
+    { "add": "Grizzly Bears" }
+  ],
+  "asserts": [
+    { "perm": "Gemrazer", "final": { "power": 4, "toughness": 4 } },
+    { "perm": "Grizzly Bears", "final": { "power": 3, "toughness": 3 } }
+  ]
+}

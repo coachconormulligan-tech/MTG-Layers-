@@ -1,0 +1,973 @@
+{
+ "name": "Mutate — a merged permanent counts once in creature counts and mana value totals",
+ "notes": "Gemrazer is mutated over Grizzly Bears: one permanent with Gemrazer's characteristics (CR 702.140e), though the engine keeps a state for each card. _computeForEachCount counted every card of the stack, so Crusader of Odric saw four creatures (4/4) and Ancient Ooze added the buried Bears' mana value 2 (9/9). Now the cards under the top card are left out of counts: Crusader counts itself, Gemrazer and the Ooze (3/3), and the Ooze adds Crusader 3 and Gemrazer 4 (7/7).",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Grizzly Bears",
+    "as": "bears"
+   },
+   {
+    "add": "Gemrazer",
+    "as": "gemrazer"
+   },
+   {
+    "call": [
+     "applyMutate",
+     "@gemrazer",
+     "@bears",
+     "top"
+    ]
+   },
+   {
+    "add": "Crusader of Odric"
+   },
+   {
+    "add": "Ancient Ooze"
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Crusader of Odric",
+   "final": {
+    "power": 3,
+    "toughness": 3
+   }
+  },
+  {
+   "perm": "Ancient Ooze",
+   "final": {
+    "power": 7,
+    "toughness": 7
+   }
+  },
+  {
+   "perm": "Gemrazer",
+   "final": {
+    "power": 4,
+    "toughness": 4
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+     "multiverse_ids": [
+      129586
+     ],
+     "mtgo_id": 27400,
+     "mtgo_foil_id": 27401,
+     "tcgplayer_id": 15153,
+     "cardmarket_id": 16432,
+     "name": "Grizzly Bears",
+     "lang": "en",
+     "released_at": "2007-07-13",
+     "uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "scryfall_uri": "https://scryfall.com/card/10e/268/grizzly-bears?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:43:21Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "normal": "https://cards.scryfall.io/normal/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "large": "https://cards.scryfall.io/large/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "png": "https://cards.scryfall.io/png/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.png?1783943001",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "grid": "https://cards.scryfall.io/grid/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "display": "https://cards.scryfall.io/display/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "art": "https://cards.scryfall.io/art/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "crop": "https://cards.scryfall.io/crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001"
+     },
+     "mana_cost": "{1}{G}",
+     "cmc": 2,
+     "type_line": "Creature — Bear",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set": "10e",
+     "set_name": "Tenth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A14c8f55d-d177-4c25-a931-ebeb9e6062a0&unique=prints",
+     "collector_number": "268",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"We cannot forget that among all of Dominaria's wonders, a system of life exists, with prey and predators that will never fight wars nor vie for ancient power.\"\n—Jolrael, empress of beasts",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "D. J. Cleland-Hura",
+     "artist_ids": [
+      "87d21070-2432-4167-8aab-5968af1c14f3"
+     ],
+     "illustration_id": "066bfe81-0f53-43da-a074-b2ecc5dcda72",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 8114,
+     "penny_rank": 10982,
+     "prices": {
+      "usd": "0.22",
+      "usd_foil": "3.29",
+      "usd_etched": null,
+      "eur": "0.11",
+      "eur_foil": "1.97",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129586&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "edhrec": "https://edhrec.com/route/?cc=Grizzly+Bears"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15153%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16432&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27400?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "0095245c-a30e-4e2a-88c9-632c678e9f03",
+     "oracle_id": "3dfb0c0a-b68f-43b9-8475-28d0192fc4ed",
+     "multiverse_ids": [
+      479675
+     ],
+     "mtgo_id": 80319,
+     "arena_id": 71222,
+     "tcgplayer_id": 212071,
+     "cardmarket_id": 451808,
+     "name": "Gemrazer",
+     "lang": "en",
+     "released_at": "2020-04-24",
+     "uri": "https://api.scryfall.com/cards/0095245c-a30e-4e2a-88c9-632c678e9f03",
+     "scryfall_uri": "https://scryfall.com/card/iko/155/gemrazer?utm_source=api",
+     "layout": "mutate",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T08:23:55Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/0/0/0095245c-a30e-4e2a-88c9-632c678e9f03.jpg?1783931035",
+      "normal": "https://cards.scryfall.io/normal/front/0/0/0095245c-a30e-4e2a-88c9-632c678e9f03.jpg?1783931035",
+      "large": "https://cards.scryfall.io/large/front/0/0/0095245c-a30e-4e2a-88c9-632c678e9f03.jpg?1783931035",
+      "png": "https://cards.scryfall.io/png/front/0/0/0095245c-a30e-4e2a-88c9-632c678e9f03.png?1783931035",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/0/0/0095245c-a30e-4e2a-88c9-632c678e9f03.jpg?1783931035",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/0/0/0095245c-a30e-4e2a-88c9-632c678e9f03.jpg?1783931035",
+      "thumb": "https://cards.scryfall.io/thumb/front/0/0/0095245c-a30e-4e2a-88c9-632c678e9f03.webp?1783931035",
+      "grid": "https://cards.scryfall.io/grid/front/0/0/0095245c-a30e-4e2a-88c9-632c678e9f03.webp?1783931035",
+      "display": "https://cards.scryfall.io/display/front/0/0/0095245c-a30e-4e2a-88c9-632c678e9f03.webp?1783931035",
+      "art": "https://cards.scryfall.io/art/front/0/0/0095245c-a30e-4e2a-88c9-632c678e9f03.webp?1783931035",
+      "crop": "https://cards.scryfall.io/crop/front/0/0/0095245c-a30e-4e2a-88c9-632c678e9f03.webp?1783931035"
+     },
+     "mana_cost": "{3}{G}",
+     "cmc": 4,
+     "type_line": "Creature — Beast",
+     "oracle_text": "Mutate {1}{G}{G} (If you cast this spell for its mutate cost, put it over or under target non-Human creature you own. They mutate into the creature on top plus all abilities from under it.)\nReach, trample\nWhenever this creature mutates, destroy target artifact or enchantment an opponent controls.",
+     "power": "4",
+     "toughness": "4",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [
+      "Reach",
+      "Mutate",
+      "Trample"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "arena",
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "19feda43-15ab-427e-a0e4-148a4bf2b03a",
+     "set": "iko",
+     "set_name": "Ikoria: Lair of Behemoths",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/19feda43-15ab-427e-a0e4-148a4bf2b03a",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aiko&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/iko?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/0095245c-a30e-4e2a-88c9-632c678e9f03/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A3dfb0c0a-b68f-43b9-8475-28d0192fc4ed&unique=prints",
+     "collector_number": "155",
+     "digital": false,
+     "rarity": "rare",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Svetlin Velinov",
+     "artist_ids": [
+      "ffd063ae-c097-4f26-b2e6-b1e2137708bc"
+     ],
+     "illustration_id": "85193f7d-c7eb-4dd7-8944-26b201b0d08d",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 3930,
+     "penny_rank": 5447,
+     "preview": {
+      "source": "Wizards of the Coast",
+      "source_uri": "https://www.youtube.com/watch?v=1_xqwsZkH4w",
+      "previewed_at": "2020-04-03"
+     },
+     "prices": {
+      "usd": "0.43",
+      "usd_foil": "4.33",
+      "usd_etched": null,
+      "eur": "0.59",
+      "eur_foil": "1.02",
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=479675&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGemrazer",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGemrazer",
+      "edhrec": "https://edhrec.com/route/?cc=Gemrazer"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F212071%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=451808&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/80319?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "2fd0400a-ef3e-4b03-9852-63e28304da53",
+     "oracle_id": "ea384b0d-3091-4d50-b15f-1f6763647b7c",
+     "multiverse_ids": [],
+     "tcgplayer_id": 695515,
+     "cardmarket_id": 904183,
+     "name": "Crusader of Odric",
+     "lang": "en",
+     "released_at": "2026-04-24",
+     "uri": "https://api.scryfall.com/cards/2fd0400a-ef3e-4b03-9852-63e28304da53",
+     "scryfall_uri": "https://scryfall.com/card/fdn/731/crusader-of-odric?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-08-24T09:19:22Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/2/f/2fd0400a-ef3e-4b03-9852-63e28304da53.jpg?1787563162",
+      "normal": "https://cards.scryfall.io/normal/front/2/f/2fd0400a-ef3e-4b03-9852-63e28304da53.jpg?1787563162",
+      "large": "https://cards.scryfall.io/large/front/2/f/2fd0400a-ef3e-4b03-9852-63e28304da53.jpg?1787563162",
+      "png": "https://cards.scryfall.io/png/front/2/f/2fd0400a-ef3e-4b03-9852-63e28304da53.png?1787563162",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/2/f/2fd0400a-ef3e-4b03-9852-63e28304da53.jpg?1787563162",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/2/f/2fd0400a-ef3e-4b03-9852-63e28304da53.jpg?1787563162",
+      "thumb": "https://cards.scryfall.io/thumb/front/2/f/2fd0400a-ef3e-4b03-9852-63e28304da53.webp?1787563162",
+      "grid": "https://cards.scryfall.io/grid/front/2/f/2fd0400a-ef3e-4b03-9852-63e28304da53.webp?1787563162",
+      "display": "https://cards.scryfall.io/display/front/2/f/2fd0400a-ef3e-4b03-9852-63e28304da53.webp?1787563162",
+      "art": "https://cards.scryfall.io/art/front/2/f/2fd0400a-ef3e-4b03-9852-63e28304da53.webp?1787563162",
+      "crop": "https://cards.scryfall.io/crop/front/2/f/2fd0400a-ef3e-4b03-9852-63e28304da53.webp?1787563162"
+     },
+     "mana_cost": "{2}{W}",
+     "cmc": 3,
+     "type_line": "Creature — Human Soldier",
+     "oracle_text": "Crusader of Odric's power and toughness are each equal to the number of creatures you control.",
+     "power": "*",
+     "toughness": "*",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "arena",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a7ecb771-d1b6-4dec-8cf5-8d45179f21e0",
+     "set": "fdn",
+     "set_name": "Foundations",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a7ecb771-d1b6-4dec-8cf5-8d45179f21e0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Afdn&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/fdn?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/2fd0400a-ef3e-4b03-9852-63e28304da53/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aea384b0d-3091-4d50-b15f-1f6763647b7c&unique=prints",
+     "collector_number": "731",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"We are Odric's sword. We strike without fear, for his mind has divined how our foe will be slain.\"",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Michael Komarck",
+     "artist_ids": [
+      "96a53b95-fe5f-4fbb-9411-ccf4ee150aca"
+     ],
+     "illustration_id": "80a36273-93fe-463c-879d-125bf42c7f92",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "setextension"
+     ],
+     "edhrec_rank": 12344,
+     "penny_rank": 14664,
+     "prices": {
+      "usd": "0.45",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.18",
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DCrusader%2Bof%2BOdric",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DCrusader%2Bof%2BOdric",
+      "edhrec": "https://edhrec.com/route/?cc=Crusader+of+Odric"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F695515%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=904183&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Crusader+of+Odric&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "3b57b41c-f99c-4525-8541-f025b7e31974",
+     "oracle_id": "2076b2a7-6e07-4b6d-ae17-c1cfd0961022",
+     "multiverse_ids": [
+      45164
+     ],
+     "mtgo_id": 18798,
+     "mtgo_foil_id": 18799,
+     "tcgplayer_id": 10932,
+     "cardmarket_id": 1105,
+     "name": "Ancient Ooze",
+     "lang": "en",
+     "released_at": "2003-05-26",
+     "uri": "https://api.scryfall.com/cards/3b57b41c-f99c-4525-8541-f025b7e31974",
+     "scryfall_uri": "https://scryfall.com/card/scg/112/ancient-ooze?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T12:14:29Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/3/b/3b57b41c-f99c-4525-8541-f025b7e31974.jpg?1783944869",
+      "normal": "https://cards.scryfall.io/normal/front/3/b/3b57b41c-f99c-4525-8541-f025b7e31974.jpg?1783944869",
+      "large": "https://cards.scryfall.io/large/front/3/b/3b57b41c-f99c-4525-8541-f025b7e31974.jpg?1783944869",
+      "png": "https://cards.scryfall.io/png/front/3/b/3b57b41c-f99c-4525-8541-f025b7e31974.png?1783944869",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/3/b/3b57b41c-f99c-4525-8541-f025b7e31974.jpg?1783944869",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/3/b/3b57b41c-f99c-4525-8541-f025b7e31974.jpg?1783944869",
+      "thumb": "https://cards.scryfall.io/thumb/front/3/b/3b57b41c-f99c-4525-8541-f025b7e31974.webp?1783944869",
+      "grid": "https://cards.scryfall.io/grid/front/3/b/3b57b41c-f99c-4525-8541-f025b7e31974.webp?1783944869",
+      "display": "https://cards.scryfall.io/display/front/3/b/3b57b41c-f99c-4525-8541-f025b7e31974.webp?1783944869",
+      "art": "https://cards.scryfall.io/art/front/3/b/3b57b41c-f99c-4525-8541-f025b7e31974.webp?1783944869",
+      "crop": "https://cards.scryfall.io/crop/front/3/b/3b57b41c-f99c-4525-8541-f025b7e31974.webp?1783944869"
+     },
+     "mana_cost": "{5}{G}{G}",
+     "cmc": 7,
+     "type_line": "Creature — Ooze",
+     "oracle_text": "Ancient Ooze's power and toughness are each equal to the total mana value of other creatures you control.",
+     "power": "*",
+     "toughness": "*",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "5133c3a1-1412-4ce6-a1f0-73b695966ded",
+     "set": "scg",
+     "set_name": "Scourge",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/5133c3a1-1412-4ce6-a1f0-73b695966ded",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Ascg&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/scg?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/3b57b41c-f99c-4525-8541-f025b7e31974/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A2076b2a7-6e07-4b6d-ae17-c1cfd0961022&unique=prints",
+     "collector_number": "112",
+     "digital": false,
+     "rarity": "rare",
+     "flavor_text": "The ooze has always been. The ooze will always be.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Erica Gassalasca-Jape",
+     "artist_ids": [
+      "4441fe52-9e41-40c1-9b74-8510426279ab"
+     ],
+     "illustration_id": "15454972-bd0e-439e-9092-b3e48ee1d32c",
+     "border_color": "black",
+     "frame": "1997",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 15550,
+     "penny_rank": 15355,
+     "prices": {
+      "usd": "1.47",
+      "usd_foil": "20.00",
+      "usd_etched": null,
+      "eur": "0.83",
+      "eur_foil": "6.52",
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=45164&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DAncient%2BOoze",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DAncient%2BOoze",
+      "edhrec": "https://edhrec.com/route/?cc=Ancient+Ooze"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F10932%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=1105&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/18798?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 4,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [
+   [
+    "perm_2",
+    "perm_1"
+   ]
+  ],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Grizzly Bears",
+    "final": {
+     "name": "Gemrazer",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Beast"
+     ],
+     "power": 4,
+     "toughness": 4,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "Mutate {1}{G}{G}",
+      "Reach, trample",
+      "Whenever this creature mutates, destroy target artifact or enchantment an opponent controls."
+     ]
+    },
+    "changedBy": {
+     "1": [
+      "Mutate Stack (Gemrazer / Grizzly Bears)"
+     ]
+    }
+   },
+   {
+    "perm": "Gemrazer",
+    "final": {
+     "name": "Gemrazer",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Beast"
+     ],
+     "power": 4,
+     "toughness": 4,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "Mutate {1}{G}{G}",
+      "Reach, trample",
+      "Whenever this creature mutates, destroy target artifact or enchantment an opponent controls."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Crusader of Odric",
+    "final": {
+     "name": "Crusader of Odric",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Human",
+      "Soldier"
+     ],
+     "power": 3,
+     "toughness": 3,
+     "colors": [
+      "W"
+     ],
+     "abilities": [
+      "This card's power and toughness are each equal to the number of creatures you control."
+     ]
+    },
+    "changedBy": {
+     "7a": [
+      "Crusader of Odric"
+     ]
+    }
+   },
+   {
+    "perm": "Ancient Ooze",
+    "final": {
+     "name": "Ancient Ooze",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Ooze"
+     ],
+     "power": 7,
+     "toughness": 7,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "This card's power and toughness are each equal to the total mana value of other creatures you control."
+     ]
+    },
+    "changedBy": {
+     "7a": [
+      "Ancient Ooze"
+     ]
+    }
+   }
+  ],
+  "order": {
+   "1": [
+    "Mutate Stack (Gemrazer / Grizzly Bears)"
+   ],
+   "7a": [
+    "Crusader of Odric",
+    "Ancient Ooze"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Crusader of Odric",
+    "layer": "7a",
+    "type": "cda_pt",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "compute": null,
+     "forEachDesc": "creatures you control",
+     "isExileCount": false,
+     "isGraveyardCount": false,
+     "userAdjustable": false
+    }
+   },
+   {
+    "source": "Ancient Ooze",
+    "layer": "7a",
+    "type": "cda_pt",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "compute": null,
+     "forEachDesc": "other creatures you control",
+     "isManaValueSum": true
+    }
+   }
+  ]
+ }
+}
