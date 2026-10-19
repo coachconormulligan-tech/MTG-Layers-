@@ -106,6 +106,15 @@ function getTargetPickerKind(sourceId, finalState, info) {
    types and colours; a restriction may also ask who controls the permanent ("you control",
    "an opponent controls"), or about its power, abilities, counters or traits ("with power 5 or
    greater", "with defender", "with a counter on it", "attacking"). */
+// "Target creature you control other than enchanted creature" (Due Diligence): is `permId` what the
+// fired ability's source is attached to now? (_excludeAttachedOfSource, set in _addAbilityPseudo.)
+function _isAttachedOfAbilitySource(sourcePerm, permId) {
+  if (!sourcePerm || !sourcePerm._excludeAttachedOfSource || !sourcePerm.abilitySourceId) return false;
+  const src = sourcePerm.abilitySourceId;
+  const att = Battlefield.effects.find(e => e.sourceId === src && e.scope === 'targeted' && e.targetId && !e._isEquipTargetEff && !e.isSpellEffect)?.targetId;
+  return !!att && att === permId;
+}
+
 function _restrictionState(tState, fs, t) {
   const src = fs || {};
   return {
@@ -184,6 +193,7 @@ function _singleTargetCandidates(sourceId) {
     if (p.isManualEffect || p.id === sourceId) return false;
     // "another" restriction: exclude the ability's source permanent itself (e.g. Arahbo can't target itself)
     if (sourcePerm?._excludeAbilitySource && sourcePerm.abilitySourceId && p.id === sourcePerm.abilitySourceId) return false;
+    if (_isAttachedOfAbilitySource(sourcePerm, p.id)) return false;
     const stack = Battlefield.getStack(p.id);
     if (stack && stack.length >= 2 && stack[0] !== p.id) return false;
     // Spell effects only affect permanents that existed before the spell (earlier timestamp),
@@ -290,6 +300,7 @@ function _multiTargetCandidates(sourceId, slotIndex) {
   const targets = Battlefield.permanents.filter(p => {
     if (p.isManualEffect || p.id === sourceId) return false;
     if (sourcePerm?._excludeAbilitySource && sourcePerm.abilitySourceId && p.id === sourcePerm.abilitySourceId) return false;
+    if (_isAttachedOfAbilitySource(sourcePerm, p.id)) return false;
     const stack = Battlefield.getStack(p.id);
     if (stack && stack.length >= 2 && stack[0] !== p.id) return false;
     // Spell effects only affect permanents that existed before the spell (earlier timestamp),
@@ -389,6 +400,7 @@ function _modalTargetCandidates(sourceId, modeIdx) {
   const targets = Battlefield.permanents.filter(p => {
     if (p.isManualEffect || p.id === sourceId) return false;
     if (sourcePerm?._excludeAbilitySource && sourcePerm.abilitySourceId && p.id === sourcePerm.abilitySourceId) return false;
+    if (_isAttachedOfAbilitySource(sourcePerm, p.id)) return false;
     const stack = Battlefield.getStack(p.id);
     if (stack && stack.length >= 2 && stack[0] !== p.id) return false;
     return true;

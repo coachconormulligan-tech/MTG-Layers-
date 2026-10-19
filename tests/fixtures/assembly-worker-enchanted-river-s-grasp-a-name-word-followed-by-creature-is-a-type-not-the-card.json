@@ -1,0 +1,1624 @@
+{
+ "name": "Assembly-Worker, Enchanted River's Grasp — a name word followed by \"creature\" is a type, not the card",
+ "notes": "Memory: project_audit_vocabulary_that_player_defending_player_2026-10-19. _replaceProperNounSelfRef turned 'Target Assembly-Worker creature' into 'Target this card creature' (the full name is the creature type), Blinkmoth Nexus's 'a 1/1 Blinkmoth artifact creature' likewise, and Enchanted River's Grasp's first word made 'Enchanted creature loses all abilities' a global 'this card creature' (and a stray 0/0). A name word directly followed by creature / permanent / token is left as it is.",
+ "recipe": {
+  "steps": [
+   {
+    "call": [
+     "addPlayer",
+     "Opponent"
+    ]
+   },
+   {
+    "add": "Grizzly Bears",
+    "as": "bears"
+   },
+   {
+    "add": "Assembly-Worker",
+    "as": "aw1"
+   },
+   {
+    "add": "Assembly-Worker",
+    "as": "aw2"
+   },
+   {
+    "fire": "@aw1",
+    "activated": 0
+   },
+   {
+    "add": "Serra Angel",
+    "as": "angel",
+    "controller": "p2"
+   },
+   {
+    "add": "Wind Drake",
+    "as": "drake",
+    "controller": "p2"
+   },
+   {
+    "add": "Enchanted River's Grasp",
+    "as": "grasp"
+   },
+   {
+    "call": [
+     "setTarget",
+     "@grasp",
+     "@angel"
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "targetCandidates": {
+    "perm": "Assembly-Worker A (activated)"
+   },
+   "are": [
+    "Assembly-Worker A",
+    "Assembly-Worker B"
+   ]
+  },
+  {
+   "perm": "Serra Angel",
+   "final": {
+    "abilities": []
+   }
+  },
+  {
+   "perm": "Wind Drake",
+   "final": {
+    "abilities": [
+     "Flying"
+    ]
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+     "multiverse_ids": [
+      129586
+     ],
+     "mtgo_id": 27400,
+     "mtgo_foil_id": 27401,
+     "tcgplayer_id": 15153,
+     "cardmarket_id": 16432,
+     "name": "Grizzly Bears",
+     "lang": "en",
+     "released_at": "2007-07-13",
+     "uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "scryfall_uri": "https://scryfall.com/card/10e/268/grizzly-bears?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:43:21Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "normal": "https://cards.scryfall.io/normal/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "large": "https://cards.scryfall.io/large/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "png": "https://cards.scryfall.io/png/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.png?1783943001",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "grid": "https://cards.scryfall.io/grid/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "display": "https://cards.scryfall.io/display/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "art": "https://cards.scryfall.io/art/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "crop": "https://cards.scryfall.io/crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001"
+     },
+     "mana_cost": "{1}{G}",
+     "cmc": 2,
+     "type_line": "Creature — Bear",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set": "10e",
+     "set_name": "Tenth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A14c8f55d-d177-4c25-a931-ebeb9e6062a0&unique=prints",
+     "collector_number": "268",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"We cannot forget that among all of Dominaria's wonders, a system of life exists, with prey and predators that will never fight wars nor vie for ancient power.\"\n—Jolrael, empress of beasts",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "D. J. Cleland-Hura",
+     "artist_ids": [
+      "87d21070-2432-4167-8aab-5968af1c14f3"
+     ],
+     "illustration_id": "066bfe81-0f53-43da-a074-b2ecc5dcda72",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 8114,
+     "penny_rank": 10982,
+     "prices": {
+      "usd": "0.22",
+      "usd_foil": "3.29",
+      "usd_etched": null,
+      "eur": "0.11",
+      "eur_foil": "1.97",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129586&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "edhrec": "https://edhrec.com/route/?cc=Grizzly+Bears"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15153%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16432&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27400?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "89a288d2-de94-4c49-a17e-5b0ed0281a5b",
+     "oracle_id": "751321ac-af07-4b7e-976f-5bf4e4281470",
+     "multiverse_ids": [
+      442210
+     ],
+     "mtgo_id": 67356,
+     "mtgo_foil_id": 67357,
+     "tcgplayer_id": 161907,
+     "cardmarket_id": 319574,
+     "name": "Assembly-Worker",
+     "lang": "en",
+     "released_at": "2018-03-16",
+     "uri": "https://api.scryfall.com/cards/89a288d2-de94-4c49-a17e-5b0ed0281a5b",
+     "scryfall_uri": "https://scryfall.com/card/a25/221/assembly-worker?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T09:31:48Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/8/9/89a288d2-de94-4c49-a17e-5b0ed0281a5b.jpg?1783935108",
+      "normal": "https://cards.scryfall.io/normal/front/8/9/89a288d2-de94-4c49-a17e-5b0ed0281a5b.jpg?1783935108",
+      "large": "https://cards.scryfall.io/large/front/8/9/89a288d2-de94-4c49-a17e-5b0ed0281a5b.jpg?1783935108",
+      "png": "https://cards.scryfall.io/png/front/8/9/89a288d2-de94-4c49-a17e-5b0ed0281a5b.png?1783935108",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/8/9/89a288d2-de94-4c49-a17e-5b0ed0281a5b.jpg?1783935108",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/8/9/89a288d2-de94-4c49-a17e-5b0ed0281a5b.jpg?1783935108",
+      "thumb": "https://cards.scryfall.io/thumb/front/8/9/89a288d2-de94-4c49-a17e-5b0ed0281a5b.webp?1783935108",
+      "grid": "https://cards.scryfall.io/grid/front/8/9/89a288d2-de94-4c49-a17e-5b0ed0281a5b.webp?1783935108",
+      "display": "https://cards.scryfall.io/display/front/8/9/89a288d2-de94-4c49-a17e-5b0ed0281a5b.webp?1783935108",
+      "art": "https://cards.scryfall.io/art/front/8/9/89a288d2-de94-4c49-a17e-5b0ed0281a5b.webp?1783935108",
+      "crop": "https://cards.scryfall.io/crop/front/8/9/89a288d2-de94-4c49-a17e-5b0ed0281a5b.webp?1783935108"
+     },
+     "mana_cost": "{3}",
+     "cmc": 3,
+     "type_line": "Artifact Creature — Assembly-Worker",
+     "oracle_text": "{T}: Target Assembly-Worker creature gets +1/+1 until end of turn.",
+     "power": "2",
+     "toughness": "2",
+     "colors": [],
+     "color_identity": [],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "41ee6e2f-69b3-4c53-8a8e-960f5e974cfc",
+     "set": "a25",
+     "set_name": "Masters 25",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/41ee6e2f-69b3-4c53-8a8e-960f5e974cfc",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aa25&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/a25?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/89a288d2-de94-4c49-a17e-5b0ed0281a5b/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A751321ac-af07-4b7e-976f-5bf4e4281470&unique=prints",
+     "collector_number": "221",
+     "digital": false,
+     "rarity": "common",
+     "watermark": "set",
+     "flavor_text": "With their factories long destroyed, some of Mishra's creations still toil in remote areas, endlessly performing and reperforming their last orders.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Chippy",
+     "artist_ids": [
+      "a36f01a0-e51a-48b2-a556-b9b3bc73f969"
+     ],
+     "illustration_id": "cf7055ad-8c90-43f9-97a9-64c9d9c758c0",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 27569,
+     "prices": {
+      "usd": "0.04",
+      "usd_foil": "0.14",
+      "usd_etched": null,
+      "eur": "0.03",
+      "eur_foil": "0.11",
+      "tix": "0.05"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=442210&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DAssembly-Worker",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DAssembly-Worker",
+      "edhrec": "https://edhrec.com/route/?cc=Assembly-Worker"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F161907%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=319574&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/67356?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "89a288d2-de94-4c49-a17e-5b0ed0281a5b",
+     "oracle_id": "751321ac-af07-4b7e-976f-5bf4e4281470",
+     "multiverse_ids": [
+      442210
+     ],
+     "mtgo_id": 67356,
+     "mtgo_foil_id": 67357,
+     "tcgplayer_id": 161907,
+     "cardmarket_id": 319574,
+     "name": "Assembly-Worker",
+     "lang": "en",
+     "released_at": "2018-03-16",
+     "uri": "https://api.scryfall.com/cards/89a288d2-de94-4c49-a17e-5b0ed0281a5b",
+     "scryfall_uri": "https://scryfall.com/card/a25/221/assembly-worker?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T09:31:48Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/8/9/89a288d2-de94-4c49-a17e-5b0ed0281a5b.jpg?1783935108",
+      "normal": "https://cards.scryfall.io/normal/front/8/9/89a288d2-de94-4c49-a17e-5b0ed0281a5b.jpg?1783935108",
+      "large": "https://cards.scryfall.io/large/front/8/9/89a288d2-de94-4c49-a17e-5b0ed0281a5b.jpg?1783935108",
+      "png": "https://cards.scryfall.io/png/front/8/9/89a288d2-de94-4c49-a17e-5b0ed0281a5b.png?1783935108",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/8/9/89a288d2-de94-4c49-a17e-5b0ed0281a5b.jpg?1783935108",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/8/9/89a288d2-de94-4c49-a17e-5b0ed0281a5b.jpg?1783935108",
+      "thumb": "https://cards.scryfall.io/thumb/front/8/9/89a288d2-de94-4c49-a17e-5b0ed0281a5b.webp?1783935108",
+      "grid": "https://cards.scryfall.io/grid/front/8/9/89a288d2-de94-4c49-a17e-5b0ed0281a5b.webp?1783935108",
+      "display": "https://cards.scryfall.io/display/front/8/9/89a288d2-de94-4c49-a17e-5b0ed0281a5b.webp?1783935108",
+      "art": "https://cards.scryfall.io/art/front/8/9/89a288d2-de94-4c49-a17e-5b0ed0281a5b.webp?1783935108",
+      "crop": "https://cards.scryfall.io/crop/front/8/9/89a288d2-de94-4c49-a17e-5b0ed0281a5b.webp?1783935108"
+     },
+     "mana_cost": "{3}",
+     "cmc": 3,
+     "type_line": "Artifact Creature — Assembly-Worker",
+     "oracle_text": "{T}: Target Assembly-Worker creature gets +1/+1 until end of turn.",
+     "power": "2",
+     "toughness": "2",
+     "colors": [],
+     "color_identity": [],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "41ee6e2f-69b3-4c53-8a8e-960f5e974cfc",
+     "set": "a25",
+     "set_name": "Masters 25",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/41ee6e2f-69b3-4c53-8a8e-960f5e974cfc",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aa25&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/a25?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/89a288d2-de94-4c49-a17e-5b0ed0281a5b/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A751321ac-af07-4b7e-976f-5bf4e4281470&unique=prints",
+     "collector_number": "221",
+     "digital": false,
+     "rarity": "common",
+     "watermark": "set",
+     "flavor_text": "With their factories long destroyed, some of Mishra's creations still toil in remote areas, endlessly performing and reperforming their last orders.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Chippy",
+     "artist_ids": [
+      "a36f01a0-e51a-48b2-a556-b9b3bc73f969"
+     ],
+     "illustration_id": "cf7055ad-8c90-43f9-97a9-64c9d9c758c0",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 27569,
+     "prices": {
+      "usd": "0.04",
+      "usd_foil": "0.14",
+      "usd_etched": null,
+      "eur": "0.03",
+      "eur_foil": "0.11",
+      "tix": "0.05"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=442210&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DAssembly-Worker",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DAssembly-Worker",
+      "edhrec": "https://edhrec.com/route/?cc=Assembly-Worker"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F161907%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=319574&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/67356?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d",
+     "oracle_id": "4b7ac066-e5c7-43e6-9e7e-2739b24a905d",
+     "multiverse_ids": [],
+     "tcgplayer_id": 695524,
+     "cardmarket_id": 904192,
+     "name": "Serra Angel",
+     "lang": "en",
+     "released_at": "2026-04-24",
+     "uri": "https://api.scryfall.com/cards/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d",
+     "scryfall_uri": "https://scryfall.com/card/fdn/740/serra-angel?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-08-24T09:18:11Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.jpg?1787563091",
+      "normal": "https://cards.scryfall.io/normal/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.jpg?1787563091",
+      "large": "https://cards.scryfall.io/large/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.jpg?1787563091",
+      "png": "https://cards.scryfall.io/png/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.png?1787563091",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.jpg?1787563091",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.jpg?1787563091",
+      "thumb": "https://cards.scryfall.io/thumb/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.webp?1787563091",
+      "grid": "https://cards.scryfall.io/grid/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.webp?1787563091",
+      "display": "https://cards.scryfall.io/display/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.webp?1787563091",
+      "art": "https://cards.scryfall.io/art/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.webp?1787563091",
+      "crop": "https://cards.scryfall.io/crop/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.webp?1787563091"
+     },
+     "mana_cost": "{3}{W}{W}",
+     "cmc": 5,
+     "type_line": "Creature — Angel",
+     "oracle_text": "Flying\nVigilance (Attacking doesn't cause this creature to tap.)",
+     "power": "4",
+     "toughness": "4",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [
+      "Flying",
+      "Vigilance"
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d",
+       "component": "combo_piece",
+       "name": "Serra Angel",
+       "type_line": "Creature — Angel",
+       "uri": "https://api.scryfall.com/cards/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d"
+      },
+      {
+       "object": "related_card",
+       "id": "ad2bbfa1-81e0-4683-b1dc-a3aaa9837690",
+       "component": "combo_piece",
+       "name": "Treizeci, Sun of Serra",
+       "type_line": "Legendary Creature — Human Knight",
+       "uri": "https://api.scryfall.com/cards/ad2bbfa1-81e0-4683-b1dc-a3aaa9837690"
+      }
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "arena",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a7ecb771-d1b6-4dec-8cf5-8d45179f21e0",
+     "set": "fdn",
+     "set_name": "Foundations",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a7ecb771-d1b6-4dec-8cf5-8d45179f21e0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Afdn&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/fdn?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A4b7ac066-e5c7-43e6-9e7e-2739b24a905d&unique=prints",
+     "collector_number": "740",
+     "digital": false,
+     "rarity": "uncommon",
+     "flavor_text": "Follow the light. In its absence, follow her.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Greg Staples",
+     "artist_ids": [
+      "93d65564-bf00-447b-8406-e2031f03b6b1"
+     ],
+     "illustration_id": "5f5651af-22fb-4fb8-a04c-1f34b5104bd9",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "setextension"
+     ],
+     "edhrec_rank": 9449,
+     "penny_rank": 12470,
+     "prices": {
+      "usd": "0.24",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.20",
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DSerra%2BAngel",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DSerra%2BAngel",
+      "edhrec": "https://edhrec.com/route/?cc=Serra+Angel"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F695524%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=904192&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Serra+Angel&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_1",
+    "controller": "player_1",
+    "timestamp": 5,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_5",
+    "scryfallData": {
+     "object": "card",
+     "id": "5e227a63-abea-494e-9d66-6ff0a3da14ca",
+     "oracle_id": "d6ffdaf0-ac08-4de9-bbce-2eab2f86bcca",
+     "multiverse_ids": [
+      417643
+     ],
+     "mtgo_id": 61655,
+     "mtgo_foil_id": 61656,
+     "tcgplayer_id": 123182,
+     "cardmarket_id": 292817,
+     "name": "Wind Drake",
+     "lang": "en",
+     "released_at": "2016-09-30",
+     "uri": "https://api.scryfall.com/cards/5e227a63-abea-494e-9d66-6ff0a3da14ca",
+     "scryfall_uri": "https://scryfall.com/card/kld/70/wind-drake?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T10:06:51Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/5/e/5e227a63-abea-494e-9d66-6ff0a3da14ca.jpg?1783937211",
+      "normal": "https://cards.scryfall.io/normal/front/5/e/5e227a63-abea-494e-9d66-6ff0a3da14ca.jpg?1783937211",
+      "large": "https://cards.scryfall.io/large/front/5/e/5e227a63-abea-494e-9d66-6ff0a3da14ca.jpg?1783937211",
+      "png": "https://cards.scryfall.io/png/front/5/e/5e227a63-abea-494e-9d66-6ff0a3da14ca.png?1783937211",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/5/e/5e227a63-abea-494e-9d66-6ff0a3da14ca.jpg?1783937211",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/5/e/5e227a63-abea-494e-9d66-6ff0a3da14ca.jpg?1783937211",
+      "thumb": "https://cards.scryfall.io/thumb/front/5/e/5e227a63-abea-494e-9d66-6ff0a3da14ca.webp?1783937211",
+      "grid": "https://cards.scryfall.io/grid/front/5/e/5e227a63-abea-494e-9d66-6ff0a3da14ca.webp?1783937211",
+      "display": "https://cards.scryfall.io/display/front/5/e/5e227a63-abea-494e-9d66-6ff0a3da14ca.webp?1783937211",
+      "art": "https://cards.scryfall.io/art/front/5/e/5e227a63-abea-494e-9d66-6ff0a3da14ca.webp?1783937211",
+      "crop": "https://cards.scryfall.io/crop/front/5/e/5e227a63-abea-494e-9d66-6ff0a3da14ca.webp?1783937211"
+     },
+     "mana_cost": "{2}{U}",
+     "cmc": 3,
+     "type_line": "Creature — Drake",
+     "oracle_text": "Flying",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "U"
+     ],
+     "color_identity": [
+      "U"
+     ],
+     "keywords": [
+      "Flying"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "d667e468-be8f-411f-a030-473d148deb74",
+     "set": "kld",
+     "set_name": "Kaladesh",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/d667e468-be8f-411f-a030-473d148deb74",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Akld&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/kld?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/5e227a63-abea-494e-9d66-6ff0a3da14ca/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ad6ffdaf0-ac08-4de9-bbce-2eab2f86bcca&unique=prints",
+     "collector_number": "70",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "Drakes prowl the skies of Kaladesh, waiting for the perfect moment to strike.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Todd Lockwood",
+     "artist_ids": [
+      "d0b9f3cc-13fb-42b6-bc43-b034728e5c7b"
+     ],
+     "illustration_id": "c53f3c65-a8f4-44d5-a18c-299b4f68ada0",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 26644,
+     "penny_rank": 14486,
+     "prices": {
+      "usd": "0.04",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.09",
+      "eur_foil": "0.18",
+      "tix": "0.04"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=417643&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DWind%2BDrake",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DWind%2BDrake",
+      "edhrec": "https://edhrec.com/route/?cc=Wind+Drake"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F123182%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=292817&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/61655?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_1",
+    "controller": "player_1",
+    "timestamp": 6,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_6",
+    "scryfallData": {
+     "object": "card",
+     "id": "ad40a4b9-9fab-49c1-8e9f-6e0776966833",
+     "oracle_id": "fcc9f3bc-0bc3-4189-a4d0-9698594b99a8",
+     "multiverse_ids": [],
+     "resource_id": "3BE128C4B680B8D89FAA8047D473D36425E2EB18C8D7DE470AE3142C497A908B",
+     "mtgo_id": 154000,
+     "arena_id": 103411,
+     "tcgplayer_id": 709476,
+     "cardmarket_id": 900606,
+     "name": "Enchanted River's Grasp",
+     "lang": "en",
+     "released_at": "2026-08-14",
+     "uri": "https://api.scryfall.com/cards/ad40a4b9-9fab-49c1-8e9f-6e0776966833",
+     "scryfall_uri": "https://scryfall.com/card/hob/39/enchanted-rivers-grasp?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-31T11:24:05Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/a/d/ad40a4b9-9fab-49c1-8e9f-6e0776966833.jpg?1785497045",
+      "normal": "https://cards.scryfall.io/normal/front/a/d/ad40a4b9-9fab-49c1-8e9f-6e0776966833.jpg?1785497045",
+      "large": "https://cards.scryfall.io/large/front/a/d/ad40a4b9-9fab-49c1-8e9f-6e0776966833.jpg?1785497045",
+      "png": "https://cards.scryfall.io/png/front/a/d/ad40a4b9-9fab-49c1-8e9f-6e0776966833.png?1785497045",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/a/d/ad40a4b9-9fab-49c1-8e9f-6e0776966833.jpg?1785497045",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/a/d/ad40a4b9-9fab-49c1-8e9f-6e0776966833.jpg?1785497045",
+      "thumb": "https://cards.scryfall.io/thumb/front/a/d/ad40a4b9-9fab-49c1-8e9f-6e0776966833.webp?1785497045",
+      "grid": "https://cards.scryfall.io/grid/front/a/d/ad40a4b9-9fab-49c1-8e9f-6e0776966833.webp?1785497045",
+      "display": "https://cards.scryfall.io/display/front/a/d/ad40a4b9-9fab-49c1-8e9f-6e0776966833.webp?1785497045",
+      "art": "https://cards.scryfall.io/art/front/a/d/ad40a4b9-9fab-49c1-8e9f-6e0776966833.webp?1785497045",
+      "crop": "https://cards.scryfall.io/crop/front/a/d/ad40a4b9-9fab-49c1-8e9f-6e0776966833.webp?1785497045"
+     },
+     "mana_cost": "{2}{U}",
+     "cmc": 3,
+     "type_line": "Enchantment — Aura",
+     "oracle_text": "Enchant creature\nWhen this Aura enters, tap enchanted creature and remove all counters from it.\nEnchanted creature loses all abilities and doesn't untap during its controller's untap step.",
+     "colors": [
+      "U"
+     ],
+     "color_identity": [
+      "U"
+     ],
+     "keywords": [
+      "Enchant"
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo",
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "59218c23-cb7a-4fde-9cff-3f2f71af1308",
+     "set": "hob",
+     "set_name": "The Hobbit",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/59218c23-cb7a-4fde-9cff-3f2f71af1308",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Ahob&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/hob?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/ad40a4b9-9fab-49c1-8e9f-6e0776966833/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Afcc9f3bc-0bc3-4189-a4d0-9698594b99a8&unique=prints",
+     "collector_number": "39",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "And fast asleep Bombur remained in spite of all they could do.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Javier Charro",
+     "artist_ids": [
+      "8fd2d5fa-3b94-4e48-9cec-9d148acc8180"
+     ],
+     "illustration_id": "f5ca6f0c-c640-4669-a396-4da54eee9e2e",
+     "border_color": "black",
+     "frame": "2015",
+     "frame_effects": [
+      "enchantment"
+     ],
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "universesbeyond"
+     ],
+     "edhrec_rank": 17722,
+     "prices": {
+      "usd": "0.15",
+      "usd_foil": "0.19",
+      "usd_etched": null,
+      "eur": "0.05",
+      "eur_foil": "0.04",
+      "tix": "0.01"
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DEnchanted%2BRiver%2527s%2BGrasp",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DEnchanted%2BRiver%2527s%2BGrasp",
+      "edhrec": "https://edhrec.com/route/?cc=Enchanted+River%27s+Grasp"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F709476%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=900606&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/154000?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 7,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": "perm_4",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": 8,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [
+   {
+    "id": "act_perm_2_0_4",
+    "kind": "activated",
+    "pseudoKind": "ability",
+    "sourceId": "perm_2",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 0,
+    "timestamp": 4,
+    "effectText": "Target Assembly-Worker creature gets +1/+1 until end of turn.",
+    "xValue": null,
+    "hasXValue": false,
+    "cdaUserValue": null,
+    "linkedCards": null,
+    "fullText": "{T}: Target Assembly-Worker creature gets +1/+1 until end of turn.",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "guessedTargetSubjects": [],
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "forPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Grizzly Bears",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Bear"
+       ],
+       "power": 2,
+       "toughness": 2,
+       "colors": [
+        "G"
+       ],
+       "abilities": [],
+       "oracleText": "",
+       "manaValue": 2,
+       "manaCost": "{1}{G}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "tapped": false,
+       "traits": [],
+       "counters": {},
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_2",
+      {
+       "name": "Assembly-Worker",
+       "types": [
+        "Artifact",
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Assembly-Worker"
+       ],
+       "power": 2,
+       "toughness": 2,
+       "colors": [],
+       "abilities": [
+        "{T}: Target Assembly-Worker creature gets +1/+1 until end of turn."
+       ],
+       "oracleText": "{T}: Target Assembly-Worker creature gets +1/+1 until end of turn.",
+       "manaValue": 3,
+       "manaCost": "{3}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "tapped": false,
+       "traits": [],
+       "counters": {},
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_3",
+      {
+       "name": "Assembly-Worker",
+       "types": [
+        "Artifact",
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Assembly-Worker"
+       ],
+       "power": 2,
+       "toughness": 2,
+       "colors": [],
+       "abilities": [
+        "{T}: Target Assembly-Worker creature gets +1/+1 until end of turn."
+       ],
+       "oracleText": "{T}: Target Assembly-Worker creature gets +1/+1 until end of turn.",
+       "manaValue": 3,
+       "manaCost": "{3}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "tapped": false,
+       "traits": [],
+       "counters": {},
+       "_protectionFrom": []
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Assembly-Worker",
+       "imageUri": "https://cards.scryfall.io/small/front/8/9/89a288d2-de94-4c49-a17e-5b0ed0281a5b.jpg?1783935108",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": "A",
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Artifact",
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Assembly-Worker"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Assembly-Worker",
+       "imageUri": "https://cards.scryfall.io/small/front/8/9/89a288d2-de94-4c49-a17e-5b0ed0281a5b.jpg?1783935108",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": "B",
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Artifact",
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Assembly-Worker"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 3
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      },
+      {
+       "id": "player_1",
+       "name": "Opponent"
+      }
+     ]
+    },
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null
+   }
+  ],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   },
+   {
+    "id": "player_1",
+    "name": "Opponent",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": false,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 2,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Grizzly Bears",
+    "final": {
+     "name": "Grizzly Bears",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Bear"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "G"
+     ],
+     "abilities": []
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Assembly-Worker A",
+    "final": {
+     "name": "Assembly-Worker",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Artifact",
+      "Creature"
+     ],
+     "subtypes": [
+      "Assembly-Worker"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [],
+     "abilities": [
+      "{T}: Target Assembly-Worker creature gets +1/+1 until end of turn."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Assembly-Worker B",
+    "final": {
+     "name": "Assembly-Worker",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Artifact",
+      "Creature"
+     ],
+     "subtypes": [
+      "Assembly-Worker"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [],
+     "abilities": [
+      "{T}: Target Assembly-Worker creature gets +1/+1 until end of turn."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Serra Angel",
+    "final": {
+     "name": "Serra Angel",
+     "controller": "player_1",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Angel"
+     ],
+     "power": 4,
+     "toughness": 4,
+     "colors": [
+      "W"
+     ],
+     "abilities": [],
+     "allAbilitiesRemoved": true,
+     "traits": [
+      "Enchanted"
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "Enchanted River's Grasp"
+     ]
+    }
+   },
+   {
+    "perm": "Wind Drake",
+    "final": {
+     "name": "Wind Drake",
+     "controller": "player_1",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Drake"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "U"
+     ],
+     "abilities": [
+      "Flying"
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Enchanted River's Grasp",
+    "final": {
+     "name": "Enchanted River's Grasp",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Enchantment"
+     ],
+     "subtypes": [
+      "Aura"
+     ],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "U"
+     ],
+     "abilities": [
+      "Enchant creature",
+      "When this Aura enters, tap enchanted creature and remove all counters from it.",
+      "Enchanted creature loses all abilities and doesn't untap during its controller's untap step."
+     ]
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "6": [
+    "Enchanted River's Grasp"
+   ],
+   "7c": [
+    "Assembly-Worker A (activated)"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Enchanted River's Grasp",
+    "layer": "6",
+    "type": "remove_abilities",
+    "scope": "targeted",
+    "target": "Serra Angel",
+    "params": {}
+   },
+   {
+    "source": "Assembly-Worker A (activated)",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "params": {
+     "power": 1,
+     "toughness": 1
+    }
+   }
+  ]
+ }
+}

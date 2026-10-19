@@ -184,17 +184,26 @@ function stripReminder(text) {
 
 // Where the phrase after "target" ends: at a verb that says what happens to it, a clause break, or
 // the end. A comma inside a list of types ("artifact, creature, or enchantment") does not end it.
-const PHRASE_STOP = /\s+(?:gets?|gains?|has|have|becomes?|become|loses?|lose|can|can't|cannot|deals?|is|are|isn't|doesn't|attacks?|blocks?|untaps?|taps?|fights?|phases?|perpetually|assumes|switches|and|then|until|this)\b|[;:.]/;
+// "For as long as …" says how long, "if its power is …" what must hold on resolution, and "each"
+// is "This creature and another target creature each get …": none of them is who can be targeted.
+const PHRASE_STOP = /\s+(?:gets?|gains?|has|have|becomes?|become|loses?|lose|can|can't|cannot|deals?|is|are|isn't|doesn't|attacks?|blocks?|untaps?|taps?|fights?|phases?|perpetually|assumes|switches|and|then|until|this|for as long as|if|each)\b|[;:.]/;
+// Stop words that are part of the phrase: "with power less than this creature's power", "less than
+// or equal to this creature's power", "Vampire that isn't a Demon".
+const PHRASE_STOP_KEPT = /(?:\bthan|\bequal to|\bcounters on)$|\bthat$/;
 function extractPhrase(after) {
   let from = 0;
   for (;;) {
     const rest = after.slice(from);
     let m = rest.match(PHRASE_STOP);
+    if (m && /^\s+(?:this|isn't)$/.test(m[0]) && PHRASE_STOP_KEPT.test(after.slice(0, from + m.index))) {
+      from += m.index + m[0].length;
+      continue;
+    }
     const c = rest.indexOf(',');
     // "you don't control" is part of the phrase; the stop list's "doesn't" is not "don't".
     if (c >= 0 && (!m || c < m.index)) {
       // A comma followed by another type of a list continues the phrase.
-      if (/^,\s*(?:or\s+|and\s+)?(?:non-?)?(?:artifact|creature|enchantment|land|planeswalker|battle|permanent)\b/.test(rest.slice(c))) {
+      if (/^,\s*(?:or\s+|and\s+)?(?:(?:non-?)?(?:artifact|creature|enchantment|land|planeswalker|battle|permanent)\b|non-?[a-z]+\b)/.test(rest.slice(c))) {
         from += c + 1;
         continue;
       }
@@ -284,10 +293,11 @@ function classifyUnitText(text) {
   // A spell's own text followed by its cycling trigger ("When you cycle this card, you may have target
   // creature gain fear" — Dirge of Dread) is not something the spell does.
   if (/\bwhen you cycle\b/.test(clauseBefore)) return { skip: 'cycling-trigger' };
-  if (/'s\b/.test(phrase)) return { skip: 'possessive-target' };
+  // ("… with power less than this creature's power" compares with the source; not a possessive target.)
+  if (/'s\b/.test(phrase.replace(/\b(?:than|equal to) this \w+'s\b/g, ''))) return { skip: 'possessive-target' };
   // "creature or player", "target opponent", "creature card in a graveyard", "spell". ("creature that
   // player controls" and "this card creature" are permanents; the interpreter reports what it cannot read.)
-  if (!/^this /.test(phrase) && /\b(?:spell|spells|ability|abilities|card|cards|graveyard|library|hand|instant|sorcery)\b/.test(phrase)) return { skip: 'not-a-permanent' };
+  if (!/^this /.test(phrase) && /\b(?:spell|spells|ability|abilities|card|cards|graveyard|library|hand|instant|sorcery)\b/.test(phrase.replace(/\b(?:than|equal to) this card's\b/g, ''))) return { skip: 'not-a-permanent' };
   if (/^(?:players?|opponents?)\b|(?:\bor|\band\/or|,)\s+(?:another\s+)?(?:players?|opponents?)\b/.test(phrase)) return { skip: 'not-a-permanent' };
   if (/\b(?:creatures|artifacts|enchantments|lands|planeswalkers|permanents)\b/.test(phrase)) return { skip: 'plural-target' };
   return { singular: true, phrase, excludeSource: /\banother $/.test(before) || /^other /.test(phrase), targetIndex: idx };
@@ -371,6 +381,16 @@ function wordConstraint(w, negated) {
   else if (w === 'blocking') c = { kind: 'adj', test: (st, p) => traitsOf(st, p).includes('Blocking') };
   else if (w === 'tapped') c = { kind: 'adj', test: (st, p) => !!p.tapped || traitsOf(st, p).includes('Tapped') };
   else if (w === 'untapped') c = { kind: 'adj', test: (st, p) => !(p.tapped || traitsOf(st, p).includes('Tapped')) };
+  else if (w === 'blocked') c = { kind: 'adj', test: (st, p) => traitsOf(st, p).includes('Blocked') };
+  else if (w === 'equipped') c = { kind: 'adj', test: (st, p) => traitsOf(st, p).includes('Equipped') };
+  else if (w === 'enchanted') c = { kind: 'adj', test: (st, p) => traitsOf(st, p).includes('Enchanted') };
+  // CR 700.9: a counter on it, an Equipment attached, or an Aura its controller controls.
+  else if (w === 'modified') c = { kind: 'adj', test: (st, p) => anyCounter(st, p) > 0 || traitsOf(st, p).includes('Equipped') || traitsOf(st, p).includes('Enchanted') };
+  // CR 700.6: legendary, artifact or Saga.
+  else if (w === 'historic') c = { kind: 'adj', test: (st) => hasCI(st.supertypes, 'legendary') || hasCI(st.types, 'artifact') || hasCI(st.subtypes, 'saga') };
+  // "Target 1/1 creature" (Aegis of the Meek).
+  else if (/^\d+\/\d+$/.test(w)) { const [pw, tg] = w.split('/').map(Number); c = { kind: 'adj', test: (st, p) => statValue(st, p, 'power') === pw && statValue(st, p, 'toughness') === tg }; }
+  else if (w === 'commander') c = { kind: 'noun', test: (st, p) => !!(p.isCommander || st.isCommander) };
   else if (w === 'permanent') c = { kind: 'noun', test: () => true };
   else if (PERMANENT_NOUNS.has(w)) c = { kind: 'noun', test: (st) => hasCI(st.types, w) };
   else if (subtypeWords().has(w)) c = { kind: 'noun', test: (st) => hasCI(st.subtypes, w) || (!!st.isAllCreatureTypes && TypeCatalog.creatureTypes.has(cap1(w))) };
@@ -388,23 +408,65 @@ function parseHeadItem(words, unknown) {
     if (!c) { unknown.push(w); continue; }
     (c.kind === 'noun' ? noun : adj).push(c.test);
   }
+  // "Target token you control" (Halsin): a token is a permanent.
+  if (!noun.length && words.includes('token')) noun.push(() => true);
   return { adj, noun };
+}
+
+/* Which player "that player" / "they" is, read from the words before the target: a trigger on
+   an opponent's event ("each opponent's upkeep", "an opponent becomes the monarch", "for each
+   opponent"), or on the player your permanent attacks or deals combat damage to, means an opponent
+   ('opponent'). Anything else ("each player's upkeep", "a player") can be any player (null). */
+function thatPlayerReading(before) {
+  const s = String(before || '').toLowerCase().replace(/’/g, "'");
+  if (/\b(?:each|an|target|for each) opponent\b|\bopponent's\b/.test(s)) return 'opponent';
+  if (/\b(?:this \w+|~|you control) (?:deals?|deal) combat damage to a player\b/.test(s)) return 'opponent';
+  if (/\b(?:this \w+|~|you control) attacks? a player\b/.test(s)) return 'opponent';
+  return null;
+}
+
+// "… the number of Vampires you control", "… the number of treasure counters on this enchantment":
+// counted on the board before the unit fired. Returns a function (ctx) => number, or null.
+function boardCount(words) {
+  let m;
+  if ((m = words.match(/^the number of ([a-z+/-]+?) counters on this \w+$/))) {
+    const kind = m[1];
+    return (ctx) => { const st = ctx.preStates.get(ctx.sourceId); const p = Battlefield.getPermById(ctx.sourceId) || {}; return counterCount(st, p, kind); };
+  }
+  if ((m = words.match(/^the number of ([a-z-]+?)s? you control$/))) {
+    const c = wordConstraint(m[1].replace(/ie$/, 'y'), false) || wordConstraint(m[1], false);
+    if (!c) return null;
+    return (ctx) => ctx.universe.filter(p => { const st = ctx.preStates.get(p.id); return st && ctrlOf(st, p) === ctx.sourceCtrl && c.test(st, p); }).length;
+  }
+  return null;
 }
 
 const allOf = (tests) => (st, p) => tests.every(t => t(st, p));
 
 // Returns { test(st, perm, ctx), excludeSource } or { unknown: [words] }.
-function interpretPhrase(phrase) {
+// `env`: { before } — the unit's words before the target, for "that player".
+function interpretPhrase(phrase, env) {
   const unknown = [];
-  let s = String(phrase).toLowerCase().replace(/\s+/g, ' ').trim();
+  let s = String(phrase).toLowerCase().replace(/\s+/g, ' ').trim()
+    // "Target creature of their choice" (Death Match): who chooses, not what.
+    .replace(/ of their choice$/, '')
+    .replace(/\b(power|toughness|mana value) x\b/g, '$1 ' + X_VALUE);
   let excludeSource = false;
   s = s.replace(/^(?:another|other) /, () => { excludeSource = true; return ''; });
-  const cut = s.search(/ (?:you control|you don't control|an opponent controls|with |without )/);
+  const cut = s.search(/ (?:you control|you don't control|you own|an opponent controls|that player controls|they control|defending player controls|other than|that isn't|whose controller|attacking the same|with |without )/);
   const head = cut >= 0 ? s.slice(0, cut) : s;
   let tail = cut >= 0 ? s.slice(cut).trim() : '';
 
-  // Head: items joined by "or" / commas; an item is the AND of its words.
-  const items = head.split(/\s*,\s*(?:or\s+)?|\s+or\s+/).map(x => x.trim()).filter(Boolean).map(x => parseHeadItem(x.split(' '), unknown));
+  // Head: items joined by "or" / commas; an item is the AND of its words. "Nonartifact, nonblack
+  // creature", "noncreature, nonland permanent": a leading item of "non-" words only is part of
+  // the next one.
+  const rawItems = head.split(/\s*,\s*(?:or\s+)?|\s+or\s+/).map(x => x.trim()).filter(Boolean);
+  for (let i = rawItems.length - 2; i >= 0; i--) {
+    if (rawItems[i].split(' ').every(w => /^non-?[a-z]/.test(w)) && new RegExp('\\b' + rawItems[i] + '\\s*,\\s*' + rawItems[i + 1].split(' ')[0]).test(head)) {
+      rawItems.splice(i, 2, rawItems[i] + ' ' + rawItems[i + 1]);
+    }
+  }
+  const items = rawItems.map(x => parseHeadItem(x.split(' '), unknown));
   if (!items.length) unknown.push('(nothing)');
   let headTest = null;
   if (items.length) {
@@ -432,6 +494,59 @@ function interpretPhrase(phrase) {
     let m;
     if ((m = tail.match(/^you control\b\s*/))) { clauseTests.push((st, p, ctx) => ctrlOf(st, p) === ctx.sourceCtrl); tail = tail.slice(m[0].length); continue; }
     if ((m = tail.match(/^(?:you don't control|an opponent controls)\b\s*/))) { clauseTests.push((st, p, ctx) => ctrlOf(st, p) !== ctx.sourceCtrl); tail = tail.slice(m[0].length); continue; }
+    if ((m = tail.match(/^you own but don't control\b\s*/))) { clauseTests.push((st, p, ctx) => (p.owner || 'player_0') === ctx.sourceCtrl && ctrlOf(st, p) !== ctx.sourceCtrl); tail = tail.slice(m[0].length); continue; }
+    // "Target creature that player controls": see thatPlayerReading.
+    if ((m = tail.match(/^(?:that player controls|they control)\b\s*/))) {
+      if (thatPlayerReading(env && env.before) === 'opponent') clauseTests.push((st, p, ctx) => ctrlOf(st, p) !== ctx.sourceCtrl);
+      tail = tail.slice(m[0].length); continue;
+    }
+    // CR 506.2: in a two-player game the defending player is the one being attacked. On the board
+    // "your soldier" attacks the opponent, and every attack trigger is one of yours.
+    if ((m = tail.match(/^defending player controls\b\s*/))) { clauseTests.push((st, p, ctx) => ctrlOf(st, p) !== ctx.sourceCtrl); tail = tail.slice(m[0].length); continue; }
+    // "Target creature you control other than this creature" (Hisoka's Guard): "another".
+    if ((m = tail.match(/^other than this [a-z-]+\b\s*/))) { clauseTests.push((st, p, ctx) => p.id !== ctx.sourceId); tail = tail.slice(m[0].length); continue; }
+    // "Target creature that isn't of the chosen type" (Callous Oppressor): with no type chosen on
+    // the card, every creature.
+    if ((m = tail.match(/^that isn't of the chosen type\b\s*/))) {
+      clauseTests.push((st, p, ctx) => { const src = Battlefield.getPermById(ctx.sourceId) || {}; const t = src.chosenCreatureType; return !t || !hasCI(st.subtypes, String(t).toLowerCase()); });
+      tail = tail.slice(m[0].length); continue;
+    }
+    // "Target creature you control other than enchanted creature" (Due Diligence).
+    if ((m = tail.match(/^other than (?:enchanted|equipped) creature\b\s*/))) {
+      clauseTests.push((st, p, ctx) => { const src = Battlefield.getPermById(ctx.sourceId) || {}; return !src.targetId || p.id !== src.targetId; });
+      tail = tail.slice(m[0].length); continue;
+    }
+    // "Attacking Vampire that isn't a Demon" (Clavileño).
+    if ((m = tail.match(/^that isn't (?:a |an )?([a-z-]+)\b\s*/))) {
+      const c = wordConstraint(m[1], true);
+      if (!c) { unknown.push('that', "isn't", m[1]); break; }
+      clauseTests.push(c.test); tail = tail.slice(m[0].length); continue;
+    }
+    // "Creature whose controller controls an Island" (Seasinger).
+    if ((m = tail.match(/^whose controller controls (?:a |an )([a-z-]+)\b\s*/))) {
+      const c = wordConstraint(m[1], false);
+      if (!c) { unknown.push('whose', 'controller', m[1]); break; }
+      clauseTests.push((st, p, ctx) => ctx.universe.some(q => { const qs = ctx.preStates.get(q.id); return qs && ctrlOf(qs, q) === ctrlOf(st, p) && c.test(qs, q); }));
+      tail = tail.slice(m[0].length); continue;
+    }
+    // "Another target creature attacking the same player or planeswalker" (Kitesail Skirmisher):
+    // the trigger's source is attacking, and on a two-player board so is every attacker of yours.
+    if ((m = tail.match(/^attacking the same player or planeswalker\b\s*/))) {
+      clauseTests.push((st, p, ctx) => traitsOf(st, p).includes('Attacking') && ctrlOf(st, p) === ctx.sourceCtrl);
+      tail = tail.slice(m[0].length); continue;
+    }
+    // "With power less than [or equal to] this creature's power", "… the number of Vampires you control".
+    if ((m = tail.match(/^with (power|toughness|mana value) (less than or equal to|less than|greater than or equal to|greater than) (this \w+'s (?:power|toughness|mana value)|the number of [a-z+/ -]+?)(?= you control\b(?! )| an opponent controls| with | without |$)( you control)?\s*/))) {
+      const [, stat, rel, what, yc] = m;
+      let amount = null;
+      const own = what.match(/^this \w+'s (power|toughness|mana value)$/);
+      if (own) amount = (ctx) => { const st0 = ctx.preStates.get(ctx.sourceId); return st0 ? statValue(st0, Battlefield.getPermById(ctx.sourceId) || {}, own[1]) : null; };
+      else amount = boardCount(what + (yc || ''));
+      if (!amount) { unknown.push(...what.split(' ').slice(0, 4)); break; }
+      const cmp = { 'less than or equal to': (a, b) => a <= b, 'less than': (a, b) => a < b, 'greater than or equal to': (a, b) => a >= b, 'greater than': (a, b) => a > b }[rel];
+      clauseTests.push((st, p, ctx) => { const v = statValue(st, p, stat), n = amount(ctx); return v !== null && n !== null && cmp(v, n); });
+      tail = tail.slice(m[0].length); continue;
+    }
     if ((m = tail.match(/^with (?:a|an) \+1\/\+1 counter on it\s*/))) { clauseTests.push((st, p) => counterCount(st, p, '+1/+1') > 0); tail = tail.slice(m[0].length); continue; }
     if ((m = tail.match(/^with (?:a|an) counter on it\s*/))) { clauseTests.push((st, p) => anyCounter(st, p) > 0); tail = tail.slice(m[0].length); continue; }
     if ((m = tail.match(/^with (power|toughness|mana value) (\d+) or (less|greater|more)\s*/))) {
@@ -444,7 +559,7 @@ function interpretPhrase(phrase) {
       clauseTests.push((st, p) => statValue(st, p, stat) === num);
       tail = tail.slice(m[0].length); continue;
     }
-    if ((m = tail.match(/^(with|without) ((?:[a-z' ]+?)(?:(?:,\s*|\s+or\s+|\s+and\s+)[a-z' ]+?)*)(?= you control| you don't control| an opponent controls| with | without |$)/))) {
+    if ((m = tail.match(/^(with|without) ((?:[a-z' ]+?)(?:(?:,\s*|\s+or\s+|\s+and\s+)[a-z' ]+?)*)(?= you control| you don't control| an opponent controls| that player controls| they control| defending player controls| with | without |$)/))) {
       const without = m[1] === 'without';
       const kws = m[2].split(/,\s*(?:or\s+|and\s+)?|\s+or\s+|\s+and\s+/).map(x => x.trim()).filter(Boolean);
       const isAnd = / and /.test(m[2]) && !/ or /.test(m[2]);
@@ -808,7 +923,10 @@ function auditFired(ctx, u, id) {
   if (siteBlocked) u.blocked = siteBlocked;
 
   let expectedIds = null;
-  const interp = interpretPhrase(u.phrase);
+  // The words before the target: a trigger's condition, then the effect up to "target".
+  const effStart = u.fullText ? u.fullText.toLowerCase().indexOf(u.text.toLowerCase().slice(0, 24)) : -1;
+  const wordsBefore = (effStart > 0 ? u.fullText.slice(0, effStart) : '') + ' ' + u.text.slice(0, u.targetIndex);
+  const interp = interpretPhrase(u.phrase, { before: wordsBefore });
   if (interp.unknown) {
     u.phraseUnknown = interp.unknown;
   } else {
@@ -819,7 +937,7 @@ function auditFired(ctx, u, id) {
       if (exclude && p.id === ctx.sourceId) continue;
       const st = ctx.preStates.get(p.id);
       if (!st) continue;
-      if (!interp.test(st, p, { sourceCtrl })) continue;
+      if (!interp.test(st, p, ctx)) continue;
       // Shroud and hexproof (CR 702.18, 702.11): not targeting rules of the phrase, but of the game.
       const kws = keywordsOf(st);
       if (kws.includes('shroud')) continue;
@@ -1007,6 +1125,8 @@ function auditFace(card, faceIndex) {
       const cls = classifyUnitText(text);
       if (!cls.singular) { skip(kind, ab.index, plan.label, text, cls.skip); continue; }
       const u = newUnit(kind, ab.index, plan.label, text, cls);
+      // (Not written to the raw output.)
+      Object.defineProperty(u, 'fullText', { value: stripReminder(ab.fullText || ''), enumerable: false });
       // "{2}{B}, Exile this card from your graveyard: … target creature" (CR 602.2, 601.2h): the
       // ability is used from the graveyard and the card is exiled as its cost, so it is never on
       // the battlefield to be a target.

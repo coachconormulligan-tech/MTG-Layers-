@@ -691,9 +691,17 @@ const Battlefield = {
       if (/^(?:player|opponent)s?$/i.test(triggerSubject)) triggerSubject = 'creature';
     }
     // "Whenever one or more Warriors you control attack a player, target creature that player
-    // controls becomes a Coward" (Gornog, the Red Reaper): the player attacked is an opponent.
-    if (fullText && kind === 'trigger' && /\battacks? (?:a player|an opponent)\b/i.test(fullText.trim().split('\n')[0])) {
-      parsedEffectText = parsedEffectText.replace(/\b(target [\w-]+(?: [\w-]+)?) that player controls\b/gi, '$1 an opponent controls');
+    // controls becomes a Coward" (Gornog, the Red Reaper): the player attacked is an opponent. So
+    // is the player your permanent deals combat damage to ("Whenever this creature deals combat
+    // damage to a player, … gain control of target creature that player controls" — Riptide
+    // Entrancer, Stilt-Man) and an opponent the trigger names ("At the beginning of each
+    // opponent's upkeep" — Tooth Collector; "Whenever an opponent becomes the monarch" — Garland).
+    // Not "each player's turn" (Kitt Kanto): that player can be you.
+    const _trigCond = fullText ? fullText.trim().split('\n')[0].split(',')[0] : '';
+    if (fullText && kind === 'trigger' && (/\battacks? (?:a player|an opponent)\b/i.test(fullText.trim().split('\n')[0])
+        || /\b(?:this [\w-]+|you control)\s+deals? combat damage to (?:a player|an opponent)\b/i.test(_trigCond)
+        || /\b(?:each|an) opponent\b|\bopponent's\b/i.test(_trigCond))) {
+      parsedEffectText = parsedEffectText.replace(/\b(target [\w-]+(?:,? [\w-]+)*?) that player controls\b/gi, '$1 an opponent controls');
     }
     // "another" or "other [thing]" in the effectText also excludes the source
     // (e.g. "another target creature", "each other creature you control").
@@ -706,6 +714,10 @@ const Battlefield = {
     // strike" (Théoden, King of Rohan) can target Théoden. It only keeps the source out when the
     // effect has no target of its own and so is about the permanent that caused the trigger.
     if (effectHasAnother || (triggerHasAnother && !/\btarget\b/i.test(parsedEffectText))) pseudoPerm._excludeAbilitySource = true;
+    // "When this Aura enters, target creature you control other than enchanted creature gets
+    // +2/+2" (Due Diligence): nor the permanent the source is attached to (cards-targeting.js,
+    // _isAttachedOfAbilitySource).
+    if (/\bother than (?:enchanted|equipped) (?:creature|permanent)\b/i.test(parsedEffectText)) pseudoPerm._excludeAttachedOfSource = true;
     if (effectHasAnother) triggerHasAnother = true;
 
     // Whether the effect already names an explicit "target" (independent of any "it"

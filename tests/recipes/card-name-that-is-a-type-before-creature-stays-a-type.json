@@ -1,0 +1,20 @@
+{
+  "name": "Assembly-Worker, Enchanted River's Grasp — a name word followed by \"creature\" is a type, not the card",
+  "notes": "Memory: project_audit_vocabulary_that_player_defending_player_2026-10-19. _replaceProperNounSelfRef turned 'Target Assembly-Worker creature' into 'Target this card creature' (the full name is the creature type), Blinkmoth Nexus's 'a 1/1 Blinkmoth artifact creature' likewise, and Enchanted River's Grasp's first word made 'Enchanted creature loses all abilities' a global 'this card creature' (and a stray 0/0). A name word directly followed by creature / permanent / token is left as it is.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Assembly-Worker", "as": "aw1" },
+    { "add": "Assembly-Worker", "as": "aw2" },
+    { "fire": "@aw1", "activated": 0 },
+    { "add": "Serra Angel", "as": "angel", "controller": "p2" },
+    { "add": "Wind Drake", "as": "drake", "controller": "p2" },
+    { "add": "Enchanted River's Grasp", "as": "grasp" },
+    { "call": ["setTarget", "@grasp", "@angel"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Assembly-Worker A (activated)" }, "are": ["Assembly-Worker A", "Assembly-Worker B"] },
+    { "perm": "Serra Angel", "final": { "abilities": [] } },
+    { "perm": "Wind Drake", "final": { "abilities": ["Flying"] } }
+  ]
+}

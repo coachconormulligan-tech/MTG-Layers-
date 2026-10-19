@@ -1,0 +1,27 @@
+{
+  "name": "Aegis of the Meek, Entrancing Melody, Unlikely Alliance, Tegan Jovanka — 1/1, mana value X, nonattacking nonblocking and historic targets are read",
+  "notes": "Memory: project_audit_vocabulary_that_player_defending_player_2026-10-19. Each of 'target 1/1 creature', 'target creature with mana value X' (X = 2), 'target nonattacking, nonblocking creature' and 'target attacking historic creature' was read as a required subtype and listed nothing.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Llanowar Elves", "as": "elves" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Serra Angel", "as": "angel" },
+    { "call": ["toggleAttacking", "@angel"] },
+    { "add": "Ornithopter", "as": "thopter" },
+    { "call": ["toggleAttacking", "@thopter"] },
+    { "add": "Hill Giant", "as": "giant", "controller": "p2" },
+    { "add": "Aegis of the Meek", "as": "aegis" },
+    { "fire": "@aegis", "activated": 0 },
+    { "add": "Unlikely Alliance", "as": "alliance" },
+    { "fire": "@alliance", "activated": 0 },
+    { "add": "Tegan Jovanka", "as": "tegan" },
+    { "fire": "@tegan", "trigger": 0 },
+    { "add": "Entrancing Melody", "as": "melody", "spell": true, "x": 2 }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Aegis of the Meek (activated)" }, "are": ["Llanowar Elves"] },
+    { "targetCandidates": { "perm": "Unlikely Alliance (activated)" }, "are": ["Llanowar Elves", "Grizzly Bears", "Hill Giant"] },
+    { "targetCandidates": { "perm": "Tegan Jovanka (trigger)" }, "are": ["Ornithopter"] },
+    { "targetCandidates": { "perm": "Entrancing Melody" }, "are": ["Grizzly Bears"] }
+  ]
+}

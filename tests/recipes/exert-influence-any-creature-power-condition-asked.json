@@ -1,0 +1,16 @@
+{
+  "name": "Exert Influence — any creature can be targeted; whether its power was within the colours spent is asked",
+  "notes": "Memory: project_audit_vocabulary_that_player_defending_player_2026-10-19. 'Gain control of target creature if its power is less than or equal to the number of colors of mana spent to cast this spell' made the condition part of the target (nothing listed). Like Welcome to the Fold, the target is any creature and the condition holds on resolution; the colours spent are not on the board, so it is a toggle (No to begin). With it on, the control effect applies.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Hill Giant", "as": "giant", "controller": "p2" },
+    { "add": "Exert Influence", "as": "spell", "spell": true },
+    { "call": ["setTarget", "@spell", "@giant"] },
+    { "call": ["setAdditionalCostPaid", "@spell", true] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Exert Influence" }, "are": ["Grizzly Bears", "Hill Giant"] },
+    { "perm": "Hill Giant", "final": { "controller": "player_0" } }
+  ]
+}

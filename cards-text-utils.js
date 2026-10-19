@@ -1276,6 +1276,16 @@ function buildAppliesToFromText(filterText) {
   // "Target creature that player controls" (Kitt Kanto, Mayhem Diva: the player whose turn it
   // is): which player is not known here, so any player's creature is offered.
   if (_tinfo.needsTargetSelection) _tinfo.cleaned = _tinfo.cleaned.replace(/\s+that player controls(?=\s|$)/i, '').trim() || _tinfo.cleaned;
+  // "Target creature you control other than this creature" (Hisoka's Guard): the source is kept
+  // out as for "another" (_addAbilityPseudo reads "other"); "other than enchanted creature" (Due
+  // Diligence): the creature its source is attached to, likewise (_excludeAttachedTo).
+  if (_tinfo.needsTargetSelection) _tinfo.cleaned = _tinfo.cleaned.replace(/\s+other than (?:this [\w-]+|(?:enchanted|equipped) (?:creature|permanent))$/i, '').trim() || _tinfo.cleaned;
+  // "Target creature defending player controls" (Spring Splasher, Warkite Marauder, Yare): see
+  // _defendingPlayerIds.
+  // (Also once "target" is cut off: "gain control of target land defending player controls" —
+  // Orcish Squatters — is read from the words after it.)
+  const _defending = /\s+defending player controls(?=\s|$)/i.test(_tinfo.cleaned);
+  if (_defending) _tinfo.cleaned = _tinfo.cleaned.replace(/\s+defending player controls(?=\s|$)/i, '').trim();
   // "Target creature you don't control" (Gnawing Vermin). Only for a target: "gain control of a
   // land you don't control" (Herald of Leshrac's upkeep cost) must not become a filter.
   const _notYours = _tinfo.needsTargetSelection && /\s+you (?:don't|do not) control(?=\s|$)/i.test(_tinfo.cleaned);
@@ -1289,6 +1299,11 @@ function buildAppliesToFromText(filterText) {
     const innerFn = _result.fn;
     _result.fn = (p, allStates, effectCtrl) =>
       (p.owner || 'player_0') !== (effectCtrl || p.controller) && innerFn(p, allStates, effectCtrl);
+  }
+  if (_defending && _result.fn && !_result.isSelf) {
+    const innerFn = _result.fn;
+    _result.fn = (p, allStates, effectCtrl) =>
+      (!effectCtrl || _defendingPlayerIds(allStates, effectCtrl).has(p.controller)) && innerFn(p, allStates, effectCtrl);
   }
   if (_notYours && _result.fn && !_result.isSelf) {
     const innerFn = _result.fn;
@@ -1346,27 +1361,35 @@ function buildAppliesToFromText(filterText) {
    subject. Who it reaches depends on P/T as layer 7 leaves it, so the result carries judgedAfterPT
    and the effect is judged after layer 7 (evaluatePermanent). */
 function _sourceComparedSubject(part, sourcePerm) {
-  const vsSource = part.match(/^(.+?)\s+with\s+(power|toughness)\s+(less|greater)\s+than\s+(or\s+equal\s+to\s+)?this\s+[\w-]+'s\s+(power|toughness)$/i);
-  const vsAmount = !vsSource && part.match(/^(.+?)\s+with\s+(power|toughness)\s+(less|greater)\s+than\s+(or\s+equal\s+to\s+)?the\s+number\s+of\s+(.+)$/i);
+  const vsSource = part.match(/^(.+?)\s+with\s+(power|toughness|mana\s+value)\s+(less|greater)\s+than\s+(or\s+equal\s+to\s+)?this\s+[\w-]+'s\s+(power|toughness|mana\s+value)$/i);
+  // ("Target creature with mana value less than or equal to the number of Vampires you control" —
+  // Dominating Vampire.)
+  const vsAmount = !vsSource && part.match(/^(.+?)\s+with\s+(power|toughness|mana\s+value)\s+(less|greater)\s+than\s+(or\s+equal\s+to\s+)?the\s+number\s+of\s+(.+)$/i);
   const vsItself = !vsSource && !vsAmount && part.match(/^(.+?)\s+with\s+(power|toughness)\s+(less|greater)\s+than\s+(or\s+equal\s+to\s+)?its\s+(power|toughness)$/i);
   const m = vsSource || vsAmount || vsItself;
   if (!m) return null;
   const base = buildAppliesToFromText(m[1]);
   if (!base.fn) return null;
-  const stat = m[2].toLowerCase(), less = /less/i.test(m[3]), orEqual = !!m[4];
-  const srcId = sourcePerm.id, srcStat = vsAmount ? null : m[5].toLowerCase(), amount = vsAmount ? m[5] : null;
-  const printed = srcStat === 'power' ? sourcePerm.printedPower : sourcePerm.printedToughness;
+  const statKey = (w) => /^mana/i.test(w) ? 'manaValue' : w.toLowerCase();
+  const statWords = m[2].toLowerCase().replace(/\s+/g, ' ');
+  const stat = statKey(m[2]), less = /less/i.test(m[3]), orEqual = !!m[4];
+  // (A fired ability's source is the permanent with the ability.)
+  const srcId = sourcePerm.abilitySourceId || sourcePerm.id, srcStat = vsAmount ? null : statKey(m[5]), amount = vsAmount ? m[5] : null;
+  const realSrc = sourcePerm.abilitySourceId && typeof Battlefield !== 'undefined' ? Battlefield.getPermById(sourcePerm.abilitySourceId) : sourcePerm;
+  const printed = !realSrc ? null : srcStat === 'power' ? realSrc.printedPower : srcStat === 'toughness' ? realSrc.printedToughness : realSrc.manaValue;
+  const valueOf = (s) => stat === 'manaValue' ? (s.manaValue || 0) : s[stat];
   return Object.assign({}, base, {
     fn: (st, all, ctrl) => {
-      if (!base.fn(st, all, ctrl) || st[stat] === null || st[stat] === undefined) return false;
+      if (!base.fn(st, all, ctrl) || valueOf(st) === null || valueOf(st) === undefined) return false;
       const src = all && all.get ? all.get(srcId) : null;
-      const ref = vsItself ? st[srcStat] : vsSource ? (src ? src[srcStat] : printed)
-        : _computeForEachCount(amount, all || new Map(), src || st, { sourceId: srcId });
+      const ref = vsItself ? st[srcStat] : vsSource ? (src ? (srcStat === 'manaValue' ? (src.manaValue || 0) : src[srcStat]) : printed)
+        : _computeForEachCount(amount, all || new Map(), src || { controller: ctrl || sourcePerm.controller, id: srcId }, { sourceId: srcId });
       if (ref === null || ref === undefined) return false;
-      return less ? (orEqual ? st[stat] <= ref : st[stat] < ref) : (orEqual ? st[stat] >= ref : st[stat] > ref);
+      const v = valueOf(st);
+      return less ? (orEqual ? v <= ref : v < ref) : (orEqual ? v >= ref : v > ref);
     },
-    desc: `${base.desc} with ${stat} ${less ? 'less' : 'greater'} than ${orEqual ? 'or equal to ' : ''}` +
-      (vsItself ? `its ${srcStat}` : vsSource ? `this creature's ${srcStat}` : `the number of ${amount}`),
+    desc: `${base.desc} with ${statWords} ${less ? 'less' : 'greater'} than ${orEqual ? 'or equal to ' : ''}` +
+      (vsItself ? `its ${m[5].toLowerCase()}` : vsSource ? `this creature's ${m[5].toLowerCase()}` : `the number of ${amount}`),
     judgedAfterPT: true,
   });
 }
@@ -1444,8 +1467,11 @@ function _buildAppliesToFromTextInner(filterText) {
     .replace(/\s+target\s+opponent\s+controls?(?=\s|$)/g, '')
     .replace(/\s+target\s+player\s+controls?(?=\s|$)/g, '')
     .replace(/^(?:other|another)\s+/, '')
+    // "Target creature that isn't of the chosen type" (Callous Oppressor) before a type is chosen:
+    // any creature. (Once chosen, _reparseWithChoices writes the type in: "that isn't Goblin".)
+    .replace(/\s+that\s+(?:isn't|is not)\s+of the chosen (?:creature )?type$/, '')
     // "attacking Vampire that isn't a Demon" (Clavileño) reads as "non-demon attacking vampire".
-    .replace(/^(.+?)\s+that\s+(?:isn't|is not)\s+an?\s+([a-z-]+)$/, 'non-$2 $1');
+    .replace(/^(.+?)\s+that\s+(?:isn't|is not)\s+(?:an?\s+)?([a-z-]+)$/, 'non-$2 $1');
 
   // "Each creature that's attacking one of your opponents" (Oviya, Automech Artisan), "creatures
   // attacking your opponents" (Blast-Furnace Hellkite): any player's attacker, as long as the
@@ -1511,6 +1537,67 @@ function _buildAppliesToFromTextInner(filterText) {
         fn: (p, allStates, effectCtrl) => baseQual.test(p) && inner.fn(p, allStates, effectCtrl),
         desc: `${inner.desc} with ${baseQual.words}`,
         ...(inner.isOpponentsControl ? { isOpponentsControl: true } : {}),
+      };
+    }
+  }
+
+  // "Target 1/1 creature" (Aegis of the Meek, Pendelhaven, The Seedcore).
+  const ptSize = f.match(/^(\d+)\/(\d+)\s+(.+)$/);
+  if (ptSize) {
+    const inner = _buildAppliesToFromTextInner(ptSize[3]);
+    const pw = +ptSize[1], th = +ptSize[2];
+    if (inner && inner.fn && !inner.isSelf && !inner.isTargeted && !inner.isFallback) {
+      return { ...inner, fn: (p, allStates, effectCtrl) => p.power === pw && p.toughness === th && inner.fn(p, allStates, effectCtrl), desc: `Applies to: ${pw}/${th} ${inner.desc.replace('Applies to: ', '')}` };
+    }
+  }
+  // "Target attacking historic creature" (Tegan Jovanka): legendary, an artifact or a Saga (CR 700.6).
+  const historic = f.match(/^(.*?)\bhistoric\s+(.+)$/);
+  if (historic) {
+    const inner = _buildAppliesToFromTextInner((historic[1] + historic[2]).trim());
+    if (inner && inner.fn && !inner.isSelf && !inner.isTargeted && !inner.isFallback) {
+      const isHistoric = (p) => (p.supertypes || []).includes('Legendary') || (p.types || []).includes('Artifact') || (p.subtypes || []).includes('Saga');
+      return { ...inner, fn: (p, allStates, effectCtrl) => isHistoric(p) && inner.fn(p, allStates, effectCtrl), desc: `Applies to: historic ${inner.desc.replace('Applies to: ', '')}` };
+    }
+  }
+  // "Target nonattacking, nonblocking creature" (Unlikely Alliance): every one of the words holds.
+  const nonCombat = f.match(/^((?:non-?(?:attacking|blocking),?\s+)+)(.+)$/);
+  if (nonCombat) {
+    const inner = _buildAppliesToFromTextInner(nonCombat[2]);
+    const traits = [...nonCombat[1].matchAll(/attacking|blocking/g)].map(m => m[0] === 'attacking' ? 'Attacking' : 'Blocking');
+    if (inner && inner.fn && !inner.isSelf && !inner.isTargeted && !inner.isFallback) {
+      return { ...inner, fn: (p, allStates, effectCtrl) => traits.every(t => !(p.traits || []).includes(t)) && inner.fn(p, allStates, effectCtrl), desc: `Applies to: ${nonCombat[1].trim()} ${inner.desc.replace('Applies to: ', '')}` };
+    }
+  }
+  // "Target creature with mana value X" (Entrancing Melody, X already a number), "with power 2".
+  const statExact = f.match(/^(.+?)\s+with\s+(power|toughness|mana\s+value)\s+(\d+)$/);
+  if (statExact) {
+    const inner = _buildAppliesToFromTextInner(statExact[1]);
+    const key = /^mana/.test(statExact[2]) ? 'manaValue' : statExact[2], n = +statExact[3];
+    if (inner && inner.fn && !inner.isSelf && !inner.isTargeted && !inner.isFallback) {
+      return { ...inner, fn: (p, allStates, effectCtrl) => (key === 'manaValue' ? (p.manaValue || 0) : p[key]) === n && inner.fn(p, allStates, effectCtrl), desc: `${inner.desc} with ${statExact[2]} ${n}` };
+    }
+  }
+  // "Another target creature attacking the same player or planeswalker" (Kitesail Skirmisher, an
+  // attack trigger): an attacker of the source's controller. The site records only players as
+  // what a creature attacks, so the planeswalker is not a second kind of target.
+  const sameAttacked = f.match(/^(.+?)\s+attacking the same player(?: or planeswalker)?$/);
+  if (sameAttacked) {
+    const inner = _buildAppliesToFromTextInner(sameAttacked[1]);
+    if (inner && inner.fn && !inner.isSelf && !inner.isTargeted && !inner.isFallback) {
+      return { ...inner, fn: (p, allStates, effectCtrl) => (p.traits || []).includes('Attacking') && (!effectCtrl || p.controller === effectCtrl) && inner.fn(p, allStates, effectCtrl), desc: `${inner.desc} attacking the same player` };
+    }
+  }
+  // "Target enchanted creature or enchantment creature you control" (Nyx Herald): a creature with
+  // an Aura on it, or the other kind. (Alone, "enchanted creature" is the one an Aura is on.)
+  const enchantedOr = f.match(/^(enchanted|equipped)\s+(creature|permanent|artifact|land)\s+or\s+(.+)$/);
+  if (enchantedOr) {
+    const kind = normalizeTypeWord(enchantedOr[2]);
+    const other = _buildAppliesToFromTextInner(enchantedOr[3]);
+    const trait = enchantedOr[1] === 'enchanted' ? 'Enchanted' : 'Equipped';
+    if (other && other.fn && !other.isSelf && !other.isTargeted && !other.isFallback) {
+      return {
+        fn: (p, allStates, effectCtrl) => ((p.traits || []).includes(trait) && (!kind || kind.check !== 'type' || (p.types || []).includes(kind.value))) || other.fn(p, allStates, effectCtrl),
+        desc: `Applies to: ${f}`,
       };
     }
   }

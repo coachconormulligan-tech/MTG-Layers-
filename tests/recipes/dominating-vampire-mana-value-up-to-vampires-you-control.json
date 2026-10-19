@@ -1,0 +1,15 @@
+{
+  "name": "Dominating Vampire — the target's mana value is at most the number of Vampires you control",
+  "notes": "Memory: project_audit_vocabulary_that_player_defending_player_2026-10-19. The comparison with 'the number of Vampires you control' was read only for power and toughness (_sourceComparedSubject), so mana value fell to a required subtype and nothing was listed. Two Vampires: mana value 2 or less.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Vampire Nighthawk", "as": "nighthawk" },
+    { "add": "Grizzly Bears", "as": "bears", "controller": "p2" },
+    { "add": "Hill Giant", "as": "giant", "controller": "p2" },
+    { "add": "Dominating Vampire", "as": "dv" },
+    { "fire": "@dv", "trigger": 0 }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Dominating Vampire (trigger)" }, "are": ["Grizzly Bears"] }
+  ]
+}

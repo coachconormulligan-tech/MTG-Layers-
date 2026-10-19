@@ -1,0 +1,14 @@
+{
+  "name": "Yare — cast while an opponent's creature attacks you, \"defending player\" is you",
+  "notes": "Memory: project_audit_vocabulary_that_player_defending_player_2026-10-19. With no attacker of your own on the board, the defending player is whoever the attackers attack (_defendingPlayerIds), so Yare lists your creatures.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Hill Giant", "as": "giant", "controller": "p2" },
+    { "call": ["toggleAttacking", "@giant"] },
+    { "add": "Yare", "as": "yare", "spell": true }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Yare" }, "are": ["Grizzly Bears"] }
+  ]
+}

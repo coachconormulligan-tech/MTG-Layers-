@@ -641,6 +641,12 @@ function _replaceProperNounSelfRef(cardName, oracleText, isToken = false) {
            /^\s+(?:creatures?|permanents?|cards?|spells?|planeswalkers?|tokens?|artifacts?|enchantments?|lands?|you control|your opponents control|on the battlefield|or\b|and\b)/i.test(result.substring(offset + match.length, offset + match.length + 30)))) {
         return match;
       }
+      // A name followed by a type noun is the creature type: "Target Assembly-Worker creature"
+      // (Assembly-Worker), "becomes a 1/1 Blinkmoth artifact creature … Target Blinkmoth creature"
+      // (Blinkmoth Nexus; Scryfall's type list lacks Blinkmoth).
+      if (/^\s+(?:(?:artifact|enchantment|land)\s+)?(?:creatures?|permanents?|tokens?)\b/i.test(result.substring(offset + match.length, offset + match.length + 30))) {
+        return match;
+      }
       // After "type" or "subtype" words
       if (/\b(?:the\s+type|the\s+subtype|type|subtype)\s*$/i.test(before)) {
         return match; // keep original

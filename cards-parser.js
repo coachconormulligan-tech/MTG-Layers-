@@ -6959,8 +6959,11 @@ function parseCardEffects(permanent, card, opts = {}) {
 
       const isUntilEOT = /until end of turn/i.test(fullSentence);
       // ("Target creature you don't control" — Firbolg Flutist, Spreading Insurrection — likewise.)
+      // ("For each opponent, gain control of target permanent that player controls" — Blatant
+      // Thievery: an opponent's.)
       const opponentCtrlRequired = /\bopponent(?:'?s?)?\s+controls?\b/i.test(fullSentence)
-        || /\btarget\b[^.,]*?\byou\s+don'?t\s+control\b/i.test(objectText);
+        || /\btarget\b[^.,]*?\byou\s+don'?t\s+control\b/i.test(objectText)
+        || (/\bfor each opponent\b/i.test(fullSentence) && /\bthat player controls\b/i.test(objectText));
 
       // For spells (isManualEffect): if "target" appears anywhere in the sentence
       // (e.g. "Untap target permanent and gain control of it"), the "it" pronoun
@@ -6975,7 +6978,9 @@ function parseCardEffects(permanent, card, opts = {}) {
         const restrictText = objectTargetInfo.cleaned
           .replace(/\s+(?:an?\s+)?(?:opponent(?:'?s?)?\s+controls?|that player controls|you\s+(?:control|don'?t\s+control))\b/i, '')
           .trim();
-        controlRestriction = restrictText ? buildAppliesToFromText(restrictText).fn : null;
+        // ("… with mana value less than or equal to the number of Vampires you control" —
+        // Dominating Vampire; "… with power less than this creature's power" — Vodalian Mindsinger.)
+        controlRestriction = restrictText ? (_sourceComparedSubject(restrictText, permanent) || buildAppliesToFromText(restrictText)).fn : null;
         controlMaxTargets = objectTargetInfo.maxTargets || 1;
         // "For each opponent, gain control of up to one target creature that player controls"
         // (Mass Mutiny): one slot per opponent.
@@ -7090,6 +7095,24 @@ function parseCardEffects(permanent, card, opts = {}) {
         controlEff.asLongAsCondition = cond;
         controlEff.targetRestriction = buildAppliesToFromText(ptIf[1].replace(/^target\s+/i, '')).fn || controlRestriction;
         if (alt) permanent.additionalCostLabel = alt[1].charAt(0).toUpperCase() + alt[1].slice(1).toLowerCase() + ' cost paid';
+      }
+      // "Gain control of target creature if its power is less than or equal to the number of
+      // colors of mana spent to cast this spell" (Exert Influence): any creature can be targeted,
+      // and whether the comparison held as the spell resolved is asked (a toggle, No to begin).
+      const askIf = !ptIf && effectScope === 'targeted'
+        && oracle.slice(gcMatch.index).match(/^gains? control of (target [^.]+?) if its (power|toughness) is ([^.]+?)\./i);
+      if (askIf) {
+        let n = 1;
+        while (n < 6 && permanent['additionalCostLabel' + (n > 1 ? n : '')]) n++;
+        const suffix = n > 1 ? String(n) : '';
+        permanent['additionalCostLabel' + suffix] = `Its ${askIf[2].toLowerCase()} is ${askIf[3]}`;
+        const asked = () => {
+          const src = typeof Battlefield !== 'undefined' ? Battlefield.getPermById(permanent.id) : null;
+          return !!(src && src['additionalCostPaid' + suffix]);
+        };
+        asked._toggle = true;
+        controlEff.asLongAsCondition = asked;
+        controlEff.targetRestriction = buildAppliesToFromText(askIf[1].replace(/^target\s+/i, '')).fn || controlRestriction;
       }
     }
 

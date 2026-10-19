@@ -1,0 +1,15 @@
+{
+  "name": "Spring Splasher, Yare — \"target creature defending player controls\" lists the attacked player's creatures",
+  "notes": "Memory: project_audit_vocabulary_that_player_defending_player_2026-10-19. 'Defending player controls' was read as a required subtype ('Defending Player Control'), so Spring Splasher, Warkite Marauder, Armix, Fear of Falling, Orcish Squatters and Yare listed nothing. The defending player is the one your attackers attack (_defendingPlayerIds): Spring Splasher attacking lists the opponent's creatures; Yare, cast while the opponent's creature attacks you, lists yours.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Hill Giant", "as": "giant", "controller": "p2" },
+    { "add": "Spring Splasher", "as": "splasher" },
+    { "call": ["toggleAttacking", "@splasher"] },
+    { "fire": "@splasher", "trigger": 0 }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Spring Splasher (trigger)" }, "are": ["Hill Giant"] }
+  ]
+}

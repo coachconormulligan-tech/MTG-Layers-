@@ -1,0 +1,22 @@
+{
+  "name": "Riptide Entrancer, Garland, Blatant Thievery — \"that player\" after combat damage, an opponent's event or \"for each opponent\" is an opponent",
+  "notes": "Memory: project_audit_vocabulary_that_player_defending_player_2026-10-19. 'Whenever this creature deals combat damage to a player, … gain control of target creature that player controls' (Riptide Entrancer), 'Whenever an opponent becomes the monarch, gain control of target creature that player controls' (Garland), 'For each opponent, gain control of target permanent that player controls' (Blatant Thievery) listed every player's permanents, the source included. The player is an opponent in each, so the lists hold only the opponent's. Kitt Kanto's 'At the beginning of combat on each player's turn … target creature that player controls' can be anyone's and still lists both sides.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Hill Giant", "as": "giant", "controller": "p2" },
+    { "add": "Riptide Entrancer", "as": "entrancer" },
+    { "fire": "@entrancer", "trigger": 0 },
+    { "add": "Garland, Royal Kidnapper", "as": "garland" },
+    { "fire": "@garland", "trigger": 1 },
+    { "add": "Kitt Kanto, Mayhem Diva", "as": "kitt" },
+    { "fire": "@kitt", "trigger": 1 },
+    { "add": "Blatant Thievery", "as": "thievery", "spell": true }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Riptide Entrancer (trigger)" }, "are": ["Hill Giant"] },
+    { "targetCandidates": { "perm": "Garland, Royal Kidnapper (trigger)" }, "are": ["Hill Giant"] },
+    { "targetCandidates": { "perm": "Blatant Thievery" }, "are": ["Hill Giant"] },
+    { "targetCandidates": { "perm": "Kitt Kanto, Mayhem Diva (trigger)" }, "are": ["Grizzly Bears", "Hill Giant", "Riptide Entrancer", "Garland, Royal Kidnapper", "Kitt Kanto, Mayhem Diva"] }
+  ]
+}

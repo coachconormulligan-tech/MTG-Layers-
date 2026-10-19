@@ -306,6 +306,22 @@ function _permIdOfState(allStates, state) {
   return null;
 }
 
+// The defending players, for "target creature defending player controls" (Spring Splasher, Yare):
+// those that `ctrl`'s attackers on `allStates` are attacking, else those anyone's attackers are
+// attacking (Yare cast while you are attacked), else, with no combat on the board, every player
+// but `ctrl` (CR 506.2: the nonactive player of a two-player game). A Set of player ids.
+function _defendingPlayerIds(allStates, ctrl) {
+  const states = allStates && allStates.values ? [...allStates.values()] : [];
+  const attackers = states.filter(s => s && (s.traits || []).includes('Attacking'));
+  const mine = attackers.filter(s => (s.controller || s.owner || 'player_0') === ctrl);
+  const ids = new Set((mine.length ? mine : attackers).map(_attackedPlayerId).filter(Boolean));
+  if (!ids.size) {
+    const players = (typeof Battlefield !== 'undefined' && Battlefield.players) || [];
+    for (const pl of players) if (pl.id !== ctrl) ids.add(pl.id);
+  }
+  return ids;
+}
+
 // The player an attacking permanent (or its state) is attacking: the one picked on the card,
 // else the first player who is not its controller. Null when it is not attacking or there is
 // no other player.

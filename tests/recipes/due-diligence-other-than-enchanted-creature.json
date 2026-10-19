@@ -1,0 +1,16 @@
+{
+  "name": "Due Diligence — \"other than enchanted creature\" leaves out only the creature it is on",
+  "notes": "Memory: project_audit_vocabulary_that_player_defending_player_2026-10-19. 'When this Aura enters, target creature you control other than enchanted creature gets +2/+2' listed nothing (the words became a required subtype). The words are cut from the filter and the creature the Aura is on as the ability fires is kept out (_addAbilityPseudo, otherThanAttached).",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Llanowar Elves", "as": "elves" },
+    { "add": "Hill Giant", "as": "giant", "controller": "p2" },
+    { "add": "Due Diligence", "as": "dd" },
+    { "call": ["setTarget", "@dd", "@bears"] },
+    { "fire": "@dd", "trigger": 1 }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Due Diligence (trigger)" }, "are": ["Llanowar Elves"] }
+  ]
+}
