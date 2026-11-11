@@ -3232,6 +3232,10 @@ const Battlefield = {
         [/\bchoose a basic land type\b[^.]*\.[^\n]*\bthat type\b|\bbasic land type of your choice\b/i, 'needsChosenLandType', 'chosenLandType'],
         // "Choose a nonbasic land type. Each land you control of that type …" (March from Velis Vel).
         [/\bchoose a nonbasic land type\b[^.]*\.[^\n]*\bthat type\b/i, 'needsChosenLandType', 'chosenLandType'],
+        // "Choose a color. X target creatures gain protection from the chosen color" (Prismatic
+        // Boon, Brave the Elements): the colour is asked for and written into the text, as on a
+        // permanent.
+        [/\bchoose a color\b(?!\s+word)[^.]*\.[^\n]*\b(?:the chosen color|that color)\b/i, 'needsChosenColor', 'chosenColor'],
       ]) {
         if (!re.test(choiceText) || perm[needsKey]) continue;
         perm[needsKey] = true;

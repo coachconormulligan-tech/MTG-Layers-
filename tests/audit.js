@@ -189,7 +189,7 @@ function stripReminder(text) {
 // the end. A comma inside a list of types ("artifact, creature, or enchantment") does not end it.
 // "For as long as …" says how long, "if its power is …" what must hold on resolution, and "each"
 // is "This creature and another target creature each get …": none of them is who can be targeted.
-const PHRASE_STOP = /\s+(?:gets?|gains?|has|have|becomes?|become|loses?|lose|can|can't|cannot|deals?|is|are|isn't|doesn't|attacks?|blocks?|untaps?|taps?|fights?|phases?|perpetually|assumes|switches|and|then|until|this|for as long as|if|each|both)\b|[;:.]/;
+const PHRASE_STOP = /\s+(?:gets?|gains?|has|have|becomes?|become|loses?|lose|can|can't|cannot|deals?|is|are|isn't|doesn't|attacks?|blocks?|untaps?|taps?|fights?|phases?|perpetually|assumes|switches|and(?!\/or)|then|until|this|for as long as|if|each|both)\b|[;:.]/;
 // Stop words that are part of the phrase: "with power less than this creature's power", "less than
 // or equal to this creature's power", "Vampire that isn't a Demon".
 const PHRASE_STOP_KEPT = /(?:\bthan|\bequal to|\bcounters on)$|\bthat$/;
@@ -255,10 +255,10 @@ function classifyUnitText(text) {
   const idx = hits[0].index;
   const before = lower.slice(0, idx);
   if (/\bup to (?:\w+ )?(?:other )?$/.test(before)) return classifyTargets(text, 'up-to');
-  if (/\bany number of (?:other )?$/.test(before)) return { skip: 'any-number' };
+  if (/\bany number of (?:other )?$/.test(before)) return classifyTargets(text, 'any-number');
   if (/\beach $/.test(before)) return { skip: 'each-target' };
   if (/\bany $/.test(before)) return { skip: 'any-target' };
-  if (new RegExp('\\b' + NUMBER_WORDS + ' (?:other )?$').test(before)) return { skip: 'n-target' };
+  if (new RegExp('\\b' + NUMBER_WORDS + ' (?:other )?$').test(before)) return classifyTargets(text, 'n-target');
   const r = classifyAt(lower, idx, lower.length, {});
   return r.layer ? { singular: true, phrase: r.phrase, excludeSource: r.excludeSource, targetIndex: r.targetIndex } : { skip: r.skip };
 }
@@ -327,10 +327,13 @@ function classifyAt(lower, idx, end, opts) {
   // ("Up to one other target creature": classifyTargets only, so a singular unit reads as before.)
   return { layer: true, phrase, excludeSource: /\banother $/.test(before) || /^other /.test(phrase) || (!!opts.each && /\bother $/.test(before)), targetIndex: idx };
 }
+// The count of "any number of target …" (classifyTargets).
+const ANY_NUMBER = 'any';
 // The plural of LATER_PRONOUN_EFFECT: "Untap up to two target creatures. They gain haste" / "Those
 // creatures each get +1/+1", in the very next sentence ("Tap up to two target creatures. … Create a
 // 1/1 Eldrazi Scion token. It has …": the token is "it").
-const LATER_PLURAL_PRONOUN_EFFECT = /^[^.]*\.\s+(?:until end of turn,\s*)?(?:they|those (?:creatures|permanents|lands|artifacts))\s+(?:each\s+)?(?:also\s+)?(?:gain|have|become|lose|get|are)\b/;
+// ("Choose any number of target creatures. Each of those creatures gains persist" - Cauldron Haze.)
+const LATER_PLURAL_PRONOUN_EFFECT = /^[^.]*\.\s+(?:until end of turn,\s*)?(?:(?:they|those (?:creatures|permanents|lands|artifacts))\s+(?:each\s+)?(?:also\s+)?(?:gain|have|become|lose|get|are(?! now attacking))|each of (?:those (?:creatures|permanents|lands|artifacts)|them)\s+(?:also\s+)?(?:gains|has|becomes|loses|gets|is))\b/;
 
 /* A unit whose text names more than one target, or "up to N target …" (`origin`, which is also the
    first part of every skip reason it returns). Each target is read on its own (classifyAt) and how
@@ -359,18 +362,19 @@ function classifyTargets(text, origin) {
     const idx = hits[k], before = lower.slice(0, idx);
     let count = 1, m;
     if ((m = before.match(/\bup to (\w+) (?:other )?$/))) count = m[1] === 'x' ? X_VALUE : (WORD_COUNT[m[1]] || parseInt(m[1], 10) || 0);
-    else if (/\bany number of (?:other )?$/.test(before)) return skip('any-number');
+    // ("Any number of target creatures": as many picks as the site offers, at least two.)
+    else if (/\bany number of (?:other )?$/.test(before)) count = ANY_NUMBER;
     else if (/\beach $/.test(before)) return skip('each-target');
     else if (/\bany (?:other )?$/.test(before)) { reasons.push('any-target'); continue; }
     else if ((m = before.match(new RegExp('\\b(' + NUMBER_WORDS + ') (?:other )?$')))) count = m[1] === 'x' ? X_VALUE : (WORD_COUNT[m[1]] || parseInt(m[1], 10) || 0);
     if (!count) return skip('count-not-read');
     // "Creatures target player controls get -1/-1": the player picker decides a group.
     if (/^\s+(?:player|opponent)s? controls\b/.test(lower.slice(idx + 6))) return skip('player-group');
-    const r = classifyAt(lower, idx, k + 1 < hits.length ? hits[k + 1] : lower.length, { plural: count > 1, each: true });
+    const r = classifyAt(lower, idx, k + 1 < hits.length ? hits[k + 1] : lower.length, { plural: count === ANY_NUMBER || count > 1, each: true });
     if (r.skip === 'possessive-target') return skip('possessive-target');
     if (!r.layer) { reasons.push(r.skip); continue; }
     layers.push({ phrase: r.phrase, excludeSource: r.excludeSource, targetIndex: r.targetIndex, count,
-      plural: count > 1, sourceNotJudged: r.excludeSource && /\b(?:an)?other $/.test(before) && layers.length + reasons.length > 0 });
+      plural: count === ANY_NUMBER || count > 1, sourceNotJudged: r.excludeSource && /\b(?:an)?other $/.test(before) && layers.length + reasons.length > 0 });
   }
   if (!layers.length) {
     const why = [...new Set(reasons)];
@@ -385,7 +389,7 @@ function classifyTargets(text, origin) {
     if (t.count === 1) return skip('another-of-one-shot-target');
     return { targets: [t], expectKind: 'multi', maxTargets: t.count, origin };
   }
-  if (layers.some(t => t.count > 1)) return skip('several-targets-of-several');
+  if (layers.some(t => t.count !== 1)) return skip('several-targets-of-several');
   return { targets: layers, expectKind: 'slotted', origin };
 }
 
@@ -560,7 +564,8 @@ function interpretPhrase(phrase, env) {
   // Head: items joined by "or" / commas; an item is the AND of its words. "Nonartifact, nonblack
   // creature", "noncreature, nonland permanent": a leading item of "non-" words only is part of
   // the next one.
-  const rawItems = head.split(/\s*,\s*(?:or\s+)?|\s+or\s+/).map(x => x.trim()).filter(Boolean);
+  // ("Creatures and/or planeswalkers" - Mass Manipulation - is either.)
+  const rawItems = head.split(/\s*,\s*(?:or\s+)?|\s+(?:and\/)?or\s+/).map(x => x.trim()).filter(Boolean);
   for (let i = rawItems.length - 2; i >= 0; i--) {
     if (rawItems[i].split(' ').every(w => /^non-?[a-z]/.test(w)) && new RegExp('\\b' + rawItems[i] + '\\s*,\\s*' + rawItems[i + 1].split(' ')[0]).test(head)) {
       rawItems.splice(i, 2, rawItems[i] + ' ' + rawItems[i + 1]);
@@ -1209,8 +1214,8 @@ function auditFiredTargets(ctx, u, id) {
   if (picker.kind === 'none') finding('check2', 'no-picker');
   else if (picker.kind === 'modal') finding('check2', 'picker-not-' + want, { actual: 'modal' });
   else if (want === 'multi') {
-    if (picker.kind !== 'multi') finding('check2', 'picker-not-multi', { actual: picker.kind, expectedCount: u.maxTargets });
-    else if (picker.maxTargets !== u.maxTargets) finding('check2', 'max-targets-mismatch', { actual: picker.maxTargets, expectedCount: u.maxTargets });
+    if (picker.kind !== 'multi') finding('check2', 'picker-not-multi', { actual: picker.kind, expectedCount: u.maxTargets === ANY_NUMBER ? 'any number' : u.maxTargets });
+    else if (u.maxTargets === ANY_NUMBER ? picker.maxTargets < 2 : picker.maxTargets !== u.maxTargets) finding('check2', 'max-targets-mismatch', { actual: picker.maxTargets, expectedCount: u.maxTargets === ANY_NUMBER ? 'any number' : u.maxTargets });
     // The one target of the text, whatever picker shows it.
     picks = [picker.kind === 'multi' ? { kind: 'multi', slotIndex: 0, textSlot: 0 } : picker.kind === 'slotted' ? { kind: 'slotted', slot: 0, textSlot: null } : { kind: 'single', textSlot: 0 }];
   } else {

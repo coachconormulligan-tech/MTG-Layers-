@@ -307,7 +307,10 @@ function _multiTargetCandidates(sourceId, slotIndex) {
     // but always include permanents that are already current targets — targeting persists
     // even if the card is later moved to a timestamp after the spell.
     // (Not for a pick made from the board as it is now — _pickFromLiveBoard, below.)
-    if (sourcePerm && sourcePerm.isManualEffect && !sourcePerm._pickFromLiveBoard && p.timestamp >= sourcePerm.timestamp && !currentTargetIds.includes(p.id)) return false;
+    // A spell too, as in the single and slotted pickers: the engine never applies a spell's
+    // effect to a later permanent (effectAppliesToPerm), so listing one ("X target creatures
+    // gain protection …" — Prismatic Boon) offered a pick that did nothing.
+    if (sourcePerm && (sourcePerm.isManualEffect || sourcePerm.isSpell) && !sourcePerm._pickFromLiveBoard && p.timestamp >= sourcePerm.timestamp && !currentTargetIds.includes(p.id)) return false;
     return true;
   });
   const spellRestriction = effs.find(e => e.targetRestriction)?.targetRestriction;

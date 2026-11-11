@@ -417,10 +417,13 @@ function _resolveTheyPronoun(text) {
         .replace(/^((?:until [^,.]+|if [^,.]+),\s*)?those\s+\w+\s+(?=(?:each\s+)?(?:gain|get|have|become)\b|are\s[^.]*\bin addition to their other\b)/i, '$1they ')
         .replace(/^((?:until [^,.]+|if [^,.]+),\s*)?each of (?:those\s+\w+|them)\s+(gain|get|ha|become)(?:s|ve)\b/i,
           (_, lead, v) => `${lead || ''}they each ${v.toLowerCase() === 'ha' ? 'have' : v}`)
-        .replace(/^((?:until [^,.]+|if [^,.]+),\s*)?each of (?:those\s+\w+|them)\s+is\s+(?=an?\s[^.]*\bin addition to its other\b)/i,
+        // "Each of those lands is an 8/8 green Elemental creature for as long as it has an
+        // awakening counter on it. They're still lands." (Liege of the Tangle) as well.
+        .replace(/^((?:until [^,.]+|if [^,.]+),\s*)?each of (?:those\s+\w+|them)\s+is\s+(?=an?\s[^.]*\bin addition to its other\b|an?\s+\d+\/\d+\s[^.]*\bcreature\b)/i,
           (_, lead) => `${lead || ''}they each are `);
       const m = asThey.match(_THEY_SUBJECT_RE);
-      if (!m || (/^are$/i.test(m[3]) && !/\bin addition to (?:its|their) other\b/i.test(asThey))) continue;
+      if (!m || (/^are$/i.test(m[3]) && !/\bin addition to (?:its|their) other\b/i.test(asThey) &&
+        !/\bthey each are an?\s+\d+\/\d+\s[^.]*\bcreature\b/i.test(asThey))) continue;
       const theySentence = asThey;
       let subject = null, verb = m[3], separate = null;
       for (let j = i - 1; j >= 0 && !subject; j--) {

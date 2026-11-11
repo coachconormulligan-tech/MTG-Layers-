@@ -1,0 +1,158 @@
+{
+  "name": "\"X target creatures gain protection\" and \"Each of those lands is an 8/8\": one pick per target",
+  "notes": "Prismatic Boon's \"X target creatures gain protection from the chosen color\" had a single-target picker: the protection-grant parser set the target restriction itself and never the count, which _applyTargetInfo gives every other grant. It now sets maxTargets / targetIds when the subject names more than one target. Liege of the Tangle's fired \"choose any number of target lands you control and put an awakening counter on each of them. Each of those lands is an 8/8 green Elemental creature for as long as it has an awakening counter on it\" made nothing: _resolveTheyPronoun wrote \"each of those lands is …\" out as the targets only before \"in addition to its other types\"; it now does before \"a(n) N/N … creature\" too. On the card itself the trigger's sentence is not read as a static effect any more (setTypeRegex's \"the last sentence names its own targets\" branch skips a triggered line, as its other branches do), so the Liege has no picker of its own. The 8/8 holds only while the land has an awakening counter, which the player puts on it. Found by the audit's check of \"N target\" and \"any number of target\" texts (tests/audit.js classifyTargets). Two more things this recipe turned up: a spell's \"Choose a color. … the chosen color\" was never asked (addSpell flagged creature and land type choices, not colour), and a spell's multi-target picker listed permanents added after the spell, which the engine never lets a spell's effect reach (the single and slotted pickers already left them out).",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Prismatic Boon",
+      "as": "boon",
+      "spell": true,
+      "x": 2
+    },
+    {
+      "call": [
+        "setChosenColor",
+        "@boon",
+        "red"
+      ]
+    },
+    {
+      "call": [
+        "setMultiTarget",
+        "@boon",
+        0,
+        "@bears"
+      ]
+    },
+    {
+      "call": [
+        "setMultiTarget",
+        "@boon",
+        1,
+        "@giant"
+      ]
+    },
+    {
+      "add": "Forest",
+      "as": "forest"
+    },
+    {
+      "add": "Island",
+      "as": "island"
+    },
+    {
+      "add": "Liege of the Tangle",
+      "as": "liege"
+    },
+    {
+      "fire": "@liege",
+      "trigger": 1,
+      "as": "firedLiege"
+    },
+    {
+      "call": [
+        "setMultiTarget",
+        "@firedLiege",
+        0,
+        "@forest"
+      ]
+    },
+    {
+      "call": [
+        "setMultiTarget",
+        "@firedLiege",
+        1,
+        "@island"
+      ]
+    },
+    {
+      "call": [
+        "addCounter",
+        "@forest",
+        "awakening",
+        1
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "targetCandidates": {
+        "perm": "Prismatic Boon",
+        "kind": "multi"
+      },
+      "are": [
+        "Grizzly Bears",
+        "Hill Giant"
+      ]
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Protection from red until end of turn"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Protection from red until end of turn"
+          ]
+        }
+      }
+    },
+    {
+      "targetCandidates": {
+        "perm": "Liege of the Tangle (trigger)",
+        "kind": "multi"
+      },
+      "are": [
+        "Forest",
+        "Island"
+      ]
+    },
+    {
+      "perm": "Forest",
+      "final": {
+        "power": 8,
+        "toughness": 8,
+        "types": {
+          "$includes": [
+            "Land",
+            "Creature"
+          ]
+        },
+        "subtypes": {
+          "$includes": [
+            "Forest",
+            "Elemental"
+          ]
+        },
+        "colors": [
+          "G"
+        ]
+      }
+    },
+    {
+      "perm": "Island",
+      "final": {
+        "types": {
+          "$excludes": [
+            "Creature"
+          ]
+        }
+      }
+    }
+  ]
+}

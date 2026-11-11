@@ -3261,7 +3261,13 @@ function parseCardEffects(permanent, card, opts = {}) {
     // as captured; they are resolved or skipped further down.)
     if (/\.\s/.test(filterText)) {
       const _lastSentence = filterText.split(/\.\s+/).pop().trim();
-      if (/^(?:(?:up to \w+|any number of|\w+ or \w+|\w+)\s+(?:other\s+)?)?target\s/i.test(_lastSentence)) filterText = _lastSentence;
+      // (Not on a triggered line read as part of the whole card: "Whenever this creature deals
+      // combat damage to a player, you may choose any number of target lands … Each of those
+      // lands is an 8/8 …" — Liege of the Tangle — is the trigger's, parsed when it fires.)
+      if (/^(?:(?:up to \w+|any number of|\w+ or \w+|\w+)\s+(?:other\s+)?)?target\s/i.test(_lastSentence)) {
+        if (!permanent.isSpell && !permanent.isManualEffect && _isInTriggeredSentence(mStart + setTypeMatch[0].search(/\S/))) continue;
+        filterText = _lastSentence;
+      }
       // "…, then shuffle. Until end of turn, target land becomes …" (Rampaging Growth). Not on a
       // triggered line read as part of the whole card (Sparkshaper Visionary).
       else if (/^until end of turn,\s*(?:(?:up to \w+|any number of|\w+ or \w+|\w+)\s+(?:other\s+)?)?target\s/i.test(_lastSentence) &&
@@ -5309,7 +5315,7 @@ function parseCardEffects(permanent, card, opts = {}) {
     }
     if (!filterReferencesPermanents(filterText)) continue;
     const splitAbilities = _splitProtectionAbilities(rawAbility);
-    const { fn, desc, isSelf, isTargeted: _protBuiltTargeted } = buildAppliesToFromText(filterText);
+    const { fn, desc, isSelf, isTargeted: _protBuiltTargeted, maxTargets: _protMaxTargets } = buildAppliesToFromText(filterText);
     // "X target creatures" (Prismatic Boon) names targets the filter builder has no count for.
     const isTargeted = _protBuiltTargeted || (!isSelf && /^(?:\w+\s+)?target\s/i.test(filterText));
     const selfAffect = isSelf ? true : detectSelfAffect(filterText);
@@ -5324,6 +5330,9 @@ function parseCardEffects(permanent, card, opts = {}) {
       // For "target X" wording, attach a target restriction so the UI picker filters
       // by type and so _pinAbilityEffectsToSource doesn't silently auto-target the source.
       if (isTargeted && !isSelf) protEff.targetRestriction = fn;
+      // "X target creatures gain protection from the chosen color" (Prismatic Boon): a picker of
+      // that many targets, as _applyTargetInfo gives the other grants.
+      if (isTargeted && !isSelf && _protMaxTargets > 1) { protEff.maxTargets = _protMaxTargets; protEff.targetIds = []; }
       // "you control" → restrict picker to permanents controlled by the source's controller.
       if (isTargeted && /\byou\s+control\b/i.test(filterText)) protEff.youControlRequired = true;
       if (protCond) protEff.asLongAsCondition = protCond;

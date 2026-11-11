@@ -37,19 +37,20 @@ A unit whose own text names one permanent target ("singular") is checked twice:
            information: every listed permanent already has the keywords given or is already yours,
            or the only continuous effect sits in a sentence with its own "if".
 
-A unit whose text names more than one target, or "up to N target …", is read target by target
+A unit whose text names more than one target, or "up to N / N / X / any number of target …", is read target by target
 (classifyTargets in tests/audit.js). Only the targets that are the subject of a continuous effect
 count; the others are one-shot actions the site does not model ("Destroy target land. Up to two target
 creatures can't block" is skipped as "multiple-targets: one-shot-action"). One such target of one
 ("up to one target creature gets +1/+1") is a singular unit as above. One target of up to N or N
-(N >= 2) expects the multi-target picker with N picks; two or more targets of one each expect one
+(N >= 2; X is 2) expects the multi-target picker with N picks ("any number of": at least two); two or more targets of one each expect one
 picker per target ("slotted"), slot k being the k-th target of the text. Findings: picker-not-multi,
 max-targets-mismatch, picker-not-slotted, slot-count-mismatch, then per list (marked [pick 1] or
 [slot N]) empty-list and list-mismatch against that target's own phrase (plural words read as
 singular), and Check 1 on each list with the others left empty. A multi-target picker is also tried
 with two targets at once (second-pick-changes-nothing). "Another target creature" after an earlier
 target means one other than that target, which is not checked: whether the source is listed there is
-not judged. Skip reasons of such units start with "up-to: " or "multiple-targets: ".
+not judged. Skip reasons of such units start with "up-to: ", "n-target: ", "any-number: " or
+"multiple-targets: ".
 
 Also reported: crash (an exception anywhere) and no-targeted-effect (the text names a target but the
 parse produced no targeted effect, so there is no picker to audit - the sweep already covers
@@ -477,7 +478,7 @@ def print_record(r):
         print('       text:      %s' % u.get('text', ''))
         print('       phrase:    "%s"%s' % (u.get('phrase', ''), ' (another/other)' if u.get('excludeSource') else ''))
         print('       picker:    %s%s' % (u.get('pickerKind', 'not reached'),
-              '   (text: %s%s)' % (u['expectKind'], ' of %d' % u['maxTargets'] if u.get('maxTargets') else ' of %d' % len(u['targets'])) if u.get('targets') else ''))
+              '   (text: %s%s)' % (u['expectKind'], ' of %s' % u['maxTargets'] if u.get('maxTargets') else ' of %d' % len(u['targets'])) if u.get('targets') else ''))
         if u.get('targets'):
             pass
         elif u.get('phraseUnknown'):
