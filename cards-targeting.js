@@ -31,9 +31,11 @@ function getEffectInfo(permId, finalState) {
   const suppressTargeted = isBestowCard || isNonTopMutate;
   const isManual = perm ? perm.isManualEffect : false;
   // Multi-target: find first effect with maxTargets > 1
-  const multiTargetEff = effs.find(e => e.maxTargets > 1 && e.scope === 'targeted' && !e.selfTarget);
+  // (Neither counts a switched-off effect: the mode of a modal spell that is not picked. "Two
+  // target creatures each get +2/+0" gave Invigorated Rampage's other mode a picker of two.)
+  const multiTargetEff = effs.find(e => e.maxTargets > 1 && e.scope === 'targeted' && !e.selfTarget && !e.disabled);
   // Multi-slot: count distinct _targetSlot values (each is an independently selectable target)
-  const _slottedEffs = effs.filter(e => e.scope === 'targeted' && !e.selfTarget && e._targetSlot !== undefined);
+  const _slottedEffs = effs.filter(e => e.scope === 'targeted' && !e.selfTarget && e._targetSlot !== undefined && !e.disabled);
   const targetSlotCount = _slottedEffs.length > 0
     ? Math.max(..._slottedEffs.map(e => e._targetSlot)) + 1
     : 0;
@@ -46,6 +48,14 @@ function getEffectInfo(permId, finalState) {
       .map(e => e.modalModeIndex)
   )];
   const hasModalTargets = !hasTextChange && !suppressTargeted && activeModalTargetedModes.length > 1;
+  // How many targets each of those modes takes ("Up to X target creatures gain fear": X).
+  const modalModeMaxTargets = {};
+  for (const mi of activeModalTargetedModes) {
+    // (Not an exchange of control: its two permanents are picked in the Exchange modal.)
+    const m = effs.find(e => e.modalModeIndex === mi && e.scope === 'targeted' && !e.selfTarget && !e.disabled && e.maxTargets > 1 &&
+      !(e.type === EFFECT_TYPE.CONTROL && e.params && e.params.exchangeControl));
+    modalModeMaxTargets[mi] = m ? m.maxTargets : 1;
+  }
   const exchangeControlEff = effs.find(e => e.type === EFFECT_TYPE.CONTROL && e.params.exchangeControl);
   const hasExchangeControl = !!exchangeControlEff;
   // Equipment/Reconfigure/Fortify: use the final computed state when available so that abilities
@@ -81,6 +91,7 @@ function getEffectInfo(permId, finalState) {
     maxTargets: multiTargetEff ? multiTargetEff.maxTargets : 1,
     hasModalTargets,
     activeModalTargetedModes,
+    modalModeMaxTargets,
     targetSlotCount,
   };
 }
@@ -97,7 +108,7 @@ function getTargetPickerKind(sourceId, finalState, info) {
     : info.hasModalTargets ? 'modal'
     : info.hasTargeted ? (info.maxTargets > 1 ? 'multi' : 'single')
     : 'none';
-  return { kind, slots: info.targetSlotCount, modes: info.activeModalTargetedModes, maxTargets: info.maxTargets, info };
+  return { kind, slots: info.targetSlotCount, modes: info.activeModalTargetedModes, modeMaxTargets: info.modalModeMaxTargets, maxTargets: info.maxTargets, info };
 }
 
 /* "Audit Bear A [Player 2]" - how a permanent is named in a picker. The modal-mode picker leaves
@@ -154,7 +165,8 @@ function _targetPickerName(t, fs, withPlayer) {
    opts.kind is 'single' | 'multi' | 'slotted' | 'modal' (see getTargetPickerKind), with
      opts.slotIndex  for 'multi'   - which of the "up to N" pickers (0-based),
      opts.slot       for 'slotted' - which target slot,
-     opts.modeIndex  for 'modal'   - which modal mode.
+     opts.modeIndex  for 'modal'   - which modal mode, and opts.slotIndex which of its targets
+                     when the mode takes more than one (picker.modeMaxTargets).
    Returns { blocked } when the picker is replaced by a message (CR 704.5p), otherwise
    { candidates: [{ id, perm, state, displayName }], currentTarget, currentTargets, isNonTargeting,
      isAttached }. displayName is not HTML-escaped. */
@@ -163,7 +175,7 @@ function getTargetCandidates(sourceId, opts) {
   switch (opts.kind || 'single') {
     case 'multi': return _multiTargetCandidates(sourceId, opts.slotIndex || 0);
     case 'slotted': return _slottedTargetCandidates(sourceId, opts.slot || 0);
-    case 'modal': return _modalTargetCandidates(sourceId, opts.modeIndex);
+    case 'modal': return _modalTargetCandidates(sourceId, opts.modeIndex, opts.slotIndex);
     default: return _singleTargetCandidates(sourceId);
   }
 }
@@ -181,11 +193,12 @@ function _singleTargetCandidates(sourceId) {
   // If ANY targeted effect from this source requires an opponent's permanent, apply that filter.
   // We scan all effects (not just `current`) because haste/untap effects parsed before the
   // CONTROL effect may be found first by the `current` finder, hiding the flag.
+  // (Not a switched-off effect: another mode of a modal spell than the one picked.)
   const opponentControlRequired = Battlefield.effects.some(e =>
-    e.sourceId === sourceId && e.scope === 'targeted' && !e.selfTarget && e.opponentControlRequired)
+    e.sourceId === sourceId && e.scope === 'targeted' && !e.selfTarget && !e.disabled && e.opponentControlRequired)
     || !!(sourcePerm?._opponentControlRequired);
   const youControlRequired = Battlefield.effects.some(e =>
-    e.sourceId === sourceId && e.scope === 'targeted' && !e.selfTarget && e.youControlRequired)
+    e.sourceId === sourceId && e.scope === 'targeted' && !e.selfTarget && !e.disabled && e.youControlRequired)
     || !!(sourcePerm?._youControlRequired);
   const sourceCtrl = sourcePerm?.controller || sourcePerm?.owner || Battlefield.activePlayerId;
   // Exclude non-top mutate stack members — a stack is one target (only the top is selectable)
@@ -295,7 +308,10 @@ function _singleTargetCandidates(sourceId) {
    state now is; hexproof and shroud are checked, protection is not. */
 function _multiTargetCandidates(sourceId, slotIndex) {
   const sourcePerm = Battlefield.getPermById(sourceId);
-  const effs = Battlefield.effects.filter(e => e.sourceId === sourceId && e.scope === 'targeted' && !e.selfTarget);
+  // (The effects that are switched on, when any are: a modal spell's other modes have targets
+  // and restrictions of their own.)
+  const _allEffs = Battlefield.effects.filter(e => e.sourceId === sourceId && e.scope === 'targeted' && !e.selfTarget);
+  const effs = _allEffs.some(e => !e.disabled) ? _allEffs.filter(e => !e.disabled) : _allEffs;
   const currentTargetIds = effs[0]?.targetIds || [];
   const targets = Battlefield.permanents.filter(p => {
     if (p.isManualEffect || p.id === sourceId) return false;
@@ -392,7 +408,7 @@ function _slottedTargetCandidates(sourceId, slot) {
 /* One active targeted mode of a modal spell (Twisted Reflection with Entwine). No timestamp rule,
    no protection check, and the player's name is not added to the permanent's. A mode with no
    targeted effect has no picker: { noEffect: true }. */
-function _modalTargetCandidates(sourceId, modeIdx) {
+function _modalTargetCandidates(sourceId, modeIdx, slotIndex) {
   const sourcePerm = Battlefield.getPermById(sourceId);
   const allEffs = Battlefield.effects.filter(e => e.sourceId === sourceId && e.scope === 'targeted' && !e.selfTarget);
   const finalStates = Battlefield.getAllFinalStates();
@@ -411,7 +427,10 @@ function _modalTargetCandidates(sourceId, modeIdx) {
 
   const modeEff = allEffs.find(e => e.modalModeIndex === modeIdx);
   if (!modeEff) return { noEffect: true, candidates: [], currentTarget: '', currentTargets: [], isNonTargeting, isAttached: false };
-  const currentTarget = modeEff.targetId || '';
+  // One of the targets of a mode of up to N targets (Battlefield.setModalModeTarget's slotIndex).
+  const multi = slotIndex !== undefined && slotIndex !== null;
+  const currentTargetIds = multi ? (modeEff.targetIds || []).filter(Boolean) : [];
+  const currentTarget = multi ? ((modeEff.targetIds || [])[slotIndex] || '') : (modeEff.targetId || '');
   const spellRestriction = modeEff.targetRestriction || null;
   const candidates = [];
   for (const t of targets) {
@@ -428,7 +447,7 @@ function _modalTargetCandidates(sourceId, modeIdx) {
       candidates.push({ id: t.id, perm: t, state: fs || tState, displayName: _targetPickerName(t, fs, false) });
     }
   }
-  return { candidates, currentTarget, currentTargets: currentTarget ? [currentTarget] : [], isNonTargeting, isAttached: false };
+  return { candidates, currentTarget, currentTargets: multi ? currentTargetIds : currentTarget ? [currentTarget] : [], isNonTargeting, isAttached: false };
 }
 
 /* ===== Exchange control of two targets =====

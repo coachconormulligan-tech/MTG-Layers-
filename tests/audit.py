@@ -52,6 +52,15 @@ target means one other than that target, which is not checked: whether the sourc
 not judged. Skip reasons of such units start with "up-to: ", "n-target: ", "any-number: " or
 "multiple-targets: ".
 
+A modal spell ("Choose one —", Spree, Tiered, Escalate, Entwine, pawprints) is a unit per mode: the
+mode is picked alone as the Modes pop-up does it, and the unit is read from that mode's line as a spell
+of that one line would be (label "mode N"; skip reasons start with "mode: "). When the spell lets two or
+more modes be picked, every two modes that each name one target are also picked together (label
+"modes N+M"): the site must show one picker per mode for exactly those two (picker-not-modal,
+modal-modes-mismatch), each mode's list is judged against its own line ([mode N] empty-list,
+list-mismatch), a target for one mode with the other left empty must change only itself, and a target
+for each at once must change both (second-mode-changes-nothing).
+
 Also reported: crash (an exception anywhere) and no-targeted-effect (the text names a target but the
 parse produced no targeted effect, so there is no picker to audit - the sweep already covers
 "sentence produced nothing"; it is its own low-priority cluster here). Units that are skipped always
@@ -115,6 +124,9 @@ CODES = [
     ('target-changes-others', 'With a target chosen, a permanent other than the target changes.'),
     ('target-changes-nothing', 'Choosing any listed target changes nothing.'),
     ('second-pick-changes-nothing', 'Of an "up to N" picker, a target chosen in the second pick (with one in the first) changes nothing.'),
+    ('picker-not-modal', 'Two modes of a modal spell that each name one target are picked, but the site shows no picker per mode.'),
+    ('modal-modes-mismatch', 'The per-mode pickers are not for the two modes picked.'),
+    ('second-mode-changes-nothing', 'Two modes picked, a target chosen for each: one of the two targets changes nothing.'),
     ('no-targeted-effect', 'The text names one permanent target but the parse produced no targeted effect.'),
 ]
 CODE_ORDER = {c: i for i, (c, _) in enumerate(CODES)}
@@ -478,7 +490,11 @@ def print_record(r):
         print('       text:      %s' % u.get('text', ''))
         print('       phrase:    "%s"%s' % (u.get('phrase', ''), ' (another/other)' if u.get('excludeSource') else ''))
         print('       picker:    %s%s' % (u.get('pickerKind', 'not reached'),
-              '   (text: %s%s)' % (u['expectKind'], ' of %s' % u['maxTargets'] if u.get('maxTargets') else ' of %d' % len(u['targets'])) if u.get('targets') else ''))
+              '   (text: %s%s)' % (u['expectKind'], ' of %s' % u['maxTargets'] if u.get('maxTargets') else ' of %d' % len(u['targets'])) if u.get('targets')
+              else '   (text: modal of modes %s)' % '+'.join(str(m['mi'] + 1) for m in u['modePair']) if u.get('modePair') else ''))
+        # (A unit of several targets or two modes prints a list per pick below.)
+        if u.get('modePair'):
+            u = dict(u, targets=u['modePair'])
         if u.get('targets'):
             pass
         elif u.get('phraseUnknown'):

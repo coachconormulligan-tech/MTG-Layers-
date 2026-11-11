@@ -3895,7 +3895,8 @@ function parseCardEffects(permanent, card, opts = {}) {
       // that names the target. A spell only: in a fired ability a pronoun has been written out as
       // the target it stands for - "Untap target creature. Target creature gets +2/+2" - so a
       // second "target" there is no second target.)
-      _boostCrossed = !!permanent.isSpell && /\btarget\b/i.test(filterText);
+      // (Or a pronoun for the target of the sentence before, as for the grant below.)
+      _boostCrossed = !!permanent.isSpell && (/\btarget\b/i.test(filterText) || /^(?:it|they|that (?:creature|permanent|land|artifact|enchantment)|those (?:creatures|permanents))$/i.test(filterText));
       // "Untap target creature. It gets +3/+3" — resolve "It" pronoun to "target [type]"
       // from the prior sentence, mirroring the same resolution in haveAbilityRegex.
       // The controller words go with it: "Untap target creature you control. It gets +2/+2"
@@ -4943,10 +4944,17 @@ function parseCardEffects(permanent, card, opts = {}) {
       const segments = filterText.split(/\.\s*/);
       // A sentence ending inside a quoted ability leaves the closing quote on the next segment.
       filterText = segments[segments.length - 1].replace(/^["\u201d\s]+/, '').trim();
-      _haveCrossed = !!permanent.isSpell && /\btarget\b/i.test(filterText);
+      // (Or the subject is a pronoun for a target of the sentence before: "Put a +1/+1 counter on
+      // target creature you control. It gains indestructible …" — Origin of Metalbending's second
+      // mode. Placed where the match began, a line earlier, the pronoun took the words of the
+      // target before that line, and in a modal spell that is another mode's.)
+      _haveCrossed = !!permanent.isSpell && (/\btarget\b/i.test(filterText) || /^(?:it|they|that (?:creature|permanent|land|artifact|enchantment)|those (?:creatures|permanents))$/i.test(filterText));
       // "Choose a [type] [restriction]. It gains [keyword]" — when the match spans
       // "Choose a creature you control. It gains indestructible", the .split leaves
       // "It" as the last segment. Resolve "It" to a targeted effect on the chosen type.
+      // "Create a token that's a copy of target creature you control. It gains haste" (Cabaretti
+      // Confluence's first mode): "it" is the token, which its own card carries.
+      if (/^it$/i.test(filterText) && segments.length >= 2 && /\bcreates?\b[^.]*\btokens?\b/i.test(segments[segments.length - 2])) continue;
       if (/^it$/i.test(filterText) && segments.length >= 2) {
         const prevSentence = segments[segments.length - 2].trim();
         const chooseItMatch = prevSentence.match(/^(?:choose\s+(?:a|an|one)|target)\s+([\w][\w\s]*?)(?:\s+you\s+(?:control|own))?$/i);
@@ -6493,6 +6501,9 @@ function parseCardEffects(permanent, card, opts = {}) {
       // "… and gain control of it", "… and untap it", ", where X is …": what is done to it.
       .replace(/,?\s+(?:and|then)\s+(?:gain|gains|untap|untaps|tap|taps|put|puts|attach|it|that|you|return|exile|destroy|sacrifice|draw|create)\b.*$/i, '')
       .replace(/,\s+(?:where|then)\b.*$/i, '')
+      // "… on target creature you control if its power is 4 or greater. Then that creature gets
+      // +1/+1 …" (Ent's Fury): when the counter is put, not which creature.
+      .replace(/,?\s+if\b.*$/i, '')
       // "Gain control of target creature until end of turn": how long, not which creature.
       .replace(/\s+(?:until|for as long as|this turn|during)\b.*$/i, '')
       .replace(/\s+face (?:down|up)$/i, '').trim();
@@ -7285,6 +7296,19 @@ function parseCardEffects(permanent, card, opts = {}) {
     }
   }
 
+  // Every targeted effect of `group` takes the target count of the one that has it ("Up to two
+  // target creatures each get +1/+0 and gain haste": the grant is of the same two).
+  function _propagateMaxTargets(group) {
+    const maxT = group.find(e => e.maxTargets)?.maxTargets;
+    if (!maxT) return;
+    for (const eff of group) {
+      if (eff.scope === 'targeted' && !eff.selfTarget) {
+        eff.maxTargets = maxT;
+        if (!eff.targetIds) eff.targetIds = [];
+      }
+    }
+  }
+
   // Post-process: for instant/sorcery spell effects that have scope:'targeted' from
   // "target [type]" parsing, attach targetRestriction and maxTargets so the UI can
   // show appropriate target dropdowns with type filtering.
@@ -7351,16 +7375,11 @@ function parseCardEffects(permanent, card, opts = {}) {
         // For effects that didn't go through _applyTargetInfo, build from oracle text.
       }
     }
-    // Also scan for maxTargets from any effect that has it and propagate to all from same source
-    const maxT = effects.find(e => e.maxTargets)?.maxTargets;
-    if (maxT) {
-      for (const eff of effects) {
-        if (eff.scope === 'targeted' && !eff.selfTarget) {
-          eff.maxTargets = maxT;
-          if (!eff.targetIds) eff.targetIds = [];
-        }
-      }
-    }
+    // Also scan for maxTargets from any effect that has it and propagate to all from same source.
+    // (A modal spell's modes are each a spell of their own, so there it is done mode by mode once
+    // the modes are tagged, below: "Two target creatures each get +2/+0" gave Invigorated Rampage's
+    // other mode, "Target creature gets +4/+0", a picker of two.)
+    if (!(_isModalSpell && _modalModeLineMap.size > 0)) _propagateMaxTargets(effects);
   }
 
   // --- Tag and sort modal spell effects by mode order ---
@@ -7451,6 +7470,10 @@ function parseCardEffects(permanent, card, opts = {}) {
         !effects.some(e => e.modalModeIndex !== undefined)) permanent.isModalSpell = false;
     // Sort effects by modalModeIndex to ensure card text order
     effects.sort((a, b) => (a.modalModeIndex ?? 999) - (b.modalModeIndex ?? 999));
+    // A spell's target counts, mode by mode (see _propagateMaxTargets above).
+    if (permanent.isManualEffect || permanent.isSpell) {
+      for (const mi of new Set(effects.map(e => e.modalModeIndex))) _propagateMaxTargets(effects.filter(e => e.modalModeIndex === mi));
+    }
     if (!permanent.modalRepeatable) {
       const allModeIndices = [...new Set([..._modalModeLineMap.values()])].sort((a, b) => a - b);
       const maxActive = permanent.modalMaxActive ?? 1;

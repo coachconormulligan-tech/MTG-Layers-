@@ -1,0 +1,31 @@
+{
+  "name": "Modal spells: each mode's picker reads its own line, and picked modes survive a new X",
+  "notes": "Found by the audit's per-mode check (tests/audit.js auditModes). Origin of Metalbending's \"Put a +1/+1 counter on target creature you control. It gains indestructible\" listed your artifacts and enchantments: the grant's subject \"It\" was placed where its match began, the end of the line before, so _pronounAntecedentRestriction took the words of the other mode's target (\"artifact or enchantment\"); a spell's pronoun subject reached across a \".\" is now placed at its own sentence (haveAbilityRegex and boostRegex), as a subject naming its own target already was. Invigorated Rampage's \"Target creature gets +4/+0\" had a picker of two: maxTargets was propagated across every effect of the spell, the other mode's \"Two target creatures\" included; for a modal spell it is propagated mode by mode, and getEffectInfo / the multi-target picker no longer read switched-off effects (another mode's count, restriction or opponent / you-control rule). Profane Command went back to its first modes when X was typed after picking modes (setXValue and _reparseWithChoices re-parse; _carryModalModes keeps the picks), and with \"-X/-X\" and \"Up to X target creatures gain fear\" picked together the fear mode had one picker for X targets: a mode of up to N now has N pickers in the per-mode list (setModalModeTarget's slotIndex, saved as modalTargetIds). Ent's Fury's \"Then that creature gets +1/+1\" now takes its target's words less the \"if its power is 4 or greater\" condition.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bearsA" },
+    { "add": "Grizzly Bears", "as": "bearsB" },
+    { "add": "Hill Giant", "as": "giant" },
+    { "add": "Sol Ring", "as": "ring" },
+    { "add": "Origin of Metalbending", "as": "origin", "spell": true },
+    { "call": ["setModalModeSelections", "@origin", [1]] },
+    { "add": "Invigorated Rampage", "as": "rampage", "spell": true },
+    { "add": "Ent's Fury", "as": "fury", "spell": true },
+    { "add": "Profane Command", "as": "profane", "spell": true, "x": 2 },
+    { "call": ["setModalModeSelections", "@profane", [2, 3]] },
+    { "call": ["setXValue", "@profane", 3] },
+    { "call": ["setModalModeTarget", "@profane", 2, "@giant"] },
+    { "call": ["setModalModeTarget", "@profane", 3, "@bearsA", 0] },
+    { "call": ["setModalModeTarget", "@profane", 3, "@bearsB", 1] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Origin of Metalbending", "kind": "single" }, "are": ["Grizzly Bears A", "Grizzly Bears B", "Hill Giant"] },
+    { "targetCandidates": { "perm": "Invigorated Rampage", "kind": "single" }, "are": ["Grizzly Bears A", "Grizzly Bears B", "Hill Giant"] },
+    { "targetCandidates": { "perm": "Ent's Fury", "kind": "single" }, "are": ["Grizzly Bears A", "Grizzly Bears B", "Hill Giant"] },
+    { "targetCandidates": { "perm": "Profane Command", "kind": "modal", "mode": 2 }, "are": ["Grizzly Bears A", "Grizzly Bears B", "Hill Giant"] },
+    { "targetCandidates": { "perm": "Profane Command", "kind": "modal", "mode": 3, "pick": 1 }, "are": ["Grizzly Bears A", "Grizzly Bears B", "Hill Giant"] },
+    { "targetCandidates": { "perm": "Profane Command", "kind": "modal", "mode": 3, "pick": 2 }, "are": ["Grizzly Bears A", "Grizzly Bears B", "Hill Giant"] },
+    { "perm": "Hill Giant", "final": { "power": 0, "toughness": 0 } },
+    { "perm": "Grizzly Bears A", "final": { "power": 2, "abilities": { "$includes": ["Fear"] } } },
+    { "perm": "Grizzly Bears B", "final": { "power": 2, "abilities": { "$includes": ["Fear"] } } }
+  ]
+}

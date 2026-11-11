@@ -472,24 +472,31 @@ function renderModalModeTargets(sourceId, activeModeIndices) {
   const sourcePerm = Battlefield.getPermById(sourceId);
   const modeTexts = sourcePerm && sourcePerm.modalModeTexts ? sourcePerm.modalModeTexts : [];
   let html = '<div class="multi-target-group" onclick="event.stopPropagation()">';
+  const sourceFs = Battlefield.getAllFinalStates().get(sourceId);
+  const modeMax = getTargetPickerKind(sourceId, sourceFs).modeMaxTargets || {};
   for (const modeIdx of activeModeIndices) {
-    const r = getTargetCandidates(sourceId, { kind: 'modal', modeIndex: modeIdx });
-    if (r.noEffect) continue;
-    const modeLabel = modeTexts[modeIdx]
-      ? (modeTexts[modeIdx].length > 40 ? modeTexts[modeIdx].substring(0, 37) + '...' : modeTexts[modeIdx])
-      : `Mode ${modeIdx + 1}`;
-    html += `<select class="ts-target-select ts-target-multi" title="${escapeAttr(modeTexts[modeIdx] || '')}"
-        onchange="setModalModeTarget('${escapeAttr(sourceId)}', ${modeIdx}, this.value)">
-      <option value="">${r.isNonTargeting ? '\u2192 choose' : '\u2192 target'} (${escapeHtml(modeLabel)})\u2026</option>
-      ${r.candidates.map(c => `<option value="${c.id}" ${c.id === r.currentTarget ? 'selected' : ''}>${escapeHtml(c.displayName)}</option>`).join('')}
-    </select>`;
+    // A mode of up to N targets gets a picker per target ("Up to X target creatures gain fear").
+    const n = modeMax[modeIdx] > 1 ? modeMax[modeIdx] : 1;
+    for (let slot = 0; slot < n; slot++) {
+      const slotArg = n > 1 ? slot : undefined;
+      const r = getTargetCandidates(sourceId, { kind: 'modal', modeIndex: modeIdx, slotIndex: slotArg });
+      if (r.noEffect) break;
+      const modeLabel = modeTexts[modeIdx]
+        ? (modeTexts[modeIdx].length > 40 ? modeTexts[modeIdx].substring(0, 37) + '...' : modeTexts[modeIdx])
+        : `Mode ${modeIdx + 1}`;
+      html += `<select class="ts-target-select ts-target-multi" title="${escapeAttr(modeTexts[modeIdx] || '')}"
+          onchange="setModalModeTarget('${escapeAttr(sourceId)}', ${modeIdx}, this.value${n > 1 ? ', ' + slot : ''})">
+        <option value="">${r.isNonTargeting ? '\u2192 choose' : '\u2192 target'}${n > 1 ? ' ' + (slot + 1) : ''} (${escapeHtml(modeLabel)})\u2026</option>
+        ${r.candidates.map(c => `<option value="${c.id}" ${c.id === r.currentTarget ? 'selected' : ''}>${escapeHtml(c.displayName)}</option>`).join('')}
+      </select>`;
+    }
   }
   html += '</div>';
   return html;
 }
 
-function setModalModeTarget(sourceId, modeIndex, targetId) {
-  Battlefield.setModalModeTarget(sourceId, modeIndex, targetId || null);
+function setModalModeTarget(sourceId, modeIndex, targetId, slotIndex) {
+  Battlefield.setModalModeTarget(sourceId, modeIndex, targetId || null, slotIndex);
   Battlefield.evaluate();
   renderAll();
 }

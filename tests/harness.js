@@ -105,6 +105,18 @@ function targetCandidateLists() {
       }
       continue;
     }
+    // A picker per picked mode of a modal spell ("mode", 0-based), and per target of a mode of up
+    // to N ("pick", 0-based): Profane Command's "Up to X target creatures gain fear".
+    if (pk && pk.kind === 'modal') {
+      for (const mode of pk.modes) {
+        const n = (pk.modeMaxTargets || {})[mode] > 1 ? pk.modeMaxTargets[mode] : 0;
+        if (!n) out.push({ perm: p.name + (p.label ? ' ' + p.label : ''), kind: 'modal', mode, candidates: listNames(getTargetCandidates(p.id, { kind: 'modal', modeIndex: mode })) });
+        for (let pick = 0; pick < n; pick++) {
+          out.push({ perm: p.name + (p.label ? ' ' + p.label : ''), kind: 'modal', mode, pick, candidates: listNames(getTargetCandidates(p.id, { kind: 'modal', modeIndex: mode, slotIndex: pick })) });
+        }
+      }
+      continue;
+    }
     if (!pk || (pk.kind !== 'single' && pk.kind !== 'multi')) continue;
     out.push({ perm: p.name + (p.label ? ' ' + p.label : ''), kind: pk.kind, candidates: listNames(getTargetCandidates(p.id, pk)) });
   }

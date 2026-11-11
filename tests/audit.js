@@ -222,7 +222,8 @@ const CONTINUOUS_VERBS = /^(?:gets?|gains?|has|have|becomes?|become|loses?|lose|
 const SAME_PERMANENT_VERBS = /^(?:put|puts|untap|tap|taps|attach|choose|goad)$/;
 // A later sentence whose subject is the target, through a pronoun ("…. Untap it. Until end of turn,
 // it gets +1/+1 and becomes a Doctor").
-const LATER_PRONOUN_EFFECT = /\.\s+(?:until end of turn,\s*)?(?:it|that (?:creature|permanent|land|artifact))\s+(?:also\s+)?(?:gets?|gains?|has|becomes?|loses?|is)\b/;
+// ("… Then that creature gets +1/+1 until end of turn and fights …" — Ent's Fury.)
+const LATER_PRONOUN_EFFECT = /\.\s+(?:until end of turn,\s*|then\s+)?(?:it|that (?:creature|permanent|land|artifact))\s+(?:also\s+)?(?:gets?|gains?|has|becomes?|loses?|is)\b/;
 
 /* Does every event of a trigger's condition happen with the card in the hand or off the
    battlefield ("When you cycle this card", "When this creature dies", "When you cycle this card and
@@ -1345,7 +1346,7 @@ function auditUnit(ctx, u, fire) {
       u.findings.push({ check: 'check2', code: 'crash', error: errInfo('fire ' + u.kind, e) });
       return { audited: true };
     }
-    try { return u.targets ? auditFiredTargets(ctx, u, id) : auditFired(ctx, u, id); }
+    try { return u.modePair ? auditFiredModePair(ctx, u, id) : u.targets ? auditFiredTargets(ctx, u, id) : auditFired(ctx, u, id); }
     catch (e) { u.findings.push({ check: 'check2', code: 'crash', error: errInfo('audit', e) }); return { audited: true }; }
   });
 }
@@ -1360,6 +1361,193 @@ function newUnit(kind, index, label, text, cls) {
     phrase: cls.targets.map(t => t.phrase).join(' / '), targetIndex: cls.targets[0].targetIndex });
   if (cls.origin) u.origin = cls.origin;
   return u;
+}
+
+/* ─── Modal spells ───
+   The Modes pop-up (ui-abilities.js applyModalModePopup) picks the modes: a repeatable spell
+   ("you may choose the same mode more than once") by counts, any other by the set of active
+   modes. Each mode is a unit of its own, picked alone, and read from its own line
+   (perm.modalModeTexts, the line as printed less its bullet or cost): which picker the site
+   then shows and what it lists is judged against that line's words, exactly as a spell of that
+   one line would be. */
+function pickModes(perm, modeIndices) {
+  if (perm.modalRepeatable) {
+    const counts = {};
+    for (const mi of modeIndices) counts[mi] = (counts[mi] || 0) + 1;
+    Battlefield.setModalModeCounts(perm.id, counts);
+    perm._unparseableCounts = {};
+  } else {
+    Battlefield.setModalModeSelections(perm.id, new Set(modeIndices));
+    perm._unparseableActive = new Set();
+  }
+  Battlefield.evaluate();
+}
+
+function auditModes(rec, perm, ctx, run, skip, spellText) {
+  const modes = perm.modalModeTexts || [];
+  if (!modes.length) { skip('spell', undefined, '', spellText, 'modal-spell: no-modes'); return; }
+  const saved = { counts: perm.modalModeCounts, unpC: perm._unparseableCounts, unpA: perm._unparseableActive };
+  const restore = () => {
+    perm.modalModeCounts = saved.counts;
+    perm._unparseableCounts = saved.unpC;
+    perm._unparseableActive = saved.unpA;
+  };
+  // The modes that name one permanent target, or one target of up to N:
+  // { mi, text, phrase, targetIndex, excludeSource, plural, max } (max: how many picks the text allows).
+  const oneTarget = [];
+  modes.forEach((modeText, mi) => {
+    const label = 'mode ' + (mi + 1);
+    const text = stripReminder(modeText);
+    const cls = classifyUnitText(text);
+    if (!cls.singular && !cls.targets) { skip('spell', undefined, label, text, 'mode: ' + cls.skip); return; }
+    if (cls.singular) oneTarget.push({ mi, text, phrase: cls.phrase, targetIndex: cls.targetIndex, excludeSource: cls.excludeSource, max: 1 });
+    else if (cls.expectKind === 'multi' && cls.targets.length === 1) {
+      const t = cls.targets[0];
+      oneTarget.push({ mi, text, phrase: t.phrase, targetIndex: t.targetIndex, excludeSource: t.excludeSource, sourceNotJudged: t.sourceNotJudged, plural: t.plural, max: cls.maxTargets });
+    }
+    const u = newUnit('spell', undefined, label, text, cls);
+    u.modeIndex = mi;
+    try { run(u, () => { pickModes(perm, [mi]); return perm; }); }
+    finally { restore(); }
+  });
+  // Two modes picked at once, each naming one target ("Choose two —", "Choose one or both —",
+  // Entwine, Spree): the site shows one picker per mode (getTargetPickerKind 'modal'), and each
+  // must list what its own mode's words allow and reach only its own target. A mode of up to N
+  // targets ("Up to X target creatures gain fear") has N pickers of its own (modeMaxTargets).
+  if ((perm.modalMaxActive ?? 1) < 2) return;
+  for (let i = 0; i < oneTarget.length; i++) {
+    for (let j = i + 1; j < oneTarget.length; j++) {
+      const pair = [oneTarget[i], oneTarget[j]];
+      const label = 'modes ' + (pair[0].mi + 1) + '+' + (pair[1].mi + 1);
+      const u = { kind: 'spell', index: undefined, label, text: pair.map(m => m.text).join(' + '), findings: [], infos: [],
+        phrase: pair.map(m => m.phrase).join(' / '), modePair: pair, expectKind: 'modal' };
+      try { run(u, () => { pickModes(perm, pair.map(m => m.mi)); return perm; }); }
+      finally { restore(); }
+    }
+  }
+}
+
+/* Two modes of a modal spell picked together (auditModes): Check 2 is that the site shows the
+   per-mode picker for exactly these two modes and that each mode's list is what that mode's words
+   allow; Check 1 is that no permanent changes with no target, that a target chosen for one mode (the
+   other left empty) changes only itself, and that a target for each mode at once changes both. */
+function auditFiredModePair(ctx, u, id) {
+  const finding = (check, code, extra) => u.findings.push(Object.assign({ check, code }, extra || {}));
+  const finalStates = Battlefield.getAllFinalStates();
+  const info = getEffectInfo(id, finalStates.get(id));
+  if (info.hasText) return { skip: 'text-change-modal' };
+  if (info.hasExchangeControl) return { skip: 'exchange-control-modal' };
+  if (info.hasCopy) return { skip: 'copy-picker' };
+  const pair = u.modePair;
+  const mixedOf = (m) => mixedSubject(m.text, m.targetIndex, ctx.cardName, true);
+  const mixed = pair.map(mixedOf);
+  const anyMixed = mixed.some(x => x.source || x.group);
+  u.mixed = { source: mixed.some(x => x.source), group: mixed.some(x => x.group) };
+  const before = ctx.before;
+  const noTargetChanged = diffSummaries(before, summarizeBoard());
+  u.check1 = { noTarget: noTargetChanged.map(c => ({ role: c.role, what: c.what })), perTarget: [] };
+  if (!anyMixed && noTargetChanged.length) finding('check1', 'changes-with-no-target', { changed: u.check1.noTarget });
+
+  /* ── Check 2: the picker kind ── */
+  const picker = getTargetPickerKind(id, finalStates.get(id));
+  const want = pair.map(m => m.mi);
+  u.pickerKind = picker.kind + (picker.kind === 'modal' ? ' of modes ' + picker.modes.map(x => x + 1 + ((picker.modeMaxTargets || {})[x] > 1 ? ' (' + picker.modeMaxTargets[x] + ' picks)' : '')).join('+') : '');
+  if (picker.kind !== 'modal') { finding('check2', 'picker-not-modal', { actual: picker.kind }); return { audited: true }; }
+  const got = picker.modes.slice().sort((a, b) => a - b);
+  if (got.length !== 2 || got[0] !== want[0] || got[1] !== want[1]) finding('check2', 'modal-modes-mismatch', { actual: got.map(x => x + 1), expectedCount: want.map(x => x + 1) });
+
+  // Each mode's number of picks.
+  const modeMax = picker.modeMaxTargets || {};
+  for (const m of pair) {
+    const got = modeMax[m.mi] || 1;
+    if (m.max === ANY_NUMBER ? got < 2 : got !== m.max) finding('check2', 'max-targets-mismatch', { slot: 'mode ' + (m.mi + 1), actual: got, expectedCount: m.max === ANY_NUMBER ? 'any number' : m.max });
+  }
+  // (A mode of several picks is judged on its first; the rest are the same list.)
+  const slotOf = (m) => (modeMax[m.mi] || 1) > 1 ? 0 : undefined;
+
+  /* ── Check 2: each mode's list; Check 1: each target of it ── */
+  u.picks = [];
+  const good = [];   // per mode: the listed targets that changed themselves and nothing else
+  pair.forEach((m, k) => {
+    const label = 'mode ' + (m.mi + 1);
+    const rec = { pick: label, phrase: m.phrase, expected: null, actual: null, perTarget: [] };
+    u.picks.push(rec);
+    let siteIds = null;
+    try {
+      const r = getTargetCandidates(id, { kind: 'modal', modeIndex: m.mi, slotIndex: slotOf(m) });
+      if (r.noEffect) finding('check2', 'no-targeted-effect', { slot: label });
+      else siteIds = r.candidates.map(c => c.id);
+    } catch (e) { finding('check2', 'crash', { slot: label, error: errInfo('candidates', e) }); }
+    rec.actual = siteIds ? rolesOf(siteIds) : null;
+    const ex = expectedForTarget(ctx, { text: m.text, excludeSource: m.excludeSource }, m);
+    let expectedIds = null;
+    if (ex.unknown) { rec.phraseUnknown = ex.unknown; u.phraseUnknown = (u.phraseUnknown || []).concat(ex.unknown); }
+    else {
+      expectedIds = ex.ids;
+      rec.expected = rolesOf(expectedIds);
+      if (siteIds) {
+        const judged = (x) => !(m.sourceNotJudged && x === ctx.sourceId);
+        const missing = expectedIds.filter(x => judged(x) && !siteIds.includes(x)), extra = siteIds.filter(x => judged(x) && !expectedIds.includes(x));
+        if (!siteIds.length && expectedIds.length) finding('check2', 'empty-list', { slot: label, missing: rolesOf(missing), extra: [] });
+        else if (missing.length || extra.length) finding('check2', 'list-mismatch', { slot: label, missing: rolesOf(missing), extra: rolesOf(extra) });
+      }
+    }
+    const tryIds = siteIds && siteIds.length ? siteIds : (expectedIds || []);
+    rec.via = siteIds && siteIds.length ? 'picker' : 'text';
+    const othersSeen = [], noOp = [], ok = [];
+    for (const tid of tryIds.slice(0, 14)) {
+      let changed = [];
+      try { Battlefield.setModalModeTarget(id, m.mi, tid, slotOf(m)); Battlefield._invalidate(); changed = diffSummaries(before, summarizeBoard()); }
+      catch (e) { finding('check1', 'crash', { slot: label, error: errInfo('set target', e) }); break; }
+      finally { try { Battlefield.setModalModeTarget(id, m.mi, null, slotOf(m)); Battlefield._invalidate(); } catch (e) { /* restored by the caller */ } }
+      const role = roleName(tid);
+      const counted = mixed[k].source ? changed.filter(c => c.id !== ctx.sourceId) : changed;
+      const targetChanged = changed.some(c => c.id === tid) && !(mixed[k].source && tid === ctx.sourceId);
+      const others = mixed[k].group ? [] : counted.filter(c => c.id !== tid);
+      rec.perTarget.push({ target: role, changed: changed.map(c => ({ role: c.role, what: c.what })) });
+      if (targetChanged) { if (!others.length) ok.push(tid); } else noOp.push(role);
+      if (others.length) othersSeen.push({ target: role, others: others.map(c => ({ role: c.role, what: c.what })) });
+    }
+    good.push(ok);
+    if (othersSeen.length) finding('check1', 'target-changes-others', { slot: label, examples: othersSeen.slice(0, 3), count: othersSeen.length });
+    // (Each mode alone was already judged on its own line; a target that changes nothing here as
+    // well is information unless it changed itself there.)
+    if (tryIds.length && !ok.length && !othersSeen.length) {
+      if (COUNT_DEPENDENT.test(m.text) && /\bgets?\b/i.test(m.text)) u.infos.push({ code: 'count-or-condition-dependent', roles: [], slot: label });
+      else finding('check1', 'target-changes-nothing', { slot: label, tried: tryIds.length });
+    } else if (ok.length && noOp.length) u.infos.push({ code: 'no-op-on-some', roles: noOp, slot: label });
+    // A mode of several picks: a second target, with one in the first pick, changes too.
+    if ((modeMax[m.mi] || 1) > 1 && ok.length >= 2) {
+      let changed2 = [];
+      try {
+        Battlefield.setModalModeTarget(id, m.mi, ok[0], 0);
+        Battlefield.setModalModeTarget(id, m.mi, ok[1], 1);
+        Battlefield._invalidate();
+        changed2 = diffSummaries(before, summarizeBoard());
+      } catch (e) { finding('check1', 'crash', { slot: label + ' pick 2', error: errInfo('set second target', e) }); }
+      finally { try { Battlefield.setModalModeTarget(id, m.mi, null, 1); Battlefield.setModalModeTarget(id, m.mi, null, 0); Battlefield._invalidate(); } catch (e) { /* restored by the caller */ } }
+      rec.together = { targets: rolesOf(ok.slice(0, 2)), changed: changed2.map(c => ({ role: c.role, what: c.what })) };
+      if (!changed2.some(c => c.id === ok[1])) finding('check1', 'second-pick-changes-nothing', { slot: label + ' pick 2', target: roleName(ok[1]) });
+    }
+  });
+  // A target for each mode at once: both change.
+  if (good[0].length && good[1].length) {
+    const a = good[0][0], b = good[1].find(x => x !== a) || good[1][0];
+    let changed = [];
+    try {
+      Battlefield.setModalModeTarget(id, pair[0].mi, a, slotOf(pair[0]));
+      Battlefield.setModalModeTarget(id, pair[1].mi, b, slotOf(pair[1]));
+      Battlefield._invalidate();
+      changed = diffSummaries(before, summarizeBoard());
+    } catch (e) { finding('check1', 'crash', { slot: 'both modes', error: errInfo('set both targets', e) }); }
+    finally {
+      try { Battlefield.setModalModeTarget(id, pair[0].mi, null, slotOf(pair[0])); Battlefield.setModalModeTarget(id, pair[1].mi, null, slotOf(pair[1])); Battlefield._invalidate(); } catch (e) { /* restored by the caller */ }
+    }
+    u.together = { targets: rolesOf([a, b]), changed: changed.map(c => ({ role: c.role, what: c.what })) };
+    if (a !== b && !changed.some(c => c.id === b)) finding('check1', 'second-mode-changes-nothing', { slot: 'mode ' + (pair[1].mi + 1), target: roleName(b) });
+    if (a !== b && !changed.some(c => c.id === a)) finding('check1', 'second-mode-changes-nothing', { slot: 'mode ' + (pair[0].mi + 1), target: roleName(a) });
+  }
+  return { audited: true };
 }
 
 function auditFace(card, faceIndex) {
@@ -1399,7 +1587,7 @@ function auditFace(card, faceIndex) {
   /* Spells: the unit is the spell itself. */
   if (isSpell) {
     const text = stripReminder(face.oracle_text || '');
-    if (perm.isModalSpell) { skip('spell', undefined, '', text, 'modal-spell'); return rec; }
+    if (perm.isModalSpell) { auditModes(rec, perm, ctx, run, skip, text); return rec; }
     const cls = classifyUnitText(text);
     if (!cls.singular && !cls.targets) { skip('spell', undefined, '', text, cls.skip); return rec; }
     const u = newUnit('spell', undefined, '', text, cls);

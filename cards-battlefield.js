@@ -1818,7 +1818,20 @@ const Battlefield = {
         if (o.targetIds && o.targetIds.length) newEffects[i].targetIds = o.targetIds.slice();
       });
     }
+    this._carryModalModes(oldEffects, newEffects);
     this.effects.push(...newEffects);
+  },
+
+  /* A modal spell re-parsed for a new X or a choice keeps the modes the player picked: the parse
+     switches on the first modes again, so picking "Target creature gets -X/-X" on Profane Command
+     and then typing X put it back to "Target player loses X life". (A repeatable spell's counts are
+     kept on the spell; its effects are switched on by them the same way.) */
+  _carryModalModes(priorEffects, newEffects) {
+    if (!priorEffects.some(e => e.modalModeIndex !== undefined)) return;
+    const active = new Set(priorEffects.filter(e => e.modalModeIndex !== undefined && !e.disabled).map(e => e.modalModeIndex));
+    for (const eff of newEffects) {
+      if (eff.modalModeIndex !== undefined) eff.disabled = !active.has(eff.modalModeIndex);
+    }
   },
 
   /* Set chosen creature type for a permanent and re-parse effects */
@@ -2010,6 +2023,7 @@ const Battlefield = {
         desc: `Creature type becomes ${perm.chosenCreatureType}.`,
       });
     }
+    this._carryModalModes(priorEffects, newEffects);
     this.effects.push(...newEffects);
   },
 
@@ -2442,12 +2456,22 @@ const Battlefield = {
   /* Set targetId for effects from a specific modal mode (modeIndex).
      Used when a modal spell has multiple targeted modes (e.g. Twisted Reflection with Entwine)
      so each mode can target a different permanent independently. */
-  setModalModeTarget(effectSourceId, modeIndex, targetPermId) {
+  /* A mode of up to N targets has a picker per target (slotIndex, 0-based): "Up to X target
+     creatures gain fear" beside another mode of Profane Command. Its picks go to targetIds, as an
+     "up to N" spell's do. */
+  setModalModeTarget(effectSourceId, modeIndex, targetPermId, slotIndex) {
     this._invalidate();
     this.effects.forEach(e => {
       if (e.sourceId === effectSourceId && e.scope === 'targeted' &&
           !e.selfTarget && e.modalModeIndex === modeIndex) {
-        e.targetId = targetPermId || null;
+        if (slotIndex !== undefined && slotIndex !== null) {
+          if (!e.targetIds) e.targetIds = [];
+          while (e.targetIds.length <= slotIndex) e.targetIds.push(null);
+          e.targetIds[slotIndex] = targetPermId || null;
+          while (e.targetIds.length > 0 && !e.targetIds[e.targetIds.length - 1]) e.targetIds.pop();
+        } else {
+          e.targetId = targetPermId || null;
+        }
       }
     });
   },
@@ -3517,14 +3541,18 @@ const Battlefield = {
     // permanents and fired ability pseudo-perms).
     const captureTargets = (srcId) => {
       let primaryTarget = null, multiTarget = null, copySource = null, targetTs = null, copyTargetPermId = null, refPermId = null;
-      const slotTargets = {}, modalTargets = {}, slotTs = {};
+      const slotTargets = {}, modalTargets = {}, modalTargetIds = {}, slotTs = {};
       for (const e of this.effects) {
         if (e.sourceId !== srcId) continue;
         if (e.type === EFFECT_TYPE.COPY && e.params && e.params.copySource) copySource = e.params.copySource;
         if (e.type === EFFECT_TYPE.COPY && e.params && e.params._copyTargetPermId) copyTargetPermId = e.params._copyTargetPermId;
         if (_takesFromRef(e) && e.params.refPermId) refPermId = e.params.refPermId;
         if (e.scope !== 'targeted' || e.selfTarget) continue;
-        if (e.targetIds && e.targetIds.length) multiTarget = e.targetIds.slice();
+        // (A mode's picks are the mode's: modalTargetIds.)
+        if (e.targetIds && e.targetIds.length) {
+          if (e.modalModeIndex !== undefined) modalTargetIds[e.modalModeIndex] = e.targetIds.slice();
+          else multiTarget = e.targetIds.slice();
+        }
         if (e._targetSlot !== undefined) { if (e.targetId) { slotTargets[e._targetSlot] = e.targetId; slotTs[e._targetSlot] = e.timestamp; } }
         else if (e.modalModeIndex !== undefined) { if (e.targetId) modalTargets[e.modalModeIndex] = e.targetId; }
         // (Not the half pinned to the ability's own source — Deadly Dancer: the picked half is the target.)
@@ -3535,7 +3563,7 @@ const Battlefield = {
       // effects (auras/equipment), which setTarget/setSlottedTarget bump independently of
       // the perm's own timestamp. Without these, restore would reconstruct the order from
       // array iteration and silently flip last-timestamp-wins effects (CR 613.7).
-      return { primaryTarget, multiTarget, slotTargets, modalTargets, copySource, targetTs, slotTs, copyTargetPermId, refPermId };
+      return { primaryTarget, multiTarget, slotTargets, modalTargets, modalTargetIds, copySource, targetTs, slotTs, copyTargetPermId, refPermId };
     };
 
     // Capture per-effect user choices that re-parse alone won't reproduce: exchange
@@ -3577,7 +3605,7 @@ const Battlefield = {
     };
 
     const perms = this.permanents.filter(isRealPerm).map(p => {
-      const { primaryTarget, multiTarget, slotTargets, modalTargets, copySource, targetTs, slotTs, copyTargetPermId, refPermId } = captureTargets(p.id);
+      const { primaryTarget, multiTarget, slotTargets, modalTargets, modalTargetIds, copySource, targetTs, slotTs, copyTargetPermId, refPermId } = captureTargets(p.id);
       return {
         id: p.id,
         scryfallData: p.scryfallData,
@@ -3617,7 +3645,7 @@ const Battlefield = {
         targetPlayerId: p._targetPlayerId || null,
         enchantedPlayerId: p._enchantedPlayerId || null,
         modalModeCounts: p.modalModeCounts || null,
-        primaryTarget, multiTarget, slotTargets, modalTargets, copySource, targetTs, slotTs, copyTargetPermId, refPermId,
+        primaryTarget, multiTarget, slotTargets, modalTargets, modalTargetIds, copySource, targetTs, slotTs, copyTargetPermId, refPermId,
         choices: captureChoices(p.id),
         // Camera/board-snapshot popup for a SPELL (instant/sorcery on the stack): the
         // cast-time board picture. Like fired abilities, addSpell rebuilds it from the
@@ -3953,6 +3981,7 @@ const Battlefield = {
       if (r.multiTarget) r.multiTarget.forEach((tid, i) => { if (idMap[tid]) this.setMultiTarget(nsId, i, idMap[tid]); });
       for (const [slot, tid] of Object.entries(r.slotTargets || {})) { if (idMap[tid]) this.setSlottedTarget(nsId, Number(slot), idMap[tid]); }
       for (const [mi, tid] of Object.entries(r.modalTargets || {})) { if (idMap[tid]) this.setModalModeTarget(nsId, Number(mi), idMap[tid]); }
+      for (const [mi, tids] of Object.entries(r.modalTargetIds || {})) (tids || []).forEach((tid, i) => { if (idMap[tid]) this.setModalModeTarget(nsId, Number(mi), idMap[tid], i); });
       // Player-level targets (these reference player ids, not perm ids — no idMap needed).
       // Idempotent for real perms (already applied during the creation loop above); this
       // is the only place fired-ability pseudo-perms get their opponent/player choice back.
