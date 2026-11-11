@@ -19,7 +19,9 @@
    or one picker per target, and each list gets both checks against its own target's words
    (auditFiredTargets).
    An Aura is a unit too ("attach", auditAttach): its attach picker against its "Enchant ..." line,
-   with protection, shroud and hexproof judged on witnesses added for it alone.
+   with protection, shroud and hexproof judged on witnesses added for it alone. So are an Equipment's
+   equip lines ("equip", auditEquip) and every quoted ability that names a target ("quoted",
+   auditQuoted): granted, then fired from the permanent that gets it.
    The unit's text decides whether it is audited at all; nothing the parser built is trusted. */
 
 /* ─── Engine shims (same as tests/sweep.js) ─── */
@@ -1048,6 +1050,7 @@ function auditFired(ctx, u, id) {
     const sourceCtrl = ctx.sourceCtrl;
     const exclude = interp.excludeSource || u.excludeSource;
     expectedIds = [];
+    const unjudged = [];
     for (const p of ctx.universe) {
       if (exclude && p.id === ctx.sourceId) continue;
       const st = ctx.preStates.get(p.id);
@@ -1057,11 +1060,17 @@ function auditFired(ctx, u, id) {
       const kws = keywordsOf(st);
       if (kws.includes('shroud')) continue;
       if (kws.includes('hexproof') && ctrlOf(st, p) !== sourceCtrl) continue;
+      // (Quoted units only: protection from the source, the permanent with the ability.)
+      if (ctx.judgeProtection) {
+        const prot = auditProtectedFrom(st, ctx.preStates.get(ctx.sourceId) || {});
+        if (prot === null) { unjudged.push(p.id); continue; }
+        if (prot) continue;
+      }
       expectedIds.push(p.id);
     }
     u.expected = rolesOf(expectedIds);
     if (siteIds) {
-      const missing = expectedIds.filter(x => !siteIds.includes(x)), extra = siteIds.filter(x => !expectedIds.includes(x));
+      const missing = expectedIds.filter(x => !siteIds.includes(x)), extra = siteIds.filter(x => !unjudged.includes(x) && !expectedIds.includes(x));
       if (!siteIds.length && expectedIds.length) finding('check2', 'empty-list', { missing: rolesOf(missing), extra: [] });
       else if (missing.length || extra.length) finding('check2', 'list-mismatch', { missing: rolesOf(missing), extra: rolesOf(extra) });
     }
@@ -1175,7 +1184,7 @@ function expectedForTarget(ctx, u, t) {
   const interp = interpretPhrase(t.phrase, { before: wordsBefore, plural: t.plural });
   if (interp.unknown) return { unknown: interp.unknown };
   const exclude = interp.excludeSource || t.excludeSource || u.excludeSource;
-  const ids = [];
+  const ids = [], unjudged = [];
   for (const p of ctx.universe) {
     if (exclude && !t.sourceNotJudged && p.id === ctx.sourceId) continue;
     const st = ctx.preStates.get(p.id);
@@ -1183,9 +1192,14 @@ function expectedForTarget(ctx, u, t) {
     const kws = keywordsOf(st);
     if (kws.includes('shroud')) continue;
     if (kws.includes('hexproof') && ctrlOf(st, p) !== ctx.sourceCtrl) continue;
+    if (ctx.judgeProtection) {
+      const prot = auditProtectedFrom(st, ctx.preStates.get(ctx.sourceId) || {});
+      if (prot === null) { unjudged.push(p.id); continue; }
+      if (prot) continue;
+    }
     ids.push(p.id);
   }
-  return { ids };
+  return { ids, unjudged };
 }
 
 function auditFiredTargets(ctx, u, id) {
@@ -1258,7 +1272,7 @@ function auditFiredTargets(ctx, u, id) {
         expectedIds = ex.ids;
         rec.expected = rolesOf(expectedIds);
         if (siteIds) {
-          const judged = (x) => !(t.sourceNotJudged && x === ctx.sourceId);
+          const judged = (x) => !(t.sourceNotJudged && x === ctx.sourceId) && !(ex.unjudged || []).includes(x);
           const missing = expectedIds.filter(x => judged(x) && !siteIds.includes(x)), extra = siteIds.filter(x => judged(x) && !expectedIds.includes(x));
           if (!siteIds.length && expectedIds.length) finding('check2', 'empty-list', { slot: label, missing: rolesOf(missing), extra: [] });
           else if (missing.length || extra.length) finding('check2', 'list-mismatch', { slot: label, missing: rolesOf(missing), extra: rolesOf(extra) });
@@ -2015,6 +2029,417 @@ function auditEquip(card, faceIndex, rec, face) {
   });
 }
 
+/* ═════════════════════════ Quoted abilities that name a target ═════════════════════════
+   'Equipped creature has "{T}: Target creature gets -1/-1 until end of turn"', 'Until end of turn,
+   creatures you control gain "{T}: Gain control of target creature"', 'Create a 1/1 Mercenary
+   token with "{T}: Target creature you control gets +1/+0 …"'. The quoted ability belongs to the
+   permanent that ends up with it (CR 113.7: its source is that permanent), so each such quote is a
+   unit of its own (kind "quoted"), on a board of its own: the fixed board, a bearer the grant's own
+   words fit ("your bearer": a creature you control, or the land / artifact / planeswalker / subtype
+   the words name) and witnesses only this unit sees (an opponent's hexproof creature, one with
+   protection from the bearer's colour, one with protection from the granting card's colour). The
+   quote is granted the way the site does it:
+     equipped  - the Equipment is attached to the bearer (applyEquipAttachment, the Equip pop-up);
+     enchanted - the Aura is attached to the bearer, or the first permanent its picker lists;
+     fired     - the spell is cast, or the ability fired (triggerPlans / activatedPlans), and its own
+                 target, if it has one, set to the bearer (else the first permanent listed);
+     static    - nothing to do: the card's own words reach the bearer ("Slivers you control have");
+     token     - the site never creates a token, the user adds the token's card: the token is made
+                 from the creating words (name, colours, types, P/T, keywords, every quote) and added;
+     emblem    - not audited: the site shows an emblem's text but has no button to fire it.
+   The bearer is the permanent that has the quote in its abilities afterwards. When the words say
+   which one that must be (the attached or targeted permanent, the token, a group the bearer is in),
+   one that lacks it is a finding (quote-not-granted). The bearer's ability is then fired exactly as
+   the site does it and audited as any fired unit (auditFired / auditFiredTargets), read by the
+   audit's own interpreter with "this creature" the bearer and "you" its controller; protection is
+   judged too (from the bearer's words, CR 702.16). A target inside a quote inside the quote is not
+   audited ("quoted: nested-quote"). */
+
+// The double-quoted texts of `text` that name a target: [{ q, start, end }] (offsets into the
+// text with ’ and curly quotes made plain; q without its quote marks).
+function targetQuotes(text) {
+  const t = String(text || '').replace(/’/g, "'").replace(/[“”]/g, '"');
+  const out = [];
+  const re = /"([^"]*)"/g;
+  let m;
+  while ((m = re.exec(t))) if (/\btargets?\b/i.test(m[1])) out.push({ q: m[1], start: m.index, end: m.index + m[0].length });
+  return out;
+}
+
+// Does the first "target" of q sit inside a nested single-quoted ability ("Mountains you control
+// have '{T}: This land deals 1 damage to any target.'")?
+function targetInNestedQuote(q) {
+  const open = q.search(/(?:^|\s)'(?=[{\[A-Z])/);
+  return open >= 0 && q.search(/\btargets?\b/i) > open;
+}
+
+// The words before a quote, from the start of its sentence (quotes before it masked).
+function wordsBeforeQuote(text, start) {
+  const t = String(text || '').replace(/’/g, "'").replace(/[“”]/g, '"');
+  const masked = t.replace(/"[^"]*"/g, (s) => 'Q'.repeat(s.length));
+  const head = masked.slice(0, start);
+  const cut = Math.max(head.lastIndexOf('\n'), head.search(/[.;](?=[^.;]*$)/));
+  const from = cut + 1 + (head.slice(cut + 1).match(/^\s*/)[0].length);
+  return { sentence: head.slice(cut + 1).trim(), previous: head.slice(0, cut + 1), from };
+}
+
+// The key a quote and an ability text are compared by: self-references and the bearer's name are one word.
+function quoteKey(s, names) {
+  let k = String(s || '').replace(/’/g, "'").toLowerCase().replace(/\b(it|that|there)'s\b/g, '$1 is');
+  for (const n of names || []) if (n && n.length > 2) k = k.split(n.toLowerCase()).join('self');
+  return k.replace(/\b(?:this (?:creature|permanent|token|artifact|land|enchantment|equipment|planeswalker|card|emblem)|~)\b/g, 'self')
+    // (The site writes X = 2 into the text it was given.)
+    .replace(/\bx\b/g, String(X_VALUE))
+    .replace(/\([^)]*\)/g, ' ').replace(/[^a-z0-9{}+\/\-]+/g, ' ').trim();
+}
+
+// Which of `texts` is the quote q: the one equal to it, else one that is the other's start (at
+// least 40 characters). "When this creature enters, you may have it deal 3 damage to target
+// Spirit creature" and "… target non-Spirit creature" are two quotes. Index or -1.
+function quoteMatch(texts, q, names) {
+  const qk = quoteKey(q, names);
+  let best = -1, bestLen = 0;
+  (texts || []).forEach((t, i) => {
+    const k = quoteKey(t, names);
+    if (k === qk) { if (bestLen < Infinity) { best = i; bestLen = Infinity; } return; }
+    // (One may run on: a quote cut short, "… Activate only as a sorcery" kept.)
+    const n = k.startsWith(qk) ? qk.length : qk.startsWith(k) ? k.length : 0;
+    if (n >= Math.min(40, qk.length) && n > bestLen) { best = i; bestLen = n; }
+  });
+  return best;
+}
+
+// The bearer the grant's words fit: { noun, subtype } read from the words before the quote.
+function bearerSpec(words) {
+  const lower = String(words || '').toLowerCase();
+  let noun = 'creature', at = -1, m;
+  const re = /\b(creature|land|planeswalker|artifact|permanent)s?\b/g;
+  while ((m = re.exec(lower))) { noun = m[1]; at = m.index; }
+  let subtype = null;
+  // (A subtype is written with a capital: "each Vampire you control", not "you".)
+  // ("Non-Spirit creatures have": not a Spirit.)
+  for (const w0 of String(words || '').replace(/’/g, "'").replace(/\bnon-?[A-Za-z]+/gi, ' ').replace(/[^A-Za-z' ]+/g, ' ').split(/\s+/)) {
+    const w = w0.toLowerCase();
+    if (!w || !/^[A-Z]/.test(w0) || PERMANENT_NOUNS.has(w)) continue;
+    const s = [w, ...singularForms(w)].find(x => subtypeWords().has(x) && !PERMANENT_NOUNS.has(x));
+    if (s) subtype = s;
+  }
+  if (noun === 'permanent') noun = 'creature';
+  // ("Outlaw creatures you control": an outlaw is an Assassin, Mercenary, Pirate, Rogue or Warlock.)
+  if (!subtype && /\boutlaws?\b/.test(lower)) subtype = 'rogue';
+  return { noun, subtype };
+}
+
+function quotedWitnesses(cardColors, spec, bearerColors) {
+  const mk = (name, typeLine, text, colors, controller, role, extra) => Object.assign({ role, controller, card: {
+    name, layout: 'normal', type_line: typeLine, oracle_text: text, mana_cost: '{2}', cmc: 2,
+    power: /Creature/.test(typeLine) ? '2' : undefined, toughness: /Creature/.test(typeLine) ? '2' : undefined,
+    loyalty: /Planeswalker/.test(typeLine) ? '3' : undefined, colors, color_identity: colors, keywords: [] } }, extra || {});
+  const out = [];
+  if (spec) {
+    const sub = spec.subtype ? cap1(spec.subtype) : null;
+    const typeLine = spec.noun === 'land' ? 'Land' + (sub ? ' — ' + sub : '')
+      : spec.noun === 'artifact' ? 'Artifact' + (sub ? ' — ' + sub : '')
+      : spec.noun === 'planeswalker' ? 'Legendary Planeswalker — ' + (sub || 'Audit')
+      : 'Creature — ' + (sub || 'Elemental');
+    out.push(mk('Audit Bearer', typeLine, '', spec.noun === 'land' || spec.noun === 'artifact' ? [] : bearerColors, 'p1', 'your bearer', { bearer: true }));
+  }
+  out.push(mk('Audit Veiled Elemental', 'Creature — Elemental', 'Hexproof', ['G'], 'p2', "opponent's hexproof creature"));
+  const bc = AURA_COLOR_ORDER.find(c => (bearerColors || []).includes(c));
+  if (bc) out.push(mk('Audit Warded Spirit', 'Creature — Spirit', 'Protection from ' + COLOR_NAME[bc], ['G'], 'p2', "opponent's creature with protection from " + COLOR_NAME[bc]));
+  const cc = AURA_COLOR_ORDER.find(c => (cardColors || []).includes(c) && c !== bc);
+  if (cc) out.push(mk('Audit Bright Spirit', 'Creature — Spirit', 'Protection from ' + COLOR_NAME[cc], ['G'], 'p2', "opponent's creature with protection from " + COLOR_NAME[cc]));
+  return out;
+}
+
+// The token a "create … token with "…"" sentence describes, as a card, read from its own words.
+function tokenFromWords(createWords, quotes, fullSentence) {
+  const lower = createWords.toLowerCase();
+  const desc = (lower.match(/\bcreates?\s+(.*?\btokens?\b(?:\s+named\s+[^,.]+)?)/) || [])[1] || lower;
+  const named = fullSentence.replace(/’/g, "'").match(/\bnamed ([A-Z][^,."]*?)(?=,| with\b| that\b|\.|$)/);
+  const lead = fullSentence.match(/\bcreates?\s+([A-Z][\w' -]*?),\s+an?\s/);
+  const pt = desc.match(/\b(\d+|x)\/(\d+|x)\b/);
+  let colors = [];
+  if (/\ball colors\b/.test(desc)) colors = ['W', 'U', 'B', 'R', 'G'];
+  else for (const w of Object.keys(COLOR_CODES)) if (new RegExp('\\b' + w + '\\b').test(desc)) colors.push(COLOR_CODES[w]);
+  const types = ['artifact', 'enchantment', 'land', 'creature'].filter(w => new RegExp('\\b' + w + '\\b').test(desc)).map(cap1);
+  const subs = [];
+  const descCased = createWords.slice(createWords.toLowerCase().indexOf(desc.slice(0, 12)) >= 0 ? createWords.toLowerCase().indexOf(desc.slice(0, 12)) : 0);
+  for (const w0 of descCased.replace(/\bnamed\b.*$/, '').replace(/[^A-Za-z' ]+/g, ' ').split(/\s+/)) {
+    const w = w0.toLowerCase();
+    if (!w || !/^[A-Z]/.test(w0) || PERMANENT_NOUNS.has(w) || w === 'token' || w === 'tokens') continue;
+    const s = [w, ...singularForms(w)].find(x => subtypeWords().has(x));
+    if (s && !subs.includes(cap1(s))) subs.push(cap1(s));
+  }
+  const kwPart = (fullSentence.toLowerCase().match(/\btokens?\b[^"]*?\bwith\s+([^"]*?)(?:,?\s*and\s*)?$/) || [])[1] || '';
+  const kws = kwPart.split(/\s*,\s*(?:and\s+)?|\s+and\s+/).map(s => s.trim()).filter(k => KEYWORD_SET.has(k)).map(cap1);
+  const isCreature = types.includes('Creature');
+  const name = named ? named[1].trim() : lead ? lead[1].trim() : (subs.join(' ') || 'Audit') + ' Token';
+  const v = (x) => x === 'x' ? String(X_VALUE) : x;
+  return {
+    name, layout: 'token', type_line: 'Token ' + (types.join(' ') || 'Artifact') + (subs.length ? ' — ' + subs.join(' ') : ''),
+    oracle_text: kws.concat(quotes).join('\n'), mana_cost: '', cmc: 0,
+    power: isCreature ? (pt ? v(pt[1]) : '1') : undefined, toughness: isCreature ? (pt ? v(pt[2]) : '1') : undefined,
+    colors, color_identity: colors, keywords: kws,
+  };
+}
+
+// Does a group grant's subject take in the bearer made for it? "Creatures you control", "all
+// creatures", "each creature you control", and the subtype it was made of ("Slivers you control",
+// "each Vampire you control"); not "outlaw creatures you control" or "creatures your opponents control".
+function groupReachesBearer(before, spec) {
+  // (After an ability word, chapter or cost: "II — ", "−8: ". The subject is followed by its verb at
+  // once: "Creatures you control with flying have" is not every creature.)
+  const l = String(before || '').toLowerCase().replace(/^[^"—:]*[—:]\s*/, '').replace(/^until end of turn,\s*/, '');
+  if (/\bopponents? controls?\b/.test(l)) return false;
+  const verb = '\\s+(?:(?:each\\s+)?(?:have|has|gain|gains)|gets?\\s+[+-][\\dx]+\\/[+-][\\dx]+\\s+and\\s+(?:have|has|gain|gains))\\s*$';
+  const lead = '(?:^|,\\s*|\\b(?:and|other)\\s+)';
+  if (new RegExp(lead + '(?:creatures|permanents) you control' + verb + '|^all (?:other )?creatures' + verb + '|^each (?:other )?creature you control' + verb + '|^commander creatures you own' + verb).test(l)) return true;
+  if (spec && spec.subtype) {
+    const sg = spec.subtype, pl = [sg + 's', sg + 'es', ...Object.keys(IRREGULAR_SINGULAR).filter(k => IRREGULAR_SINGULAR[k] === sg)].join('|');
+    return new RegExp(lead + '(?:' + pl + ')(?: creatures)? you control' + verb + '|^all (?:other )?(?:' + pl + ')' + verb + '|^each (?:other )?' + sg + '(?: creature)? you control' + verb).test(l);
+  }
+  return false;
+}
+
+function auditQuoted(card, faceIndex, rec, face, isSpell) {
+  const raw = String(face.oracle_text || '');
+  // (Reminder text is not the card's: "Create a Map token. (It's an artifact with "…target…")".)
+  const text = raw.split('\n').map(stripReminder).filter(Boolean).join('\n');
+  const quotes = targetQuotes(text);
+  if (!quotes.length) return;
+  const plainText = text.replace(/’/g, "'").replace(/[“”]/g, '"');
+  const cardColors = (face.colors || card.colors || []).map(String);
+  const typeLine = face.type_line || card.type_line || '';
+  const skipQ = (i, label, q, reason) => rec.skipped.push({ unit: 'quoted ' + i + (label ? ' (' + label + ')' : ''), reason: 'quoted: ' + reason, text: q.slice(0, 140) });
+
+  quotes.forEach((qt, qi) => {
+    const q = qt.q;
+    if (targetInNestedQuote(q)) { skipQ(qi, '', q, 'nested-quote'); return; }
+    // A static quote is never fired ("Spells your opponents cast that target this creature cost {2} more").
+    if (!/^(?:when|whenever|at)\b/i.test(q) && !/^[^"']*?:\s/.test(q)) { skipQ(qi, '', q, 'not-an-ability'); return; }
+    const wb = wordsBeforeQuote(text, qt.start);
+    const before = wb.sentence;
+    const lowerBefore = before.toLowerCase();
+    if (/\bemblem\b/.test(lowerBefore)) { skipQ(qi, 'emblem', q, 'emblem'); return; }
+    // A token: "create … token(s) … with "…"", or "Create … token. It has / They have "…"".
+    let createWords = null;
+    if (/\bcreates?\b[^.]*\btokens?\b/.test(lowerBefore)) createWords = before;
+    else if (/^(?:until end of turn,\s*)?(?:it|they|each of them|those tokens?|the tokens?)\s+(?:has|have|gains?)\b/.test(lowerBefore)) {
+      const prev = wb.previous.replace(/[.;]\s*$/, '');
+      const ps = prev.slice(Math.max(prev.lastIndexOf('\n'), prev.search(/[.;](?=[^.;]*$)/)) + 1);
+      if (/\bcreates?\b[^.]*\btokens?\b/i.test(ps)) createWords = ps;
+    }
+    // Every quote of the token's sentence is the token's.
+    const sentenceEnd = (() => { const rest = plainText.slice(qt.end).replace(/"[^"]*"/g, (s) => 'Q'.repeat(s.length)); const k = rest.search(/[.;]\s|\n|[.;]$/); return qt.end + (k < 0 ? rest.length : k); })();
+    const sentenceStart = wb.from;
+    const fullSentence = plainText.slice(Math.max(0, sentenceStart), sentenceEnd);
+    const route = createWords ? 'token' : isSpell ? 'fired' : null;
+    runQuotedUnit({ card, faceIndex, rec, face, isSpell, q, qi, before, createWords, fullSentence, route, cardColors, typeLine, skipQ });
+  });
+}
+
+function runQuotedUnit(o) {
+  const { card, faceIndex, rec, isSpell, q, qi, before, cardColors, skipQ } = o;
+  const qKey = quoteKey(q).slice(0, 40);
+  const spec = o.route === 'token' ? null : bearerSpec(before);
+  const bearerColors = [AURA_COLOR_ORDER.find(c => !cardColors.includes(c)) || 'G'];
+  let tokenCard = null;
+  if (o.route === 'token') {
+    const all = targetQuotes(o.fullSentence).map(x => x.q);
+    const others = [...o.fullSentence.replace(/’/g, "'").matchAll(/"([^"]*)"/g)].map(m => m[1]).filter(x => !all.includes(x));
+    tokenCard = tokenFromWords(o.createWords, all.concat(others), o.fullSentence);
+  }
+  const u0 = { kind: 'quoted', index: qi, label: '', text: q.slice(0, 400), phrase: '', findings: [], infos: [] };
+  let perm, grant = null, expectBearerId = null, bearerWitnessId = null;
+  try {
+    buildBoard();
+    for (const e of quotedWitnesses(cardColors, spec, tokenCard ? tokenCard.colors : bearerColors)) {
+      const c = e.controller === 'p2' ? Battlefield.players[1].id : 'player_0';
+      Battlefield.activePlayerId = c;
+      const p = Battlefield.addPermanent(JSON.parse(JSON.stringify(e.card)), { suppressPrompt: true, controller: c, owner: c });
+      roleOf.set(p.id, e.role);
+      if (e.bearer) bearerWitnessId = p.id;
+      // "Commander creatures you own have …", "As long as you control your commander": the bearer is your commander.
+      if (e.bearer && /\bcommanders?\b/i.test(o.fullSentence)) {
+        Battlefield.players[0].commanders.push({ card: null, name: p.name, imageUri: null, castCount: 0, linkedPermId: p.id });
+        roleOf.set(p.id, 'your bearer, your commander');
+      }
+    }
+    Battlefield.activePlayerId = 'player_0';
+    // What the grant's own condition asks of the board: threshold, hellbent.
+    if (/\bseven or more cards in your graveyard\b/i.test(o.fullSentence)) {
+      for (let k = 0; k < 7; k++) Battlefield.addToGraveyard('player_0', { name: 'Graveyard Shock ' + (k + 1), type_line: 'Instant', mana_cost: '{R}', cmc: 1, layout: 'normal', oracle_text: '', colors: ['R'] });
+      u0.infos.push({ code: 'grant-set-up', roles: [], what: 'seven cards in your graveyard' });
+    }
+    if (/\byou have no cards in hand\b/i.test(o.fullSentence)) {
+      Battlefield.gameState.handSize = 0;
+      u0.infos.push({ code: 'grant-set-up', roles: [], what: 'no cards in your hand' });
+    }
+    Battlefield._invalidate();
+    if (o.route === 'token') {
+      grant = 'token';
+      const t = Battlefield.addPermanent(tokenCard, { suppressPrompt: true, controller: 'player_0', owner: 'player_0', isToken: true });
+      roleOf.set(t.id, 'the token');
+      expectBearerId = t.id;
+    } else {
+      perm = addAuditedCard(card, faceIndex, isSpell);
+      if (!isSpell) roleOf.set(perm.id, 'source');
+      // The outer target, when the grant has one: the bearer if listed, else the first of yours, else the first.
+      const chooseOuter = (id) => {
+        const fs = Battlefield.getAllFinalStates();
+        const pk = getTargetPickerKind(id, fs.get(id));
+        if (pk.kind === 'none' || pk.kind === 'modal') return null;
+        const opts = pk.kind === 'multi' ? { kind: 'multi', slotIndex: 0 } : pk.kind === 'slotted' ? { kind: 'slotted', slot: 0 } : { kind: 'single' };
+        const r = getTargetCandidates(id, opts);
+        if (r.blocked || !r.candidates.length) return null;
+        const ids = r.candidates.map(c => c.id);
+        const pick = ids.includes(bearerWitnessId) ? bearerWitnessId
+          : ids.find(x => ctrlOf(fs.get(x), Battlefield.getPermById(x) || {}) === 'player_0') || ids[0];
+        if (pk.kind === 'multi') Battlefield.setMultiTarget(id, 0, pick);
+        else if (pk.kind === 'slotted') Battlefield.setSlottedTarget(id, 0, pick);
+        else Battlefield.setTarget(id, pick);
+        Battlefield._invalidate();
+        return pick;
+      };
+      if (isSpell) {
+        if (perm.isModalSpell) { skipQ(qi, 'spell', q, 'modal-spell'); return; }
+        grant = 'fired spell';
+        finishPseudo(perm);
+        expectBearerId = chooseOuter(perm.id);
+      } else {
+        // Is the quote part of a triggered or activated ability of the card? Then it is granted by firing it.
+        const fs0 = Battlefield.getAllFinalStates().get(perm.id);
+        const abilities = ((fs0 && fs0.abilities) || []).slice();
+        const owning = [];
+        // (Not the quote itself, which a Sliver granting it to Slivers has too.)
+        const cn = [rec.name, String(rec.name).split(',')[0]];
+        const cKey = quoteKey(q, cn).slice(0, 40);
+        const grants = (ft) => { const k = quoteKey(ft, cn); return k.includes(cKey) && !k.startsWith(cKey); };
+        for (const t of Battlefield.extractTriggeredAbilities(abilities)) if (grants(t.fullText)) owning.push(['trigger', t]);
+        for (const a of Battlefield.extractActivatedAbilities(abilities)) if (grants(a.fullText)) owning.push(['activated', a]);
+        if (owning.length) {
+          const [kind, ab] = owning[0];
+          const plans = kind === 'trigger' ? triggerPlans(perm.id, ab) : activatedPlans(perm.id, ab);
+          const plan = plans.find(p => !p.skip && quoteKey(p.text, cn).includes(cKey));
+          if (!plan) { skipQ(qi, kind + ' ' + ab.index, q, (plans.find(p => p.skip) || {}).skip || 'not-in-fired-text'); return; }
+          grant = 'fired ' + kind + ' ' + ab.index + (plan.label ? ' ' + plan.label : '');
+          const pseudo = plan.fire();
+          if (!pseudo) { skipQ(qi, grant, q, 'fire-returned-nothing'); return; }
+          finishPseudo(pseudo);
+          Battlefield.evaluate();
+          expectBearerId = chooseOuter(pseudo.id);
+        } else if (/\bequipped (?:creature|permanent)\b/i.test(before)) {
+          const eq = Battlefield.extractActivatedAbilities(abilities).find(a => a.isEquip || a.isReconfigure);
+          if (!eq) { skipQ(qi, 'equipped', q, 'no-equip-ability'); return; }
+          grant = 'equipped';
+          Battlefield.applyEquipAttachment(perm.id, eq.index, bearerWitnessId);
+          Battlefield._invalidate();
+          expectBearerId = bearerWitnessId;
+        } else if (/\benchanted (?:creature|permanent|land|planeswalker|artifact)\b/i.test(before) && /\bAura\b/.test(o.typeLine)) {
+          grant = 'enchanted';
+          expectBearerId = chooseOuter(perm.id);
+          if (!expectBearerId) { skipQ(qi, grant, q, 'nothing-to-enchant'); return; }
+        } else {
+          grant = 'static';
+          // A Saga's chapter: the lore counters that reach it ("II — Until end of turn, Angels you control gain "…"").
+          const ch = before.match(/^([IVX]+)(?:,\s*[IVX]+)*\s*—/);
+          if (ch && /\bSaga\b/.test(o.typeLine)) {
+            const n = { I: 1, II: 2, III: 3, IV: 4, V: 5, VI: 6 }[ch[1]] || 0;
+            const have = (perm.counters || {}).lore || 0;
+            if (n > have) Battlefield.addCounter(perm.id, 'lore', n - have);
+            grant = 'chapter ' + ch[1];
+            Battlefield._invalidate();
+          }
+          if (groupReachesBearer(before, spec)) expectBearerId = bearerWitnessId;
+        }
+      }
+      // A group grant fired: "creatures you control gain "…"" reaches the bearer.
+      if (!expectBearerId && /^fired/.test(grant) && groupReachesBearer(before, spec)) expectBearerId = bearerWitnessId;
+      // The card itself, by its own words, fired or with no condition: "Iron Fist gains "…" until end of turn".
+      if (!expectBearerId && !isSpell && (/^fired/.test(grant) || (grant === 'static' && !/\b(?:as long as|if|during|unless)\b/i.test(o.fullSentence)))) {
+        const names = [rec.name, String(rec.name).split(',')[0]].map(n => n.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+        const self = new RegExp('(?:^|[,:—]\\s*|\\bthen\\s+)(?:this (?:creature|permanent|card|artifact|land|enchantment|vehicle)|~|' + names.join('|') + ')\\s+(?:gets [^"]*?\\s+and\\s+)?(?:gains?|has)\\s*$', 'i');
+        if (self.test(before.trim())) expectBearerId = perm.id;
+      }
+    }
+  } catch (e) { rec.errors.push(errInfo('quoted grant', e)); return; }
+  u0.label = grant;
+
+  try {
+    // The bearer: the permanent that now has the quote among its abilities.
+    const fs = Battlefield.getAllFinalStates();
+    const real = Battlefield.permanents.filter(p => !p.isManualEffect && !p.isSpell && !p.isEmblem);
+    const nameForms = (n) => [n, String(n || '').split(',')[0]];
+    const cardNames = tokenCard ? nameForms(tokenCard.name) : nameForms(rec.name);
+    // The bearer's names and the granting card's are "self" alike for finding the quote; whether the
+    // card's name was kept is checked once the bearer is known.
+    const looseNames = (p, st) => nameForms(p.name).concat(nameForms(st.name), cardNames);
+    const hasQuote = (p) => {
+      const st = fs.get(p.id);
+      // (The ability is the quote, not an ability that grants it: "each Vampire you control gains "…"".)
+      return !!st && quoteMatch(st.abilities, q, looseNames(p, st)) >= 0;
+    };
+    const holders = real.filter(hasQuote);
+    if (expectBearerId && !holders.some(p => p.id === expectBearerId)) {
+      u0.findings.push({ check: 'check2', code: 'quote-not-granted', bearer: roleName(expectBearerId), holders: rolesOf(holders.map(p => p.id)) });
+      u0.bearer = roleName(expectBearerId);
+      rec.units.push(u0);
+      return;
+    }
+    const order = [expectBearerId, bearerWitnessId, perm && perm.id].filter(Boolean);
+    const bearer = order.map(id => holders.find(p => p.id === id)).find(Boolean)
+      || holders.find(p => ctrlOf(fs.get(p.id), p) === 'player_0') || holders[0];
+    if (!bearer) { skipQ(qi, grant, q, 'no-bearer'); return; }
+    const bst = fs.get(bearer.id);
+    const names = looseNames(bearer, bst);
+    // On a permanent other than the card, the card's name in the quote is the card, not "this card"
+    // ('Equipped creature has "{T}, Sacrifice Blazing Torch: Blazing Torch deals 2 damage …"').
+    {
+      const own = nameForms(bearer.name).concat(nameForms(bst.name));
+      const strictQ = quoteKey(q, own);
+      const onBearer = (bst.abilities || [])[quoteMatch(bst.abilities, q, names)];
+      if (onBearer && quoteKey(onBearer, own) !== strictQ && !quoteKey(onBearer, own).startsWith(strictQ)) {
+        u0.findings.push({ check: 'check2', code: 'quote-text-changed', bearer: roleName(bearer.id), quote: q.slice(0, 160), onBearer: String(onBearer).slice(0, 160) });
+        u0.bearer = roleName(bearer.id);
+        rec.units.push(u0);
+      }
+    }
+    const abilities = (bst.abilities || []).slice();
+    const extracted = Battlefield.extractTriggeredAbilities(abilities).map(t => ['trigger', t])
+      .concat(Battlefield.extractActivatedAbilities(abilities).map(a => ['activated', a]));
+    const at = quoteMatch(extracted.map(x => x[1].fullText), q, names);
+    const found = at >= 0 ? [extracted[at]] : [];
+    if (!found.length) {
+      // The bearer has the words but the site offers no button for them.
+      u0.findings.push({ check: 'check2', code: 'quote-not-fireable', bearer: roleName(bearer.id) });
+      u0.bearer = roleName(bearer.id);
+      rec.units.push(u0);
+      return;
+    }
+    const [kind, ab] = found[0];
+    const ctx = { cardName: bst.name || bearer.name, sourceCtrl: ctrlOf(bst, bearer), sourceId: bearer.id, preStates: fs, before: summarizeBoard(),
+      universe: real, judgeProtection: true };
+    const plans = kind === 'trigger' ? triggerPlans(bearer.id, ab) : activatedPlans(bearer.id, ab);
+    for (const plan of plans) {
+      const label = grant + ', ' + kind + ' ' + ab.index + ' of ' + roleName(bearer.id) + (plan.label ? ', ' + plan.label : '');
+      if (plan.skip) { skipQ(qi, label, q, plan.skip); continue; }
+      const t = stripReminder(plan.text);
+      const cls = classifyUnitText(t);
+      if (!cls.singular && !cls.targets) { skipQ(qi, label, t, cls.skip); continue; }
+      const u = newUnit('quoted', qi, label, t, cls);
+      u.bearer = roleName(bearer.id);
+      Object.defineProperty(u, 'fullText', { value: stripReminder(ab.fullText || ''), enumerable: false });
+      if (kind === 'activated' && /\b(?:exile this (?:card|creature) from your graveyard|discard this|reveal this \w+ from your hand)\b/i.test(ab.costText || '')) u.excludeSource = true;
+      if (kind === 'trigger' && offBattlefieldTrigger(ab.fullText)) u.excludeSource = true;
+      const out = auditUnit(ctx, u, plan.fire);
+      if (out.skip) skipQ(qi, label, t, out.skip);
+      else rec.units.push(u);
+    }
+  } catch (e) { rec.errors.push(errInfo('quoted audit', e)); }
+  finally { Battlefield._invalidate(); }
+}
+
 function auditFace(card, faceIndex) {
   const face = _resolveCardFace(card, faceIndex);
   const typeLine = face.type_line || card.type_line || '';
@@ -2050,14 +2475,17 @@ function auditFace(card, faceIndex) {
   };
 
   /* Spells: the unit is the spell itself. */
+  // (A quoted ability's target is a unit of auditQuoted, from the permanent that gets the quote.)
+  const quotedLater = () => { try { auditQuoted(card, faceIndex, rec, face, isSpell); } catch (e) { rec.errors.push(errInfo('quoted', e)); } };
   if (isSpell) {
     const text = stripReminder(face.oracle_text || '');
-    if (perm.isModalSpell) { auditModes(rec, perm, ctx, run, skip, text); return rec; }
+    if (perm.isModalSpell) { auditModes(rec, perm, ctx, run, skip, text); quotedLater(); return rec; }
     const cls = classifyUnitText(text);
-    if (!cls.singular && !cls.targets) { skip('spell', undefined, '', text, cls.skip); return rec; }
+    if (!cls.singular && !cls.targets) { if (cls.skip !== 'target-in-quote') skip('spell', undefined, '', text, cls.skip); quotedLater(); return rec; }
     const u = newUnit('spell', undefined, '', text, cls);
     // Casting happened in addAuditedCard; the spell's own effects are the unit's.
     run(u, () => perm);
+    quotedLater();
     return rec;
   }
 
@@ -2075,7 +2503,7 @@ function auditFace(card, faceIndex) {
       if (plan.skip) { skip(kind, ab.index, '', stripReminder(ab.effectText), plan.skip); continue; }
       const text = stripReminder(plan.text);
       const cls = classifyUnitText(text);
-      if (!cls.singular && !cls.targets) { skip(kind, ab.index, plan.label, text, cls.skip); continue; }
+      if (!cls.singular && !cls.targets) { if (cls.skip !== 'target-in-quote') skip(kind, ab.index, plan.label, text, cls.skip); continue; }
       const u = newUnit(kind, ab.index, plan.label, text, cls);
       // (Not written to the raw output.)
       Object.defineProperty(u, 'fullText', { value: stripReminder(ab.fullText || ''), enumerable: false });
@@ -2106,6 +2534,8 @@ function auditFace(card, faceIndex) {
   /* An Equipment's equip lists, on a board of their own. */
   try { auditEquip(card, faceIndex, rec, face); }
   catch (e) { rec.errors.push(errInfo('equip', e)); }
+  /* Each quoted ability that names a target, from the permanent that gets it, on a board of its own. */
+  quotedLater();
   return rec;
 }
 

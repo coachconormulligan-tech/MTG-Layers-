@@ -651,6 +651,24 @@ function _replaceProperNounSelfRef(cardName, oracleText, isToken = false) {
       if (/\b(?:the\s+type|the\s+subtype|type|subtype)\s*$/i.test(before)) {
         return match; // keep original
       }
+      // Inside a quoted ability granted to another permanent the name is this card, not the one
+      // with the ability: 'Equipped creature has "{T}, Sacrifice Blazing Torch: Blazing Torch deals
+      // 2 damage to any target."' read "Sacrifice this card" on the creature. Granted to the card
+      // itself ("Iron Fist gains "{T}: Iron Fist deals …"", "this creature has "…"") it is replaced.
+      {
+        const lineStart = result.lastIndexOf('\n', offset - 1) + 1;
+        const head = result.substring(lineStart, offset);
+        const quoteMarks = (head.match(/["“”]/g) || []).length;
+        if (quoteMarks % 2 === 1) {
+          const open = Math.max(head.lastIndexOf('"'), head.lastIndexOf('“'));
+          // (The name stands in as one word first: "Ms. Marvel gains "…"" is not two sentences.)
+          let grant = head.substring(0, open).replace(/["“][^"”]*["”]/g, '""');
+          for (const c of candidates) grant = grant.split(c).join('~');
+          const sentence = grant.substring(Math.max(grant.lastIndexOf('. '), grant.lastIndexOf('; ')) + 1);
+          const namesSelf = /\bthis (?:creature|permanent|card|artifact|land|enchantment|vehicle|equipment|token|planeswalker)\b|~/i.test(sentence);
+          if (!namesSelf) return match;
+        }
+      }
       // Capitalize at sentence boundaries (start of text or after . ! ? or newline)
       const trimmedBefore = before.trimEnd();
       if (trimmedBefore.length === 0 || /[.!?\n]$/.test(trimmedBefore)) {

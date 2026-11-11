@@ -4,3 +4,4 @@ Sentences that read like a continuous effect, produced no effect, and whose word
 
 | Card | Reads like | Where | Sentence |
 |---|---|---|---|
+| Sentinel | becomes | activated | {0}: This creature's base toughness becomes equal to 1 plus the power of target creature blocking or blocked by this creature. |

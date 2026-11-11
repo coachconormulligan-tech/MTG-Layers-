@@ -268,6 +268,9 @@ function _finalizeEffects(effects, isEquipmentSource, permanent, oracleText, con
   if (permanent && !permanent.isSpell && !permanent.abilitySourceId && !permanent.isManualEffect) {
     _oppText = _oracle.split('\n').filter(l => !_isTriggeredSentence(l.trim()) && !/^[^"]*:[^"]*\btarget\s+opponent\b/.test(l)).join('\n');
   }
+  // Nor inside a quoted ability, which is the ability of the permanent that gets it: 'All Slivers
+  // have "{T}: Choose a card name. Target opponent reveals …"' (Dementia Sliver) reached no Sliver.
+  _oppText = _oppText.replace(/["“][^"”]*["”]/g, '""');
   if (/\btarget\s+opponent\b/.test(_oppText) && permanent) {
     const chosen = permanent._targetOpponentPlayerId || null;
     let tagged = false;

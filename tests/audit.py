@@ -91,6 +91,31 @@ hexproof stays. Findings: equip-not-detected, single-picker-shown, empty-list, l
 creature-equip-not-blocked (CR 301.5c / 704.5p, also tried with the Equipment made an artifact
 creature), changes-with-no-target, target-changes-others, attach-changes-nothing, grant-not-applied.
 
+A quoted ability that names a target ('Equipped creature has "{T}: Target creature gets -1/-1 until
+end of turn"', 'Until end of turn, each Vampire you control gains "{T}: Gain control of target
+creature."', 'Create a 1/1 Mercenary token with "{T}: Target creature you control gets +1/+0 …"') is a
+unit of its own (kind "quoted", auditQuoted in tests/audit.js): its source is the permanent that gets
+it (CR 113.7), so it is granted the way the site does it and fired from that permanent. On the fixed
+board plus witnesses only this unit sees ("your bearer", a creature you control or the land /
+artifact / planeswalker / subtype the grant's words name, your commander when they name one; an
+opponent's hexproof creature; one with protection from the bearer's colour and one with protection
+from the granting card's colour), the grant is made: an Equipment is attached to the bearer, an Aura
+attached through its picker, a spell cast or an ability fired with its own target (if any) set to the
+bearer, a Saga given the lore counters of the chapter, a token made from the creating words (the site
+never creates a token: the user adds its card), a static grant left to reach the bearer; the
+grant's own condition is met where the board can show it (seven cards in your graveyard, no cards in
+hand). An emblem's quote is skipped ("quoted: emblem": the site has no button to fire an emblem's
+ability), and so are a target inside a quote inside the quote ("quoted: nested-quote") and a static
+quote ("quoted: not-an-ability"). The bearer is the permanent that then has the quote among its
+abilities; when the words say which one it must be (the attached or targeted permanent, the token,
+the card itself, "creatures you control", the subtype the bearer was made of, "commander creatures
+you own") one that lacks it is quote-not-granted; a quote the bearer has but whose words changed on
+the way (the granting card's name read as "this card" on the bearer) is quote-text-changed; one the
+site offers no button for is quote-not-fireable. The bearer's ability is then fired as the site fires
+it (triggerPlans / activatedPlans on the bearer) and audited like any fired unit, read by the audit's
+own interpreter with "this creature" the bearer and "you" its controller, protection judged as well
+(from the bearer, by the witness's words). Skip reasons of these units start with "quoted: ".
+
 Results: tests/audit/report.md, tests/audit/clusters.json; raw results are cached in
 ~/Library/Caches/layer-inspector/audit-raw.jsonl.gz. Clusters are sorted by the best (lowest) EDHREC
 rank among their cards, then by size. No network. tests/audit.js does the work; this file selects
@@ -152,6 +177,9 @@ CODES = [
     ('modal-modes-mismatch', 'The per-mode pickers are not for the two modes picked.'),
     ('second-mode-changes-nothing', 'Two modes picked, a target chosen for each: one of the two targets changes nothing.'),
     ('no-targeted-effect', 'The text names one permanent target but the parse produced no targeted effect.'),
+    ('quote-not-granted', 'A quoted ability naming a target never reaches the permanent its grant names (attached, targeted, the token, the card, its group).'),
+    ('quote-text-changed', 'The permanent that gets a quoted ability has it in other words (the granting card\'s name read as "this card").'),
+    ('quote-not-fireable', 'The permanent that gets a quoted ability has it, but the site offers no Trigger / Activate button for it.'),
 ]
 CODE_ORDER = {c: i for i, (c, _) in enumerate(CODES)}
 CHECK2_CODES = {'empty-list', 'list-mismatch', 'no-picker'}
@@ -351,6 +379,12 @@ def _finding_detail(f):
     if c == 'crash':
         e = f.get('error', {})
         return '%s: %s (%s)' % (e.get('stage', ''), e.get('msg', ''), e.get('where', ''))
+    if c == 'quote-not-granted':
+        return 'bearer %s; has it: %s' % (f.get('bearer', ''), roles_key(f.get('holders', [])))
+    if c == 'quote-text-changed':
+        return 'on %s: %s' % (f.get('bearer', ''), f.get('onBearer', ''))
+    if c == 'quote-not-fireable':
+        return 'on %s' % f.get('bearer', '')
     return ''
 
 

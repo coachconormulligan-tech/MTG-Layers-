@@ -1,0 +1,27 @@
+{
+  "name": "A quoted ability is fired from the permanent that gets it — Foul Presence, Blazing Torch, Dementia Sliver, Shameless Charlatan",
+  "notes": "Memory: project_audit_quoted_target_2026-11-11. The audit's quoted units (tests/audit.js auditQuoted) grant a quoted ability that names a target and fire it from the bearer. Foul Presence's granted '{T}: Target creature gets -1/-1' fired from Grizzly Bears: its source is the Bears (CR 113.7), so protection from green keeps Vodalian Zombie out and protection from black (Foul Presence's colour) does not keep Great Sable Stag out; an opponent's hexproof Gladecover Scout is out. Fixed: the card's own name inside a quote granted to another permanent became 'this card' on that permanent ('{T}, Sacrifice this card: this card deals 2 damage' on the creature wearing Blazing Torch; _replaceProperNounSelfRef keeps the name unless the grant names the card itself). Dementia Sliver's 'All Slivers have \"… Target opponent reveals …\"' reached no Sliver: the quoted 'target opponent' tagged the grant as one for the chosen opponent's permanents (_finalizeEffects now masks quotes). Shameless Charlatan's 'Commander creatures you own have \"{2}{U}: This creature becomes a copy of another target creature.\"' made no effect: the copy reader matched inside the quote and claimed the line.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Foul Presence", "as": "presence" },
+    { "call": ["setTarget", "@presence", "@bears"] },
+    { "add": "Vodalian Zombie", "as": "zombie", "controller": "p2" },
+    { "add": "Great Sable Stag", "as": "stag", "controller": "p2" },
+    { "add": "Gladecover Scout", "as": "scout", "controller": "p2" },
+    { "fire": "@bears", "activated": 0, "as": "bearsAbility" },
+    { "add": "Blazing Torch", "as": "torch" },
+    { "call": ["applyEquipAttachment", "@torch", 2, "@bears"] },
+    { "add": "Muscle Sliver", "as": "sliver" },
+    { "add": "Dementia Sliver", "as": "dementia" },
+    { "call": ["addCommander", "card:Isamaru, Hound of Konda"] },
+    { "call": ["putCommanderOnBattlefield", 0], "as": "isamaru" },
+    { "add": "Shameless Charlatan", "as": "charlatan" }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Grizzly Bears (activated)", "kind": "single" }, "are": ["Grizzly Bears", "Great Sable Stag"] },
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$includes": ["{T}, Sacrifice Blazing Torch: Blazing Torch deals 2 damage to any target."] } } },
+    { "perm": "Muscle Sliver", "final": { "abilities": { "$includes": ["{T}: Choose a card name. Target opponent reveals a card at random from their hand. If that card has the chosen name, that player discards it. Activate only during your turn."] } } },
+    { "perm": "Isamaru, Hound of Konda", "final": { "abilities": { "$includes": ["{2}{U}: This creature becomes a copy of another target creature."] } } }
+  ]
+}

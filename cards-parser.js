@@ -2349,6 +2349,17 @@ function parseCardEffects(permanent, card, opts = {}) {
   const copyClauseSpans = [];
   const copyRegex = /(enters?\s+(?:the battlefield\s+)?as|becomes?)\s+(?:a\s+copy|copies)\s+of\s+(?:any\s+|a\s+|target\s+)?([^.]+?)(?:\s*,?\s*except\s+(.+?))?(?:\.|$)/i;
   let copyMatch = oracleLower.match(copyRegex);
+  // A copy inside a quoted ability is that ability's, on the permanent that gets it: 'Commander
+  // creatures you own have "{2}{U}: This creature becomes a copy of another target creature."'
+  // (Shameless Charlatan) made a copy effect and lost the grant. The first one outside quotes counts.
+  if (copyMatch && _insideQuote(oracleLower, copyMatch.index)) {
+    const _cpRe = new RegExp(copyRegex.source, 'gi');
+    let _cpM;
+    copyMatch = null;
+    while ((_cpM = _cpRe.exec(oracleLower))) {
+      if (!_insideQuote(oracleLower, _cpM.index)) { copyMatch = _cpM; break; }
+    }
+  }
   // ("…they enter as copies of the chosen creature", Mystic Reflection, is about permanents
   // still to come: the plural is read only after "become".)
   if (copyMatch && !/^becomes?$/i.test(copyMatch[1]) && /\bcopies\s+of\b/.test(copyMatch[0])) copyMatch = null;
