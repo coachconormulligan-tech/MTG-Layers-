@@ -15,6 +15,9 @@
                (worked out by a small interpreter below that does NOT use the parser);
      Check 1 - with no target chosen no permanent changes; with each listed permanent chosen, exactly
                that permanent changes.
+   A unit with several targets, or "up to N" (classifyTargets), expects a multi-target picker of N
+   or one picker per target, and each list gets both checks against its own target's words
+   (auditFiredTargets).
    The unit's text decides whether it is audited at all; nothing the parser built is trusted. */
 
 /* ─── Engine shims (same as tests/sweep.js) ─── */
@@ -186,7 +189,7 @@ function stripReminder(text) {
 // the end. A comma inside a list of types ("artifact, creature, or enchantment") does not end it.
 // "For as long as …" says how long, "if its power is …" what must hold on resolution, and "each"
 // is "This creature and another target creature each get …": none of them is who can be targeted.
-const PHRASE_STOP = /\s+(?:gets?|gains?|has|have|becomes?|become|loses?|lose|can|can't|cannot|deals?|is|are|isn't|doesn't|attacks?|blocks?|untaps?|taps?|fights?|phases?|perpetually|assumes|switches|and|then|until|this|for as long as|if|each)\b|[;:.]/;
+const PHRASE_STOP = /\s+(?:gets?|gains?|has|have|becomes?|become|loses?|lose|can|can't|cannot|deals?|is|are|isn't|doesn't|attacks?|blocks?|untaps?|taps?|fights?|phases?|perpetually|assumes|switches|and|then|until|this|for as long as|if|each|both)\b|[;:.]/;
 // Stop words that are part of the phrase: "with power less than this creature's power", "less than
 // or equal to this creature's power", "Vampire that isn't a Demon".
 const PHRASE_STOP_KEPT = /(?:\bthan|\bequal to|\bcounters on)$|\bthat$/;
@@ -237,7 +240,9 @@ function offBattlefieldTrigger(fullText) {
 }
 
 /* Is this unit's text a "singular permanent target" unit? Returns { singular: true, phrase,
-   excludeSource, targetIndex } or { skip: '<reason code>' }. Works from the text alone. */
+   excludeSource, targetIndex } or { skip: '<reason code>' }. Works from the text alone. A text
+   that names more than one target, or "up to N target …", is read by classifyTargets: it can be a
+   singular unit too (one target the site models, the others one-shot), or { targets: [...] }. */
 function classifyUnitText(text) {
   const t0 = String(text || '').replace(/’/g, "'");
   const quotedTarget = /["“][^"”]*\btargets?\b[^"”]*["”]/i.test(t0);
@@ -245,25 +250,42 @@ function classifyUnitText(text) {
   const lower = masked.toLowerCase();
   const hits = [...lower.matchAll(/\btargets?\b/g)];
   if (!hits.length) return { skip: quotedTarget ? 'target-in-quote' : 'no-target' };
-  if (hits.length > 1) return { skip: 'multiple-targets' };
+  if (hits.length > 1) return classifyTargets(text, 'multiple-targets');
   if (hits[0][0] === 'targets') return { skip: 'targets-verb' };
   const idx = hits[0].index;
   const before = lower.slice(0, idx);
-  if (/\bup to (?:\w+ )?(?:other )?$/.test(before)) return { skip: 'up-to' };
+  if (/\bup to (?:\w+ )?(?:other )?$/.test(before)) return classifyTargets(text, 'up-to');
   if (/\bany number of (?:other )?$/.test(before)) return { skip: 'any-number' };
   if (/\beach $/.test(before)) return { skip: 'each-target' };
   if (/\bany $/.test(before)) return { skip: 'any-target' };
   if (new RegExp('\\b' + NUMBER_WORDS + ' (?:other )?$').test(before)) return { skip: 'n-target' };
-  const after = lower.slice(idx + 'target'.length).trim();
+  const r = classifyAt(lower, idx, lower.length, {});
+  return r.layer ? { singular: true, phrase: r.phrase, excludeSource: r.excludeSource, targetIndex: r.targetIndex } : { skip: r.skip };
+}
+
+/* One "target" of a unit's text, at `idx` of `lower` (the text, lower-cased, quotes masked), its
+   own words running to `end` (the next "target", or the end). { layer: true, phrase, excludeSource,
+   targetIndex } when the target is the subject of a continuous effect, otherwise { skip: reason }.
+   opts (classifyTargets only; a singular unit passes none, so it reads exactly as before):
+     plural    - the count before it is more than one ("up to two target creatures"): a plural
+                 phrase is expected, and "those creatures" / "they" in a later sentence is the target;
+     each      - "… target creatures each get +1/+1": "each" is not a verb of its own. */
+function classifyAt(lower, idx, end, opts) {
+  const before = lower.slice(0, idx);
+  const after = lower.slice(idx + 'target'.length, end).trim();
   const phrase = extractPhrase(after);
   if (!phrase) return { skip: 'empty-phrase' };
   // The engine models continuous effects only. "Destroy / exile / put a counter on / create a token
   // that's a copy of target ..." is a one-shot action: the target is the object of a verb, not the
   // subject of "gets / gains / becomes", and no parse could be expected to give it a targeted effect.
-  const clauseBefore = before.slice(Math.max(before.lastIndexOf('.'), before.lastIndexOf(';')) + 1);
-  const verbAfter = after.slice(phrase.length).trim();
-  // (Gaining control is a continuous effect, layer 2.)
-  const takesControl = /\bgains? control of (?:another |that |the )?$/.test(clauseBefore);
+  let clauseBefore = before.slice(Math.max(before.lastIndexOf('.'), before.lastIndexOf(';')) + 1);
+  let verbAfter = after.slice(phrase.length).trim();
+  // (classifyTargets: "Target player creates X Zombies, then up to one target creature gets -1/-1".)
+  if (opts.each) clauseBefore = clauseBefore.replace(/^.*(?:,\s*|\s)then\s/, ' ');
+  if (opts.each) verbAfter = verbAfter.replace(/^(?:each|both)\s+/, '');
+  // (Gaining control is a continuous effect, layer 2. "… gains control of up to three target …".)
+  const takesControl = /\bgains? control of (?:another |that |the )?$/.test(opts.each
+    ? clauseBefore.replace(new RegExp('\\b(?:up to \\w+|' + NUMBER_WORDS + ') (?:other )?$'), '') : clauseBefore);
   // "Put a +1/+1 counter on target creature you control. It gains hexproof until end of turn"
   // (Snakeskin Veil): the action leaves the target where it is and a later sentence makes it the
   // subject of a continuous verb, so that sentence is a targeted effect. Not "create a token that's
@@ -272,7 +294,7 @@ function classifyUnitText(text) {
   const actionVerbs = [...clauseBefore.replace(/\bputs? [^.;]*?\bcounters? (?:and [^.;]*?\bcounters? )?on $/, 'put on ')
     .matchAll(new RegExp(ONE_SHOT_VERBS.source, 'g'))].map(m => m[0]);
   const keepsTarget = actionVerbs.length > 0 && actionVerbs.every(v => SAME_PERMANENT_VERBS.test(v));
-  const pronounEffect = keepsTarget && LATER_PRONOUN_EFFECT.test(verbAfter);
+  const pronounEffect = keepsTarget && (opts.plural ? LATER_PLURAL_PRONOUN_EFFECT : LATER_PRONOUN_EFFECT).test(verbAfter);
   if (!takesControl && !pronounEffect && (ONE_SHOT_VERBS.test(clauseBefore) || !CONTINUOUS_VERBS.test(verbAfter))) return { skip: 'one-shot-action' };
   // "Target creature can't be blocked this turn" / "can't be regenerated" / "can attack as though
   // it didn't have defender": a rule about the target, not a change to what it is. The site does
@@ -282,7 +304,9 @@ function classifyUnitText(text) {
   {
     const ownSentence = verbAfter.split('.')[0].replace(/\bas though it (?:didn't|doesn't|did not) have \w+/, '');
     const later = verbAfter.slice(verbAfter.split('.')[0].length);
-    const pronounGrant = /\b(?:it|that (?:creature|permanent|land|artifact))\s+(?:also\s+)?(?:gets?|gains?|has|becomes?|loses?)\b/.test(later);
+    const pronounGrant = (opts.plural
+      ? /\b(?:they|those (?:creatures|permanents|lands|artifacts))\s+(?:each\s+)?(?:also\s+)?(?:gain|have|become|lose|get)\b/
+      : /\b(?:it|that (?:creature|permanent|land|artifact))\s+(?:also\s+)?(?:gets?|gains?|has|becomes?|loses?)\b/).test(later);
     if (/^(?:can|can't|cannot)\b/.test(verbAfter) && !/\b(?:gets?|gains?|has|have|becomes?|loses?)\b/.test(ownSentence) && !pronounGrant) return { skip: 'not-a-layer-effect' };
   }
   // Likewise: "target unblocked creature becomes blocked", damage "… by target creature is dealt to
@@ -299,8 +323,70 @@ function classifyUnitText(text) {
   // player controls" and "this card creature" are permanents; the interpreter reports what it cannot read.)
   if (!/^this /.test(phrase) && /\b(?:spell|spells|ability|abilities|card|cards|graveyard|library|hand|instant|sorcery)\b/.test(phrase.replace(/\b(?:than|equal to) this card's\b/g, ''))) return { skip: 'not-a-permanent' };
   if (/^(?:players?|opponents?)\b|(?:\bor|\band\/or|,)\s+(?:another\s+)?(?:players?|opponents?)\b/.test(phrase)) return { skip: 'not-a-permanent' };
-  if (/\b(?:creatures|artifacts|enchantments|lands|planeswalkers|permanents)\b/.test(phrase)) return { skip: 'plural-target' };
-  return { singular: true, phrase, excludeSource: /\banother $/.test(before) || /^other /.test(phrase), targetIndex: idx };
+  if (!opts.plural && /\b(?:creatures|artifacts|enchantments|lands|planeswalkers|permanents)\b/.test(phrase)) return { skip: 'plural-target' };
+  // ("Up to one other target creature": classifyTargets only, so a singular unit reads as before.)
+  return { layer: true, phrase, excludeSource: /\banother $/.test(before) || /^other /.test(phrase) || (!!opts.each && /\bother $/.test(before)), targetIndex: idx };
+}
+// The plural of LATER_PRONOUN_EFFECT: "Untap up to two target creatures. They gain haste" / "Those
+// creatures each get +1/+1", in the very next sentence ("Tap up to two target creatures. … Create a
+// 1/1 Eldrazi Scion token. It has …": the token is "it").
+const LATER_PLURAL_PRONOUN_EFFECT = /^[^.]*\.\s+(?:until end of turn,\s*)?(?:they|those (?:creatures|permanents|lands|artifacts))\s+(?:each\s+)?(?:also\s+)?(?:gain|have|become|lose|get|are)\b/;
+
+/* A unit whose text names more than one target, or "up to N target …" (`origin`, which is also the
+   first part of every skip reason it returns). Each target is read on its own (classifyAt) and how
+   many it allows from the words before it ("up to two", "up to one", "two", none). Only the targets
+   that are the subject of a continuous effect count; a one-shot target ("Destroy target land. Up to
+   two target creatures can't block") is not one the site models:
+     one target, of one             -> a singular unit (the single picker), read as before;
+     one target, of N >= 2          -> { targets: [t], expectKind: 'multi', maxTargets: N }
+                                       ("Up to two target creatures each get +1/+1");
+     K >= 2 targets, each of one    -> { targets: [t1 … tK], expectKind: 'slotted' }, slot k being the
+                                       k-th target of the text ("Target creature gets +2/+0 and
+                                       target creature an opponent controls gets -2/-0");
+     anything else                  -> skipped.
+   Each t is { phrase, excludeSource, targetIndex, plural, sourceNotJudged }. "Another target
+   creature" after an earlier target means one other than that target, which the audit does not
+   check; whether the source may be chosen is then not judged (sourceNotJudged). */
+function classifyTargets(text, origin) {
+  const t0 = String(text || '').replace(/’/g, "'");
+  // (Masked to the same length, so offsets are offsets into the text.)
+  const lower = t0.replace(/["“][^"”]*["”]/g, (q) => 'q'.repeat(q.length)).toLowerCase();
+  const hits = [...lower.matchAll(/\btarget\b/g)].map(m => m.index);
+  const skip = (why) => ({ skip: origin + ': ' + why });
+  if (!hits.length) return skip('targets-verb');
+  const layers = [], reasons = [];
+  for (let k = 0; k < hits.length; k++) {
+    const idx = hits[k], before = lower.slice(0, idx);
+    let count = 1, m;
+    if ((m = before.match(/\bup to (\w+) (?:other )?$/))) count = m[1] === 'x' ? X_VALUE : (WORD_COUNT[m[1]] || parseInt(m[1], 10) || 0);
+    else if (/\bany number of (?:other )?$/.test(before)) return skip('any-number');
+    else if (/\beach $/.test(before)) return skip('each-target');
+    else if (/\bany (?:other )?$/.test(before)) { reasons.push('any-target'); continue; }
+    else if ((m = before.match(new RegExp('\\b(' + NUMBER_WORDS + ') (?:other )?$')))) count = m[1] === 'x' ? X_VALUE : (WORD_COUNT[m[1]] || parseInt(m[1], 10) || 0);
+    if (!count) return skip('count-not-read');
+    // "Creatures target player controls get -1/-1": the player picker decides a group.
+    if (/^\s+(?:player|opponent)s? controls\b/.test(lower.slice(idx + 6))) return skip('player-group');
+    const r = classifyAt(lower, idx, k + 1 < hits.length ? hits[k + 1] : lower.length, { plural: count > 1, each: true });
+    if (r.skip === 'possessive-target') return skip('possessive-target');
+    if (!r.layer) { reasons.push(r.skip); continue; }
+    layers.push({ phrase: r.phrase, excludeSource: r.excludeSource, targetIndex: r.targetIndex, count,
+      plural: count > 1, sourceNotJudged: r.excludeSource && /\b(?:an)?other $/.test(before) && layers.length + reasons.length > 0 });
+  }
+  if (!layers.length) {
+    const why = [...new Set(reasons)];
+    return skip(why.length === 1 ? why[0] : why.includes('one-shot-action') ? 'one-shot-action' : why.sort().join('+'));
+  }
+  if (layers.length === 1 && layers[0].count === 1 && !layers[0].sourceNotJudged) {
+    const t = layers[0];
+    return { singular: true, phrase: t.phrase, excludeSource: t.excludeSource, targetIndex: t.targetIndex, origin };
+  }
+  if (layers.length === 1) {
+    const t = layers[0];
+    if (t.count === 1) return skip('another-of-one-shot-target');
+    return { targets: [t], expectKind: 'multi', maxTargets: t.count, origin };
+  }
+  if (layers.some(t => t.count > 1)) return skip('several-targets-of-several');
+  return { targets: layers, expectKind: 'slotted', origin };
 }
 
 /* Does the text outside the target's own clause also name the source or a group? Kept as one
@@ -375,6 +461,7 @@ function wordConstraint(w, negated) {
   if (COLOR_CODES[w]) c = { kind: 'adj', test: (st) => stateColors(st).includes(COLOR_CODES[w]) };
   else if (w === 'colorless') c = { kind: 'adj', test: (st) => stateColors(st).length === 0 };
   else if (w === 'multicolored') c = { kind: 'adj', test: (st) => stateColors(st).length >= 2 };
+  else if (w === 'monocolored') c = { kind: 'adj', test: (st) => stateColors(st).length === 1 };
   else if (SUPERTYPE_WORDS.has(w)) c = { kind: 'adj', test: (st) => hasCI(st.supertypes, w) };
   else if (w === 'token') c = { kind: 'adj', test: (st, p) => !!p.isToken };
   else if (w === 'attacking') c = { kind: 'adj', test: (st, p) => traitsOf(st, p).includes('Attacking') };
@@ -398,18 +485,31 @@ function wordConstraint(w, negated) {
   return c;
 }
 
-function parseHeadItem(words, unknown) {
+// "Up to two target creatures / Elves / Zombies": the singular of a plural word, by the audit's own
+// rules (not the parser's helper). Tried only for a target of more than one.
+const IRREGULAR_SINGULAR = { elves: 'elf', dwarves: 'dwarf', wolves: 'wolf', mice: 'mouse', oxen: 'ox', werewolves: 'werewolf', men: 'man', octopuses: 'octopus', fungi: 'fungus' };
+function singularForms(w) {
+  if (IRREGULAR_SINGULAR[w]) return [IRREGULAR_SINGULAR[w]];
+  const out = [];
+  if (/ies$/.test(w)) out.push(w.slice(0, -3) + 'y');
+  if (/(?:ch|sh|ss|x)es$/.test(w)) out.push(w.slice(0, -2));
+  if (/s$/.test(w) && !/ss$/.test(w)) out.push(w.slice(0, -1));
+  return out;
+}
+
+function parseHeadItem(words, unknown, plural) {
   const adj = [], noun = [];
   for (const w of words) {
     let neg = false, base = w;
     const m = w.match(/^non-?(.+)$/);
     if (m) { neg = true; base = m[1]; }
-    const c = wordConstraint(base, neg);
+    let c = wordConstraint(base, neg);
+    if (!c && plural) for (const sg of singularForms(base)) { c = wordConstraint(sg, neg); if (c) break; }
     if (!c) { unknown.push(w); continue; }
     (c.kind === 'noun' ? noun : adj).push(c.test);
   }
   // "Target token you control" (Halsin): a token is a permanent.
-  if (!noun.length && words.includes('token')) noun.push(() => true);
+  if (!noun.length && (words.includes('token') || (plural && words.includes('tokens')))) noun.push(() => true);
   return { adj, noun };
 }
 
@@ -466,7 +566,7 @@ function interpretPhrase(phrase, env) {
       rawItems.splice(i, 2, rawItems[i] + ' ' + rawItems[i + 1]);
     }
   }
-  const items = rawItems.map(x => parseHeadItem(x.split(' '), unknown));
+  const items = rawItems.map(x => parseHeadItem(x.split(' '), unknown, !!(env && env.plural)));
   if (!items.length) unknown.push('(nothing)');
   let headTest = null;
   if (items.length) {
@@ -1035,6 +1135,198 @@ function auditFired(ctx, u, id) {
   return { audited: true };
 }
 
+/* ─── Units with several targets, or "up to N" (classifyTargets) ───
+   A pick is one target list of the site: { kind: 'single' } | { kind: 'multi', slotIndex } |
+   { kind: 'slotted', slot }, and textSlot, the target of the text it stands for (null when the
+   site's picker does not line up with the text, so its list is not judged). */
+function pickLabel(pick) {
+  return pick.kind === 'multi' ? 'pick ' + (pick.slotIndex + 1) : pick.kind === 'slotted' ? 'slot ' + (pick.slot + 1) : 'single';
+}
+function applyPick(unitId, pick, targetId) {
+  if (pick.kind === 'multi') Battlefield.setMultiTarget(unitId, pick.slotIndex, targetId);
+  else if (pick.kind === 'slotted') Battlefield.setSlottedTarget(unitId, pick.slot, targetId);
+  else Battlefield.setTarget(unitId, targetId);
+  Battlefield._invalidate();
+}
+function candidatesForPick(unitId, pick) {
+  return getTargetCandidates(unitId, pick.kind === 'multi' ? { kind: 'multi', slotIndex: pick.slotIndex }
+    : pick.kind === 'slotted' ? { kind: 'slotted', slot: pick.slot } : { kind: 'single' });
+}
+
+/* The permanents the text allows for target t of unit u, or { unknown }. */
+function expectedForTarget(ctx, u, t) {
+  const effStart = u.fullText ? u.fullText.toLowerCase().indexOf(u.text.toLowerCase().slice(0, 24)) : -1;
+  const wordsBefore = (effStart > 0 ? u.fullText.slice(0, effStart) : '') + ' ' + u.text.slice(0, t.targetIndex);
+  const interp = interpretPhrase(t.phrase, { before: wordsBefore, plural: t.plural });
+  if (interp.unknown) return { unknown: interp.unknown };
+  const exclude = interp.excludeSource || t.excludeSource || u.excludeSource;
+  const ids = [];
+  for (const p of ctx.universe) {
+    if (exclude && !t.sourceNotJudged && p.id === ctx.sourceId) continue;
+    const st = ctx.preStates.get(p.id);
+    if (!st || !interp.test(st, p, ctx)) continue;
+    const kws = keywordsOf(st);
+    if (kws.includes('shroud')) continue;
+    if (kws.includes('hexproof') && ctrlOf(st, p) !== ctx.sourceCtrl) continue;
+    ids.push(p.id);
+  }
+  return { ids };
+}
+
+function auditFiredTargets(ctx, u, id) {
+  const finding = (check, code, extra) => u.findings.push(Object.assign({ check, code }, extra || {}));
+  const effs = Battlefield.effects.filter(e => e.sourceId === id);
+  const targeted = effs.filter(e => e.scope === 'targeted' && !e.selfTarget);
+  const finalStates = Battlefield.getAllFinalStates();
+  const info = getEffectInfo(id, finalStates.get(id));
+  const pseudo = Battlefield.getPermById(id);
+  if (info.hasText) return { skip: 'text-change-modal' };
+  if (info.hasExchangeControl) return { skip: 'exchange-control-modal' };
+  if (info.hasCopy) return { skip: 'copy-picker' };
+  if (info.hasEquipSource) return { skip: 'equip' };
+  if (pseudo && pseudo._refPick) return { skip: 'ref-picker' };
+  if (pseudo && (pseudo._targetsOpponentPlayer || pseudo._targetsChosenPlayer || pseudo._isEnchantPlayer)) return { skip: 'player-picker' };
+  if (pseudo && pseudo.hasBestow) return { skip: 'bestow' };
+  if (effs.some(e => e.auraRestriction)) return { skip: 'aura-attach' };
+
+  const mixedOf = (t) => mixedSubject(u.text, t.targetIndex, ctx.cardName, u.kind === 'spell');
+  const mixedAll = u.targets.map(mixedOf);
+  const anyMixed = mixedAll.some(m => m.source || m.group);
+  u.mixed = { source: mixedAll.some(m => m.source), group: mixedAll.some(m => m.group) };
+  const before = ctx.before;
+  const noTargetChanged = diffSummaries(before, summarizeBoard());
+  u.check1 = { noTarget: noTargetChanged.map(c => ({ role: c.role, what: c.what })), perTarget: [] };
+  if (!anyMixed && noTargetChanged.length) {
+    finding('check1', 'changes-with-no-target', { changed: noTargetChanged.map(c => ({ role: c.role, what: c.what })) });
+  }
+  if (!targeted.length) { finding('check2', 'no-targeted-effect'); return { audited: true }; }
+
+  /* ── Check 2: the picker kind ── */
+  const picker = getTargetPickerKind(id, finalStates.get(id));
+  u.pickerKind = picker.kind + (picker.kind === 'multi' ? ' of ' + picker.maxTargets : picker.kind === 'slotted' ? ' of ' + picker.slots : '');
+  const want = u.expectKind;
+  let picks = [];
+  if (picker.kind === 'none') finding('check2', 'no-picker');
+  else if (picker.kind === 'modal') finding('check2', 'picker-not-' + want, { actual: 'modal' });
+  else if (want === 'multi') {
+    if (picker.kind !== 'multi') finding('check2', 'picker-not-multi', { actual: picker.kind, expectedCount: u.maxTargets });
+    else if (picker.maxTargets !== u.maxTargets) finding('check2', 'max-targets-mismatch', { actual: picker.maxTargets, expectedCount: u.maxTargets });
+    // The one target of the text, whatever picker shows it.
+    picks = [picker.kind === 'multi' ? { kind: 'multi', slotIndex: 0, textSlot: 0 } : picker.kind === 'slotted' ? { kind: 'slotted', slot: 0, textSlot: null } : { kind: 'single', textSlot: 0 }];
+  } else {
+    const n = u.targets.length;
+    if (picker.kind !== 'slotted') finding('check2', 'picker-not-slotted', { actual: picker.kind, expectedCount: n });
+    else if (picker.slots !== n) finding('check2', 'slot-count-mismatch', { actual: picker.slots, expectedCount: n });
+    if (picker.kind === 'slotted') for (let s = 0; s < picker.slots; s++) picks.push({ kind: 'slotted', slot: s, textSlot: picker.slots === n ? s : null });
+    else if (picker.kind === 'multi') picks = [{ kind: 'multi', slotIndex: 0, textSlot: null }];
+    else picks = [{ kind: 'single', textSlot: null }];
+  }
+
+  /* ── Check 2: each list; Check 1: each target of each list ── */
+  u.picks = [];
+  for (const pick of picks) {
+    const label = pickLabel(pick);
+    const t = pick.textSlot !== null ? u.targets[pick.textSlot] : null;
+    const rec = { pick: label, phrase: t ? t.phrase : null, expected: null, actual: null, perTarget: [] };
+    u.picks.push(rec);
+    let siteIds = null;
+    try {
+      const r = candidatesForPick(id, pick);
+      if (r.blocked) rec.blocked = r.blocked; else siteIds = r.candidates.map(c => c.id);
+    } catch (e) { finding('check2', 'crash', { slot: label, error: errInfo('candidates', e) }); }
+    rec.actual = siteIds ? rolesOf(siteIds) : null;
+    let expectedIds = null;
+    if (t) {
+      const ex = expectedForTarget(ctx, u, t);
+      if (ex.unknown) { rec.phraseUnknown = ex.unknown; u.phraseUnknown = (u.phraseUnknown || []).concat(ex.unknown); }
+      else {
+        expectedIds = ex.ids;
+        rec.expected = rolesOf(expectedIds);
+        if (siteIds) {
+          const judged = (x) => !(t.sourceNotJudged && x === ctx.sourceId);
+          const missing = expectedIds.filter(x => judged(x) && !siteIds.includes(x)), extra = siteIds.filter(x => judged(x) && !expectedIds.includes(x));
+          if (!siteIds.length && expectedIds.length) finding('check2', 'empty-list', { slot: label, missing: rolesOf(missing), extra: [] });
+          else if (missing.length || extra.length) finding('check2', 'list-mismatch', { slot: label, missing: rolesOf(missing), extra: rolesOf(extra) });
+        }
+      }
+    }
+    // Check 1, this list: each listed permanent in turn (the others left empty).
+    const mixed = t ? mixedOf(t) : u.mixed;
+    const tryIds = siteIds && siteIds.length ? siteIds : (expectedIds || []);
+    rec.via = siteIds && siteIds.length ? 'picker' : 'text';
+    const othersSeen = [], noOp = [];
+    let anyTargetChanged = false;
+    const tryTargets = (ids, from, record) => {
+      let ok = false, clean = true;
+      for (const tid of ids.slice(0, 14)) {
+        let changed = [];
+        try { applyPick(id, pick, tid); changed = diffSummaries(from, summarizeBoard()); }
+        catch (e) { if (record) finding('check1', 'crash', { slot: label, error: errInfo('set target', e) }); clean = false; break; }
+        finally { try { applyPick(id, pick, null); } catch (e) { /* restored by the caller */ } }
+        const role = roleName(tid);
+        const counted = mixed.source ? changed.filter(c => c.id !== ctx.sourceId) : changed;
+        const targetChanged = changed.some(c => c.id === tid) && !(mixed.source && tid === ctx.sourceId);
+        const others = mixed.group ? [] : counted.filter(c => c.id !== tid);
+        if (targetChanged) ok = true;
+        if (others.length) clean = false;
+        if (!record) continue;
+        rec.perTarget.push({ target: role, changed: changed.map(c => ({ role: c.role, what: c.what })) });
+        if (targetChanged) anyTargetChanged = true; else noOp.push(role);
+        if (others.length) othersSeen.push({ target: role, others: others.map(c => ({ role: c.role, what: c.what })) });
+      }
+      return ok && clean;
+    };
+    tryTargets(tryIds, before, true);
+    if (othersSeen.length) finding('check1', 'target-changes-others', { slot: label, examples: othersSeen.slice(0, 3), count: othersSeen.length });
+    if (tryIds.length && !anyTargetChanged && !othersSeen.length) {
+      if (COUNT_DEPENDENT.test(u.text) && /\bgets?\b/i.test(u.text) && !/\b(?:gains?|has|have|becomes?|loses?)\b/i.test(u.text)) u.infos.push({ code: 'count-or-condition-dependent', roles: [], slot: label });
+      else {
+        const shown = [];
+        for (const adj of boardAdjustments(ctx, u, id, pseudo, tryIds)) {
+          let undo = null, worked = false;
+          try {
+            undo = adj.apply();
+            Battlefield._invalidate();
+            const from = summarizeBoard();
+            const r = candidatesForPick(id, pick);
+            const ids = r && r.candidates && r.candidates.length ? r.candidates.map(c => c.id) : tryIds;
+            worked = tryTargets(adj.only ? ids.filter(x => adj.only.includes(x)) : ids, from, false);
+          } catch (e) { worked = false; }
+          finally { try { if (undo) undo(); } catch (e) { /* restored by the caller */ } Battlefield._invalidate(); }
+          if (worked) { shown.push(adj.what); break; }
+        }
+        const limit = shown.length ? null : boardCannotShow(ctx, u, tryIds);
+        if (shown.length) u.infos.push({ code: 'shown-on-adjusted-board', roles: [], what: shown[0], slot: label });
+        else if (limit) u.infos.push({ code: 'board-cannot-show', roles: [], what: limit, slot: label });
+        else finding('check1', 'target-changes-nothing', { slot: label, tried: tryIds.length });
+      }
+    }
+    if (anyTargetChanged && noOp.length) u.infos.push({ code: 'no-op-on-some', roles: noOp, slot: label });
+
+    // "Up to two target creatures": a second pick must reach its own target too, with the first.
+    if (pick.kind === 'multi' && picker.maxTargets >= 2) {
+      const good = rec.perTarget.filter(x => x.changed.some(c => c.role === x.target)).map(x => x.target);
+      const ids = tryIds.filter(x => good.includes(roleName(x)) && !(mixed.source && x === ctx.sourceId)).slice(0, 2);
+      if (ids.length === 2) {
+        let changed = [];
+        try {
+          applyPick(id, { kind: 'multi', slotIndex: 0 }, ids[0]);
+          applyPick(id, { kind: 'multi', slotIndex: 1 }, ids[1]);
+          changed = diffSummaries(before, summarizeBoard());
+        } catch (e) { finding('check1', 'crash', { slot: 'pick 2', error: errInfo('set second target', e) }); }
+        finally {
+          try { applyPick(id, { kind: 'multi', slotIndex: 1 }, null); applyPick(id, { kind: 'multi', slotIndex: 0 }, null); } catch (e) { /* restored by the caller */ }
+        }
+        rec.together = { targets: rolesOf(ids), changed: changed.map(c => ({ role: c.role, what: c.what })) };
+        if (!changed.some(c => c.id === ids[1])) finding('check1', 'second-pick-changes-nothing', { slot: 'pick 2', target: roleName(ids[1]) });
+        const others = mixed.group ? [] : changed.filter(c => !ids.includes(c.id) && !(mixed.source && c.id === ctx.sourceId));
+        if (others.length) finding('check1', 'target-changes-others', { slot: 'picks 1 and 2', examples: [{ target: rolesOf(ids).join(' + '), others: others.map(c => ({ role: c.role, what: c.what })) }], count: 1 });
+      }
+    }
+  }
+  return { audited: true };
+}
+
 function auditUnit(ctx, u, fire) {
   // Everything about a unit happens on a board that is put back afterwards.
   return withRestore(() => {
@@ -1048,7 +1340,7 @@ function auditUnit(ctx, u, fire) {
       u.findings.push({ check: 'check2', code: 'crash', error: errInfo('fire ' + u.kind, e) });
       return { audited: true };
     }
-    try { return auditFired(ctx, u, id); }
+    try { return u.targets ? auditFiredTargets(ctx, u, id) : auditFired(ctx, u, id); }
     catch (e) { u.findings.push({ check: 'check2', code: 'crash', error: errInfo('audit', e) }); return { audited: true }; }
   });
 }
@@ -1056,8 +1348,13 @@ function auditUnit(ctx, u, fire) {
 /* ═════════════════════════ One card face ═════════════════════════ */
 
 function newUnit(kind, index, label, text, cls) {
-  return { kind, index, label, text, findings: [], infos: [],
+  const u = { kind, index, label, text, findings: [], infos: [],
     phrase: cls.phrase, excludeSource: cls.excludeSource, targetIndex: cls.targetIndex };
+  // Several targets, or "up to N" (classifyTargets): one phrase per target of the text.
+  if (cls.targets) Object.assign(u, { targets: cls.targets, expectKind: cls.expectKind, maxTargets: cls.maxTargets,
+    phrase: cls.targets.map(t => t.phrase).join(' / '), targetIndex: cls.targets[0].targetIndex });
+  if (cls.origin) u.origin = cls.origin;
+  return u;
 }
 
 function auditFace(card, faceIndex) {
@@ -1099,7 +1396,7 @@ function auditFace(card, faceIndex) {
     const text = stripReminder(face.oracle_text || '');
     if (perm.isModalSpell) { skip('spell', undefined, '', text, 'modal-spell'); return rec; }
     const cls = classifyUnitText(text);
-    if (!cls.singular) { skip('spell', undefined, '', text, cls.skip); return rec; }
+    if (!cls.singular && !cls.targets) { skip('spell', undefined, '', text, cls.skip); return rec; }
     const u = newUnit('spell', undefined, '', text, cls);
     // Casting happened in addAuditedCard; the spell's own effects are the unit's.
     run(u, () => perm);
@@ -1123,7 +1420,7 @@ function auditFace(card, faceIndex) {
       if (plan.skip) { skip(kind, ab.index, '', stripReminder(ab.effectText), plan.skip); continue; }
       const text = stripReminder(plan.text);
       const cls = classifyUnitText(text);
-      if (!cls.singular) { skip(kind, ab.index, plan.label, text, cls.skip); continue; }
+      if (!cls.singular && !cls.targets) { skip(kind, ab.index, plan.label, text, cls.skip); continue; }
       const u = newUnit(kind, ab.index, plan.label, text, cls);
       // (Not written to the raw output.)
       Object.defineProperty(u, 'fullText', { value: stripReminder(ab.fullText || ''), enumerable: false });

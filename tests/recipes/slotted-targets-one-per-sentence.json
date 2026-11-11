@@ -1,0 +1,29 @@
+{
+  "name": "A target per sentence: one picker per target, each effect on its own target",
+  "notes": "Rally Maneuver's \"Up to one other target creature gets +0/+2 and gains lifelink\" was split into two pickers: boostRegex's match for it began at \" and gains first strike …\" in the sentence before, so the boost and the lifelink got different positions and therefore different slots (three pickers for two targets). A boost or a have-ability match in a spell that began in an earlier sentence and whose subject names its own target is now placed at the subject's sentence, and slot positions are moved past the \".\" and spaces a match can start on (_finalizeEffects, the parser's _getMatchContentPos). Hostile Takeover's two \"Up to one … target creature has base power and toughness\" sentences had no position at all, so both went to one target (the later 4/4 won); a spell's targeted base P/T is now placed at its sentence. Both only for spells: in a fired ability a pronoun has been written out as the target it stands for (Admiral Brass's \"It has base power and toughness 4/4\" reads \"target Pirate creature has …\"), so a second \"target\" there is the same one. Panther Pounce (\"Target player investigates. Target creature gets +1/+0 and gains flying\") keeps one picker. Found by the audit's check of texts with several targets (tests/audit.js classifyTargets).",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Hill Giant", "as": "giant", "controller": "p2" },
+    { "add": "Rally Maneuver", "as": "rally", "spell": true },
+    { "call": ["setSlottedTarget", "@rally", 0, "@bears"] },
+    { "call": ["setSlottedTarget", "@rally", 1, "@giant"] },
+
+    { "add": "Savannah Lions", "as": "lions" },
+    { "add": "Gray Ogre", "as": "ogre", "controller": "p2" },
+    { "add": "Hostile Takeover", "as": "takeover", "spell": true },
+    { "call": ["setSlottedTarget", "@takeover", 0, "@lions"] },
+    { "call": ["setSlottedTarget", "@takeover", 1, "@ogre"] },
+
+    { "add": "Panther Pounce", "as": "pounce", "spell": true }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Rally Maneuver", "kind": "slotted", "slot": 1 }, "are": ["Grizzly Bears", "Hill Giant"] },
+    { "perm": "Grizzly Bears", "final": { "power": 4, "toughness": 2, "abilities": { "$includes": ["First strike"], "$excludes": ["Lifelink"] } } },
+    { "perm": "Hill Giant", "final": { "power": 3, "toughness": 5, "abilities": { "$includes": ["Lifelink"], "$excludes": ["First strike"] } } },
+    { "targetCandidates": { "perm": "Hostile Takeover", "kind": "slotted", "slot": 0 }, "are": ["Grizzly Bears", "Gray Ogre", "Hill Giant", "Savannah Lions"] },
+    { "perm": "Savannah Lions", "final": { "power": 1, "toughness": 1 } },
+    { "perm": "Gray Ogre", "final": { "power": 4, "toughness": 4 } },
+    { "targetCandidates": { "perm": "Panther Pounce", "kind": "single" }, "are": ["Grizzly Bears", "Gray Ogre", "Hill Giant", "Savannah Lions"] }
+  ]
+}

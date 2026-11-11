@@ -37,6 +37,20 @@ A unit whose own text names one permanent target ("singular") is checked twice:
            information: every listed permanent already has the keywords given or is already yours,
            or the only continuous effect sits in a sentence with its own "if".
 
+A unit whose text names more than one target, or "up to N target …", is read target by target
+(classifyTargets in tests/audit.js). Only the targets that are the subject of a continuous effect
+count; the others are one-shot actions the site does not model ("Destroy target land. Up to two target
+creatures can't block" is skipped as "multiple-targets: one-shot-action"). One such target of one
+("up to one target creature gets +1/+1") is a singular unit as above. One target of up to N or N
+(N >= 2) expects the multi-target picker with N picks; two or more targets of one each expect one
+picker per target ("slotted"), slot k being the k-th target of the text. Findings: picker-not-multi,
+max-targets-mismatch, picker-not-slotted, slot-count-mismatch, then per list (marked [pick 1] or
+[slot N]) empty-list and list-mismatch against that target's own phrase (plural words read as
+singular), and Check 1 on each list with the others left empty. A multi-target picker is also tried
+with two targets at once (second-pick-changes-nothing). "Another target creature" after an earlier
+target means one other than that target, which is not checked: whether the source is listed there is
+not judged. Skip reasons of such units start with "up-to: " or "multiple-targets: ".
+
 Also reported: crash (an exception anywhere) and no-targeted-effect (the text names a target but the
 parse produced no targeted effect, so there is no picker to audit - the sweep already covers
 "sentence produced nothing"; it is its own low-priority cluster here). Units that are skipped always
@@ -90,11 +104,16 @@ CODES = [
     ('picker-kind-multi', 'The site shows a multi-target ("up to N") picker for a one-target text.'),
     ('picker-kind-slotted', 'The site shows one picker per slot for a one-target text.'),
     ('picker-kind-modal', 'The site shows per-mode pickers for a one-target text.'),
+    ('picker-not-multi', 'The text names one target of up to N (N >= 2), but the site shows no multi-target picker.'),
+    ('max-targets-mismatch', 'The multi-target picker allows a different number of targets than the text.'),
+    ('picker-not-slotted', 'The text names two or more separate targets, but the site shows no picker per target.'),
+    ('slot-count-mismatch', 'The site shows a different number of target pickers than the text names targets.'),
     ('empty-list', 'The target list is empty although the text allows permanents on the board.'),
     ('list-mismatch', 'The target list differs from the permanents the text allows.'),
     ('changes-with-no-target', 'With no target chosen, some permanent changes.'),
     ('target-changes-others', 'With a target chosen, a permanent other than the target changes.'),
     ('target-changes-nothing', 'Choosing any listed target changes nothing.'),
+    ('second-pick-changes-nothing', 'Of an "up to N" picker, a target chosen in the second pick (with one in the first) changes nothing.'),
     ('no-targeted-effect', 'The text names one permanent target but the parse produced no targeted effect.'),
 ]
 CODE_ORDER = {c: i for i, (c, _) in enumerate(CODES)}
@@ -271,7 +290,18 @@ def roles_key(roles):
 
 def finding_detail(f):
     """One line describing a finding."""
+    d = _finding_detail(f)
+    if f.get('slot'):
+        d = '[%s] %s' % (f['slot'], d)
+    return d
+
+
+def _finding_detail(f):
     c = f['code']
+    if c in ('picker-not-multi', 'picker-not-slotted', 'max-targets-mismatch', 'slot-count-mismatch'):
+        return 'text: %s, site: %s' % (f.get('expectedCount'), f.get('actual'))
+    if c == 'second-pick-changes-nothing':
+        return 'second pick %s' % f.get('target', '')
     if c in ('empty-list', 'list-mismatch'):
         return 'missing: %s; extra: %s' % (roles_key(f.get('missing', [])), roles_key(f.get('extra', [])))
     if c == 'changes-with-no-target':
@@ -293,7 +323,13 @@ def cluster_key(tp, f, u):
         e = f.get('error', {})
         return '%s / %s' % (e.get('where', ''), re.sub(r'\b(?:c|trig|act|spell|perm)_\w+', '<id>', e.get('msg', '')))
     if c in ('empty-list', 'list-mismatch') or c.startswith('picker-kind'):
-        base = tp.template('target ' + (u.get('phrase') or ''))
+        phrase = u.get('phrase') or ''
+        if u.get('targets') and f.get('slot'):
+            # The phrase of the list the finding is about.
+            phrase = next((p.get('phrase') for p in u.get('picks', []) if p.get('pick') == f['slot'] and p.get('phrase')), phrase)
+        base = tp.template('target ' + phrase)
+        if u.get('targets'):
+            base = '[%s] %s' % (u.get('expectKind'), base)
         if c in ('empty-list', 'list-mismatch'):
             base += ' / missing: %s / extra: %s' % (roles_key(f.get('missing', [])), roles_key(f.get('extra', [])))
         return base
@@ -365,7 +401,7 @@ def write_report(records, keywords, meta, scope):
          '`tests/audit-board.json`. See the docstring of `tests/audit.py` for how a unit is judged.\n' % (scope, meta.get('cards_updated', 'unknown')),
          '| | |\n|---|---|',
          '| Cards audited | %d (%d faces) |' % (a['cards'], a['totals']['faces']),
-         '| Units audited (text names one permanent target) | %d |' % a['totals']['units'],
+         '| Units audited (text names a permanent target the site models) | %d |' % a['totals']['units'],
          '| Units skipped | %d |' % a['totals']['skipped'],
          '| Audited units whose phrase the interpreter did not understand (list check not run) | %d |' % a['totals']['phrase_unknown'],
          '| Findings | %d in %d clusters |' % (a['totals']['findings'], len(a['clusters'])),
@@ -440,12 +476,17 @@ def print_record(r):
         print('   UNIT    %s' % unit_label(u))
         print('       text:      %s' % u.get('text', ''))
         print('       phrase:    "%s"%s' % (u.get('phrase', ''), ' (another/other)' if u.get('excludeSource') else ''))
-        print('       picker:    %s' % u.get('pickerKind', 'not reached'))
-        if u.get('phraseUnknown'):
+        print('       picker:    %s%s' % (u.get('pickerKind', 'not reached'),
+              '   (text: %s%s)' % (u['expectKind'], ' of %d' % u['maxTargets'] if u.get('maxTargets') else ' of %d' % len(u['targets'])) if u.get('targets') else ''))
+        if u.get('targets'):
+            pass
+        elif u.get('phraseUnknown'):
             print('       expected:  phrase not understood (%s)' % ', '.join(u['phraseUnknown']))
         else:
             print('       expected:  %s' % (', '.join(u['expected']) if u.get('expected') else 'nothing' if u.get('expected') is not None else 'n/a'))
-        if u.get('blocked'):
+        if u.get('targets'):
+            pass
+        elif u.get('blocked'):
             print('       actual:    blocked - %s' % u['blocked'])
         else:
             print('       actual:    %s' % (', '.join(u['actual']) if u.get('actual') else 'nothing' if u.get('actual') is not None else 'n/a'))
@@ -454,11 +495,24 @@ def print_record(r):
         if c1:
             print('       check 1:   no target -> %s%s' % (', '.join('%s (%s)' % (x['role'], x['what']) for x in c1['noTarget']) or 'nothing changed',
                   '   [mixed subject: %s - no-target half not judged]' % ('source' if m.get('source') else 'group') if (m.get('source') or m.get('group')) else ''))
-            print('                  targets tried from the %s' % c1.get('via', '?'))
+            if not u.get('targets'):
+                print('                  targets tried from the %s' % c1.get('via', '?'))
             for t in c1['perTarget']:
                 print('                  %-26s -> %s' % (t['target'], ', '.join('%s (%s)' % (x['role'], x['what']) for x in t['changed']) or 'nothing changed'))
+        for p in u.get('picks', []):
+            print('       %-10s phrase "%s"' % (p['pick'] + ':', p.get('phrase') or '(not lined up with the text)'))
+            if p.get('phraseUnknown'):
+                print('                  expected:  phrase not understood (%s)' % ', '.join(p['phraseUnknown']))
+            else:
+                print('                  expected:  %s' % (', '.join(p['expected']) if p.get('expected') else 'nothing' if p.get('expected') is not None else 'n/a'))
+            print('                  actual:    %s' % ('blocked - ' + p['blocked'] if p.get('blocked') else ', '.join(p['actual']) if p.get('actual') else 'nothing' if p.get('actual') is not None else 'n/a'))
+            for t in p.get('perTarget', []):
+                print('                  %-26s -> %s' % (t['target'], ', '.join('%s (%s)' % (x['role'], x['what']) for x in t['changed']) or 'nothing changed'))
+            if p.get('together'):
+                tg = p['together']
+                print('                  %-26s -> %s' % (' + '.join(tg['targets']), ', '.join('%s (%s)' % (x['role'], x['what']) for x in tg['changed']) or 'nothing changed'))
         for i in u.get('infos', []):
-            print('       info:      %s %s' % (i['code'], i.get('what') or ', '.join(i.get('roles', []))))
+            print('       info:      %s %s%s' % (i['code'], '[%s] ' % i['slot'] if i.get('slot') else '', i.get('what') or ', '.join(i.get('roles', []))))
         for f in u.get('findings', []):
             print('       FINDING    %s  %s' % (f['code'], finding_detail(f)))
     print()

@@ -1,0 +1,28 @@
+{
+  "name": "Fired ability with a target per clause: each target is judged by its own words",
+  "notes": "Gurmag Rakshasa's \"target creature an opponent controls gets -2/-2 … and target creature you control gets +2/+2\" listed your creatures for the second picker, but picking one changed nothing: _addAbilityPseudo stamped the earliest target restriction of the ability (\"an opponent controls\") on every effect as _abilityTargetRestriction, and effectAppliesToPerm's fire-time check refused your creature for the +2/+2. Monoist Circuit-Feeder was the mirror case (\"you control\" stamped on the -0/-X). A slotted effect now takes the earliest restriction of its own slot, in _addAbilityPseudo and the command-zone path alike. Found by the audit's check of texts with several targets (tests/audit.js classifyTargets).",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Hill Giant", "as": "giant", "controller": "p2" },
+    { "add": "Gurmag Rakshasa", "as": "gurmag" },
+    { "fire": "@gurmag", "trigger": 1, "as": "firedGurmag" },
+    { "call": ["setSlottedTarget", "@firedGurmag", 0, "@giant"] },
+    { "call": ["setSlottedTarget", "@firedGurmag", 1, "@bears"] },
+
+    { "add": "Savannah Lions", "as": "lions" },
+    { "add": "Gray Ogre", "as": "ogre", "controller": "p2" },
+    { "add": "Monoist Circuit-Feeder", "as": "monoist" },
+    { "fire": "@monoist", "trigger": 1, "as": "firedMonoist" },
+    { "call": ["setSlottedTarget", "@firedMonoist", 0, "@lions"] },
+    { "call": ["setSlottedTarget", "@firedMonoist", 1, "@ogre"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Gurmag Rakshasa (trigger)", "kind": "slotted", "slot": 1 }, "are": ["Grizzly Bears", "Gurmag Rakshasa"] },
+    { "perm": "Hill Giant", "final": { "power": 1, "toughness": 1 } },
+    { "perm": "Grizzly Bears", "final": { "power": 4, "toughness": 4 } },
+    { "targetCandidates": { "perm": "Monoist Circuit-Feeder (trigger)", "kind": "slotted", "slot": 1 }, "are": ["Gray Ogre", "Hill Giant"] },
+    { "perm": "Savannah Lions", "final": { "power": 3, "toughness": 1 } },
+    { "perm": "Gray Ogre", "final": { "power": 2, "toughness": 1 } }
+  ]
+}

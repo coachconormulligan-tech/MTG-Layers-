@@ -87,8 +87,8 @@ function triggerConditions() {
   return out;
 }
 
-// What the site's target picker lists now for each spell or fired ability with a single or
-// multi-target picker (cards-targeting.js, which ui-targeting.js renders from): the permanents'
+// What the site's target picker lists now for each spell or fired ability with a single,
+// multi-target or per-slot picker (cards-targeting.js, which ui-targeting.js renders from): the permanents'
 // names, sorted. Kept out of the summary like triggerConditions; "targetCandidates" asserts read it.
 function targetCandidateLists() {
   const finalStates = Battlefield.getAllFinalStates();
@@ -96,10 +96,17 @@ function targetCandidateLists() {
   for (const p of Battlefield.permanents) {
     if (!p.isManualEffect && !p.isSpell) continue;
     const pk = getTargetPickerKind(p.id, finalStates.get(p.id));
+    const listNames = (r) => r.blocked ? [] : (r.candidates || []).map(c => c.perm.name + (c.perm.label ? ' ' + c.perm.label : '')).sort();
+    // A picker per target of the text ("Target creature gets +2/+0 … Up to one other target
+    // creature gets +0/+2" - Rally Maneuver): one list per "slot", 0-based.
+    if (pk && pk.kind === 'slotted') {
+      for (let slot = 0; slot < pk.slots; slot++) {
+        out.push({ perm: p.name + (p.label ? ' ' + p.label : ''), kind: 'slotted', slot, candidates: listNames(getTargetCandidates(p.id, { kind: 'slotted', slot })) });
+      }
+      continue;
+    }
     if (!pk || (pk.kind !== 'single' && pk.kind !== 'multi')) continue;
-    const r = getTargetCandidates(p.id, pk);
-    const names = r.blocked ? [] : (r.candidates || []).map(c => c.perm.name + (c.perm.label ? ' ' + c.perm.label : '')).sort();
-    out.push({ perm: p.name + (p.label ? ' ' + p.label : ''), kind: pk.kind, candidates: names });
+    out.push({ perm: p.name + (p.label ? ' ' + p.label : ''), kind: pk.kind, candidates: listNames(getTargetCandidates(p.id, pk)) });
   }
   // The exchange-control modal's two lists (getExchangeControlCandidates): "slot" "a", and "b" as
   // narrowed by the current Permanent A, if any. "Exchange control of this creature and target

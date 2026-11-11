@@ -182,7 +182,7 @@ function _parseSimpleKeywordList(text) {
 
 /* Helper: mark equipment effects with requiresCreatureTarget flag,
    and propagate auraRestriction to all targeted effects */
-function _finalizeEffects(effects, isEquipmentSource, permanent, oracleText) {
+function _finalizeEffects(effects, isEquipmentSource, permanent, oracleText, contentPos) {
   const _oracle = (oracleText || '').toLowerCase();
   // "…, loses all abilities, and gains flying" (Dance of the Skywise, Dragonshift): effects of
   // one source apply in list order, so the loss must stand before the grant it leaves alone.
@@ -299,7 +299,11 @@ function _finalizeEffects(effects, isEquipmentSource, permanent, oracleText) {
     || (permanent?.printedSubtypes || []).some(t => t === 'Aura' || t === 'Equipment');
   if (_slottable.length > 1 && !_isAttachment) {
     // _slotPos: a branch line ("If this spell was kicked, …") shares its base sentence's slot.
-    const _slotPosOf = (e) => e._slotPos !== undefined ? e._slotPos : e._oraclePos;
+    // Either is moved past the "." and spaces a match can start on
+    // (contentPos, the parser's _getMatchContentPos): "… until end of turn. Up to one other
+    // target creature gets +0/+2 and gains lifelink" (Rally Maneuver) put the boost at the
+    // space and the lifelink at the period, two slots for one target.
+    const _slotPosOf = (e) => { const p = e._slotPos !== undefined ? e._slotPos : e._oraclePos; return contentPos ? contentPos(p) : p; };
     const _distinctPos = [...new Set(_slottable.map(_slotPosOf))].sort((a, b) => a - b);
     if (_distinctPos.length > 1) {
       for (const eff of _slottable) {

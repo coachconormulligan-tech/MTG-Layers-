@@ -1,0 +1,17 @@
+{
+  "name": "Ballroom Brawlers asks first strike or lifelink; Dark Salvation's \"then up to one target creature\" lists creatures",
+  "notes": "Ballroom Brawlers' \"this creature and up to one other target creature you control both gain your choice of first strike or lifelink\" was kept out of _yourChoiceOfOptions because its two-part subject was once read as every permanent you control; it is read as the source and the target now (the source half is pinned to it), so the trigger asks which keyword, like Steel Seraph. Dark Salvation's boost subject was \"Target player creates X 2/2 black Zombie creature tokens, then up to one target creature\" (boostRegex splits a subject only at \".\"), which no creature matched: the target picker was empty. A subject ending \", then <target …>\" is now that target. Razorfield Ripper's \"you get {E}, then it gets +X/+X\" changed with it: the fired \"it\" (written \"target creature\") is now a targeted effect pinned to the Ripper instead of a global one with that whole clause as its filter. Found by the audit's check of texts with several targets / \"up to\" (tests/audit.js classifyTargets).",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Ballroom Brawlers", "as": "brawlers" },
+    { "fire": "@brawlers", "trigger": 0, "mode": 1, "as": "firedBrawlers" },
+    { "call": ["setTarget", "@firedBrawlers", "@bears"] },
+    { "add": "Hill Giant", "as": "giant" },
+    { "add": "Dark Salvation", "as": "salvation", "spell": true, "x": 1 }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$includes": ["Lifelink"], "$excludes": ["First strike"] } } },
+    { "perm": "Ballroom Brawlers", "final": { "abilities": { "$includes": ["Lifelink"], "$excludes": ["First strike"] } } },
+    { "targetCandidates": { "perm": "Dark Salvation", "kind": "single" }, "are": ["Ballroom Brawlers", "Grizzly Bears", "Hill Giant"] }
+  ]
+}

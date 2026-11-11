@@ -3876,6 +3876,8 @@ function parseCardEffects(permanent, card, opts = {}) {
   let boostMatch;
   while ((boostMatch = boostRegex.exec(oracle)) !== null) {
     let filterText = boostMatch[1].trim();
+    // Set below: the match began in an earlier sentence and the subject names its own target.
+    let _boostCrossed = false;
     // Fix: If the regex matched across sentence boundaries (filter contains "."),
     // use only the last sentence segment as the actual filter text.
     if (filterText.includes('.')) {
@@ -3883,6 +3885,11 @@ function parseCardEffects(permanent, card, opts = {}) {
       // "Choose target creature. Until end of turn, target creature gets +2/+0" — the duration
       // is not part of the subject.
       filterText = stripDurationPrefix(segments[segments.length - 1].trim());
+      // ("Choose target creature. Until end of turn, that creature gets …" keeps to the sentence
+      // that names the target. A spell only: in a fired ability a pronoun has been written out as
+      // the target it stands for - "Untap target creature. Target creature gets +2/+2" - so a
+      // second "target" there is no second target.)
+      _boostCrossed = !!permanent.isSpell && /\btarget\b/i.test(filterText);
       // "Untap target creature. It gets +3/+3" — resolve "It" pronoun to "target [type]"
       // from the prior sentence, mirroring the same resolution in haveAbilityRegex.
       // The controller words go with it: "Untap target creature you control. It gets +2/+2"
@@ -3893,6 +3900,13 @@ function parseCardEffects(permanent, card, opts = {}) {
         if (tRef) filterText = 'target ' + tRef[1].trim() + (tRef[2] || '');
       }
       if (!filterText) continue;
+    }
+    // "Target player creates X 2/2 black Zombie creature tokens, then up to one target creature
+    // gets -1/-1 …" (Dark Salvation): the subject is the target after ", then".
+    {
+      const _thenParts = filterText.split(/,\s*then\s+/i);
+      const _thenLast = _thenParts[_thenParts.length - 1];
+      if (_thenParts.length > 1 && /^(?:up to \w+ (?:other )?|another )?target\b/i.test(_thenLast)) filterText = _thenLast.trim();
     }
     // Fix: Strip a leading ability-word prefix ("Animal May-Ham — Other Spiders … get +1/+1").
     // Ability words are title-case flavor phrases followed by an em/en-dash and have no rules
@@ -4051,7 +4065,10 @@ function parseCardEffects(permanent, card, opts = {}) {
         { power: parseInt(boostMatch[2]), toughness: parseInt(boostMatch[3]) },
         _ctx,
         `${filterText} get ${boostMatch[2]}/${boostMatch[3]}. ${rcpt.desc}`,
-        { _oraclePos: boostMatch.index });
+        // A match that began in an earlier sentence ("… and gains first strike until end of turn.
+        // Up to one other target creature gets +0/+2" - Rally Maneuver) is placed at the sentence
+        // its subject is in, so it gets that target's slot.
+        { _oraclePos: _boostCrossed ? _boostSentPos : boostMatch.index });
       _applyTargetInfo(_effBoost, rcpt.build, rcpt.fn);
     };
     for (const rcpt of recipients) {
@@ -4483,7 +4500,13 @@ function parseCardEffects(permanent, card, opts = {}) {
       _gbpCtx,
       `${gbpFilterText} have base P/T ${generalBasePTMatch[2]}/${generalBasePTMatch[3]}. ${gbpApplies.desc}`,
       Object.assign({}, gbpCond ? { asLongAsCondition: gbpCond } : null,
-        _isModalSpell ? { _oraclePos: generalBasePTMatch.index + generalBasePTMatch[0].search(/base\s+power/i) } : null));
+        _isModalSpell ? { _oraclePos: generalBasePTMatch.index + generalBasePTMatch[0].search(/base\s+power/i) }
+          // A target's sentence is placed, so a spell with a target per sentence gets a slot for
+          // each ("Up to one target creature has base power and toughness 1/1 until end of turn.
+          // Up to one other target creature has base power and toughness 4/4" - Hostile Takeover).
+          // (A spell only, as for the boost above: Admiral Brass's fired "It has base power and
+          // toughness 4/4" reads "target Pirate creature has …", the target already named.)
+          : gbpIsTargetPhrase && permanent.isSpell ? { _oraclePos: Math.max(oracle.lastIndexOf('.', _gbpPTPos - 1), oracle.lastIndexOf('\n', _gbpPTPos - 1)) + 1 } : null));
 
     // Trailing "and are [type]" (Kudo/Graaz: "have base P/T X/Y and are Bears/Juggernauts")
     if (generalBasePTMatch[4]) {
@@ -4906,10 +4929,15 @@ function parseCardEffects(permanent, card, opts = {}) {
     // Fix: If the regex matched across sentence boundaries (filter contains "."),
     // use only the last sentence segment as the actual filter text.
     // e.g. "Put a +1/+1 counter on target creature you control. It" → "It"
+    // Set below, as for the boost: a spell's match began in an earlier sentence and the subject
+    // names its own target ("Target player investigates. Target creature gets +1/+0 and gains
+    // flying" - Panther Pounce): the effect is placed at the subject's sentence (haveStart).
+    let _haveCrossed = false;
     if (filterText.includes('.')) {
       const segments = filterText.split(/\.\s*/);
       // A sentence ending inside a quoted ability leaves the closing quote on the next segment.
       filterText = segments[segments.length - 1].replace(/^["\u201d\s]+/, '').trim();
+      _haveCrossed = !!permanent.isSpell && /\btarget\b/i.test(filterText);
       // "Choose a [type] [restriction]. It gains [keyword]" — when the match spans
       // "Choose a creature you control. It gains indestructible", the .split leaves
       // "It" as the last segment. Resolve "It" to a targeted effect on the chosen type.
@@ -5135,7 +5163,7 @@ function parseCardEffects(permanent, card, opts = {}) {
             scope: _haveTargeted ? 'targeted' : 'global',
             selfTarget: !!rcpt.isSelf, affectsSelf: rcpt.selfAffect },
           `${filterText.charAt(0).toUpperCase() + filterText.slice(1)} ${/^each\b/i.test(filterText) ? 'has' : 'have'} ${ability}. ${rcpt.desc}`,
-          { _oraclePos: haveMatch.index });
+          { _oraclePos: _haveCrossed ? haveStart : haveMatch.index });
         if (haveCond) eff.asLongAsCondition = haveCond;
         _applyTargetInfo(eff, rcpt.build, rcpt.fn);
         // The source's half keeps to the source when the other half's target is chosen.
@@ -7824,6 +7852,6 @@ function parseCardEffects(permanent, card, opts = {}) {
       for (const e of located) if (within(e, from)) e._slotPos = Math.min(...named);
     }
   }
-  return _finalizeEffects(effects, isEquipmentSource, permanent, card.oracle_text);
+  return _finalizeEffects(effects, isEquipmentSource, permanent, card.oracle_text, _getMatchContentPos);
 }
 /* [END: PARSE] */

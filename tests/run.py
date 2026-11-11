@@ -19,7 +19,9 @@ Asserts are the hand-written facts the fixture exists to protect, checked on eve
         or null when it does not read it; a false one fires nothing)
     { "targetCandidates": { "perm": "Snakeskin Veil" }, "are": ["Grizzly Bears"] }
         (the permanents a spell's or fired ability's single / multi-target picker lists, by name,
-        in any order; the picker is the site's only check on what can be targeted)
+        in any order; the picker is the site's only check on what can be targeted. A text with a
+        target per sentence has one picker per target: { "perm": "Rally Maneuver", "kind":
+        "slotted", "slot": 1 }, slots 0-based)
 A recipe may carry "knownFailure": "reason" to mark an open bug whose asserts do not hold
 yet; it is reported but does not fail the run, and is flagged once it starts passing.
 Matching is partial: only the keys given are compared. Use { "$includes": [...] } or

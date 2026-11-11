@@ -26,10 +26,9 @@ const DEFAULT_GAME_STATE = {
 function _yourChoiceOfOptions(effectText) {
   const m = effectText.match(/\byour choice of ([^.]+?)(?=\s+until\b|\s+this turn\b|\.|$)/i);
   if (!m) return null;
-  // Not for "this creature and up to one other target creature you control both gain your choice
-  // of …" (Ballroom Brawlers): that two-part subject is read as every permanent you control, so
-  // offering the options would apply the keyword to all of them.
-  if (/\band (?:up to \w+ )?(?:other |another )?target\b/i.test(effectText.slice(0, m.index))) return null;
+  // ("This creature and up to one other target creature you control both gain your choice of
+  // first strike or lifelink" - Ballroom Brawlers - was once left out: its two-part subject was
+  // read as every permanent you control. It is read as the source and the target now.)
   const items = m[1].split(/\s*,\s*(?:or\s+)?|\s+or\s+/i).map(x => x.trim()).filter(Boolean);
   if (items.length < 2 || items.some(x => x.split(/\s+/).length > 3)) return null;
   return items.map(item => effectText.slice(0, m.index) + item + effectText.slice(m.index + m[0].length));
@@ -966,12 +965,16 @@ const Battlefield = {
     // that specifies one. This is stamped on ALL effects so that the snapshot gate in
     // effectAppliesToPerm can uniformly block the ability when the target didn't qualify
     // at fire time — even for effects like REMOVE_ABILITIES that lack their own targetRestriction.
+    // An ability with a target per sentence ("target creature an opponent controls gets -2/-2 and
+    // target creature you control gets +2/+2" - Gurmag Rakshasa) has one restriction per target
+    // slot: each slotted effect takes the earliest of its own slot.
     let abilityTargetRestriction = null;
+    const slotTargetRestriction = new Map();
     if (firedAtStates) {
       for (const eff of newEffects) {
         if (eff.scope === 'targeted' && !eff.selfTarget && eff.targetRestriction) {
-          abilityTargetRestriction = eff.targetRestriction;
-          break;
+          if (!abilityTargetRestriction) abilityTargetRestriction = eff.targetRestriction;
+          if (eff._targetSlot !== undefined && !slotTargetRestriction.has(eff._targetSlot)) slotTargetRestriction.set(eff._targetSlot, eff.targetRestriction);
         }
       }
     }
@@ -994,7 +997,8 @@ const Battlefield = {
         // Aura's own target is set again.)
         if (/^when(?:ever)?\s+(?:enchanted|equipped)\s+(?:creature|permanent)\b/i.test(fullText || '')) eff._excludeAttachedOfId = sourcePermId;
       }
-      if (abilityTargetRestriction) eff._abilityTargetRestriction = abilityTargetRestriction;
+      const ownRestriction = eff._targetSlot !== undefined ? (slotTargetRestriction.get(eff._targetSlot) || null) : abilityTargetRestriction;
+      if (ownRestriction) eff._abilityTargetRestriction = ownRestriction;
       // "creatures you control other than this creature become copies of …" (Deceiver of Form).
       // An ability used from the graveyard (Naga Fleshcrafter's renew) has no source on the
       // battlefield to become a copy.
@@ -1461,11 +1465,13 @@ const Battlefield = {
     const fakeCard = { name: commander.name, oracle_text: parsedCmdEffectText, type_line: 'Instant', colors, cmc: 0 };
     const newEffects = parseCardEffects({ ...pseudoPerm, printedTypes: ['Instant'] }, fakeCard);
     let cmdAbilityTargetRestriction = null;
+    const cmdSlotTargetRestriction = new Map();
     if (firedAtStates) {
       for (const eff of newEffects) {
         if (eff.scope === 'targeted' && !eff.selfTarget && eff.targetRestriction) {
-          cmdAbilityTargetRestriction = eff.targetRestriction;
-          break;
+          if (!cmdAbilityTargetRestriction) cmdAbilityTargetRestriction = eff.targetRestriction;
+          // (One restriction per target slot, as in _addAbilityPseudo.)
+          if (eff._targetSlot !== undefined && !cmdSlotTargetRestriction.has(eff._targetSlot)) cmdSlotTargetRestriction.set(eff._targetSlot, eff.targetRestriction);
         }
       }
     }
@@ -1476,7 +1482,8 @@ const Battlefield = {
       eff.timestamp = ts;
       if (didCmdItConversion) eff._nonTargetingSelection = true;
       if (firedAtStates) eff._firedAtStates = firedAtStates;
-      if (cmdAbilityTargetRestriction) eff._abilityTargetRestriction = cmdAbilityTargetRestriction;
+      const ownRestriction = eff._targetSlot !== undefined ? (cmdSlotTargetRestriction.get(eff._targetSlot) || null) : cmdAbilityTargetRestriction;
+      if (ownRestriction) eff._abilityTargetRestriction = ownRestriction;
     }
     this.effects.push(...newEffects);
     this.updateLabels();
