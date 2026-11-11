@@ -152,6 +152,8 @@ function _restrictionState(tState, fs, t) {
     // ("Enchant tapped creature" — Entangling Vines, Glimmerdust Nap.)
     tapped: src.tapped ?? !!t.tapped,
     traits: tState.traits || src.traits || t.traits || [],
+    // ("Equip commander {3}" - Unstable Molecule Suit.)
+    isCommander: !!src.isCommander,
   };
 }
 
@@ -468,6 +470,113 @@ function _modalTargetCandidates(sourceId, modeIdx, slotIndex) {
     }
   }
   return { candidates, currentTarget, currentTargets: multi ? currentTargetIds : currentTarget ? [currentTarget] : [], isNonTargeting, isAttached: false };
+}
+
+/* ===== Equip / Reconfigure / Fortify ===== */
+
+/* What an equip ability may be attached to, as words after "target": CR 702.6a "Equip" is "target
+   creature you control" and "Equip [quality]" is "target [quality] creature you control" ("Equip
+   legendary creature", "Equip Knight", "Equip creature token", "Equip commander"); a quality that
+   names a card type is that type ("Equip planeswalker" - Luxior). CR 702.67a Fortify: "target land
+   you control". CR 702.151a Reconfigure: "another target creature you control". A quality the card
+   defines in its reminder text ("Equip worthy {1} (A creature is worthy if it's a legendary
+   non-Villain that's red and/or white.)" - Mjolnir) is read from that definition. */
+function _equipTargetWords(ability, isFortify, perm) {
+  if (isFortify) return 'land';
+  let q = ability && ability.equipQuality ? ability.equipQuality.trim() : '';
+  if (!q) return 'creature';
+  const def = String(((ability && ability.fullText) || '') + '\n' + ((perm && perm.scryfallData && (perm.scryfallData.oracle_text || (perm.scryfallData.card_faces || []).map(f => f.oracle_text || '').join('\n'))) || '')).replace(/’/g, "'").match(new RegExp('\\(an? (?:creature|permanent) is ' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + " if it's an? ([^)]+?)\\.?\\)", 'i'));
+  if (def) {
+    // "legendary non-Villain that's red and/or white" -> "red or white legendary non-Villain".
+    const m = def[1].match(/^(.+?) that's (.+)$/i);
+    q = m ? m[2].replace(/\s+and\/or\s+/gi, ' or ') + ' ' + m[1] : def[1];
+  }
+  return /\b(?:creature|planeswalker|permanent|artifact|land|enchantment|battle)s?\b/i.test(q) ? q : q + ' creature';
+}
+
+const _equipRestrictionCache = new Map();
+function _equipTargetRestriction(words) {
+  if (_equipRestrictionCache.has(words)) return _equipRestrictionCache.get(words);
+  let fn = null;
+  try {
+    const built = buildAppliesToFromText('target ' + words + ' you control');
+    fn = built && built.fn && !built.isSelf ? built.fn : null;
+  } catch (e) { fn = null; }
+  _equipRestrictionCache.set(words, fn);
+  return fn;
+}
+
+/* The permanents the Equip / Reconfigure / Fortify pop-up (openEquipModal) offers for the
+   source's equip ability at abilityIdx (its index among the source's abilities; null: its first
+   such ability). Returns { blocked } when the Equipment can't equip (an Equipment or
+   Fortification that is a creature, unless it has reconfigure: CR 301.5c, 301.6, 704.5p),
+   otherwise { candidates: [{ id, perm, state, displayName }], currentTarget, ability, abilityIdx,
+   isFortify, isReconfigure, targetWords }. The ability targets (CR 702.6a), so the source itself,
+   shroud and protection from the source (CR 702.16c) keep a permanent out; hexproof does not, as
+   only permanents you control are listed. */
+function getEquipCandidates(permId, abilityIdx) {
+  const perm = Battlefield.getPermById(permId);
+  const none = { candidates: [], currentTarget: null, ability: null, abilityIdx: null, isFortify: false, isReconfigure: false, targetWords: null };
+  if (!perm) return none;
+  const finalStates = Battlefield.getAllFinalStates();
+  const sourceCtrl = perm.controller || perm.owner || Battlefield.activePlayerId;
+  const sourceFs = finalStates.get(permId);
+  const sourceTypes = sourceFs ? (sourceFs.types || []) : (perm.printedTypes || []);
+  const sourceAbilities = sourceFs ? (sourceFs.abilities || []) : [];
+  const activated = Battlefield.extractActivatedAbilities(sourceAbilities);
+  const isEquipAb = (a) => a.isEquip || a.isFortify || a.isReconfigure;
+  const ability = (abilityIdx === null || abilityIdx === undefined)
+    ? activated.find(isEquipAb) || null
+    : activated.find(a => a.index === abilityIdx && isEquipAb(a)) || null;
+  const oracleText = (perm.oracleText || '').toLowerCase();
+  const isFortify = ability ? !!ability.isFortify : oracleText.includes('fortify');
+  const isReconfigure = ability ? !!ability.isReconfigure : oracleText.includes('reconfigure');
+  const out = { ...none, ability, abilityIdx: ability ? ability.index : abilityIdx, isFortify, isReconfigure };
+
+  const hasReconfigure = sourceAbilities.some(a => /^reconfigure\b/i.test(String(a).trim()));
+  if (sourceTypes.includes('Creature') && !hasReconfigure) {
+    return { ...out, blocked: isFortify
+      ? 'This Fortification is currently a creature and cannot fortify a land. (Rules 301.6 and 704.5p)'
+      : 'This Equipment is currently a creature and cannot equip another creature. (Rules 301.5c and 704.5p)' };
+  }
+
+  // The current target: the Equipment's own effects, or the synthetic tracker.
+  const existingDirectEff = Battlefield.effects.find(e => e.sourceId === permId && e.requiresCreatureTarget && !e._isEquipTargetEff && !e.disabled);
+  const existingSynth = Battlefield.effects.find(e => e.sourceId === permId && e._isEquipTargetEff);
+  out.currentTarget = (existingDirectEff?.targetId || existingSynth?.targetId) || null;
+
+  // For Aura-Equipment hybrids, the equip target must also satisfy the Enchant restriction.
+  const auraRestriction = Battlefield.effects.find(e => e.sourceId === permId && e.auraRestriction)?.auraRestriction
+    || perm._auraRestriction;
+  const words = _equipTargetWords(ability, isFortify, perm);
+  out.targetWords = words;
+  const restriction = _equipTargetRestriction(words);
+  const typeWanted = isFortify ? 'Land' : 'Creature';
+
+  for (const p of Battlefield.permanents) {
+    if (p.isManualEffect || p.isSpell || p.id === permId) continue;
+    const fs = finalStates.get(p.id);
+    const tCtrl = p.controller || p.owner || 'player_0';
+    if (tCtrl !== sourceCtrl) continue;
+    const tState = {
+      types: fs ? (fs.types || []) : (p.printedTypes || []),
+      supertypes: fs ? (fs.supertypes || []) : (p.printedSupertypes || []),
+      subtypes: fs ? (fs.subtypes || []) : (p.printedSubtypes || []),
+      colors: fs ? (fs.colors || []) : (p.printedColors || []),
+      isAllCreatureTypes: fs ? !!fs.isAllCreatureTypes : false,
+    };
+    if (restriction) {
+      if (!restriction(_restrictionState(tState, fs, p), finalStates, sourceCtrl)) continue;
+    } else if (!tState.types.includes(typeWanted)) continue;
+    if (auraRestriction && !auraRestriction(tState)) continue;
+    // A mutated permanent is equipped as its top card.
+    const stack = Battlefield.getStack(p.id);
+    if (stack && stack.length >= 2 && stack[0] !== p.id) continue;
+    if (_hasKeywordAbility(fs ? (fs.abilities || []) : [], 'shroud')) continue;
+    if (typeof _isProtectedFromSource === 'function' && _isProtectedFromSource(fs || tState, sourceFs, perm, p)) continue;
+    out.candidates.push({ id: p.id, perm: p, state: fs || tState, displayName: _targetPickerName(p, fs, true) });
+  }
+  return out;
 }
 
 /* ===== Exchange control of two targets =====

@@ -119,6 +119,23 @@ function _parseGrantedGlobalAbilities(permanent, effects) {
       const kwText = haveInAbility[2].replace(/[,.]$/, '').trim();
       const grantedKws = _parseSimpleKeywordList(kwText);
       if (grantedKws.length === 0) continue;
+      // 'Equipped creature … has "This creature has hexproof …"' (Giant's Amulet): "this creature"
+      // is the one the grant is on - eff's target - and no other. Its self-reference filter let the
+      // keyword reach every permanent on the board, attached or not.
+      if (/^this (?:creature|permanent|token)$/i.test(filterText) && eff.scope === 'targeted' && !eff.selfTarget) {
+        const bearerFn = (p, allStates) => !!(allStates && eff.targetId && allStates.get(eff.targetId) === p);
+        for (const kw of grantedKws) {
+          toAdd.push({
+            id: `${sid}_eff_granted_${toAdd.length}c`,
+            layer: '6', type: EFFECT_TYPE.ADD_ABILITY,
+            params: { ability: kw }, appliesTo: bearerFn, scope: 'global', affectsSelf: false,
+            sourceId: sid, sourceName: cardName, timestamp: ts,
+            desc: `${filterText} has ${kw} (from granted ability). Applies to: the permanent with the ability`,
+            asLongAsCondition: eff.asLongAsCondition,
+          });
+        }
+        continue;
+      }
       // A fired ability that gives one permanent the quoted ability ('This creature gains "Other
       // creatures you control have indestructible."' — Tenth District Hero): it works for as
       // long as that permanent has it, and "other" leaves that permanent out.

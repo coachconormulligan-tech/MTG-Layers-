@@ -1611,7 +1611,8 @@ function _buildAppliesToFromTextInner(filterText) {
   }
   // "enchanted creature" and "equipped creature" are targeted (apply to attached permanent, not self)
   // Matches any "enchanted/equipped [optional-non-prefix] [type-word]" pattern
-  if (/^(?:equipped|enchanted)\s+(?:non\w+\s+)?(?:creature|permanent|land|artifact|enchantment|planeswalker|battle|vehicle)$/.test(f)) {
+  // ("Fortified land has indestructible" - Darksteel Garrison: the land the Fortification is on.)
+  if (/^(?:equipped|enchanted|fortified)\s+(?:non\w+\s+)?(?:creature|permanent|land|artifact|enchantment|planeswalker|battle|vehicle)$/.test(f)) {
     return { fn: () => true, desc: `Applies to: ${f}`, isSelf: false, isTargeted: true };
   }
 
@@ -1723,7 +1724,11 @@ function _buildAppliesToFromTextInner(filterText) {
   // Also handles lists of creature subtypes ("Pests, Bats, Insects, Snakes, and Spiders") and
   // lists of land subtypes — the comma is the OR signal.
   if (f.includes(',')) {
-    const _commaParts = f.split(/,\s*(?:and\s+)?|\s+and\s+/).map(s => s.trim()).filter(Boolean);
+    const _commaParts = f.split(/,\s*(?:and\s+|or\s+)?|\s+and\s+/).map(s => s.trim()).filter(Boolean);
+    // "Shaman, Warlock, or Wizard creature" (Robe of the Archmagi): ", or" ends the list as ", and"
+    // does, and a trailing "creature" is the noun of every subtype in it.
+    const _lastSub = _commaParts.length >= 2 && /,\s*or\s+/.test(f) ? _commaParts[_commaParts.length - 1].match(/^([a-z'-]+)\s+creatures?$/) : null;
+    if (_lastSub && !normalizeTypeWord(_lastSub[1])) _commaParts[_commaParts.length - 1] = _lastSub[1];
     if (_commaParts.length >= 2) {
       const _commaTypeInfos = _commaParts.map(p => {
         const info = normalizeTypeWord(p);
@@ -2068,6 +2073,8 @@ function _buildAppliesToFromTextInner(filterText) {
       requiredTraits.push('Enchanted');
     } else if (word === 'equipped') {
       requiredTraits.push('Equipped');
+    } else if (word === 'fortified') {
+      requiredTraits.push('Fortified');
     } else if (word === 'tapped') {
       requireTapped = true;
     } else if (word === 'untapped') {

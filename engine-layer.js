@@ -590,11 +590,16 @@ function _evaluateBoard(allPermanents, allEffects, tracedIds, permanent) {
     if (srcSubs.includes('Aura') && !targetState.traits.includes('Enchanted')) {
       targetState.traits.push('Enchanted');
     }
+    // A Fortification's land is fortified, not equipped ("Fortified land has indestructible" -
+    // Darksteel Garrison).
+    if (srcSubs.includes('Fortification') && !targetState.traits.includes('Fortified')) {
+      targetState.traits.push('Fortified');
+    }
     // Synthetic equip-tracking effects (_isEquipTargetEff) are created when the user activates
     // an equip/reconfigure/fortify ability. The source may have gained Equipment subtype via a
     // Layer 4 effect (e.g. Armed with Proof making Clues Equipment), so printedSubtypes alone
     // is not sufficient. Mark the target Equipped whenever an explicit equip activation is present.
-    if (eff._isEquipTargetEff && !targetState.traits.includes('Equipped')) {
+    if (eff._isEquipTargetEff && !srcSubs.includes('Fortification') && !targetState.traits.includes('Equipped')) {
       targetState.traits.push('Equipped');
     }
   }

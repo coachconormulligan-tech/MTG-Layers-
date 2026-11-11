@@ -126,6 +126,20 @@ function targetCandidateLists() {
     if (!pk || (pk.kind !== 'single' && pk.kind !== 'multi')) continue;
     out.push({ perm: p.name + (p.label ? ' ' + p.label : ''), kind: pk.kind, candidates: listNames(getTargetCandidates(p.id, pk)) });
   }
+  // The Equip / Reconfigure / Fortify pop-up's list for each such ability of a permanent
+  // (getEquipCandidates): "kind": "equip", "equip" k = its k-th such ability (0-based, in text
+  // order: Robe of the Archmagi's "Equip Shaman, Warlock, or Wizard {1}" is 1). A blocked list
+  // (an Equipment that is a creature, CR 301.5c) is empty.
+  for (const p of Battlefield.permanents) {
+    if (p.isManualEffect || p.isSpell) continue;
+    const fs = finalStates.get(p.id);
+    const eq = Battlefield.extractActivatedAbilities((fs && fs.abilities) || []).filter(a => a.isEquip || a.isReconfigure || a.isFortify);
+    eq.forEach((a, k) => {
+      const r = getEquipCandidates(p.id, a.index);
+      out.push({ perm: p.name + (p.label ? ' ' + p.label : ''), kind: 'equip', equip: k, line: a.fullText,
+        candidates: r.blocked ? [] : r.candidates.map(c => c.perm.name + (c.perm.label ? ' ' + c.perm.label : '')).sort() });
+    });
+  }
   // The exchange-control modal's two lists (getExchangeControlCandidates): "slot" "a", and "b" as
   // narrowed by the current Permanent A, if any. "Exchange control of this creature and target
   // creature …" (Gilded Drake) has only "b", A being the source.

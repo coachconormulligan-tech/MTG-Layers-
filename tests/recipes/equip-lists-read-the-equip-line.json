@@ -1,0 +1,202 @@
+{
+  "name": "Equip lists read the Equip line; Fortified land, Giant's Amulet, Eater of Virtue, Luxior",
+  "notes": "Memory: project_audit_equip_2026-11-11. extractActivatedAbilities read only 'Equip {cost}', so 'Equip legendary creature {1}', 'Equip Knight {1}', 'Equip planeswalker {1}', 'Equip—Pay 3 life.', 'Equip {2} or {B}' and 'Equip {3}. This ability costs …' were no ability at all (46 lines); they are now, with equipQuality, and the pop-up's list (getEquipCandidates, lifted out of openEquipModal) reads the quality as 'target <quality> creature you control' ('Shaman, Warlock, or Wizard': the comma-list reader now ends a list at ', or'; 'worthy' from Mjolnir's reminder text). Eater of Virtue and Bride's Gown / Groom's Finery lost 'Equip {N}' from their abilities: a normaliser moved a sentence onto a new line mid-text, shifting the conditional-line indices; the moved sentences now go at the end. 'Fortified land has indestructible' was a global effect on lands with an 'Equipped' trait; the land is now Fortified and the effect targeted. Giant's Amulet's quoted 'This creature has hexproof' gave every permanent hexproof. Luxior's planeswalker kept the Planeswalker type (setTarget and requiresCreatureTarget refused a non-creature).",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Prodigal Sorcerer",
+      "as": "sorcerer"
+    },
+    {
+      "add": "Prodigal Sorcerer",
+      "as": "oppSorcerer",
+      "controller": "p2"
+    },
+    {
+      "add": "Tel-Jilad Chosen",
+      "as": "chosen"
+    },
+    {
+      "add": "Argothian Enchantress",
+      "as": "enchantress"
+    },
+    {
+      "add": "Gladecover Scout",
+      "as": "scout"
+    },
+    {
+      "add": "Isamaru, Hound of Konda",
+      "as": "isamaru"
+    },
+    {
+      "add": "Jace Beleren",
+      "as": "jace"
+    },
+    {
+      "add": "Forest",
+      "as": "forest"
+    },
+    {
+      "add": "Robe of the Archmagi",
+      "as": "robe"
+    },
+    {
+      "add": "Ace's Baseball Bat",
+      "as": "bat"
+    },
+    {
+      "add": "Mjölnir, Hammer of Thor",
+      "as": "mjolnir"
+    },
+    {
+      "add": "Giant's Amulet",
+      "as": "amulet"
+    },
+    {
+      "add": "Eater of Virtue",
+      "as": "eater"
+    },
+    {
+      "add": "Darksteel Garrison",
+      "as": "garrison"
+    },
+    {
+      "call": [
+        "applyEquipAttachment",
+        "@garrison",
+        2,
+        "@forest"
+      ]
+    },
+    {
+      "add": "Luxior, Giada's Gift",
+      "as": "luxior"
+    },
+    {
+      "call": [
+        "applyEquipAttachment",
+        "@luxior",
+        2,
+        "@jace"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "targetCandidates": {
+        "perm": "Robe of the Archmagi",
+        "kind": "equip",
+        "equip": 0
+      },
+      "are": [
+        "Gladecover Scout",
+        "Grizzly Bears",
+        "Isamaru, Hound of Konda",
+        "Jace Beleren",
+        "Prodigal Sorcerer"
+      ]
+    },
+    {
+      "targetCandidates": {
+        "perm": "Robe of the Archmagi",
+        "kind": "equip",
+        "equip": 1
+      },
+      "are": [
+        "Prodigal Sorcerer"
+      ]
+    },
+    {
+      "targetCandidates": {
+        "perm": "Ace's Baseball Bat",
+        "kind": "equip",
+        "equip": 0
+      },
+      "are": [
+        "Isamaru, Hound of Konda",
+        "Jace Beleren"
+      ]
+    },
+    {
+      "targetCandidates": {
+        "perm": "Mjölnir, Hammer of Thor",
+        "kind": "equip",
+        "equip": 0
+      },
+      "are": [
+        "Isamaru, Hound of Konda"
+      ]
+    },
+    {
+      "targetCandidates": {
+        "perm": "Eater of Virtue",
+        "kind": "equip",
+        "equip": 0
+      },
+      "are": [
+        "Gladecover Scout",
+        "Grizzly Bears",
+        "Isamaru, Hound of Konda",
+        "Jace Beleren",
+        "Prodigal Sorcerer"
+      ]
+    },
+    {
+      "targetCandidates": {
+        "perm": "Darksteel Garrison",
+        "kind": "equip",
+        "equip": 0
+      },
+      "are": [
+        "Forest"
+      ]
+    },
+    {
+      "perm": "Forest",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Indestructible"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Hexproof"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Isamaru, Hound of Konda",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Hexproof"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Jace Beleren",
+      "final": {
+        "types": [
+          "Creature"
+        ]
+      }
+    }
+  ]
+}

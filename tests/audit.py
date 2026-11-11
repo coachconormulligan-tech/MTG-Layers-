@@ -79,6 +79,18 @@ parse produced no targeted effect, so there is no picker to audit - the sweep al
 carry a reason code, and the report counts them; a phrase the interpreter does not know is listed
 under "Phrases not understood" so the vocabulary can be grown on purpose.
 
+An Equipment's "Equip [quality] {cost}", "Reconfigure" or "Fortify" line is a unit of its own (kind
+"equip", auditEquip in tests/audit.js), read by the audit: "Equip" is a creature you control, "Equip
+[quality]" a [quality] creature you control (a quality naming a card type is that type; one defined in
+the reminder text, Mjolnir's "worthy", is read from the definition), Reconfigure another creature you
+control, Fortify a land you control. On the board plus witnesses only this unit sees (your hexproof,
+shroud, protection from artifacts / the Equipment's colour / another colour, creature token, commander,
+planeswalker, a creature of each subtype the quality names), the list of getEquipCandidates (what the
+Equip pop-up shows) must be what the line allows less the Equipment, shroud and protection from it;
+hexproof stays. Findings: equip-not-detected, single-picker-shown, empty-list, list-mismatch, blocked,
+creature-equip-not-blocked (CR 301.5c / 704.5p, also tried with the Equipment made an artifact
+creature), changes-with-no-target, target-changes-others, attach-changes-nothing, grant-not-applied.
+
 Results: tests/audit/report.md, tests/audit/clusters.json; raw results are cached in
 ~/Library/Caches/layer-inspector/audit-raw.jsonl.gz. Clusters are sorted by the best (lowest) EDHREC
 rank among their cards, then by size. No network. tests/audit.js does the work; this file selects

@@ -303,29 +303,37 @@ const Battlefield = {
                       isSaddle: true, saddleN: parseInt(saddleMatch[1], 10), options: null });
         continue;
       }
-      // Detect Equip {cost} keyword (no colon in keyword shorthand)
-      // Use ((?:\{[^}]+\})+|\d+) to handle multi-symbol costs like {1}{W}
-      const equipMatch = stripped.match(/^Equip(?:\s+—\s+[^{]+)?\s*((?:\{[^}]+\})+|\d+)\.?\s*$/i);
+      // Detect the Equip keyword (no colon in keyword shorthand): "Equip {1}{W}", "Equip {2} or {B}",
+      // "Equip—Pay 3 life.", "Equip {3}. This ability costs {1} less …", and "Equip [quality] {cost}"
+      // (CR 702.6a: "Equip legendary creature {3}", "Equip Knight {1}", "Equip planeswalker {1}"),
+      // whose quality is kept as equipQuality for the equip list (getEquipCandidates). Not "Equip
+      // abilities you activate cost {1} less" or "Equip costs you pay cost {1} less".
+      // ("Equip—Pay 3 life." is matched before the ability-word strip above, which takes "Equip—" for one.)
+      const eqLine = /^(?:Equip|Reconfigure|Fortify)\s*—/i.test(ab.trim()) ? ab.trim().replace(/\s*\([^)]*\)\s*$/, '') : stripped;
+      const equipMatch = eqLine.match(/^Equip(?:\s+(?!abilities\b|costs?\b)([A-Za-z][A-Za-z ,'’-]*?))?\s*(—\s*[^.]+|(?:\{[^}]+\})+(?:\s+or\s+(?:\{[^}]+\})+)?|\d+)\.?(?:\s+(.+))?$/i);
       if (equipMatch) {
-        result.push({ index: i, fullText: ab, effectText: stripped, costText: equipMatch[1],
+        const cost = equipMatch[2].replace(/^—\s*/, '');
+        result.push({ index: i, fullText: ab, effectText: stripped, costText: cost,
                       activateLimit: null, isMonstrosity: false, monstrosityN: 0,
-                      isEquip: true, equipCost: equipMatch[1], options: null });
+                      isEquip: true, equipCost: cost, equipQuality: equipMatch[1] ? equipMatch[1].trim() : null, options: null });
         continue;
       }
-      // Detect Reconfigure {cost} keyword
-      const reconfigureMatch = stripped.match(/^Reconfigure\s+((?:\{[^}]+\})+|\d+)\.?\s*$/i);
+      // Detect Reconfigure {cost} keyword ("Reconfigure—Pay {2} or {E}{E}{E}." too)
+      const reconfigureMatch = eqLine.match(/^Reconfigure\s*(—\s*[^.]+|(?:\{[^}]+\})+|\d+)\.?(?:\s+(.+))?$/i);
       if (reconfigureMatch) {
-        result.push({ index: i, fullText: ab, effectText: stripped, costText: reconfigureMatch[1],
+        const cost = reconfigureMatch[1].replace(/^—\s*/, '');
+        result.push({ index: i, fullText: ab, effectText: stripped, costText: cost,
                       activateLimit: null, isMonstrosity: false, monstrosityN: 0,
-                      isReconfigure: true, reconfigureCost: reconfigureMatch[1], options: null });
+                      isReconfigure: true, reconfigureCost: cost, options: null });
         continue;
       }
       // Detect Fortify {cost} keyword (like Equip but for Fortifications attaching to lands)
-      const fortifyMatch = stripped.match(/^Fortify\s+((?:\{[^}]+\})+|\d+)\.?\s*$/i);
+      const fortifyMatch = eqLine.match(/^Fortify\s*(—\s*[^.]+|(?:\{[^}]+\})+|\d+)\.?(?:\s+(.+))?$/i);
       if (fortifyMatch) {
-        result.push({ index: i, fullText: ab, effectText: stripped, costText: fortifyMatch[1],
+        const cost = fortifyMatch[1].replace(/^—\s*/, '');
+        result.push({ index: i, fullText: ab, effectText: stripped, costText: cost,
                       activateLimit: null, isMonstrosity: false, monstrosityN: 0,
-                      isFortify: true, fortifyCost: fortifyMatch[1], options: null });
+                      isFortify: true, fortifyCost: cost, options: null });
         continue;
       }
       const colonIdx = stripped.indexOf(':');
@@ -2284,7 +2292,7 @@ const Battlefield = {
           ? { types: fs.types || [], supertypes: fs.supertypes || [], subtypes: fs.subtypes || [], colors: fs.colors || [], isAllCreatureTypes: fs.isAllCreatureTypes }
           : { types: target.printedTypes || [], supertypes: target.printedSupertypes || [], subtypes: target.printedSubtypes || [] };
         const validAsAura = !auraR || auraR(tState);
-        const validAsEquip = !isEquipment || tState.types.includes('Creature');
+        const validAsEquip = !isEquipment || tState.types.includes('Creature') || _equipMayBeOnNonCreature(this.getPermById(effectSourceId), tState.types);
         if (auraR && isEquipment) {
           // Dual: accept if valid for either attachment type
           if (!validAsAura && !validAsEquip) return;

@@ -777,7 +777,7 @@ function activatedPlans(permId, a) {
   }
   if (a.isMonstrosity) return [{ skip: 'monstrosity' }];            // fireActivatedAbility adds a trait only
   if (a.isCrew || a.isSaddle) return [{ skip: 'crew-saddle' }];     // applyCrew / applySaddle
-  if (a.isEquip || a.isReconfigure || a.isFortify) return [{ skip: 'equip' }];   // openEquipModal
+  if (a.isEquip || a.isReconfigure || a.isFortify) return [];   // openEquipModal: a unit of auditEquip
   // fireActivatedAbility: "or" options -> openActivateOptionsPopup -> _chooseActivateOption, which calls
   // addActivatedAbility(permId, idx, option, a.fullText, finalStates) with freshly read final states.
   if (a.options && a.options.length >= 2) {
@@ -1617,18 +1617,19 @@ function auditProtectedFrom(st, aura) {
 
 // "Enchanted creature gets +2/+2" / "Enchanted creature has flying and vigilance", on its own and
 // with nothing that makes it depend on the board: attaching must show more than the Enchanted trait.
-function plainEnchantedGrant(text) {
+function plainEnchantedGrant(text, word) {
+  const w = word || 'enchanted';
   for (const s of String(text).replace(/’/g, "'").split(/(?<=\.)\s+|\n/)) {
     const l = s.toLowerCase().trim();
-    if (!/^enchanted (?:creature|permanent|land|artifact|planeswalker) /.test(l)) continue;
+    if (!new RegExp('^' + w + ' (?:creature|permanent|land|artifact|planeswalker) ').test(l)) continue;
     if (/\b(?:as long as|if|for each|where x|equal to|during|unless|for as long|x\/|\/x|chosen|as though)\b/.test(l)) continue;
     let m;
-    if ((m = l.match(/^enchanted \w+ gets ([+-]\d+)\/([+-]\d+)\.?$/)) && (+m[1] || +m[2])) return { pt: [+m[1], +m[2]] };
-    if ((m = l.match(/^enchanted \w+ (?:has|gains) ([a-z ,]+?)\.?$/))) {
+    if ((m = l.match(new RegExp('^' + w + ' \\w+ gets ([+-]\\d+)/([+-]\\d+)\\.?$'))) && (+m[1] || +m[2])) return { pt: [+m[1], +m[2]] };
+    if ((m = l.match(new RegExp('^' + w + ' \\w+ (?:has|gains) ([a-z ,]+?)\\.?$')))) {
       const kws = m[1].split(/\s*,\s*(?:and\s+)?|\s+and\s+/).map(k => k.trim()).filter(Boolean);
       if (kws.length && kws.every(k => KEYWORD_SET.has(k))) return { kws };
     }
-    if ((m = l.match(/^enchanted \w+ gets ([+-]\d+)\/([+-]\d+) and has ([a-z ,]+?)\.?$/))) {
+    if ((m = l.match(new RegExp('^' + w + ' \\w+ gets ([+-]\\d+)/([+-]\\d+) and has ([a-z ,]+?)\\.?$')))) {
       const kws = m[3].split(/\s*,\s*(?:and\s+)?|\s+and\s+/).map(k => k.trim()).filter(Boolean);
       if (kws.every(k => KEYWORD_SET.has(k))) return { pt: [+m[1], +m[2]], kws };
     }
@@ -1766,6 +1767,254 @@ function auditAttach(card, faceIndex, rec, face) {
   rec.units.push(u);
 }
 
+/* ═════════════════════════ Equipment: the equip list ═════════════════════════
+   "Equip {cost}", "Equip [quality] {cost}", "Reconfigure {cost}" and "Fortify {cost}" are each a
+   unit ("equip"), read from the line itself by the audit: CR 702.6a "Equip" is "Attach to target
+   creature you control", "Equip [quality]" is "target [quality] creature you control" (a quality
+   that names a card type is that type: "Equip planeswalker"), CR 702.151a Reconfigure is "another
+   target creature you control", CR 702.67a Fortify "target land you control". A quality the card
+   defines in its reminder text ("Equip worthy {1} (A creature is worthy if it's a legendary
+   non-Villain that's red and/or white.)") is read from that definition. The site's list is
+   getEquipCandidates (cards-targeting.js), which the Equip pop-up renders, on a board of its own:
+   the fixed board plus the witnesses below. Check 2: the site reads the line as an equip ability
+   (equip-not-detected), shows no other picker for it (single-picker-shown), and lists what the
+   line allows, less the Equipment itself, shroud and protection from the Equipment (CR 702.16c);
+   hexproof does not keep a permanent you control out. An Equipment or Fortification that is a
+   creature can't equip unless it has reconfigure (CR 301.5c, 704.5p): the list must then be
+   blocked (creature-equip-not-blocked), and it is also tried with the Equipment made an artifact
+   creature. Check 1: unattached, the Equipment changes no permanent; attached (applyEquipAttachment,
+   as the pop-up's Apply does) to each listed permanent it changes that permanent and no other; a
+   plain "Equipped creature gets +N/+N / has <keywords>" must show more than the Equipped trait. */
+
+const EQUIP_LINE_RE = /^(Equip|Reconfigure|Fortify)(?:\s+(?!abilities\b|costs?\b)([a-z][a-z ,'’-]*?))?\s*(?:—|\{|\d)/i;
+function equipLines(rawText) {
+  const out = [];
+  for (const raw of String(rawText || '').split('\n')) {
+    const line = stripReminder(raw);
+    const m = line.match(EQUIP_LINE_RE);
+    if (!m) continue;
+    const kind = m[1].toLowerCase();
+    if (kind !== 'equip' && m[2]) continue;
+    out.push({ kind, quality: kind === 'equip' && m[2] ? m[2].trim().toLowerCase() : null, line, raw: raw.trim() });
+  }
+  return out;
+}
+
+// The phrase after "target" the line stands for, by the audit's own reading, and a test for a
+// quality the reminder text defines. { phrase, extra(st, p) | null, excludeSource }.
+function equipPhrase(el) {
+  if (el.kind === 'fortify') return { phrase: 'land you control' };
+  if (el.kind === 'reconfigure') return { phrase: 'creature you control', excludeSource: true };
+  if (!el.quality) return { phrase: 'creature you control' };
+  const def = el.raw.replace(/’/g, "'").match(/\(a (?:creature|permanent) is ([a-z]+) if it's an? ([^)]+?)\.?\)/i);
+  if (def && def[1].toLowerCase() === el.quality) {
+    // "a legendary non-Villain that's red and/or white": the words before "that's", and its colours.
+    const m = def[2].toLowerCase().match(/^(.+?) that's ((?:white|blue|black|red|green)(?:(?:,\s*|\s+and\/or\s+|\s+or\s+)(?:white|blue|black|red|green))*)$/);
+    if (m) {
+      const cols = m[2].split(/,\s*|\s+and\/or\s+|\s+or\s+/).map(c => COLOR_CODES[c]);
+      return { phrase: m[1] + ' creature you control', extra: (st) => stateColors(st).some(c => cols.includes(c)), defined: def[2] };
+    }
+    return { phrase: def[2].toLowerCase() + (/\b(?:creature|planeswalker)\b/.test(def[2].toLowerCase()) ? '' : ' creature') + ' you control', defined: def[2] };
+  }
+  const hasNoun = el.quality.split(/[\s,]+/).some(w => PERMANENT_NOUNS.has(w));
+  return { phrase: el.quality + (hasNoun ? '' : ' creature') + ' you control' };
+}
+
+function equipWitnesses(colors, lines) {
+  const mk = (name, typeLine, text, wColors, controller, role, extra) => Object.assign({ role, controller, card: {
+    name, layout: 'normal', type_line: typeLine, oracle_text: text, mana_cost: '{2}', cmc: 2,
+    power: /Creature/.test(typeLine) ? '2' : undefined, toughness: /Creature/.test(typeLine) ? '2' : undefined,
+    loyalty: /Planeswalker/.test(typeLine) ? '3' : undefined, colors: wColors, color_identity: wColors, keywords: [] } }, extra || {});
+  const out = [
+    mk('Audit Warded Elemental', 'Creature — Elemental', 'Hexproof', ['G'], 'p1', 'your hexproof creature'),
+    mk('Audit Shrouded Elemental', 'Creature — Elemental', 'Shroud', ['G'], 'p1', 'your shroud creature'),
+    mk('Audit Rustproof Elemental', 'Creature — Elemental', 'Protection from artifacts', ['G'], 'p1', 'your creature with protection from artifacts'),
+    mk('Audit Elemental Token', 'Token Creature — Elemental', '', ['G'], 'p1', 'your creature token', { token: true }),
+    mk('Audit Commander', 'Legendary Creature — Elemental', '', ['G'], 'p1', 'your commander', { commander: true }),
+    mk('Audit Planeswalker', 'Legendary Planeswalker — Audit', '', ['G'], 'p1', 'your planeswalker'),
+  ];
+  const own = AURA_COLOR_ORDER.find(c => colors.includes(c));
+  const other = AURA_COLOR_ORDER.find(c => !colors.includes(c));
+  if (own) out.push(mk('Audit Warded Spirit', 'Creature — Spirit', 'Protection from ' + COLOR_NAME[own], ['G'], 'p1', "your creature with protection from the Equipment's colour"));
+  if (other) out.push(mk('Audit Bright Spirit', 'Creature — Spirit', 'Protection from ' + COLOR_NAME[other], ['G'], 'p1', 'your creature with protection from another colour'));
+  // A creature of each subtype the quality names, one yours and one the opponent's.
+  const seen = new Set();
+  for (const el of lines) {
+    for (const w of String(el.quality || '').split(/[\s,]+/)) {
+      if (!w || w === 'or' || seen.has(w) || !subtypeWords().has(w) || PERMANENT_NOUNS.has(w)) continue;
+      seen.add(w);
+      out.push(mk('Audit ' + cap1(w), 'Creature — ' + cap1(w), '', ['G'], 'p1', 'your ' + w));
+      out.push(mk('Audit ' + cap1(w), 'Creature — ' + cap1(w), '', ['G'], 'p2', "opponent's " + w));
+    }
+    // A quality defined in the reminder text: a creature that is all of it and one that misses a part.
+    if (el.quality && equipPhrase(el).defined && !seen.has('(defined)')) {
+      seen.add('(defined)');
+      out.push(mk('Audit Worthy Hero', 'Legendary Creature — Human', '', ['R'], 'p1', 'your creature of the defined quality'));
+      out.push(mk('Audit Unworthy Villain', 'Legendary Creature — Human Villain', '', ['R'], 'p1', 'your Villain of the quality\'s colour'));
+      out.push(mk('Audit Pale Hero', 'Legendary Creature — Human', '', ['B'], 'p1', 'your legendary creature of another colour'));
+    }
+  }
+  return out;
+}
+
+function auditEquip(card, faceIndex, rec, face) {
+  const typeLine = face.type_line || card.type_line || '';
+  if (/\b(?:instant|sorcery)\b/i.test(typeLine)) return;
+  const lines = equipLines(face.oracle_text || '');
+  if (!lines.length) return;
+  const text = String(face.oracle_text || '').split('\n').map(stripReminder).filter(Boolean).join('\n');
+  const colors = (face.colors || card.colors || []).map(String);
+  let perm, ctx;
+  try {
+    buildBoard();
+    for (const e of equipWitnesses(colors, lines)) {
+      const c = e.controller === 'p2' ? Battlefield.players[1].id : 'player_0';
+      Battlefield.activePlayerId = c;
+      const p = Battlefield.addPermanent(JSON.parse(JSON.stringify(e.card)), { suppressPrompt: true, controller: c, owner: c, isToken: !!e.token });
+      roleOf.set(p.id, e.role);
+      // A commander on the battlefield is one its owner's command zone links to (isCommander).
+      if (e.commander) Battlefield.players[0].commanders.push({ card: null, name: p.name, imageUri: null, castCount: 0, linkedPermId: p.id });
+    }
+    Battlefield.activePlayerId = 'player_0';
+    Battlefield._invalidate();
+    const beforeEquip = summarizeBoard();
+    perm = addAuditedCard(card, faceIndex, false);
+    roleOf.set(perm.id, 'source');
+    const preStates = Battlefield.getAllFinalStates();
+    const before = summarizeBoard();
+    const universe = Battlefield.permanents.filter(p => !p.isManualEffect && !p.isSpell);
+    ctx = { cardName: rec.name, sourceCtrl: 'player_0', sourceId: perm.id, preStates, before, beforeEquip, universe };
+  } catch (e) { rec.errors.push(errInfo('equip add', e)); return; }
+
+  // What else the text names besides the equipped permanent: a group ("Equipment you control",
+  // "other creatures you control get …").
+  const rest = text.split('\n').filter(l => !EQUIP_LINE_RE.test(l)).join('\n').replace(/["“][^"”]*["”]/g, 'QUOTED');
+  const restLower = rest.toLowerCase().replace(/’/g, "'");
+  const group = GROUP_WORDS.test(restLower) || /\b(?:creatures|permanents|lands|artifacts|equipment) (?:you control|your opponents control|an opponent controls)\b|\ball \w+s?\b|\beach (?:other )?\w+\b/.test(restLower);
+  const grant = plainEnchantedGrant(text, lines.some(l => l.kind === 'fortify') ? 'fortified' : 'equipped');
+
+  const fState = ctx.preStates.get(perm.id) || {};
+  let siteAbilities = [];
+  try { siteAbilities = Battlefield.extractActivatedAbilities(fState.abilities || []).filter(a => a.isEquip || a.isReconfigure || a.isFortify); }
+  catch (e) { rec.errors.push(errInfo('equip extract', e)); return; }
+  const used = new Set();
+
+  lines.forEach((el, li) => {
+    const u = { kind: 'equip', index: li, label: el.line.slice(0, 60), text: text.slice(0, 400), phrase: equipPhrase(el).phrase, findings: [], infos: [] };
+    const finding = (check, code, extra) => u.findings.push(Object.assign({ check, code }, extra || {}));
+    try {
+      // The site's ability for this line: same keyword, same words.
+      const norm = (s) => stripReminder(s).toLowerCase().replace(/[.\s]+$/, '');
+      const ab = siteAbilities.find(a => !used.has(a.index) && norm(a.fullText) === norm(el.line))
+        || siteAbilities.find(a => !used.has(a.index) && (el.kind === 'equip' ? a.isEquip : el.kind === 'fortify' ? a.isFortify : a.isReconfigure) && norm(a.fullText).startsWith(norm(el.line).split(/\s*[{—]/)[0]));
+      u.mixed = { source: false, group };
+      if (!ab) { finding('check2', 'equip-not-detected', { line: el.line }); return; }
+      used.add(ab.index);
+      u.abilityIndex = ab.index;
+
+      // Check 1: unattached, nothing changes.
+      const noTarget = diffSummaries(ctx.beforeEquip, ctx.before);
+      u.check1 = { noTarget: noTarget.map(c => ({ role: c.role, what: c.what })), perTarget: [] };
+      if (!group && noTarget.length) finding('check1', 'changes-with-no-target', { changed: u.check1.noTarget });
+
+      // Check 2: no other picker for it, and the list.
+      const finalStates = Battlefield.getAllFinalStates();
+      const isAura = /\bAura\b/.test(typeLine);
+      const pk = getTargetPickerKind(perm.id, finalStates.get(perm.id));
+      u.pickerKind = 'equip';
+      if (!isAura && pk.kind !== 'none') finding('check2', 'single-picker-shown', { kind: pk.kind });
+      const srcSt = finalStates.get(perm.id) || {};
+      const isCreature = hasCI(srcSt.types, 'creature');
+      const hasReconfigure = lines.some(l => l.kind === 'reconfigure');
+      let r = null;
+      try { r = getEquipCandidates(perm.id, ab.index); } catch (e) { finding('check2', 'crash', { error: errInfo('equip candidates', e) }); return; }
+      if (isCreature && !hasReconfigure) {
+        u.expectBlocked = true;
+        if (!r.blocked) finding('check2', 'creature-equip-not-blocked', { listed: rolesOf(r.candidates.map(c => c.id)) });
+        else u.blocked = r.blocked;
+        return;
+      }
+      if (r.blocked) { u.blocked = r.blocked; finding('check2', 'blocked', { what: r.blocked }); return; }
+      const siteIds = r.candidates.map(c => c.id);
+      u.actual = rolesOf(siteIds);
+      u.siteWords = r.targetWords;
+
+      const ep = equipPhrase(el);
+      const interp = interpretPhrase(ep.phrase, { before: '' });
+      let expectedIds = null;
+      if (interp.unknown) u.phraseUnknown = interp.unknown;
+      else {
+        expectedIds = [];
+        const unjudged = [];
+        for (const p of ctx.universe) {
+          if (p.id === perm.id) continue;                 // CR 301.5c: not itself
+          const st = ctx.preStates.get(p.id);
+          if (!st || !interp.test(st, p, ctx) || (ep.extra && !ep.extra(st, p))) continue;
+          if (keywordsOf(st).includes('shroud')) continue;
+          const prot = auditProtectedFrom(st, srcSt);
+          if (prot === null) { unjudged.push(p.id); continue; }
+          if (prot) continue;
+          expectedIds.push(p.id);
+        }
+        u.expected = rolesOf(expectedIds);
+        const judged = (x) => !unjudged.includes(x);
+        const missing = expectedIds.filter(x => !siteIds.includes(x)), extra = siteIds.filter(x => judged(x) && !expectedIds.includes(x));
+        if (!siteIds.length && expectedIds.length) finding('check2', 'empty-list', { missing: rolesOf(missing), extra: [] });
+        else if (missing.length || extra.length) finding('check2', 'list-mismatch', { missing: rolesOf(missing), extra: rolesOf(extra) });
+      }
+
+      // Check 1: attached to each listed permanent (or, with an empty list, each one the line allows).
+      const tryIds = siteIds.length ? siteIds : (expectedIds || []);
+      u.check1.via = siteIds.length ? 'picker' : 'text';
+      const othersSeen = [], noOp = [], traitOnly = [];
+      for (const tid of tryIds.slice(0, 16)) {
+        let changed = [];
+        try {
+          withRestore(() => {
+            Battlefield.applyEquipAttachment(perm.id, ab.index, tid);   // applyEquipModal
+            Battlefield._invalidate();
+            changed = diffSummaries(ctx.before, summarizeBoard());
+          });
+        } catch (e) { finding('check1', 'crash', { error: errInfo('equip', e) }); break; }
+        const role = roleName(tid);
+        u.check1.perTarget.push({ target: role, changed: changed.map(c => ({ role: c.role, what: c.what })) });
+        const mine = changed.find(c => c.id === tid);
+        if (!mine) noOp.push(role);
+        else if (grant && /^traits \+(?:Equipped|Fortified)$/.test(mine.what)) {
+          const st = ctx.preStates.get(tid);
+          if (grant.pt || !(grant.kws || []).every(k => hasKeyword(st, k))) traitOnly.push(role);
+        }
+        // (The Equipment itself may change: a reconfigured one stops being a creature.)
+        const others = group ? [] : changed.filter(c => c.id !== tid && c.id !== perm.id);
+        if (others.length) othersSeen.push({ target: role, others: others.map(c => ({ role: c.role, what: c.what })) });
+      }
+      if (othersSeen.length) finding('check1', 'target-changes-others', { examples: othersSeen.slice(0, 3), count: othersSeen.length });
+      if (noOp.length) finding('check1', 'attach-changes-nothing', { roles: noOp });
+      if (traitOnly.length) finding('check1', 'grant-not-applied', { roles: traitOnly, what: grant.pt ? 'gets ' + grant.pt.join('/') : 'has ' + grant.kws.join(', ') });
+
+      // CR 301.5c / 704.5p: made an artifact creature (as Bludgeon Brawl or March of the Machines
+      // would), an Equipment without reconfigure can't equip.
+      if (!hasReconfigure) {
+        withRestore(() => {
+          Battlefield.effects.push({
+            id: perm.id + '_audit_animate', sourceId: perm.id, sourceName: perm.name, type: EFFECT_TYPE.ADD_TYPE, layer: '4',
+            params: { types: ['Artifact', 'Creature'] }, scope: 'targeted', selfTarget: false, targetId: perm.id,
+            timestamp: Battlefield.nextTimestamp++, ownerId: 'player_0', desc: 'Audit: this Equipment is an artifact creature.',
+            _autoTargetSource: true, isSpellEffect: true,
+          });
+          Battlefield._invalidate();
+          const st = Battlefield.getAllFinalStates().get(perm.id) || {};
+          if (!hasCI(st.types, 'creature')) { u.infos.push('animate-did-not-apply'); return; }
+          const r2 = getEquipCandidates(perm.id, ab.index);
+          u.asCreature = r2.blocked ? 'blocked' : rolesOf(r2.candidates.map(c => c.id));
+          if (!r2.blocked) finding('check2', 'creature-equip-not-blocked', { as: 'made an artifact creature', listed: u.asCreature });
+        });
+      }
+    } catch (e) { u.findings.push({ check: 'check2', code: 'crash', error: errInfo('equip audit', e) }); }
+    finally { Battlefield._invalidate(); rec.units.push(u); }
+  });
+}
+
 function auditFace(card, faceIndex) {
   const face = _resolveCardFace(card, faceIndex);
   const typeLine = face.type_line || card.type_line || '';
@@ -1854,6 +2103,9 @@ function auditFace(card, faceIndex) {
   /* An Aura's attach picker, on a board of its own (the last thing done with this face). */
   try { auditAttach(card, faceIndex, rec, face); }
   catch (e) { rec.errors.push(errInfo('attach', e)); }
+  /* An Equipment's equip lists, on a board of their own. */
+  try { auditEquip(card, faceIndex, rec, face); }
+  catch (e) { rec.errors.push(errInfo('equip', e)); }
   return rec;
 }
 

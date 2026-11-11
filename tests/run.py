@@ -24,7 +24,9 @@ Asserts are the hand-written facts the fixture exists to protect, checked on eve
         "slotted", "slot": 1 }, slots 0-based. Two modes of a modal spell picked together have a
         picker per mode, { "kind": "modal", "mode": 2 }, and a mode of up to N targets one per
         target, { "kind": "modal", "mode": 3, "pick": 1 }, both 0-based. An Aura on the
-        battlefield has the picker it is attached with: { "perm": "Pacifism" })
+        battlefield has the picker it is attached with: { "perm": "Pacifism" }. An Equipment's
+        Equip / Reconfigure / Fortify pop-up has a list per such ability, { "perm": "Robe of the
+        Archmagi", "kind": "equip", "equip": 1 }, 0-based in text order; empty when blocked)
 A recipe may carry "knownFailure": "reason" to mark an open bug whose asserts do not hold
 yet; it is reported but does not fail the run, and is flagged once it starts passing.
 Matching is partial: only the keys given are compared. Use { "$includes": [...] } or

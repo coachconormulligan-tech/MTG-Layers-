@@ -1230,8 +1230,16 @@ function parseCardEffects(permanent, card, opts = {}) {
   // "Equipped creature gets +2/+0. It gets an additional +0/+2 and has first strike as long as
   // an Equipment named Groom's Finery is attached to a creature you control." (Bride's Gown): a
   // second boost for the same creature, with a condition of its own. Conditions attach per
-  // line, so the sentence moves to a line of its own with its subject written out.
+  // line, so the sentence moves to a line of its own with its subject written out - at the end of
+  // the text, so that every later line keeps its index (Bride's Gown's "Equip {2}" was taken for
+  // the conditional line and left out of its abilities).
   if (isAuraCard || isEquipmentCard) {
+    const _movedBoosts = [];
+    oracle = oracle.replace(/(\.)[ \t]+It gets an additional ([+-][\dX]+\/[+-][\dX]+[^\n]*)/g, (m, dot, rest) => {
+      _movedBoosts.push(`${enchantedRef} gets ${rest}`);
+      return dot;
+    });
+    if (_movedBoosts.length) oracle = oracle.replace(/\s*$/, '') + '\n' + _movedBoosts.join('\n');
     oracle = oracle.replace(/(\.)\s+It gets an additional (?=[+-][\dX]+\/[+-][\dX]+)/g, `$1\n${enchantedRef} gets `);
   }
   // "… enchanted creature gets an additional +1/+0 and has first strike" (Zealot's Conviction):
@@ -1748,6 +1756,11 @@ function parseCardEffects(permanent, card, opts = {}) {
       'infect', 'prowess', 'intimidate'
     ];
     const _expSorted = [..._EXPANDABLE_KEYWORDS].sort((a, b) => b.length - a.length);
+    // The copies go on lines of their own at the END of the text: the base sentence keeps its
+    // line, and every later line keeps its index ("Equip {1}" after Eater of Virtue's "As long as
+    // a card exiled with this card has flying, … The same is true for …" was taken for a
+    // conditional line and left out of the card's abilities).
+    const _expandedLines = [];
     oracle = oracle.replace(
       /([^.\n]+?)\.\s*The same is true for\s+([^.\n]+?)\./gi,
       (match, baseSentence, listText) => {
@@ -1770,10 +1783,14 @@ function parseCardEffects(permanent, card, opts = {}) {
         if (hasProtectionItem && /\ba card exiled with\b/i.test(trimmedBase)) {
           items = items.filter(i => !/^protection$/i.test(i));
           const srcId = permanent.id;
+          // Whose the protection is: the base sentence's subject ("…, equipped creature has
+          // flying" - Eater of Virtue), else the card itself (Death-Mask Duplicant).
+          const _protSubj = trimmedBase.match(/,\s*((?:equipped|enchanted) (?:creature|permanent)) has\b/i);
+          const _protAppliesTo = _protSubj ? buildAppliesToFromText(_protSubj[1].toLowerCase()) : null;
           pushEff('6', EFFECT_TYPE.ADD_ABILITY,
             { protectionFromImprinted: true },
-            { isSelf: true, isTargeted: false, fn: null, selfAffect: true },
-            `${card.name} has each "Protection from X" of a card exiled with it.`,
+            _protAppliesTo && !_protAppliesTo.isFallback ? _protAppliesTo : { isSelf: true, isTargeted: false, fn: null, selfAffect: true },
+            _protSubj ? `${_protSubj[1].charAt(0).toUpperCase() + _protSubj[1].slice(1)} has each "Protection from X" of a card exiled with ${card.name}.` : `${card.name} has each "Protection from X" of a card exiled with it.`,
             { asLongAsCondition: () => {
               if (typeof _getImprintedExileEntries !== 'function') return false;
               const entries = _getImprintedExileEntries(srcId);
@@ -1792,13 +1809,13 @@ function parseCardEffects(permanent, card, opts = {}) {
         }
         if (!templateKw) return match;
         const reTemplate = new RegExp('\\b' + templateKw.replace(/ /g, '\\s+') + '\\b', 'gi');
-        const sentences = [trimmedBase + '.'];
         for (const item of items) {
-          sentences.push(trimmedBase.replace(reTemplate, item) + '.');
+          _expandedLines.push(trimmedBase.replace(reTemplate, item) + '.');
         }
-        return sentences.join('\n');
+        return match.slice(0, match.indexOf(baseSentence)) + trimmedBase + '.';
       }
     );
+    if (_expandedLines.length) oracle = oracle.replace(/\s*$/, '') + '\n' + _expandedLines.join('\n');
   }
 
   // "Equipped creature has deathtouch during your turn." → "… as long as it is your turn."

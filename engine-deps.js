@@ -250,7 +250,8 @@ function effectAppliesToPerm(effect, permState, permanent, permId, allStates, ab
       const srcState = allStates.get(effect.sourceId);
       const srcSubs = srcState ? (srcState.subtypes || []) : [];
       const validAsAura = srcSubs.includes('Aura') && (!effect.auraRestriction || effect.auraRestriction(permState));
-      if (!validAsAura) return false;
+      const srcPermForEquip = typeof Battlefield !== 'undefined' ? Battlefield.getPermById(effect.sourceId) : null;
+      if (!validAsAura && !_equipMayBeOnNonCreature(srcPermForEquip, permState.types)) return false;
     }
 
     // CR 702.16 — Protection from X: target rejects effects from a matching source.

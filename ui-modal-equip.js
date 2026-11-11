@@ -301,73 +301,25 @@ function openEquipModal(permId, abilityIdx, ability) {
   const perm = Battlefield.getPermById(permId);
   if (!perm) return;
 
-  const finalStates = Battlefield.getAllFinalStates();
-  const sourceCtrl = perm.controller || perm.owner || Battlefield.activePlayerId;
-  const sourceFs = finalStates.get(permId);
-  const sourceTypes = sourceFs ? (sourceFs.types || []) : (perm.printedTypes || []);
-  const sourceAbilities = sourceFs ? (sourceFs.abilities || []) : [];
-
-  // CR 704.5p: Equipment that is a creature cannot equip unless it has reconfigure
-  const hasReconfigure = sourceAbilities.some(a => /\breconfigure\b/i.test(a));
-  if (sourceTypes.includes('Creature') && !hasReconfigure) {
-    if (typeof _showSBAToast === 'function') {
-      _showSBAToast('This Equipment is currently a creature and cannot equip another creature. (Rule 704.5p)');
-    }
+  // The list, and the CR 704.5p block, come from getEquipCandidates (cards-targeting.js), which
+  // tests/audit.js audits headlessly. With abilityIdx null (no ability clicked) it is the source's
+  // first Equip / Reconfigure / Fortify ability.
+  const equip = getEquipCandidates(permId, abilityIdx);
+  if (equip.blocked) {
+    if (typeof _showSBAToast === 'function') _showSBAToast(equip.blocked);
     return;
   }
-
-  // When called from the Equip/Reconfigure/Fortify button (abilityIdx is null), resolve
-  // the actual ability index so this path behaves the same as clicking Activate in the popup.
-  if (abilityIdx === null) {
-    const activated = Battlefield.extractActivatedAbilities(sourceAbilities);
-    const equipAbility = activated.find(a => a.isEquip || a.isFortify || a.isReconfigure);
-    if (equipAbility) {
-      abilityIdx = equipAbility.index;
-      ability = equipAbility;
-    }
+  if (abilityIdx === null && equip.ability) {
+    abilityIdx = equip.ability.index;
+    ability = equip.ability;
   }
   _equipModalAbilityIdx = abilityIdx;
-
-  // Detect fortify/reconfigure from the ability object or oracle text fallback.
-  const oracleText = (perm.oracleText || '').toLowerCase();
-  const isFortify = !!(ability && ability.isFortify) || oracleText.includes('fortify');
-  const isReconfigure = !!(ability && ability.isReconfigure) || oracleText.includes('reconfigure');
-
-  // Find current target from original effects or synthetic tracking effect.
-  const existingDirectEff = Battlefield.effects.find(e => e.sourceId === permId && e.requiresCreatureTarget && !e._isEquipTargetEff && !e.disabled);
-  const existingSynth = Battlefield.effects.find(e => e.sourceId === permId && e._isEquipTargetEff);
-  const currentTargetId = (existingDirectEff?.targetId || existingSynth?.targetId) || '';
+  const finalStates = Battlefield.getAllFinalStates();
+  const isFortify = equip.isFortify;
+  const isReconfigure = equip.isReconfigure;
+  const currentTargetId = equip.currentTarget || '';
   _equipSelectedTargetId = currentTargetId || null;
-
-  // For Aura-Equipment hybrids, equip target must also satisfy the Enchant restriction.
-  const auraRestriction = Battlefield.effects.find(e => e.sourceId === permId && e.auraRestriction)?.auraRestriction
-    || Battlefield.getPermById(permId)?._auraRestriction;
-
-  // Valid targets: creatures (or lands for Fortify) the source's controller controls
-  const validTargets = Battlefield.permanents.filter(p => {
-    if (p.isManualEffect || p.id === permId) return false;
-    const fs = finalStates.get(p.id);
-    const types = fs ? (fs.types || []) : (p.printedTypes || []);
-    const tCtrl = p.controller || p.owner || 'player_0';
-    if (isFortify ? !types.includes('Land') : !types.includes('Creature')) return false;
-    if (tCtrl !== sourceCtrl) return false;
-    if (auraRestriction) {
-      const tState = {
-        types: fs ? (fs.types || []) : (p.printedTypes || []),
-        supertypes: fs ? (fs.supertypes || []) : (p.printedSupertypes || []),
-        subtypes: fs ? (fs.subtypes || []) : (p.printedSubtypes || []),
-        colors: fs ? (fs.colors || []) : (p.printedColors || []),
-        isAllCreatureTypes: fs ? !!fs.isAllCreatureTypes : false,
-      };
-      if (!auraRestriction(tState)) return false;
-    }
-    const stack = Battlefield.getStack(p.id);
-    if (stack && stack.length >= 2 && stack[0] !== p.id) return false;
-    const tAbilities = fs ? (fs.abilities || []) : [];
-    if (tAbilities.some(a => /\bshroud\b/i.test(a))) return false;
-    if (typeof _isProtectedFromSource === 'function' && _isProtectedFromSource(fs, sourceFs, perm, p)) return false;
-    return true;
-  });
+  const validTargets = equip.candidates.map(c => c.perm);
 
   const overlay = _createModalOverlay('equip-modal-overlay', closeEquipModal);
 
@@ -383,7 +335,8 @@ function openEquipModal(permId, abilityIdx, ability) {
 
   const actionLabel = isFortify ? 'Fortify' : isReconfigure ? 'Reconfigure' : 'Equip';
   const permDisplayName = perm.label ? perm.name + ' ' + perm.label : perm.name;
-  const targetTypeLabel = isFortify ? 'Land' : 'Creature';
+  const walker = /\bplaneswalker\b/i.test(equip.targetWords || ''), creature = /\bcreature\b/i.test(equip.targetWords || '');
+  const targetTypeLabel = isFortify ? 'Land' : walker ? (creature ? 'Creature or Planeswalker' : 'Planeswalker') : 'Creature';
 
   const unattachBtn = currentTargetId
     ? '<button class="btn btn-sm" style="color:var(--red)" onclick="unattachEquipFromModal()">Unattach</button>'

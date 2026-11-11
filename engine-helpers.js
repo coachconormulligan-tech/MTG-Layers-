@@ -333,3 +333,11 @@ function _attackedPlayerId(st) {
   const other = players.find(pl => pl.id !== ctrl);
   return other ? other.id : null;
 }
+
+/* "Equip planeswalker {1}" (Luxior, Giada's Gift; CR 702.6a with a quality that names a card
+   type): may this Equipment's effects be on a permanent of these types that is not a creature?
+   Only a planeswalker, and only for an Equipment with such an equip ability. */
+function _equipMayBeOnNonCreature(sourcePerm, types) {
+  if (!sourcePerm || !(types || []).includes('Planeswalker')) return false;
+  return (sourcePerm.printedAbilities || []).some(a => /^Equip (?:creature or )?planeswalker\b/i.test(String(a).trim()));
+}
