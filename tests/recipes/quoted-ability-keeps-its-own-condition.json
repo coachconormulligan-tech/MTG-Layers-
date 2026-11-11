@@ -1,0 +1,37 @@
+{
+  "name": "Quoted ability keeps its own condition; equipped creature is attacking",
+  "notes": "Memory: project_quoted_condition_and_attached_subject_2026-11-11. Giant's Amulet: the trailing 'as long as' normaliser (Pattern B) lifted the quote's 'as long as it's untapped' onto the whole line, so the +0/+1 was conditional and the granted text was cut to 'This creature has hexproof' (twice). Pattern B now skips a condition inside a quote (_insideQuote), the quoted 'This creature has <keyword> as long as <condition>' gives the keyword to the wearer only while the condition holds on it (_parseGrantedGlobalAbilities), and the quoted-grant dedupe ignores the closing period. Sedge Sliver: 'This creature gets +1/+1 as long as you control a Swamp' granted to all Slivers now boosts each Sliver whose controller has a Swamp. Ace's Baseball Bat: 'As long as equipped creature is attacking, it has first strike' read 'equipped' as the condition (always true on the wearer); _parseCondition now reads 'equipped/enchanted/fortified <noun> is/has ...' as 'it ...' against the permanent the card is attached to.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Giant's Amulet", "as": "amulet" },
+    { "call": ["setTarget", "@amulet", "@bears"] },
+    { "add": "Savannah Lions", "as": "lions" },
+    { "add": "Giant's Amulet", "as": "amulet2" },
+    { "call": ["setTarget", "@amulet2", "@lions"] },
+    { "call": ["toggleTapped", "@lions"] },
+    { "add": "Llanowar Elves", "as": "elves" },
+    { "add": "Ace's Baseball Bat", "as": "bat" },
+    { "call": ["setTarget", "@bat", "@elves"] },
+    { "add": "Raging Goblin", "as": "gob" },
+    { "add": "Ace's Baseball Bat", "as": "bat2" },
+    { "call": ["setTarget", "@bat2", "@gob"] },
+    { "call": ["toggleAttacking", "@gob"] },
+    { "add": "Memnite", "as": "mem" },
+    { "add": "Sedge Sliver", "as": "sedge" },
+    { "add": "Metallic Sliver", "as": "mySliver" },
+    { "add": "Virulent Sliver", "as": "oppSliver", "controller": "p2" },
+    { "add": "Swamp", "as": "oppSwamp", "controller": "p2" }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 3, "abilities": { "$includes": ["Hexproof", "This creature has hexproof as long as it is untapped."] } } },
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$excludes": ["This creature has hexproof as long as it is untapped", "This creature has hexproof."] } } },
+    { "perm": "Savannah Lions", "final": { "power": 2, "toughness": 2, "abilities": { "$excludes": ["Hexproof"] } } },
+    { "perm": "Memnite", "final": { "abilities": { "$excludes": ["Hexproof", "First strike"] } } },
+    { "perm": "Llanowar Elves", "final": { "power": 4, "toughness": 1, "abilities": { "$excludes": ["First strike"] } } },
+    { "perm": "Raging Goblin", "final": { "power": 4, "toughness": 1, "abilities": { "$includes": ["First strike"] } } },
+    { "perm": "Sedge Sliver", "final": { "power": 2, "toughness": 2 } },
+    { "perm": "Metallic Sliver", "final": { "power": 1, "toughness": 1 } },
+    { "perm": "Virulent Sliver", "final": { "power": 2, "toughness": 2 } }
+  ]
+}

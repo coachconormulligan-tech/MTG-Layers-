@@ -47,7 +47,7 @@ function _wearsCarrierOfGrant(state, allStates, grantEff) {
    These are conditioned on the source having a targetId (i.e. being equipped/attached).
    Example: Dancer's Chakrams grants "Other commanders you control get +2/+2 and have lifelink"
    as an ability to the equipped creature. This generates a global MODIFY_PT + ADD_ABILITY. */
-function _parseGrantedGlobalAbilities(permanent, effects) {
+function _parseGrantedGlobalAbilities(permanent, effects, parseCondition) {
   const sid = permanent.id;
   const ts = permanent.timestamp;
   const cardName = permanent.name;
@@ -60,6 +60,34 @@ function _parseGrantedGlobalAbilities(permanent, effects) {
     const boostInAbility = /^(.+?)\s+(?:you (?:control|own)\s+)?get[s]?\s+([+-]\d+)\/([+-]\d+)/i.exec(abilityText);
     if (boostInAbility) {
       const filterText = boostInAbility[1].trim();
+      // 'Sliver creatures you control have "This creature gets +1/+1 as long as you control a
+      // Swamp."' (Sedge Sliver): the permanent with the ability gets it - the grant's target, or
+      // for a grant to a group each permanent that now has the quoted text - and only while the
+      // quote's own condition holds, read on that permanent ("you" is its controller). A rest
+      // other than a condition ("for each …") or a condition that cannot be read gives nothing.
+      if (/^this (?:creature|permanent|token)$/i.test(filterText) && !eff.selfTarget) {
+        const rest = abilityText.slice(boostInAbility[0].length).replace(/[.\s]+$/, '');
+        const condM = /^\s+as long as\s+(.+)$/i.exec(rest);
+        if (rest && !condM) continue;
+        const quoteCond = condM ? (typeof parseCondition === 'function' ? parseCondition(condM[1]) : null) : null;
+        if (condM && !quoteCond) continue;
+        const carries = eff.scope === 'targeted'
+          ? (p, allStates) => !!(allStates && eff.targetId && allStates.get(eff.targetId) === p)
+          : (p) => (p.abilities || []).includes(abilityText);
+        const grantCond = eff.scope === 'targeted' ? eff.asLongAsCondition : null;
+        toAdd.push({
+          id: `${sid}_eff_granted_${toAdd.length}a`,
+          layer: '7c', type: EFFECT_TYPE.MODIFY_PT,
+          params: { power: parseInt(boostInAbility[2]), toughness: parseInt(boostInAbility[3]) },
+          appliesTo: carries, scope: 'global', affectsSelf: true,
+          sourceId: sid, sourceName: cardName, timestamp: ts,
+          desc: `${filterText} gets ${boostInAbility[2]}/${boostInAbility[3]} (from granted ability). Applies to: the permanent with the ability`,
+          asLongAsCondition: (quoteCond || grantCond)
+            ? (st, allStates) => (!grantCond || grantCond(st, allStates)) && (!quoteCond || quoteCond(st, allStates))
+            : undefined,
+        });
+        continue;
+      }
       if (!filterReferencesPermanents(filterText)) continue;
       const built = buildAppliesToFromText(filterText);
       const desc = built.desc;
@@ -116,14 +144,31 @@ function _parseGrantedGlobalAbilities(permanent, effects) {
         fn = (p, allStates, effectCtrl) => innerFn(p, allStates, effectCtrl) &&
           _wearsCarrierOfGrant(p, allStates, eff);
       }
-      const kwText = haveInAbility[2].replace(/[,.]$/, '').trim();
+      let kwText = haveInAbility[2].replace(/[,.]$/, '').trim();
+      const _bearerGrant = /^this (?:creature|permanent|token)$/i.test(filterText) && eff.scope === 'targeted' && !eff.selfTarget;
+      // The quoted ability's own condition ('"This creature has hexproof as long as it's
+      // untapped."' — Giant's Amulet) is read on the permanent with the ability: "it" is that
+      // permanent. One that cannot be read gives nothing rather than an unconditional keyword.
+      let quoteCond = null;
+      if (_bearerGrant) {
+        const condAt = kwText.search(/\s+as long as\s+/i);
+        if (condAt >= 0) {
+          const condText = kwText.slice(condAt).replace(/^\s+as long as\s+/i, '');
+          kwText = kwText.slice(0, condAt).trim();
+          quoteCond = typeof parseCondition === 'function' ? parseCondition(condText) : null;
+          if (!quoteCond) continue;
+        }
+      }
       const grantedKws = _parseSimpleKeywordList(kwText);
       if (grantedKws.length === 0) continue;
       // 'Equipped creature … has "This creature has hexproof …"' (Giant's Amulet): "this creature"
       // is the one the grant is on - eff's target - and no other. Its self-reference filter let the
       // keyword reach every permanent on the board, attached or not.
-      if (/^this (?:creature|permanent|token)$/i.test(filterText) && eff.scope === 'targeted' && !eff.selfTarget) {
+      if (_bearerGrant) {
         const bearerFn = (p, allStates) => !!(allStates && eff.targetId && allStates.get(eff.targetId) === p);
+        const grantCond = eff.asLongAsCondition;
+        const cond = !quoteCond ? grantCond
+          : grantCond ? (st, allStates) => grantCond(st, allStates) && quoteCond(st, allStates) : quoteCond;
         for (const kw of grantedKws) {
           toAdd.push({
             id: `${sid}_eff_granted_${toAdd.length}c`,
@@ -131,7 +176,7 @@ function _parseGrantedGlobalAbilities(permanent, effects) {
             params: { ability: kw }, appliesTo: bearerFn, scope: 'global', affectsSelf: false,
             sourceId: sid, sourceName: cardName, timestamp: ts,
             desc: `${filterText} has ${kw} (from granted ability). Applies to: the permanent with the ability`,
-            asLongAsCondition: eff.asLongAsCondition,
+            asLongAsCondition: cond,
           });
         }
         continue;

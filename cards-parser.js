@@ -8,6 +8,13 @@
 const TRIGGERED_SENTENCE_RE = /^(?:when(?:ever)?|at)\b/i;
 function _isTriggeredSentence(s) { return TRIGGERED_SENTENCE_RE.test(s); }
 
+/* Shared: is position `offset` of `text` inside a double-quoted ability on its line? (An odd
+   number of quote marks between the line's start and the offset.) A condition found there
+   belongs to the quoted ability, not to the line that grants it. */
+function _insideQuote(text, offset) {
+  return (text.substring(text.lastIndexOf('\n', offset) + 1, offset).match(/"/g) || []).length % 2 === 1;
+}
+
 /* Shared: strip a leading "Until end of turn, " / "Until your next turn, " duration
    prefix from a filter or oracle fragment. Used where compound activated-ability text
    bleeds a leading duration clause into what should be a subject filter. */
@@ -1079,6 +1086,31 @@ function parseCardEffects(permanent, card, opts = {}) {
       for (const k of ['_toggle', '_onResolution', '_finalPT']) if (inner[k]) onSelf[k] = inner[k];
       return onSelf;
     }
+    // "As long as equipped creature is attacking, it has first strike" (Ace's Baseball Bat),
+    // "equipped creature is untapped / tapped" (Sword of the Paruns), "enchanted land is
+    // untapped" (Tourach's Gate), "equipped creature is a Human" (True-Faith Censer): read as
+    // "it …" against the permanent the card is attached to (the permanent being changed while
+    // it is attached to nothing). Left to the "equipped" / "enchanted" trait entries below,
+    // every such condition was true of anything wearing the card. A condition "it …" does not
+    // read keeps that old reading.
+    const attachedSubject = ct.match(/^(?:equipped|enchanted|fortified) [\w-]+ ((?:is|isn't|has|was)\b.*)$/);
+    if (attachedSubject) {
+      const inner = _parseCondition('it ' + attachedSubject[1]);
+      if (inner) {
+        const srcId = permanent.abilitySourceId || permanent.id;
+        const onAttached = (state, allStates) => {
+          let on = null;
+          if (allStates && typeof Battlefield !== 'undefined') {
+            const link = Battlefield.effects.find(e => e.sourceId === srcId && e.scope === 'targeted' &&
+              e.targetId && !e.selfTarget && !e.isSpellEffect && allStates.has(e.targetId));
+            if (link) on = allStates.get(link.targetId);
+          }
+          return inner(on || state, allStates);
+        };
+        for (const k of ['_toggle', '_onResolution', '_finalPT']) if (inner[k]) onAttached[k] = inner[k];
+        return onAttached;
+      }
+    }
     // "… can't attack or block for as long as you control this creature" (Extraction
     // Specialist), "gains indestructible …" (Aegis Angel), "gain control of target creature …"
     // (Mind Flayer; the card's name is already "this card"): true while the card the ability
@@ -1968,6 +2000,10 @@ function parseCardEffects(permanent, card, opts = {}) {
   // Pattern B: trailing "as long as [condition]" at end of sentence
   // Exception: preserve "as long as your devotion" (Theros gods)
   oracle = oracle.replace(/\s+as long as\s+(?!your devotion\b)([^.,;\n]+)(?=[.,;]|$)/gi, (match, condText, offset, full) => {
+    // An "as long as" inside a quoted ability belongs to that ability, not to the grant
+    // ('Equipped creature gets +0/+1 and has "This creature has hexproof as long as it's
+    // untapped."' — Giant's Amulet: the +0/+1 always applies).
+    if (_insideQuote(full, offset)) return match;
     // "… doesn't untap during its controller's untap step for as long as it has a paralyzation
     // counter on it." (Dread Wight): how long that sentence's own rule lasts, not a condition
     // on the other sentences of the line.
@@ -2028,7 +2064,7 @@ function parseCardEffects(permanent, card, opts = {}) {
     // An "if" inside a quoted ability belongs to that ability, not to the grant ("Sliver creatures
     // you control have "When this creature enters, Slivers you control get +1/+1 until end of turn
     // if you're the monarch. …"" — Regal Sliver).
-    if ((full.substring(full.lastIndexOf('\n', offset) + 1, offset).match(/"/g) || []).length % 2 === 1) return match;
+    if (_insideQuote(full, offset)) return match;
     // The "if" of a later sentence that changes nothing on the board ("… gets -4/-0 until end of
     // turn. If you control a Wizard, draw a card." — Chilling Trap) is no condition on the
     // sentences before it.
@@ -6279,8 +6315,11 @@ function parseCardEffects(permanent, card, opts = {}) {
           `Enchanted permanent${hasLoseAbilities ? ' loses all abilities' : ''}${hasLoseAllCreatureTypes ? ' loses all creature types' : ''}${allReplaceWith.length ? ` and gains: ${allReplaceWith.join(', ')}` : ''}.`);
       }
     } else {
+      // A quoted ability read here without its closing period is the one the quoted-grant
+      // parser already gave ('… and has "This creature has hexproof as long as it's untapped."').
+      const _noStop = s => String(s || '').replace(/\.\s*$/, '');
       for (const ab of allReplaceWith) {
-        if (!effects.some(e => e.layer === '6' && e.params.ability === ab && e.sourceId === sid && e.scope === 'targeted')) {
+        if (!effects.some(e => e.layer === '6' && _noStop(e.params.ability) === _noStop(ab) && e.sourceId === sid && e.scope === 'targeted')) {
           pushEff('6', EFFECT_TYPE.ADD_ABILITY, { ability: ab }, _enchCtx,
             `Enchanted permanent gains ${ab}.`);
         }
@@ -6784,7 +6823,7 @@ function parseCardEffects(permanent, card, opts = {}) {
   // When such an ADD_ABILITY effect is targeted (scope:'targeted'), the quoted text may
   // contain boost or keyword-grant patterns that should generate real global effects,
   // conditioned on the source being equipped/attached (targetId being set).
-  _parseGrantedGlobalAbilities(permanent, effects);
+  _parseGrantedGlobalAbilities(permanent, effects, _parseCondition);
 
   // --- "target player gains control of target [types] you control" → Layer 2 CONTROL
   // effect where the new controller is a user-chosen player (dropdown). Pattern: Bazaar Trader.

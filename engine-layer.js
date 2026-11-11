@@ -677,6 +677,17 @@ function _evaluateBoard(allPermanents, allEffects, tracedIds, permanent) {
         st.hasChangeling = st.abilities.some(a => /\bchangeling\b/i.test(a));
       }
     }
+    // A creature with no power or toughness (a planeswalker Luxior, Giada's Gift makes a creature,
+    // CR 208.3: a noncreature card's P/T is not a characteristic it has) is 0/0 until a layer 7
+    // effect says otherwise (Luxior's rulings). Effects that make one a creature and set its P/T
+    // ("becomes a 4/4 Dragon creature") do so in layer 7b, over this.
+    if (layerDef.id === '7a') {
+      for (const st of allStates.values()) {
+        if (!(st.types || []).includes('Creature')) continue;
+        if (st.power == null) st.power = 0;
+        if (st.toughness == null) st.toughness = 0;
+      }
+    }
     // Base power and toughness are what layers 7a and 7b leave ("with base power and toughness
     // 1/1" — Bess, Soul Nourisher); later sublayers modify P/T without changing them.
     if (layerDef.id === '7c') {

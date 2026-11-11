@@ -1,6 +1,6 @@
 {
  "name": "Equip lists read the Equip line; Fortified land, Giant's Amulet, Eater of Virtue, Luxior",
- "notes": "Memory: project_audit_equip_2026-11-11. extractActivatedAbilities read only 'Equip {cost}', so 'Equip legendary creature {1}', 'Equip Knight {1}', 'Equip planeswalker {1}', 'Equip—Pay 3 life.', 'Equip {2} or {B}' and 'Equip {3}. This ability costs …' were no ability at all (46 lines); they are now, with equipQuality, and the pop-up's list (getEquipCandidates, lifted out of openEquipModal) reads the quality as 'target <quality> creature you control' ('Shaman, Warlock, or Wizard': the comma-list reader now ends a list at ', or'; 'worthy' from Mjolnir's reminder text). Eater of Virtue and Bride's Gown / Groom's Finery lost 'Equip {N}' from their abilities: a normaliser moved a sentence onto a new line mid-text, shifting the conditional-line indices; the moved sentences now go at the end. 'Fortified land has indestructible' was a global effect on lands with an 'Equipped' trait; the land is now Fortified and the effect targeted. Giant's Amulet's quoted 'This creature has hexproof' gave every permanent hexproof. Luxior's planeswalker kept the Planeswalker type (setTarget and requiresCreatureTarget refused a non-creature).",
+ "notes": "Memory: project_audit_equip_2026-11-11. extractActivatedAbilities read only 'Equip {cost}', so 'Equip legendary creature {1}', 'Equip Knight {1}', 'Equip planeswalker {1}', 'Equip—Pay 3 life.', 'Equip {2} or {B}' and 'Equip {3}. This ability costs …' were no ability at all (46 lines); they are now, with equipQuality, and the pop-up's list (getEquipCandidates, lifted out of openEquipModal) reads the quality as 'target <quality> creature you control' ('Shaman, Warlock, or Wizard': the comma-list reader now ends a list at ', or'; 'worthy' from Mjolnir's reminder text). Eater of Virtue and Bride's Gown / Groom's Finery lost 'Equip {N}' from their abilities: a normaliser moved a sentence onto a new line mid-text, shifting the conditional-line indices; the moved sentences now go at the end. 'Fortified land has indestructible' was a global effect on lands with an 'Equipped' trait; the land is now Fortified and the effect targeted. Giant's Amulet's quoted 'This creature has hexproof' gave every permanent hexproof. Luxior's planeswalker kept the Planeswalker type (setTarget and requiresCreatureTarget refused a non-creature). Luxior's planeswalker had no P/T (null): a planeswalker added through the site had no loyalty counters (addPermanent now gives it its printed loyalty, CR 306.5b), and a creature with no P/T is now 0/0 from layer 7a (engine-layer), so Jace Beleren with Luxior is a 3/3 non-planeswalker creature.",
  "recipe": {
   "steps": [
    {
@@ -197,7 +197,12 @@
    "final": {
     "types": [
      "Creature"
-    ]
+    ],
+    "power": 3,
+    "toughness": 3,
+    "counters": {
+     "loyalty": 3
+    }
    }
   }
  ],
@@ -1626,8 +1631,12 @@
     "timestamp": 8,
     "tapped": false,
     "traits": [],
-    "counters": {},
-    "counterTimestamps": {},
+    "counters": {
+     "loyalty": 3
+    },
+    "counterTimestamps": {
+     "loyalty": 8
+    },
     "isFaceDown": false,
     "faceDownMode": null,
     "roomLocked": null,
@@ -3361,7 +3370,9 @@
        "isManualEffect": false,
        "label": null,
        "traits": [],
-       "counters": {},
+       "counters": {
+        "loyalty": 3
+       },
        "printedTypes": [
         "Planeswalker"
        ],
@@ -3767,7 +3778,9 @@
        "isManualEffect": false,
        "label": null,
        "traits": [],
-       "counters": {},
+       "counters": {
+        "loyalty": 3
+       },
        "printedTypes": [
         "Planeswalker"
        ],
@@ -4252,8 +4265,8 @@
       "Creature"
      ],
      "subtypes": [],
-     "power": null,
-     "toughness": null,
+     "power": 3,
+     "toughness": 3,
      "colors": [
       "U"
      ],
@@ -4262,6 +4275,9 @@
       "−1: Target player draws a card.",
       "−10: Target player mills twenty cards."
      ],
+     "counters": {
+      "loyalty": 3
+     },
      "traits": [
       "Equipped"
      ]
@@ -4269,6 +4285,9 @@
     "changedBy": {
      "4": [
       "Luxior, Giada's Gift",
+      "Luxior, Giada's Gift"
+     ],
+     "7c": [
       "Luxior, Giada's Gift"
      ]
     }
@@ -4401,6 +4420,7 @@
      ],
      "abilities": [
       "When this Equipment enters, you may pay {3}{U}. If you do, create a 4/4 blue Giant Wizard creature token, then attach this Equipment to it.",
+      "Equipped creature gets +0/+1 and has \"This creature has hexproof as long as it's untapped.\"",
       "Equip {2}"
      ]
     },
@@ -4491,8 +4511,6 @@
     "Ace's Baseball Bat",
     "Giant's Amulet",
     "Giant's Amulet",
-    "Giant's Amulet",
-    "Giant's Amulet",
     "Eater of Virtue",
     "Eater of Virtue",
     "Eater of Virtue",
@@ -4553,25 +4571,7 @@
     "type": "add_ability",
     "scope": "targeted",
     "params": {
-     "ability": "This creature has hexproof."
-    }
-   },
-   {
-    "source": "Giant's Amulet",
-    "layer": "6",
-    "type": "add_ability",
-    "scope": "targeted",
-    "params": {
-     "ability": "This creature has hexproof"
-    }
-   },
-   {
-    "source": "Giant's Amulet",
-    "layer": "6",
-    "type": "add_ability",
-    "scope": "global",
-    "params": {
-     "ability": "Hexproof"
+     "ability": "This creature has hexproof as long as it is untapped."
     }
    },
    {

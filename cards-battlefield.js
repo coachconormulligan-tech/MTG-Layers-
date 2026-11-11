@@ -1689,6 +1689,16 @@ const Battlefield = {
       (card.type_line || '').toLowerCase().includes('shapeshifter')
     );
     const perm = createPermanent(processedCard, this.nextTimestamp++, opts);
+    // CR 306.5b: a planeswalker enters with loyalty counters equal to its printed loyalty
+    // ("Equipped creature gets +1/+1 for each counter on it" counts them on Luxior's planeswalker).
+    // A restored board keeps its saved counters (restore() writes them over these).
+    {
+      const loyalty = parseInt(resolvedForCheck.loyalty, 10);
+      if ((perm.printedTypes || []).includes('Planeswalker') && loyalty > 0 && !perm.isFaceDown) {
+        perm.counters.loyalty = loyalty;
+        perm.counterTimestamps.loyalty = perm.timestamp;
+      }
+    }
     // Store X value info for later adjustment
     if (hasX) {
       perm.hasXValue = true;
