@@ -61,6 +61,18 @@ modal-modes-mismatch), each mode's list is judged against its own line ([mode N]
 list-mismatch), a target for one mode with the other left empty must change only itself, and a target
 for each at once must change both (second-mode-changes-nothing).
 
+An Aura is a unit of its own (kind "attach"), read from its "Enchant ..." line ("Enchant player" and
+"Enchant ... card in a graveyard" are skipped as "attach: enchant-player" / "attach: enchant-card"), on
+the fixed board plus witnesses only this unit sees: an opponent's and your creature with hexproof, your
+creature with shroud, an opponent's creature with protection from enchantments, one with protection from
+the Aura's colour and one of yours with protection from another colour. Check 2: the site attaches with
+the single picker, which lists what the line allows, less the Aura itself (CR 303.4d), shroud, an
+opponent's hexproof (an Aura spell targets) and protection from the Aura (CR 702.16c, judged from the
+witness's words and the Aura's colours and types). Check 1: with nothing attached no permanent changes;
+attached to each listed permanent, that permanent changes and no other (attach-changes-nothing,
+target-changes-others), and a plain "Enchanted creature gets +N/+N / has <keywords>" shows more than
+the Enchanted trait (grant-not-applied). Words of the Aura about itself or a group are not counted.
+
 Also reported: crash (an exception anywhere) and no-targeted-effect (the text names a target but the
 parse produced no targeted effect, so there is no picker to audit - the sweep already covers
 "sentence produced nothing"; it is its own low-priority cluster here). Units that are skipped always

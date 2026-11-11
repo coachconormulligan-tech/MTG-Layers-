@@ -94,6 +94,12 @@ function targetCandidateLists() {
   const finalStates = Battlefield.getAllFinalStates();
   const out = [];
   for (const p of Battlefield.permanents) {
+    // An Aura on the battlefield: the single picker it is attached with ("kind": "single").
+    if (!p.isManualEffect && !p.isSpell && p._auraRestriction && (p.printedSubtypes || []).includes('Aura')) {
+      const r = getTargetCandidates(p.id, { kind: 'single' });
+      out.push({ perm: p.name + (p.label ? ' ' + p.label : ''), kind: 'single', candidates: r.blocked ? [] : (r.candidates || []).map(c => c.perm.name + (c.perm.label ? ' ' + c.perm.label : '')).sort() });
+      continue;
+    }
     if (!p.isManualEffect && !p.isSpell) continue;
     const pk = getTargetPickerKind(p.id, finalStates.get(p.id));
     const listNames = (r) => r.blocked ? [] : (r.candidates || []).map(c => c.perm.name + (c.perm.label ? ' ' + c.perm.label : '')).sort();

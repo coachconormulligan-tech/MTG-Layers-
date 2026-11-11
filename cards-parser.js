@@ -776,6 +776,8 @@ function parseCardEffects(permanent, card, opts = {}) {
             if (eff.scope === 'targeted' && !eff.selfTarget) eff.auraRestriction = auraRestriction;
           }
           permanent._auraRestriction = auraRestriction;
+          permanent._auraTargetRestriction = buildEnchantTargetRestriction(enchantTarget);
+          if (ENCHANT_OTHER_AURA_RE.test(enchantTarget)) permanent._enchantNeedsOtherAura = true;
         }
         // "Enchant [type] an opponent controls" — restrict targeting to opponents' permanents
         if (/\bopponent(?:'?s?)?\s+controls?\b/i.test(enchantTarget)) {
@@ -2751,6 +2753,8 @@ function parseCardEffects(permanent, card, opts = {}) {
       }
     }
     if (!permanent._auraRestriction) permanent._auraRestriction = auraRestriction;
+    if (auraRestriction && !permanent._auraTargetRestriction) permanent._auraTargetRestriction = buildEnchantTargetRestriction(enchantTarget);
+    if (auraRestriction && ENCHANT_OTHER_AURA_RE.test(enchantTarget)) permanent._enchantNeedsOtherAura = true;
     // "Enchant [type] an opponent controls" — restrict targeting to opponents' permanents
     if (/\bopponent(?:'?s?)?\s+controls?\b/i.test(enchantTarget)) {
       permanent._opponentControlRequired = true;
@@ -6557,9 +6561,14 @@ function parseCardEffects(permanent, card, opts = {}) {
     // measured against the source.
     const vsSource = _sourceComparedSubject(filterText, permanent);
     const { fn, desc: filterDesc } = vsSource || buildAppliesToFromText(filterText);
+    // "Enchanted creature is goaded" (The Sound of Drums): the permanent it is attached to, like
+    // every other "enchanted creature" effect, not a filter (which held for every permanent, so
+    // the Aura goaded the whole board with nothing attached).
+    const attachedSubject = /^(?:enchanted|equipped|fortified)\s+[a-z]+$/i.test(filterText);
     const eff = pushEff('6', EFFECT_TYPE.ADD_ABILITY,
       { ability: traitName, isTrait: true, traitOnly: true },
-      { appliesTo: fn, scope: fn ? 'global' : 'targeted', selfTarget: !fn },
+      attachedSubject ? { appliesTo: null, scope: 'targeted', selfTarget: false }
+        : { appliesTo: fn, scope: fn ? 'global' : 'targeted', selfTarget: !fn },
       `${traitStateDesc} ${filterDesc}`,
       { _oraclePos: traitStateMatch.index });
     if (vsSource) eff._judgedAfterPT = true;

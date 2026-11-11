@@ -18,6 +18,8 @@
    A unit with several targets, or "up to N" (classifyTargets), expects a multi-target picker of N
    or one picker per target, and each list gets both checks against its own target's words
    (auditFiredTargets).
+   An Aura is a unit too ("attach", auditAttach): its attach picker against its "Enchant ..." line,
+   with protection, shroud and hexproof judged on witnesses added for it alone.
    The unit's text decides whether it is audited at all; nothing the parser built is trusted. */
 
 /* ─── Engine shims (same as tests/sweep.js) ─── */
@@ -651,6 +653,13 @@ function interpretPhrase(phrase, env) {
       if (!amount) { unknown.push(...what.split(' ').slice(0, 4)); break; }
       const cmp = { 'less than or equal to': (a, b) => a <= b, 'less than': (a, b) => a < b, 'greater than or equal to': (a, b) => a >= b, 'greater than': (a, b) => a > b }[rel];
       clauseTests.push((st, p, ctx) => { const v = statValue(st, p, stat), n = amount(ctx); return v !== null && n !== null && cmp(v, n); });
+      tail = tail.slice(m[0].length); continue;
+    }
+    // "Enchant creature with another Aura attached to it" (Daybreak Coronet): an Aura other than
+    // the source attached to it now.
+    if ((m = tail.match(/^with another aura attached to it\s*/))) {
+      clauseTests.push((st, p, ctx) => Battlefield.effects.some(e => e.sourceId !== ctx.sourceId && e.targetId === p.id && e.scope === 'targeted' &&
+        hasCI((Battlefield.getPermById(e.sourceId) || {}).printedSubtypes, 'aura')));
       tail = tail.slice(m[0].length); continue;
     }
     if ((m = tail.match(/^with (?:a|an) \+1\/\+1 counter on it\s*/))) { clauseTests.push((st, p) => counterCount(st, p, '+1/+1') > 0); tail = tail.slice(m[0].length); continue; }
@@ -1550,6 +1559,213 @@ function auditFiredModePair(ctx, u, id) {
   return { audited: true };
 }
 
+/* ═════════════════════════ Auras: the attach picker ═════════════════════════
+   An Aura on the battlefield is attached with the ordinary single picker (setTarget). Its unit is
+   read from its own "Enchant …" line, on a board of its own: the fixed board plus the witnesses
+   below, which only an attach picker needs (none of the other units see them). Check 2: the
+   picker is the single one and lists what the Enchant line allows, less the Aura itself (CR
+   303.4d), what has shroud, what an opponent controls with hexproof (an Aura spell targets, CR
+   303.4a) and what has protection from the Aura (CR 702.16c, judged below from the witness's own
+   words and the Aura's colours and types). Check 1: the Aura with nothing attached changes no
+   permanent, and attached to each listed permanent changes that permanent and no other; a plain
+   "Enchanted creature gets +N/+N / has <keywords>" must change more than the Enchanted trait. */
+
+const AURA_COLOR_ORDER = ['W', 'U', 'B', 'R', 'G'];
+function auraWitnesses(auraColors) {
+  const mk = (name, text, colors, controller, role) => ({ role, controller, card: {
+    name, layout: 'normal', type_line: 'Creature — Elemental', oracle_text: text, mana_cost: '{2}', cmc: 2,
+    power: '2', toughness: '2', colors, color_identity: colors, keywords: [] } });
+  const out = [
+    mk('Audit Veiled Elemental', 'Hexproof', ['G'], 'p2', "opponent's hexproof creature"),
+    mk('Audit Warded Elemental', 'Hexproof', ['G'], 'p1', 'your hexproof creature'),
+    mk('Audit Shrouded Elemental', 'Shroud', ['G'], 'p1', 'your shroud creature'),
+    mk('Audit Aura-Proof Elemental', 'Protection from enchantments', ['G'], 'p2', "opponent's creature with protection from enchantments"),
+  ];
+  const own = AURA_COLOR_ORDER.find(c => auraColors.includes(c));
+  const other = AURA_COLOR_ORDER.find(c => !auraColors.includes(c));
+  if (own) out.push(mk('Audit Warded Spirit', 'Protection from ' + COLOR_NAME[own], ['G'], 'p2', "opponent's creature with protection from the Aura's colour"));
+  if (other) out.push(mk('Audit Bright Spirit', 'Protection from ' + COLOR_NAME[other], ['G'], 'p1', 'your creature with protection from another colour'));
+  return out;
+}
+
+/* Is the permanent with state st protected from the Aura (aura: its state)? By the protection
+   words on st alone: colours, mono/multicolored, card types and subtypes (plural), everything.
+   null when a quality is not one of these. */
+function auditProtectedFrom(st, aura) {
+  let unknown = false, hit = false;
+  const auraColors = stateColors(aura);
+  for (const kw of keywordsOf(st)) {
+    const m = kw.match(/^protection from (.+)$/);
+    if (!m) continue;
+    for (let q of m[1].split(/\s*,\s*(?:and\s+)?(?:from\s+)?|\s+and\s+from\s+|\s+and\s+/)) {
+      q = q.replace(/^from\s+/, '').trim();
+      if (COLOR_CODES[q]) { if (auraColors.includes(COLOR_CODES[q])) hit = true; }
+      else if (q === 'everything') hit = true;
+      else if (q === 'multicolored') { if (auraColors.length >= 2) hit = true; }
+      else if (q === 'monocolored') { if (auraColors.length === 1) hit = true; }
+      else if (q === 'colorless') { if (!auraColors.length) hit = true; }
+      else {
+        const sg = singularForms(q);
+        const w = sg.find(s => PERMANENT_NOUNS.has(s) || subtypeWords().has(s));
+        if (!w) { unknown = true; continue; }
+        if (hasCI(aura.types, w) || hasCI(aura.subtypes, w)) hit = true;
+      }
+    }
+  }
+  return hit ? true : unknown ? null : false;
+}
+
+// "Enchanted creature gets +2/+2" / "Enchanted creature has flying and vigilance", on its own and
+// with nothing that makes it depend on the board: attaching must show more than the Enchanted trait.
+function plainEnchantedGrant(text) {
+  for (const s of String(text).replace(/’/g, "'").split(/(?<=\.)\s+|\n/)) {
+    const l = s.toLowerCase().trim();
+    if (!/^enchanted (?:creature|permanent|land|artifact|planeswalker) /.test(l)) continue;
+    if (/\b(?:as long as|if|for each|where x|equal to|during|unless|for as long|x\/|\/x|chosen|as though)\b/.test(l)) continue;
+    let m;
+    if ((m = l.match(/^enchanted \w+ gets ([+-]\d+)\/([+-]\d+)\.?$/)) && (+m[1] || +m[2])) return { pt: [+m[1], +m[2]] };
+    if ((m = l.match(/^enchanted \w+ (?:has|gains) ([a-z ,]+?)\.?$/))) {
+      const kws = m[1].split(/\s*,\s*(?:and\s+)?|\s+and\s+/).map(k => k.trim()).filter(Boolean);
+      if (kws.length && kws.every(k => KEYWORD_SET.has(k))) return { kws };
+    }
+    if ((m = l.match(/^enchanted \w+ gets ([+-]\d+)\/([+-]\d+) and has ([a-z ,]+?)\.?$/))) {
+      const kws = m[3].split(/\s*,\s*(?:and\s+)?|\s+and\s+/).map(k => k.trim()).filter(Boolean);
+      if (kws.every(k => KEYWORD_SET.has(k))) return { pt: [+m[1], +m[2]], kws };
+    }
+  }
+  return null;
+}
+
+function auditAttach(card, faceIndex, rec, face) {
+  const typeLine = face.type_line || card.type_line || '';
+  if (!/\bAura\b/.test(typeLine)) return;
+  const text = String(face.oracle_text || '').split('\n').map(stripReminder).filter(Boolean).join('\n');
+  const em = text.match(/^Enchant (.+)$/im);
+  const skip = (reason) => rec.skipped.push({ unit: 'attach', reason, text: text.slice(0, 140) });
+  if (!em) { skip('attach: no-enchant-line'); return; }
+  const phrase = em[1].trim().replace(/\.$/, '');
+  const lower = phrase.toLowerCase();
+  if (/\b(?:player|opponent)s?\b/.test(lower.replace(/\b(?:an opponent|that player) controls\b/g, ''))) { skip('attach: enchant-player'); return; }
+  if (/\b(?:card|cards|graveyard|hand|library|spell)\b/.test(lower)) { skip('attach: enchant-card'); return; }
+  const u = { kind: 'attach', index: undefined, label: '', text: text.slice(0, 400), phrase, findings: [], infos: [] };
+  const finding = (check, code, extra) => u.findings.push(Object.assign({ check, code }, extra || {}));
+  let perm, ctx;
+  try {
+    buildBoard();
+    const colors = (face.colors || card.colors || []).map(String);
+    for (const e of auraWitnesses(colors)) {
+      const c = e.controller === 'p2' ? Battlefield.players[1].id : 'player_0';
+      Battlefield.activePlayerId = c;
+      const p = Battlefield.addPermanent(JSON.parse(JSON.stringify(e.card)), { suppressPrompt: true, controller: c, owner: c });
+      roleOf.set(p.id, e.role);
+    }
+    Battlefield.activePlayerId = 'player_0';
+    Battlefield._invalidate();
+    const beforeAura = summarizeBoard();
+    perm = addAuditedCard(card, faceIndex, false);
+    roleOf.set(perm.id, 'source');
+    if (perm.hasBestow) { skip('attach: bestow'); return; }
+    const preStates = Battlefield.getAllFinalStates();
+    const before = summarizeBoard();
+    const universe = Battlefield.permanents.filter(p => !p.isManualEffect && !p.isSpell);
+    ctx = { cardName: rec.name, sourceCtrl: 'player_0', sourceId: perm.id, preStates, before, beforeAura, universe };
+  } catch (e) { rec.errors.push(errInfo('attach add', e)); return; }
+
+  try {
+    // What else the text names besides the enchanted permanent: the Aura itself, or a group.
+    const rest = text.replace(/^Enchant .+$/im, '').replace(/["“][^"”]*["”]/g, 'QUOTED');
+    const restLower = rest.toLowerCase().replace(/’/g, "'");
+    const names = [String(rec.name || '').toLowerCase()];
+    if (names[0].indexOf(',') > 0) names.push(names[0].slice(0, names[0].indexOf(',')));
+    const mixed = {
+      source: SELF_WORDS.test(restLower) || names.some(n => n.length > 2 && restLower.includes(n)),
+      group: GROUP_WORDS.test(restLower) || /\b(?:creatures|permanents|lands|artifacts) (?:you control|your opponents control|an opponent controls)\b|\ball \w+s?\b|\beach (?:other )?\w+\b/.test(restLower),
+    };
+    u.mixed = { source: false, group: mixed.group };
+
+    // Check 1: with nothing attached, no permanent changes.
+    const noTarget = diffSummaries(ctx.beforeAura, ctx.before);
+    u.check1 = { noTarget: noTarget.map(c => ({ role: c.role, what: c.what })), perTarget: [] };
+    if (!mixed.group && noTarget.length) finding('check1', 'changes-with-no-target', { changed: u.check1.noTarget });
+
+    // Check 2: the picker.
+    const finalStates = Battlefield.getAllFinalStates();
+    const picker = getTargetPickerKind(perm.id, finalStates.get(perm.id));
+    u.pickerKind = picker.kind;
+    if (picker.kind === 'none') finding('check2', 'no-picker');
+    else if (picker.kind !== 'single') finding('check2', 'picker-kind-' + picker.kind);
+    let siteIds = null;
+    if (picker.kind !== 'none') {
+      try {
+        const r = getTargetCandidates(perm.id, { kind: 'single' });
+        if (r.blocked) u.blocked = r.blocked; else siteIds = r.candidates.map(c => c.id);
+      } catch (e) { finding('check2', 'crash', { error: errInfo('candidates', e) }); }
+    }
+    u.actual = siteIds ? rolesOf(siteIds) : null;
+    if (u.blocked) finding('check2', 'blocked', { what: u.blocked });
+
+    let expectedIds = null;
+    const interp = interpretPhrase(phrase, { before: '' });
+    if (interp.unknown) u.phraseUnknown = interp.unknown;
+    else {
+      expectedIds = [];
+      const auraSt = ctx.preStates.get(perm.id) || {};
+      const unjudged = [];
+      for (const p of ctx.universe) {
+        if (p.id === perm.id) continue;               // CR 303.4d
+        const st = ctx.preStates.get(p.id);
+        if (!st || !interp.test(st, p, ctx)) continue;
+        const kws = keywordsOf(st);
+        if (kws.includes('shroud')) continue;
+        if (kws.includes('hexproof') && ctrlOf(st, p) !== ctx.sourceCtrl) continue;
+        const prot = auditProtectedFrom(st, auraSt);
+        if (prot === null) { unjudged.push(p.id); continue; }
+        if (prot) continue;
+        expectedIds.push(p.id);
+      }
+      u.expected = rolesOf(expectedIds);
+      if (siteIds) {
+        const judged = (x) => !unjudged.includes(x);
+        const missing = expectedIds.filter(x => !siteIds.includes(x)), extra = siteIds.filter(x => judged(x) && !expectedIds.includes(x));
+        if (!siteIds.length && expectedIds.length) finding('check2', 'empty-list', { missing: rolesOf(missing), extra: [] });
+        else if (missing.length || extra.length) finding('check2', 'list-mismatch', { missing: rolesOf(missing), extra: rolesOf(extra) });
+      }
+    }
+
+    // Check 1: attached to each listed permanent (or, with an empty list, each one the text allows).
+    const tryIds = siteIds && siteIds.length ? siteIds : (expectedIds || []);
+    u.check1.via = siteIds && siteIds.length ? 'picker' : 'text';
+    const grant = plainEnchantedGrant(text);
+    const othersSeen = [], noOp = [], traitOnly = [];
+    for (const tid of tryIds.slice(0, 16)) {
+      let changed = [];
+      try {
+        withRestore(() => {
+          Battlefield.setTarget(perm.id, tid);   // setEffectTarget in ui-targeting.js
+          Battlefield._invalidate();
+          changed = diffSummaries(ctx.before, summarizeBoard());
+        });
+      } catch (e) { finding('check1', 'crash', { error: errInfo('attach', e) }); break; }
+      const role = roleName(tid);
+      u.check1.perTarget.push({ target: role, changed: changed.map(c => ({ role: c.role, what: c.what })) });
+      const mine = changed.find(c => c.id === tid);
+      if (!mine) noOp.push(role);
+      else if (grant && /^traits \+Enchanted$/.test(mine.what)) {
+        // A creature that already has every keyword granted shows nothing more.
+        const st = ctx.preStates.get(tid);
+        if (grant.pt || !(grant.kws || []).every(k => hasKeyword(st, k))) traitOnly.push(role);
+      }
+      const others = mixed.group ? [] : changed.filter(c => c.id !== tid && !(mixed.source && c.id === perm.id));
+      if (others.length) othersSeen.push({ target: role, others: others.map(c => ({ role: c.role, what: c.what })) });
+    }
+    if (othersSeen.length) finding('check1', 'target-changes-others', { examples: othersSeen.slice(0, 3), count: othersSeen.length });
+    if (noOp.length) finding('check1', 'attach-changes-nothing', { roles: noOp });
+    if (traitOnly.length) finding('check1', 'grant-not-applied', { roles: traitOnly, what: grant.pt ? 'gets ' + grant.pt.join('/') : 'has ' + grant.kws.join(', ') });
+  } catch (e) { u.findings.push({ check: 'check2', code: 'crash', error: errInfo('attach audit', e) }); }
+  finally { Battlefield._invalidate(); }
+  rec.units.push(u);
+}
+
 function auditFace(card, faceIndex) {
   const face = _resolveCardFace(card, faceIndex);
   const typeLine = face.type_line || card.type_line || '';
@@ -1596,9 +1812,6 @@ function auditFace(card, faceIndex) {
     return rec;
   }
 
-  /* Permanents: an Aura's attach target is out of scope. */
-  if (Battlefield.effects.some(e => e.sourceId === perm.id && e.auraRestriction)) skip('attach', undefined, '', face.oracle_text, 'aura-attach');
-
   const states = Battlefield.getAllFinalStates();
   const fState = states.get(perm.id);
   const abilities = ((fState && fState.abilities) || []).slice();
@@ -1638,6 +1851,9 @@ function auditFace(card, faceIndex) {
     try { unitsFor('activated', a, activatedPlans(perm.id, a)); }
     catch (e) { rec.errors.push(errInfo('activated ' + a.index, e)); }
   }
+  /* An Aura's attach picker, on a board of its own (the last thing done with this face). */
+  try { auditAttach(card, faceIndex, rec, face); }
+  catch (e) { rec.errors.push(errInfo('attach', e)); }
   return rec;
 }
 

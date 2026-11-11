@@ -1,0 +1,151 @@
+{
+  "name": "Aura attach pickers read the whole Enchant line; The Sound of Drums goads only what it enchants",
+  "notes": "Memory: project_audit_aura_attach_2026-11-11. buildAuraRestriction read only card types and subtypes, so 'Enchant red or green creature' (Controlled Instincts), 'tapped creature' (Entangling Vines), 'creature you don't control' (Captured by the Consulate) and 'artifact creature' (Domineer, read as artifact OR creature) listed too much; the picker now also checks the line as 'target <words>' (buildEnchantTargetRestriction, permanent._auraTargetRestriction). Daybreak Coronet's 'with another Aura attached to it' was a required Aura subtype, so it listed nothing ever (_enchantNeedsOtherAura). 'Enchanted creature is goaded' was a global effect matching every permanent. 'Enchant creature card in a graveyard' (Animate Dead) keeps the type test only: on the battlefield it is on the creature it returned.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Ornithopter",
+      "as": "thopter"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant",
+      "controller": "p2"
+    },
+    {
+      "call": [
+        "toggleTapped",
+        "@giant"
+      ]
+    },
+    {
+      "add": "Rancor",
+      "as": "rancor"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@rancor",
+        "@bears"
+      ]
+    },
+    {
+      "add": "Daybreak Coronet",
+      "as": "coronet"
+    },
+    {
+      "add": "Controlled Instincts",
+      "as": "instincts"
+    },
+    {
+      "add": "Entangling Vines",
+      "as": "vines"
+    },
+    {
+      "add": "Captured by the Consulate",
+      "as": "consulate"
+    },
+    {
+      "add": "Domineer",
+      "as": "domineer"
+    },
+    {
+      "add": "The Sound of Drums",
+      "as": "drums"
+    },
+    {
+      "add": "Animate Dead",
+      "as": "animate"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@drums",
+        "@giant"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "targetCandidates": {
+        "perm": "Daybreak Coronet"
+      },
+      "are": [
+        "Grizzly Bears",
+        "Hill Giant"
+      ]
+    },
+    {
+      "targetCandidates": {
+        "perm": "Controlled Instincts"
+      },
+      "are": [
+        "Grizzly Bears",
+        "Hill Giant"
+      ]
+    },
+    {
+      "targetCandidates": {
+        "perm": "Entangling Vines"
+      },
+      "are": [
+        "Hill Giant"
+      ]
+    },
+    {
+      "targetCandidates": {
+        "perm": "Captured by the Consulate"
+      },
+      "are": [
+        "Hill Giant"
+      ]
+    },
+    {
+      "targetCandidates": {
+        "perm": "Domineer"
+      },
+      "are": [
+        "Ornithopter"
+      ]
+    },
+    {
+      "targetCandidates": {
+        "perm": "Animate Dead"
+      },
+      "are": [
+        "Grizzly Bears",
+        "Hill Giant",
+        "Ornithopter"
+      ]
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "traits": {
+          "$includes": [
+            "Goaded by Player 1"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "traits": {
+          "$excludes": [
+            "Goaded by Player 1"
+          ]
+        }
+      }
+    }
+  ]
+}

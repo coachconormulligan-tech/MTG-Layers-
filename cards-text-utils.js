@@ -2392,12 +2392,29 @@ function parseBecomesType(text) {
 
   return { types: [...new Set(types)], subtypes: validatedSubtypes, supertypes: [...new Set(supertypes)], isLandSubtype, grantedAbilities };
 }
+/* What an "Enchant …" line asks beyond card types and subtypes (buildAuraRestriction): colour,
+   supertype, who controls it, tapped, modified, "without flying", "with power 3 or less" ("Enchant
+   red or green creature", "Enchant creature you don't control", "Enchant tapped creature"). Read
+   as "target <words>" by the filter reader every target restriction uses, and called the same
+   way: fn(restrictionState, states, sourceController). The attach picker checks it beside
+   buildAuraRestriction's test; null when the words name no permanent. */
+// "Enchant creature with another Aura attached to it" (Daybreak Coronet): a rule about the board,
+// checked by the attach picker (permanent._enchantNeedsOtherAura), not a subtype the creature has.
+const ENCHANT_OTHER_AURA_RE = /\s+with another Aura attached to it\.?$/i;
+function buildEnchantTargetRestriction(enchantTarget) {
+  const words = String(enchantTarget || '').trim().replace(ENCHANT_OTHER_AURA_RE, '').replace(/\.$/, '');
+  // "Enchant creature card in a graveyard" (Animate Dead): on the battlefield the Aura is on the
+  // creature it returned, so only the type test applies.
+  if (!words || /\b(?:cards?|graveyards?|hand|library)\b/i.test(words)) return null;
+  const built = buildAppliesToFromText('target ' + words);
+  return built && built.fn && !built.isSelf ? built.fn : null;
+}
 /* Build an aura restriction function from "Enchant [type(s)]" text.
    Supports any combination of permanent types joined by "or", "and/or", or commas.
    Handles negation: "nonland permanent" = any permanent that is NOT a Land.
    Returns null if the target cannot be a battlefield permanent (e.g. "player"). */
 function buildAuraRestriction(enchantTarget) {
-  const t = enchantTarget.toLowerCase();
+  const t = enchantTarget.replace(ENCHANT_OTHER_AURA_RE, '').toLowerCase();
   if (/\bplayer\b/.test(t) && !/\b(creature|artifact|planeswalker|enchantment|land|permanent)\b/.test(t)) {
     return null; // player-only auras have no permanent-targeting restriction; UI handles player picker
   }

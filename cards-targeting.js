@@ -126,6 +126,18 @@ function _isAttachedOfAbilitySource(sourcePerm, permId) {
   return !!att && att === permId;
 }
 
+// "Enchant creature with another Aura attached to it" (Daybreak Coronet): is an Aura other than
+// sourceId attached to permId now?
+function _hasOtherAuraAttached(permId, sourceId, finalStates) {
+  return Battlefield.effects.some(e => {
+    if (e.sourceId === sourceId || e.targetId !== permId || e.scope !== 'targeted' || e.selfTarget || e.isSpellEffect) return false;
+    const src = Battlefield.getPermById(e.sourceId);
+    if (!src || src.isManualEffect || src.isSpell) return false;
+    const subs = (finalStates.get(e.sourceId) || {}).subtypes || src.printedSubtypes || [];
+    return subs.includes('Aura');
+  });
+}
+
 function _restrictionState(tState, fs, t) {
   const src = fs || {};
   return {
@@ -137,6 +149,8 @@ function _restrictionState(tState, fs, t) {
     counters: src.counters || t.counters || {},
     manaValue: src.manaValue ?? t.manaValue ?? 0,
     isToken: !!t.isToken,
+    // ("Enchant tapped creature" — Entangling Vines, Glimmerdust Nap.)
+    tapped: src.tapped ?? !!t.tapped,
     traits: tState.traits || src.traits || t.traits || [],
   };
 }
@@ -224,6 +238,7 @@ function _singleTargetCandidates(sourceId) {
   const auraRestriction = current?.auraRestriction
     || Battlefield.effects.find(e => e.sourceId === sourceId && e.auraRestriction)?.auraRestriction
     || Battlefield.getPermById(sourceId)?._auraRestriction;
+  const auraTargetRestriction = sourcePerm?._auraTargetRestriction || null;
 
   // Get spell target restriction (from "target creature" parsing)
   const firstRestriction = current?.targetRestriction
@@ -295,8 +310,13 @@ function _singleTargetCandidates(sourceId) {
     const isProtected = checkProtection && (typeof _isProtectedFromSource === 'function')
       ? !!_isProtectedFromSource(fs || tState, sourceFs, sourcePerm, t)
       : false;
+    // The rest of the Enchant line: colour, supertype, controller, tapped, "without flying" …
+    // ("Enchant red or green creature", "Enchant creature you don't control" — buildEnchantTargetRestriction).
+    const validAuraWords = !auraRestriction || ((!auraTargetRestriction ||
+      auraTargetRestriction(_restrictionState(tState, fs, t), snapStates || finalStates, sourceCtrl)) &&
+      (!sourcePerm?._enchantNeedsOtherAura || _hasOtherAuraAttached(t.id, sourceId, finalStates)));
     // Dual Aura+Equipment: accept if valid for either attachment type; otherwise AND both.
-    const validAttach = (auraRestriction && isEquipment) ? (validAura || validEquip) : (validAura && validEquip);
+    const validAttach = (auraRestriction && isEquipment) ? ((validAura && validAuraWords) || validEquip) : (validAura && validAuraWords && validEquip);
     if (validAttach && validSpell && !hasShroud && !hasHexproof && !isProtected) {
       candidates.push({ id: t.id, perm: t, state: fs || tState, displayName: _targetPickerName(t, fs, true) });
     }
