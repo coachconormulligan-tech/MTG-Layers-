@@ -35,6 +35,7 @@ function createBaseState(permanent) {
     manaCost:   permanent.manaCost || '',
     isCreature: permanent.printedTypes.includes('Creature'),
     isToken:    permanent.isToken || false,
+    isEmblem:   permanent.isEmblem || false, // an emblem's state: no permanent, so no count sees it (CR 114.5)
     oracleText: permanent.oracleText || '',
     hasChangeling: hasChangeling,
     isAllCreatureTypes: false, // computed at Layer 4 based on whether changeling is present at that point

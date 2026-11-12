@@ -28,7 +28,7 @@ function openStandardTextModal(permId, effect) {
   const overlay = _createModalOverlay('text-modal-overlay', closeTextChangeModal);
 
   let otherPerms = Battlefield.permanents.filter(p => {
-    if (p.isManualEffect || p.id === permId) return false;
+    if (!_isPermanent(p) || p.id === permId) return false;
     const stack = Battlefield.getStack(p.id);
     if (stack && stack[0] !== p.id) return false; // non-top mutate members are not valid targets
     return true;
@@ -377,7 +377,7 @@ function openCreatureTypeModal(permId, effect) {
   overlay.dataset.excludeTypes = JSON.stringify(excludeTypes);
 
   let otherPerms = Battlefield.permanents.filter(p => {
-    if (p.isManualEffect || p.id === permId) return false;
+    if (!_isPermanent(p) || p.id === permId) return false;
     const stack = Battlefield.getStack(p.id);
     if (stack && stack[0] !== p.id) return false; // non-top mutate members are not valid targets
     return true;

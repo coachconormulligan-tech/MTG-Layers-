@@ -41,7 +41,7 @@ function openCopyModal(permId) {
   const bfList = document.getElementById('copy-bf-list');
   // Only show top cards of mutate stacks; non-top cards are not valid copy targets
   const perms = Battlefield.permanents.filter(p => {
-    if (p.isManualEffect || p.id === permId) return false;
+    if (!_isPermanent(p) || p.id === permId) return false;
     const stack = Battlefield.getStack(p.id);
     if (stack && stack[0] !== p.id) return false;
     return true;

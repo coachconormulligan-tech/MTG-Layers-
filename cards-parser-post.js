@@ -38,7 +38,7 @@ function _wearsCarrierOfGrant(state, allStates, grantEff) {
   if (!stateId || !carrierId || carrierId === stateId) return false;
   const carrier = allStates.get(carrierId);
   if (!carrier) return false;
-  if (grantEff.asLongAsCondition && !grantEff.asLongAsCondition(carrier, allStates)) return false;
+  if (grantEff.asLongAsCondition && !grantEff.asLongAsCondition(carrier, _permanentStates(allStates))) return false;
   return Battlefield.effects.some(e => e.sourceId === carrierId && !e.selfTarget && e.targetId === stateId);
 }
 

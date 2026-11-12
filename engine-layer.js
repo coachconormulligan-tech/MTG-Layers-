@@ -793,7 +793,7 @@ function _evaluateBoard(allPermanents, allEffects, tracedIds, permanent) {
       const inspState = allStates.get(id);
       for (const [idx, condFn] of finalState.conditionalAbilityConditions) {
         try {
-          if (condFn(inspState, _withoutBuriedMutateCards(allStates))) metSet.add(idx);
+          if (condFn(inspState, _permanentStates(allStates))) metSet.add(idx);
         } catch(e) { /* condition eval failed, leave as unmet */ }
       }
       result.final.conditionalAbilitiesMet = metSet;

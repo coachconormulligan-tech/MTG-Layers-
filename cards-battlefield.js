@@ -2364,7 +2364,7 @@ const Battlefield = {
     const rolled = {};
     const seats = (this.players || []).map(pl => pl.id);
     for (const p of this.permanents) {
-      if (p === spell || p.isSpell || p.isManualEffect || p.isTriggeredAbility || p.isActivatedAbility) continue;
+      if (p === spell || p.isSpell || !_isPermanent(p) || p.isTriggeredAbility || p.isActivatedAbility) continue;
       const st = spell._castStates && spell._castStates.get(p.id);
       if (((st && st.types) || p.printedTypes || []).includes('Land')) continue;
       rolled[p.id] = this._randomPick(seats);

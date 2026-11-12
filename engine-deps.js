@@ -138,14 +138,14 @@ function effectAppliesToPerm(effect, permState, permanent, permId, allStates, ab
           if (!gCard || typeof _isCreatureCardInZone !== 'function' || !_isCreatureCardInZone(gCard, 'graveyard')) return false;
         }
         if (effect.asLongAsCondition) {
-          if (!effect.asLongAsCondition(permState, _withoutBuriedMutateCards(allStates))) return false;
+          if (!effect.asLongAsCondition(permState, _permanentStates(allStates))) return false;
         }
         return true;
       }
       if (effect.sourceId !== permId) return false;
       // Check "as long as" condition even for self-targeted effects
       if (effect.asLongAsCondition) {
-        if (!effect.asLongAsCondition(permState, _withoutBuriedMutateCards(allStates))) return false;
+        if (!effect.asLongAsCondition(permState, _permanentStates(allStates))) return false;
       }
       // Devotion condition (Theros Gods): only applies while devotion < threshold.
       // When devotion >= threshold the God IS a creature — effect doesn't apply at all.
@@ -296,9 +296,9 @@ function effectAppliesToPerm(effect, permState, permanent, permId, allStates, ab
         snapState = _stateAsResolved(snapState, permId, effect);
       }
       if (snapState) {
-        if (!effect.asLongAsCondition(snapState, _withoutBuriedMutateCards(effect._firedAtStates))) return false;
+        if (!effect.asLongAsCondition(snapState, _permanentStates(effect._firedAtStates))) return false;
       } else if (!groupAlreadyAppliedTargeted) {
-        if (!effect.asLongAsCondition(permState, _withoutBuriedMutateCards(allStates))) return false;
+        if (!effect.asLongAsCondition(permState, _permanentStates(allStates))) return false;
       }
     }
 
@@ -430,8 +430,8 @@ function effectAppliesToPerm(effect, permState, permanent, permId, allStates, ab
     const snapState = effect.asLongAsCondition._onResolution && !effect.asLongAsCondition._finalPT && effect._firedAtStates
       ? effect._firedAtStates.get(permId) : null;
     if (snapState) {
-      if (!effect.asLongAsCondition(snapState, _withoutBuriedMutateCards(effect._firedAtStates))) return false;
-    } else if (!effect.asLongAsCondition(permState, _withoutBuriedMutateCards(allStates))) return false;
+      if (!effect.asLongAsCondition(snapState, _permanentStates(effect._firedAtStates))) return false;
+    } else if (!effect.asLongAsCondition(permState, _permanentStates(allStates))) return false;
   }
 
   // Spell effects (instants/sorceries) only affect permanents that existed before the

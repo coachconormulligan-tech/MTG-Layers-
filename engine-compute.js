@@ -33,13 +33,49 @@ function _withoutBuriedMutateCards(allStates) {
   return out;
 }
 
+/* allStates without the emblems, for iterating: a lookup by id (get / has) still finds an
+   emblem, so a condition or count whose source is an emblem can read its controller. */
+class _PermanentStatesView extends Map {
+  constructor(full) {
+    super();
+    this._full = full;
+    for (const [id, st] of full) if (_isPermanent(st)) super.set(id, st);
+  }
+  get(id) {
+    const st = super.get(id);
+    return st !== undefined ? st : this._full.get(id);
+  }
+  has(id) {
+    return super.has(id) || this._full.has(id);
+  }
+}
+
+// Per state map: its view without emblems, or null when it holds none. States are changed in
+// place and a map's ids are fixed once it is built (checked by its size), so a map is read once.
+const _permanentViewCache = new WeakMap();
+function _withoutEmblems(allStates) {
+  if (!allStates || typeof allStates.values !== 'function') return allStates;
+  const hit = _permanentViewCache.get(allStates);
+  if (hit && hit.size === allStates.size) return hit.view || allStates;
+  let view = null;
+  for (const st of allStates.values()) if (!_isPermanent(st)) { view = new _PermanentStatesView(allStates); break; }
+  _permanentViewCache.set(allStates, { size: allStates.size, view });
+  return view || allStates;
+}
+
+/* The states a count or a "you control" condition reads: each permanent on the battlefield once
+   (a mutated permanent as its top card), and no emblem. allStates itself when nothing is left out. */
+function _permanentStates(allStates) {
+  return _withoutEmblems(_withoutBuriedMutateCards(allStates));
+}
+
 /* [KEY: FOR-EACH-COMPUTE]  —  Auto-compute "for each" counts from battlefield state */
 function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
   // A mutated permanent counts once, as its top card, and a card under it that says "this
   // creature" or "other" means the whole permanent, read from the top card's state.
   const srcPermId = effect && effect.sourceId ? _mutateTopId(effect.sourceId) : null;
   const fullStates = allStates;
-  allStates = _withoutBuriedMutateCards(allStates);
+  allStates = _permanentStates(allStates);
   if (selfState && allStates !== fullStates) {
     for (const [id, st] of fullStates) {
       if (st !== selfState) continue;
@@ -776,6 +812,7 @@ function _countZoneCardsByQualifier(qualifier, zone) {
 // zone-card count ("zombie cards in all graveyards") or a battlefield type/subtype count
 // ("zombies on the battlefield"). Returns a number (never null) so a zero half doesn't void the sum.
 function _computeCountClause(clause, allStates, selfState) {
+  allStates = _permanentStates(allStates);
   let c = (clause || '').toLowerCase().trim().replace(/\.$/, '');
   let zone = null;
   if (/\bgraveyards?\b/.test(c)) zone = 'graveyard';
@@ -818,7 +855,7 @@ function _computeDevotionCounts(allStates, controller) {
   const devotion = { W: 0, U: 0, B: 0, R: 0, G: 0 };
   const colorMap = { W: 'W', U: 'U', B: 'B', R: 'R', G: 'G' };
   // A mutated permanent's mana cost is its top card's (CR 702.140e): cards under it add nothing.
-  for (const [, st] of _withoutBuriedMutateCards(allStates)) {
+  for (const [, st] of _permanentStates(allStates)) {
     if (controller && st.controller !== controller) continue;
     const cost = st.manaCost || '';
     for (const ch of cost) {
