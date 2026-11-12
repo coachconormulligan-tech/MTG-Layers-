@@ -33,13 +33,19 @@ function _withoutBuriedMutateCards(allStates) {
   return out;
 }
 
-/* allStates without the emblems, for iterating: a lookup by id (get / has) still finds an
-   emblem, so a condition or count whose source is an emblem can read its controller. */
+/* Is this state counted as a permanent on the battlefield? Not an emblem (_isPermanent) and not
+   a spell being cast (Battlefield.addSpell): a spell is on the stack and is no permanent (CR 110.1). */
+function _countsAsPermanent(st) {
+  return _isPermanent(st) && !st.isSpell;
+}
+
+/* allStates without emblems and spells, for iterating: a lookup by id (get / has) still finds
+   them, so a condition or count whose source is an emblem or a spell can read its controller. */
 class _PermanentStatesView extends Map {
   constructor(full) {
     super();
     this._full = full;
-    for (const [id, st] of full) if (_isPermanent(st)) super.set(id, st);
+    for (const [id, st] of full) if (_countsAsPermanent(st)) super.set(id, st);
   }
   get(id) {
     const st = super.get(id);
@@ -50,23 +56,23 @@ class _PermanentStatesView extends Map {
   }
 }
 
-// Per state map: its view without emblems, or null when it holds none. States are changed in
+// Per state map: its view without emblems and spells, or null when it holds none. States are changed in
 // place and a map's ids are fixed once it is built (checked by its size), so a map is read once.
 const _permanentViewCache = new WeakMap();
-function _withoutEmblems(allStates) {
+function _withoutNonPermanents(allStates) {
   if (!allStates || typeof allStates.values !== 'function') return allStates;
   const hit = _permanentViewCache.get(allStates);
   if (hit && hit.size === allStates.size) return hit.view || allStates;
   let view = null;
-  for (const st of allStates.values()) if (!_isPermanent(st)) { view = new _PermanentStatesView(allStates); break; }
+  for (const st of allStates.values()) if (!_countsAsPermanent(st)) { view = new _PermanentStatesView(allStates); break; }
   _permanentViewCache.set(allStates, { size: allStates.size, view });
   return view || allStates;
 }
 
 /* The states a count or a "you control" condition reads: each permanent on the battlefield once
-   (a mutated permanent as its top card), and no emblem. allStates itself when nothing is left out. */
+   (a mutated permanent as its top card), and no emblem or spell. allStates itself when nothing is left out. */
 function _permanentStates(allStates) {
-  return _withoutEmblems(_withoutBuriedMutateCards(allStates));
+  return _withoutNonPermanents(_withoutBuriedMutateCards(allStates));
 }
 
 /* [KEY: FOR-EACH-COMPUTE]  —  Auto-compute "for each" counts from battlefield state */

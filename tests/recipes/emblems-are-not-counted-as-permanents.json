@@ -1,18 +1,20 @@
 {
-  "name": "An emblem is not counted as a permanent — Regal Bunnicorn beside Tezzeret the Schemer's and Elspeth, Sun's Champion's emblems",
-  "notes": "Memory: project_emblems_not_counted_as_permanents_2026-11-11. An emblem's pseudo-permanent has a state of its own (so its abilities can be fired from the Emblem panel), and every count and 'you control' condition read the board's states as they were, so an emblem counted as a permanent you control: Regal Bunnicorn ('equal to the number of nonland permanents you control') counted each emblem. An emblem is in the command zone and is no permanent (CR 114.1, 114.5). Counts and conditions now read _permanentStates (engine-compute.js), which leaves emblems out of iteration but still finds an emblem by id, so an emblem's own effects keep their controller: Elspeth's emblem still gives your creatures +2/+2 and flying, not the opponent's. Here Bunnicorn counts itself and Grizzly Bears (not the Forest, the opponent's Serra Angel or either emblem): 2/2, +2/+2 from Elspeth = 4/4 (was 6/6). The copy-source, text-change and random-controller lists also leave emblems out (_isPermanent, engine-helpers.js).",
+  "name": "An emblem or a spell is not counted as a permanent — Regal Bunnicorn beside Tezzeret the Schemer's and Elspeth, Sun's Champion's emblems, with Giant Growth cast on it",
+  "notes": "Memory: project_emblems_not_counted_as_permanents_2026-11-11. An emblem's pseudo-permanent has a state of its own (so its abilities can be fired from the Emblem panel), and every count and 'you control' condition read the board's states as they were, so an emblem counted as a permanent you control: Regal Bunnicorn ('equal to the number of nonland permanents you control') counted each emblem. An emblem is in the command zone and is no permanent (CR 114.1, 114.5). Counts and conditions now read _permanentStates (engine-compute.js), which leaves emblems out of iteration but still finds an emblem by id, so an emblem's own effects keep their controller: Elspeth's emblem still gives your creatures +2/+2 and flying, not the opponent's. Here Bunnicorn counts itself and Grizzly Bears (not the Forest, the opponent's Serra Angel or either emblem): 2/2, +2/+2 from Elspeth = 4/4 (was 6/6). The copy-source, text-change and random-controller lists also leave emblems out (_isPermanent, engine-helpers.js). A spell being cast (Battlefield.addSpell) has a state too and was counted the same way: Giant Growth cast on Bunnicorn counted as a nonland permanent you control. A spell is on the stack and is no permanent (CR 110.1); _permanentStates leaves spells out as well (_countsAsPermanent), and snapshotState keeps isSpell so fire-time snapshots leave them out too. With Giant Growth: 2/2 +2/+2 +3/+3 = 7/7 (was 9/9 with both bugs, 8/8 with the emblem fix alone).",
   "steps": [
     { "call": ["addPlayer", "Opponent"] },
-    { "add": "Regal Bunnicorn" },
+    { "add": "Regal Bunnicorn", "as": "bun" },
     { "add": "Grizzly Bears" },
     { "add": "Forest" },
     { "add": "Serra Angel", "controller": "p2" },
     { "call": ["setActivePlayer", "player_0"] },
     { "call": ["addEmblem", "card:Tezzeret the Schemer Emblem"] },
-    { "call": ["addEmblem", "card:Elspeth, Sun's Champion Emblem"] }
+    { "call": ["addEmblem", "card:Elspeth, Sun's Champion Emblem"] },
+    { "add": "Giant Growth", "spell": true, "as": "growth" },
+    { "call": ["setTarget", "@growth", "@bun"] }
   ],
   "asserts": [
-    { "perm": "Regal Bunnicorn", "final": { "power": 4, "toughness": 4 } },
+    { "perm": "Regal Bunnicorn", "final": { "power": 7, "toughness": 7 } },
     { "perm": "Grizzly Bears", "final": { "power": 4, "toughness": 4, "abilities": ["Flying"] } },
     { "perm": "Serra Angel", "final": { "power": 4, "toughness": 4 } }
   ]
