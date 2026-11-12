@@ -294,8 +294,11 @@ function buildFromRecipe(recipe, cards) {
       // "color": the colour picked in the site's pop-up for "protection from the color of your choice".
       if (step.color) effectText = effectText.replace(/the\s+color\s+of\s+your\s+choice/i, step.color);
       const before = new Set(Battlefield.permanents.map(p => p.id));
+      // fireActivatedAbility: Crew and Saddle go to applyCrew / applySaddle.
       const ret = isTrigger
         ? Battlefield.addTriggeredAbility(id, ab.index, effectText, ab.fullText, states)
+        : ab.isCrew ? Battlefield.applyCrew(id, ab.index, ab.fullText)
+        : ab.isSaddle ? Battlefield.applySaddle(id, ab.index, ab.fullText)
         : Battlefield.addActivatedAbility(id, ab.index, effectText, ab.fullText, states);
       if (step.as && ret && ret.id) alias[step.as] = ret.id;
       if (step.asEach) {

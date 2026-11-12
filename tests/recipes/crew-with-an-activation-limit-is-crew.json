@@ -1,0 +1,13 @@
+{
+  "name": "Luxurious Locomotive — \"Crew 1. Activate only once each turn.\" is Crew",
+  "notes": "Memory: project_audit_crew_saddle_2026-11-11. extractActivatedAbilities read only a bare \"Crew N\" / \"Saddle N\" line, so Luxurious Locomotive's \"Crew 1. Activate only once each turn.\" was no ability at all (no colon) and the Vehicle could not be crewed. It is Crew 1 with an activation limit of one: fired, the Vehicle is a 6/5 artifact creature with the Crewed trait (CR 702.122a), and only the Vehicle changes. The harness fire step crews as fireActivatedAbility does (applyCrew).",
+  "steps": [
+    { "add": "Luxurious Locomotive", "as": "loco" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "fire": "@loco", "activated": 1, "as": "crewed" }
+  ],
+  "asserts": [
+    { "perm": "Luxurious Locomotive", "final": { "types": ["Artifact", "Creature"], "power": 6, "toughness": 5, "traits": ["Crewed"] } },
+    { "perm": "Grizzly Bears", "final": { "types": ["Creature"], "power": 2, "toughness": 2 } }
+  ]
+}

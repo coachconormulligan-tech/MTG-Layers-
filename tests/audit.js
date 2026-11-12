@@ -778,7 +778,7 @@ function activatedPlans(permId, a) {
     if (distinctPowers.size < threshold) return [{ skip: 'activation-condition-false' }];
   }
   if (a.isMonstrosity) return [{ skip: 'monstrosity' }];            // fireActivatedAbility adds a trait only
-  if (a.isCrew || a.isSaddle) return [{ skip: 'crew-saddle' }];     // applyCrew / applySaddle
+  if (a.isCrew || a.isSaddle) return [];      // applyCrew / applySaddle: a unit of auditCrew
   if (a.isEquip || a.isReconfigure || a.isFortify) return [];   // openEquipModal: a unit of auditEquip
   // fireActivatedAbility: "or" options -> openActivateOptionsPopup -> _chooseActivateOption, which calls
   // addActivatedAbility(permId, idx, option, a.fullText, finalStates) with freshly read final states.
@@ -2029,6 +2029,110 @@ function auditEquip(card, faceIndex, rec, face) {
   });
 }
 
+/* ═════════════════════════ Crew and Saddle ═════════════════════════
+   "Crew N" (CR 702.122) and "Saddle N" (CR 702.171) name no target, so they are units of their own
+   (kind "crew" / "saddle"), read from the card's own lines. Each is fired as fireActivatedAbility
+   does it (Battlefield.applyCrew / applySaddle) on the fixed board, then its pseudo-permanent is
+   removed as the timeline's Remove button does (Battlefield.removePermanent). Crewed, the Vehicle
+   must be an artifact creature with the Crewed trait and its printed power and toughness (CR
+   702.122a, 301.7a); saddled, the Mount must have the Saddled trait and nothing else of it may change
+   (no condition of the pool's Mounts is static). Before, a Vehicle printed without the creature type
+   must not be a creature. Nothing but the card may change unless the card's text names a group, and
+   after the removal the board must be as before. */
+const CREW_LINE_RE = /^(crew|saddle)\s+(\d+)\b(.*)$/i;
+function crewLines(oracle) {
+  const out = [];
+  for (const raw of String(oracle || '').split('\n')) {
+    const line = stripReminder(raw);
+    const m = line.match(CREW_LINE_RE);
+    if (m) out.push({ kind: m[1].toLowerCase(), n: parseInt(m[2], 10), line });
+  }
+  return out;
+}
+
+function auditCrew(card, faceIndex, rec, face) {
+  const lines = crewLines(face.oracle_text || '');
+  if (!lines.length) return;
+  const text = String(face.oracle_text || '').split('\n').map(stripReminder).filter(Boolean).join('\n');
+  const typeLine = face.type_line || card.type_line || '';
+  const printedCreature = /\bcreature\b/i.test(typeLine.split('—')[0]);
+  const num = (v) => (v === null || v === undefined || v === '' || isNaN(Number(v))) ? null : Number(v);
+  const printedP = num(face.power), printedT = num(face.toughness);
+  let perm, before;
+  try {
+    buildBoard();
+    perm = addAuditedCard(card, faceIndex, false);
+    roleOf.set(perm.id, 'source');
+    Battlefield._invalidate();
+    before = summarizeBoard();
+  } catch (e) { rec.errors.push(errInfo('crew add', e)); return; }
+  const rest = text.split('\n').filter(l => !CREW_LINE_RE.test(l)).join('\n').replace(/["“][^"”]*["”]/g, 'QUOTED');
+  const restLower = rest.toLowerCase().replace(/’/g, "'");
+  const group = GROUP_WORDS.test(restLower) || /\b(?:vehicles|mounts|creatures|permanents) (?:you control|your opponents control)\b/.test(restLower);
+  // P/T words of the card's own (a Vehicle that gets +N/+N or has a */* of its own) leave its P/T unjudged.
+  const ownPT = /[+-]\d+\/[+-]\d+|\bpower and toughness\b|\bbase power\b|\bgets?\b/i.test(rest);
+
+  let siteAbilities = [];
+  try {
+    const fState = Battlefield.getAllFinalStates().get(perm.id) || {};
+    siteAbilities = Battlefield.extractActivatedAbilities(fState.abilities || []).filter(a => a.isCrew || a.isSaddle);
+  } catch (e) { rec.errors.push(errInfo('crew extract', e)); return; }
+  const used = new Set();
+
+  lines.forEach((cl, li) => {
+    const u = { kind: cl.kind, index: li, label: cl.line.slice(0, 60), text: text.slice(0, 400), phrase: cl.line, findings: [], infos: [] };
+    const finding = (check, code, extra) => u.findings.push(Object.assign({ check, code }, extra || {}));
+    try {
+      u.mixed = { source: false, group };
+      const ab = siteAbilities.find(a => !used.has(a.index) && (cl.kind === 'crew' ? a.isCrew && a.crewN === cl.n : a.isSaddle && a.saddleN === cl.n));
+      if (!ab) { finding('check2', cl.kind + '-not-detected', { line: cl.line }); return; }
+      used.add(ab.index);
+      u.abilityIndex = ab.index;
+      const pre = before.get(perm.id) || {};
+      if (cl.kind === 'crew' && !printedCreature && hasCI(pre.types, 'creature')) finding('check1', 'creature-before-crewed', { types: pre.types });
+
+      const savedTraits = new Map(Battlefield.permanents.map(p => [p, (p.traits || []).slice()]));
+      try {
+        withRestore(() => {
+          const pseudo = cl.kind === 'crew' ? Battlefield.applyCrew(perm.id, ab.index, ab.fullText)
+                                            : Battlefield.applySaddle(perm.id, ab.index, ab.fullText);
+          Battlefield.evaluate();
+          Battlefield._invalidate();
+          const after = summarizeBoard();
+          const st = after.get(perm.id) || {};
+          const changed = diffSummaries(before, after);
+          u.changed = changed.map(c => ({ role: c.role, what: c.what }));
+          if (!pseudo) { finding('check1', cl.kind + '-not-applied'); return; }
+          const trait = cl.kind === 'crew' ? 'Crewed' : 'Saddled';
+          if (!(st.traits || []).includes(trait)) finding('check1', cl.kind + '-no-trait', { traits: st.traits });
+          if (cl.kind === 'crew') {
+            if (!hasCI(st.types, 'creature') || !hasCI(st.types, 'artifact')) finding('check1', 'crewed-not-artifact-creature', { types: st.types });
+            else if (!ownPT && printedP !== null && printedT !== null && (num(st.power) !== printedP || num(st.toughness) !== printedT))
+              finding('check1', 'crewed-pt-differs', { printed: printedP + '/' + printedT, shown: st.power + '/' + st.toughness });
+          } else {
+            const mine = changed.find(c => c.id === perm.id);
+            if (mine && mine.what !== 'traits +Saddled') finding('check1', 'saddle-changes-more', { what: mine.what });
+          }
+          const others = group ? [] : changed.filter(c => c.id !== perm.id);
+          if (others.length) finding('check1', cl.kind + '-changes-others', { others: others.map(c => ({ role: c.role, what: c.what })) });
+          // The timeline's Remove button on the crewed / saddled pseudo-permanent.
+          if (pseudo) {
+            Battlefield.removePermanent(pseudo.id);
+            Battlefield.evaluate();
+            Battlefield._invalidate();
+            const back = diffSummaries(before, summarizeBoard());
+            if (back.length) finding('check1', 'remove-leaves-change', { changed: back.map(c => ({ role: c.role, what: c.what })) });
+          }
+        });
+      } finally {
+        for (const [p, t] of savedTraits) p.traits = t;
+        Battlefield._invalidate();
+      }
+    } catch (e) { u.findings.push({ check: 'check1', code: 'crash', error: errInfo(cl.kind + ' audit', e) }); }
+    finally { rec.units.push(u); }
+  });
+}
+
 /* ═════════════════════════ Quoted abilities that name a target ═════════════════════════
    'Equipped creature has "{T}: Target creature gets -1/-1 until end of turn"', 'Until end of turn,
    creatures you control gain "{T}: Gain control of target creature"', 'Create a 1/1 Mercenary
@@ -2565,6 +2669,9 @@ function auditFace(card, faceIndex) {
   /* An Equipment's equip lists, on a board of their own. */
   try { auditEquip(card, faceIndex, rec, face); }
   catch (e) { rec.errors.push(errInfo('equip', e)); }
+  /* Crew and Saddle, on a board of their own. */
+  try { auditCrew(card, faceIndex, rec, face); }
+  catch (e) { rec.errors.push(errInfo('crew', e)); }
   /* Each quoted ability that names a target, from the permanent that gets it, on a board of its own. */
   quotedLater();
   return rec;

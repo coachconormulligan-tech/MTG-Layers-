@@ -288,18 +288,20 @@ const Battlefield = {
       // Strip ability word prefix (e.g. "Eminence — ") ALWAYS before any parsing.
       const stripped = ab.trim().replace(/^[^{\n.;"—\u2014]+[\u2014—]\s*/g, '');
       // Detect Crew N keyword (reminder text stripped: "Crew 3" with no colon)
-      const crewMatch = stripped.match(/^Crew\s+(\d+)\s*$/i);
+      // "Crew 1. Activate only once each turn." (Luxurious Locomotive) is Crew with a limit.
+      const keywordLimit = (m) => m && m[2] ? _parseWordNumber(m[2]) : null;
+      const crewMatch = stripped.match(/^Crew\s+(\d+)(?:\.\s*Activate\s+only\s+(\w+)(?:\s+times)?\s+each\s+turn\.?)?\s*$/i);
       if (crewMatch) {
         result.push({ index: i, fullText: ab, effectText: stripped, costText: '',
-                      activateLimit: null, isMonstrosity: false, monstrosityN: 0,
+                      activateLimit: keywordLimit(crewMatch), isMonstrosity: false, monstrosityN: 0,
                       isCrew: true, crewN: parseInt(crewMatch[1], 10), options: null });
         continue;
       }
       // Detect Saddle N keyword
-      const saddleMatch = stripped.match(/^Saddle\s+(\d+)\s*$/i);
+      const saddleMatch = stripped.match(/^Saddle\s+(\d+)(?:\.\s*Activate\s+only\s+(\w+)(?:\s+times)?\s+each\s+turn\.?)?\s*$/i);
       if (saddleMatch) {
         result.push({ index: i, fullText: ab, effectText: stripped, costText: '',
-                      activateLimit: null, isMonstrosity: false, monstrosityN: 0,
+                      activateLimit: keywordLimit(saddleMatch), isMonstrosity: false, monstrosityN: 0,
                       isSaddle: true, saddleN: parseInt(saddleMatch[1], 10), options: null });
         continue;
       }

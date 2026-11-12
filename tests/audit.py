@@ -91,6 +91,16 @@ hexproof stays. Findings: equip-not-detected, single-picker-shown, empty-list, l
 creature-equip-not-blocked (CR 301.5c / 704.5p, also tried with the Equipment made an artifact
 creature), changes-with-no-target, target-changes-others, attach-changes-nothing, grant-not-applied.
 
+A "Crew N" or "Saddle N" line names no target and is a unit of its own (kind "crew" / "saddle",
+auditCrew in tests/audit.js), read from the card's own lines: it is fired as the site fires it
+(applyCrew / applySaddle) on the fixed board and its pseudo-permanent then removed as the timeline's
+Remove button does. Findings: crew-not-detected / saddle-not-detected (the site offers no Crew / Saddle
+ability for the line), crew-not-applied / saddle-not-applied, crew-no-trait / saddle-no-trait,
+creature-before-crewed (a Vehicle printed without the creature type is a creature before it is crewed),
+crewed-not-artifact-creature, crewed-pt-differs (not its printed P/T, judged only when the card has no
+P/T words of its own), saddle-changes-more (the Mount changes beyond the Saddled trait),
+crew-changes-others / saddle-changes-others (unless the card's text names a group), remove-leaves-change.
+
 A quoted ability that names a target ('Equipped creature has "{T}: Target creature gets -1/-1 until
 end of turn"', 'Until end of turn, each Vampire you control gains "{T}: Gain control of target
 creature."', 'Create a 1/1 Mercenary token with "{T}: Target creature you control gets +1/+0 …"') is a
@@ -181,6 +191,19 @@ CODES = [
     ('modal-modes-mismatch', 'The per-mode pickers are not for the two modes picked.'),
     ('second-mode-changes-nothing', 'Two modes picked, a target chosen for each: one of the two targets changes nothing.'),
     ('no-targeted-effect', 'The text names one permanent target but the parse produced no targeted effect.'),
+    ('crew-not-detected', 'A "Crew N" line the site offers no Crew ability for.'),
+    ('saddle-not-detected', 'A "Saddle N" line the site offers no Saddle ability for.'),
+    ('crew-not-applied', 'Crewing made no pseudo-permanent.'),
+    ('saddle-not-applied', 'Saddling made no pseudo-permanent.'),
+    ('crew-no-trait', 'Crewed, the Vehicle lacks the Crewed trait.'),
+    ('saddle-no-trait', 'Saddled, the Mount lacks the Saddled trait.'),
+    ('creature-before-crewed', 'A Vehicle printed without the creature type is a creature before it is crewed.'),
+    ('crewed-not-artifact-creature', 'Crewed, the Vehicle is not an artifact creature (CR 702.122a).'),
+    ('crewed-pt-differs', 'Crewed, the Vehicle does not have its printed power and toughness, and its text has no P/T words of its own.'),
+    ('saddle-changes-more', 'Saddled, the Mount changes beyond the Saddled trait.'),
+    ('crew-changes-others', 'Crewing changes a permanent other than the Vehicle (its text names no group).'),
+    ('saddle-changes-others', 'Saddling changes a permanent other than the Mount (its text names no group).'),
+    ('remove-leaves-change', 'After the crewed / saddled pseudo-permanent is removed, the board is not as before.'),
     ('quote-not-granted', 'A quoted ability naming a target never reaches the permanent its grant names (attached, targeted, the token, the card, its group).'),
     ('quote-text-changed', 'The permanent that gets a quoted ability has it in other words (the granting card\'s name read as "this card").'),
     ('quote-not-fireable', 'The permanent that gets a quoted ability has it, but the site offers no Trigger / Activate button for it.'),
