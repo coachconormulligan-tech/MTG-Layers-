@@ -877,33 +877,38 @@ let _zoneDetailsCard = null;
 /* Run the layer engine on a single zone card. The throwaway perm is flagged isZoneCard so
    effectAppliesToPerm only feeds it non-battlefield-zone effects; it contributes no effects
    of its own and isn't registered in Battlefield, so battlefield perms evaluate unchanged. */
-function evaluateZoneCard(card, zone) {
+function evaluateZoneCard(card, zone, ownerId) {
   // Delegate to the engine-level helper so the Details popup and other-card checks (Volrath's
-  // Shapeshifter reading the graveyard top) share one evaluation path.
-  return computeZoneCardState(card, zone);
+  // Shapeshifter reading the graveyard top) share one evaluation path. ownerId is "you" for the
+  // card's own characteristic-defining abilities.
+  return computeZoneCardState(card, zone, ownerId);
 }
 
 function openZoneCardDetails(zone, idA, idB) {
-  let card = null;
+  let card = null, ownerId = null;
   if (zone === 'graveyard') {
     const player = Battlefield.getPlayer(idA);
     card = player && player.graveyard ? player.graveyard[idB] : null;
+    ownerId = idA;
   } else if (zone === 'exile') {
     const entry = Battlefield.exile.find(e => e.id === idA);
     card = entry ? entry.card : null;
+    ownerId = entry ? entry.owner : null;
   } else if (zone === 'commander') {
+    // The command zone panel lists the active player's commanders.
     const c = Battlefield.commanders[idA];
     card = c ? c.card : null;
+    ownerId = Battlefield.activePlayerId;
   }
   if (!card) return;
-  _zoneDetailsCard = { card, zone };
+  _zoneDetailsCard = { card, zone, ownerId };
   _renderZoneDetailsModal();
 }
 
 function _renderZoneDetailsModal() {
   if (!_zoneDetailsCard) return;
-  const { card, zone } = _zoneDetailsCard;
-  const result = evaluateZoneCard(card, zone);
+  const { card, zone, ownerId } = _zoneDetailsCard;
+  const result = evaluateZoneCard(card, zone, ownerId);
   const isRulesMode = Battlefield.explanationMode === 'rules';
   const name = result.base.name;
   const illustrator = card.artist || (card.card_faces && card.card_faces[0] && card.card_faces[0].artist) || '';

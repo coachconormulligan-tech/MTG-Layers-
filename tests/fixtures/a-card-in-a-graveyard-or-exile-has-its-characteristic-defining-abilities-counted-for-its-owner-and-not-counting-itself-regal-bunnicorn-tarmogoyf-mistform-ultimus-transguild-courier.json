@@ -1,0 +1,1762 @@
+{
+ "name": "A card in a graveyard or exile has its characteristic-defining abilities, counted for its owner and not counting itself — Regal Bunnicorn, Tarmogoyf, Mistform Ultimus, Transguild Courier",
+ "notes": "Memory: project_emblems_not_counted_as_permanents_2026-11-11 (zone cards section). computeZoneCardState (the inspector's Details pop-up for a graveyard / exile / command-zone card) injected only the card's own effects flagged appliesToNonBattlefieldZones, so a characteristic-defining ability never applied there: Regal Bunnicorn in a graveyard was 0/0 and Tarmogoyf in exile 0/0. A CDA functions in every zone (CR 604.3). Its CDAs are now injected too, with 'you' the card's owner (CR 108.4a: a card outside the battlefield has no controller; before, it was the active player), and the zone card is no permanent (6880a15), so it does not count itself. Here the first player controls Regal Bunnicorn, an Ornithopter and a Forest, the opponent an Ornithopter. The first player's graveyard Bunnicorn counts Bunnicorn and Ornithopter (2/2; not itself, not the Forest), the opponent's counts the opponent's Ornithopter (1/1), and the battlefield Bunnicorn is still 2/2. Tarmogoyf in exile counts one card type (creature) among the two graveyard Bunnicorns: 1/2 (fixed along the way: 'card types among cards in all graveyards' counted cards, 2/3 here, on the battlefield too; _computeForEachCount now counts distinct types, a split card with both halves'). Mistform Ultimus in exile is every creature type and Transguild Courier all colors.",
+ "recipe": {
+  "steps": [
+   {
+    "call": [
+     "addPlayer",
+     "Opponent"
+    ]
+   },
+   {
+    "add": "Regal Bunnicorn"
+   },
+   {
+    "add": "Ornithopter"
+   },
+   {
+    "add": "Forest"
+   },
+   {
+    "add": "Ornithopter",
+    "controller": "p2"
+   },
+   {
+    "call": [
+     "setActivePlayer",
+     "player_0"
+    ]
+   },
+   {
+    "call": [
+     "addToGraveyard",
+     "p1",
+     "card:Regal Bunnicorn"
+    ]
+   },
+   {
+    "call": [
+     "addToGraveyard",
+     "p2",
+     "card:Regal Bunnicorn"
+    ]
+   },
+   {
+    "call": [
+     "addToExile",
+     "card:Tarmogoyf"
+    ]
+   },
+   {
+    "call": [
+     "addToExile",
+     "card:Mistform Ultimus"
+    ]
+   },
+   {
+    "call": [
+     "addToExile",
+     "card:Transguild Courier"
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Regal Bunnicorn",
+   "final": {
+    "power": 2,
+    "toughness": 2
+   }
+  },
+  {
+   "zoneCard": {
+    "name": "Regal Bunnicorn",
+    "zone": "graveyard",
+    "owner": "player_0"
+   },
+   "final": {
+    "power": 2,
+    "toughness": 2
+   },
+   "cdaAbilities": [
+    "This card's power and toughness are each equal to the number of nonland permanents you control."
+   ]
+  },
+  {
+   "zoneCard": {
+    "name": "Regal Bunnicorn",
+    "zone": "graveyard",
+    "owner": "player_1"
+   },
+   "final": {
+    "power": 1,
+    "toughness": 1
+   }
+  },
+  {
+   "zoneCard": {
+    "name": "Tarmogoyf",
+    "zone": "exile"
+   },
+   "final": {
+    "power": 1,
+    "toughness": 2
+   }
+  },
+  {
+   "zoneCard": {
+    "name": "Mistform Ultimus",
+    "zone": "exile"
+   },
+   "final": {
+    "isAllCreatureTypes": true
+   }
+  },
+  {
+   "zoneCard": {
+    "name": "Transguild Courier",
+    "zone": "exile"
+   },
+   "final": {
+    "colors": [
+     "W",
+     "U",
+     "B",
+     "R",
+     "G"
+    ]
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "03c7d409-90e7-44d7-a8c6-4eda35fbcc83",
+     "oracle_id": "efd93428-88a5-4f7b-95f3-1d6eec069a4c",
+     "multiverse_ids": [
+      629526
+     ],
+     "mtgo_id": 116342,
+     "arena_id": 86709,
+     "tcgplayer_id": 513505,
+     "cardmarket_id": 729953,
+     "name": "Regal Bunnicorn",
+     "lang": "en",
+     "released_at": "2023-09-08",
+     "uri": "https://api.scryfall.com/cards/03c7d409-90e7-44d7-a8c6-4eda35fbcc83",
+     "scryfall_uri": "https://scryfall.com/card/woe/25/regal-bunnicorn?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T03:58:48Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/0/3/03c7d409-90e7-44d7-a8c6-4eda35fbcc83.jpg?1783915128",
+      "normal": "https://cards.scryfall.io/normal/front/0/3/03c7d409-90e7-44d7-a8c6-4eda35fbcc83.jpg?1783915128",
+      "large": "https://cards.scryfall.io/large/front/0/3/03c7d409-90e7-44d7-a8c6-4eda35fbcc83.jpg?1783915128",
+      "png": "https://cards.scryfall.io/png/front/0/3/03c7d409-90e7-44d7-a8c6-4eda35fbcc83.png?1783915128",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/0/3/03c7d409-90e7-44d7-a8c6-4eda35fbcc83.jpg?1783915128",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/0/3/03c7d409-90e7-44d7-a8c6-4eda35fbcc83.jpg?1783915128",
+      "thumb": "https://cards.scryfall.io/thumb/front/0/3/03c7d409-90e7-44d7-a8c6-4eda35fbcc83.webp?1783915128",
+      "grid": "https://cards.scryfall.io/grid/front/0/3/03c7d409-90e7-44d7-a8c6-4eda35fbcc83.webp?1783915128",
+      "display": "https://cards.scryfall.io/display/front/0/3/03c7d409-90e7-44d7-a8c6-4eda35fbcc83.webp?1783915128",
+      "art": "https://cards.scryfall.io/art/front/0/3/03c7d409-90e7-44d7-a8c6-4eda35fbcc83.webp?1783915128",
+      "crop": "https://cards.scryfall.io/crop/front/0/3/03c7d409-90e7-44d7-a8c6-4eda35fbcc83.webp?1783915128"
+     },
+     "mana_cost": "{1}{W}",
+     "cmc": 2,
+     "type_line": "Creature — Rabbit Unicorn",
+     "oracle_text": "Regal Bunnicorn's power and toughness are each equal to the number of nonland permanents you control.",
+     "power": "*",
+     "toughness": "*",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "arena",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "79139661-13ee-43c4-8bad-a8c069f1a1df",
+     "set": "woe",
+     "set_name": "Wilds of Eldraine",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/79139661-13ee-43c4-8bad-a8c069f1a1df",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Awoe&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/woe?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/03c7d409-90e7-44d7-a8c6-4eda35fbcc83/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aefd93428-88a5-4f7b-95f3-1d6eec069a4c&unique=prints",
+     "collector_number": "25",
+     "digital": false,
+     "rarity": "rare",
+     "flavor_text": "\"It's entirely peaceful, as long as you don't try to pet it, pen it, take its food, take its hide, sit on its grass, or dress it up in colorful garb for human holidays.\"\n—Sturwynn, Boundary Lands ranger",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Ilse Gort",
+     "artist_ids": [
+      "12070c2e-4de6-46bc-b379-8a580dfb34c5"
+     ],
+     "illustration_id": "0c466d41-f28d-49e1-b815-3bc508a559c4",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 6416,
+     "penny_rank": 2120,
+     "preview": {
+      "source": "Wizards of the Coast",
+      "source_uri": "https://www.tiktok.com/@mtg/video/7270225515510910250",
+      "previewed_at": "2023-08-22"
+     },
+     "prices": {
+      "usd": "0.73",
+      "usd_foil": "1.29",
+      "usd_etched": null,
+      "eur": "0.69",
+      "eur_foil": "1.20",
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=629526&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DRegal%2BBunnicorn",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DRegal%2BBunnicorn",
+      "edhrec": "https://edhrec.com/route/?cc=Regal+Bunnicorn"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F513505%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=729953&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/116342?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "305078a5-ac18-4721-bba2-3434eba5b1cf",
+     "oracle_id": "a3a98bc9-caa0-49b7-951c-fe4e4f54e4ba",
+     "multiverse_ids": [
+      599107
+     ],
+     "mtgo_id": 107995,
+     "tcgplayer_id": 457188,
+     "cardmarket_id": 688483,
+     "name": "Ornithopter",
+     "lang": "en",
+     "released_at": "2023-01-13",
+     "uri": "https://api.scryfall.com/cards/305078a5-ac18-4721-bba2-3434eba5b1cf",
+     "scryfall_uri": "https://scryfall.com/card/dmr/233/ornithopter?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T04:53:30Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+      "normal": "https://cards.scryfall.io/normal/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+      "large": "https://cards.scryfall.io/large/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+      "png": "https://cards.scryfall.io/png/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.png?1783918410",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+      "thumb": "https://cards.scryfall.io/thumb/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.webp?1783918410",
+      "grid": "https://cards.scryfall.io/grid/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.webp?1783918410",
+      "display": "https://cards.scryfall.io/display/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.webp?1783918410",
+      "art": "https://cards.scryfall.io/art/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.webp?1783918410",
+      "crop": "https://cards.scryfall.io/crop/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.webp?1783918410"
+     },
+     "mana_cost": "{0}",
+     "cmc": 0,
+     "type_line": "Artifact Creature — Thopter",
+     "oracle_text": "Flying",
+     "power": "0",
+     "toughness": "2",
+     "colors": [],
+     "color_identity": [],
+     "keywords": [
+      "Flying"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "ca4c2884-e539-4b7f-980d-5d6a50220f2a",
+     "set": "dmr",
+     "set_name": "Dominaria Remastered",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/ca4c2884-e539-4b7f-980d-5d6a50220f2a",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Admr&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/dmr?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/305078a5-ac18-4721-bba2-3434eba5b1cf/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aa3a98bc9-caa0-49b7-951c-fe4e4f54e4ba&unique=prints",
+     "collector_number": "233",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"It has been my honor to improve on Thran's original design. Perhaps history will remember me in some small part for my work.\"\n—Urza, in his apprenticeship",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Franz Vohwinkel",
+     "artist_ids": [
+      "3a243c17-3baa-4b53-9599-645311cd7d3d"
+     ],
+     "illustration_id": "ba23fb60-f170-40cc-8d2e-fe88ba070269",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 783,
+     "penny_rank": 393,
+     "prices": {
+      "usd": "0.31",
+      "usd_foil": "0.38",
+      "usd_etched": null,
+      "eur": "0.24",
+      "eur_foil": "0.35",
+      "tix": "0.04"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=599107&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DOrnithopter",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DOrnithopter",
+      "edhrec": "https://edhrec.com/route/?cc=Ornithopter"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F457188%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=688483&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/107995?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "dce15387-4114-4b3e-91aa-5b42b45c44ac",
+     "oracle_id": "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
+     "multiverse_ids": [],
+     "name": "Forest",
+     "lang": "en",
+     "released_at": "2026-11-13",
+     "uri": "https://api.scryfall.com/cards/dce15387-4114-4b3e-91aa-5b42b45c44ac",
+     "scryfall_uri": "https://scryfall.com/card/trk/325/forest?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-08-06T02:01:15Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+      "normal": "https://cards.scryfall.io/normal/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+      "large": "https://cards.scryfall.io/large/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+      "png": "https://cards.scryfall.io/png/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.png?1785981675",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+      "thumb": "https://cards.scryfall.io/thumb/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.webp?1785981675",
+      "grid": "https://cards.scryfall.io/grid/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.webp?1785981675",
+      "display": "https://cards.scryfall.io/display/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.webp?1785981675",
+      "art": "https://cards.scryfall.io/art/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.webp?1785981675",
+      "crop": "https://cards.scryfall.io/crop/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.webp?1785981675"
+     },
+     "mana_cost": "",
+     "cmc": 0,
+     "type_line": "Basic Land — Forest",
+     "oracle_text": "({T}: Add {G}.)",
+     "colors": [],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "produced_mana": [
+      "G"
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "4fae200d-5757-4924-8cf4-ab2a5ef2ccc0",
+       "component": "combo_piece",
+       "name": "Forest",
+       "type_line": "Basic Land — Forest",
+       "uri": "https://api.scryfall.com/cards/4fae200d-5757-4924-8cf4-ab2a5ef2ccc0"
+      },
+      {
+       "object": "related_card",
+       "id": "aed8ae06-ae54-4a16-8830-6547164ce6ae",
+       "component": "combo_piece",
+       "name": "Gilt-Leaf Alchemist",
+       "type_line": "Creature — Elf Druid",
+       "uri": "https://api.scryfall.com/cards/aed8ae06-ae54-4a16-8830-6547164ce6ae"
+      }
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo",
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "b47039dc-da5a-448c-8feb-e77d458108a6",
+     "set": "trk",
+     "set_name": "Star Trek",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/b47039dc-da5a-448c-8feb-e77d458108a6",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Atrk&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/trk?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/dce15387-4114-4b3e-91aa-5b42b45c44ac/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ab34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6&unique=prints",
+     "collector_number": "325",
+     "digital": false,
+     "rarity": "common",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Bastien Grivet",
+     "artist_ids": [
+      "434a6cf6-c6bf-4f87-84db-d0a902393b9e"
+     ],
+     "illustration_id": "5a6bbfa9-4075-48e4-b06a-78e31477bd3f",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "universesbeyond"
+     ],
+     "prices": {
+      "usd": null,
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DForest",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DForest",
+      "edhrec": "https://edhrec.com/route/?cc=Forest"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fmagic%2Fproduct%3FproductLineName%3Dmagic%26q%3DForest%26view%3Dgrid",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products/Search?referrer=scryfall&searchString=Forest&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Forest&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "305078a5-ac18-4721-bba2-3434eba5b1cf",
+     "oracle_id": "a3a98bc9-caa0-49b7-951c-fe4e4f54e4ba",
+     "multiverse_ids": [
+      599107
+     ],
+     "mtgo_id": 107995,
+     "tcgplayer_id": 457188,
+     "cardmarket_id": 688483,
+     "name": "Ornithopter",
+     "lang": "en",
+     "released_at": "2023-01-13",
+     "uri": "https://api.scryfall.com/cards/305078a5-ac18-4721-bba2-3434eba5b1cf",
+     "scryfall_uri": "https://scryfall.com/card/dmr/233/ornithopter?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T04:53:30Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+      "normal": "https://cards.scryfall.io/normal/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+      "large": "https://cards.scryfall.io/large/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+      "png": "https://cards.scryfall.io/png/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.png?1783918410",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+      "thumb": "https://cards.scryfall.io/thumb/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.webp?1783918410",
+      "grid": "https://cards.scryfall.io/grid/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.webp?1783918410",
+      "display": "https://cards.scryfall.io/display/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.webp?1783918410",
+      "art": "https://cards.scryfall.io/art/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.webp?1783918410",
+      "crop": "https://cards.scryfall.io/crop/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.webp?1783918410"
+     },
+     "mana_cost": "{0}",
+     "cmc": 0,
+     "type_line": "Artifact Creature — Thopter",
+     "oracle_text": "Flying",
+     "power": "0",
+     "toughness": "2",
+     "colors": [],
+     "color_identity": [],
+     "keywords": [
+      "Flying"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "ca4c2884-e539-4b7f-980d-5d6a50220f2a",
+     "set": "dmr",
+     "set_name": "Dominaria Remastered",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/ca4c2884-e539-4b7f-980d-5d6a50220f2a",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Admr&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/dmr?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/305078a5-ac18-4721-bba2-3434eba5b1cf/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aa3a98bc9-caa0-49b7-951c-fe4e4f54e4ba&unique=prints",
+     "collector_number": "233",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"It has been my honor to improve on Thran's original design. Perhaps history will remember me in some small part for my work.\"\n—Urza, in his apprenticeship",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Franz Vohwinkel",
+     "artist_ids": [
+      "3a243c17-3baa-4b53-9599-645311cd7d3d"
+     ],
+     "illustration_id": "ba23fb60-f170-40cc-8d2e-fe88ba070269",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 783,
+     "penny_rank": 393,
+     "prices": {
+      "usd": "0.31",
+      "usd_foil": "0.38",
+      "usd_etched": null,
+      "eur": "0.24",
+      "eur_foil": "0.35",
+      "tix": "0.04"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=599107&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DOrnithopter",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DOrnithopter",
+      "edhrec": "https://edhrec.com/route/?cc=Ornithopter"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F457188%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=688483&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/107995?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_1",
+    "controller": "player_1",
+    "timestamp": 4,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 1,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [
+     {
+      "object": "card",
+      "id": "03c7d409-90e7-44d7-a8c6-4eda35fbcc83",
+      "oracle_id": "efd93428-88a5-4f7b-95f3-1d6eec069a4c",
+      "multiverse_ids": [
+       629526
+      ],
+      "mtgo_id": 116342,
+      "arena_id": 86709,
+      "tcgplayer_id": 513505,
+      "cardmarket_id": 729953,
+      "name": "Regal Bunnicorn",
+      "lang": "en",
+      "released_at": "2023-09-08",
+      "uri": "https://api.scryfall.com/cards/03c7d409-90e7-44d7-a8c6-4eda35fbcc83",
+      "scryfall_uri": "https://scryfall.com/card/woe/25/regal-bunnicorn?utm_source=api",
+      "layout": "normal",
+      "highres_image": true,
+      "image_status": "highres_scan",
+      "image_updated_at": "2026-07-13T03:58:48Z",
+      "image_uris": {
+       "small": "https://cards.scryfall.io/small/front/0/3/03c7d409-90e7-44d7-a8c6-4eda35fbcc83.jpg?1783915128",
+       "normal": "https://cards.scryfall.io/normal/front/0/3/03c7d409-90e7-44d7-a8c6-4eda35fbcc83.jpg?1783915128",
+       "large": "https://cards.scryfall.io/large/front/0/3/03c7d409-90e7-44d7-a8c6-4eda35fbcc83.jpg?1783915128",
+       "png": "https://cards.scryfall.io/png/front/0/3/03c7d409-90e7-44d7-a8c6-4eda35fbcc83.png?1783915128",
+       "art_crop": "https://cards.scryfall.io/art_crop/front/0/3/03c7d409-90e7-44d7-a8c6-4eda35fbcc83.jpg?1783915128",
+       "border_crop": "https://cards.scryfall.io/border_crop/front/0/3/03c7d409-90e7-44d7-a8c6-4eda35fbcc83.jpg?1783915128",
+       "thumb": "https://cards.scryfall.io/thumb/front/0/3/03c7d409-90e7-44d7-a8c6-4eda35fbcc83.webp?1783915128",
+       "grid": "https://cards.scryfall.io/grid/front/0/3/03c7d409-90e7-44d7-a8c6-4eda35fbcc83.webp?1783915128",
+       "display": "https://cards.scryfall.io/display/front/0/3/03c7d409-90e7-44d7-a8c6-4eda35fbcc83.webp?1783915128",
+       "art": "https://cards.scryfall.io/art/front/0/3/03c7d409-90e7-44d7-a8c6-4eda35fbcc83.webp?1783915128",
+       "crop": "https://cards.scryfall.io/crop/front/0/3/03c7d409-90e7-44d7-a8c6-4eda35fbcc83.webp?1783915128"
+      },
+      "mana_cost": "{1}{W}",
+      "cmc": 2,
+      "type_line": "Creature — Rabbit Unicorn",
+      "oracle_text": "Regal Bunnicorn's power and toughness are each equal to the number of nonland permanents you control.",
+      "power": "*",
+      "toughness": "*",
+      "colors": [
+       "W"
+      ],
+      "color_identity": [
+       "W"
+      ],
+      "keywords": [],
+      "legalities": {
+       "standard": "legal",
+       "future": "legal",
+       "historic": "legal",
+       "timeless": "legal",
+       "gladiator": "legal",
+       "pioneer": "legal",
+       "modern": "legal",
+       "legacy": "legal",
+       "pauper": "not_legal",
+       "vintage": "legal",
+       "penny": "legal",
+       "commander": "legal",
+       "oathbreaker": "legal",
+       "standardbrawl": "legal",
+       "brawl": "legal",
+       "competitivebrawl": "legal",
+       "alchemy": "not_legal",
+       "paupercommander": "not_legal",
+       "duel": "legal",
+       "oldschool": "not_legal",
+       "premodern": "not_legal",
+       "predh": "not_legal",
+       "tlr": "legal"
+      },
+      "games": [
+       "paper",
+       "arena",
+       "mtgo"
+      ],
+      "reserved": false,
+      "game_changer": false,
+      "foil": true,
+      "nonfoil": true,
+      "finishes": [
+       "nonfoil",
+       "foil"
+      ],
+      "oversized": false,
+      "promo": false,
+      "reprint": false,
+      "variation": false,
+      "set_id": "79139661-13ee-43c4-8bad-a8c069f1a1df",
+      "set": "woe",
+      "set_name": "Wilds of Eldraine",
+      "set_type": "expansion",
+      "set_uri": "https://api.scryfall.com/sets/79139661-13ee-43c4-8bad-a8c069f1a1df",
+      "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Awoe&unique=prints",
+      "scryfall_set_uri": "https://scryfall.com/sets/woe?utm_source=api",
+      "rulings_uri": "https://api.scryfall.com/cards/03c7d409-90e7-44d7-a8c6-4eda35fbcc83/rulings",
+      "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aefd93428-88a5-4f7b-95f3-1d6eec069a4c&unique=prints",
+      "collector_number": "25",
+      "digital": false,
+      "rarity": "rare",
+      "flavor_text": "\"It's entirely peaceful, as long as you don't try to pet it, pen it, take its food, take its hide, sit on its grass, or dress it up in colorful garb for human holidays.\"\n—Sturwynn, Boundary Lands ranger",
+      "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+      "artist": "Ilse Gort",
+      "artist_ids": [
+       "12070c2e-4de6-46bc-b379-8a580dfb34c5"
+      ],
+      "illustration_id": "0c466d41-f28d-49e1-b815-3bc508a559c4",
+      "border_color": "black",
+      "frame": "2015",
+      "security_stamp": "oval",
+      "full_art": false,
+      "textless": false,
+      "booster": true,
+      "story_spotlight": false,
+      "edhrec_rank": 6416,
+      "penny_rank": 2120,
+      "preview": {
+       "source": "Wizards of the Coast",
+       "source_uri": "https://www.tiktok.com/@mtg/video/7270225515510910250",
+       "previewed_at": "2023-08-22"
+      },
+      "prices": {
+       "usd": "0.73",
+       "usd_foil": "1.29",
+       "usd_etched": null,
+       "eur": "0.69",
+       "eur_foil": "1.20",
+       "tix": "0.02"
+      },
+      "related_uris": {
+       "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=629526&printed=false",
+       "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DRegal%2BBunnicorn",
+       "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DRegal%2BBunnicorn",
+       "edhrec": "https://edhrec.com/route/?cc=Regal+Bunnicorn"
+      },
+      "purchase_uris": {
+       "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F513505%3Fpage%3D1",
+       "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=729953&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+       "cardhoarder": "https://www.cardhoarder.com/cards/116342?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+      }
+     }
+    ],
+    "libraryTop": null,
+    "emblems": []
+   },
+   {
+    "id": "player_1",
+    "name": "Opponent",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 1,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": false,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [
+     {
+      "object": "card",
+      "id": "03c7d409-90e7-44d7-a8c6-4eda35fbcc83",
+      "oracle_id": "efd93428-88a5-4f7b-95f3-1d6eec069a4c",
+      "multiverse_ids": [
+       629526
+      ],
+      "mtgo_id": 116342,
+      "arena_id": 86709,
+      "tcgplayer_id": 513505,
+      "cardmarket_id": 729953,
+      "name": "Regal Bunnicorn",
+      "lang": "en",
+      "released_at": "2023-09-08",
+      "uri": "https://api.scryfall.com/cards/03c7d409-90e7-44d7-a8c6-4eda35fbcc83",
+      "scryfall_uri": "https://scryfall.com/card/woe/25/regal-bunnicorn?utm_source=api",
+      "layout": "normal",
+      "highres_image": true,
+      "image_status": "highres_scan",
+      "image_updated_at": "2026-07-13T03:58:48Z",
+      "image_uris": {
+       "small": "https://cards.scryfall.io/small/front/0/3/03c7d409-90e7-44d7-a8c6-4eda35fbcc83.jpg?1783915128",
+       "normal": "https://cards.scryfall.io/normal/front/0/3/03c7d409-90e7-44d7-a8c6-4eda35fbcc83.jpg?1783915128",
+       "large": "https://cards.scryfall.io/large/front/0/3/03c7d409-90e7-44d7-a8c6-4eda35fbcc83.jpg?1783915128",
+       "png": "https://cards.scryfall.io/png/front/0/3/03c7d409-90e7-44d7-a8c6-4eda35fbcc83.png?1783915128",
+       "art_crop": "https://cards.scryfall.io/art_crop/front/0/3/03c7d409-90e7-44d7-a8c6-4eda35fbcc83.jpg?1783915128",
+       "border_crop": "https://cards.scryfall.io/border_crop/front/0/3/03c7d409-90e7-44d7-a8c6-4eda35fbcc83.jpg?1783915128",
+       "thumb": "https://cards.scryfall.io/thumb/front/0/3/03c7d409-90e7-44d7-a8c6-4eda35fbcc83.webp?1783915128",
+       "grid": "https://cards.scryfall.io/grid/front/0/3/03c7d409-90e7-44d7-a8c6-4eda35fbcc83.webp?1783915128",
+       "display": "https://cards.scryfall.io/display/front/0/3/03c7d409-90e7-44d7-a8c6-4eda35fbcc83.webp?1783915128",
+       "art": "https://cards.scryfall.io/art/front/0/3/03c7d409-90e7-44d7-a8c6-4eda35fbcc83.webp?1783915128",
+       "crop": "https://cards.scryfall.io/crop/front/0/3/03c7d409-90e7-44d7-a8c6-4eda35fbcc83.webp?1783915128"
+      },
+      "mana_cost": "{1}{W}",
+      "cmc": 2,
+      "type_line": "Creature — Rabbit Unicorn",
+      "oracle_text": "Regal Bunnicorn's power and toughness are each equal to the number of nonland permanents you control.",
+      "power": "*",
+      "toughness": "*",
+      "colors": [
+       "W"
+      ],
+      "color_identity": [
+       "W"
+      ],
+      "keywords": [],
+      "legalities": {
+       "standard": "legal",
+       "future": "legal",
+       "historic": "legal",
+       "timeless": "legal",
+       "gladiator": "legal",
+       "pioneer": "legal",
+       "modern": "legal",
+       "legacy": "legal",
+       "pauper": "not_legal",
+       "vintage": "legal",
+       "penny": "legal",
+       "commander": "legal",
+       "oathbreaker": "legal",
+       "standardbrawl": "legal",
+       "brawl": "legal",
+       "competitivebrawl": "legal",
+       "alchemy": "not_legal",
+       "paupercommander": "not_legal",
+       "duel": "legal",
+       "oldschool": "not_legal",
+       "premodern": "not_legal",
+       "predh": "not_legal",
+       "tlr": "legal"
+      },
+      "games": [
+       "paper",
+       "arena",
+       "mtgo"
+      ],
+      "reserved": false,
+      "game_changer": false,
+      "foil": true,
+      "nonfoil": true,
+      "finishes": [
+       "nonfoil",
+       "foil"
+      ],
+      "oversized": false,
+      "promo": false,
+      "reprint": false,
+      "variation": false,
+      "set_id": "79139661-13ee-43c4-8bad-a8c069f1a1df",
+      "set": "woe",
+      "set_name": "Wilds of Eldraine",
+      "set_type": "expansion",
+      "set_uri": "https://api.scryfall.com/sets/79139661-13ee-43c4-8bad-a8c069f1a1df",
+      "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Awoe&unique=prints",
+      "scryfall_set_uri": "https://scryfall.com/sets/woe?utm_source=api",
+      "rulings_uri": "https://api.scryfall.com/cards/03c7d409-90e7-44d7-a8c6-4eda35fbcc83/rulings",
+      "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aefd93428-88a5-4f7b-95f3-1d6eec069a4c&unique=prints",
+      "collector_number": "25",
+      "digital": false,
+      "rarity": "rare",
+      "flavor_text": "\"It's entirely peaceful, as long as you don't try to pet it, pen it, take its food, take its hide, sit on its grass, or dress it up in colorful garb for human holidays.\"\n—Sturwynn, Boundary Lands ranger",
+      "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+      "artist": "Ilse Gort",
+      "artist_ids": [
+       "12070c2e-4de6-46bc-b379-8a580dfb34c5"
+      ],
+      "illustration_id": "0c466d41-f28d-49e1-b815-3bc508a559c4",
+      "border_color": "black",
+      "frame": "2015",
+      "security_stamp": "oval",
+      "full_art": false,
+      "textless": false,
+      "booster": true,
+      "story_spotlight": false,
+      "edhrec_rank": 6416,
+      "penny_rank": 2120,
+      "preview": {
+       "source": "Wizards of the Coast",
+       "source_uri": "https://www.tiktok.com/@mtg/video/7270225515510910250",
+       "previewed_at": "2023-08-22"
+      },
+      "prices": {
+       "usd": "0.73",
+       "usd_foil": "1.29",
+       "usd_etched": null,
+       "eur": "0.69",
+       "eur_foil": "1.20",
+       "tix": "0.02"
+      },
+      "related_uris": {
+       "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=629526&printed=false",
+       "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DRegal%2BBunnicorn",
+       "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DRegal%2BBunnicorn",
+       "edhrec": "https://edhrec.com/route/?cc=Regal+Bunnicorn"
+      },
+      "purchase_uris": {
+       "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F513505%3Fpage%3D1",
+       "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=729953&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+       "cardhoarder": "https://www.cardhoarder.com/cards/116342?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+      }
+     }
+    ],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [
+   {
+    "card": {
+     "object": "card",
+     "id": "8be5ee47-8f8a-4e3c-b1a1-9ca0e1fdec7f",
+     "oracle_id": "45900b2f-f6a9-4c42-9642-008f3c1cf6dd",
+     "multiverse_ids": [],
+     "resource_id": "387709DD28AD78B229B2C3B0450E2BE14114AF515F03698D9F7981F1BCF13A11",
+     "mtgo_id": 155938,
+     "tcgplayer_id": 716686,
+     "cardmarket_id": 908428,
+     "name": "Tarmogoyf",
+     "lang": "en",
+     "released_at": "2026-10-02",
+     "uri": "https://api.scryfall.com/cards/8be5ee47-8f8a-4e3c-b1a1-9ca0e1fdec7f",
+     "scryfall_uri": "https://scryfall.com/card/fra/116/tarmogoyf?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-09-11T11:47:50Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/8/b/8be5ee47-8f8a-4e3c-b1a1-9ca0e1fdec7f.jpg?1789127270",
+      "normal": "https://cards.scryfall.io/normal/front/8/b/8be5ee47-8f8a-4e3c-b1a1-9ca0e1fdec7f.jpg?1789127270",
+      "large": "https://cards.scryfall.io/large/front/8/b/8be5ee47-8f8a-4e3c-b1a1-9ca0e1fdec7f.jpg?1789127270",
+      "png": "https://cards.scryfall.io/png/front/8/b/8be5ee47-8f8a-4e3c-b1a1-9ca0e1fdec7f.png?1789127270",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/8/b/8be5ee47-8f8a-4e3c-b1a1-9ca0e1fdec7f.jpg?1789127270",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/8/b/8be5ee47-8f8a-4e3c-b1a1-9ca0e1fdec7f.jpg?1789127270",
+      "thumb": "https://cards.scryfall.io/thumb/front/8/b/8be5ee47-8f8a-4e3c-b1a1-9ca0e1fdec7f.webp?1789127270",
+      "grid": "https://cards.scryfall.io/grid/front/8/b/8be5ee47-8f8a-4e3c-b1a1-9ca0e1fdec7f.webp?1789127270",
+      "display": "https://cards.scryfall.io/display/front/8/b/8be5ee47-8f8a-4e3c-b1a1-9ca0e1fdec7f.webp?1789127270",
+      "art": "https://cards.scryfall.io/art/front/8/b/8be5ee47-8f8a-4e3c-b1a1-9ca0e1fdec7f.webp?1789127270",
+      "crop": "https://cards.scryfall.io/crop/front/8/b/8be5ee47-8f8a-4e3c-b1a1-9ca0e1fdec7f.webp?1789127270"
+     },
+     "mana_cost": "{1}{G}",
+     "cmc": 2,
+     "type_line": "Creature — Lhurgoyf",
+     "oracle_text": "Tarmogoyf's power is equal to the number of card types among cards in all graveyards and its toughness is equal to that number plus 1.",
+     "power": "*",
+     "toughness": "1+*",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo",
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "6595985e-39cf-4ca3-b43d-dd3e64749fdc",
+     "set": "fra",
+     "set_name": "Reality Fracture",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/6595985e-39cf-4ca3-b43d-dd3e64749fdc",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Afra&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/fra?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/8be5ee47-8f8a-4e3c-b1a1-9ca0e1fdec7f/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A45900b2f-f6a9-4c42-9642-008f3c1cf6dd&unique=prints",
+     "collector_number": "116",
+     "digital": false,
+     "rarity": "mythic",
+     "flavor_text": "What doesn't adapt, dies. And what dies feeds the tarmogoyf.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Lucas Graciano",
+     "artist_ids": [
+      "ce98f39c-7cdd-47e6-a520-6c50443bb4c2"
+     ],
+     "illustration_id": "f0e6096a-33a4-467a-918c-2fe77af29ea6",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 9481,
+     "preview": {
+      "source": "Hungry On Plane",
+      "source_uri": "https://checkpointgaming.net/features/2026/09/mtg-reality-fracture-exclusive-card-reveal-bestial-incursion/",
+      "previewed_at": "2026-09-10"
+     },
+     "prices": {
+      "usd": "2.01",
+      "usd_foil": "3.09",
+      "usd_etched": null,
+      "eur": "2.65",
+      "eur_foil": "4.21",
+      "tix": "0.14"
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DTarmogoyf",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DTarmogoyf",
+      "edhrec": "https://edhrec.com/route/?cc=Tarmogoyf"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F716686%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=908428&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/155938?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "owner": "player_0",
+    "exiledWithId": null,
+    "counters": {},
+    "isFaceDown": false
+   },
+   {
+    "card": {
+     "object": "card",
+     "id": "b74feed4-840b-4f10-9861-7a6885ce7907",
+     "oracle_id": "7bf0e628-06b5-4e12-a526-a2bce08844f2",
+     "multiverse_ids": [
+      111062
+     ],
+     "mtgo_id": 26191,
+     "mtgo_foil_id": 26192,
+     "tcgplayer_id": 14618,
+     "cardmarket_id": 14119,
+     "name": "Mistform Ultimus",
+     "lang": "en",
+     "released_at": "2006-10-06",
+     "uri": "https://api.scryfall.com/cards/b74feed4-840b-4f10-9861-7a6885ce7907",
+     "scryfall_uri": "https://scryfall.com/card/tsb/26/mistform-ultimus?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:48:00Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/b/7/b74feed4-840b-4f10-9861-7a6885ce7907.jpg?1783943280",
+      "normal": "https://cards.scryfall.io/normal/front/b/7/b74feed4-840b-4f10-9861-7a6885ce7907.jpg?1783943280",
+      "large": "https://cards.scryfall.io/large/front/b/7/b74feed4-840b-4f10-9861-7a6885ce7907.jpg?1783943280",
+      "png": "https://cards.scryfall.io/png/front/b/7/b74feed4-840b-4f10-9861-7a6885ce7907.png?1783943280",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/b/7/b74feed4-840b-4f10-9861-7a6885ce7907.jpg?1783943280",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/b/7/b74feed4-840b-4f10-9861-7a6885ce7907.jpg?1783943280",
+      "thumb": "https://cards.scryfall.io/thumb/front/b/7/b74feed4-840b-4f10-9861-7a6885ce7907.webp?1783943280",
+      "grid": "https://cards.scryfall.io/grid/front/b/7/b74feed4-840b-4f10-9861-7a6885ce7907.webp?1783943280",
+      "display": "https://cards.scryfall.io/display/front/b/7/b74feed4-840b-4f10-9861-7a6885ce7907.webp?1783943280",
+      "art": "https://cards.scryfall.io/art/front/b/7/b74feed4-840b-4f10-9861-7a6885ce7907.webp?1783943280",
+      "crop": "https://cards.scryfall.io/crop/front/b/7/b74feed4-840b-4f10-9861-7a6885ce7907.webp?1783943280"
+     },
+     "mana_cost": "{3}{U}",
+     "cmc": 4,
+     "type_line": "Legendary Creature — Illusion",
+     "oracle_text": "Mistform Ultimus is every creature type (even if this card isn't on the battlefield).",
+     "power": "3",
+     "toughness": "3",
+     "colors": [
+      "U"
+     ],
+     "color_identity": [
+      "U"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "6519be58-b8cb-4cd7-9f5b-4db23364715b",
+     "set": "tsb",
+     "set_name": "Time Spiral Timeshifted",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/6519be58-b8cb-4cd7-9f5b-4db23364715b",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Atsb&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/tsb?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/b74feed4-840b-4f10-9861-7a6885ce7907/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A7bf0e628-06b5-4e12-a526-a2bce08844f2&unique=prints",
+     "collector_number": "26",
+     "digital": false,
+     "rarity": "special",
+     "flavor_text": "It may wear your face, but its mind is its own.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Anthony S. Waters",
+     "artist_ids": [
+      "f009de11-3c8d-4663-b996-ca0c3e997fad"
+     ],
+     "illustration_id": "e90195a4-7efd-43c3-8242-712df38e107a",
+     "border_color": "black",
+     "frame": "1997",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 24315,
+     "penny_rank": 17386,
+     "prices": {
+      "usd": "0.38",
+      "usd_foil": "1.50",
+      "usd_etched": null,
+      "eur": "0.27",
+      "eur_foil": "1.42",
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=111062&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DMistform%2BUltimus",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DMistform%2BUltimus",
+      "edhrec": "https://edhrec.com/route/?cc=Mistform+Ultimus"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F14618%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=14119&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/26191?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "owner": "player_0",
+    "exiledWithId": null,
+    "counters": {},
+    "isFaceDown": false
+   },
+   {
+    "card": {
+     "object": "card",
+     "id": "2496ab15-2a88-43fd-8d79-74758879157b",
+     "oracle_id": "86f94f8e-f45e-42fc-8ad6-e9bdfaaa997d",
+     "multiverse_ids": [
+      578810
+     ],
+     "mtgo_id": 103278,
+     "tcgplayer_id": 282965,
+     "cardmarket_id": 672196,
+     "name": "Transguild Courier",
+     "lang": "en",
+     "released_at": "2022-09-09",
+     "uri": "https://api.scryfall.com/cards/2496ab15-2a88-43fd-8d79-74758879157b",
+     "scryfall_uri": "https://scryfall.com/card/dmc/194/transguild-courier?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T05:43:13Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/2/4/2496ab15-2a88-43fd-8d79-74758879157b.jpg?1783921393",
+      "normal": "https://cards.scryfall.io/normal/front/2/4/2496ab15-2a88-43fd-8d79-74758879157b.jpg?1783921393",
+      "large": "https://cards.scryfall.io/large/front/2/4/2496ab15-2a88-43fd-8d79-74758879157b.jpg?1783921393",
+      "png": "https://cards.scryfall.io/png/front/2/4/2496ab15-2a88-43fd-8d79-74758879157b.png?1783921393",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/2/4/2496ab15-2a88-43fd-8d79-74758879157b.jpg?1783921393",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/2/4/2496ab15-2a88-43fd-8d79-74758879157b.jpg?1783921393",
+      "thumb": "https://cards.scryfall.io/thumb/front/2/4/2496ab15-2a88-43fd-8d79-74758879157b.webp?1783921393",
+      "grid": "https://cards.scryfall.io/grid/front/2/4/2496ab15-2a88-43fd-8d79-74758879157b.webp?1783921393",
+      "display": "https://cards.scryfall.io/display/front/2/4/2496ab15-2a88-43fd-8d79-74758879157b.webp?1783921393",
+      "art": "https://cards.scryfall.io/art/front/2/4/2496ab15-2a88-43fd-8d79-74758879157b.webp?1783921393",
+      "crop": "https://cards.scryfall.io/crop/front/2/4/2496ab15-2a88-43fd-8d79-74758879157b.webp?1783921393"
+     },
+     "mana_cost": "{4}",
+     "cmc": 4,
+     "type_line": "Artifact Creature — Golem",
+     "oracle_text": "Transguild Courier is all colors.",
+     "power": "3",
+     "toughness": "3",
+     "colors": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+     ],
+     "color_identity": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "78076b27-f888-4723-b27c-44074accd261",
+     "set": "dmc",
+     "set_name": "Dominaria United Commander",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/78076b27-f888-4723-b27c-44074accd261",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Admc&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/dmc?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/2496ab15-2a88-43fd-8d79-74758879157b/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A86f94f8e-f45e-42fc-8ad6-e9bdfaaa997d&unique=prints",
+     "collector_number": "194",
+     "digital": false,
+     "rarity": "uncommon",
+     "flavor_text": "Reluctant to meet face to face, the leaders of the ten guilds prefer to do official business through a go-between immune to bribes and threats.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "John Avon",
+     "artist_ids": [
+      "798f3932-30e0-4420-aa3f-db4d613f89ca"
+     ],
+     "illustration_id": "c9bc9d0d-d798-48c5-b956-647e8a1b90c1",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 17994,
+     "penny_rank": 12881,
+     "prices": {
+      "usd": "0.22",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.18",
+      "eur_foil": null,
+      "tix": "0.25"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=578810&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DTransguild%2BCourier",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DTransguild%2BCourier",
+      "edhrec": "https://edhrec.com/route/?cc=Transguild+Courier"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F282965%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=672196&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/103278?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "owner": "player_0",
+    "exiledWithId": null,
+    "counters": {},
+    "isFaceDown": false
+   }
+  ],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 2,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Regal Bunnicorn",
+    "final": {
+     "name": "Regal Bunnicorn",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Rabbit",
+      "Unicorn"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "W"
+     ],
+     "abilities": [
+      "This card's power and toughness are each equal to the number of nonland permanents you control."
+     ]
+    },
+    "changedBy": {
+     "7a": [
+      "Regal Bunnicorn"
+     ]
+    }
+   },
+   {
+    "perm": "Ornithopter",
+    "final": {
+     "name": "Ornithopter",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Artifact",
+      "Creature"
+     ],
+     "subtypes": [
+      "Thopter"
+     ],
+     "power": 0,
+     "toughness": 2,
+     "colors": [],
+     "abilities": [
+      "Flying"
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Forest",
+    "final": {
+     "name": "Forest",
+     "controller": "player_0",
+     "supertypes": [
+      "Basic"
+     ],
+     "types": [
+      "Land"
+     ],
+     "subtypes": [
+      "Forest"
+     ],
+     "power": null,
+     "toughness": null,
+     "colors": [],
+     "abilities": [
+      "{T}: Add {G}."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Ornithopter",
+    "final": {
+     "name": "Ornithopter",
+     "controller": "player_1",
+     "supertypes": [],
+     "types": [
+      "Artifact",
+      "Creature"
+     ],
+     "subtypes": [
+      "Thopter"
+     ],
+     "power": 0,
+     "toughness": 2,
+     "colors": [],
+     "abilities": [
+      "Flying"
+     ]
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "7a": [
+    "Regal Bunnicorn"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Regal Bunnicorn",
+    "layer": "7a",
+    "type": "cda_pt",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "compute": null,
+     "forEachDesc": "nonland permanents you control",
+     "isExileCount": false,
+     "isGraveyardCount": false,
+     "userAdjustable": false
+    }
+   }
+  ]
+ }
+}

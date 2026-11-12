@@ -244,6 +244,27 @@ function _parseSimpleKeywordList(text) {
 
 /* Helper: mark equipment effects with requiresCreatureTarget flag,
    and propagate auraRestriction to all targeted effects */
+/* Characteristic-defining abilities (CR 604.3): a static ability of the card that defines its own
+   colour, subtypes or power and toughness, with no condition. Every CDA_PT is one, and the parser
+   flags Changeling, "is all colors" and Angry Mob's fixed half itself; this flags the rest: "This
+   card is colorless" (Ghostfire) and "This card is every creature type" (Mistform Ultimus). A CDA
+   applies first in its layer (CR 613.3) and in every zone (computeZoneCardState). Then the printed
+   lines they come from are kept on the permanent (_cdaAbilities) for the inspector's label. */
+function _markCharacteristicDefining(effects, permanent) {
+  if (!permanent || permanent.abilitySourceId || permanent.isTriggeredAbility || permanent.isActivatedAbility || permanent.isEmblem) return;
+  const own = effects.filter(e => e.sourceId === permanent.id);
+  for (const e of own) {
+    if (e.isCDA || !e.selfTarget || e.targetId || e.asLongAsCondition || e.appliesToNonBattlefieldZones ||
+        e.modalModeIndex !== undefined) continue;
+    const p = e.params || {};
+    const colour = e.layer === '5' && e.type === EFFECT_TYPE.SET_COLOR;
+    const everyCreatureType = e.layer === '4' && e.type === EFFECT_TYPE.ADD_TYPE && p.gainsAllCreatureTypes &&
+      !(p.types || []).length && !(p.subtypes || []).length && !(p.supertypes || []).length && !p.gainsAllLandTypes;
+    if (colour || everyCreatureType) e.isCDA = true;
+  }
+  permanent._cdaAbilities = _cdaAbilityTexts(permanent.printedAbilities || [], own);
+}
+
 function _finalizeEffects(effects, isEquipmentSource, permanent, oracleText, contentPos) {
   const _oracle = (oracleText || '').toLowerCase();
   // "…, loses all abilities, and gains flying" (Dance of the Skywise, Dragonshift): effects of
@@ -376,5 +397,6 @@ function _finalizeEffects(effects, isEquipmentSource, permanent, oracleText, con
       }
     }
   }
+  _markCharacteristicDefining(effects, permanent);
   return effects;
 }

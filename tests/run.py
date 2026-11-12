@@ -27,6 +27,12 @@ Asserts are the hand-written facts the fixture exists to protect, checked on eve
         battlefield has the picker it is attached with: { "perm": "Pacifism" }. An Equipment's
         Equip / Reconfigure / Fortify pop-up has a list per such ability, { "perm": "Robe of the
         Archmagi", "kind": "equip", "equip": 1 }, 0-based in text order; empty when blocked)
+    { "zoneCard": { "name": "Regal Bunnicorn", "zone": "graveyard" }, "final": { "power": 1 },
+      "cdaAbilities": ["This card's power and toughness are each equal to …"] }
+        (a graveyard / exile / command-zone card as the Details pop-up evaluates it, "you" being
+        its owner; "owner": "player_1" picks one owner's copy; both keys after it are optional)
+    { "cdaAbilities": "Changeling Outcast", "are": ["Changeling"] }
+        (a permanent's lines the inspector labels as characteristic-defining abilities)
 A recipe may carry "knownFailure": "reason" to mark an open bug whose asserts do not hold
 yet; it is reported but does not fail the run, and is flagged once it starts passing.
 Matching is partial: only the keys given are compared. Use { "$includes": [...] } or
@@ -285,10 +291,31 @@ def matches(spec, value):
     return spec == value
 
 
-def check_asserts(asserts, actual, trigger_conditions=(), target_candidates=()):
+def check_asserts(asserts, actual, trigger_conditions=(), target_candidates=(), zone_cards=(), cda_abilities=()):
     """List of failure messages for a fixture's hand-written asserts."""
     out = []
     for a in asserts or []:
+        if 'zoneCard' in a:
+            found = [z for z in zone_cards or [] if matches(a['zoneCard'], z)]
+            if not found:
+                out.append('assert: no zone card matching %s' % short(a['zoneCard']))
+                continue
+            z = found[0]
+            if 'final' in a and not matches(a['final'], z['final']):
+                out.append('assert on zone card %s: expected %s, got %s' % (
+                    short(a['zoneCard']), short(a['final']), short({k: z['final'].get(k) for k in a['final']})))
+            if 'cdaAbilities' in a and sorted(z['cdaAbilities']) != sorted(a['cdaAbilities']):
+                out.append('assert on zone card %s CDA lines: expected %s, got %s' % (
+                    short(a['zoneCard']), short(a['cdaAbilities']), short(z['cdaAbilities'])))
+            continue
+        if 'cdaAbilities' in a:
+            found = [c for c in cda_abilities or [] if c['perm'] == a['cdaAbilities']]
+            if not found:
+                out.append('assert: no permanent named %s' % a['cdaAbilities'])
+            elif sorted(found[0]['abilities']) != sorted(a.get('are') or []):
+                out.append('assert on %s CDA lines: expected %s, got %s' % (
+                    a['cdaAbilities'], short(sorted(a.get('are') or [])), short(found[0]['abilities'])))
+            continue
         if 'targetCandidates' in a:
             found = [c for c in target_candidates or [] if matches(a['targetCandidates'], c)]
             if not found:
@@ -355,7 +382,7 @@ def cmd_build(recipe_paths):
             failed += 1
             print('ERROR  %s\n       %s' % (name, r['error'].replace('\n', '\n       ')))
             continue
-        problems = check_asserts(recipe.get('asserts'), r['actual'], r.get('triggerConditions'), r.get('targetCandidates'))
+        problems = check_asserts(recipe.get('asserts'), r['actual'], r.get('triggerConditions'), r.get('targetCandidates'), r.get('zoneCards'), r.get('cdaAbilities'))
         fx = {'name': name, 'notes': recipe.get('notes', ''), 'recipe': {'steps': recipe.get('steps', [])},
               'asserts': recipe.get('asserts', []), 'board': r['board'], 'expected': r['actual']}
         if recipe.get('knownFailure'):
@@ -426,7 +453,7 @@ def main():
             failed += 1
             print('ERROR  %s\n       %s' % (label, r['error'].replace('\n', '\n       ')))
             continue
-        problems = check_asserts(fx.get('asserts'), r['actual'], r.get('triggerConditions'), r.get('targetCandidates'))
+        problems = check_asserts(fx.get('asserts'), r['actual'], r.get('triggerConditions'), r.get('targetCandidates'), r.get('zoneCards'), r.get('cdaAbilities'))
         if fx.get('knownFailure'):
             # An open bug with its fixture already written. Reported, but does not fail the
             # run, so the suite stays usable as a gate while the bug is waiting to be fixed.

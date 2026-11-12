@@ -399,7 +399,7 @@ function renderLayerBody(layer, isRulesMode, cardName, baseState) {
         <div class="layer-app-source">
           <span class="layer-app-num">${entryNum}.</span>
           <strong>${escapeHtml(entryDisplaySource)}</strong>
-          <span class="layer-app-ts">ts:${entry.timestamp}</span>
+          <span class="layer-app-ts">ts:${entry.timestamp}</span>${entry.isCDA ? _cdaTagHtml(isRulesMode) : ''}
         </div>
         <div class="layer-app-reason">${isRulesMode
           ? escapeHtml(capitalizeFirst(_replaceYouControl(_replaceThisCard(entry.reason, cardName), entry.sourceId)))
@@ -614,6 +614,16 @@ function _finalPtHtml(state, baseState) {
     + `${wrap(hl && String(state.toughness) !== String(baseState.toughness), state.toughness)}`;
 }
 
+/* The label on a characteristic-defining ability (CR 604.3): on its line in the Abilities list
+   (state.cdaAbilities, kept by the parser's _markCharacteristicDefining) and on its entry in a
+   layer (entry.isCDA, engine-layer.js). */
+function _cdaTagHtml(isRulesMode) {
+  const title = isRulesMode
+    ? 'CR 604.3: A characteristic-defining ability defines the object\'s own colour, subtypes, or power and toughness. It functions in all zones (CR 604.3) and applies before other effects in its layer (CR 613.3).'
+    : 'This ability defines the card\'s own colour, creature types, or power and toughness. It works wherever the card is, and it applies before the other effects in its layer.';
+  return ` <span class="cda-tag" title="${escapeAttr(title)}">${isRulesMode ? 'Characteristic-defining ability (CR 604.3)' : 'Characteristic-defining ability'}</span>`;
+}
+
 function renderStateBlock(state, isRulesMode, cardName, baseState, omitPtRow) {
   const _rcName = cardName || state.name;
   const _repAb = (ab) => _replaceThisCard(_replaceYouForPlayer(ab, state.controller), _rcName);
@@ -639,6 +649,8 @@ function renderStateBlock(state, isRulesMode, cardName, baseState, omitPtRow) {
   //  - unchanged ability        -> plain text, no class
   //  - text-changed ability     -> only the changed words wrapped in .state-new
   //  - genuinely new ability     -> plain text + .state-ability-new (whole line red)
+  const _cdaSet = new Set(state.cdaAbilities || []);
+  const _cdaTag = (ab) => _cdaSet.has(ab) ? _cdaTagHtml(isRulesMode) : '';
   const _abRender = (ab) => {
     const disp = _repAb(ab);
     if (!highlight || (baseAbSet && baseAbSet.has(ab))) return { html: escapeHtml(disp), cls: '' };
@@ -699,34 +711,34 @@ function renderStateBlock(state, isRulesMode, cardName, baseState, omitPtRow) {
           if (inRange) {
             const title = isLevelUpLine ? 'Level up ability (always active)' :
               `Level ${bracket.min}${bracket.max === Infinity ? '+' : '-' + bracket.max} (active, ${levelCount} level counters)`;
-            lines.push(`<div class="state-ability-line state-ability-saga-active" title="${title}">${escapeHtml(_repAb(ab))}</div>`);
+            lines.push(`<div class="state-ability-line state-ability-saga-active" title="${title}">${escapeHtml(_repAb(ab))}${_cdaTag(ab)}</div>`);
           } else {
             const title = `Level ${bracket.min}${bracket.max === Infinity ? '+' : '-' + bracket.max} (inactive, ${levelCount} level counters)`;
-            lines.push(`<div class="state-ability-line state-ability-saga-inactive" title="${title}">${escapeHtml(_repAb(ab))}</div>`);
+            lines.push(`<div class="state-ability-line state-ability-saga-inactive" title="${title}">${escapeHtml(_repAb(ab))}${_cdaTag(ab)}</div>`);
           }
         } else {
-          lines.push(`<div class="state-ability-line">${escapeHtml(_repAb(ab))}</div>`);
+          lines.push(`<div class="state-ability-line">${escapeHtml(_repAb(ab))}${_cdaTag(ab)}</div>`);
         }
       } else if (classThresholds && classThresholds.has(i)) {
         // Class level ability: dim if class level hasn't reached threshold
         const threshold = classThresholds.get(i);
         if (classLevel >= threshold) {
-          lines.push(`<div class="state-ability-line state-ability-saga-active" title="Level ${threshold} ability (active)">${escapeHtml(_repAb(ab))}</div>`);
+          lines.push(`<div class="state-ability-line state-ability-saga-active" title="Level ${threshold} ability (active)">${escapeHtml(_repAb(ab))}${_cdaTag(ab)}</div>`);
         } else {
-          lines.push(`<div class="state-ability-line state-ability-saga-inactive" title="Level ${threshold} ability (needs level ${threshold}, currently ${classLevel})">${escapeHtml(_repAb(ab))}</div>`);
+          lines.push(`<div class="state-ability-line state-ability-saga-inactive" title="Level ${threshold} ability (needs level ${threshold}, currently ${classLevel})">${escapeHtml(_repAb(ab))}${_cdaTag(ab)}</div>`);
         }
       } else if (spacecraftData && spacecraftData.abilityIndexToBracket && spacecraftData.abilityIndexToBracket.has(i)) {
         // Spacecraft station ability: check if charge counters >= threshold
         const minCharge = spacecraftData.abilityIndexToBracket.get(i);
         if (minCharge === -1) {
           // Station keyword line — always active
-          lines.push(`<div class="state-ability-line state-ability-saga-active" title="Station keyword (always active)">${escapeHtml(_repAb(ab))}</div>`);
+          lines.push(`<div class="state-ability-line state-ability-saga-active" title="Station keyword (always active)">${escapeHtml(_repAb(ab))}${_cdaTag(ab)}</div>`);
         } else {
           const isActive = chargeCount >= minCharge;
           if (isActive) {
-            lines.push(`<div class="state-ability-line state-ability-saga-active" title="Station ${minCharge}+ (active, ${chargeCount} charge counters)">${escapeHtml(_repAb(ab))}</div>`);
+            lines.push(`<div class="state-ability-line state-ability-saga-active" title="Station ${minCharge}+ (active, ${chargeCount} charge counters)">${escapeHtml(_repAb(ab))}${_cdaTag(ab)}</div>`);
           } else {
-            lines.push(`<div class="state-ability-line state-ability-saga-inactive" title="Station ${minCharge}+ (inactive, needs ${minCharge} charge counters, currently ${chargeCount})">${escapeHtml(_repAb(ab))}</div>`);
+            lines.push(`<div class="state-ability-line state-ability-saga-inactive" title="Station ${minCharge}+ (inactive, needs ${minCharge} charge counters, currently ${chargeCount})">${escapeHtml(_repAb(ab))}${_cdaTag(ab)}</div>`);
           }
         }
       } else if (state.conditionalAbilityIndices && state.conditionalAbilityIndices.has(i)) {
@@ -734,23 +746,23 @@ function renderStateBlock(state, isRulesMode, cardName, baseState, omitPtRow) {
         if (!state.allAbilitiesRemoved) {
           const isMet = state.conditionalAbilitiesMet && state.conditionalAbilitiesMet.has(i);
           if (isMet) {
-            lines.push(`<div class="state-ability-line state-ability-conditional-active" title="Conditional (condition met)">${escapeHtml(_repAb(ab))}</div>`);
+            lines.push(`<div class="state-ability-line state-ability-conditional-active" title="Conditional (condition met)">${escapeHtml(_repAb(ab))}${_cdaTag(ab)}</div>`);
           } else {
-            lines.push(`<div class="state-ability-line state-ability-conditional" title="Conditional (inactive — condition not met)">${escapeHtml(_repAb(ab))}</div>`);
+            lines.push(`<div class="state-ability-line state-ability-conditional" title="Conditional (inactive — condition not met)">${escapeHtml(_repAb(ab))}${_cdaTag(ab)}</div>`);
           }
         }
       } else if (sagaThresholds && sagaThresholds.has(i)) {
         // Saga chapter: dim if lore counters haven't reached threshold
         const threshold = sagaThresholds.get(i);
         if (loreCount >= threshold) {
-          lines.push(`<div class="state-ability-line state-ability-saga-active" title="Chapter active (lore \u2265 ${threshold})">${escapeHtml(_repAb(ab))}</div>`);
+          lines.push(`<div class="state-ability-line state-ability-saga-active" title="Chapter active (lore \u2265 ${threshold})">${escapeHtml(_repAb(ab))}${_cdaTag(ab)}</div>`);
         } else {
-          lines.push(`<div class="state-ability-line state-ability-saga-inactive" title="Chapter inactive (needs lore \u2265 ${threshold}, currently ${loreCount})">${escapeHtml(_repAb(ab))}</div>`);
+          lines.push(`<div class="state-ability-line state-ability-saga-inactive" title="Chapter inactive (needs lore \u2265 ${threshold}, currently ${loreCount})">${escapeHtml(_repAb(ab))}${_cdaTag(ab)}</div>`);
         }
       } else {
         // Non-conditional printed abilities: only show if still in state.abilities
         if (state.abilities.includes(ab)) {
-          lines.push(`<div class="state-ability-line">${escapeHtml(_repAb(ab))}</div>`);
+          lines.push(`<div class="state-ability-line">${escapeHtml(_repAb(ab))}${_cdaTag(ab)}</div>`);
         }
       }
     }
@@ -758,7 +770,7 @@ function renderStateBlock(state, isRulesMode, cardName, baseState, omitPtRow) {
     for (const ab of state.abilities) {
       if (!state.allPrintedAbilities.includes(ab)) {
         const r = _abRender(ab);
-        lines.push(`<div class="state-ability-line${r.cls}">${r.html}</div>`);
+        lines.push(`<div class="state-ability-line${r.cls}">${r.html}${_cdaTag(ab)}</div>`);
       }
     }
     // Equip and Reconfigure always appear last in the text box
@@ -778,7 +790,7 @@ function renderStateBlock(state, isRulesMode, cardName, baseState, omitPtRow) {
     abilitiesHtml = sortedAbilities.length
       ? _groupAbilityLines(sortedAbilities.map(a => {
           const r = _abRender(a);
-          return `<div class="state-ability-line${r.cls}">${r.html}</div>`;
+          return `<div class="state-ability-line${r.cls}">${r.html}${_cdaTag(a)}</div>`;
         })).join('')
       : '<span class="dim">(none)</span>';
   }

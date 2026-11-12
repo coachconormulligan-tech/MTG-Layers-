@@ -1,0 +1,23 @@
+{
+  "name": "Every characteristic-defining ability is flagged and labelled — Changeling Outcast, Mistform Ultimus, Ghostfire, Eldrazi Skyspawner, Angry Mob; Flying Men keeps flying",
+  "notes": "Memory: project_emblems_not_counted_as_permanents_2026-11-11 (CDA labels section). The inspector labels a characteristic-defining ability (CR 604.3) on its line in the Abilities list (state.cdaAbilities, from _markCharacteristicDefining in cards-parser-post.js) and on its layer entry (entry.isCDA). The parser flagged Changeling, 'is all colors' and Angry Mob's fixed half as CDAs but not 'This card is every creature type' (Mistform Ultimus) or 'This card is colorless' (Ghostfire), so those did not apply first in their layer (CR 613.3); now they do. Devoid has no effect (a card with it is printed colorless) but its line is labelled. A conditional or granted P/T change (Nighthowler's '+X/+X') is no CDA and gets no label. Fixed along the way: a card whose name begins with a keyword lost the keyword, read as its short name: Changeling Outcast's 'Changeling' became 'This card' (no creature types at all) and Flying Men had no flying (_replaceProperNounSelfRef keeps a first word that stands as a keyword).",
+  "steps": [
+    { "add": "Changeling Outcast" },
+    { "add": "Mistform Ultimus" },
+    { "add": "Eldrazi Skyspawner" },
+    { "add": "Angry Mob" },
+    { "add": "Nighthowler" },
+    { "add": "Flying Men" },
+    { "add": "Ghostfire", "spell": true }
+  ],
+  "asserts": [
+    { "cdaAbilities": "Changeling Outcast", "are": ["Changeling"] },
+    { "perm": "Changeling Outcast", "final": { "isAllCreatureTypes": true } },
+    { "cdaAbilities": "Mistform Ultimus", "are": ["This card is every creature type ."] },
+    { "cdaAbilities": "Eldrazi Skyspawner", "are": ["Devoid"] },
+    { "cdaAbilities": "Angry Mob", "are": ["During your turn, this card's power and toughness are each equal to 2 plus the number of Swamps your opponents control. During turns other than yours, this card's power and toughness are each 2."] },
+    { "cdaAbilities": "Nighthowler", "are": [] },
+    { "perm": "Flying Men", "final": { "abilities": ["Flying"] } },
+    { "order": { "4": ["Changeling Outcast", "Mistform Ultimus"] } }
+  ]
+}

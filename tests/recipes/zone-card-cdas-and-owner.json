@@ -1,0 +1,26 @@
+{
+  "name": "A card in a graveyard or exile has its characteristic-defining abilities, counted for its owner and not counting itself — Regal Bunnicorn, Tarmogoyf, Mistform Ultimus, Transguild Courier",
+  "notes": "Memory: project_emblems_not_counted_as_permanents_2026-11-11 (zone cards section). computeZoneCardState (the inspector's Details pop-up for a graveyard / exile / command-zone card) injected only the card's own effects flagged appliesToNonBattlefieldZones, so a characteristic-defining ability never applied there: Regal Bunnicorn in a graveyard was 0/0 and Tarmogoyf in exile 0/0. A CDA functions in every zone (CR 604.3). Its CDAs are now injected too, with 'you' the card's owner (CR 108.4a: a card outside the battlefield has no controller; before, it was the active player), and the zone card is no permanent (6880a15), so it does not count itself. Here the first player controls Regal Bunnicorn, an Ornithopter and a Forest, the opponent an Ornithopter. The first player's graveyard Bunnicorn counts Bunnicorn and Ornithopter (2/2; not itself, not the Forest), the opponent's counts the opponent's Ornithopter (1/1), and the battlefield Bunnicorn is still 2/2. Tarmogoyf in exile counts one card type (creature) among the two graveyard Bunnicorns: 1/2 (fixed along the way: 'card types among cards in all graveyards' counted cards, 2/3 here, on the battlefield too; _computeForEachCount now counts distinct types, a split card with both halves'). Mistform Ultimus in exile is every creature type and Transguild Courier all colors.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Regal Bunnicorn" },
+    { "add": "Ornithopter" },
+    { "add": "Forest" },
+    { "add": "Ornithopter", "controller": "p2" },
+    { "call": ["setActivePlayer", "player_0"] },
+    { "call": ["addToGraveyard", "p1", "card:Regal Bunnicorn"] },
+    { "call": ["addToGraveyard", "p2", "card:Regal Bunnicorn"] },
+    { "call": ["addToExile", "card:Tarmogoyf"] },
+    { "call": ["addToExile", "card:Mistform Ultimus"] },
+    { "call": ["addToExile", "card:Transguild Courier"] }
+  ],
+  "asserts": [
+    { "perm": "Regal Bunnicorn", "final": { "power": 2, "toughness": 2 } },
+    { "zoneCard": { "name": "Regal Bunnicorn", "zone": "graveyard", "owner": "player_0" }, "final": { "power": 2, "toughness": 2 },
+      "cdaAbilities": ["This card's power and toughness are each equal to the number of nonland permanents you control."] },
+    { "zoneCard": { "name": "Regal Bunnicorn", "zone": "graveyard", "owner": "player_1" }, "final": { "power": 1, "toughness": 1 } },
+    { "zoneCard": { "name": "Tarmogoyf", "zone": "exile" }, "final": { "power": 1, "toughness": 2 } },
+    { "zoneCard": { "name": "Mistform Ultimus", "zone": "exile" }, "final": { "isAllCreatureTypes": true } },
+    { "zoneCard": { "name": "Transguild Courier", "zone": "exile" }, "final": { "colors": ["W", "U", "B", "R", "G"] } }
+  ]
+}

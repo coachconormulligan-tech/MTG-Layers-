@@ -67,6 +67,37 @@ function _isPermanent(p) {
   return !!p && !p.isEmblem && !p.isManualEffect && !p.isZoneCard;
 }
 
+/* Is this effect a characteristic-defining ability (CR 604.3): one that defines its own object's
+   colour, subtypes or power and toughness? Those apply first in their layer (CR 613.3) and in
+   every zone (CR 604.3), and the inspector labels them. The parser flags them isCDA
+   (_markCharacteristicDefining in cards-parser-post.js); every CDA_PT is one. */
+function _isCdaEffect(e) {
+  return !!e && (e.isCDA === true || e.type === EFFECT_TYPE.CDA_PT);
+}
+
+/* Which of these ability lines are characteristic-defining abilities, for the inspector's label.
+   A line counts when its own words say so ("this card's power and toughness are each equal to …",
+   "this card is colorless / all colors / every creature type", Changeling, Devoid; a quoted ability
+   is another object's and is left out) and, when `effects` (the card's own) are given, the card has
+   a CDA effect in that layer: Devoid has none, as a card with it is printed colorless. */
+const _CDA_SELF_RE = "this (?:card|creature|permanent|artifact|enchantment|land|vehicle|token|spell)";
+const _CDA_LINE_RE = {
+  '7': new RegExp("\\b" + _CDA_SELF_RE + "'s (?:power|toughness)\\b(?: and toughness)? (?:is|are)\\b", 'i'),
+  '5': new RegExp("\\b" + _CDA_SELF_RE + " is (?:all colors|colorless|white|blue|black|red|green)\\b", 'i'),
+  '4': new RegExp("\\b" + _CDA_SELF_RE + " is (?:every|all) creature types?\\b|^(?:[\\w' -]+,\\s*)*changeling\\s*(?:[,.(]|$)", 'i'),
+};
+const _CDA_DEVOID_RE = /^(?:[\w' -]+,\s*)*devoid\s*(?:[,.(]|$)/i;
+function _cdaAbilityTexts(abilities, effects) {
+  const layers = effects ? new Set(effects.filter(_isCdaEffect).map(e => String(e.layer).charAt(0))) : null;
+  const out = [];
+  for (const ab of abilities || []) {
+    const t = String(ab || '').replace(/"[^"]*"|“[^”]*”/g, '""').trim();
+    if (_CDA_DEVOID_RE.test(t) ||
+        Object.keys(_CDA_LINE_RE).some(L => (!layers || layers.has(L)) && _CDA_LINE_RE[L].test(t))) out.push(ab);
+  }
+  return out;
+}
+
 function snapshotState(state) {
   return {
     name:       state.name,
@@ -103,6 +134,7 @@ function snapshotState(state) {
     attackingPlayerId: state.attackingPlayerId || null,
     timesAttackedThisTurn: state.timesAttackedThisTurn || 0,
     allPrintedAbilities: state.allPrintedAbilities ? [...state.allPrintedAbilities] : null,
+    cdaAbilities: state.cdaAbilities ? [...state.cdaAbilities] : [],
     conditionalAbilityIndices: state.conditionalAbilityIndices || null,
     conditionalAbilityConditions: state.conditionalAbilityConditions || null,
     sagaChapterThresholds: state.sagaChapterThresholds || null,

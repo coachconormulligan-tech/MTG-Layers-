@@ -615,6 +615,8 @@ function _replaceProperNounSelfRef(cardName, oracleText, isToken = false) {
     // card's short name ("Gideon becomes a 4/4 …"), but only where it stands alone as a
     // subject — not "All Sliver creatures", "Target Goblin", "this Case", "0/0 Elemental creature".
     const _typeWordShortName = _isFirstWordOnly && _isTypeWord;
+    // A first word that is a keyword ability (Changeling Outcast, Flying Men, Firebending Student).
+    const _keywordFirstWord = _isFirstWordOnly && typeof KEYWORD_SET !== 'undefined' && KEYWORD_SET.has(candidate.toLowerCase());
     const escaped = candidate.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     // Letter-aware boundaries: \b does not see "Ó" as a word character (Óin the Brave).
     const regex = new RegExp('(?<![\\p{L}\\p{N}_])' + escaped + '(?![\\p{L}\\p{N}_])', 'gu');
@@ -639,6 +641,14 @@ function _replaceProperNounSelfRef(cardName, oracleText, isToken = false) {
       if (_typeWordShortName &&
           (/(?:\b(?:all|each|every|target|this|that|those|these|of|more|attacking|blocking|tapped|untapped|legendary|non-?\w*)|\d+\/\d+|\b[A-Z][\w-]*)\s+$/.test(before) ||
            /^\s+(?:creatures?|permanents?|cards?|spells?|planeswalkers?|tokens?|artifacts?|enchantments?|lands?|you control|your opponents control|on the battlefield|or\b|and\b)/i.test(result.substring(offset + match.length, offset + match.length + 30)))) {
+        return match;
+      }
+      // Standing as a keyword (alone on its line or in a keyword list, before its reminder text, a
+      // number or a cost), that first word is the keyword and not the card's short name:
+      // "Changeling (This card is every creature type.)" on Changeling Outcast read "This card",
+      // so the card was no creature type at all, and Flying Men lost flying.
+      if (_keywordFirstWord && /(?:^|\n|,)[ \t]*$/.test(before) &&
+          /^(?:[ \t]*(?:\n|$|[,.(;\u2014])|[ \t]+(?:\d|\{|X\b|from\b))/.test(result.substring(offset + match.length, offset + match.length + 30))) {
         return match;
       }
       // A name followed by a type noun is the creature type: "Target Assembly-Worker creature"

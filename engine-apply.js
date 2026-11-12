@@ -878,6 +878,8 @@ function applyEffect(state, effect, context) {
       // stale entry (e.g. the copying card's own "enter as a copy of …" ability, which
       // is flagged conditional and would otherwise show regardless of state.abilities).
       state.allPrintedAbilities = [...state.abilities];
+      // The copied card's characteristic-defining lines, read from their words alone.
+      state.cdaAbilities = _cdaAbilityTexts(state.abilities, null);
       state.conditionalAbilityIndices = null;
       state.conditionalAbilitiesMet = null;
       state.sagaChapterThresholds = null;
@@ -950,6 +952,7 @@ function applyEffect(state, effect, context) {
         // Sync allPrintedAbilities so the inspector never shows the stale Volrath ability
         // in any layer after this replacement.
         state.allPrintedAbilities = [...state.abilities];
+        state.cdaAbilities = _cdaAbilityTexts(state.abilities, null);
         state.hasChangeling = state.abilities.some(a => /\bchangeling\b/i.test(a));
         state.oracleTextModified = true;
         changes.push(`Volrath becomes "${gCard.name}" (was "${oldName}"): gained name, mana cost, types, abilities, P/T, color.`);

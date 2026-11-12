@@ -244,6 +244,20 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
   // (CR 613.4f — a "number of creature cards in all graveyards" CDA only counts creatures).
   if (effect && effect.params && effect.params.isGraveyardCount) {
     if (typeof Battlefield !== 'undefined' && Array.isArray(Battlefield.players)) {
+      // "the number of card types among cards in all graveyards" (Tarmogoyf) counts types, not
+      // cards: two creature cards are one type. A card in a graveyard has its front face's types,
+      // except a split card, which has both halves' (CR 709.4, 711.4).
+      if (/\bcard\s+types\s+among\b/.test(desc)) {
+        const found = new Set();
+        for (const player of Battlefield.players) {
+          for (const card of (player.graveyard || [])) {
+            const line = (card && card.type_line) || '';
+            const faces = card && card.layout === 'split' ? line.split(' // ') : [line.split(' // ')[0]];
+            for (const f of faces) for (const t of (parseTypeLine(f).types || [])) found.add(t);
+          }
+        }
+        return found.size;
+      }
       const creatureOnly = /\bcreature\b/.test(desc);
       let count = 0;
       for (const player of Battlefield.players) {

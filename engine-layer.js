@@ -345,7 +345,7 @@ function applyEffectGlobally(effect, allStates, realPerms, tr, appliedSourceIds,
     const log = tr.logs.get(id), applicationLog = tr.apps.get(id);
     if (changes && changes.length > 0) {
       applicationLog.push({
-        source: computedSourceName, sourceId: effSrcId, timestamp: effect.timestamp,
+        source: computedSourceName, sourceId: effSrcId, timestamp: effect.timestamp, isCDA: _isCdaEffect(effect),
         reason: effect.desc || `Effect from "${displayName}"`,
         changes,
       });
@@ -355,7 +355,7 @@ function applyEffectGlobally(effect, allStates, realPerms, tr, appliedSourceIds,
       // the permanent is already controlled by the correct player). Still show it in the inspector
       // so the user can see the Layer 2 effect is present even when it has no visible delta.
       applicationLog.push({
-        source: computedSourceName, sourceId: effSrcId, timestamp: effect.timestamp,
+        source: computedSourceName, sourceId: effSrcId, timestamp: effect.timestamp, isCDA: _isCdaEffect(effect),
         reason: effect.desc || `Effect from "${displayName}"`,
         changes: [],
         appliedToInspected: true,
@@ -363,7 +363,7 @@ function applyEffectGlobally(effect, allStates, realPerms, tr, appliedSourceIds,
       log.push(`Applied "${displayName}" (ts:${effect.timestamp})`);
     } else if (appliedAnywhere) {
       applicationLog.push({
-        source: computedSourceName, sourceId: effSrcId, timestamp: effect.timestamp,
+        source: computedSourceName, sourceId: effSrcId, timestamp: effect.timestamp, isCDA: _isCdaEffect(effect),
         reason: `${effect.desc || displayName} (affected other permanents, not inspected)`,
         changes: [],
       });
@@ -372,7 +372,7 @@ function applyEffectGlobally(effect, allStates, realPerms, tr, appliedSourceIds,
       // Effect is in this layer but matched no permanents currently on the battlefield.
       // Still record it so "show all" mode can display it.
       applicationLog.push({
-        source: computedSourceName, sourceId: effSrcId, timestamp: effect.timestamp,
+        source: computedSourceName, sourceId: effSrcId, timestamp: effect.timestamp, isCDA: _isCdaEffect(effect),
         reason: `${effect.desc || displayName} (no matching permanents)`,
         changes: [],
       });
@@ -820,14 +820,18 @@ function _evaluateBoard(allPermanents, allEffects, tracedIds, permanent) {
    it effects that function outside the battlefield, and its OWN appliesToNonBattlefieldZones
    statics (e.g. Grist, the Hunger Tide's "1/1 Insect creature while not on the battlefield") are
    parsed and injected — they aren't in Battlefield.effects because the card isn't on the board.
+   So are its characteristic-defining abilities, which function in every zone (CR 604.3): Regal
+   Bunnicorn in a graveyard counts the nonland permanents its owner controls, not itself (a zone
+   card is no permanent, _isPermanent). "You" is the card's owner (ownerId; the active player when
+   not given), as a card outside the battlefield has no controller (CR 108.4a).
    This is the single source of truth shared by ui-zones' Details popup and by other-card checks
    that must read a zone card's COMPUTED characteristics (Volrath's Shapeshifter). */
 let _zoneEvalDepth = 0;          // re-entrancy guard (see _isCreatureCardInZone)
 const _zoneStateMemo = new Map(); // keyed by cacheVersion|name|zone within a single eval pass
-function computeZoneCardState(card, zone) {
+function computeZoneCardState(card, zone, ownerId) {
   const z = zone || 'graveyard';
   const cv = (typeof Battlefield !== 'undefined' && Battlefield._cacheVersion) || 0;
-  const key = cv + '|' + (card && card.name) + '|' + z;
+  const key = cv + '|' + (card && card.name) + '|' + z + '|' + (ownerId || '');
   if (_zoneStateMemo.has(key)) return _zoneStateMemo.get(key);
   _zoneEvalDepth++;
   let result = null;
@@ -836,9 +840,12 @@ function computeZoneCardState(card, zone) {
     perm.isZoneCard = true;
     perm.zone = z;
     perm.isManualEffect = false;
+    if (ownerId) perm.owner = perm.controller = ownerId;
     let selfEffects = [];
     try {
-      selfEffects = (parseCardEffects(perm, card) || []).filter(e => e.appliesToNonBattlefieldZones);
+      selfEffects = (parseCardEffects(perm, card) || [])
+        .filter(e => e.appliesToNonBattlefieldZones || (_isCdaEffect(e) && e.selfTarget && e.sourceId === perm.id))
+        .map(e => e.appliesToNonBattlefieldZones ? e : Object.assign({}, e, { appliesToNonBattlefieldZones: true, zoneCardsOnly: true }));
     } catch (e) { selfEffects = []; }
     const realPerms = (typeof Battlefield !== 'undefined' && Battlefield.permanents)
       ? Battlefield.permanents.filter(p => !p.isManualEffect) : [];

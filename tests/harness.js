@@ -87,6 +87,29 @@ function triggerConditions() {
   return out;
 }
 
+// Every card in a graveyard, in exile or in a command zone as the inspector's Details pop-up
+// evaluates it (computeZoneCardState, with its owner as "you"), and every permanent's
+// characteristic-defining lines (state.cdaAbilities, the inspector's label). Kept out of the
+// summary like triggerConditions; "zoneCard" and "cdaAbilities" asserts read them.
+function zoneCardStates() {
+  const out = [];
+  const add = (card, zone, owner) => {
+    const r = computeZoneCardState(card, zone, owner);
+    if (r && r.final) out.push({ name: card.name, zone, owner, final: _summarizeState(r.final), cdaAbilities: (r.final.cdaAbilities || []).slice() });
+  };
+  for (const pl of Battlefield.players) {
+    for (const card of pl.graveyard || []) add(card, 'graveyard', pl.id);
+    for (const c of pl.commanders || []) if (!c.linkedPermId) add(c.card, 'commander', pl.id);
+  }
+  for (const e of Battlefield.exile || []) add(e.card, 'exile', e.owner);
+  return out;
+}
+function cdaAbilityLists() {
+  const finalStates = Battlefield.getAllFinalStates();
+  return Battlefield.permanents.filter(p => !p.isManualEffect && finalStates.get(p.id))
+    .map(p => ({ perm: p.name + (p.label ? ' ' + p.label : ''), abilities: (finalStates.get(p.id).cdaAbilities || []).slice() }));
+}
+
 // What the site's target picker lists now for each spell or fired ability with a single,
 // multi-target or per-slot picker (cards-targeting.js, which ui-targeting.js renders from): the permanents'
 // names, sorted. Kept out of the summary like triggerConditions; "targetCandidates" asserts read it.
@@ -346,6 +369,8 @@ function buildFromRecipe(recipe, cards) {
       if (!Battlefield.restore(board)) throw new Error('Battlefield.restore() rejected the board');
       out.actual = summarizeBoard();
       out.triggerConditions = triggerConditions();
+      out.zoneCards = zoneCardStates();
+      out.cdaAbilities = cdaAbilityLists();
       out.targetCandidates = targetCandidateLists();
     } catch (e) {
       out.error = String(e) + (e && e.stack ? '\n' + String(e.stack).split('\n').slice(0, 6).join('\n') : '');
