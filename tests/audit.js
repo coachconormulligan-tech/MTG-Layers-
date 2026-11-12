@@ -2046,7 +2046,10 @@ function auditEquip(card, faceIndex, rec, face) {
      static    - nothing to do: the card's own words reach the bearer ("Slivers you control have");
      token     - the site never creates a token, the user adds the token's card: the token is made
                  from the creating words (name, colours, types, P/T, keywords, every quote) and added;
-     emblem    - not audited: the site shows an emblem's text but has no button to fire it.
+     emblem    - "You get an emblem with "…"": the emblem is made from the sentence's quotes (colourless,
+                 "<Planeswalker> Emblem") and added as the Emblem panel does (Battlefield.addEmblem,
+                 yours, or the opponent's for "target / each opponent gets"); its ability is fired
+                 from the emblem, as the panel's Trigger / Activate buttons do (CR 113.7, 114.4).
    The bearer is the permanent that has the quote in its abilities afterwards. When the words say
    which one that must be (the attached or targeted permanent, the token, a group the bearer is in),
    one that lacks it is a finding (quote-not-granted). The bearer's ability is then fired exactly as
@@ -2221,7 +2224,14 @@ function auditQuoted(card, faceIndex, rec, face, isSpell) {
     const wb = wordsBeforeQuote(text, qt.start);
     const before = wb.sentence;
     const lowerBefore = before.toLowerCase();
-    if (/\bemblem\b/.test(lowerBefore)) { skipQ(qi, 'emblem', q, 'emblem'); return; }
+    // An emblem: "You get an emblem with "…"" is yours, "Target opponent / Each opponent gets …" the
+    // opponent's, "Target player gets …" yours (you may pick yourself).
+    let emblemOwner = null;
+    if (/\bemblem\b/.test(lowerBefore)) {
+      if (/\b(?:target|each) opponents? gets?\b[^"]*\bemblem\b/.test(lowerBefore)) emblemOwner = 'p2';
+      else if (/\b(?:you|target player) gets?\b[^"]*\bemblem\b/.test(lowerBefore)) emblemOwner = 'p1';
+      else { skipQ(qi, 'emblem', q, 'emblem-owner'); return; }
+    }
     // A token: "create … token(s) … with "…"", or "Create … token. It has / They have "…"".
     let createWords = null;
     if (/\bcreates?\b[^.]*\btokens?\b/.test(lowerBefore)) createWords = before;
@@ -2234,21 +2244,31 @@ function auditQuoted(card, faceIndex, rec, face, isSpell) {
     const sentenceEnd = (() => { const rest = plainText.slice(qt.end).replace(/"[^"]*"/g, (s) => 'Q'.repeat(s.length)); const k = rest.search(/[.;]\s|\n|[.;]$/); return qt.end + (k < 0 ? rest.length : k); })();
     const sentenceStart = wb.from;
     const fullSentence = plainText.slice(Math.max(0, sentenceStart), sentenceEnd);
-    const route = createWords ? 'token' : isSpell ? 'fired' : null;
-    runQuotedUnit({ card, faceIndex, rec, face, isSpell, q, qi, before, createWords, fullSentence, route, cardColors, typeLine, skipQ });
+    const route = emblemOwner ? 'emblem' : createWords ? 'token' : isSpell ? 'fired' : null;
+    runQuotedUnit({ card, faceIndex, rec, face, isSpell, q, qi, before, createWords, fullSentence, route, emblemOwner, cardColors, typeLine, skipQ });
   });
 }
 
 function runQuotedUnit(o) {
   const { card, faceIndex, rec, isSpell, q, qi, before, cardColors, skipQ } = o;
   const qKey = quoteKey(q).slice(0, 40);
-  const spec = o.route === 'token' ? null : bearerSpec(before);
+  const spec = o.route === 'token' || o.route === 'emblem' ? null : bearerSpec(before);
   const bearerColors = [AURA_COLOR_ORDER.find(c => !cardColors.includes(c)) || 'G'];
   let tokenCard = null;
   if (o.route === 'token') {
     const all = targetQuotes(o.fullSentence).map(x => x.q);
     const others = [...o.fullSentence.replace(/’/g, "'").matchAll(/"([^"]*)"/g)].map(m => m[1]).filter(x => !all.includes(x));
     tokenCard = tokenFromWords(o.createWords, all.concat(others), o.fullSentence);
+  }
+  // The emblem, as a card: every quote of its sentence, colourless (CR 114.2), named as Scryfall
+  // names emblems ("Tezzeret the Schemer Emblem").
+  let emblemCard = null;
+  if (o.route === 'emblem') {
+    const pwName = String(rec.name || '');
+    const sub = (o.typeLine.match(/—\s*(.+)$/) || [])[1] || pwName.split(/[ ,]/)[0];
+    emblemCard = { name: pwName + ' Emblem', layout: 'emblem', type_line: 'Emblem — ' + sub,
+      oracle_text: [...o.fullSentence.replace(/’/g, "'").matchAll(/"([^"]*)"/g)].map(m => m[1]).join('\n'),
+      mana_cost: '', cmc: 0, colors: [], color_identity: [], keywords: [] };
   }
   const u0 = { kind: 'quoted', index: qi, label: '', text: q.slice(0, 400), phrase: '', findings: [], infos: [] };
   let perm, grant = null, expectBearerId = null, bearerWitnessId = null;
@@ -2277,7 +2297,17 @@ function runQuotedUnit(o) {
       u0.infos.push({ code: 'grant-set-up', roles: [], what: 'no cards in your hand' });
     }
     Battlefield._invalidate();
-    if (o.route === 'token') {
+    if (o.route === 'emblem') {
+      // As the site adds it (selectEmblem -> Battlefield.addEmblem, on its owner's tab); the
+      // planeswalker that made it need not be on the battlefield.
+      grant = 'emblem';
+      Battlefield.activePlayerId = o.emblemOwner === 'p2' ? Battlefield.players[1].id : 'player_0';
+      const em = Battlefield.addEmblem(emblemCard);
+      Battlefield.activePlayerId = 'player_0';
+      roleOf.set(em.id, o.emblemOwner === 'p2' ? "the opponent's emblem" : 'your emblem');
+      expectBearerId = em.id;
+      Battlefield._invalidate();
+    } else if (o.route === 'token') {
       grant = 'token';
       const t = Battlefield.addPermanent(tokenCard, { suppressPrompt: true, controller: 'player_0', owner: 'player_0', isToken: true });
       roleOf.set(t.id, 'the token');
@@ -2371,7 +2401,7 @@ function runQuotedUnit(o) {
     const fs = Battlefield.getAllFinalStates();
     const real = Battlefield.permanents.filter(p => !p.isManualEffect && !p.isSpell && !p.isEmblem);
     const nameForms = (n) => [n, String(n || '').split(',')[0]];
-    const cardNames = tokenCard ? nameForms(tokenCard.name) : nameForms(rec.name);
+    const cardNames = tokenCard ? nameForms(tokenCard.name) : emblemCard ? nameForms(emblemCard.name).concat(nameForms(rec.name)) : nameForms(rec.name);
     // The bearer's names and the granting card's are "self" alike for finding the quote; whether the
     // card's name was kept is checked once the bearer is known.
     const looseNames = (p, st) => nameForms(p.name).concat(nameForms(st.name), cardNames);
@@ -2380,7 +2410,8 @@ function runQuotedUnit(o) {
       // (The ability is the quote, not an ability that grants it: "each Vampire you control gains "…"".)
       return !!st && quoteMatch(st.abilities, q, looseNames(p, st)) >= 0;
     };
-    const holders = real.filter(hasQuote);
+    // (An emblem has the quote too, but it is no permanent: never a target, so not in `real`.)
+    const holders = (o.route === 'emblem' ? real.concat(Battlefield.permanents.filter(p => p.isEmblem)) : real).filter(hasQuote);
     if (expectBearerId && !holders.some(p => p.id === expectBearerId)) {
       u0.findings.push({ check: 'check2', code: 'quote-not-granted', bearer: roleName(expectBearerId), holders: rolesOf(holders.map(p => p.id)) });
       u0.bearer = roleName(expectBearerId);

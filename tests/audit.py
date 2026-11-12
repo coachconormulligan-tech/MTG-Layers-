@@ -104,9 +104,13 @@ attached through its picker, a spell cast or an ability fired with its own targe
 bearer, a Saga given the lore counters of the chapter, a token made from the creating words (the site
 never creates a token: the user adds its card), a static grant left to reach the bearer; the
 grant's own condition is met where the board can show it (seven cards in your graveyard, no cards in
-hand). An emblem's quote is skipped ("quoted: emblem": the site has no button to fire an emblem's
-ability), and so are a target inside a quote inside the quote ("quoted: nested-quote") and a static
-quote ("quoted: not-an-ability"). The bearer is the permanent that then has the quote among its
+hand). An emblem's quote ("You get an emblem with "…"") is granted as the Emblem panel does it: the
+emblem is made from the sentence's quotes ("<Planeswalker> Emblem", colourless) and added with
+Battlefield.addEmblem, yours, or the opponent's for "target / each opponent gets"; the bearer is the
+emblem (no permanent, so never in the expected lists), and its ability is fired from it as the
+panel's Trigger / Activate buttons do. "quoted: emblem-owner" is an emblem whose owner the words do
+not say. A target inside a quote inside the quote ("quoted: nested-quote") and a static quote
+("quoted: not-an-ability") are skipped. The bearer is the permanent that then has the quote among its
 abilities; when the words say which one it must be (the attached or targeted permanent, the token,
 the card itself, "creatures you control", the subtype the bearer was made of, "commander creatures
 you own") one that lacks it is quote-not-granted; a quote the bearer has but whose words changed on

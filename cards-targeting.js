@@ -219,7 +219,8 @@ function _singleTargetCandidates(sourceId) {
   const sourceCtrl = sourcePerm?.controller || sourcePerm?.owner || Battlefield.activePlayerId;
   // Exclude non-top mutate stack members — a stack is one target (only the top is selectable)
   const targets = Battlefield.permanents.filter(p => {
-    if (p.isManualEffect || p.id === sourceId) return false;
+    // (An emblem is no permanent, CR 114.4: never a target, though its pseudo-permanent is in the list.)
+    if (p.isManualEffect || p.isEmblem || p.id === sourceId) return false;
     // "another" restriction: exclude the ability's source permanent itself (e.g. Arahbo can't target itself)
     if (sourcePerm?._excludeAbilitySource && sourcePerm.abilitySourceId && p.id === sourcePerm.abilitySourceId) return false;
     if (_isAttachedOfAbilitySource(sourcePerm, p.id)) return false;
@@ -336,7 +337,7 @@ function _multiTargetCandidates(sourceId, slotIndex) {
   const effs = _allEffs.some(e => !e.disabled) ? _allEffs.filter(e => !e.disabled) : _allEffs;
   const currentTargetIds = effs[0]?.targetIds || [];
   const targets = Battlefield.permanents.filter(p => {
-    if (p.isManualEffect || p.id === sourceId) return false;
+    if (p.isManualEffect || p.isEmblem || p.id === sourceId) return false;
     if (sourcePerm?._excludeAbilitySource && sourcePerm.abilitySourceId && p.id === sourcePerm.abilitySourceId) return false;
     if (_isAttachedOfAbilitySource(sourcePerm, p.id)) return false;
     const stack = Battlefield.getStack(p.id);
@@ -393,7 +394,7 @@ function _slottedTargetCandidates(sourceId, slot) {
   const sourceCtrl = sourcePerm?.controller || sourcePerm?.owner || Battlefield.activePlayerId;
 
   const targets = Battlefield.permanents.filter(p => {
-    if (p.isManualEffect || p.id === sourceId) return false;
+    if (p.isManualEffect || p.isEmblem || p.id === sourceId) return false;
     const stack = Battlefield.getStack(p.id);
     if (stack && stack.length >= 2 && stack[0] !== p.id) return false;
     if (sourcePerm && (sourcePerm.isManualEffect || sourcePerm.isSpell) && p.timestamp >= sourcePerm.timestamp && p.id !== currentTarget) return false;
@@ -439,7 +440,7 @@ function _modalTargetCandidates(sourceId, modeIdx, slotIndex) {
   const isNonTargeting = sourcePerm && sourcePerm._nonTargetingSelection;
   const sourceCtrl = sourcePerm?.controller || sourcePerm?.owner || Battlefield.activePlayerId;
   const targets = Battlefield.permanents.filter(p => {
-    if (p.isManualEffect || p.id === sourceId) return false;
+    if (p.isManualEffect || p.isEmblem || p.id === sourceId) return false;
     if (sourcePerm?._excludeAbilitySource && sourcePerm.abilitySourceId && p.id === sourcePerm.abilitySourceId) return false;
     if (_isAttachedOfAbilitySource(sourcePerm, p.id)) return false;
     const stack = Battlefield.getStack(p.id);
@@ -554,7 +555,7 @@ function getEquipCandidates(permId, abilityIdx) {
   const typeWanted = isFortify ? 'Land' : 'Creature';
 
   for (const p of Battlefield.permanents) {
-    if (p.isManualEffect || p.isSpell || p.id === permId) continue;
+    if (p.isManualEffect || p.isSpell || p.isEmblem || p.id === permId) continue;
     const fs = finalStates.get(p.id);
     const tCtrl = p.controller || p.owner || 'player_0';
     if (tCtrl !== sourceCtrl) continue;
@@ -776,7 +777,7 @@ function getExchangeControlCandidates(sourceId, slot, aId) {
   const current = slot === 'a' ? effect.params.exchangeTargetA : effect.params.exchangeTargetB;
   const out = [];
   for (const t of Battlefield.permanents) {
-    if (t.isManualEffect || t.isSpell) continue;
+    if (t.isManualEffect || t.isSpell || t.isEmblem) continue;
     const stack = Battlefield.getStack(t.id);
     if (stack && stack.length >= 2 && stack[0] !== t.id) continue;
     if (snap && !snap.has(t.id) && t.id !== current && !laterOk) continue;

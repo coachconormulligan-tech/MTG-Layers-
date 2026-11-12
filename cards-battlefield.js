@@ -3498,7 +3498,8 @@ const Battlefield = {
       printedSubtypes: [],
       printedPower: null,
       printedToughness: null,
-      printedAbilities: [],
+      // (Its abilities, so a triggered or activated one can be fired from the Emblem panel: CR 114.4.)
+      printedAbilities: extractAbilities(oracleText),
       printedColors: colors,
       manaValue: 0,
       manaCost: '',
@@ -3767,7 +3768,12 @@ const Battlefield = {
       commanders: (pl.commanders || []).map(c => ({ card: c.card, castCount: c.castCount || 0, linkedPermId: c.linkedPermId || null })),
       graveyard: (pl.graveyard || []).slice(),
       libraryTop: pl.libraryTop || null,
-      emblems: (pl.emblems || []).map(em => ({ card: em.card })),
+      // (id and timestamp: an ability fired from the emblem names it as its source, and its effects
+      // keep their place in timestamp order.)
+      emblems: (pl.emblems || []).map(em => {
+        const ep = em.permId ? this.getPermById(em.permId) : null;
+        return { card: em.card, id: em.permId || null, timestamp: ep ? ep.timestamp : null };
+      }),
     }));
 
     const mutateStacks = this.mutateStacks.map(s => s.slice());
@@ -3883,7 +3889,22 @@ const Battlefield = {
       for (const e of this.effects) { if (e.sourceId === np.id && !e._isCounterEffect) e.timestamp = r.timestamp; }
     }
 
-    // Replay fired abilities in timestamp order. Sources now exist (real perms above,
+    // Re-add emblems (addEmblem pushes a pseudo-perm + a player.emblems entry), before the fired
+    // abilities: one fired from an emblem has the emblem as its source.
+    for (const pl of data.players || []) {
+      this.activePlayerId = pl.id;
+      for (const em of pl.emblems || []) {
+        const ne = this.addEmblem(em.card);
+        if (!ne) continue;
+        if (em.id) idMap[em.id] = ne.id;
+        if (em.timestamp != null) {
+          ne.timestamp = em.timestamp;
+          for (const e of this.effects) { if (e.sourceId === ne.id) e.timestamp = em.timestamp; }
+        }
+      }
+    }
+
+    // Replay fired abilities in timestamp order. Sources now exist (real perms above, emblems,
     // commanders in the player rebuild), so each pseudo-perm is recreated through the
     // same code path the live UI uses, then slotted back to its saved timestamp.
     // Targets and per-effect choices are re-applied in the final pass below.
@@ -3945,11 +3966,6 @@ const Battlefield = {
     });
     this._invalidate();
 
-    // Re-add emblems (addEmblem pushes a pseudo-perm + a player.emblems entry).
-    for (const pl of data.players || []) {
-      this.activePlayerId = pl.id;
-      for (const em of pl.emblems || []) this.addEmblem(em.card);
-    }
 
     // Restore exile (global zone). exiledWithId references a permanent — translate it.
     this.exile = (data.exile || []).map(e => ({

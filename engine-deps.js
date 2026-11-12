@@ -36,6 +36,8 @@ function effectAppliesToPerm(effect, permState, permanent, permId, allStates, ab
   // spell — it only receives effects flagged to reach cards outside the battlefield
   // (e.g. Mycosynth Lattice's colorless clause), never ordinary battlefield-targeted
   // effects like "All permanents are artifacts".
+  // An emblem is not a permanent (CR 114.4): "permanents you control have …" never reaches one.
+  if (permanent && permanent.isEmblem) return false;
   if (permanent && permanent.isZoneCard) {
     if (!effect.appliesToNonBattlefieldZones) return false;
     if (effect.nonBattlefieldZones && !effect.nonBattlefieldZones.includes(permanent.zone)) return false;

@@ -218,15 +218,16 @@ function renderEmblemPanel() {
 
   if (Battlefield.emblems.length > 0) {
     html += '<div class="emblem-list">';
+    const finalStates = Battlefield.getAllFinalStates();
     Battlefield.emblems.forEach((e, i) => {
       const previewText = e.card.oracle_text || (e.card.card_faces?.[0]?.oracle_text) || '';
       html += `<div class="emblem-card">
         ${e.imageUri ? `<img src="${e.imageUri}" class="emblem-img" alt="${escapeAttr(e.name)}">` : '<div class="emblem-img-placeholder">EMB</div>'}
         <div class="emblem-info">
           <span class="emblem-name">${escapeHtml(e.name)}</span>
-          ${previewText ? `<div class="emblem-oracle">${escapeHtml(previewText).replace(/\n/g, '<br>')}</div>` : ''}
+          ${_renderEmblemText(e, previewText, finalStates)}
           <div class="emblem-actions">
-            <button class="btn btn-sm btn-emblem-remove" onclick="removeEmblemUI(${i})" title="Remove emblem">✕ Remove</button>
+            <button class="btn btn-sm btn-emblem-remove" onclick="removeEmblemUI(${i})" title="Remove emblem">Remove</button>
           </div>
         </div>
       </div>`;
@@ -257,6 +258,43 @@ function renderEmblemPanel() {
       input.focus();
     }
   }
+}
+
+/* An emblem's text, with a Trigger / Activate button beside each triggered or activated ability.
+   The button fires it exactly as a permanent's ability popup does (fireTriggeredAbility /
+   fireActivatedAbility), the emblem being the ability's source (CR 113.7, 114.4): its controller
+   is the player who owns the emblem. Lines that cannot be fired are shown as plain text. */
+function _renderEmblemText(e, previewText, finalStates) {
+  const permId = e.permId;
+  const fState = permId ? finalStates.get(permId) : null;
+  const abilities = (fState && fState.abilities) || [];
+  const triggers = new Map(Battlefield.extractTriggeredAbilities(abilities).map(t => [t.index, t]));
+  const activated = new Map(Battlefield.extractActivatedAbilities(abilities).map(a => [a.index, a]));
+  if (!triggers.size && !activated.size) {
+    return previewText ? `<div class="emblem-oracle">${escapeHtml(previewText).replace(/\n/g, '<br>')}</div>` : '';
+  }
+  let html = '<div class="emblem-abilities">';
+  abilities.forEach((line, idx) => {
+    const t = triggers.get(idx), a = activated.get(idx);
+    if (!t && !a) {
+      html += `<div class="emblem-ability-line">${escapeHtml(line)}</div>`;
+      return;
+    }
+    const isTrigger = !!t;
+    const ab = t || a;
+    const count = isTrigger ? Battlefield.getTriggerCount(permId, idx) : Battlefield.getActivateCount(permId, idx);
+    const limit = isTrigger ? ab.triggerLimit : ab.activateLimit;
+    const atLimit = limit !== null && limit !== undefined && count >= limit;
+    const fn = isTrigger ? 'fireTriggeredAbility' : 'fireActivatedAbility';
+    const label = isTrigger ? 'Trigger' : 'Activate';
+    html += `<div class="emblem-ability-row">
+      <span class="emblem-ability-line">${escapeHtml(_replaceYouControl(ab.fullText, permId))}</span>
+      <button class="btn btn-sm btn-emblem-fire${isTrigger ? ' btn-emblem-trigger' : ' btn-emblem-activate'}"
+        onclick="${fn}('${escapeAttr(permId)}', ${idx})" ${atLimit ? 'disabled' : ''}
+        title="${label} this ability of the emblem">${label}${limit !== null && limit !== undefined ? ` (${count}/${limit})` : ''}</button>
+    </div>`;
+  });
+  return html + '</div>';
 }
 
 function openEmblemSearch() {
