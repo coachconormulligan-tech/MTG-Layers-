@@ -33,14 +33,15 @@ function _withoutBuriedMutateCards(allStates) {
   return out;
 }
 
-/* Is this state counted as a permanent on the battlefield? Not an emblem (_isPermanent) and not
-   a spell being cast (Battlefield.addSpell): a spell is on the stack and is no permanent (CR 110.1). */
+/* Is this state counted as a permanent on the battlefield? Not an emblem or a zone card
+   (_isPermanent) and not a spell being cast (Battlefield.addSpell): a spell is on the stack and
+   a zone card is in a graveyard, exile or the command zone, and neither is a permanent (CR 110.1). */
 function _countsAsPermanent(st) {
   return _isPermanent(st) && !st.isSpell;
 }
 
-/* allStates without emblems and spells, for iterating: a lookup by id (get / has) still finds
-   them, so a condition or count whose source is an emblem or a spell can read its controller. */
+/* allStates without emblems, spells and zone cards, for iterating: a lookup by id (get / has) still
+   finds them, so a condition or count whose source is one of them can read its controller. */
 class _PermanentStatesView extends Map {
   constructor(full) {
     super();
@@ -56,7 +57,7 @@ class _PermanentStatesView extends Map {
   }
 }
 
-// Per state map: its view without emblems and spells, or null when it holds none. States are changed in
+// Per state map: its view without emblems, spells and zone cards, or null when it holds none. States are changed in
 // place and a map's ids are fixed once it is built (checked by its size), so a map is read once.
 const _permanentViewCache = new WeakMap();
 function _withoutNonPermanents(allStates) {
@@ -70,7 +71,7 @@ function _withoutNonPermanents(allStates) {
 }
 
 /* The states a count or a "you control" condition reads: each permanent on the battlefield once
-   (a mutated permanent as its top card), and no emblem or spell. allStates itself when nothing is left out. */
+   (a mutated permanent as its top card), and no emblem, spell or zone card. allStates itself when nothing is left out. */
 function _permanentStates(allStates) {
   return _withoutNonPermanents(_withoutBuriedMutateCards(allStates));
 }

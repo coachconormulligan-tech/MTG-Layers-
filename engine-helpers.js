@@ -58,10 +58,13 @@ function _effectDisplayName(effect, allStates) {
    pseudo-permanent and a state of its own (its abilities are shown and fired from the Emblem
    panel), but it is in the command zone and is no permanent (CR 114.1, 114.5), so nothing counts,
    targets, copies or affects it. Not a manual effect (an instant or sorcery card, a fired
-   ability) either. Spells cast with addSpell (isSpell) are left to the caller: a
-   "target spell or permanent" lists them; counts leave them out (_countsAsPermanent). */
+   ability) either, nor a card in a graveyard, exile or the command zone that the inspector
+   evaluates on a throwaway copy of the board (isZoneCard, computeZoneCardState): it is a card,
+   not a permanent (CR 110.1), so the battlefield's counts on that run leave it out. Spells cast
+   with addSpell (isSpell) are left to the caller: a "target spell or permanent" lists them;
+   counts leave them out (_countsAsPermanent). */
 function _isPermanent(p) {
-  return !!p && !p.isEmblem && !p.isManualEffect;
+  return !!p && !p.isEmblem && !p.isManualEffect && !p.isZoneCard;
 }
 
 function snapshotState(state) {
@@ -82,6 +85,7 @@ function snapshotState(state) {
     isToken:    state.isToken || false,
     isEmblem:   state.isEmblem || false,
     isSpell:    state.isSpell || false,
+    isZoneCard: state.isZoneCard || false,
     oracleText: state.oracleText || '',
     hasChangeling: state.hasChangeling || state.abilities.some(a => /\bchangeling\b/i.test(a)),
     // isAllCreatureTypes: set once at Layer 4 based on whether changeling exists at that point
