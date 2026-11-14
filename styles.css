@@ -3552,4 +3552,20 @@ body.bf-picking #battlefield .bf-card * { pointer-events: none; }
 .card-symbol { width: .92em; height: .92em; vertical-align: -.12em; margin: 0 .05em; display: inline-block; }
 .bf-live-text .card-symbol { width: .86em; height: .86em; vertical-align: -.08em; }
 .bf-live-wait { visibility: hidden; }
-.bf-live-pt.bf-live-drawn.bf-live-pt-pw { right: 24%; }
+/* A drawn power/toughness box looks like a printed one: a plate in the
+   frame's colour with a pale bevel, a dark rim and a shadow down and left. */
+.bf-live-pt.bf-live-drawn {
+  --plate: #ccd4d9;
+  overflow: visible;
+  padding: 0;
+  color: #111;
+  font: 700 5.2cqw/1 "Beleren", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--plate) 55%, #fff) 0%, var(--plate) 48%, color-mix(in srgb, var(--plate) 82%, #000) 100%);
+  border: solid #15120f;
+  border-width: .25cqw .45cqw .5cqw .28cqw;      /* the rim is heavier below and to the right */
+  border-radius: 1.9cqw;
+  box-shadow: inset 0 0 0 .3cqw rgba(255,255,255,.5), inset 0 -.5cqw .7cqw rgba(0,0,0,.22), -.35cqw .45cqw .15cqw rgba(0,0,0,.7);
+  right: 5.6%; bottom: 5%; min-width: 16%; height: 5.9%;
+}
+/* On a planeswalker the box sits on the loyalty shield and covers it */
+.bf-live-pt.bf-live-drawn.bf-live-pt-pw { right: 4.8%; bottom: 3.9%; min-width: 19.2%; height: 7.9%; font-size: 5.8cqw; }

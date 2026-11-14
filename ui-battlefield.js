@@ -706,6 +706,16 @@ function _liveTypeLineHtml(p, fs) {
   return `<div class="bf-live-type bf-live-type-${spot}${look}">${text || 'No types'}</div>`;
 }
 
+// The colour of a card's power/toughness box, from the colours of its frame
+function _livePlateColor(p) {
+  const tone = { W: '#f3efe2', U: '#bcd3e6', B: '#b4aca6', R: '#e6b092', G: '#bfd3b6', White: '#f3efe2', Blue: '#bcd3e6', Black: '#b4aca6', Red: '#e6b092', Green: '#bfd3b6' };
+  const cols = (p.printedColors || []).filter(c => tone[c]);
+  if (cols.length > 1) return '#e0cd8c';                                   // gold
+  if (cols.length === 1) return tone[cols[0]];
+  if ((p.printedTypes || []).includes('Land')) return '#d2c8b6';
+  return '#ccd4d9';                                                        // artifact and colourless
+}
+
 function _livePtHtml(p, fs) {
   if (!(fs.types || []).includes('Creature')) return '';
   const pw = fs.power, tg = fs.toughness;
@@ -718,7 +728,9 @@ function _livePtHtml(p, fs) {
   const drawn = p.isFaceDown || p.printedPower === null || p.printedPower === undefined || (_liveTypeSpot(p) === 'foot' && kind !== 'token');
   // A planeswalker's loyalty is where a P/T box would be: the box goes beside it
   const look = drawn ? ' bf-live-drawn' + (kind === 'pw' ? ' bf-live-pt-pw' : '') : _liveOldFrame(p) ? ' bf-live-light' : '';
-  return `<div class="bf-live-pt${look}">${escapeHtml(String(pw))}/${escapeHtml(String(tg))}</div>`;
+  // A drawn box is made to look like a printed one, in the frame's own colour
+  const plate = drawn ? ` style="--plate:${_livePlateColor(p)}"` : '';
+  return `<div class="bf-live-pt${look}"${plate}>${escapeHtml(String(pw))}/${escapeHtml(String(tg))}</div>`;
 }
 
 // The rules text box, when the abilities are not the printed ones. Only on a
