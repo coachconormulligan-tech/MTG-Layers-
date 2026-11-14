@@ -6,7 +6,7 @@
   <title>MTG Layer Inspector - CR 613</title>
   <link rel="icon" type="image/png" href="assets/layer-inspector-tab.png">
   <link rel="apple-touch-icon" href="assets/layer-inspector-tab.png">
-  <link rel="stylesheet" href="styles.css?v=113">
+  <link rel="stylesheet" href="styles.css?v=125">
 </head>
 <body>
 
@@ -202,6 +202,10 @@
             <button class="btn btn-clear btn-sm bf-title-clear" onclick="confirmAction('Clear all permanents from the battlefield?', () => { Battlefield.clear(); renderAll(); })">Clear All</button>
           </span>
           <span class="bf-title-actions">
+            <label class="bf-size-control" title="How large cards are drawn on the battlefield">Card size
+              <input type="range" id="bf-card-size" min="100" max="300" step="10" value="130" oninput="setBfCardSize(this.value)" onchange="setBfCardSize(this.value, true)">
+            </label>
+            <button id="live-text-btn" class="bf-title-toggle active" onclick="toggleLiveText()" title="Show each card's current type line, rules text and power/toughness over its image where they differ from the print">Live text</button>
             <button id="hide-abilities-btn" class="bf-title-toggle" onclick="toggleHideAbilityPerms()">Hide abilities</button>
             <button class="header-icon-button bf-title-icon-button" type="button" onclick="exportBoard()" aria-label="Export board to file" title="Export board to file">
               <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -273,8 +277,9 @@
   <script src="ui-dom-builders.js?v=1"></script>
   <script src="ui-core.js?v=38"></script>
   <script src="ui-pages.js?v=12"></script>
-  <script src="ui-battlefield.js?v=42"></script>
+  <script src="ui-battlefield.js?v=51"></script>
   <script src="ui-card-menu.js?v=1"></script>
+  <script src="ui-live-bg.js?v=5"></script>
   <script src="ui-timestamp.js?v=15"></script>
   <script src="ui-zones.js?v=24"></script>
   <script src="ui-abilities.js?v=16"></script>

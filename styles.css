@@ -694,7 +694,7 @@ body.utility-page-open .utility-page-shell {
 
 .bf-card {
   position: relative;
-  width: 130px;
+  width: var(--bf-card-w, 130px);
   border-radius: var(--radius-lg);
   overflow: hidden;
   border: 2px solid var(--border);
@@ -705,7 +705,7 @@ body.utility-page-open .utility-page-shell {
 .bf-card:hover { border-color: var(--border-hl); transform: translateY(-2px); }
 .bf-card-selected { border-color: var(--accent) !important; box-shadow: 0 0 12px rgba(124, 109, 240, .3); }
 
-.bf-card-img { width: 100%; display: block; }
+.bf-card-img { width: 100%; display: block; aspect-ratio: 488 / 680; object-fit: cover; } /* Scryfall's image size: the card keeps its shape while the image loads */
 .bf-card-no-img {
   width: 100%;
   aspect-ratio: 5 / 7;
@@ -749,36 +749,90 @@ body.utility-page-open .utility-page-shell {
    image where the final state differs from the print (ui-battlefield.js).
    Sized in cqw so they follow the card's width. */
 .bf-card { container-type: inline-size; }
-.bf-live-type, .bf-live-pt {
+/* A patch blurs the print beneath it into the frame's own colour and writes
+   over that in the card's ink, so it reads as part of the card on any frame. */
+.bf-live-type, .bf-live-pt, .bf-live-text {
   position: absolute;
-  background: #17171d;
-  border: 1px solid var(--gold);
-  color: var(--text);
-  line-height: 1;
-  white-space: nowrap;
   overflow: hidden;
+  color: #141414;
+  background: rgba(255,255,255,.16);
+  -webkit-backdrop-filter: blur(2.4cqw);
+  backdrop-filter: blur(2.4cqw);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .bf-live-type, .bf-live-pt, .bf-live-text { background: #e6e0d3; }
+}
+.bf-live { position: absolute; inset: 0; }
+/* The card's own image with the print erased (ui-live-bg.js): the patch is
+   transparent except where ink was, so nothing but the words changes. */
+.bf-live-exact {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  background-color: transparent;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  border-radius: 0;
+}
+.bf-live-text.bf-live-exact { padding: 2cqw 2.2cqw 1cqw; clip-path: none !important; }
+.bf-live-text.bf-live-exact.bf-live-haspt { padding-bottom: 4.8cqw; }   /* clear of the P/T box */
+/* The print's title face is a bold humanist serif: Palatino is the nearest common one */
+.bf-live-type.bf-live-exact { padding: 0 1cqw; font: 700 4.25cqw "Beleren", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; }
+.bf-live-pt.bf-live-exact { overflow: visible; padding: 0; font: 700 5.2cqw/1 "Beleren", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; }
+.bf-live-new { color: #a01818; }
+/* White ink on the frame itself (1993 and 1997 frames) */
+.bf-live-light {
+  color: #fff;
+  background: rgba(0,0,0,.2);
+  text-shadow: 0 0 .5cqw #000, 0 .3cqw .6cqw #000;
+}
+.bf-live-light .bf-live-new { color: #ffd966; }
+/* No print to blend into: a plain box in card colours */
+.bf-live-drawn {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: #e8e2d5;
+  border: 1px solid #1c1c1c;
 }
 .bf-live-type {
-  left: 5.5%; right: 5.5%;
-  height: 6.6%;
-  padding: 0 1.6cqw;
-  border-radius: 3px;
-  font-size: 5cqw; font-weight: 600;
-  line-height: 8.4cqw;
+  left: 7.4%; top: 56.8%;
+  width: fit-content; max-width: 85.2%;
+  height: 5.1%;
+  padding: 0 1.2cqw;
+  border-radius: .8cqw;
+  font: 700 4.9cqw/7.1cqw "Beleren", "Gill Sans", "Trebuchet MS", sans-serif;
+  white-space: nowrap;
   text-overflow: ellipsis;
 }
-.bf-live-type-line { top: 56%; }
-.bf-live-type-foot { bottom: 12.5%; }
-.bf-live-new { color: var(--gold); }
-.bf-live-pt {
-  right: 5%; bottom: 4.4%;
-  min-width: 19%; height: 7%;
-  padding: 0 2cqw;
-  display: flex; align-items: center; justify-content: center;
-  border-radius: 4px;
-  color: var(--gold);
-  font-size: 7.6cqw; font-weight: 700;
+.bf-live-type-foot { top: auto; bottom: 12.5%; left: 5.5%; max-width: 89%; }
+.bf-live-text {
+  left: 8.2%; right: 8.2%; top: 63.8%; bottom: 9.8%;
+  padding: .8cqw 1.2cqw;
+  border-radius: .6cqw;
+  font-family: "MPlantin", "Plantin", "Palatino Linotype", Palatino, Georgia, serif;
+  line-height: 1.15;
+  /* A wide blur: the printed lines melt into the box's own colour */
+  -webkit-backdrop-filter: blur(9cqw);
+  backdrop-filter: blur(9cqw);
+  overflow-wrap: anywhere;
 }
+.bf-live-text.bf-live-old { left: 11%; right: 11%; top: 63%; bottom: 12.6%; }
+.bf-live-text.bf-live-haspt:not(.bf-live-old) { clip-path: polygon(0 0, 100% 0, 100% 92%, 81% 92%, 81% 100%, 0 100%); }
+.bf-live-text p { margin: 0 0 0.45em; }
+.bf-live-none { font-style: italic; opacity: .7; }
+.bf-live-pt {
+  right: 8%; bottom: 5.7%;
+  min-width: 13.2%; height: 5%;
+  padding: 0 1cqw;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 1cqw;
+  font: 700 6.4cqw/1 "Beleren", "Gill Sans", "Trebuchet MS", sans-serif;
+  white-space: nowrap;
+}
+.bf-live-pt.bf-live-drawn { right: 5%; bottom: 4.4%; min-width: 19%; height: 7%; border-radius: 1.4cqw; }
+.bf-live-pt:not(.bf-live-drawn) { color: #a01818; }
+.bf-live-pt.bf-live-light { color: #ffd966; }
+.bf-size-control { display: inline-flex; align-items: center; gap: 6px; font-size: var(--fs-xs); color: var(--text-dim); text-transform: none; letter-spacing: 0; font-weight: 400; }
+.bf-size-control input { width: 90px; accent-color: var(--accent); cursor: pointer; }
 
 /* Large faint letter label for duplicate-named cards (display-only, never parsed) */
 .bf-card-label {
@@ -931,7 +985,7 @@ body.utility-page-open .utility-page-shell {
 .bf-card-tapped {
   transform: rotate(90deg);
   transform-origin: center center;
-  margin: 20px 10px;
+  margin: 20px calc(var(--bf-card-w, 130px) * 0.08);
 }
 
 /* Tapped cards: delay showing action buttons so accidental hovers don't trigger them */
@@ -2339,7 +2393,7 @@ body.utility-page-open .utility-page-shell {
   display: flex;
   flex-direction: column;
   gap: 0;
-  width: 130px;
+  width: var(--bf-card-w, 130px);
 }
 .bf-attach-target {
   position: relative;

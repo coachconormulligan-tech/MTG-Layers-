@@ -12,6 +12,39 @@ function toggleHideAbilityPerms() {
   renderAll();
 }
 
+/* View settings of the battlefield, kept per browser: whether cards show their
+   live text, and how wide a card is drawn. Neither is part of a board. */
+const LIVE_TEXT_KEY = 'layer-inspector-live-text';
+const CARD_SIZE_KEY = 'layer-inspector-card-size';
+const CARD_SIZE_DEFAULT = 130;
+let _liveTextOn = true;
+let _bfCardSize = CARD_SIZE_DEFAULT;
+try {
+  _liveTextOn = localStorage.getItem(LIVE_TEXT_KEY) !== 'off';
+  _bfCardSize = Math.min(300, Math.max(100, parseInt(localStorage.getItem(CARD_SIZE_KEY)) || CARD_SIZE_DEFAULT));
+} catch (e) { /* storage blocked: defaults */ }
+
+function toggleLiveText() {
+  _liveTextOn = !_liveTextOn;
+  try { localStorage.setItem(LIVE_TEXT_KEY, _liveTextOn ? 'on' : 'off'); } catch (e) { /* ignore */ }
+  renderBattlefield();
+}
+
+// While the slider moves only the width changes; on release the cards are
+// drawn again so a large card gets the sharper image.
+function setBfCardSize(px, done) {
+  _bfCardSize = Math.min(300, Math.max(100, parseInt(px) || CARD_SIZE_DEFAULT));
+  document.documentElement.style.setProperty('--bf-card-w', _bfCardSize + 'px');
+  if (!done) return;
+  try { localStorage.setItem(CARD_SIZE_KEY, String(_bfCardSize)); } catch (e) { /* ignore */ }
+  renderBattlefield();
+}
+
+// Scryfall's "small" image is 146px wide: a wider card takes the "normal" one.
+function _bfCardImage(uri) {
+  return (uri && _bfCardSize > 150) ? uri.replace('/small/', '/normal/') : uri;
+}
+
 /* [KEY: BATTLEFIELD-UI] */
 function renderBattlefield() {
   const container = document.getElementById('battlefield');
@@ -27,6 +60,11 @@ function renderBattlefield() {
     return ctrl === Battlefield.activePlayerId;
   });
 
+  document.documentElement.style.setProperty('--bf-card-w', _bfCardSize + 'px');
+  const liveBtn = document.getElementById('live-text-btn');
+  if (liveBtn) liveBtn.classList.toggle('active', _liveTextOn);
+  const sizeInput = document.getElementById('bf-card-size');
+  if (sizeInput && document.activeElement !== sizeInput) sizeInput.value = _bfCardSize;
   const hideBtn = document.getElementById('hide-abilities-btn');
   if (hideBtn) {
     hideBtn.textContent = _hideAbilityPseudoPerms ? 'Show abilities' : 'Hide abilities';
@@ -408,11 +446,15 @@ function renderBattlefield() {
     const _subtypes = _cardFs ? (_cardFs.subtypes || []) : p.printedSubtypes;
     const _power = _cardFs && _cardFs.power !== null && _cardFs.power !== undefined ? _cardFs.power : p.printedPower;
     const _toughness = _cardFs && _cardFs.toughness !== null && _cardFs.toughness !== undefined ? _cardFs.toughness : p.printedToughness;
+    // Live text is cut from Scryfall's "normal" image, so a card that has any is
+    // drawn with that same image: the patch and the card are then the same pixels.
+    const _live = renderLivePatches(p, _cardFs);
+    const _imgSrc = (p.imageUri && _live.includes('data-src=')) ? p.imageUri.replace('/small/', '/normal/') : _bfCardImage(p.imageUri);
     return `
     <div class="bf-card ${isSelected ? 'bf-card-selected' : ''} ${hasSBA ? 'bf-card-sba' : ''} ${(p.isManualEffect || p.isSpell) ? 'bf-card-spell' : ''} ${p.tapped ? 'bf-card-tapped' : ''} ${p.isSideways ? 'bf-card-sideways' : ''} ${p.isFaceDown ? 'bf-card-facedown' : ''}" data-id="${p.id}" data-sba="${sbaReasons.join(',')}" onclick="selectPermanent('${p.id}')" oncontextmenu="event.preventDefault(); event.stopPropagation(); openCardMenu(event, '${p.id}');">
-      ${p.imageUri ? `<img src="${p.imageUri}" alt="${escapeAttr(p.name)}" class="bf-card-img">` : `<div class="bf-card-no-img"><span>${escapeHtml(p.name)}</span></div>`}
+      ${p.imageUri ? `<img src="${_imgSrc}" alt="${escapeAttr(p.name)}" class="bf-card-img">` : `<div class="bf-card-no-img"><span>${escapeHtml(p.name)}</span></div>`}
       ${p.label ? `<div class="bf-card-label" aria-hidden="true">${escapeHtml(p.label)}</div>` : ''}
-      <div class="bf-card-overlay">${renderLivePatches(p, _cardFs)}</div>
+      <div class="bf-card-overlay">${_live}</div>
       ${p._isEnchantPlayer && p._enchantedPlayerId ? `<div class="bf-card-spell-badge bf-card-enchant-player-badge">Enchanting: ${escapeHtml(Battlefield.getPlayerName(p._enchantedPlayerId))}</div>` : ''}
       <button class="bf-card-remove" onclick="event.stopPropagation(); removePermanent('${p.id}')" title="Remove"> \u2014 </button>
       ${!p.isManualEffect && !p.isSpell ? `<button class="bf-card-tap" onclick="event.stopPropagation(); toggleTapped('${p.id}')" title="${p.tapped ? 'Untap' : 'Tap'}">\u21BB</button>` : ''}
@@ -521,6 +563,8 @@ function renderBattlefield() {
       return stackHtml;
     }
   }).join('');
+  // Live-text patches get the card's own background (ui-live-bg.js)
+  applyLiveBackgrounds();
 }
 
 
@@ -614,6 +658,13 @@ function _liveTypeSpot(p) {
   return 'line';
 }
 
+// The 1993 and 1997 frames print the type line and the power/toughness in
+// white straight on the frame, and their text box is narrower.
+function _liveOldFrame(p) {
+  const f = (p.scryfallData || {}).frame;
+  return f === '1993' || f === '1997';
+}
+
 function _liveTypeLineHtml(p, fs) {
   const same = (a, b) => a.length === b.length && a.every(t => b.includes(t));
   const sup = fs.supertypes || [], typ = fs.types || [], sub = fs.subtypes || [];
@@ -634,7 +685,9 @@ function _liveTypeLineHtml(p, fs) {
   }
   const right = [...all, ...subs.map(t => tok(t, pSub))];
   const text = left.join(' ') + (right.length ? ' — ' + right.join(' ') : '');
-  return `<div class="bf-live-type bf-live-type-${_liveTypeSpot(p)}">${text || 'No types'}</div>`;
+  const spot = _liveTypeSpot(p);
+  const look = spot === 'foot' ? ' bf-live-drawn' : _liveOldFrame(p) ? ' bf-live-light' : '';
+  return `<div class="bf-live-type bf-live-type-${spot}${look}">${text || 'No types'}</div>`;
 }
 
 function _livePtHtml(p, fs) {
@@ -643,12 +696,67 @@ function _livePtHtml(p, fs) {
   if (pw === null || pw === undefined || tg === null || tg === undefined) return '';
   // A printed "*" is kept as 0, so a characteristic-defining value always shows.
   if (!p.isFaceDown && pw === p.printedPower && tg === p.printedToughness) return '';
-  return `<div class="bf-live-pt">${escapeHtml(String(pw))}/${escapeHtml(String(tg))}</div>`;
+  // Over a printed box the patch blends into it; where the image prints none
+  // (a noncreature card, a face-down card, an unusual frame) a box is drawn.
+  const drawn = p.isFaceDown || p.printedPower === null || p.printedPower === undefined || _liveTypeSpot(p) === 'foot';
+  const look = drawn ? ' bf-live-drawn' : _liveOldFrame(p) ? ' bf-live-light' : '';
+  return `<div class="bf-live-pt${look}">${escapeHtml(String(pw))}/${escapeHtml(String(tg))}</div>`;
+}
+
+// The rules text box, when the abilities are not the printed ones. Only on a
+// frame whose text box is in the usual place; an ability the print lacks is gold.
+function _liveTextBoxHtml(p, fs) {
+  if (_liveTypeSpot(p) !== 'line' || (p.printedTypes || []).includes('Planeswalker')) return '';
+  const abilities = fs.abilities || [];
+  const printed = p.printedAbilities || [];
+  if (abilities.length === printed.length && abilities.every(a => printed.includes(a))) return '';
+  // Equip and Reconfigure last, as in the inspector
+  const last = (a) => /^(?:equip|reconfigure)\b/i.test(a) ? 1 : 0;
+  const lines = _groupAbilityLines([...abilities].sort((a, b) => last(a) - last(b)));
+  // Paragraphs as a card prints them: keywords share one, comma-separated.
+  const isKeyword = (a) => a.length <= 40 && !/[.:"—]/.test(a);
+  const paras = [];
+  for (const a of lines) {
+    const part = { text: _replaceThisCard(a, p.name).replace(/\s+([.,;])/g, '$1'), isNew: !printed.includes(a) };
+    const prev = paras[paras.length - 1];
+    if (isKeyword(a) && prev && prev.keywords) {
+      part.text = part.text.charAt(0).toLowerCase() + part.text.slice(1);
+      prev.parts.push(part);
+    } else {
+      paras.push({ keywords: isKeyword(a), parts: [part] });
+    }
+  }
+  // The largest font at which the paragraphs fit: the box is about 81cqw by
+  // 33cqw inside (75cqw on an old frame), a character about half its font size wide.
+  const old = _liveOldFrame(p);
+  const lens = paras.map(pa => pa.parts.reduce((n, x) => n + x.text.length + 2, -2));
+  let size = 4.8;
+  for (; size > 2.6; size -= 0.2) {
+    const perLine = (old ? 75 : 81) / (0.5 * size);
+    const rows = lens.reduce((n, len) => n + Math.ceil(len / perLine), 0);
+    if (rows * 1.15 * size + (paras.length - 1) * 0.45 * size <= 33) break;
+  }
+  const body = paras.length
+    ? paras.map(pa => '<p>' + pa.parts.map(x => x.isNew
+        ? `<span class="bf-live-new">${escapeHtml(x.text)}</span>` : escapeHtml(x.text)).join(', ') + '</p>').join('')
+    : '<p class="bf-live-none">No abilities</p>';
+  // The printed power/toughness box sits in the text box's corner: leave it clear
+  const tall = (p.printedPower === null || p.printedPower === undefined) ? '' : ' bf-live-haspt';
+  return `<div class="bf-live-text${old ? ' bf-live-old' : ''}${tall}" style="font-size:${size.toFixed(1)}cqw">${body}</div>`;
 }
 
 function renderLivePatches(p, fs) {
-  if (!fs || p.isManualEffect || p.isSpell || p.isEmblem) return '';
-  return _liveTypeLineHtml(p, fs) + _livePtHtml(p, fs);
+  if (!_liveTextOn || !fs || p.isManualEffect || p.isSpell || p.isEmblem) return '';
+  const html = _liveTypeLineHtml(p, fs) + _liveTextBoxHtml(p, fs) + _livePtHtml(p, fs);
+  if (!html) return '';
+  // What ui-live-bg.js needs to read the card's own image: only for a frame
+  // whose boxes are in the usual places.
+  const usual = _liveTypeSpot(p) === 'line' && !p.isFaceDown && p.imageUri;
+  const hasPt = p.printedPower !== null && p.printedPower !== undefined;
+  const attrs = usual
+    ? ` data-src="${escapeAttr(p.imageUri.replace('/small/', '/normal/'))}" data-frame="${_liveOldFrame(p) ? 'old' : escapeAttr((p.scryfallData || {}).frame || '2015')}" data-pt="${hasPt ? 1 : 0}"`
+    : '';
+  return `<div class="bf-live"${attrs}>${html}</div>`;
 }
 /* [END: LIVE-PATCHES] */
 
