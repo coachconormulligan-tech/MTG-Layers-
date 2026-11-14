@@ -502,3 +502,81 @@ function setModalModeTarget(sourceId, modeIndex, targetId, slotIndex) {
 }
 /* [END: TIMESTAMP-UI] */
 
+
+/* [KEY: PICK-ON-BOARD]
+   Click a card to target it. Every target list that offers permanents gets a
+   "Pick" button; pressing it lights up the cards that list offers, and a click
+   on one of them chooses it exactly as the list would (the list's own onchange
+   runs). No rule is decided here: the cards are the list's own options. */
+let _pickSelect = null;
+
+function decorateTargetPicks() {
+  _endTargetPick();
+  document.querySelectorAll('select.ts-target-select').forEach(sel => {
+    if (sel.nextElementSibling && sel.nextElementSibling.classList.contains('ts-pick-btn')) return;
+    if (!_pickCardsOf(sel).length) return;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'ts-pick-btn';
+    btn.textContent = 'Pick';
+    btn.title = 'Choose by clicking a card on the battlefield';
+    btn.addEventListener('click', (e) => { e.stopPropagation(); _startTargetPick(sel, btn); });
+    sel.insertAdjacentElement('afterend', btn);
+  });
+}
+
+// The battlefield cards a list offers
+function _pickCardsOf(sel) {
+  const cards = [];
+  for (const o of sel.options) {
+    if (!o.value || o.disabled) continue;
+    const card = document.querySelector(`#battlefield .bf-card[data-id="${CSS.escape(o.value)}"]`);
+    if (card) cards.push(card);
+  }
+  return cards;
+}
+
+function _startTargetPick(sel, btn) {
+  const same = _pickSelect === sel;
+  _endTargetPick();
+  if (same) return;                               // pressing Pick again cancels
+  const cards = _pickCardsOf(sel);
+  if (!cards.length) return;
+  _pickSelect = sel;
+  btn.classList.add('active');
+  document.body.classList.add('bf-picking');
+  cards.forEach(c => c.classList.add('bf-pick-ok'));
+  if (typeof _showSBAToast === 'function') _showSBAToast('Click a highlighted card to choose it. Press Escape to cancel.', 'success');
+}
+
+/* Leaves pick mode. Returns true if it was on. */
+function _endTargetPick() {
+  if (!_pickSelect) return false;
+  _pickSelect = null;
+  document.body.classList.remove('bf-picking');
+  document.querySelectorAll('.bf-pick-ok').forEach(c => c.classList.remove('bf-pick-ok'));
+  document.querySelectorAll('.ts-pick-btn.active').forEach(b => b.classList.remove('active'));
+  const toast = document.getElementById('sba-toast');
+  if (toast) toast.classList.remove('sba-toast-visible');
+  return true;
+}
+
+// While picking, a click belongs to the pick: on a lit card it chooses, anywhere else it cancels.
+document.addEventListener('click', (e) => {
+  if (!_pickSelect) return;
+  if (e.target.closest && e.target.closest('.ts-pick-btn')) return;
+  const sel = _pickSelect;
+  const card = e.target.closest ? e.target.closest('.bf-card.bf-pick-ok') : null;
+  e.preventDefault();
+  e.stopPropagation();
+  _endTargetPick();
+  if (card && document.contains(sel)) {
+    sel.value = card.dataset.id;
+    sel.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+}, true);
+document.addEventListener('contextmenu', (e) => { if (_pickSelect) { e.preventDefault(); e.stopPropagation(); _endTargetPick(); } }, true);
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && _endTargetPick()) { e.preventDefault(); e.stopImmediatePropagation(); }
+}, true);
+/* [END: PICK-ON-BOARD] */

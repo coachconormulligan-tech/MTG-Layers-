@@ -3538,3 +3538,12 @@ kbd.card-menu-key { padding: 0 5px; border: 1px solid var(--border-hl); border-r
 .catalog-warning-retry { border-color: var(--gold); color: var(--gold); }
 .catalog-warning-retry:disabled { opacity: 0.6; cursor: default; }
 /* [END: CATALOG-WARNING] */
+
+/* [KEY: PICK-ON-BOARD] choosing a target by clicking a card (ui-targeting.js) */
+.ts-pick-btn { margin-left: 4px; font-size: var(--fs-xs); padding: 1px 7px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: transparent; color: var(--text-dim); cursor: pointer; line-height: 1.6; }
+.ts-pick-btn:hover, .ts-pick-btn.active { border-color: var(--accent); color: var(--accent); }
+.ts-pick-btn.active { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+body.bf-picking #battlefield .bf-card { opacity: .35; transition: opacity var(--t-base); }
+body.bf-picking #battlefield .bf-card.bf-pick-ok { opacity: 1; cursor: crosshair; outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 8px; }
+body.bf-picking #battlefield .bf-card.bf-pick-ok:hover { outline-width: 4px; }
+body.bf-picking #battlefield .bf-card * { pointer-events: none; }

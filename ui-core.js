@@ -140,6 +140,7 @@ function _doRenderAll() {
   renderLibraryPanel();
   renderExilePanel();
   renderInspector();
+  decorateTargetPicks();   // "Pick" buttons beside the target lists (ui-targeting.js)
 }
 
 /* Lightweight selection change: update inspectedId and refresh inspector + timestamp
@@ -172,6 +173,7 @@ function selectInspected(id) {
   renderInspector();
   renderTimestampPanel();
   renderCounterPanel();
+  decorateTargetPicks();
 }
 
 function _showProcessingBar() {
