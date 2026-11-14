@@ -229,3 +229,38 @@ function confirmAction(message, onConfirm) {
   modal.querySelector('#confirm-action-ok').focus();
 }
 /* [END: HELPERS] */
+
+/* [KEY: SYMBOLS]
+   Mana and cost symbols drawn as on a card: "{2}{U}", "{T}", "{W/U}" become
+   Scryfall's own symbol pictures. If a picture cannot be loaded the braces
+   are written back, so the text is never lost. Display only. */
+const SYMBOL_RE = /\{([A-Za-z0-9\u221E\u00BD\/]{1,6})\}/g;
+function _symbolUrl(code) {
+  const c = code.toUpperCase().replace(/\//g, '').replace('\u221E', 'INFINITY').replace('\u00BD', 'HALF');
+  return 'https://svgs.scryfall.io/card-symbols/' + encodeURIComponent(c) + '.svg';
+}
+/* For text that is already HTML-escaped. */
+function symbolsHtml(html) {
+  return String(html || '').replace(SYMBOL_RE, (m, code) =>
+    `<img class="card-symbol" src="${_symbolUrl(code)}" alt="${m}" title="${m}" onerror="this.replaceWith(this.alt)">`);
+}
+/* For a part of the page that is already drawn: every "{...}" in its text. */
+function drawSymbols(root) {
+  if (!root) return;
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  const nodes = [];
+  while (walker.nextNode()) {
+    const n = walker.currentNode;
+    if (n.nodeValue.indexOf('{') < 0) continue;
+    if (n.parentElement && n.parentElement.closest('textarea, select, option, script, style, input, [contenteditable]')) continue;
+    nodes.push(n);
+  }
+  for (const n of nodes) {
+    const html = symbolsHtml(escapeHtml(n.nodeValue));
+    if (html.indexOf('<img') < 0) continue;
+    const span = document.createElement('span');
+    span.innerHTML = html;
+    n.replaceWith(...span.childNodes);
+  }
+}
+/* [END: SYMBOLS] */

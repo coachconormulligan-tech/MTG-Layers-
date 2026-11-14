@@ -46,6 +46,11 @@ function toggleOrderShowAll() {
 
 /* [KEY: INSPECTOR-UI] */
 function renderInspector() {
+  _renderInspectorBody();
+  drawSymbols(document.getElementById('inspector'));   // mana symbols as pictures (ui-helpers.js)
+}
+
+function _renderInspectorBody() {
   const panel = document.getElementById('inspector');
 
   // Check if inspected card is a triggered/activated ability pseudo-perm — show simplified view

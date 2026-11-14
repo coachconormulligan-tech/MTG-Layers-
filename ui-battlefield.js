@@ -751,7 +751,7 @@ function _liveTextBoxHtml(p, fs) {
   }
   const body = paras.length
     ? paras.map(pa => '<p>' + pa.parts.map(x => x.isNew
-        ? `<span class="bf-live-new">${escapeHtml(x.text)}</span>` : escapeHtml(x.text)).join(', ') + '</p>').join('')
+        ? `<span class="bf-live-new">${symbolsHtml(escapeHtml(x.text))}</span>` : symbolsHtml(escapeHtml(x.text))).join(', ') + '</p>').join('')
     : '<p class="bf-live-none">No abilities</p>';
   // The printed power/toughness box sits in the text box's corner: leave it clear
   const tall = (p.printedPower === null || p.printedPower === undefined) ? '' : ' bf-live-haspt';

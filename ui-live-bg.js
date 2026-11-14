@@ -135,7 +135,7 @@ function _lbErase(d, W, H, x0, y0, x1, y1, r, ry, grow, keep, sidesOnly) {
   let mask = new Uint8Array(w * h);
   front = [];
   for (let k = 0; k < dark.length; k++) if (dark[k] === 2 && !frame[k]) { mask[k] = 1; front.push(k); }
-  for (let pass = 0; pass < 8 && front.length; pass++) {
+  for (let pass = 0; pass < 4 && front.length; pass++) {
     const next = [];
     for (const k of front) near(k, (j) => { if (dark[j] && !frame[j] && !mask[j]) { mask[j] = 1; next.push(j); } });
     front = next;
