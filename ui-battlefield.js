@@ -412,7 +412,7 @@ function renderBattlefield() {
     <div class="bf-card ${isSelected ? 'bf-card-selected' : ''} ${hasSBA ? 'bf-card-sba' : ''} ${(p.isManualEffect || p.isSpell) ? 'bf-card-spell' : ''} ${p.tapped ? 'bf-card-tapped' : ''} ${p.isSideways ? 'bf-card-sideways' : ''} ${p.isFaceDown ? 'bf-card-facedown' : ''}" data-id="${p.id}" data-sba="${sbaReasons.join(',')}" onclick="selectPermanent('${p.id}')" oncontextmenu="event.preventDefault(); event.stopPropagation(); openCardMenu(event, '${p.id}');">
       ${p.imageUri ? `<img src="${p.imageUri}" alt="${escapeAttr(p.name)}" class="bf-card-img">` : `<div class="bf-card-no-img"><span>${escapeHtml(p.name)}</span></div>`}
       ${p.label ? `<div class="bf-card-label" aria-hidden="true">${escapeHtml(p.label)}</div>` : ''}
-      <div class="bf-card-overlay"></div>
+      <div class="bf-card-overlay">${renderLivePatches(p, _cardFs)}</div>
       ${p._isEnchantPlayer && p._enchantedPlayerId ? `<div class="bf-card-spell-badge bf-card-enchant-player-badge">Enchanting: ${escapeHtml(Battlefield.getPlayerName(p._enchantedPlayerId))}</div>` : ''}
       <button class="bf-card-remove" onclick="event.stopPropagation(); removePermanent('${p.id}')" title="Remove"> \u2014 </button>
       ${!p.isManualEffect && !p.isSpell ? `<button class="bf-card-tap" onclick="event.stopPropagation(); toggleTapped('${p.id}')" title="${p.tapped ? 'Untap' : 'Tap'}">\u21BB</button>` : ''}
@@ -595,6 +595,62 @@ function renderBfCounterBadges(perm) {
 
   return left + right;
 }
+
+/* [KEY: LIVE-PATCHES]
+   "Live text" on a battlefield card: where the final state differs from what
+   the image prints, a patch is drawn over that part of the image (type line,
+   power/toughness). A card nothing has changed keeps its image untouched.
+   Display only: the values come from the final state. */
+
+// Where the type line is printed. 'line' is the usual place (every normal
+// frame, old and new); anything else gets a bar near the foot of the card.
+function _liveTypeSpot(p) {
+  const c = p.scryfallData || {};
+  if (p.isFaceDown || p.isToken || c.full_art || c.textless || c.border_color === 'borderless') return 'foot';
+  if ((c.frame_effects || []).includes('showcase')) return 'foot';
+  if (!['normal', 'transform', 'modal_dfc', 'meld', 'adventure', 'mutate', 'prototype', 'leveler'].includes(c.layout || 'normal')) return 'foot';
+  if ((p.printedSubtypes || []).some(t => t === 'Saga' || t === 'Class' || t === 'Case' || t === 'Room')) return 'foot';
+  if ((p.printedTypes || []).includes('Battle')) return 'foot';
+  return 'line';
+}
+
+function _liveTypeLineHtml(p, fs) {
+  const same = (a, b) => a.length === b.length && a.every(t => b.includes(t));
+  const sup = fs.supertypes || [], typ = fs.types || [], sub = fs.subtypes || [];
+  const pSup = p.printedSupertypes || [], pTyp = p.printedTypes || [], pSub = p.printedSubtypes || [];
+  if (same(sup, pSup) && same(typ, pTyp) && same(sub, pSub)) return '';
+  const tok = (t, printed) => printed.includes(t) ? escapeHtml(t) : `<span class="bf-live-new">${escapeHtml(t)}</span>`;
+  const left = [...sup.map(t => tok(t, pSup)), ...typ.map(t => tok(t, pTyp))];
+  // "Every creature type" / "every land type" as one phrase, like the inspector's chip
+  let subs = sub, all = [];
+  const cat = typeof TypeCatalog !== 'undefined' ? TypeCatalog : null;
+  if (fs.isAllCreatureTypes && cat && cat.creatureTypes && cat.creatureTypes.size) {
+    subs = subs.filter(t => !cat.creatureTypes.has(t));
+    all.push('<span class="bf-live-new">All creature types</span>');
+  }
+  if (fs.isAllLandTypes && cat && cat.landTypes && cat.landTypes.size) {
+    subs = subs.filter(t => !cat.landTypes.has(t));
+    all.push('<span class="bf-live-new">All land types</span>');
+  }
+  const right = [...all, ...subs.map(t => tok(t, pSub))];
+  const text = left.join(' ') + (right.length ? ' — ' + right.join(' ') : '');
+  return `<div class="bf-live-type bf-live-type-${_liveTypeSpot(p)}">${text || 'No types'}</div>`;
+}
+
+function _livePtHtml(p, fs) {
+  if (!(fs.types || []).includes('Creature')) return '';
+  const pw = fs.power, tg = fs.toughness;
+  if (pw === null || pw === undefined || tg === null || tg === undefined) return '';
+  // A printed "*" is kept as 0, so a characteristic-defining value always shows.
+  if (!p.isFaceDown && pw === p.printedPower && tg === p.printedToughness) return '';
+  return `<div class="bf-live-pt">${escapeHtml(String(pw))}/${escapeHtml(String(tg))}</div>`;
+}
+
+function renderLivePatches(p, fs) {
+  if (!fs || p.isManualEffect || p.isSpell || p.isEmblem) return '';
+  return _liveTypeLineHtml(p, fs) + _livePtHtml(p, fs);
+}
+/* [END: LIVE-PATCHES] */
 
 function selectPermanent(id) {
   selectInspected(id);

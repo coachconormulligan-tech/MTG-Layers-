@@ -745,6 +745,41 @@ body.utility-page-open .utility-page-shell {
   text-shadow: 0 1px 4px rgba(0,0,0,0.95);
 }
 
+/* [KEY: LIVE-PATCHES] live type line and power/toughness drawn over the card
+   image where the final state differs from the print (ui-battlefield.js).
+   Sized in cqw so they follow the card's width. */
+.bf-card { container-type: inline-size; }
+.bf-live-type, .bf-live-pt {
+  position: absolute;
+  background: #17171d;
+  border: 1px solid var(--gold);
+  color: var(--text);
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.bf-live-type {
+  left: 5.5%; right: 5.5%;
+  height: 6.6%;
+  padding: 0 1.6cqw;
+  border-radius: 3px;
+  font-size: 5cqw; font-weight: 600;
+  line-height: 8.4cqw;
+  text-overflow: ellipsis;
+}
+.bf-live-type-line { top: 56%; }
+.bf-live-type-foot { bottom: 12.5%; }
+.bf-live-new { color: var(--gold); }
+.bf-live-pt {
+  right: 5%; bottom: 4.4%;
+  min-width: 19%; height: 7%;
+  padding: 0 2cqw;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 4px;
+  color: var(--gold);
+  font-size: 7.6cqw; font-weight: 700;
+}
+
 /* Large faint letter label for duplicate-named cards (display-only, never parsed) */
 .bf-card-label {
   position: absolute;
