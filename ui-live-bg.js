@@ -226,19 +226,101 @@ const LB_FRAME = {
   'old':  { text: [0.107, 0.600, 0.893, 0.884] },
 };
 
+/* The type bar, found in the image: the pale band about a type line high, with
+   a dark line above and below it across the card and words on it. Tokens,
+   Sagas, Classes and tall planeswalkers print it at different heights. Returns
+   [first row inside, last row inside] or null. */
+function _lbFindBar(d, W, H) {
+  const a = Math.round(W * 0.12), b = Math.round(W * 0.80);
+  const row = new Float64Array(H);
+  for (let y = 0; y < H; y++) {
+    let sum = 0, n = 0;
+    for (let x = a; x < b; x += 2) { sum += _lbLum(d, (y * W + x) * 4); n++; }
+    row[y] = sum / n;
+  }
+  const into = (y, dir) => (row[y] + row[y + dir] + row[y + 2 * dir]) / 3 - Math.min(row[y - dir], row[y - 2 * dir]);
+  let best = null, bestScore = 0;
+  for (let y1 = Math.round(H * 0.45); y1 < Math.round(H * 0.90); y1++) {
+    const top = into(y1, 1);
+    if (top < 25) continue;
+    for (let hgt = Math.round(H * 0.034); hgt <= Math.round(H * 0.058); hgt++) {
+      const y2 = y1 + hgt;
+      if (y2 + 3 >= H) break;
+      const score = Math.min(top, into(y2, -1));
+      if (score <= bestScore) continue;
+      // The band itself is pale and even, and it has words on it at the left
+      let lo = 255;
+      for (let y = y1 + 3; y <= y2 - 3; y++) lo = Math.min(lo, row[y]);
+      const ground = Math.min(row[y1 + 1], row[y2 - 1]);
+      if (lo < ground - 45) continue;
+      let ink = 0;
+      for (let y = y1 + 3; y <= y2 - 3; y++) {
+        for (let x = Math.round(W * 0.08); x < Math.round(W * 0.5); x++) if (_lbLum(d, (y * W + x) * 4) < ground - 70) ink++;
+      }
+      if (ink < 40) continue;
+      bestScore = score; best = [y1, y2];
+    }
+  }
+  return best;
+}
+
+/* Frames whose type bar is found in the image. text: the text column of a
+   Saga (left) or a Class (right), as fractions of the image. */
+const LB_BAR_FRAME = {
+  'pw':    {},
+  'token': { plate: [0.791, 0.903, 0.930, 0.937], cut: [0.766, 0.889] },
+  'saga':  { text: [0.058, 0.112, 0.497, 0.836], tight: true },
+  'class': { text: [0.498, 0.112, 0.925, 0.836], tight: true },
+};
+
+function _liveBgAnalyzeBar(d, W, H, frame, hasPt, hasText) {
+  const fr = LB_BAR_FRAME[frame];
+  const px = (f, dim) => Math.round(f * dim);
+  const res = { aspect: H / W };
+  const bar = _lbFindBar(d, W, H);
+  if (bar) {
+    const a = px(0.075, W), c = px(0.86, W), b = bar[0] + 2, e = bar[1] - 1;
+    res.type = _lbRect(a, b, c, e, W, H, _lbErase(d, W, H, a, b, c, e, px(0.05, W), 3, 2, null, true));
+  }
+  const range = px(0.022, W);
+  const side = (s, guess, a, b) => {
+    const edge = _lbEdge(d, W, H, s, guess, range, a, b);
+    const inward = (s === 'l' || s === 't') ? 1 : -1;
+    // A column's words start right at its edge; what is frame there is kept anyway
+    return edge === null ? guess + inward * (fr.tight ? 3 : 8) : edge + inward * (fr.tight ? 1 : 4);
+  };
+  let t = fr.text;
+  // A token's text box sits under its type bar, when it prints one
+  if (frame === 'token' && bar && hasText && bar[1] < H * 0.80) t = [0.076, bar[1] / H + 0.014, 0.924, 0.922];
+  if (t) {
+    const my0 = px(t[1] + (t[3] - t[1]) * 0.2, H), my1 = px(t[1] + (t[3] - t[1]) * 0.8, H);
+    const mx0 = px(t[0] + (t[2] - t[0]) * 0.2, W), mx1 = px(t[0] + (t[2] - t[0]) * 0.8, W);
+    const x0 = side('l', px(t[0], W), my0, my1), x1 = side('r', px(t[2], W), my0, my1) + 1;
+    const y0 = side('t', px(t[1], H), mx0, mx1), y1 = side('b', px(t[3], H), mx0, px(t[0] + (t[2] - t[0]) * 0.42, W)) + 1;
+    const keep = (hasPt && fr.cut) ? [px(fr.cut[0], W), px(fr.cut[1], H)] : null;
+    res.text = _lbRect(x0, y0, x1, y1, W, H, _lbErase(d, W, H, x0, y0, x1, y1, px(0.02, W), px(0.02, W), 3, keep));
+  }
+  if (fr.plate && hasPt) {
+    const f = fr.plate, a = px(f[0], W), b = px(f[1], H), c = px(f[2], W), e = px(f[3], H);
+    res.pt = _lbRect(a, b, c, e, W, H, _lbErase(d, W, H, a, b, c, e, px(0.03, W), 2, 2, null, true));
+  }
+  return res;
+}
+
 function _lbRect(x0, y0, x1, y1, W, H, url) {
   return url ? { x: x0 / W, y: y0 / H, w: (x1 - x0) / W, h: (y1 - y0) / H, url } : null;
 }
 
-function _liveBgAnalyze(img, frame, hasPt) {
+function _liveBgAnalyze(img, frame, hasPt, hasText) {
   const fr = LB_FRAME[frame];
-  if (!fr) return null;
+  if (!fr && !LB_BAR_FRAME[frame]) return null;
   const W = img.naturalWidth, H = img.naturalHeight;
   const cv = document.createElement('canvas');
   cv.width = W; cv.height = H;
   const g = cv.getContext('2d', { willReadFrequently: true });
   g.drawImage(img, 0, 0);
   const d = g.getImageData(0, 0, W, H).data;       // throws if the image is not readable
+  if (!fr) return _liveBgAnalyzeBar(d, W, H, frame, hasPt, hasText);
   const px = (f, dim) => Math.round(f * dim);
   const res = { aspect: H / W };
 
@@ -283,7 +365,7 @@ function _liveBgPump() {
   img.crossOrigin = 'anonymous';
   img.onload = () => {
     let result = null;
-    try { result = _liveBgAnalyze(img, job.frame, job.hasPt); } catch (e) { result = null; }
+    try { result = _liveBgAnalyze(img, job.frame, job.hasPt, job.hasText); } catch (e) { result = null; }
     finish(result);
   };
   img.onerror = () => finish(null);
@@ -298,10 +380,11 @@ function _liveBgPlace(el, r) {
   el.style.maxWidth = 'none'; el.style.minWidth = '0';
   el.style.backgroundImage = `url(${r.url})`;
   el.classList.add('bf-live-exact');
+  el.classList.remove('bf-live-drawn', 'bf-live-wait');
 }
 
 function _liveBgApply(box, res) {
-  const type = box.querySelector('.bf-live-type-line');
+  const type = box.querySelector('.bf-live-type');
   if (type && res.type) {
     _liveBgPlace(type, res.type);
     type.style.lineHeight = (res.type.h * res.aspect * 100).toFixed(2) + 'cqw';
@@ -317,7 +400,7 @@ function _liveBgApply(box, res) {
     const fits = () => text.scrollHeight <= text.clientHeight + 1;
     const set = (v) => { size = v; text.style.fontSize = v.toFixed(1) + 'cqw'; };
     while (fits() && size < 4.8) set(size + 0.2);
-    while (!fits() && size > 2.4) set(size - 0.2);
+    while (!fits() && size > 2) set(size - 0.2);
   }
 }
 
@@ -326,12 +409,12 @@ function _liveBgApply(box, res) {
    otherwise when its reading is done. */
 function applyLiveBackgrounds() {
   document.querySelectorAll('#battlefield .bf-live[data-src]').forEach(box => {
-    const src = box.dataset.src, frame = box.dataset.frame, hasPt = box.dataset.pt === '1';
-    const key = src + '|' + frame + (hasPt ? 1 : 0);
+    const src = box.dataset.src, frame = box.dataset.frame, hasPt = box.dataset.pt === '1', hasText = box.dataset.text === '1';
+    const key = src + '|' + frame + (hasPt ? 1 : 0) + (hasText ? 1 : 0);
     const hit = _liveBg.get(key);
     if (hit) { if (hit.done && hit.result) _liveBgApply(box, hit.result); return; }
     _liveBg.set(key, { done: false });
-    _liveBgQueue.push({ key, src, frame, hasPt });
+    _liveBgQueue.push({ key, src, frame, hasPt, hasText });
   });
   _liveBgPump();
 }

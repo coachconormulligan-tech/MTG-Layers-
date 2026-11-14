@@ -658,6 +658,21 @@ function _liveTypeSpot(p) {
   return 'line';
 }
 
+// Which frame the card's image has, for the live patches: 'line' (the usual
+// one), or a frame whose type bar ui-live-bg.js finds in the image ('pw',
+// 'token', 'saga', 'class'), or 'foot' (anything else: drawn boxes only).
+function _liveKind(p) {
+  const c = p.scryfallData || {};
+  if (p.isFaceDown) return 'foot';
+  const plain = !c.full_art && !c.textless && c.border_color !== 'borderless' && !(c.frame_effects || []).includes('showcase');
+  if (_liveTypeSpot(p) === 'line') return (p.printedTypes || []).includes('Planeswalker') ? (c.frame === '2015' ? 'pw' : 'foot') : 'line';
+  if (!plain || c.frame !== '2015') return 'foot';
+  if (p.isToken && (c.layout === 'token' || !c.layout)) return 'token';
+  if (c.layout === 'saga') return 'saga';
+  if (c.layout === 'class') return 'class';
+  return 'foot';
+}
+
 // The 1993 and 1997 frames print the type line and the power/toughness in
 // white straight on the frame, and their text box is narrower.
 function _liveOldFrame(p) {
@@ -672,6 +687,7 @@ function _liveTypeLineHtml(p, fs) {
   if (same(sup, pSup) && same(typ, pTyp) && same(sub, pSub)) return '';
   const tok = (t, printed) => printed.includes(t) ? escapeHtml(t) : `<span class="bf-live-new">${escapeHtml(t)}</span>`;
   const left = [...sup.map(t => tok(t, pSup)), ...typ.map(t => tok(t, pTyp))];
+  if (_liveKind(p) === 'token') left.unshift('Token');          // as the token's own type line prints it
   // "Every creature type" / "every land type" as one phrase, like the inspector's chip
   let subs = sub, all = [];
   const cat = typeof TypeCatalog !== 'undefined' ? TypeCatalog : null;
@@ -698,15 +714,21 @@ function _livePtHtml(p, fs) {
   if (!p.isFaceDown && pw === p.printedPower && tg === p.printedToughness) return '';
   // Over a printed box the patch blends into it; where the image prints none
   // (a noncreature card, a face-down card, an unusual frame) a box is drawn.
-  const drawn = p.isFaceDown || p.printedPower === null || p.printedPower === undefined || _liveTypeSpot(p) === 'foot';
-  const look = drawn ? ' bf-live-drawn' : _liveOldFrame(p) ? ' bf-live-light' : '';
+  const kind = _liveKind(p);
+  const drawn = p.isFaceDown || p.printedPower === null || p.printedPower === undefined || (_liveTypeSpot(p) === 'foot' && kind !== 'token');
+  // A planeswalker's loyalty is where a P/T box would be: the box goes beside it
+  const look = drawn ? ' bf-live-drawn' + (kind === 'pw' ? ' bf-live-pt-pw' : '') : _liveOldFrame(p) ? ' bf-live-light' : '';
   return `<div class="bf-live-pt${look}">${escapeHtml(String(pw))}/${escapeHtml(String(tg))}</div>`;
 }
 
 // The rules text box, when the abilities are not the printed ones. Only on a
 // frame whose text box is in the usual place; an ability the print lacks is gold.
 function _liveTextBoxHtml(p, fs) {
-  if (_liveTypeSpot(p) !== 'line' || (p.printedTypes || []).includes('Planeswalker')) return '';
+  // The usual frame, a token that prints a text box, a Saga or a Class. (A
+  // planeswalker keeps its print: its loyalty costs are part of the frame.)
+  const kind = _liveKind(p);
+  const column = kind === 'saga' || kind === 'class' || (kind === 'token' && (p.printedAbilities || []).length > 0);
+  if (kind !== 'line' && !column) return '';
   // An ability it has twice is written once, as a card would print it
   // ("Flying" from the print and again from Levitation).
   // A keyword line of the print ("Defender, flying") counts word by word.
@@ -723,6 +745,9 @@ function _liveTextBoxHtml(p, fs) {
     return true;
   });
   if (abilities.length === printed.length && abilities.every(a => printed.includes(a))) return '';
+  // A Saga's chapters and a Class's levels are laid out by the frame: the
+  // column is rewritten only when the card has lost some of what it prints.
+  if ((kind === 'saga' || kind === 'class') && printed.every(a => abilities.includes(a))) return '';
   // Equip and Reconfigure last, as in the inspector
   const last = (a) => /^(?:equip|reconfigure)\b/i.test(a) ? 1 : 0;
   const lines = _groupAbilityLines([...abilities].sort((a, b) => last(a) - last(b)));
@@ -755,7 +780,8 @@ function _liveTextBoxHtml(p, fs) {
     : '<p class="bf-live-none">No abilities</p>';
   // The printed power/toughness box sits in the text box's corner: leave it clear
   const tall = (p.printedPower === null || p.printedPower === undefined) ? '' : ' bf-live-haspt';
-  return `<div class="bf-live-text${old ? ' bf-live-old' : ''}${tall}" style="font-size:${size.toFixed(1)}cqw">${body}</div>`;
+  // Off the usual frame the box is only known once the image has been read
+  return `<div class="bf-live-text${old ? ' bf-live-old' : ''}${tall}${column ? ' bf-live-wait' : ''}" style="font-size:${size.toFixed(1)}cqw">${body}</div>`;
 }
 
 function renderLivePatches(p, fs) {
@@ -764,10 +790,12 @@ function renderLivePatches(p, fs) {
   if (!html) return '';
   // What ui-live-bg.js needs to read the card's own image: only for a frame
   // whose boxes are in the usual places.
-  const usual = _liveTypeSpot(p) === 'line' && !p.isFaceDown && p.imageUri;
+  const kind = _liveKind(p);
+  const usual = kind !== 'foot' && p.imageUri;
   const hasPt = p.printedPower !== null && p.printedPower !== undefined;
+  const frame = kind !== 'line' ? kind : _liveOldFrame(p) ? 'old' : ((p.scryfallData || {}).frame || '2015');
   const attrs = usual
-    ? ` data-src="${escapeAttr(p.imageUri.replace('/small/', '/normal/'))}" data-frame="${_liveOldFrame(p) ? 'old' : escapeAttr((p.scryfallData || {}).frame || '2015')}" data-pt="${hasPt ? 1 : 0}"`
+    ? ` data-src="${escapeAttr(p.imageUri.replace('/small/', '/normal/'))}" data-frame="${escapeAttr(frame)}" data-pt="${hasPt ? 1 : 0}" data-text="${(p.printedAbilities || []).length ? 1 : 0}"`
     : '';
   return `<div class="bf-live"${attrs}>${html}</div>`;
 }
