@@ -6,7 +6,7 @@
   <title>MTG Layer Inspector - CR 613</title>
   <link rel="icon" type="image/png" href="assets/layer-inspector-tab.png">
   <link rel="apple-touch-icon" href="assets/layer-inspector-tab.png">
-  <link rel="stylesheet" href="styles.css?v=125">
+  <link rel="stylesheet" href="styles.css?v=126">
 </head>
 <body>
 
@@ -202,6 +202,8 @@
             <button class="btn btn-clear btn-sm bf-title-clear" onclick="confirmAction('Clear all permanents from the battlefield?', () => { Battlefield.clear(); renderAll(); })">Clear All</button>
           </span>
           <span class="bf-title-actions">
+            <button id="undo-btn" class="bf-title-toggle" onclick="undoBoard()" disabled title="Undo the last change to the board (Ctrl+Z)">Undo</button>
+            <button id="redo-btn" class="bf-title-toggle" onclick="redoBoard()" disabled title="Redo the change that was undone (Ctrl+Shift+Z)">Redo</button>
             <label class="bf-size-control" title="How large cards are drawn on the battlefield">Card size
               <input type="range" id="bf-card-size" min="100" max="300" step="10" value="130" oninput="setBfCardSize(this.value)" onchange="setBfCardSize(this.value, true)">
             </label>
@@ -275,11 +277,11 @@
   <!-- ui -->
   <script src="ui-helpers.js?v=11"></script>
   <script src="ui-dom-builders.js?v=1"></script>
-  <script src="ui-core.js?v=38"></script>
-  <script src="ui-pages.js?v=12"></script>
-  <script src="ui-battlefield.js?v=51"></script>
+  <script src="ui-core.js?v=40"></script>
+  <script src="ui-pages.js?v=13"></script>
+  <script src="ui-battlefield.js?v=53"></script>
   <script src="ui-card-menu.js?v=1"></script>
-  <script src="ui-live-bg.js?v=5"></script>
+  <script src="ui-live-bg.js?v=8"></script>
   <script src="ui-timestamp.js?v=15"></script>
   <script src="ui-zones.js?v=24"></script>
   <script src="ui-abilities.js?v=16"></script>

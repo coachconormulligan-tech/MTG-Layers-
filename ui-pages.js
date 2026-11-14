@@ -233,6 +233,13 @@ function tutorialPageHtml() {
           <tr><td><kbd>/</kbd></td><td>Card search</td></tr>
           <tr><td><kbd>c</kbd></td><td>Clear battlefield</td></tr>
           <tr><td><kbd>h</kbd></td><td>Toggle Hide abilities</td></tr>
+          <tr><td><kbd>t</kbd></td><td>Tap or untap the selected card</td></tr>
+          <tr><td><kbd>f</kbd></td><td>Transform the selected card</td></tr>
+          <tr><td><kbd>a</kbd></td><td>Mark the selected creature as attacking</td></tr>
+          <tr><td><kbd>b</kbd></td><td>Mark the selected creature as blocking</td></tr>
+          <tr><td><kbd>Delete</kbd></td><td>Remove the selected card</td></tr>
+          <tr><td><kbd>Ctrl+Z</kbd></td><td>Undo the last change to the board (Cmd+Z on a Mac)</td></tr>
+          <tr><td><kbd>Ctrl+Shift+Z</kbd></td><td>Redo (or Ctrl+Y)</td></tr>
           <tr><td><kbd>Esc</kbd></td><td>Close a dialog or clear search</td></tr>
         </table>
       </section>

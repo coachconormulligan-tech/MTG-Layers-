@@ -75,25 +75,77 @@ function _lbRank(d, W, H, x0, y0, x1, y1, r, ry, q) {
    ground refilled from the non-ink pixels around it.
    r, ry: half-size of the window the ground is estimated over;
    grow: how far the ink mask is widened; keep: an [x, y] corner from which
-   nothing is erased (the P/T box in the text box's corner). */
-function _lbErase(d, W, H, x0, y0, x1, y1, r, ry, grow, keep) {
+   nothing is erased (the P/T box in the text box's corner); sidesOnly: frame
+   is looked for along the left and right edges only. */
+function _lbErase(d, W, H, x0, y0, x1, y1, r, ry, grow, keep, sidesOnly) {
   const w = x1 - x0, h = y1 - y0;
   if (w < 4 || h < 4) return null;
   const ground = _lbRank(d, W, H, x0, y0, x1, y1, r, ry, 0.8);
   const kept = (x, y) => keep && x0 + x >= keep[0] && y0 + y >= keep[1];
-  let mask = new Uint8Array(w * h);
+  // Darker than the ground: clearly (ink, or the frame) or only a little (a
+  // soft edge, a shadow, the grain of the box).
+  const dark = new Uint8Array(w * h);            // 1 = a little darker, 2 = clearly darker
   for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) {
       if (kept(x, y)) continue;
-      if (_lbLum(d, ((y0 + y) * W + x0 + x) * 4) < _lbLum(ground, (y * w + x) * 4) - 14) mask[y * w + x] = 1;
+      const gap = _lbLum(ground, (y * w + x) * 4) - _lbLum(d, ((y0 + y) * W + x0 + x) * 4);
+      if (gap > 14) dark[y * w + x] = gap > 40 ? 2 : 1;
     }
+  }
+  const near = (k, fn) => {
+    const x = k % w, y = (k - x) / w;
+    for (let dy = -1; dy <= 1; dy++) {
+      for (let dx = -1; dx <= 1; dx++) {
+        const xx = x + dx, yy = y + dy;
+        if ((dx || dy) && xx >= 0 && xx < w && yy >= 0 && yy < h) fn(yy * w + xx);
+      }
+    }
+  };
+  // Printed words are islands inside their box. Clearly dark pixels joined to
+  // the patch's own edge (or to the kept corner) are the frame coming in: a
+  // border line, the plate's rim, the holofoil stamp. They stay, and so does
+  // everything within a few pixels of them (their soft edge and shadow).
+  const frame = new Uint8Array(w * h);           // 1 = frame, 2 = beside it
+  let front = [];
+  const seed = (x, y) => { const k = y * w + x; if (dark[k] === 2 && !frame[k]) { frame[k] = 1; front.push(k); } };
+  // (The P/T digits stand as tall as the flat of their plate, so there only
+  // what comes in from the left or right is frame.)
+  if (!sidesOnly) for (let x = 0; x < w; x++) { seed(x, 0); seed(x, h - 1); }
+  for (let y = 0; y < h; y++) { seed(0, y); seed(w - 1, y); }
+  if (keep) {
+    const kx = keep[0] - x0, ky = keep[1] - y0;
+    if (kx > 0 && kx < w) for (let y = Math.max(0, ky - 1); y < h; y++) seed(kx - 1, y);
+    if (ky > 0 && ky < h) for (let x = Math.max(0, kx - 1); x < w; x++) seed(x, ky - 1);
+  }
+  const all = [];
+  while (front.length) {
+    const k = front.pop();
+    all.push(k);
+    near(k, (j) => { if (dark[j] === 2 && !frame[j]) { frame[j] = 1; front.push(j); } });
+  }
+  front = all;
+  for (let pass = 0; pass < 4 && front.length; pass++) {
+    const next = [];
+    for (const k of front) near(k, (j) => { if (!frame[j]) { frame[j] = 2; next.push(j); } });
+    front = next;
+  }
+  // Ink: the clearly dark pixels that are not frame, and the slightly dark
+  // ones that hang on to them (a glyph's soft edge, a symbol's disc), followed
+  // for a few pixels only, so the grain of the box is left alone.
+  let mask = new Uint8Array(w * h);
+  front = [];
+  for (let k = 0; k < dark.length; k++) if (dark[k] === 2 && !frame[k]) { mask[k] = 1; front.push(k); }
+  for (let pass = 0; pass < 8 && front.length; pass++) {
+    const next = [];
+    for (const k of front) near(k, (j) => { if (dark[j] && !frame[j] && !mask[j]) { mask[j] = 1; next.push(j); } });
+    front = next;
   }
   // Widen the mask: a glyph's soft edge and the ringing around it are ink too
   for (let pass = 0; pass < grow; pass++) {
     const next = new Uint8Array(mask);
     for (let y = 0; y < h; y++) {
       for (let x = 0; x < w; x++) {
-        if (mask[y * w + x] || kept(x, y)) continue;
+        if (mask[y * w + x] || frame[y * w + x] || kept(x, y)) continue;
         if ((x > 0 && mask[y * w + x - 1]) || (x < w - 1 && mask[y * w + x + 1])
           || (y > 0 && mask[(y - 1) * w + x]) || (y < h - 1 && mask[(y + 1) * w + x])) next[y * w + x] = 1;
       }
@@ -212,7 +264,7 @@ function _liveBgAnalyze(img, frame, hasPt) {
   }
   if (fr.plate && hasPt) {
     const f = fr.plate, a = px(f[0], W), b = px(f[1], H), c = px(f[2], W), e = px(f[3], H);
-    res.pt = _lbRect(a, b, c, e, W, H, _lbErase(d, W, H, a, b, c, e, px(0.03, W), 2, 2, null));
+    res.pt = _lbRect(a, b, c, e, W, H, _lbErase(d, W, H, a, b, c, e, px(0.03, W), 2, 2, null, true));
   }
   return res;
 }

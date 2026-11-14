@@ -41,14 +41,25 @@ document.addEventListener('DOMContentLoaded', () => {
   // Keyboard shortcuts (ignored while typing in a field or when a modal is open).
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') return; // handled above
-    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.altKey) return;
+    const withCmd = e.ctrlKey || e.metaKey;
+    const isUndoKey = withCmd && (e.key === 'z' || e.key === 'Z' || e.key === 'y' || e.key === 'Y');
+    if (withCmd && !isUndoKey) return;
     // Don't act on the hidden sandbox while the landing page is up.
     if (document.body.classList.contains('landing-active')) return;
     const t = e.target;
-    if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return;
+    // A range slider or a checkbox takes no typing, so shortcuts still work after using one.
+    const typing = t && ((t.tagName === 'INPUT' && !/^(?:range|checkbox|radio|button)$/.test(t.type)) || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable);
+    if (typing) return;
     // Don't fire while a modal overlay is open (Escape is the way out of those).
     const modalOpen = [...document.querySelectorAll('.modal-overlay')].some(el => getComputedStyle(el).display !== 'none');
     if (modalOpen) return;
+
+    if (isUndoKey) {
+      e.preventDefault();
+      if (e.key === 'y' || e.key === 'Y' || e.shiftKey) redoBoard(); else undoBoard();
+      return;
+    }
 
     switch (e.key) {
       case '/':
@@ -66,6 +77,11 @@ document.addEventListener('DOMContentLoaded', () => {
       case '?':
         e.preventDefault();
         openShortcutsHelp();
+        break;
+      case 'Delete': case 'Backspace':
+        // Remove the selected card (Undo brings it back)
+        { const sel = Battlefield.inspectedId && Battlefield.getPermById(Battlefield.inspectedId);
+          if (sel) { e.preventDefault(); closeCardMenu(); removePermanent(sel.id); } }
         break;
       case 't': case 'T': case 'f': case 'F': case 'a': case 'A': case 'b': case 'B':
         // The selected card's menu items (ui-card-menu.js)
@@ -87,6 +103,9 @@ function openShortcutsHelp() {
     ['f', 'Transform the selected card'],
     ['a', 'Mark the selected creature as attacking'],
     ['b', 'Mark the selected creature as blocking'],
+    ['Delete', 'Remove the selected card'],
+    ['Ctrl+Z', 'Undo the last change to the board (Cmd+Z on a Mac)'],
+    ['Ctrl+Shift+Z', 'Redo (or Ctrl+Y)'],
     ['Esc', 'Close a dialog or clear search'],
   ];
   function _close() { const el = document.getElementById(overlayId); if (el) el.remove(); }
@@ -128,6 +147,7 @@ function _doRenderAll() {
 function selectInspected(id) {
   const prevId = Battlefield.inspectedId;
   Battlefield.inspectedId = id;
+  if (_undoNow && !_undoTimer) _undoNow.sel = id;   // Undo comes back to the card that was selected
 
   // Toggle bf-card-selected CSS class directly on existing DOM nodes — no innerHTML rebuild.
   if (prevId) {
@@ -175,6 +195,7 @@ function renderAll() {
     requestAnimationFrame(() => {
       _doRenderAll();
       _autosaveBoard();
+      _undoWatch();
       _hideProcessingBar();
     });
   });
@@ -234,6 +255,76 @@ function _retryTypeCatalog() {
   const btn = document.querySelector('#catalog-warning .catalog-warning-retry');
   if (btn) { btn.disabled = true; btn.textContent = 'Retrying'; }
   _loadTypeCatalog();
+}
+
+/* ─── Undo / redo ───
+   The board is saved whole after every change (the same data as the autosave
+   and Download), so Undo is "restore the board before this change". Selecting
+   a card or switching the player tab is no change. Kept in memory only: a
+   reload starts a new history. */
+const UNDO_LIMIT = 40;
+let _undoPast = [], _undoFuture = [];
+let _undoNow = null;            // { json, sel }: the board as it stands
+let _undoTimer = null;
+
+function _undoRead() {
+  const data = Battlefield.serialize();
+  const sel = data.inspectedId || null;
+  delete data.inspectedId; delete data.activePlayerId;
+  return { json: JSON.stringify(data), sel };
+}
+
+/* Take note of the board if it changed. Returns nothing; safe to call often. */
+function _undoNote() {
+  clearTimeout(_undoTimer); _undoTimer = null;
+  if (_restoreInProgress || _urlRestoreInFlight) return;
+  let cur;
+  try { cur = _undoRead(); } catch (e) { return; }
+  if (_undoNow && _undoNow.json === cur.json) { _undoNow.sel = cur.sel; return; }
+  if (_undoNow) {
+    _undoPast.push(_undoNow);
+    if (_undoPast.length > UNDO_LIMIT) _undoPast.shift();
+    _undoFuture = [];
+  }
+  _undoNow = cur;
+  _renderUndoButtons();
+}
+
+/* Called after every render: one drag or burst of clicks is one step. */
+function _undoWatch() {
+  clearTimeout(_undoTimer);
+  _undoTimer = setTimeout(_undoNote, 250);
+}
+
+function _undoGo(from, to, nothing) {
+  _undoNote();                                   // a change made a moment ago counts
+  if (!from.length || !_undoNow) { if (typeof _showSBAToast === 'function') _showSBAToast(nothing); return; }
+  const entry = from.pop();
+  const data = JSON.parse(entry.json);
+  data.inspectedId = entry.sel;
+  if ((data.players || []).some(pl => pl.id === Battlefield.activePlayerId)) data.activePlayerId = Battlefield.activePlayerId;
+  const back = _undoNow;
+  if (!_restoreFromData(data)) {
+    // Put the board back as it was and leave the history alone
+    from.push(entry);
+    const cur = JSON.parse(back.json); cur.inspectedId = back.sel;
+    _restoreFromData(cur);
+  } else {
+    to.push(back);
+  }
+  // Restoring renumbers the permanents: read the board again so this state
+  // is not taken for a new change.
+  try { _undoNow = _undoRead(); } catch (e) { _undoNow = entry; }
+  _renderUndoButtons();
+  renderAll();
+}
+function undoBoard() { _undoGo(_undoPast, _undoFuture, 'Nothing to undo.'); }
+function redoBoard() { _undoGo(_undoFuture, _undoPast, 'Nothing to redo.'); }
+
+function _renderUndoButtons() {
+  const u = document.getElementById('undo-btn'), r = document.getElementById('redo-btn');
+  if (u) u.disabled = !_undoPast.length;
+  if (r) r.disabled = !_undoFuture.length;
 }
 
 /* ─── Board persistence ─── */

@@ -707,8 +707,21 @@ function _livePtHtml(p, fs) {
 // frame whose text box is in the usual place; an ability the print lacks is gold.
 function _liveTextBoxHtml(p, fs) {
   if (_liveTypeSpot(p) !== 'line' || (p.printedTypes || []).includes('Planeswalker')) return '';
-  const abilities = fs.abilities || [];
+  // An ability it has twice is written once, as a card would print it
+  // ("Flying" from the print and again from Levitation).
+  // A keyword line of the print ("Defender, flying") counts word by word.
   const printed = p.printedAbilities || [];
+  const had = new Set();
+  for (const a of printed) {
+    if (a.length <= 40 && !/[.:"—]/.test(a)) a.split(/\s*,\s*/).forEach(w => had.add(w.toLowerCase()));
+  }
+  const abilities = (fs.abilities || []).filter(a => {
+    if (printed.includes(a)) return true;
+    const k = String(a).toLowerCase();
+    if (had.has(k)) return false;
+    had.add(k);
+    return true;
+  });
   if (abilities.length === printed.length && abilities.every(a => printed.includes(a))) return '';
   // Equip and Reconfigure last, as in the inspector
   const last = (a) => /^(?:equip|reconfigure)\b/i.test(a) ? 1 : 0;
