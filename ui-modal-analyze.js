@@ -1,6 +1,6 @@
 /* ui-modal-analyze.js — "Analyze abilities" popup.
 
-   Right-click a battlefield card -> small "Analyze" context menu -> a two-pane
+   Right-click a battlefield card -> "Analyze" in the card menu (ui-card-menu.js) -> a two-pane
    popup that teaches the inverse of the main inspector: given ONE ability, which
    CR 613 layer does each part of it apply in, and which layer does it start in.
 
@@ -20,48 +20,6 @@ function _aaLayerIndex(layerId) {
 function _aaLayerName(layerId) {
   const l = LAYER_MAP[layerId];
   return l ? l.name : layerId;
-}
-
-/* ============================================================================
-   Right-click "Analyze" context menu (mirrors openFaceDownMenu)
-   ========================================================================= */
-function openAnalyzeMenu(event, permId) {
-  document.getElementById('analyze-menu')?.remove();
-  document.getElementById('facedown-menu')?.remove();
-
-  const perm = Battlefield.getPermById(permId);
-  if (!perm || perm.isManualEffect) return;
-
-  const menu = document.createElement('div');
-  menu.id = 'analyze-menu';
-  menu.className = 'facedown-popup-menu aa-context-menu';
-  menu.innerHTML = `
-    <button class="facedown-menu-btn aa-examine-btn" onclick="document.getElementById('analyze-menu')?.remove(); openAnalyzeAbilities('${permId}')">Analyze</button>`;
-  document.body.appendChild(menu);
-
-  // Position at the cursor, clamped to the viewport.
-  const scrollX = window.scrollX || 0;
-  const scrollY = window.scrollY || 0;
-  const mw = menu.offsetWidth || 120;
-  const mh = menu.offsetHeight || 36;
-  let left = event.clientX;
-  let top = event.clientY;
-  if (left + mw > window.innerWidth - 8) left = window.innerWidth - mw - 8;
-  if (top + mh > window.innerHeight - 8) top = window.innerHeight - mh - 8;
-  menu.style.left = (left + scrollX) + 'px';
-  menu.style.top = (top + scrollY) + 'px';
-
-  const close = (e) => {
-    if (!menu.contains(e.target)) {
-      menu.remove();
-      document.removeEventListener('click', close, true);
-      document.removeEventListener('contextmenu', close, true);
-    }
-  };
-  setTimeout(() => {
-    document.addEventListener('click', close, true);
-    document.addEventListener('contextmenu', close, true);
-  }, 0);
 }
 
 /* ============================================================================

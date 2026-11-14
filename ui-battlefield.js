@@ -409,19 +409,14 @@ function renderBattlefield() {
     const _power = _cardFs && _cardFs.power !== null && _cardFs.power !== undefined ? _cardFs.power : p.printedPower;
     const _toughness = _cardFs && _cardFs.toughness !== null && _cardFs.toughness !== undefined ? _cardFs.toughness : p.printedToughness;
     return `
-    <div class="bf-card ${isSelected ? 'bf-card-selected' : ''} ${hasSBA ? 'bf-card-sba' : ''} ${(p.isManualEffect || p.isSpell) ? 'bf-card-spell' : ''} ${p.tapped ? 'bf-card-tapped' : ''} ${p.isSideways ? 'bf-card-sideways' : ''} ${p.isFaceDown ? 'bf-card-facedown' : ''}" data-id="${p.id}" data-sba="${sbaReasons.join(',')}" onclick="selectPermanent('${p.id}')"${(!p.isManualEffect && !p.isSpell) ? ` oncontextmenu="event.preventDefault(); event.stopPropagation(); openAnalyzeMenu(event, '${p.id}'); return false;"` : ''}>
+    <div class="bf-card ${isSelected ? 'bf-card-selected' : ''} ${hasSBA ? 'bf-card-sba' : ''} ${(p.isManualEffect || p.isSpell) ? 'bf-card-spell' : ''} ${p.tapped ? 'bf-card-tapped' : ''} ${p.isSideways ? 'bf-card-sideways' : ''} ${p.isFaceDown ? 'bf-card-facedown' : ''}" data-id="${p.id}" data-sba="${sbaReasons.join(',')}" onclick="selectPermanent('${p.id}')" oncontextmenu="event.preventDefault(); event.stopPropagation(); openCardMenu(event, '${p.id}');">
       ${p.imageUri ? `<img src="${p.imageUri}" alt="${escapeAttr(p.name)}" class="bf-card-img">` : `<div class="bf-card-no-img"><span>${escapeHtml(p.name)}</span></div>`}
       ${p.label ? `<div class="bf-card-label" aria-hidden="true">${escapeHtml(p.label)}</div>` : ''}
       <div class="bf-card-overlay"></div>
       ${p._isEnchantPlayer && p._enchantedPlayerId ? `<div class="bf-card-spell-badge bf-card-enchant-player-badge">Enchanting: ${escapeHtml(Battlefield.getPlayerName(p._enchantedPlayerId))}</div>` : ''}
       <button class="bf-card-remove" onclick="event.stopPropagation(); removePermanent('${p.id}')" title="Remove"> \u2014 </button>
       ${!p.isManualEffect && !p.isSpell ? `<button class="bf-card-tap" onclick="event.stopPropagation(); toggleTapped('${p.id}')" title="${p.tapped ? 'Untap' : 'Tap'}">\u21BB</button>` : ''}
-      ${p.isTransformable ? `<button class="bf-card-flip" onclick="event.stopPropagation(); flipCard('${p.id}')" title="Transform / Flip">\u21C4</button>` : ''}
-      ${p.isChooseableFace ? `<button class="bf-card-flip" onclick="event.stopPropagation(); openDualOptionsPopup('${p.id}')" title="Choose half">\u21C4</button>` : ''}
-      ${!p.isManualEffect && !p.isSpell && !p.isFaceDown ? `<button class="bf-card-facedown-btn" onclick="event.stopPropagation(); openFaceDownMenu(event, '${p.id}')" title="Turn face down">\u29C9</button>` : ''}
-      ${p.isFaceDown ? `<button class="bf-card-facedown-btn bf-card-faceup-btn" onclick="event.stopPropagation(); turnFaceUp('${p.id}')" title="Turn face up">\u25CE</button>` : ''}
-      ${isCreature && !p.isManualEffect && !p.isSpell ? `<button class="bf-card-attack-btn${(p.traits||[]).includes('Attacking') ? ' bf-card-attack-btn-active' : ''}" onclick="event.stopPropagation(); toggleAttacking('${p.id}')" title="${(p.traits||[]).includes('Attacking') ? 'Remove Attacking' : 'Mark as Attacking'}"><svg viewBox="0 0 24 24"><path style="fill:currentColor;stroke:none" d="M12 2 L16 18 L12 20 L8 18 Z"/><line x1="5" y1="18" x2="19" y2="18"/><line x1="12" y1="20" x2="12" y2="23"/><line x1="10" y1="23" x2="14" y2="23"/></svg></button>` : ''}
-      ${isCreature && !p.isManualEffect && !p.isSpell ? `<button class="bf-card-block-btn${(p.traits||[]).includes('Blocking') ? ' bf-card-block-btn-active' : ''}" onclick="event.stopPropagation(); toggleBlocking('${p.id}')" title="${(p.traits||[]).includes('Blocking') ? 'Remove Blocking' : 'Mark as Blocking'}"><svg viewBox="0 0 24 24"><path style="fill:currentColor;stroke:none" d="M4 4 H20 V14 L12 22 L4 14 Z"/></svg></button>` : ''}
+      <button class="bf-card-more" onclick="event.stopPropagation(); openCardMenu(event, '${p.id}')" title="More actions (or right-click the card)">More</button>
       ${p.isRoom && p.roomFaces ? (() => {
         const unlockedCount = p.roomFaces.filter((_, i) => !p.roomLocked[i]).length;
         return `<button class="bf-room-btn bf-room-popup-btn" style="bottom:18px"
@@ -696,44 +691,7 @@ function flipCard(id) {
   renderAll();
 }
 
-/* Face-down menu for Morph/Cloak/Manifest */
-function openFaceDownMenu(event, permId) {
-  // Remove existing menu
-  const existing = document.getElementById('facedown-menu');
-  if (existing) existing.remove();
-  const menu = document.createElement('div');
-  menu.id = 'facedown-menu';
-  menu.className = 'facedown-popup-menu';
-  menu.innerHTML = `
-    <div class="facedown-menu-title">Turn Face Down</div>
-    <button class="facedown-menu-btn" onclick="setFaceDown('${permId}', 'morph')">
-      <strong>Morph</strong><br><span class="facedown-menu-desc">2/2 creature, no abilities</span>
-    </button>
-    <button class="facedown-menu-btn" onclick="setFaceDown('${permId}', 'cloak')">
-      <strong>Cloak</strong><br><span class="facedown-menu-desc">2/2 creature, Ward 2</span>
-    </button>
-    <button class="facedown-menu-btn" onclick="setFaceDown('${permId}', 'manifest')">
-      <strong>Manifest</strong><br><span class="facedown-menu-desc">2/2 creature, no abilities</span>
-    </button>
-  `;
-  document.body.appendChild(menu);
-  // Position near the button
-  const rect = event.target.getBoundingClientRect();
-  menu.style.top = (rect.bottom + 4) + 'px';
-  menu.style.left = rect.left + 'px';
-  // Close on outside click
-  const close = (e) => {
-    if (!menu.contains(e.target) && e.target !== event.target) {
-      menu.remove();
-      document.removeEventListener('click', close, true);
-    }
-  };
-  setTimeout(() => document.addEventListener('click', close, true), 0);
-}
-
 function setFaceDown(permId, mode) {
-  const menu = document.getElementById('facedown-menu');
-  if (menu) menu.remove();
   Battlefield.setFaceDown(permId, mode);
   renderAll();
 }

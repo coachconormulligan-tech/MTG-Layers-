@@ -25,8 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const dep = document.getElementById('dep-reason-popup');
     if (dep) { dep.remove(); return; }
 
-    const fdMenu = document.getElementById('facedown-menu');
-    if (fdMenu) { fdMenu.remove(); return; }
+    if (closeCardMenu()) return;
 
     // Any visible .modal-overlay — trigger its existing click-outside handler
     const overlays = [...document.querySelectorAll('.modal-overlay')];
@@ -68,6 +67,10 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         openShortcutsHelp();
         break;
+      case 't': case 'T': case 'f': case 'F': case 'a': case 'A': case 'b': case 'B':
+        // The selected card's menu items (ui-card-menu.js)
+        if (cardMenuShortcut(e.key)) e.preventDefault();
+        break;
     }
   });
 });
@@ -80,6 +83,10 @@ function openShortcutsHelp() {
     ['/', 'Card search'],
     ['c', 'Clear battlefield'],
     ['h', 'Toggle Hide abilities'],
+    ['t', 'Tap or untap the selected card'],
+    ['f', 'Transform the selected card'],
+    ['a', 'Mark the selected creature as attacking'],
+    ['b', 'Mark the selected creature as blocking'],
     ['Esc', 'Close a dialog or clear search'],
   ];
   function _close() { const el = document.getElementById(overlayId); if (el) el.remove(); }

@@ -792,7 +792,7 @@ body.utility-page-open .utility-page-shell {
 
 .bf-card-remove { right: 4px;  width: 20px; height: 20px; color: var(--red);    font-size: 14px; z-index: 15; }
 .bf-card-flip   { right: 28px; color: var(--accent); font-size: 13px; z-index: 15; }
-.bf-card-tap    { right: 52px; color: var(--green);  font-size: 14px; z-index: 10; }
+.bf-card-tap    { right: 28px; color: var(--green);  font-size: 14px; z-index: 10; }
 .bf-card-facedown-btn { right: 78px; color: rgba(160,120,220,.9); font-size: 13px; z-index: 10; }
 
 .bf-card-remove:hover      { background: rgba(224,85,85,.5); }
@@ -803,6 +803,29 @@ body.utility-page-open .utility-page-shell {
 .bf-card-tap:active        { background: var(--green); color: #fff; }
 .bf-card-facedown-btn:hover  { background: rgba(80,50,120,.7); }
 .bf-card-facedown-btn:active { background: rgba(100,60,150,.9); color: #fff; }
+
+/* "More": opens the card menu (the same one as right-click) */
+.bf-card-more {
+  position: absolute;
+  top: 4px; left: 4px;
+  height: 20px;
+  padding: 0 8px;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: var(--overlay-btn-bg);
+  color: var(--text);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  display: none;
+  align-items: center;
+  cursor: pointer;
+  z-index: 15;
+  transition: background var(--t-base);
+}
+.bf-card:hover .bf-card-more { display: flex; }
+.bf-card-more:hover { background: rgba(124,109,240,.6); }
+.bf-card-tapped .bf-card-more { opacity: 0; pointer-events: none; transition: opacity 0.15s ease; }
+.bf-card-tapped:hover .bf-card-more { opacity: 1; pointer-events: auto; transition-delay: 0.45s; }
 
 /* Face-up button variant (shown on face-down cards) */
 .bf-card-faceup-btn { color: rgba(220,180,120,.9); }
@@ -3212,18 +3235,58 @@ body.utility-page-open .landing-page { display: none; }
 
 
 /* [KEY: ANALYZE-MODAL] — right-click "Analyze" fragment-to-layer popup */
-/* Compact right-click "Analyze" context menu (overrides the roomier face-down menu). */
-.aa-context-menu {
-  min-width: 0;
-  padding: 2px;
+/* [KEY: CARD-MENU] the card's right-click / "More" menu (ui-card-menu.js) */
+.card-menu {
+  position: fixed;
+  z-index: 9999;
+  min-width: 210px;
+  max-width: 280px;
+  max-height: calc(100vh - 16px);
+  overflow-y: auto;
+  padding: var(--sp-2);
+  background: var(--surface);
+  border: 1px solid var(--border-hl);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 24px rgba(0,0,0,.55);
+  font-size: var(--fs-body);
 }
-.aa-examine-btn {
-  padding: 3px 10px;
-  font-size: 11px;
+.card-menu-title {
+  padding: var(--sp-2) var(--sp-4) var(--sp-3);
+  font-size: var(--fs-xs);
   font-weight: 600;
-  text-align: center;
-  white-space: nowrap;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
+.card-menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-5);
+  width: 100%;
+  padding: 5px var(--sp-4);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.card-menu-item:hover, .card-menu-item:focus-visible { background: var(--surface-hover); outline: none; }
+.card-menu-danger { color: var(--red); }
+.card-menu-hint { margin-left: var(--sp-4); font-size: var(--fs-xs); color: var(--text-dim); }
+.card-menu-key {
+  flex: none;
+  font-family: var(--mono);
+  font-size: var(--fs-xs);
+  color: var(--text-dim);
+}
+kbd.card-menu-key { padding: 0 5px; border: 1px solid var(--border-hl); border-radius: var(--radius-sm); }
+.card-menu-sep { height: 1px; margin: var(--sp-2) var(--sp-2); background: var(--border); }
+.card-menu-sub { display: none; margin: 0 0 var(--sp-2) var(--sp-4); padding-left: var(--sp-2); border-left: 1px solid var(--border-hl); }
+.card-menu-group.open .card-menu-sub { display: block; }
 
 #analyze-modal-overlay .modal {
   width: min(940px, 94vw);
