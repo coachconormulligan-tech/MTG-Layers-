@@ -76,22 +76,74 @@ function _lbRank(d, W, H, x0, y0, x1, y1, r, ry, q) {
    r, ry: half-size of the window the ground is estimated over;
    grow: how far the ink mask is widened; keep: an [x, y] corner from which
    nothing is erased (the P/T box in the text box's corner); sidesOnly: frame
-   is looked for along the left and right edges only. */
-function _lbErase(d, W, H, x0, y0, x1, y1, r, ry, grow, keep, sidesOnly) {
+   is looked for along the left and right edges only (true), or along the
+   sides named ('rb'); light: the print is white on a dark ground (a Room's
+   type bar), so the image is read as its negative, or 'both': white print
+   with a dark shadow. */
+function _lbErase(d, W, H, x0, y0, x1, y1, r, ry, grow, keep, sidesOnly, light) {
   const w = x1 - x0, h = y1 - y0;
   if (w < 4 || h < 4) return null;
+  let im;
+  if (light === 'both') {
+    // White print with a dark shadow (the 1997 frame's type line): the white
+    // is erased first, then the shadow from what is left.
+    im = _lbErasePixels(d, W, H, x0, y0, x1, y1, r, ry, grow, keep, sidesOnly, true);
+    const d2 = new Uint8ClampedArray(d);
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        const o = (y * w + x) * 4, i = ((y0 + y) * W + x0 + x) * 4;
+        if (im.data[o + 3]) { d2[i] = im.data[o]; d2[i + 1] = im.data[o + 1]; d2[i + 2] = im.data[o + 2]; }
+      }
+    }
+    const under = _lbErasePixels(d2, W, H, x0, y0, x1, y1, r, ry, grow, keep, sidesOnly, false, 26);
+    for (let o = 0; o < im.data.length; o += 4) {
+      if (under.data[o + 3]) { im.data[o] = under.data[o]; im.data[o + 1] = under.data[o + 1]; im.data[o + 2] = under.data[o + 2]; im.data[o + 3] = 255; }
+    }
+  } else {
+    im = _lbErasePixels(d, W, H, x0, y0, x1, y1, r, ry, grow, keep, sidesOnly, light);
+  }
+  const cv = document.createElement('canvas');
+  cv.width = w; cv.height = h;
+  cv.getContext('2d').putImageData(im, 0, 0);
+  return cv.toDataURL('image/png');
+}
+
+/* The pixels of _lbErase: an ImageData of the rectangle, opaque where ink was.
+   clear: how much darker than the ground a pixel must be to count as print. */
+function _lbErasePixels(d, W, H, x0, y0, x1, y1, r, ry, grow, keep, sidesOnly, light, clear) {
+  const w = x1 - x0, h = y1 - y0;
+  const adapt = !light && !clear;
+  clear = clear || 40;
+  if (light) {
+    const neg = new Uint8ClampedArray(d.length);
+    for (let i = 0; i < d.length; i++) neg[i] = 255 - d[i];
+    d = neg;
+  }
   const ground = _lbRank(d, W, H, x0, y0, x1, y1, r, ry, 0.8);
   const kept = (x, y) => keep && x0 + x >= keep[0] && y0 + y >= keep[1];
   // Darker than the ground: clearly (ink, or the frame) or only a little (a
   // soft edge, a shadow, the grain of the box).
   const dark = new Uint8Array(w * h);            // 1 = a little darker, 2 = clearly darker
+  const gaps = new Int16Array(w * h), hist = new Int32Array(256);
+  let counted = 0;
   for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) {
       if (kept(x, y)) continue;
-      const gap = _lbLum(ground, (y * w + x) * 4) - _lbLum(d, ((y0 + y) * W + x0 + x) * 4);
-      if (gap > 14) dark[y * w + x] = gap > 40 ? 2 : 1;
+      const gap = Math.max(0, _lbLum(ground, (y * w + x) * 4) - _lbLum(d, ((y0 + y) * W + x0 + x) * 4));
+      gaps[y * w + x] = gap; hist[gap]++; counted++;
     }
   }
+  // A mottled box (the parchment of the 1993 frames) is itself darker than
+  // its ground in half its pixels: the median gap is its grain, since print
+  // covers far less than half a box. On such a box print has to be darker.
+  let faint = 14;
+  if (adapt) {
+    let grain = 0;
+    for (let n = 0; grain < 255 && n + hist[grain] <= counted / 2; grain++) n += hist[grain];
+    const extra = Math.min(8, Math.max(0, grain - 9));
+    faint += 2 * extra; clear += 4 * extra;
+  }
+  for (let k = 0; k < gaps.length; k++) if (gaps[k] > faint) dark[k] = gaps[k] > clear ? 2 : 1;
   const near = (k, fn) => {
     const x = k % w, y = (k - x) / w;
     for (let dy = -1; dy <= 1; dy++) {
@@ -110,12 +162,19 @@ function _lbErase(d, W, H, x0, y0, x1, y1, r, ry, grow, keep, sidesOnly) {
   const seed = (x, y) => { const k = y * w + x; if (dark[k] === 2 && !frame[k]) { frame[k] = 1; front.push(k); } };
   // (The P/T digits stand as tall as the flat of their plate, so there only
   // what comes in from the left or right is frame.)
-  if (!sidesOnly) for (let x = 0; x < w; x++) { seed(x, 0); seed(x, h - 1); }
-  for (let y = 0; y < h; y++) { seed(0, y); seed(w - 1, y); }
+  const from = sidesOnly === true ? 'lr' : (sidesOnly || 'lrtb');
+  for (let x = 0; x < w; x++) { if (from.includes('t')) seed(x, 0); if (from.includes('b')) seed(x, h - 1); }
+  for (let y = 0; y < h; y++) { if (from.includes('l')) seed(0, y); if (from.includes('r')) seed(w - 1, y); }
   if (keep) {
     const kx = keep[0] - x0, ky = keep[1] - y0;
-    if (kx > 0 && kx < w) for (let y = Math.max(0, ky - 1); y < h; y++) seed(kx - 1, y);
-    if (ky > 0 && ky < h) for (let x = Math.max(0, kx - 1); x < w; x++) seed(x, ky - 1);
+    // (Only what goes on into the corner: the last word of a line that ends
+    // right above the P/T box touches the corner too, and is print.)
+    // (dx, dy: the way into the corner. A glyph's soft underside is a pixel deep; the frame goes on.)
+    const darkAt = (x, y, k) => x < w && y < h && _lbLum(ground, k * 4) - _lbLum(d, ((y0 + y) * W + x0 + x) * 4) > clear;
+    const goesOn = (x, y, k, dx, dy) => darkAt(x, y, k) && darkAt(x + 2 * dx, y + 2 * dy, k);
+    if (kx > 0 && kx < w) for (let y = Math.max(0, ky); y < h; y++) if (goesOn(kx, y, y * w + kx - 1, 1, 0)) seed(kx - 1, y);
+    if (ky > 0 && ky < h) for (let x = Math.max(0, kx); x < w; x++) if (goesOn(x, ky, (ky - 1) * w + x, 0, 1)) seed(x, ky - 1);
+    if (kx > 0 && kx < w && ky > 0 && ky < h && goesOn(kx, ky, (ky - 1) * w + kx - 1, 1, 1)) seed(kx - 1, ky - 1);
   }
   const all = [];
   while (front.length) {
@@ -166,29 +225,64 @@ function _lbErase(d, W, H, x0, y0, x1, y1, r, ry, grow, keep, sidesOnly) {
     }
   }
   const box = (c, xa, ya, xb, yb) => sat[c][yb * sw + xb] - sat[c][ya * sw + xb] - sat[c][yb * sw + xa] + sat[c][ya * sw + xa];
-  const cv = document.createElement('canvas');
-  cv.width = w; cv.height = h;
-  const g = cv.getContext('2d'), im = g.createImageData(w, h);
+  // The mean of the non-ink pixels within R of (x, y), or null when there are too few
+  const meanAt = (x, y, R, least, out) => {
+    const xa = Math.max(0, x - R), ya = Math.max(0, y - R), xb = Math.min(w, x + R + 1), yb = Math.min(h, y + R + 1);
+    const n = box(3, xa, ya, xb, yb);
+    if (n < least) return false;
+    for (let c = 0; c < 3; c++) out[c] = box(c, xa, ya, xb, yb) / n;
+    return true;
+  };
+  // First guess for each ink pixel: the mean of the non-ink pixels around it
+  const val = new Float32Array(w * h * 3), list = [], m3 = [0, 0, 0];
   for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) {
-      if (!mask[y * w + x]) continue;
-      const o = (y * w + x) * 4;
-      let done = false;
-      for (const R of [3, 6, 12]) {
-        const xa = Math.max(0, x - R), ya = Math.max(0, y - R), xb = Math.min(w, x + R + 1), yb = Math.min(h, y + R + 1);
-        const n = box(3, xa, ya, xb, yb);
-        if (n >= 8) {
-          for (let c = 0; c < 3; c++) im.data[o + c] = box(c, xa, ya, xb, yb) / n;
-          done = true;
-          break;
-        }
+      const k = y * w + x;
+      if (mask[k]) {
+        list.push(k);
+        if (!(meanAt(x, y, 3, 8, m3) || meanAt(x, y, 6, 8, m3) || meanAt(x, y, 12, 8, m3))) for (let c = 0; c < 3; c++) m3[c] = ground[k * 4 + c];
+      } else if (kept(x, y) || !meanAt(x, y, 1, 1, m3)) {
+        continue;
       }
-      if (!done) for (let c = 0; c < 3; c++) im.data[o + c] = ground[o + c];
-      im.data[o + 3] = 255;
+      // (A non-ink pixel stands for itself and its neighbours: one speck does not streak.)
+      for (let c = 0; c < 3; c++) val[k * 3 + c] = m3[c];
     }
   }
-  g.putImageData(im, 0, 0);
-  return cv.toDataURL('image/png');
+  // Then the ground is carried across each gap from all its sides (each ink
+  // pixel settles at the mean of its four neighbours), so a gap in a mottled
+  // box shades from one side to the other and is no flat square.
+  const usable = (x, y) => x >= 0 && x < w && y >= 0 && y < h && (mask[y * w + x] || !kept(x, y));
+  for (let pass = 0; pass < 60; pass++) {
+    for (let q = 0; q < list.length; q++) {
+      const k = list[pass & 1 ? list.length - 1 - q : q], x = k % w, y = (k - x) / w;
+      let n = 0, a = 0, b = 0, c = 0;
+      if (usable(x - 1, y)) { const j = (k - 1) * 3; a += val[j]; b += val[j + 1]; c += val[j + 2]; n++; }
+      if (usable(x + 1, y)) { const j = (k + 1) * 3; a += val[j]; b += val[j + 1]; c += val[j + 2]; n++; }
+      if (usable(x, y - 1)) { const j = (k - w) * 3; a += val[j]; b += val[j + 1]; c += val[j + 2]; n++; }
+      if (usable(x, y + 1)) { const j = (k + w) * 3; a += val[j]; b += val[j + 1]; c += val[j + 2]; n++; }
+      if (n) { val[k * 3] = a / n; val[k * 3 + 1] = b / n; val[k * 3 + 2] = c / n; }
+    }
+  }
+  // And the box's grain is put back: what a non-ink pixel nearby differs by
+  // from the pixels around it (never more than faint print would).
+  const im = new ImageData(w, h);
+  for (const k of list) {
+    const x = k % w, y = (k - x) / w, o = k * 4;
+    let g0 = 0, g1 = 0, g2 = 0;
+    for (let t = 0; t < 8; t++) {
+      const hash = (Math.imul(x, 73856093) ^ Math.imul(y, 19349663) ^ Math.imul(t + 1, 83492791)) >>> 0;
+      const sx = x + (hash % 41) - 20, sy = y + ((hash >>> 8) % 41) - 20;
+      if (sx < 0 || sx >= w || sy < 0 || sy >= h || mask[sy * w + sx] || frame[sy * w + sx] || kept(sx, sy)) continue;
+      if (!meanAt(sx, sy, 2, 6, m3)) continue;
+      const i = ((y0 + sy) * W + x0 + sx) * 4, lim = faint;
+      g0 = Math.max(-lim, Math.min(lim, d[i] - m3[0])); g1 = Math.max(-lim, Math.min(lim, d[i + 1] - m3[1])); g2 = Math.max(-lim, Math.min(lim, d[i + 2] - m3[2]));
+      break;
+    }
+    const v = [val[k * 3] + g0, val[k * 3 + 1] + g1, val[k * 3 + 2] + g2];
+    for (let c = 0; c < 3; c++) im.data[o + c] = light ? 255 - v[c] : v[c];
+    im.data[o + 3] = 255;
+  }
+  return im;
 }
 
 /* A box's border line: the position within `range` pixels of `guess` where the
@@ -218,12 +312,14 @@ function _lbEdge(d, W, H, side, guess, range, a, b) {
    Scryfall's images): text = the text box, plate = the flat inside of the P/T
    box, cut = the corner of the text box the P/T box covers, type = the part of
    the type bar that holds the words (it stops before the set symbol). The 1993
-   and 1997 frames print the type line and P/T straight on the frame, so those
-   two keep the blurred patch there. */
+   and 1997 frames ('old') print the type line and P/T in white straight on
+   the frame, in the same places on both. */
 const LB_FRAME = {
   '2015': { text: [0.076, 0.631, 0.924, 0.922], plate: [0.791, 0.903, 0.930, 0.937], cut: [0.766, 0.889], type: [0.072, 0.569, 0.862, 0.611] },
   '2003': { text: [0.084, 0.628, 0.910, 0.899], plate: [0.752, 0.900, 0.908, 0.935], cut: [0.726, 0.886], type: [0.086, 0.571, 0.861, 0.607] },
-  'old':  { text: [0.107, 0.600, 0.893, 0.884] },
+  // White words with a dark shadow, straight on the frame (light: 'both');
+  // the type line stops before the set symbol, which may come in from the right.
+  'old':  { text: [0.107, 0.600, 0.893, 0.884], plate: [0.803, 0.899, 0.934, 0.941], type: [0.082, 0.559, 0.877, 0.594], light: 'both', typeSeeds: 'r' },
 };
 
 /* The type bar, found in the image: the pale band about a type line high, with
@@ -268,7 +364,10 @@ function _lbFindBar(d, W, H) {
    Saga (left) or a Class (right), as fractions of the image. */
 const LB_BAR_FRAME = {
   'pw':    {},
-  'token': { plate: [0.791, 0.903, 0.930, 0.937], cut: [0.766, 0.889] },
+  // under: a token's text box, when it prints one, sits under its type bar
+  // (left, gap below the bar, right, bottom); bar: where the bar's words are.
+  'token': { plate: [0.791, 0.903, 0.930, 0.937], cut: [0.766, 0.889], under: [0.076, 0.014, 0.924, 0.922] },
+  'token03': { plate: [0.752, 0.900, 0.912, 0.944], under: [0.090, 0.018, 0.914, 0.888], bar: [0.085, 0.80] },
   'saga':  { text: [0.058, 0.112, 0.497, 0.836], tight: true },
   'class': { text: [0.498, 0.112, 0.925, 0.836], tight: true },
 };
@@ -279,7 +378,8 @@ function _liveBgAnalyzeBar(d, W, H, frame, hasPt, hasText) {
   const res = { aspect: H / W };
   const bar = _lbFindBar(d, W, H);
   if (bar) {
-    const a = px(0.075, W), c = px(0.86, W), b = bar[0] + 2, e = bar[1] - 1;
+    res.barTop = bar[0] / H;
+    const a = px((fr.bar || [0.075])[0], W), c = px((fr.bar || [0, 0.86])[1], W), b = bar[0] + 2, e = bar[1] - 1;
     res.type = _lbRect(a, b, c, e, W, H, _lbErase(d, W, H, a, b, c, e, px(0.05, W), 3, 2, null, true));
   }
   const range = px(0.022, W);
@@ -290,19 +390,75 @@ function _liveBgAnalyzeBar(d, W, H, frame, hasPt, hasText) {
     return edge === null ? guess + inward * (fr.tight ? 3 : 8) : edge + inward * (fr.tight ? 1 : 4);
   };
   let t = fr.text;
-  // A token's text box sits under its type bar, when it prints one
-  if (frame === 'token' && bar && hasText && bar[1] < H * 0.80) t = [0.076, bar[1] / H + 0.014, 0.924, 0.922];
+  if (fr.under && bar && hasText && bar[1] < H * 0.80) t = [fr.under[0], bar[1] / H + fr.under[1], fr.under[2], fr.under[3]];
   if (t) {
     const my0 = px(t[1] + (t[3] - t[1]) * 0.2, H), my1 = px(t[1] + (t[3] - t[1]) * 0.8, H);
     const mx0 = px(t[0] + (t[2] - t[0]) * 0.2, W), mx1 = px(t[0] + (t[2] - t[0]) * 0.8, W);
     const x0 = side('l', px(t[0], W), my0, my1), x1 = side('r', px(t[2], W), my0, my1) + 1;
     const y0 = side('t', px(t[1], H), mx0, mx1), y1 = side('b', px(t[3], H), mx0, px(t[0] + (t[2] - t[0]) * 0.42, W)) + 1;
     const keep = (hasPt && fr.cut) ? [px(fr.cut[0], W), px(fr.cut[1], H)] : null;
-    res.text = _lbRect(x0, y0, x1, y1, W, H, _lbErase(d, W, H, x0, y0, x1, y1, px(0.02, W), px(0.02, W), 3, keep));
+    // A Case's "To solve" and "Solved" start right at the column's left line:
+    // where that line was found, what is dark along it is print. (A Class's
+    // level bars reach the right side too; a Saga's badges come in from the left.)
+    const leftIsPrint = frame === 'class' && _lbEdge(d, W, H, 'l', px(t[0], W), range, my0, my1) !== null;
+    res.text = _lbRect(x0, y0, x1, y1, W, H, _lbErase(d, W, H, x0, y0, x1, y1, px(0.02, W), px(0.02, W), 3, keep, leftIsPrint ? 'rtb' : false));
   }
   if (fr.plate && hasPt) {
     const f = fr.plate, a = px(f[0], W), b = px(f[1], H), c = px(f[2], W), e = px(f[3], H);
     res.pt = _lbRect(a, b, c, e, W, H, _lbErase(d, W, H, a, b, c, e, px(0.03, W), 2, 2, null, true));
+  }
+  return res;
+}
+
+/* Frames read from measured places. Cards printed on their side are read
+   turned upright (fractions of the turned image, 680 by 488); upright: the
+   card is printed upright. type: the words of the type bar; light: they are
+   white on a dark bar (true), or white with a dark shadow ('both');
+   typeSeeds: the sides of that patch frame may come in from; texts: the text
+   boxes, a Room's two doors left to right; plate: the printed power and
+   toughness; range: how far a text box's side is looked for from its place. */
+const LB_SIDE_FRAME = {
+  // Every Room prints "Enchantment — Room": only that stretch of the bar is
+  // cleaned (the bar is marbled, and its pale veins would pass for print).
+  'room': { type: [0.094, 0.549, 0.36, 0.590], light: true, typeSeeds: 'r', texts: [[0.097, 0.705, 0.484, 0.949], [0.556, 0.705, 0.941, 0.949]] },
+  // cut: the corner of the text box that holds the back face's power and
+  // toughness and the defense shield.
+  'battle': { type: [0.118, 0.586, 0.86, 0.648], texts: [[0.122, 0.672, 0.929, 0.955]], cut: [0.865, 0.80] },
+  // The promo tokens of 2001 to 2003 (mpr, pr2, p03): the lower part of the
+  // 1997 card frame. Type line and power/toughness are white with a shadow,
+  // straight on the coloured panel; the small text box differs by colour.
+  'token97': { upright: true, type: [0.148, 0.666, 0.79, 0.699], light: 'both', typeSeeds: 'r', texts: [[0.160, 0.706, 0.830, 0.862]], plate: [0.762, 0.878, 0.881, 0.922], range: 0.025 },
+};
+
+function _liveBgAnalyzeSide(d, W, H, frame, hasPt) {
+  const fr = LB_SIDE_FRAME[frame];
+  const px = (f, dim) => Math.round(f * dim);
+  const res = { aspect: H / W, texts: [] };
+  if (fr.type) {
+    const f = fr.type, a = px(f[0], W), b = px(f[1], H), c = px(f[2], W), e = px(f[3], H);
+    res.type = _lbRect(a, b, c, e, W, H, _lbErase(d, W, H, a, b, c, e, px(0.04, W), 3, 2, null, fr.typeSeeds || false, fr.light));
+  }
+  if (fr.plate && hasPt) {
+    const f = fr.plate, a = px(f[0], W), b = px(f[1], H), c = px(f[2], W), e = px(f[3], H);
+    res.pt = _lbRect(a, b, c, e, W, H, _lbErase(d, W, H, a, b, c, e, px(0.03, W), 3, 2, null, 'none', fr.light));
+  }
+  const range = px(fr.range || 0.016, W);
+  for (const t of fr.texts || []) {
+    const my0 = px(t[1] + (t[3] - t[1]) * 0.2, H), my1 = px(t[1] + (t[3] - t[1]) * 0.8, H);
+    const mx0 = px(t[0] + (t[2] - t[0]) * 0.2, W), mx1 = px(t[0] + (t[2] - t[0]) * 0.8, W);
+    // Each side from its border line; where none stands out, well inside the
+    // measured place, and what is dark along that side is taken for frame.
+    let seeds = '';
+    const side = (s, guess, a, b) => {
+      const edge = _lbEdge(d, W, H, s, guess, range, a, b);
+      const inward = (s === 'l' || s === 't') ? 1 : -1;
+      if (edge === null) { seeds += s; return guess + inward * 6; }
+      return edge + inward * 2;
+    };
+    const x0 = side('l', px(t[0], W), my0, my1), x1 = side('r', px(t[2], W), my0, my1) + 1;
+    const y0 = side('t', px(t[1], H), mx0, mx1), y1 = side('b', px(t[3], H), mx0, mx1) + 1;
+    const keep = fr.cut ? [px(fr.cut[0], W), px(fr.cut[1], H)] : null;
+    res.texts.push(_lbRect(x0, y0, x1, y1, W, H, _lbErase(d, W, H, x0, y0, x1, y1, px(0.015, W), px(0.015, W), 3, keep, seeds || 'none')));
   }
   return res;
 }
@@ -313,13 +469,19 @@ function _lbRect(x0, y0, x1, y1, W, H, url) {
 
 function _liveBgAnalyze(img, frame, hasPt, hasText) {
   const fr = LB_FRAME[frame];
-  if (!fr && !LB_BAR_FRAME[frame]) return null;
-  const W = img.naturalWidth, H = img.naturalHeight;
+  const measured = LB_SIDE_FRAME[frame];
+  const turned = !!measured && !measured.upright;
+  if (!fr && !LB_BAR_FRAME[frame] && !measured) return null;
+  // A card printed on its side is read turned upright, as the battlefield shows it
+  const W = turned ? img.naturalHeight : img.naturalWidth, H = turned ? img.naturalWidth : img.naturalHeight;
   const cv = document.createElement('canvas');
   cv.width = W; cv.height = H;
   const g = cv.getContext('2d', { willReadFrequently: true });
+  if (turned) { g.translate(W, 0); g.rotate(Math.PI / 2); }
   g.drawImage(img, 0, 0);
+  if (turned) g.setTransform(1, 0, 0, 1, 0, 0);
   const d = g.getImageData(0, 0, W, H).data;       // throws if the image is not readable
+  if (measured) return _liveBgAnalyzeSide(d, W, H, frame, hasPt);
   if (!fr) return _liveBgAnalyzeBar(d, W, H, frame, hasPt, hasText);
   const px = (f, dim) => Math.round(f * dim);
   const res = { aspect: H / W };
@@ -335,18 +497,25 @@ function _liveBgAnalyze(img, frame, hasPt, hasText) {
     const inward = (s === 'l' || s === 't') ? 1 : -1;
     return e === null ? guess + inward * missed : e + inward * found;
   };
-  const x0 = side('l', px(t[0], W), midY0, midY1, 4, 8), x1 = side('r', px(t[2], W), midY0, midY1, 4, 8) + 1;
-  const y0 = side('t', px(t[1], H), midX0, midX1, 4, 8), y1 = side('b', px(t[3], H), midX0, lowX1, 4, 8) + 1;
+  // The first line can start 2 px under the box's top line, and an italic
+  // capital reaches 4 px left of the text's margin. Where the top or left
+  // line was found, the patch starts right inside it, and what is dark along
+  // that side is print, not frame.
+  const found = (s, guess, a, b) => _lbEdge(d, W, H, s, guess, range, a, b) !== null;
+  const topFound = found('t', px(t[1], H), midX0, midX1), leftFound = found('l', px(t[0], W), midY0, midY1);
+  const x0 = side('l', px(t[0], W), midY0, midY1, 2, 8), x1 = side('r', px(t[2], W), midY0, midY1, 4, 8) + 1;
+  const y0 = side('t', px(t[1], H), midX0, midX1, 2, 8), y1 = side('b', px(t[3], H), midX0, lowX1, 4, 8) + 1;
   const keep = (hasPt && fr.cut) ? [px(fr.cut[0], W), px(fr.cut[1], H)] : null;
-  res.text = _lbRect(x0, y0, x1, y1, W, H, _lbErase(d, W, H, x0, y0, x1, y1, px(0.02, W), px(0.02, W), 3, keep));
+  const seeds = 'rb' + (topFound ? '' : 't') + (leftFound ? '' : 'l');
+  res.text = _lbRect(x0, y0, x1, y1, W, H, _lbErase(d, W, H, x0, y0, x1, y1, px(0.02, W), px(0.02, W), 3, keep, seeds));
 
   if (fr.type) {
     const f = fr.type, a = px(f[0], W), b = px(f[1], H), c = px(f[2], W), e = px(f[3], H);
-    res.type = _lbRect(a, b, c, e, W, H, _lbErase(d, W, H, a, b, c, e, px(0.05, W), 3, 2, null));
+    res.type = _lbRect(a, b, c, e, W, H, _lbErase(d, W, H, a, b, c, e, px(0.05, W), 3, 2, null, fr.typeSeeds || false, fr.light));
   }
   if (fr.plate && hasPt) {
     const f = fr.plate, a = px(f[0], W), b = px(f[1], H), c = px(f[2], W), e = px(f[3], H);
-    res.pt = _lbRect(a, b, c, e, W, H, _lbErase(d, W, H, a, b, c, e, px(0.03, W), 2, 2, null, true));
+    res.pt = _lbRect(a, b, c, e, W, H, _lbErase(d, W, H, a, b, c, e, px(0.03, W), fr.light ? 3 : 2, 2, null, fr.light ? 'none' : true, fr.light));
   }
   return res;
 }
@@ -391,17 +560,26 @@ function _liveBgApply(box, res) {
   }
   const pt = box.querySelector('.bf-live-pt:not(.bf-live-drawn)');
   if (pt && res.pt) _liveBgPlace(pt, res.pt);
-  const text = box.querySelector('.bf-live-text');
-  if (text && res.text) {
-    _liveBgPlace(text, res.text);
+  // The strip of gained abilities ends just above the type bar
+  const gain = box.querySelector('.bf-live-gain');
+  if (gain) {
+    if (res.barTop) gain.style.bottom = ((1 - res.barTop) * 100 + 0.9).toFixed(2) + '%';
+    gain.classList.remove('bf-live-wait');
+  }
+  // (A Room has a text box for each door.)
+  box.querySelectorAll('.bf-live-text').forEach(text => {
+    const rect = res.texts ? res.texts[+(text.dataset.half || 0)] : res.text;
+    if (!rect) { text.classList.remove('bf-live-wait'); return; }
+    _liveBgPlace(text, rect);
     // The font was estimated for the usual box: now that the real box is known,
     // take the largest size that fits it.
     let size = parseFloat(text.style.fontSize) || 4;
+    const max = parseFloat(text.dataset.max) || 4.8, min = parseFloat(text.dataset.min) || 2;
     const fits = () => text.scrollHeight <= text.clientHeight + 1;
     const set = (v) => { size = v; text.style.fontSize = v.toFixed(1) + 'cqw'; };
-    while (fits() && size < 4.8) set(size + 0.2);
-    while (!fits() && size > 2) set(size - 0.2);
-  }
+    while (fits() && size < max) set(size + 0.2);
+    while (!fits() && size > min) set(size - 0.2);
+  });
 }
 
 /* Called after the battlefield is drawn: every card's patches get the card's
@@ -412,7 +590,11 @@ function applyLiveBackgrounds() {
     const src = box.dataset.src, frame = box.dataset.frame, hasPt = box.dataset.pt === '1', hasText = box.dataset.text === '1';
     const key = src + '|' + frame + (hasPt ? 1 : 0) + (hasText ? 1 : 0);
     const hit = _liveBg.get(key);
-    if (hit) { if (hit.done && hit.result) _liveBgApply(box, hit.result); return; }
+    if (hit) {
+      if (hit.done && hit.result) _liveBgApply(box, hit.result);
+      else if (hit.done) box.querySelectorAll('.bf-live-wait').forEach(g => g.classList.remove('bf-live-wait'));   // unreadable image: the first-guess place
+      return;
+    }
     _liveBg.set(key, { done: false });
     _liveBgQueue.push({ key, src, frame, hasPt, hasText });
   });

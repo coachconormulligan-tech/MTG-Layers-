@@ -220,7 +220,7 @@ function renderSnapshotBoard(container, snap) {
   function renderSnapCard(p) {
     const tapped = p.tapped ? ' bf-card-tapped' : '';
     const faceDown = p.isFaceDown ? ' bf-card-facedown' : '';
-    const sideways = p.isSideways ? ' bf-card-sideways' : '';
+    const sideways = _cardIsSideways(p) ? ' bf-card-sideways' : '';
     const spellish = (p.isManualEffect || p.isSpell) ? ' bf-card-spell' : '';
     const selected = (_snapshotPopupState && _snapshotPopupState.selectedId === p.id) ? ' bf-card-snapshot-selected' : '';
     const img = p.imageUri

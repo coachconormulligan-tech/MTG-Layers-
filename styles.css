@@ -787,6 +787,10 @@ body.utility-page-open .utility-page-shell {
   text-shadow: 0 0 .5cqw #000, 0 .3cqw .6cqw #000;
 }
 .bf-live-light .bf-live-new { color: #ffd966; }
+/* (Over the card's own image with the print erased, no dimming is needed.) */
+.bf-live-light.bf-live-exact { background-color: transparent; }
+/* (The 1993 and 1997 frames print a smaller type line than later ones.) */
+.bf-live-type-line.bf-live-light.bf-live-exact { font-size: 3.9cqw; }
 /* No print to blend into: a plain box in card colours */
 .bf-live-drawn {
   -webkit-backdrop-filter: none;
@@ -1013,10 +1017,17 @@ body.utility-page-open .utility-page-shell {
 }
 
 /* Sideways card orientation (Battles, Split/Room cards) */
+/* The card lies on its side, whole: the box is as wide as a card is tall, and
+   the upright image is turned inside it. */
+.bf-card-sideways { width: calc(var(--bf-card-w, 130px) * 680 / 488); aspect-ratio: 680 / 488; }
 .bf-card-sideways .bf-card-img {
-  transform: rotate(90deg);
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 71.765%;                 /* 488 / 680 of the box: the image's own width */
+  transform: translate(-50%, -50%) rotate(90deg);
   transform-origin: center center;
 }
+.bf-card-sideways.bf-card-tapped { margin: calc(var(--bf-card-w, 130px) * 0.22) 4px; }
 
 /* Face-down cards (Morph, Cloak, Manifest) */
 .bf-card-facedown .bf-card-img {
@@ -2862,7 +2873,12 @@ body.utility-page-open .utility-page-shell {
 .dual-opt-toggle-btn:hover { border-color: var(--accent); color: var(--accent); }
 
 /* Single popup-trigger button on Room cards in the battlefield */
+/* A small pill in the lower left corner: the lower right one is where a Room
+   that has become a creature gets its power/toughness plate. */
 .bf-room-popup-btn {
+  left: 4px; right: auto; bottom: 4px;
+  width: auto; max-width: 60%;
+  margin: 0;
   background: rgba(50, 50, 70, .88);
   color: #ccc;
   letter-spacing: .02em;
@@ -3567,5 +3583,61 @@ body.bf-picking #battlefield .bf-card * { pointer-events: none; }
   box-shadow: inset 0 0 0 .3cqw rgba(255,255,255,.5), inset 0 -.5cqw .7cqw rgba(0,0,0,.22), -.35cqw .45cqw .15cqw rgba(0,0,0,.7);
   right: 5.6%; bottom: 5%; min-width: 16%; height: 5.9%;
 }
+/* Abilities gained by a card whose text is laid out by its frame (planeswalker,
+   Saga, Class) or that prints no text box (a vanilla token): a strip in the
+   frame's colour at the foot of the art, ending just above the type bar. */
+.bf-live-gain {
+  --plate: #ccd4d9;
+  position: absolute;
+  left: 8%; right: 8%; bottom: 45%;
+  padding: .9cqw 1.6cqw 1cqw;
+  color: #141414;
+  font-family: "MPlantin", "Plantin", "Palatino Linotype", Palatino, Georgia, serif;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--plate) 45%, #fff) 0%, color-mix(in srgb, var(--plate) 70%, #fff) 100%);
+  border: solid #15120f;
+  border-width: .25cqw .4cqw .4cqw .28cqw;
+  border-radius: 1.2cqw;
+  box-shadow: inset 0 0 0 .25cqw rgba(255,255,255,.45), -.3cqw .4cqw .15cqw rgba(0,0,0,.6);
+}
+.bf-live-gain p { margin: 0 0 .35em; }
+.bf-live-gain p:last-child { margin-bottom: 0; }
+.bf-live-gain .card-symbol { width: .86em; height: .86em; vertical-align: -.08em; }
+.bf-live-gain-token { bottom: 21%; }
+.bf-live-gain-saga { left: 51.5%; right: 7.5%; bottom: 16.5%; }     /* under the art, which is the right half */
+.bf-live-gain-class { left: 7.5%; right: 51.5%; bottom: 16.5%; }    /* the art is the left half */
 /* On a planeswalker the box sits on the loyalty shield and covers it */
 .bf-live-pt.bf-live-drawn.bf-live-pt-pw { right: 4.8%; bottom: 3.9%; min-width: 19.2%; height: 7.9%; font-size: 5.8cqw; }
+
+/* [KEY: LIVE-SIDEWAYS] live text on a card printed on its side (a Room): the
+   box is 680 by 488, so a cqw is 6.8 image pixels where an upright card's is 4.88. */
+.bf-live-type.bf-live-type-room { left: 9.4%; top: 55.3%; height: 3.1%; max-width: 70%; background: none; }
+.bf-live-type.bf-live-type-room.bf-live-exact { overflow: visible; padding: 0 .3cqw; font: 700 2.6cqw "Beleren", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; text-shadow: none; }
+.bf-live-text.bf-live-text-room { left: 9.7%; right: auto; top: 70.5%; bottom: auto; width: 38.7%; height: 24.4%; }
+.bf-live-text.bf-live-text-room[data-half="1"] { left: 55.6%; }
+.bf-live-text.bf-live-text-room.bf-live-exact { padding: .5cqw 1cqw .3cqw; }
+.bf-live-locked { opacity: .5; }
+/* A battle: dark words on a pale bar; the text box's lower right corner holds
+   the back face's power/toughness and the defense shield. */
+.bf-live-type.bf-live-type-battle { left: 11.8%; top: 58.6%; height: 6.2%; max-width: 74%; }
+.bf-live-type.bf-live-type-battle.bf-live-exact { padding: 0 .9cqw; font: 700 3.3cqw "Beleren", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; }
+.bf-live-text.bf-live-text-battle { left: 12.2%; right: 7.1%; top: 67.2%; bottom: 4.5%; }
+.bf-live-text.bf-live-text-battle.bf-live-exact { padding: .7cqw 1.2cqw .4cqw; }
+.bf-live-notch-a { float: right; width: 0; height: 44%; }
+.bf-live-notch-b { float: right; clear: right; width: 9%; height: 56%; }
+.bf-card-sideways .bf-live-pt.bf-live-drawn.bf-live-pt-battle { right: 13.5%; }
+.bf-card-sideways .bf-live-pt.bf-live-drawn { right: 4.4%; bottom: 3.4%; min-width: 11.5%; height: 8.2%; font-size: 3.8cqw; border-radius: 1.4cqw; }
+/* [END: LIVE-SIDEWAYS] */
+/* The token frame of 2004 to 2014: smaller type, rules text centred in its box */
+.bf-live[data-frame="token03"] .bf-live-type.bf-live-exact { font-size: 3.7cqw; }
+.bf-live-text.bf-live-text-center { display: flex; flex-direction: column; justify-content: center; text-align: center; }
+.bf-live-gain-token03 { bottom: 21%; }
+/* The promo tokens of 2001 to 2003 (the lower part of the 1997 frame): white
+   type line and power/toughness on the coloured panel, a small text box. */
+.bf-live-type.bf-live-type-t97 { left: 14.8%; top: 66.6%; height: 3.3%; max-width: 64%; }
+.bf-live-type.bf-live-type-t97.bf-live-exact { overflow: visible; padding: 0 .9cqw; background-color: transparent; font-size: 3.5cqw; }
+.bf-live-text.bf-live-text-t97 { left: 16%; right: 17%; top: 70.6%; bottom: 13.8%; }
+.bf-live-text.bf-live-text-t97.bf-live-exact { padding: .9cqw 1.8cqw .4cqw; }
+.bf-live[data-frame="token97"] .bf-live-pt { right: 11.9%; bottom: 7.8%; min-width: 11.9%; height: 4.4%; }
+.bf-live[data-frame="token97"] .bf-live-pt.bf-live-exact { background-color: transparent; font-size: 5.6cqw; }

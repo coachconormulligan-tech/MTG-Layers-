@@ -451,7 +451,7 @@ function renderBattlefield() {
     const _live = renderLivePatches(p, _cardFs);
     const _imgSrc = (p.imageUri && _live.includes('data-src=')) ? p.imageUri.replace('/small/', '/normal/') : _bfCardImage(p.imageUri);
     return `
-    <div class="bf-card ${isSelected ? 'bf-card-selected' : ''} ${hasSBA ? 'bf-card-sba' : ''} ${(p.isManualEffect || p.isSpell) ? 'bf-card-spell' : ''} ${p.tapped ? 'bf-card-tapped' : ''} ${p.isSideways ? 'bf-card-sideways' : ''} ${p.isFaceDown ? 'bf-card-facedown' : ''}" data-id="${p.id}" data-sba="${sbaReasons.join(',')}" onclick="selectPermanent('${p.id}')" oncontextmenu="event.preventDefault(); event.stopPropagation(); openCardMenu(event, '${p.id}');">
+    <div class="bf-card ${isSelected ? 'bf-card-selected' : ''} ${hasSBA ? 'bf-card-sba' : ''} ${(p.isManualEffect || p.isSpell) ? 'bf-card-spell' : ''} ${p.tapped ? 'bf-card-tapped' : ''} ${_cardIsSideways(p) ? 'bf-card-sideways' : ''} ${p.isFaceDown ? 'bf-card-facedown' : ''}" data-id="${p.id}" data-sba="${sbaReasons.join(',')}" onclick="selectPermanent('${p.id}')" oncontextmenu="event.preventDefault(); event.stopPropagation(); openCardMenu(event, '${p.id}');">
       ${p.imageUri ? `<img src="${_imgSrc}" alt="${escapeAttr(p.name)}" class="bf-card-img">` : `<div class="bf-card-no-img"><span>${escapeHtml(p.name)}</span></div>`}
       ${p.label ? `<div class="bf-card-label" aria-hidden="true">${escapeHtml(p.label)}</div>` : ''}
       <div class="bf-card-overlay">${_live}</div>
@@ -461,7 +461,7 @@ function renderBattlefield() {
       <button class="bf-card-more" onclick="event.stopPropagation(); openCardMenu(event, '${p.id}')" title="More actions (or right-click the card)">More</button>
       ${p.isRoom && p.roomFaces ? (() => {
         const unlockedCount = p.roomFaces.filter((_, i) => !p.roomLocked[i]).length;
-        return `<button class="bf-room-btn bf-room-popup-btn" style="bottom:18px"
+        return `<button class="bf-room-btn bf-room-popup-btn"
           onclick="event.stopPropagation(); openDualOptionsPopup('${p.id}')"
           title="Room options — ${unlockedCount}/${p.roomFaces.length} unlocked"
         >Rooms ${unlockedCount}/${p.roomFaces.length}</button>`;
@@ -640,6 +640,13 @@ function renderBfCounterBadges(perm) {
   return left + right;
 }
 
+// A card printed on its side lies on its side: a split card or Room, a plane,
+// and a battle while its battle face is up (Scryfall files battles as
+// "transform", so the layout does not say).
+function _cardIsSideways(p) {
+  return !!p.isSideways || (!p.isFaceDown && (p.printedTypes || []).includes('Battle'));
+}
+
 /* [KEY: LIVE-PATCHES]
    "Live text" on a battlefield card: where the final state differs from what
    the image prints, a patch is drawn over that part of the image (type line,
@@ -660,16 +667,24 @@ function _liveTypeSpot(p) {
 
 // Which frame the card's image has, for the live patches: 'line' (the usual
 // one), or a frame whose type bar ui-live-bg.js finds in the image ('pw',
-// 'token', 'saga', 'class'), or 'foot' (anything else: drawn boxes only).
+// 'token', 'token03' (the token frame of 2004 to 2014), 'saga', 'class'), a frame read from measured places ('room' and
+// 'battle', printed on their side, and 'token97', the promo tokens of 2001 to 2003),
+// or 'foot' (anything else: drawn boxes only).
 function _liveKind(p) {
   const c = p.scryfallData || {};
   if (p.isFaceDown) return 'foot';
   const plain = !c.full_art && !c.textless && c.border_color !== 'borderless' && !(c.frame_effects || []).includes('showcase');
   if (_liveTypeSpot(p) === 'line') return (p.printedTypes || []).includes('Planeswalker') ? (c.frame === '2015' ? 'pw' : 'foot') : 'line';
+  // The token frame of 2004 to 2014 (Scryfall calls some of them full-art)
+  if (p.isToken && c.frame === '2003' && c.layout === 'token' && !c.textless && c.border_color !== 'borderless') return 'token03';
+  // The promo tokens of 2001 to 2003: the lower part of the 1997 card frame
+  if (p.isToken && c.frame === '1997' && c.layout === 'token' && ['mpr', 'pr2', 'p03'].includes(c.set)) return 'token97';
   if (!plain || c.frame !== '2015') return 'foot';
+  if (p.isRoom && p.roomFaces && c.layout === 'split') return 'room';
+  if ((p.printedTypes || []).includes('Battle')) return 'battle';
   if (p.isToken && (c.layout === 'token' || !c.layout)) return 'token';
   if (c.layout === 'saga') return 'saga';
-  if (c.layout === 'class') return 'class';
+  if (c.layout === 'class' || c.layout === 'case') return 'class';     // a Case has the Class frame: art left, text right
   return 'foot';
 }
 
@@ -702,6 +717,11 @@ function _liveTypeLineHtml(p, fs) {
   const right = [...all, ...subs.map(t => tok(t, pSub))];
   const text = left.join(' ') + (right.length ? ' — ' + right.join(' ') : '');
   const spot = _liveTypeSpot(p);
+  // A Room's type bar is dark with white words, across both doors
+  if (_liveKind(p) === 'room') return `<div class="bf-live-type bf-live-type-room bf-live-light bf-live-wait">${text || 'No types'}</div>`;
+  if (_liveKind(p) === 'battle') return `<div class="bf-live-type bf-live-type-battle bf-live-wait">${text || 'No types'}</div>`;
+  // A promo token of 2001 to 2003 prints it in white on its coloured panel
+  if (_liveKind(p) === 'token97') return `<div class="bf-live-type bf-live-type-t97 bf-live-light bf-live-wait">${text || 'No types'}</div>`;
   const look = spot === 'foot' ? ' bf-live-drawn' : _liveOldFrame(p) ? ' bf-live-light' : '';
   return `<div class="bf-live-type bf-live-type-${spot}${look}">${text || 'No types'}</div>`;
 }
@@ -725,22 +745,35 @@ function _livePtHtml(p, fs) {
   // Over a printed box the patch blends into it; where the image prints none
   // (a noncreature card, a face-down card, an unusual frame) a box is drawn.
   const kind = _liveKind(p);
-  const drawn = p.isFaceDown || p.printedPower === null || p.printedPower === undefined || (_liveTypeSpot(p) === 'foot' && kind !== 'token');
+  const drawn = p.isFaceDown || p.printedPower === null || p.printedPower === undefined || (_liveTypeSpot(p) === 'foot' && kind !== 'token' && kind !== 'token03' && kind !== 'token97');
   // A planeswalker's loyalty is where a P/T box would be: the box goes beside it
-  const look = drawn ? ' bf-live-drawn' + (kind === 'pw' ? ' bf-live-pt-pw' : '') : _liveOldFrame(p) ? ' bf-live-light' : '';
+  const look = drawn ? ' bf-live-drawn' + (kind === 'pw' ? ' bf-live-pt-pw' : kind === 'battle' ? ' bf-live-pt-battle' : '') : _liveOldFrame(p) ? ' bf-live-light' : '';
   // A drawn box is made to look like a printed one, in the frame's own colour
   const plate = drawn ? ` style="--plate:${_livePlateColor(p)}"` : '';
   return `<div class="bf-live-pt${look}"${plate}>${escapeHtml(String(pw))}/${escapeHtml(String(tg))}</div>`;
 }
 
-// The rules text box, when the abilities are not the printed ones. Only on a
-// frame whose text box is in the usual place; an ability the print lacks is gold.
+// What one door of a Room prints, read as the card's own abilities are
+function _roomHalfAbilities(p, i) {
+  const f = (p.roomFaces || [])[i];
+  if (!f) return [];
+  const cardName = (p.scryfallData && p.scryfallData.name) || p.name;
+  let t = _replaceProperNounSelfRef(p.name, _stripReminderText(f.oracle_text || ''), p.isToken);
+  if (cardName !== p.name) t = _replaceProperNounSelfRef(cardName, t, p.isToken);
+  return extractAbilities(t);
+}
+
+// The rules text box, when the abilities are not the printed ones: rewritten
+// on a frame whose text box is in the usual place (an ability the print lacks
+// in red), else a strip of the gained abilities at the foot of the art.
 function _liveTextBoxHtml(p, fs) {
   // The usual frame, a token that prints a text box, a Saga or a Class. (A
   // planeswalker keeps its print: its loyalty costs are part of the frame.)
   const kind = _liveKind(p);
-  const column = kind === 'saga' || kind === 'class' || (kind === 'token' && (p.printedAbilities || []).length > 0);
-  if (kind !== 'line' && !column) return '';
+  const token = kind === 'token' || kind === 'token03';
+  // (A promo token of 2001 to 2003 always prints a text box: flavor text when it has no rules.)
+  const column = kind === 'saga' || kind === 'class' || kind === 'token97' || (token && (p.printedAbilities || []).length > 0);
+  if (kind === 'foot') return '';
   // An ability it has twice is written once, as a card would print it
   // ("Flying" from the print and again from Levitation).
   // A keyword line of the print ("Defender, flying") counts word by word.
@@ -756,25 +789,70 @@ function _liveTextBoxHtml(p, fs) {
     had.add(k);
     return true;
   });
-  if (abilities.length === printed.length && abilities.every(a => printed.includes(a))) return '';
-  // A Saga's chapters and a Class's levels are laid out by the frame: the
-  // column is rewritten only when the card has lost some of what it prints.
-  if ((kind === 'saga' || kind === 'class') && printed.every(a => abilities.includes(a))) return '';
-  // Equip and Reconfigure last, as in the inspector
-  const last = (a) => /^(?:equip|reconfigure)\b/i.test(a) ? 1 : 0;
-  const lines = _groupAbilityLines([...abilities].sort((a, b) => last(a) - last(b)));
+  if (kind !== 'room' && abilities.length === printed.length && abilities.every(a => printed.includes(a))) return '';
   // Paragraphs as a card prints them: keywords share one, comma-separated.
+  // Equip and Reconfigure last, as in the inspector.
   const isKeyword = (a) => a.length <= 40 && !/[.:"—]/.test(a);
-  const paras = [];
-  for (const a of lines) {
-    const part = { text: _replaceThisCard(a, p.name).replace(/\s+([.,;])/g, '$1'), isNew: !printed.includes(a) };
-    const prev = paras[paras.length - 1];
-    if (isKeyword(a) && prev && prev.keywords) {
-      part.text = part.text.charAt(0).toLowerCase() + part.text.slice(1);
-      prev.parts.push(part);
-    } else {
-      paras.push({ keywords: isKeyword(a), parts: [part] });
+  const last = (a) => /^(?:equip|reconfigure)\b/i.test(a) ? 1 : 0;
+  const parasOf = (list) => {
+    const paras = [];
+    for (const a of _groupAbilityLines([...list].sort((x, y) => last(x) - last(y)))) {
+      const part = { text: _replaceThisCard(a, p.name).replace(/\s+([.,;])/g, '$1'), isNew: !printed.includes(a) };
+      const prev = paras[paras.length - 1];
+      if (isKeyword(a) && prev && prev.keywords) {
+        part.text = part.text.charAt(0).toLowerCase() + part.text.slice(1);
+        prev.parts.push(part);
+      } else {
+        paras.push({ keywords: isKeyword(a), parts: [part] });
+      }
     }
+    return paras;
+  };
+  const bodyOf = (paras, mark) => paras.map(pa => '<p>' + pa.parts.map(x => (mark && x.isNew)
+    ? `<span class="bf-live-new">${symbolsHtml(escapeHtml(x.text))}</span>` : symbolsHtml(escapeHtml(x.text))).join(', ') + '</p>').join('');
+  // A Room has a text box for each door. A locked door has no abilities: its
+  // box says so, with what it prints in pale ink under it. What the card has
+  // gained is written on its first unlocked door.
+  if (kind === 'room') {
+    const gained = abilities.filter(a => !printed.includes(a));
+    const carrier = Math.max(0, p.roomLocked.findIndex(l => !l));
+    return p.roomFaces.map((f, i) => {
+      const own = _roomHalfAbilities(p, i), locked = !!p.roomLocked[i];
+      const kept = locked ? [] : own.filter(a => abilities.includes(a));
+      const extra = i === carrier ? gained : [];
+      if (!locked && kept.length === own.length && !extra.length) return '';
+      let body = locked
+        ? '<p class="bf-live-none">Locked</p>' + (own.length ? `<div class="bf-live-locked">${bodyOf(parasOf(own), false)}</div>` : '')
+        : bodyOf(parasOf(kept), false);
+      body += bodyOf(parasOf(extra), true);
+      if (!body) body = '<p class="bf-live-none">No abilities</p>';
+      return `<div class="bf-live-text bf-live-text-room bf-live-wait" data-half="${i}" data-max="3" data-min="1.6" style="font-size:3cqw">${body}</div>`;
+    }).join('');
+  }
+  // A planeswalker's loyalty costs, a Saga's chapters and a Class's levels are
+  // laid out by the frame, and a token without text prints no box: the print
+  // stays, and what the card has gained is written on a strip at the foot of
+  // the art. (A Saga or Class that has lost a printed ability is rewritten.)
+  const framed = (kind === 'saga' || kind === 'class') && printed.every(a => abilities.includes(a));
+  if (kind === 'pw' || framed || (token && !column)) {
+    const gained = abilities.filter(a => !printed.includes(a));
+    if (!gained.length) return '';
+    const paras = parasOf(gained);
+    const chars = paras.reduce((n, pa) => n + pa.parts.reduce((m, x) => m + x.text.length + 2, 0), 0);
+    const narrow = kind === 'saga' || kind === 'class';
+    const fsize = Math.max(narrow ? 2.6 : 3, Math.min(4.2, (narrow ? 15 : 22) / Math.sqrt(chars)));
+    return `<div class="bf-live-gain bf-live-gain-${kind} bf-live-wait" style="font-size:${fsize.toFixed(1)}cqw;--plate:${_livePlateColor(p)}">${bodyOf(paras, false)}</div>`;
+  }
+  const paras = parasOf(abilities);
+  // A battle's box is fitted once its image is read; the corner that holds the
+  // back face's power/toughness and the defense shield is left clear.
+  if (kind === 'battle') {
+    const inner = paras.length ? bodyOf(paras, true) : '<p class="bf-live-none">No abilities</p>';
+    return `<div class="bf-live-text bf-live-text-battle bf-live-wait" data-max="3" data-min="1.6" style="font-size:3cqw"><i class="bf-live-notch-a"></i><i class="bf-live-notch-b"></i>${inner}</div>`;
+  }
+  if (kind === 'token97') {
+    const inner = paras.length ? bodyOf(paras, true) : '<p class="bf-live-none">No abilities</p>';
+    return `<div class="bf-live-text bf-live-text-t97 bf-live-wait" data-max="4.4" data-min="1.8" style="font-size:3.4cqw">${inner}</div>`;
   }
   // The largest font at which the paragraphs fit: the box is about 81cqw by
   // 33cqw inside (75cqw on an old frame), a character about half its font size wide.
@@ -786,14 +864,11 @@ function _liveTextBoxHtml(p, fs) {
     const rows = lens.reduce((n, len) => n + Math.ceil(len / perLine), 0);
     if (rows * 1.15 * size + (paras.length - 1) * 0.45 * size <= 33) break;
   }
-  const body = paras.length
-    ? paras.map(pa => '<p>' + pa.parts.map(x => x.isNew
-        ? `<span class="bf-live-new">${symbolsHtml(escapeHtml(x.text))}</span>` : symbolsHtml(escapeHtml(x.text))).join(', ') + '</p>').join('')
-    : '<p class="bf-live-none">No abilities</p>';
+  const body = paras.length ? bodyOf(paras, true) : '<p class="bf-live-none">No abilities</p>';
   // The printed power/toughness box sits in the text box's corner: leave it clear
   const tall = (p.printedPower === null || p.printedPower === undefined) ? '' : ' bf-live-haspt';
   // Off the usual frame the box is only known once the image has been read
-  return `<div class="bf-live-text${old ? ' bf-live-old' : ''}${tall}${column ? ' bf-live-wait' : ''}" style="font-size:${size.toFixed(1)}cqw">${body}</div>`;
+  return `<div class="bf-live-text${old ? ' bf-live-old' : ''}${tall}${column ? ' bf-live-wait' : ''}${kind === 'token03' ? ' bf-live-text-center' : ''}" style="font-size:${size.toFixed(1)}cqw">${body}</div>`;
 }
 
 function renderLivePatches(p, fs) {
