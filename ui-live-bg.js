@@ -77,7 +77,7 @@ function _lbRank(d, W, H, x0, y0, x1, y1, r, ry, q) {
    grow: how far the ink mask is widened; keep: an [x, y] corner from which
    nothing is erased (the P/T box in the text box's corner); sidesOnly: frame
    is looked for along the left and right edges only (true), or along the
-   sides named ('rb'); light: the print is white on a dark ground (a Room's
+   sides named ('rb'), or as on a type bar ('bar', see _lbErasePixels); light: the print is white on a dark ground (a Room's
    type bar), so the image is read as its negative, or 'both': white print
    with a dark shadow. */
 function _lbErase(d, W, H, x0, y0, x1, y1, r, ry, grow, keep, sidesOnly, light) {
@@ -171,7 +171,17 @@ function _lbErasePixels(d, W, H, x0, y0, x1, y1, r, ry, grow, keep, sidesOnly, l
   const seed = (x, y) => { const k = y * w + x; if (dark[k] === 2 && !frame[k]) { frame[k] = 1; front.push(k); } };
   // (The P/T digits stand as tall as the flat of their plate, so there only
   // what comes in from the left or right is frame.)
-  const from = sidesOnly === true ? 'lr' : (sidesOnly || 'lrtb');
+  // ('bar': a type bar. A letter's tail (p, g, y) can reach the patch's last
+  // row, and a first letter or the shadow of the bar's end its first column;
+  // each was taken for frame with every letter joined to it ("Shapeshifter"
+  // kept its "ap", an 8th Edition "Enchantment" its "En"). There only the set
+  // symbol's side, the right, is followed as usual. Along the other three
+  // sides only a long run of dark is frame, a border line; and nothing is
+  // followed out of the two rows or columns at those sides into the patch, so
+  // a line there keeps no letter that touches it.)
+  const bar = sidesOnly === 'bar', edge = bar ? 2 : 0;
+  const inEdge = (k) => { const x = k % w, y = (k - x) / w; return y < edge || y >= h - edge || x < edge; };
+  const from = sidesOnly === true ? 'lr' : bar ? 'r' : (sidesOnly || 'lrtb');
   for (let x = 0; x < w; x++) { if (from.includes('t')) seed(x, 0); if (from.includes('b')) seed(x, h - 1); }
   for (let y = 0; y < h; y++) { if (from.includes('l')) seed(0, y); if (from.includes('r')) seed(w - 1, y); }
   if (keep) {
@@ -189,7 +199,28 @@ function _lbErasePixels(d, W, H, x0, y0, x1, y1, r, ry, grow, keep, sidesOnly, l
   while (front.length) {
     const k = front.pop();
     all.push(k);
-    near(k, (j) => { if (dark[j] === 2 && !frame[j]) { frame[j] = 1; front.push(j); } });
+    near(k, (j) => { if (dark[j] === 2 && !frame[j] && !(bar && inEdge(k) && !inEdge(j))) { frame[j] = 1; front.push(j); } });
+  }
+  if (bar) {
+    // (along: the run's length in pixels along a side; at: the pixel n along it)
+    const runs = (n, least, at) => {
+      for (let i = 0, start = -1; i <= n; i++) {
+        const on = i < n && dark[at(i)] === 2;
+        if (on && start < 0) start = i;
+        if (!on && start >= 0) {
+          if (i - start >= least) for (let q = start; q < i; q++) { const k = at(q); if (!frame[k]) { frame[k] = 1; front.push(k); } }
+          start = -1;
+        }
+      }
+    };
+    const least = Math.max(8, Math.round(0.035 * W));
+    runs(w, least, (i) => i); runs(w, least, (i) => (h - 1) * w + i);
+    runs(h, Math.round(h * 0.6), (i) => i * w);
+    while (front.length) {
+      const k = front.pop();
+      all.push(k);
+      near(k, (j) => { if (dark[j] === 2 && !frame[j] && inEdge(j)) { frame[j] = 1; front.push(j); } });
+    }
   }
   front = all;
   for (let pass = 0; pass < 4 && front.length; pass++) {
@@ -326,10 +357,20 @@ function _lbEdge(d, W, H, side, guess, range, a, b, any) {
    the frame, in the same places on both. */
 const LB_FRAME = {
   '2015': { text: [0.076, 0.631, 0.924, 0.922], plate: [0.791, 0.903, 0.930, 0.937], cut: [0.766, 0.889], type: [0.072, 0.569, 0.862, 0.611] },
-  '2003': { text: [0.084, 0.628, 0.910, 0.899], plate: [0.752, 0.900, 0.908, 0.935], cut: [0.726, 0.886], type: [0.086, 0.571, 0.861, 0.607] },
+  '2003': { text: [0.084, 0.628, 0.910, 0.899], plate: [0.752, 0.900, 0.908, 0.935], cut: [0.726, 0.886], type: [0.086, 0.571, 0.861, 0.609] },      // (to row 413 of 680: a letter's tail ends there, the bar's line is at 415 or 416)
   // White words with a dark shadow, straight on the frame (light: 'both');
   // the type line stops before the set symbol, which may come in from the right.
   'old':  { text: [0.107, 0.600, 0.893, 0.884], plate: [0.803, 0.899, 0.934, 0.941], type: [0.082, 0.559, 0.877, 0.594], light: 'both', typeSeeds: 'r' },
+  // The "future" frame (Future Sight, and later printings in its style): the
+  // text box has bowed sides and a rounded foot, and the P/T box sits under
+  // it, not in its corner. A coloured card prints its type line and P/T in
+  // white on a dark bar and plate, a pale card in black: each is read off the
+  // image (fixed: the places are used as measured, no border line is looked for).
+  // (A full line of text ends 7 px from the box's side at mid height: the
+  // patch runs to the side there, and where the side bows in it is frame.)
+  // The bar's left end casts a soft shadow that reaches the first letter: only
+  // the set symbol, on the right, is frame there.
+  'future': { text: [0.090, 0.631, 0.918, 0.884], plate: [0.781, 0.896, 0.920, 0.946], type: [0.119, 0.568, 0.862, 0.616], fixed: true, typeSeeds: 'r' },
 };
 
 /* The type bar, found in the image: the pale band about a type line high, with
@@ -688,6 +729,20 @@ function _liveBgAnalyze(img, frame, hasPt, hasText, ind) {
     const dim = r => !r.light && r.med < 115;
     res.dim = { text: dim(rt), type: dim(ry), pt: dim(rp) };
   }
+  if (fr.fixed) {
+    const ry = _lbRegion(d, W, H, fr.type), rp = hasPt ? _lbRegion(d, W, H, fr.plate) : { light: false, med: 255 };
+    // (The two-colour lands of 2007 print their rules in white on a dark,
+    // see-through box. Graven Cairns, Grove of the Burnwillows.)
+    const t = fr.text, rt = _lbRegion(d, W, H, [t[0] + 0.03, t[1] + 0.02, t[2] - 0.03, t[3] - 0.04]);
+    lightText = rt.light; lightType = ry.light; lightPt = rp.light;
+    res.light = { text: lightText, type: lightType, pt: lightPt };
+    const dim = r => !r.light && r.med < 115;
+    res.dim = { text: dim(rt), type: dim(ry), pt: dim(rp) };
+    // (White print on a pale bar, as on this frame's lands: the yellow of a
+    // changed word is lost there, the blue is not.)
+    res.mid = { type: ry.light && ry.med >= 140, pt: rp.light && rp.med >= 140 };
+    res.ptBelow = true;        // nothing of the P/T box is in the text box
+  }
 
   // Text box: each side from its border line, else the measured place; the
   // patch stays inside by a margin the printed text never enters.
@@ -712,17 +767,20 @@ function _liveBgAnalyze(img, frame, hasPt, hasText, ind) {
   // that side is print, not frame.
   const found = (s, guess, a, b) => _lbEdge(d, W, H, s, guess, range, a, b, show) !== null;
   const topFound = found('t', px(t[1], H), midX0, midX1), leftFound = found('l', px(t[0], W), midY0, midY1);
-  const x0 = side('l', px(t[0], W), midY0, midY1, 2, 8), x1 = side('r', px(t[2], W), midY0, midY1, 4, 8) + 1;
-  const y0 = side('t', px(t[1], H), midX0, midX1, 2, 8), y1 = side('b', px(t[3], H), midX0, lowX1, 4, 8) + 1;
+  const x0 = fr.fixed ? px(t[0], W) : side('l', px(t[0], W), midY0, midY1, 2, 8), x1 = fr.fixed ? px(t[2], W) : side('r', px(t[2], W), midY0, midY1, 4, 8) + 1;
+  const y0 = fr.fixed ? px(t[1], H) : side('t', px(t[1], H), midX0, midX1, 2, 8), y1 = fr.fixed ? px(t[3], H) : side('b', px(t[3], H), midX0, lowX1, 4, 8) + 1;
   const keep = (hasPt && fr.cut) ? [px(fr.cut[0], W), px(fr.cut[1], H)] : null;
   // (A see-through box lets the art's bright specks in along every side: on a
   // showcase or borderless printing only the stamp at the foot is frame.)
-  const seeds = show ? 'b' : 'rb' + (topFound ? '' : 't') + (leftFound ? '' : 'l');
+  // (The bowed sides of the future frame's box come into the patch anywhere.)
+  const seeds = fr.fixed ? 'lrtb' : show ? 'b' : 'rb' + (topFound ? '' : 't') + (leftFound ? '' : 'l');
   res.text = _lbRect(x0, y0, x1, y1, W, H, _lbErase(d, W, H, x0, y0, x1, y1, px(0.02, W), px(0.02, W), 3, keep, seeds, lightText ? 'adapt' : false));
 
   if (fr.type) {
     // (After a colour indicator the line starts 4.7% of the card further in,
     // and a long one ends nearer the set symbol.)
+    // (The future frame prints no indicator dot: Dryad Arbor.)
+    if (fr.fixed) ind = false;
     const f = fr.type, a = px(f[0] + (ind ? 0.047 : 0), W), c = px(f[2] + (ind ? 0.03 : 0), W);
     // (The back face of a double-faced card prints its type line in white on
     // a darkened bar.)
@@ -733,11 +791,11 @@ function _liveBgAnalyze(img, frame, hasPt, hasText, ind) {
     // (A showcase frame may print its type line a little higher or lower.)
     const dy = typeDy || 0;
     const b = px(f[1], H) + dy, e = px(f[3], H) + dy;
-    res.type = _lbRect(a, b, c, e, W, H, _lbErase(d, W, H, a, b, c, e, px(0.05, W), 3, 2, null, fr.typeSeeds || false, lightType === true ? 'adapt' : lightType));
+    res.type = _lbRect(a, b, c, e, W, H, _lbErase(d, W, H, a, b, c, e, px(0.05, W), 3, 2, null, fr.typeSeeds || (show ? false : 'bar'), lightType === true ? 'adapt' : lightType));
   }
   if (fr.plate && hasPt) {
     const f = fr.plate, a = px(f[0], W), b = px(f[1], H), c = px(f[2], W), e = px(f[3], H);
-    res.pt = _lbRect(a, b, c, e, W, H, _lbErase(d, W, H, a, b, c, e, px(0.03, W), fr.light ? 3 : 2, 2, null, fr.light ? 'none' : true, show && lightPt ? 'adapt' : lightPt));
+    res.pt = _lbRect(a, b, c, e, W, H, _lbErase(d, W, H, a, b, c, e, px(0.03, W), fr.light ? 3 : 2, 2, null, fr.light ? 'none' : true, (show || fr.fixed) && lightPt ? 'adapt' : lightPt));
   }
   return res;
 }
@@ -782,12 +840,21 @@ function _liveBgApply(box, res) {
       const el = box.querySelector('.bf-live-' + k);
       if (el) el.classList.toggle('bf-live-light', !!res.light[k]);
       if (el) el.classList.toggle('bf-live-dim', !!(res.dim && res.dim[k]));
+      if (el) el.classList.toggle('bf-live-mid', !!(res.mid && res.mid[k]));
     }
   }
   const type = box.querySelector('.bf-live-type');
   if (type && res.type) {
     _liveBgPlace(type, res.type);
-    type.style.lineHeight = (res.type.h * res.aspect * 100).toFixed(2) + 'cqw';
+    const high = res.type.h * res.aspect * 100;
+    type.style.lineHeight = high.toFixed(2) + 'cqw';
+    // A line too long for its bar is set smaller, as a printed one is, before
+    // it is cut short. (The line's height in pixels gives the size of a cqw.)
+    type.style.fontSize = '';
+    const cs = getComputedStyle(type), cqw = parseFloat(cs.lineHeight) / high, base = parseFloat(cs.fontSize) / cqw;
+    if (cqw > 0 && base > 0) {
+      for (let k = 0.96; k >= 0.74 && type.scrollWidth > type.clientWidth + 1; k -= 0.04) type.style.fontSize = (base * k).toFixed(2) + 'cqw';
+    }
   }
   const pt = box.querySelector('.bf-live-pt:not(.bf-live-drawn)');
   if (pt && res.pt) _liveBgPlace(pt, res.pt);
@@ -804,6 +871,7 @@ function _liveBgApply(box, res) {
     const rect = res.texts ? res.texts[+(text.dataset.half || 0)] : res.text;
     if (!rect) { text.classList.remove('bf-live-wait'); return; }
     _liveBgPlace(text, rect);
+    if (res.ptBelow) text.classList.remove('bf-live-haspt');
     // The font was estimated for the usual box: now that the real box is known,
     // take the largest size that fits it.
     let size = parseFloat(text.style.fontSize) || 4;
