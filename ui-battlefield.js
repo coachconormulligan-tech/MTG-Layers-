@@ -694,6 +694,13 @@ function _liveKind(p) {
   // (And for a token: Scryfall calls most vanilla tokens of 2019 to 2021
   // full-art, and a few textless, though they have the usual token frame.)
   if (!plain && c.frame === '2015' && p.isToken && (c.layout === 'token' || !c.layout)) return 'showtoken';
+  // (A double-faced token's side is a token frame too, or the dark back of a card that transforms.)
+  if (c.frame === '2015' && p.isToken && c.layout === 'double_faced_token') return 'showtoken';
+  // A textless creature has no text box, but most print their power and
+  // toughness on the usual plate: tried with that rewritten in place ('showbare').
+  if (c.textless && c.frame === '2015' && !p.isToken && p.printedPower !== null && p.printedPower !== undefined
+      && ['normal', 'transform', 'modal_dfc', 'meld'].includes(c.layout || 'normal')
+      && !(p.printedTypes || []).some(t => t === 'Battle' || t === 'Planeswalker')) return 'showbare';
   if (!plain || c.frame !== '2015') return 'foot';
   if (p.isRoom && p.roomFaces && c.layout === 'split') return 'room';
   if ((p.printedTypes || []).includes('Battle')) return 'battle';
@@ -760,7 +767,9 @@ function _livePtHtml(p, fs) {
   // Over a printed box the patch blends into it; where the image prints none
   // (a noncreature card, a face-down card, an unusual frame) a box is drawn.
   const kind = _liveKind(p);
-  const drawn = p.isFaceDown || p.printedPower === null || p.printedPower === undefined || (_liveTypeSpot(p) === 'foot' && kind !== 'token' && kind !== 'token03' && kind !== 'token97');
+  // (bare: a textless printing tried with its printed plate, see renderLivePatches)
+  const bare = !!(_liveForce && _liveForce.p === p && _liveForce.bare);
+  const drawn = p.isFaceDown || p.printedPower === null || p.printedPower === undefined || (_liveTypeSpot(p) === 'foot' && !bare && kind !== 'token' && kind !== 'token03' && kind !== 'token97');
   // A planeswalker's loyalty is where a P/T box would be: the box goes beside it
   const look = drawn ? ' bf-live-drawn' + (kind === 'pw' ? ' bf-live-pt-pw' : kind === 'battle' ? ' bf-live-pt-battle' : '') : _liveOldFrame(p) ? ' bf-live-light' : '';
   // A drawn box is made to look like a printed one, in the frame's own colour
@@ -907,10 +916,12 @@ function renderLivePatches(p, fs) {
   // shown if ui-live-bg.js finds its boxes in the usual places, and with
   // drawn boxes, shown if it does not.
   const tried = _liveKind(p);
-  if (tried === 'show' || tried === 'showsaga' || tried === 'showtoken') {
+  if (tried === 'show' || tried === 'showsaga' || tried === 'showtoken' || tried === 'showbare') {
     let asLine = '', asFoot = '';
     try {
-      _liveForce = tried === 'show' ? { p, kind: 'line', spot: 'line' } : { p, kind: tried === 'showtoken' ? 'token' : 'saga', spot: 'foot' }; asLine = build();
+      _liveForce = tried === 'show' ? { p, kind: 'line', spot: 'line' } : tried === 'showbare' ? { p, kind: 'foot', spot: 'foot', bare: true }
+        : { p, kind: tried === 'showtoken' ? 'token' : 'saga', spot: 'foot' };
+      asLine = build();
       _liveForce = { p, kind: 'foot', spot: 'foot' }; asFoot = build();
     } finally { _liveForce = null; }
     if (!asLine && !asFoot) return '';

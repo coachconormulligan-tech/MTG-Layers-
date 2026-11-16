@@ -571,7 +571,7 @@ function _liveBgAnalyze(img, frame, hasPt, hasText, ind) {
   const fr = LB_FRAME[show ? '2015' : frame];
   const measured = LB_SIDE_FRAME[frame];
   const turned = !!measured && !measured.upright;
-  if (!fr && !LB_BAR_FRAME[frame] && !measured && frame !== 'showsaga' && frame !== 'showtoken') return null;
+  if (!fr && !LB_BAR_FRAME[frame] && !measured && frame !== 'showsaga' && frame !== 'showtoken' && frame !== 'showbare') return null;
   // A card printed on its side is read turned upright, as the battlefield shows it
   const W = turned ? img.naturalHeight : img.naturalWidth, H = turned ? img.naturalWidth : img.naturalHeight;
   const cv = document.createElement('canvas');
@@ -609,6 +609,27 @@ function _liveBgAnalyze(img, frame, hasPt, hasText, ind) {
       if (_lbEdge(d, W, H, 'l', Math.round(u[0] * W), rg, ya, yb) === null || _lbEdge(d, W, H, 'r', Math.round(u[2] * W), rg, ya, yb) === null) return null;
     }
     return _liveBgAnalyzeBar(d, W, H, 'token', hasPt, hasText, bar);
+  }
+  // A textless printing ('showbare') has no text box, but most creatures
+  // print their power and toughness on the usual plate: rewritten in place
+  // when the plate is found. (Some print a type line near the foot too, at a
+  // height of their own; looking for it found "type lines" in the art of
+  // other cards, so the type bar stays a drawn one.)
+  if (frame === 'showbare') {
+    const f15 = LB_FRAME['2015'], px = (v, dim) => Math.round(v * dim);
+    const res = { aspect: H / W, light: {}, dim: {} };
+    if (hasPt) {
+      const f = f15.plate, rp = _lbRegion(d, W, H, f);
+      // (The digits fill the plate: fewer strokes than a "1/1" has, or a
+      // quarter of them in its top rows, is a plate printed higher. Traveling
+      // Chocobo fin 551f.)
+      const top = _lbRegion(d, W, H, [f[0], f[1], f[2], f[1] + (f[3] - f[1]) * 0.13]);
+      if (rp.plain < 0.5 || rp.thin < 160 || top.thin > rp.thin * 0.25) return null;
+      const a = px(f[0], W), b = px(f[1], H), c = px(f[2], W), e = px(f[3], H);
+      res.pt = _lbRect(a, b, c, e, W, H, _lbErase(d, W, H, a, b, c, e, px(0.03, W), 2, 2, null, true, rp.light ? 'adapt' : false));
+      res.light.pt = rp.light; res.dim.pt = !rp.light && rp.med < 115;
+    }
+    return res.pt ? res : null;
   }
   if (!fr) return _liveBgAnalyzeBar(d, W, H, frame, hasPt, hasText);
   const px = (f, dim) => Math.round(f * dim);
