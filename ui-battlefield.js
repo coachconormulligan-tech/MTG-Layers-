@@ -661,7 +661,7 @@ function _liveTypeSpot(p) {
   const c = p.scryfallData || {};
   if (p.isFaceDown || p.isToken || c.full_art || c.textless || c.border_color === 'borderless') return 'foot';
   if ((c.frame_effects || []).includes('showcase')) return 'foot';
-  if (!['normal', 'transform', 'modal_dfc', 'meld', 'adventure', 'mutate', 'prototype', 'leveler'].includes(c.layout || 'normal')) return 'foot';
+  if (!['normal', 'transform', 'modal_dfc', 'meld', 'adventure', 'prepare', 'mutate', 'prototype', 'leveler'].includes(c.layout || 'normal')) return 'foot';
   if ((p.printedSubtypes || []).some(t => t === 'Saga' || t === 'Class' || t === 'Case' || t === 'Room')) return 'foot';
   if ((p.printedTypes || []).includes('Battle')) return 'foot';
   return 'line';
@@ -686,7 +686,7 @@ function _liveKind(p) {
   // in the usual places: tried as the usual frame once its image is read
   // ('show'), with the drawn boxes kept for when it has not.
   if (!plain && c.frame === '2015' && !c.textless && !p.isToken
-      && ['normal', 'transform', 'modal_dfc', 'meld', 'adventure', 'mutate', 'prototype', 'leveler'].includes(c.layout || 'normal')
+      && ['normal', 'transform', 'modal_dfc', 'meld', 'mutate', 'prototype', 'leveler'].includes(c.layout || 'normal')
       && !(p.printedSubtypes || []).some(t => t === 'Saga' || t === 'Class' || t === 'Case' || t === 'Room')
       && !(p.printedTypes || []).some(t => t === 'Battle' || t === 'Planeswalker')) return 'show';
   // (The same for a Saga: tried as the Saga frame.)
@@ -707,9 +707,18 @@ function _liveKind(p) {
   if (p.isRoom && p.roomFaces && c.layout === 'split') return 'room';
   if ((p.printedTypes || []).includes('Battle')) return 'battle';
   if (p.isToken && (c.layout === 'token' || !c.layout)) return 'token';
-  if (c.layout === 'saga') return 'saga';
+  // (A Saga that transforms is filed as "transform": its front has the Saga frame.)
+  if (c.layout === 'saga' || (c.layout === 'transform' && (p.printedSubtypes || []).includes('Saga'))) return 'saga';
   if (c.layout === 'class' || c.layout === 'case') return 'class';     // a Case has the Class frame: art left, text right
   return 'foot';
+}
+
+// A card whose text box is an open book: its own rules are on one page, the
+// spell it carries on the other. 'r': an Adventure or Omen (own rules on the
+// right page); 'l': a prepare card (on the left); '' for any other card.
+function _livePage(p) {
+  const lay = (p.scryfallData || {}).layout;
+  return lay === 'adventure' ? 'r' : lay === 'prepare' ? 'l' : '';
 }
 
 // The 1993 and 1997 frames print the type line and the power/toughness in
@@ -891,19 +900,21 @@ function _liveTextBoxHtml(p, fs) {
   }
   // The largest font at which the paragraphs fit: the box is about 81cqw by
   // 33cqw inside (75cqw on an old frame), a character about half its font size wide.
-  const old = _liveOldFrame(p);
+  // (One page of an Adventure's or a prepare card's book is about 36cqw wide.)
+  const old = _liveOldFrame(p), page = kind === 'line' ? _livePage(p) : '';
   const lens = paras.map(pa => pa.parts.reduce((n, x) => n + x.text.length + 2, -2));
   let size = 4.8;
   for (; size > 2.6; size -= 0.2) {
-    const perLine = (old ? 75 : 81) / (0.5 * size);
+    const perLine = (page ? 36 : old ? 75 : 81) / (0.5 * size);
     const rows = lens.reduce((n, len) => n + Math.ceil(len / perLine), 0);
     if (rows * 1.15 * size + (paras.length - 1) * 0.45 * size <= 33) break;
   }
   const body = paras.length ? bodyOf(paras, true) : '<p class="bf-live-none">No abilities</p>';
   // The printed power/toughness box sits in the text box's corner: leave it clear
-  const tall = (p.printedPower === null || p.printedPower === undefined) ? '' : ' bf-live-haspt';
+  // (A prepare card's box is in the spell's page, not in its own.)
+  const tall = (p.printedPower === null || p.printedPower === undefined || page === 'l') ? '' : ' bf-live-haspt';
   // Off the usual frame the box is only known once the image has been read
-  return `<div class="bf-live-text${old ? ' bf-live-old' : ''}${tall}${column ? ' bf-live-wait' : ''}${kind === 'token03' ? ' bf-live-text-center' : ''}" style="font-size:${size.toFixed(1)}cqw">${body}</div>`;
+  return `<div class="bf-live-text${old ? ' bf-live-old' : ''}${tall}${(column || page) ? ' bf-live-wait' : ''}${page ? ' bf-live-page-' + page : ''}${kind === 'token03' ? ' bf-live-text-center' : ''}"${page ? ' data-min="1.8"' : ''} style="font-size:${size.toFixed(1)}cqw">${body}</div>`;
 }
 
 function renderLivePatches(p, fs) {
@@ -941,7 +952,7 @@ function renderLivePatches(p, fs) {
   const hasPt = p.printedPower !== null && p.printedPower !== undefined;
   const frame = kind !== 'line' ? kind : _liveOldFrame(p) ? 'old' : ((p.scryfallData || {}).frame || '2015');
   const attrs = usual
-    ? ` data-src="${escapeAttr(p.imageUri.replace('/small/', '/normal/'))}" data-frame="${escapeAttr(frame)}" data-ind="${ind}" data-pt="${hasPt ? 1 : 0}" data-text="${(p.printedAbilities || []).length ? 1 : 0}"`
+    ? ` data-src="${escapeAttr(p.imageUri.replace('/small/', '/normal/'))}" data-frame="${escapeAttr(frame)}" data-ind="${ind}" data-pt="${hasPt ? 1 : 0}" data-text="${(p.printedAbilities || []).length ? 1 : 0}" data-page="${kind === 'line' ? _livePage(p) : ''}"`
     : '';
   return `<div class="bf-live"${attrs}>${html}</div>`;
 }

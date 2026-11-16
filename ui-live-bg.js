@@ -179,9 +179,14 @@ function _lbErasePixels(d, W, H, x0, y0, x1, y1, r, ry, grow, keep, sidesOnly, l
   // sides only a long run of dark is frame, a border line; and nothing is
   // followed out of the two rows or columns at those sides into the patch, so
   // a line there keeps no letter that touches it.)
-  const bar = sidesOnly === 'bar', edge = bar ? 2 : 0;
-  const inEdge = (k) => { const x = k % w, y = (k - x) / w; return y < edge || y >= h - edge || x < edge; };
-  const from = sidesOnly === true ? 'lr' : bar ? 'r' : (sidesOnly || 'lrtb');
+  // (A side named in capitals is such a side, 'bar' is 'rTBL'. The page of a
+  // prepare card ends its lines at the book's spine: 'R'.)
+  const from = sidesOnly === true ? 'lr' : sidesOnly === 'bar' ? 'rTBL' : (sidesOnly || 'lrtb');
+  const strict = /[TBLR]/.test(from);
+  const inEdge = (k) => {
+    const x = k % w, y = (k - x) / w;
+    return (y < 2 && from.includes('T')) || (y >= h - 2 && from.includes('B')) || (x < 2 && from.includes('L')) || (x >= w - 2 && from.includes('R'));
+  };
   for (let x = 0; x < w; x++) { if (from.includes('t')) seed(x, 0); if (from.includes('b')) seed(x, h - 1); }
   for (let y = 0; y < h; y++) { if (from.includes('l')) seed(0, y); if (from.includes('r')) seed(w - 1, y); }
   if (keep) {
@@ -199,9 +204,9 @@ function _lbErasePixels(d, W, H, x0, y0, x1, y1, r, ry, grow, keep, sidesOnly, l
   while (front.length) {
     const k = front.pop();
     all.push(k);
-    near(k, (j) => { if (dark[j] === 2 && !frame[j] && !(bar && inEdge(k) && !inEdge(j))) { frame[j] = 1; front.push(j); } });
+    near(k, (j) => { if (dark[j] === 2 && !frame[j] && !(strict && inEdge(k) && !inEdge(j))) { frame[j] = 1; front.push(j); } });
   }
-  if (bar) {
+  if (strict) {
     // (along: the run's length in pixels along a side; at: the pixel n along it)
     const runs = (n, least, at) => {
       for (let i = 0, start = -1; i <= n; i++) {
@@ -214,8 +219,10 @@ function _lbErasePixels(d, W, H, x0, y0, x1, y1, r, ry, grow, keep, sidesOnly, l
       }
     };
     const least = Math.max(8, Math.round(0.035 * W));
-    runs(w, least, (i) => i); runs(w, least, (i) => (h - 1) * w + i);
-    runs(h, Math.round(h * 0.6), (i) => i * w);
+    if (from.includes('T')) runs(w, least, (i) => i);
+    if (from.includes('B')) runs(w, least, (i) => (h - 1) * w + i);
+    if (from.includes('L')) runs(h, Math.round(h * 0.6), (i) => i * w);
+    if (from.includes('R')) runs(h, Math.round(h * 0.6), (i) => i * w + w - 1);
     while (front.length) {
       const k = front.pop();
       all.push(k);
@@ -608,9 +615,16 @@ function _lbTypeShift(d, W, H, f, light) {
   return null;
 }
 
-function _liveBgAnalyze(img, frame, hasPt, hasText, ind) {
+function _liveBgAnalyze(img, frame, hasPt, hasText, ind, page) {
   const show = frame === 'show';
-  const fr = LB_FRAME[show ? '2015' : frame];
+  let fr = LB_FRAME[show ? '2015' : frame];
+  // An Adventure, an Omen or a prepare card: the text box is an open book, and
+  // the card's own rules are on one page of it (page 'r': the right one, from
+  // the spine at 50.2% of the width; 'l': the left one, up to 49.2%). The other
+  // page holds the spell and stays as printed. A prepare card's P/T box is in
+  // the spell's page.
+  if (fr && page === 'r') fr = { ...fr, text: [0.502, fr.text[1], fr.text[2], 0.917] };
+  if (fr && page === 'l') fr = { ...fr, text: [fr.text[0], fr.text[1], 0.492, fr.text[3]], cut: null };
   const measured = LB_SIDE_FRAME[frame];
   const turned = !!measured && !measured.upright;
   if (!fr && !LB_BAR_FRAME[frame] && !measured && frame !== 'showsaga' && frame !== 'showtoken' && frame !== 'showbare') return null;
@@ -768,12 +782,16 @@ function _liveBgAnalyze(img, frame, hasPt, hasText, ind) {
   const found = (s, guess, a, b) => _lbEdge(d, W, H, s, guess, range, a, b, show) !== null;
   const topFound = found('t', px(t[1], H), midX0, midX1), leftFound = found('l', px(t[0], W), midY0, midY1);
   const x0 = fr.fixed ? px(t[0], W) : side('l', px(t[0], W), midY0, midY1, 2, 8), x1 = fr.fixed ? px(t[2], W) : side('r', px(t[2], W), midY0, midY1, 4, 8) + 1;
-  const y0 = fr.fixed ? px(t[1], H) : side('t', px(t[1], H), midX0, midX1, 2, 8), y1 = fr.fixed ? px(t[3], H) : side('b', px(t[3], H), midX0, lowX1, 4, 8) + 1;
+  const y0 = fr.fixed ? px(t[1], H) : side('t', px(t[1], H), midX0, midX1, 2, 8), y1 = fr.fixed ? px(t[3], H) : side('b', px(t[3], H), midX0, lowX1, page ? 2 : 4, 8) + 1;
+  // (A page's reminder text often fills it: the tail of a "p" in its last
+  // line ends 3 px above the page's foot, and a patch that stopped there took
+  // the letter for frame. A page's patch runs 2 px further down.)
   const keep = (hasPt && fr.cut) ? [px(fr.cut[0], W), px(fr.cut[1], H)] : null;
+  if (page === 'l') res.ptBelow = true;
   // (A see-through box lets the art's bright specks in along every side: on a
   // showcase or borderless printing only the stamp at the foot is frame.)
   // (The bowed sides of the future frame's box come into the patch anywhere.)
-  const seeds = fr.fixed ? 'lrtb' : show ? 'b' : 'rb' + (topFound ? '' : 't') + (leftFound ? '' : 'l');
+  const seeds = fr.fixed ? 'lrtb' : show ? 'b' : (page === 'l' ? 'R' : 'r') + 'b' + (topFound ? '' : 't') + (leftFound ? '' : 'l');
   res.text = _lbRect(x0, y0, x1, y1, W, H, _lbErase(d, W, H, x0, y0, x1, y1, px(0.02, W), px(0.02, W), 3, keep, seeds, lightText ? 'adapt' : false));
 
   if (fr.type) {
@@ -814,7 +832,7 @@ function _liveBgPump() {
   img.crossOrigin = 'anonymous';
   img.onload = () => {
     let result = null;
-    try { result = _liveBgAnalyze(img, job.frame, job.hasPt, job.hasText, job.ind); } catch (e) { result = null; }
+    try { result = _liveBgAnalyze(img, job.frame, job.hasPt, job.hasText, job.ind, job.page); } catch (e) { result = null; }
     finish(result);
   };
   img.onerror = () => finish(null);
@@ -889,7 +907,8 @@ function _liveBgApply(box, res) {
 function applyLiveBackgrounds() {
   document.querySelectorAll('#battlefield .bf-live[data-src]').forEach(box => {
     const src = box.dataset.src, frame = box.dataset.frame, hasPt = box.dataset.pt === '1', hasText = box.dataset.text === '1', ind = box.dataset.ind === '1';
-    const key = src + '|' + frame + (hasPt ? 1 : 0) + (hasText ? 1 : 0) + (ind ? 1 : 0);
+    const page = box.dataset.page || '';
+    const key = src + '|' + frame + (hasPt ? 1 : 0) + (hasText ? 1 : 0) + (ind ? 1 : 0) + page;
     const hit = _liveBg.get(key);
     if (hit) {
       if (hit.done && hit.result) _liveBgApply(box, hit.result);
@@ -897,7 +916,7 @@ function applyLiveBackgrounds() {
       return;
     }
     _liveBg.set(key, { done: false });
-    _liveBgQueue.push({ key, src, frame, hasPt, hasText, ind });
+    _liveBgQueue.push({ key, src, frame, hasPt, hasText, ind, page });
   });
   _liveBgPump();
 }
