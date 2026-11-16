@@ -655,7 +655,9 @@ function _cardIsSideways(p) {
 
 // Where the type line is printed. 'line' is the usual place (every normal
 // frame, old and new); anything else gets a bar near the foot of the card.
+let _liveForce = null;      // { p, kind, spot }: one card built as another kind (see renderLivePatches)
 function _liveTypeSpot(p) {
+  if (_liveForce && _liveForce.p === p) return _liveForce.spot;
   const c = p.scryfallData || {};
   if (p.isFaceDown || p.isToken || c.full_art || c.textless || c.border_color === 'borderless') return 'foot';
   if ((c.frame_effects || []).includes('showcase')) return 'foot';
@@ -671,6 +673,7 @@ function _liveTypeSpot(p) {
 // 'battle', printed on their side, and 'token97', the promo tokens of 2001 to 2003),
 // or 'foot' (anything else: drawn boxes only).
 function _liveKind(p) {
+  if (_liveForce && _liveForce.p === p) return _liveForce.kind;
   const c = p.scryfallData || {};
   if (p.isFaceDown) return 'foot';
   const plain = !c.full_art && !c.textless && c.border_color !== 'borderless' && !(c.frame_effects || []).includes('showcase');
@@ -679,6 +682,15 @@ function _liveKind(p) {
   if (p.isToken && c.frame === '2003' && c.layout === 'token' && !c.textless && c.border_color !== 'borderless') return 'token03';
   // The promo tokens of 2001 to 2003: the lower part of the 1997 card frame
   if (p.isToken && c.frame === '1997' && c.layout === 'token' && ['mpr', 'pr2', 'p03'].includes(c.set)) return 'token97';
+  // A showcase, borderless or full-art printing that may still have its boxes
+  // in the usual places: tried as the usual frame once its image is read
+  // ('show'), with the drawn boxes kept for when it has not.
+  if (!plain && c.frame === '2015' && !c.textless && !p.isToken
+      && ['normal', 'transform', 'modal_dfc', 'meld', 'adventure', 'mutate', 'prototype', 'leveler'].includes(c.layout || 'normal')
+      && !(p.printedSubtypes || []).some(t => t === 'Saga' || t === 'Class' || t === 'Case' || t === 'Room')
+      && !(p.printedTypes || []).some(t => t === 'Battle' || t === 'Planeswalker')) return 'show';
+  // (The same for a Saga: tried as the Saga frame.)
+  if (!plain && c.frame === '2015' && !c.textless && !p.isToken && !p.isFaceDown && c.layout === 'saga') return 'showsaga';
   if (!plain || c.frame !== '2015') return 'foot';
   if (p.isRoom && p.roomFaces && c.layout === 'split') return 'room';
   if ((p.printedTypes || []).includes('Battle')) return 'battle';
@@ -773,11 +785,11 @@ function _liveTextBoxHtml(p, fs) {
   const token = kind === 'token' || kind === 'token03';
   // (A promo token of 2001 to 2003 always prints a text box: flavor text when it has no rules.)
   const column = kind === 'saga' || kind === 'class' || kind === 'token97' || (token && (p.printedAbilities || []).length > 0);
-  if (kind === 'foot') return '';
   // An ability it has twice is written once, as a card would print it
   // ("Flying" from the print and again from Levitation).
   // A keyword line of the print ("Defender, flying") counts word by word.
-  const printed = p.printedAbilities || [];
+  // (A face-down card shows none of its print: all it has is gained.)
+  const printed = p.isFaceDown ? [] : (p.printedAbilities || []);
   const had = new Set();
   for (const a of printed) {
     if (a.length <= 40 && !/[.:"—]/.test(a)) a.split(/\s*,\s*/).forEach(w => had.add(w.toLowerCase()));
@@ -834,14 +846,20 @@ function _liveTextBoxHtml(p, fs) {
   // stays, and what the card has gained is written on a strip at the foot of
   // the art. (A Saga or Class that has lost a printed ability is rewritten.)
   const framed = (kind === 'saga' || kind === 'class') && printed.every(a => abilities.includes(a));
-  if (kind === 'pw' || framed || (token && !column)) {
+  // A frame whose boxes are not read from the image (full-art, borderless,
+  // showcase, a face-down card) keeps its print too and gets the same strip,
+  // on the art: beside it on a Saga, Class or Case, else across it.
+  if (kind === 'pw' || kind === 'foot' || framed || (token && !column)) {
     const gained = abilities.filter(a => !printed.includes(a));
     if (!gained.length) return '';
     const paras = parasOf(gained);
     const chars = paras.reduce((n, pa) => n + pa.parts.reduce((m, x) => m + x.text.length + 2, 0), 0);
-    const narrow = kind === 'saga' || kind === 'class';
+    const lay = (p.scryfallData || {}).layout;
+    const place = kind !== 'foot' ? kind : p.isFaceDown ? 'foot' : lay === 'saga' ? 'saga' : (lay === 'class' || lay === 'case') ? 'class' : 'foot';
+    const narrow = place === 'saga' || place === 'class';
     const fsize = Math.max(narrow ? 2.6 : 3, Math.min(4.2, (narrow ? 15 : 22) / Math.sqrt(chars)));
-    return `<div class="bf-live-gain bf-live-gain-${kind} bf-live-wait" style="font-size:${fsize.toFixed(1)}cqw;--plate:${_livePlateColor(p)}">${bodyOf(paras, false)}</div>`;
+    // (Its place is only known once the image is read, where the image is read.)
+    return `<div class="bf-live-gain bf-live-gain-${place}${kind === 'foot' ? '' : ' bf-live-wait'}" style="font-size:${fsize.toFixed(1)}cqw;--plate:${_livePlateColor(p)}">${bodyOf(paras, false)}</div>`;
   }
   const paras = parasOf(abilities);
   // A battle's box is fitted once its image is read; the corner that holds the
@@ -873,7 +891,29 @@ function _liveTextBoxHtml(p, fs) {
 
 function renderLivePatches(p, fs) {
   if (!_liveTextOn || !fs || p.isManualEffect || p.isSpell || p.isEmblem) return '';
-  const html = _liveTypeLineHtml(p, fs) + _liveTextBoxHtml(p, fs) + _livePtHtml(p, fs);
+  // (A colour indicator, the dot that starts the type line of a back face or
+  // of a card with no mana cost: the line starts after it.)
+  const sc = p.scryfallData || {};
+  const face = (sc.card_faces || [])[p.activeFaceIndex || 0] || sc;
+  const ind = (face.color_indicator || sc.color_indicator || []).length ? 1 : 0;
+  const build = () => _liveTypeLineHtml(p, fs) + _liveTextBoxHtml(p, fs) + _livePtHtml(p, fs);
+  // A showcase or borderless printing is built twice: as the usual frame,
+  // shown if ui-live-bg.js finds its boxes in the usual places, and with
+  // drawn boxes, shown if it does not.
+  const tried = _liveKind(p);
+  if (tried === 'show' || tried === 'showsaga') {
+    let asLine = '', asFoot = '';
+    try {
+      _liveForce = tried === 'show' ? { p, kind: 'line', spot: 'line' } : { p, kind: 'saga', spot: 'foot' }; asLine = build();
+      _liveForce = { p, kind: 'foot', spot: 'foot' }; asFoot = build();
+    } finally { _liveForce = null; }
+    if (!asLine && !asFoot) return '';
+    if (!p.imageUri) return asFoot ? `<div class="bf-live">${asFoot}</div>` : '';
+    const pt = p.printedPower !== null && p.printedPower !== undefined;
+    return `<div class="bf-live bf-live-try" data-src="${escapeAttr(p.imageUri.replace('/small/', '/normal/'))}" data-frame="${tried}" data-ind="${ind}" data-pt="${pt ? 1 : 0}" data-text="${(p.printedAbilities || []).length ? 1 : 0}">${asLine}</div>`
+      + `<div class="bf-live bf-live-fallback">${asFoot}</div>`;
+  }
+  const html = build();
   if (!html) return '';
   // What ui-live-bg.js needs to read the card's own image: only for a frame
   // whose boxes are in the usual places.
@@ -882,7 +922,7 @@ function renderLivePatches(p, fs) {
   const hasPt = p.printedPower !== null && p.printedPower !== undefined;
   const frame = kind !== 'line' ? kind : _liveOldFrame(p) ? 'old' : ((p.scryfallData || {}).frame || '2015');
   const attrs = usual
-    ? ` data-src="${escapeAttr(p.imageUri.replace('/small/', '/normal/'))}" data-frame="${escapeAttr(frame)}" data-pt="${hasPt ? 1 : 0}" data-text="${(p.printedAbilities || []).length ? 1 : 0}"`
+    ? ` data-src="${escapeAttr(p.imageUri.replace('/small/', '/normal/'))}" data-frame="${escapeAttr(frame)}" data-ind="${ind}" data-pt="${hasPt ? 1 : 0}" data-text="${(p.printedAbilities || []).length ? 1 : 0}"`
     : '';
   return `<div class="bf-live"${attrs}>${html}</div>`;
 }

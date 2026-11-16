@@ -779,11 +779,14 @@ body.utility-page-open .utility-page-shell {
 /* The print's title face is a bold humanist serif: Palatino is the nearest common one */
 .bf-live-type.bf-live-exact { padding: 0 1cqw; font: 700 4.25cqw "Beleren", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; }
 .bf-live-pt.bf-live-exact { overflow: visible; padding: 0; font: 700 5.2cqw/1 "Beleren", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; }
-.bf-live-new { color: #a01818; }
+/* Changed words: a deep blue. Dark red was lost on a red box (1997 red cards,
+   red promo tokens); blue is far from black ink and from every box colour. */
+.bf-live { --live-new: #0b2f9e; }
+.bf-live-new { color: var(--live-new); }
 /* White ink on the frame itself (1993 and 1997 frames) */
 .bf-live-light {
   color: #fff;
-  background: rgba(0,0,0,.2);
+  background-color: rgba(0,0,0,.2);      /* (not the shorthand: an erased patch keeps its image's size) */
   text-shadow: 0 0 .5cqw #000, 0 .3cqw .6cqw #000;
 }
 .bf-live-light .bf-live-new { color: #ffd966; }
@@ -834,8 +837,10 @@ body.utility-page-open .utility-page-shell {
   white-space: nowrap;
 }
 .bf-live-pt.bf-live-drawn { right: 5%; bottom: 4.4%; min-width: 19%; height: 7%; border-radius: 1.4cqw; }
-.bf-live-pt:not(.bf-live-drawn) { color: #a01818; }
+.bf-live-pt:not(.bf-live-drawn) { color: var(--live-new); }
 .bf-live-pt.bf-live-light { color: #ffd966; }
+/* Dark print on a dark box (a showcase frame): changed words in the yellow of the white-ink frames */
+.bf-live-dim { --live-new: #ffd966; }
 .bf-size-control { display: inline-flex; align-items: center; gap: 6px; font-size: var(--fs-xs); color: var(--text-dim); text-transform: none; letter-spacing: 0; font-weight: 400; }
 .bf-size-control input { width: 90px; accent-color: var(--accent); cursor: pointer; }
 
@@ -974,8 +979,10 @@ body.utility-page-open .utility-page-shell {
 /* Which player an attacking creature is attacking */
 .bf-card-attack-select {
   position: absolute;
-  left: 4px; right: 4px; bottom: 32px;
-  width: calc(100% - 8px);
+  /* A pill in the lower left corner, above the COPY badge and the Rooms
+     button and clear of the power/toughness box on a card of any size */
+  left: 4px; right: auto; bottom: 22px;
+  width: auto; max-width: 72%;
   padding: 2px 4px;
   font-size: 10px;
   color: var(--text);
@@ -3604,6 +3611,16 @@ body.bf-picking #battlefield .bf-card * { pointer-events: none; }
 .bf-live-gain p { margin: 0 0 .35em; }
 .bf-live-gain p:last-child { margin-bottom: 0; }
 .bf-live-gain .card-symbol { width: .86em; height: .86em; vertical-align: -.08em; }
+/* A showcase or borderless printing: the usual-frame patches show once its
+   boxes are found in the usual places, the drawn ones if they are not. */
+.bf-live-try { visibility: hidden; }
+.bf-live-try.bf-live-ok { visibility: visible; }
+.bf-live-try.bf-live-failed { display: none; }
+.bf-live-fallback { display: none; }
+.bf-live-try.bf-live-failed + .bf-live-fallback { display: block; }
+/* (A frame that is not read from the image: across the art, above the usual type line.) */
+.bf-live-gain-foot { bottom: 45%; }
+.bf-card-sideways .bf-live-gain-foot { left: 30%; right: 30%; bottom: 52%; }
 .bf-live-gain-token { bottom: 21%; }
 .bf-live-gain-saga { left: 51.5%; right: 7.5%; bottom: 16.5%; }     /* under the art, which is the right half */
 .bf-live-gain-class { left: 7.5%; right: 51.5%; bottom: 16.5%; }    /* the art is the left half */

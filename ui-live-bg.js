@@ -113,6 +113,7 @@ function _lbErase(d, W, H, x0, y0, x1, y1, r, ry, grow, keep, sidesOnly, light) 
 function _lbErasePixels(d, W, H, x0, y0, x1, y1, r, ry, grow, keep, sidesOnly, light, clear) {
   const w = x1 - x0, h = y1 - y0;
   const adapt = !light && !clear;
+  const overArt = light === 'adapt';     // white print on a see-through box: the art shows under it
   clear = clear || 40;
   if (light) {
     const neg = new Uint8ClampedArray(d.length);
@@ -137,6 +138,14 @@ function _lbErasePixels(d, W, H, x0, y0, x1, y1, r, ry, grow, keep, sidesOnly, l
   // its ground in half its pixels: the median gap is its grain, since print
   // covers far less than half a box. On such a box print has to be darker.
   let faint = 14;
+  if (overArt) {
+    // The art under a see-through box is lighter than its ground too, in
+    // shapes that reach the box's sides. The print is far lighter still: what
+    // counts as print is set by the print itself (the top 2% of the box).
+    let hi = 255;
+    for (let n = 0; hi > 0 && n + hist[hi] <= counted * 0.02; hi--) n += hist[hi];
+    clear = Math.max(clear, Math.round(hi * 0.5)); faint = Math.max(faint, Math.round(hi * 0.25));
+  }
   if (adapt) {
     let grain = 0;
     for (let n = 0; grain < 255 && n + hist[grain] <= counted / 2; grain++) n += hist[grain];
@@ -290,7 +299,7 @@ function _lbErasePixels(d, W, H, x0, y0, x1, y1, r, ry, grow, keep, sidesOnly, l
    along the whole side (text never lines up along a side, a border does).
    side: 'l' | 'r' | 't' | 'b'; a, b: the span along the side to average over.
    Returns the first pixel inside the box, or null when no line stands out. */
-function _lbEdge(d, W, H, side, guess, range, a, b) {
+function _lbEdge(d, W, H, side, guess, range, a, b, any) {
   const horiz = side === 'l' || side === 'r';
   const inward = (side === 'l' || side === 't') ? 1 : -1;
   const lim = horiz ? W : H;
@@ -302,7 +311,8 @@ function _lbEdge(d, W, H, side, guess, range, a, b) {
       sum += (at(0) + at(1) + at(2)) - (at(-1) + at(-2) + at(-3));
       n++;
     }
-    const score = sum / (3 * n);
+    // (any: a step either way, for a dark box inside a pale line)
+    const score = any ? Math.abs(sum / (3 * n)) : sum / (3 * n);
     if (score > bestScore) { bestScore = score; best = p; }
   }
   return bestScore >= 5 ? best : null;
@@ -467,11 +477,87 @@ function _lbRect(x0, y0, x1, y1, W, H, url) {
   return url ? { x: x0 / W, y: y0 / H, w: (x1 - x0) / W, h: (y1 - y0) / H, url } : null;
 }
 
-function _liveBgAnalyze(img, frame, hasPt, hasText) {
-  const fr = LB_FRAME[frame];
+/* A showcase or borderless printing ('show'): is a region of the image a box
+   with print on it? Returns { plain: the share of its pixels near its median
+   brightness, light: the print is lighter than the ground }. */
+function _lbRegion(d, W, H, f) {
+  const x0 = Math.round(f[0] * W), y0 = Math.round(f[1] * H), x1 = Math.round(f[2] * W), y1 = Math.round(f[3] * H);
+  const hist = new Uint32Array(256);
+  let n = 0;
+  for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) { hist[_lbLum(d, (y * W + x) * 4)]++; n++; }
+  let acc = 0, med = 0;
+  for (let i = 0; i < 256; i++) { acc += hist[i]; if (acc >= n / 2) { med = i; break; } }
+  let near = 0, above = 0, below = 0;
+  for (let i = 0; i < 256; i++) {
+    if (Math.abs(i - med) <= 22) near += hist[i];
+    else if (i > med + 50) above += hist[i];
+    else if (i < med - 50) below += hist[i];
+  }
+  // Over dark art (black hair under a see-through box) more pixels are far
+  // below the median than the thin white print is above it. Print is thin:
+  // pixels 40 lighter than both pixels four to their left and right against
+  // pixels 40 darker than both say which it is, when they say it clearly.
+  let thinLight = 0, thinDark = 0;
+  for (let y = y0; y < y1; y++) for (let x = x0 + 4; x < x1 - 4; x++) {
+    const l = _lbLum(d, (y * W + x) * 4), a = _lbLum(d, (y * W + x - 4) * 4), c = _lbLum(d, (y * W + x + 4) * 4);
+    if (l - Math.max(a, c) > 40) thinLight++; else if (Math.min(a, c) - l > 40) thinDark++;
+  }
+  let light = above > below;
+  if (thinLight + thinDark >= 40) {
+    if (thinLight >= thinDark * 1.25) light = true; else if (thinDark >= thinLight * 1.25) light = false;
+  }
+  return { plain: near / n, light, med, thin: thinLight + thinDark };
+}
+
+/* A showcase or borderless printing ('show'): how many pixels lower (or, if
+   negative, higher) than the usual place its type line is printed. The rows of
+   the words' small letters hold print in a quarter to three quarters of their
+   pixels (a frame line holds it in nearly all), 9 to 16 rows of 680 together; on the
+   usual frame their middle is 55% down the measured place. Returns null when
+   no such rows are found: no type line is printed there. */
+function _lbTypeShift(d, W, H, f, light) {
+  const x0 = Math.round(f[0] * W) + 4, x1 = Math.round((f[0] + (f[2] - f[0]) * 0.6) * W);
+  // (As much as 5% of the card higher: the dragon frames of 2025 have a band
+  // of ornament between the type bar and the text box.)
+  const yA = Math.round((f[1] - 0.06) * H), yB = Math.round((f[3] + 0.025) * H);
+  const hist = new Uint32Array(256);
+  let n = 0;
+  for (let y = Math.round(f[1] * H); y < Math.round(f[3] * H); y++) for (let x = x0; x < x1; x++) { hist[_lbLum(d, (y * W + x) * 4)]++; n++; }
+  let acc = 0, med = 0;
+  for (let i = 0; i < 256; i++) { acc += hist[i]; if (acc >= n / 2) { med = i; break; } }
+  const usual = (f[1] + (f[3] - f[1]) * 0.55) * H;
+  const share = [];
+  for (let y = yA; y < yB; y++) {
+    let c = 0;
+    for (let x = x0; x < x1; x++) { const l = _lbLum(d, (y * W + x) * 4); if (light ? l > med + 50 : l < med - 50) c++; }
+    share.push(c / (x1 - x0));
+  }
+  // (A short line, "Creature" alone, fills far less of a row than a long one.)
+  for (const least of [0.25, 0.12, 0.06]) {
+    let best = null, start = -1;
+    for (let i = 0; i <= share.length; i++) {
+      const words = i < share.length && share[i] >= least && share[i] <= 0.75;
+      if (words && start < 0) start = i;
+      if (!words && start >= 0) {
+        const len = i - start, mid = yA + (start + i - 1) / 2;
+        if (len >= 0.013 * H && len <= 0.024 * H && (best === null || Math.abs(mid - usual) < Math.abs(best - usual))) best = mid;
+        start = -1;
+      }
+    }
+    if (best !== null) {
+      const dy = Math.round(best - usual);
+      return Math.abs(dy) >= 3 ? dy : 0;
+    }
+  }
+  return null;
+}
+
+function _liveBgAnalyze(img, frame, hasPt, hasText, ind) {
+  const show = frame === 'show';
+  const fr = LB_FRAME[show ? '2015' : frame];
   const measured = LB_SIDE_FRAME[frame];
   const turned = !!measured && !measured.upright;
-  if (!fr && !LB_BAR_FRAME[frame] && !measured) return null;
+  if (!fr && !LB_BAR_FRAME[frame] && !measured && frame !== 'showsaga') return null;
   // A card printed on its side is read turned upright, as the battlefield shows it
   const W = turned ? img.naturalHeight : img.naturalWidth, H = turned ? img.naturalWidth : img.naturalHeight;
   const cv = document.createElement('canvas');
@@ -482,9 +568,47 @@ function _liveBgAnalyze(img, frame, hasPt, hasText) {
   if (turned) g.setTransform(1, 0, 0, 1, 0, 0);
   const d = g.getImageData(0, 0, W, H).data;       // throws if the image is not readable
   if (measured) return _liveBgAnalyzeSide(d, W, H, frame, hasPt);
+  // A showcase or borderless Saga ('showsaga') is read as a Saga when it has
+  // the Saga frame: the type bar at its height and a plain, pale text column.
+  if (frame === 'showsaga') {
+    const bar = _lbFindBar(d, W, H), col = _lbRegion(d, W, H, [0.08, 0.14, 0.47, 0.80]);
+    if (!bar || Math.abs(bar[0] / H - 0.848) > 0.02 || col.plain < 0.5 || col.light) return null;
+    return _liveBgAnalyzeBar(d, W, H, 'saga', hasPt, hasText);
+  }
   if (!fr) return _liveBgAnalyzeBar(d, W, H, frame, hasPt, hasText);
   const px = (f, dim) => Math.round(f * dim);
   const res = { aspect: H / W };
+  // A showcase or borderless printing is only read as the usual frame when it
+  // has a text box there: a line along its top, and a ground that is plain
+  // (or, for a see-through box over the art, plain enough with a line on
+  // every side and a type bar and P/T box where they should be). The print
+  // may be white on a dark box: each region says which.
+  let lightText = false, lightType = fr.light, lightPt = fr.light;
+  let typeDy = null;
+  if (show) {
+    const t = fr.text, rg = px(0.022, W);
+    const edge = (s, g, a, b) => _lbEdge(d, W, H, s, g, rg, a, b) !== null;
+    const top = edge('t', px(t[1], H), px(0.25, W), px(0.75, W));
+    const all = top && edge('l', px(t[0], W), px(0.69, H), px(0.86, H)) && edge('r', px(t[2], W), px(0.69, H), px(0.86, H)) && edge('b', px(t[3], H), px(0.25, W), px(0.43, W));
+    const rt = _lbRegion(d, W, H, [t[0] + 0.03, t[1] + 0.02, t[2] - 0.03, t[3] - 0.04]);
+    const ry = _lbRegion(d, W, H, fr.type), rp = _lbRegion(d, W, H, fr.plate);
+    const ok = top && ry.plain >= 0.38 && (rt.plain >= 0.55 || (all && rt.plain >= 0.33 && (!hasPt || rp.plain >= 0.6)));
+    if (!ok) return null;
+    // (A see-through box must have a type line above it too: a poster-like
+    // printing can have lines and plain ground in all the right places.)
+    typeDy = _lbTypeShift(d, W, H, fr.type, ry.light);
+    if (rt.plain < 0.55 && typeDy === null) return null;
+    // (A type line far from its place, or no digits on the power/toughness
+    // plate: a frame of its own, with its boxes elsewhere.)
+    if (typeDy !== null && Math.abs(typeDy) > 0.022 * H) return null;
+    if (hasPt && rp.thin < 30) return null;
+    lightText = rt.light; lightType = ry.light; lightPt = rp.light;
+    res.light = { text: lightText, type: lightType, pt: lightPt };
+    // (Dark print on a dark box, as on the black and white werewolves of 2021:
+    // the blue of a changed word is lost there.)
+    const dim = r => !r.light && r.med < 115;
+    res.dim = { text: dim(rt), type: dim(ry), pt: dim(rp) };
+  }
 
   // Text box: each side from its border line, else the measured place; the
   // patch stays inside by a margin the printed text never enters.
@@ -493,29 +617,48 @@ function _liveBgAnalyze(img, frame, hasPt, hasText) {
   const midX0 = px(t[0] + (t[2] - t[0]) * 0.2, W), midX1 = px(t[0] + (t[2] - t[0]) * 0.8, W);
   const lowX1 = px(t[0] + (t[2] - t[0]) * 0.42, W);          // clear of the stamp and the P/T box
   const side = (s, guess, a, b, found, missed) => {
-    const e = _lbEdge(d, W, H, s, guess, range, a, b);
+    let e = _lbEdge(d, W, H, s, guess, range, a, b, show);
     const inward = (s === 'l' || s === 't') ? 1 : -1;
-    return e === null ? guess + inward * missed : e + inward * found;
+    // (Such a box may be a little larger than the usual one, with its words
+    // starting where the usual box's side would be: a "line" found inside the
+    // usual place is the words' own margin, not a border.)
+    if (show && e !== null && (e - guess) * inward > 3) e = null;
+    // (On a showcase or borderless printing a line may be two or three pixels
+    // thick and pale: the patch starts a little further in.)
+    return e === null ? guess + inward * (show ? 3 : missed) : e + inward * (show ? found + 2 : found);
   };
   // The first line can start 2 px under the box's top line, and an italic
   // capital reaches 4 px left of the text's margin. Where the top or left
   // line was found, the patch starts right inside it, and what is dark along
   // that side is print, not frame.
-  const found = (s, guess, a, b) => _lbEdge(d, W, H, s, guess, range, a, b) !== null;
+  const found = (s, guess, a, b) => _lbEdge(d, W, H, s, guess, range, a, b, show) !== null;
   const topFound = found('t', px(t[1], H), midX0, midX1), leftFound = found('l', px(t[0], W), midY0, midY1);
   const x0 = side('l', px(t[0], W), midY0, midY1, 2, 8), x1 = side('r', px(t[2], W), midY0, midY1, 4, 8) + 1;
   const y0 = side('t', px(t[1], H), midX0, midX1, 2, 8), y1 = side('b', px(t[3], H), midX0, lowX1, 4, 8) + 1;
   const keep = (hasPt && fr.cut) ? [px(fr.cut[0], W), px(fr.cut[1], H)] : null;
-  const seeds = 'rb' + (topFound ? '' : 't') + (leftFound ? '' : 'l');
-  res.text = _lbRect(x0, y0, x1, y1, W, H, _lbErase(d, W, H, x0, y0, x1, y1, px(0.02, W), px(0.02, W), 3, keep, seeds));
+  // (A see-through box lets the art's bright specks in along every side: on a
+  // showcase or borderless printing only the stamp at the foot is frame.)
+  const seeds = show ? 'b' : 'rb' + (topFound ? '' : 't') + (leftFound ? '' : 'l');
+  res.text = _lbRect(x0, y0, x1, y1, W, H, _lbErase(d, W, H, x0, y0, x1, y1, px(0.02, W), px(0.02, W), 3, keep, seeds, lightText ? 'adapt' : false));
 
   if (fr.type) {
-    const f = fr.type, a = px(f[0], W), b = px(f[1], H), c = px(f[2], W), e = px(f[3], H);
-    res.type = _lbRect(a, b, c, e, W, H, _lbErase(d, W, H, a, b, c, e, px(0.05, W), 3, 2, null, fr.typeSeeds || false, fr.light));
+    // (After a colour indicator the line starts 4.7% of the card further in,
+    // and a long one ends nearer the set symbol.)
+    const f = fr.type, a = px(f[0] + (ind ? 0.047 : 0), W), c = px(f[2] + (ind ? 0.03 : 0), W);
+    // (The back face of a double-faced card prints its type line in white on
+    // a darkened bar.)
+    if (ind && !show && !fr.light) {
+      lightType = _lbRegion(d, W, H, [f[0] + 0.047, f[1], f[2], f[3]]).light;
+      if (lightType) res.light = { text: false, type: true, pt: false };
+    }
+    // (A showcase frame may print its type line a little higher or lower.)
+    const dy = typeDy || 0;
+    const b = px(f[1], H) + dy, e = px(f[3], H) + dy;
+    res.type = _lbRect(a, b, c, e, W, H, _lbErase(d, W, H, a, b, c, e, px(0.05, W), 3, 2, null, fr.typeSeeds || false, lightType === true ? 'adapt' : lightType));
   }
   if (fr.plate && hasPt) {
     const f = fr.plate, a = px(f[0], W), b = px(f[1], H), c = px(f[2], W), e = px(f[3], H);
-    res.pt = _lbRect(a, b, c, e, W, H, _lbErase(d, W, H, a, b, c, e, px(0.03, W), fr.light ? 3 : 2, 2, null, fr.light ? 'none' : true, fr.light));
+    res.pt = _lbRect(a, b, c, e, W, H, _lbErase(d, W, H, a, b, c, e, px(0.03, W), fr.light ? 3 : 2, 2, null, fr.light ? 'none' : true, show && lightPt ? 'adapt' : lightPt));
   }
   return res;
 }
@@ -534,7 +677,7 @@ function _liveBgPump() {
   img.crossOrigin = 'anonymous';
   img.onload = () => {
     let result = null;
-    try { result = _liveBgAnalyze(img, job.frame, job.hasPt, job.hasText); } catch (e) { result = null; }
+    try { result = _liveBgAnalyze(img, job.frame, job.hasPt, job.hasText, job.ind); } catch (e) { result = null; }
     finish(result);
   };
   img.onerror = () => finish(null);
@@ -553,6 +696,15 @@ function _liveBgPlace(el, r) {
 }
 
 function _liveBgApply(box, res) {
+  box.classList.add('bf-live-ok');
+  // (A showcase or borderless printing may print in white on a dark box.)
+  if (res.light) {
+    for (const k of ['type', 'text', 'pt']) {
+      const el = box.querySelector('.bf-live-' + k);
+      if (el) el.classList.toggle('bf-live-light', !!res.light[k]);
+      if (el) el.classList.toggle('bf-live-dim', !!(res.dim && res.dim[k]));
+    }
+  }
   const type = box.querySelector('.bf-live-type');
   if (type && res.type) {
     _liveBgPlace(type, res.type);
@@ -587,16 +739,16 @@ function _liveBgApply(box, res) {
    otherwise when its reading is done. */
 function applyLiveBackgrounds() {
   document.querySelectorAll('#battlefield .bf-live[data-src]').forEach(box => {
-    const src = box.dataset.src, frame = box.dataset.frame, hasPt = box.dataset.pt === '1', hasText = box.dataset.text === '1';
-    const key = src + '|' + frame + (hasPt ? 1 : 0) + (hasText ? 1 : 0);
+    const src = box.dataset.src, frame = box.dataset.frame, hasPt = box.dataset.pt === '1', hasText = box.dataset.text === '1', ind = box.dataset.ind === '1';
+    const key = src + '|' + frame + (hasPt ? 1 : 0) + (hasText ? 1 : 0) + (ind ? 1 : 0);
     const hit = _liveBg.get(key);
     if (hit) {
       if (hit.done && hit.result) _liveBgApply(box, hit.result);
-      else if (hit.done) box.querySelectorAll('.bf-live-wait').forEach(g => g.classList.remove('bf-live-wait'));   // unreadable image: the first-guess place
+      else if (hit.done) { box.classList.add('bf-live-failed'); box.querySelectorAll('.bf-live-wait').forEach(g => g.classList.remove('bf-live-wait')); }   // unreadable image: the first-guess place
       return;
     }
     _liveBg.set(key, { done: false });
-    _liveBgQueue.push({ key, src, frame, hasPt, hasText });
+    _liveBgQueue.push({ key, src, frame, hasPt, hasText, ind });
   });
   _liveBgPump();
 }
