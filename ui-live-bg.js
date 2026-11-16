@@ -335,8 +335,9 @@ const LB_FRAME = {
 /* The type bar, found in the image: the pale band about a type line high, with
    a dark line above and below it across the card and words on it. Tokens,
    Sagas, Classes and tall planeswalkers print it at different heights. Returns
-   [first row inside, last row inside] or null. */
-function _lbFindBar(d, W, H) {
+   [first row inside, last row inside] or null. bold: the band's evenness is
+   judged by each row's ground and not its mean (see below). */
+function _lbFindBar(d, W, H, bold) {
   const a = Math.round(W * 0.12), b = Math.round(W * 0.80);
   const row = new Float64Array(H);
   for (let y = 0; y < H; y++) {
@@ -344,6 +345,19 @@ function _lbFindBar(d, W, H) {
     for (let x = a; x < b; x += 2) { sum += _lbLum(d, (y * W + x) * 4); n++; }
     row[y] = sum / n;
   }
+  // A row's ground, even under print: its upper quartile. (A long bold type
+  // line, "Token Artifact Creature — Construct", inks half of a row: by the
+  // rows' means the band is not even, and half of it or the gap under it was
+  // taken for the bar. Used for the vanilla tokens Scryfall calls full-art.)
+  const hiOf = new Map(), samples = new Uint8Array(Math.ceil((b - a) / 2));
+  const hi = (y) => {
+    if (hiOf.has(y)) return hiOf.get(y);
+    let n = 0;
+    for (let x = a; x < b; x += 2) samples[n++] = _lbLum(d, (y * W + x) * 4);
+    const v = samples.subarray(0, n).slice().sort()[Math.floor(n * 0.75)];
+    hiOf.set(y, v);
+    return v;
+  };
   const into = (y, dir) => (row[y] + row[y + dir] + row[y + 2 * dir]) / 3 - Math.min(row[y - dir], row[y - 2 * dir]);
   let best = null, bestScore = 0;
   for (let y1 = Math.round(H * 0.45); y1 < Math.round(H * 0.90); y1++) {
@@ -356,7 +370,7 @@ function _lbFindBar(d, W, H) {
       if (score <= bestScore) continue;
       // The band itself is pale and even, and it has words on it at the left
       let lo = 255;
-      for (let y = y1 + 3; y <= y2 - 3; y++) lo = Math.min(lo, row[y]);
+      for (let y = y1 + 3; y <= y2 - 3; y++) lo = Math.min(lo, bold ? hi(y) : row[y]);
       const ground = Math.min(row[y1 + 1], row[y2 - 1]);
       if (lo < ground - 45) continue;
       let ink = 0;
@@ -382,11 +396,11 @@ const LB_BAR_FRAME = {
   'class': { text: [0.498, 0.112, 0.925, 0.836], tight: true },
 };
 
-function _liveBgAnalyzeBar(d, W, H, frame, hasPt, hasText) {
+function _liveBgAnalyzeBar(d, W, H, frame, hasPt, hasText, found) {
   const fr = LB_BAR_FRAME[frame];
   const px = (f, dim) => Math.round(f * dim);
   const res = { aspect: H / W };
-  const bar = _lbFindBar(d, W, H);
+  const bar = found || _lbFindBar(d, W, H);
   if (bar) {
     res.barTop = bar[0] / H;
     const a = px((fr.bar || [0.075])[0], W), c = px((fr.bar || [0, 0.86])[1], W), b = bar[0] + 2, e = bar[1] - 1;
@@ -557,7 +571,7 @@ function _liveBgAnalyze(img, frame, hasPt, hasText, ind) {
   const fr = LB_FRAME[show ? '2015' : frame];
   const measured = LB_SIDE_FRAME[frame];
   const turned = !!measured && !measured.upright;
-  if (!fr && !LB_BAR_FRAME[frame] && !measured && frame !== 'showsaga') return null;
+  if (!fr && !LB_BAR_FRAME[frame] && !measured && frame !== 'showsaga' && frame !== 'showtoken') return null;
   // A card printed on its side is read turned upright, as the battlefield shows it
   const W = turned ? img.naturalHeight : img.naturalWidth, H = turned ? img.naturalWidth : img.naturalHeight;
   const cv = document.createElement('canvas');
@@ -574,6 +588,27 @@ function _liveBgAnalyze(img, frame, hasPt, hasText, ind) {
     const bar = _lbFindBar(d, W, H), col = _lbRegion(d, W, H, [0.08, 0.14, 0.47, 0.80]);
     if (!bar || Math.abs(bar[0] / H - 0.848) > 0.02 || col.plain < 0.5 || col.light) return null;
     return _liveBgAnalyzeBar(d, W, H, 'saga', hasPt, hasText);
+  }
+  // A token Scryfall calls full-art, textless or borderless ('showtoken') is
+  // read as a token when it has the token frame: a pale type bar with dark
+  // words, and its power and toughness on a plate in the usual corner.
+  if (frame === 'showtoken') {
+    const bar = _lbFindBar(d, W, H, true);
+    if (!bar) return null;
+    const rb = _lbRegion(d, W, H, [0.075, (bar[0] + 2) / H, 0.86, (bar[1] - 1) / H]);
+    if (rb.plain < 0.5 || rb.light) return null;
+    if (hasPt) {
+      const rp = _lbRegion(d, W, H, LB_BAR_FRAME.token.plate);
+      if (rp.plain < 0.5 || rp.thin < 30 || rp.light) return null;
+    }
+    // (A text box under the bar has a line down each side: without them the
+    // words are set elsewhere. Icingdeath sld 1018.)
+    const u = LB_BAR_FRAME.token.under;
+    if (hasText && bar[1] < H * 0.80) {
+      const ya = Math.round(bar[1] + (u[3] * H - bar[1]) * 0.2), yb = Math.round(bar[1] + (u[3] * H - bar[1]) * 0.8), rg = Math.round(0.022 * W);
+      if (_lbEdge(d, W, H, 'l', Math.round(u[0] * W), rg, ya, yb) === null || _lbEdge(d, W, H, 'r', Math.round(u[2] * W), rg, ya, yb) === null) return null;
+    }
+    return _liveBgAnalyzeBar(d, W, H, 'token', hasPt, hasText, bar);
   }
   if (!fr) return _liveBgAnalyzeBar(d, W, H, frame, hasPt, hasText);
   const px = (f, dim) => Math.round(f * dim);
@@ -592,12 +627,17 @@ function _liveBgAnalyze(img, frame, hasPt, hasText, ind) {
     const all = top && edge('l', px(t[0], W), px(0.69, H), px(0.86, H)) && edge('r', px(t[2], W), px(0.69, H), px(0.86, H)) && edge('b', px(t[3], H), px(0.25, W), px(0.43, W));
     const rt = _lbRegion(d, W, H, [t[0] + 0.03, t[1] + 0.02, t[2] - 0.03, t[3] - 0.04]);
     const ry = _lbRegion(d, W, H, fr.type), rp = _lbRegion(d, W, H, fr.plate);
-    const ok = top && ry.plain >= 0.38 && (rt.plain >= 0.55 || (all && rt.plain >= 0.33 && (!hasPt || rp.plain >= 0.6)));
+    // (A see-through type bar over the art, or a long type line on a dark bar,
+    // is less plain: enough when the text box is plain with a line on every
+    // side. Baleful Strix sld 2070, Toski khm 319.)
+    const barPlain = ry.plain >= 0.38;
+    const ok = top && (barPlain ? (rt.plain >= 0.55 || (all && rt.plain >= 0.33 && (!hasPt || rp.plain >= 0.6)))
+      : (all && ry.plain >= 0.30 && rt.plain >= 0.55));
     if (!ok) return null;
-    // (A see-through box must have a type line above it too: a poster-like
+    // (A see-through box or bar must have a type line too: a poster-like
     // printing can have lines and plain ground in all the right places.)
     typeDy = _lbTypeShift(d, W, H, fr.type, ry.light);
-    if (rt.plain < 0.55 && typeDy === null) return null;
+    if ((rt.plain < 0.55 || !barPlain) && typeDy === null) return null;
     // (A type line far from its place, or no digits on the power/toughness
     // plate: a frame of its own, with its boxes elsewhere.)
     if (typeDy !== null && Math.abs(typeDy) > 0.022 * H) return null;

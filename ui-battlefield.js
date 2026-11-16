@@ -691,6 +691,9 @@ function _liveKind(p) {
       && !(p.printedTypes || []).some(t => t === 'Battle' || t === 'Planeswalker')) return 'show';
   // (The same for a Saga: tried as the Saga frame.)
   if (!plain && c.frame === '2015' && !c.textless && !p.isToken && !p.isFaceDown && c.layout === 'saga') return 'showsaga';
+  // (And for a token: Scryfall calls most vanilla tokens of 2019 to 2021
+  // full-art, and a few textless, though they have the usual token frame.)
+  if (!plain && c.frame === '2015' && p.isToken && (c.layout === 'token' || !c.layout)) return 'showtoken';
   if (!plain || c.frame !== '2015') return 'foot';
   if (p.isRoom && p.roomFaces && c.layout === 'split') return 'room';
   if ((p.printedTypes || []).includes('Battle')) return 'battle';
@@ -784,7 +787,8 @@ function _liveTextBoxHtml(p, fs) {
   const kind = _liveKind(p);
   const token = kind === 'token' || kind === 'token03';
   // (A promo token of 2001 to 2003 always prints a text box: flavor text when it has no rules.)
-  const column = kind === 'saga' || kind === 'class' || kind === 'token97' || (token && (p.printedAbilities || []).length > 0);
+  // (A textless token prints no text box, whatever its abilities.)
+  const column = kind === 'saga' || kind === 'class' || kind === 'token97' || (token && (p.printedAbilities || []).length > 0 && !(p.scryfallData || {}).textless);
   // An ability it has twice is written once, as a card would print it
   // ("Flying" from the print and again from Levitation).
   // A keyword line of the print ("Defender, flying") counts word by word.
@@ -855,7 +859,9 @@ function _liveTextBoxHtml(p, fs) {
     const paras = parasOf(gained);
     const chars = paras.reduce((n, pa) => n + pa.parts.reduce((m, x) => m + x.text.length + 2, 0), 0);
     const lay = (p.scryfallData || {}).layout;
-    const place = kind !== 'foot' ? kind : p.isFaceDown ? 'foot' : lay === 'saga' ? 'saga' : (lay === 'class' || lay === 'case') ? 'class' : 'foot';
+    // (A Class with drawn boxes is a borderless one with a layout of its own:
+    // its text is not in the right half, so the strip goes across the art.)
+    const place = kind !== 'foot' ? kind : p.isFaceDown ? 'foot' : lay === 'saga' ? 'saga' : 'foot';
     const narrow = place === 'saga' || place === 'class';
     const fsize = Math.max(narrow ? 2.6 : 3, Math.min(4.2, (narrow ? 15 : 22) / Math.sqrt(chars)));
     // (Its place is only known once the image is read, where the image is read.)
@@ -901,16 +907,16 @@ function renderLivePatches(p, fs) {
   // shown if ui-live-bg.js finds its boxes in the usual places, and with
   // drawn boxes, shown if it does not.
   const tried = _liveKind(p);
-  if (tried === 'show' || tried === 'showsaga') {
+  if (tried === 'show' || tried === 'showsaga' || tried === 'showtoken') {
     let asLine = '', asFoot = '';
     try {
-      _liveForce = tried === 'show' ? { p, kind: 'line', spot: 'line' } : { p, kind: 'saga', spot: 'foot' }; asLine = build();
+      _liveForce = tried === 'show' ? { p, kind: 'line', spot: 'line' } : { p, kind: tried === 'showtoken' ? 'token' : 'saga', spot: 'foot' }; asLine = build();
       _liveForce = { p, kind: 'foot', spot: 'foot' }; asFoot = build();
     } finally { _liveForce = null; }
     if (!asLine && !asFoot) return '';
     if (!p.imageUri) return asFoot ? `<div class="bf-live">${asFoot}</div>` : '';
     const pt = p.printedPower !== null && p.printedPower !== undefined;
-    return `<div class="bf-live bf-live-try" data-src="${escapeAttr(p.imageUri.replace('/small/', '/normal/'))}" data-frame="${tried}" data-ind="${ind}" data-pt="${pt ? 1 : 0}" data-text="${(p.printedAbilities || []).length ? 1 : 0}">${asLine}</div>`
+    return `<div class="bf-live bf-live-try" data-src="${escapeAttr(p.imageUri.replace('/small/', '/normal/'))}" data-frame="${tried}" data-ind="${ind}" data-pt="${pt ? 1 : 0}" data-text="${(p.printedAbilities || []).length && !sc.textless ? 1 : 0}">${asLine}</div>`
       + `<div class="bf-live bf-live-fallback">${asFoot}</div>`;
   }
   const html = build();
