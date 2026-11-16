@@ -696,9 +696,11 @@ function _liveKind(p) {
   if (!plain && c.frame === '2015' && p.isToken && (c.layout === 'token' || !c.layout)) return 'showtoken';
   // (A double-faced token's side is a token frame too, or the dark back of a card that transforms.)
   if (c.frame === '2015' && p.isToken && c.layout === 'double_faced_token') return 'showtoken';
-  // A textless creature has no text box, but most print their power and
-  // toughness on the usual plate: tried with that rewritten in place ('showbare').
-  if (c.textless && c.frame === '2015' && !p.isToken && p.printedPower !== null && p.printedPower !== undefined
+  // A textless printing has no text box, but most creatures print their power
+  // and toughness on the usual plate, and some printings a type line on a dark
+  // bar near the foot: tried with those rewritten in place ('showbare'). (A
+  // basic land's bar holds its name between a mana symbol and the stamp.)
+  if (c.textless && c.frame === '2015' && !p.isToken && !(p.printedSupertypes || []).includes('Basic')
       && ['normal', 'transform', 'modal_dfc', 'meld'].includes(c.layout || 'normal')
       && !(p.printedTypes || []).some(t => t === 'Battle' || t === 'Planeswalker')) return 'showbare';
   if (!plain || c.frame !== '2015') return 'foot';
@@ -773,7 +775,7 @@ function _livePtHtml(p, fs) {
   // A planeswalker's loyalty is where a P/T box would be: the box goes beside it
   const look = drawn ? ' bf-live-drawn' + (kind === 'pw' ? ' bf-live-pt-pw' : kind === 'battle' ? ' bf-live-pt-battle' : '') : _liveOldFrame(p) ? ' bf-live-light' : '';
   // A drawn box is made to look like a printed one, in the frame's own colour
-  const plate = drawn ? ` style="--plate:${_livePlateColor(p)}"` : '';
+  const plate = (drawn || bare) ? ` style="--plate:${_livePlateColor(p)}"` : '';
   return `<div class="bf-live-pt${look}"${plate}>${escapeHtml(String(pw))}/${escapeHtml(String(tg))}</div>`;
 }
 
@@ -927,7 +929,7 @@ function renderLivePatches(p, fs) {
     if (!asLine && !asFoot) return '';
     if (!p.imageUri) return asFoot ? `<div class="bf-live">${asFoot}</div>` : '';
     const pt = p.printedPower !== null && p.printedPower !== undefined;
-    return `<div class="bf-live bf-live-try" data-src="${escapeAttr(p.imageUri.replace('/small/', '/normal/'))}" data-frame="${tried}" data-ind="${ind}" data-pt="${pt ? 1 : 0}" data-text="${(p.printedAbilities || []).length && !sc.textless ? 1 : 0}">${asLine}</div>`
+    return `<div class="bf-live bf-live-try" data-src="${escapeAttr(p.imageUri.replace('/small/', '/normal/'))}" data-frame="${tried}" data-ind="${tried === 'showbare' ? ((p.printedTypes || []).includes('Land') ? 1 : 0) : ind}" data-pt="${pt ? 1 : 0}" data-text="${(p.printedAbilities || []).length && !sc.textless ? 1 : 0}">${asLine}</div>`
       + `<div class="bf-live bf-live-fallback">${asFoot}</div>`;
   }
   const html = build();

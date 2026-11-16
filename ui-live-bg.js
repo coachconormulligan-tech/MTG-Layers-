@@ -336,8 +336,9 @@ const LB_FRAME = {
    a dark line above and below it across the card and words on it. Tokens,
    Sagas, Classes and tall planeswalkers print it at different heights. Returns
    [first row inside, last row inside] or null. bold: the band's evenness is
-   judged by each row's ground and not its mean (see below). */
-function _lbFindBar(d, W, H, bold) {
+   judged by each row's ground and not its mean (see below); from, to: where
+   the bar's top is looked for, as fractions of the height. */
+function _lbFindBar(d, W, H, bold, from, to) {
   const a = Math.round(W * 0.12), b = Math.round(W * 0.80);
   const row = new Float64Array(H);
   for (let y = 0; y < H; y++) {
@@ -360,7 +361,7 @@ function _lbFindBar(d, W, H, bold) {
   };
   const into = (y, dir) => (row[y] + row[y + dir] + row[y + 2 * dir]) / 3 - Math.min(row[y - dir], row[y - 2 * dir]);
   let best = null, bestScore = 0;
-  for (let y1 = Math.round(H * 0.45); y1 < Math.round(H * 0.90); y1++) {
+  for (let y1 = Math.round(H * (from || 0.45)); y1 < Math.round(H * (to || 0.90)); y1++) {
     const top = into(y1, 1);
     if (top < 25) continue;
     for (let hgt = Math.round(H * 0.034); hgt <= Math.round(H * 0.058); hgt++) {
@@ -610,26 +611,43 @@ function _liveBgAnalyze(img, frame, hasPt, hasText, ind) {
     }
     return _liveBgAnalyzeBar(d, W, H, 'token', hasPt, hasText, bar);
   }
-  // A textless printing ('showbare') has no text box, but most creatures
-  // print their power and toughness on the usual plate: rewritten in place
-  // when the plate is found. (Some print a type line near the foot too, at a
-  // height of their own; looking for it found "type lines" in the art of
-  // other cards, so the type bar stays a drawn one.)
+  // A textless printing ('showbare') has no text box. Most creatures print
+  // their power and toughness on the usual plate, and some printings a type
+  // line near the foot, white on a dark bar: each is rewritten in place where
+  // it is found, and drawn where it is not.
   if (frame === 'showbare') {
     const f15 = LB_FRAME['2015'], px = (v, dim) => Math.round(v * dim);
     const res = { aspect: H / W, light: {}, dim: {} };
     if (hasPt) {
-      const f = f15.plate, rp = _lbRegion(d, W, H, f);
       // (The digits fill the plate: fewer strokes than a "1/1" has, or a
       // quarter of them in its top rows, is a plate printed higher. Traveling
       // Chocobo fin 551f.)
+      const f = f15.plate, rp = _lbRegion(d, W, H, f);
       const top = _lbRegion(d, W, H, [f[0], f[1], f[2], f[1] + (f[3] - f[1]) * 0.13]);
-      if (rp.plain < 0.5 || rp.thin < 160 || top.thin > rp.thin * 0.25) return null;
-      const a = px(f[0], W), b = px(f[1], H), c = px(f[2], W), e = px(f[3], H);
-      res.pt = _lbRect(a, b, c, e, W, H, _lbErase(d, W, H, a, b, c, e, px(0.03, W), 2, 2, null, true, rp.light ? 'adapt' : false));
-      res.light.pt = rp.light; res.dim.pt = !rp.light && rp.med < 115;
+      if (rp.plain >= 0.5 && rp.thin >= 160 && top.thin <= rp.thin * 0.25) {
+        const a = px(f[0], W), b = px(f[1], H), c = px(f[2], W), e = px(f[3], H);
+        res.pt = _lbRect(a, b, c, e, W, H, _lbErase(d, W, H, a, b, c, e, px(0.03, W), 2, 2, null, true, rp.light ? 'adapt' : false));
+        res.light.pt = rp.light; res.dim.pt = !rp.light && rp.med < 115;
+      }
     }
-    return res.pt ? res : null;
+    // The dark bar is the pale bar of the image's negative. Its top is looked
+    // for between 80% and 88% of the height only: lower down the collector
+    // line's black band has "words" on it too, and higher up is art.
+    const neg = new Uint8ClampedArray(d.length);
+    for (let i = 0; i < d.length; i++) neg[i] = (i & 3) === 3 ? 255 : 255 - d[i];
+    // (ind: the card is a land. The textless shock lands of trk print their
+    // type line lower, under a striped band that was taken for the bar: a
+    // land's type bar stays a drawn one.)
+    const bar = ind ? null : _lbFindBar(neg, W, H, true, 0.80, 0.88);
+    if (bar) {
+      const g = [0.075, (bar[0] + 2) / H, 0.86, (bar[1] - 1) / H], ry = _lbRegion(d, W, H, g);
+      if (ry.plain >= 0.5 && ry.light && ry.med <= 70) {
+        const a = px(g[0], W), b = bar[0] + 2, c = px(g[2], W), e = bar[1] - 1;
+        res.type = _lbRect(a, b, c, e, W, H, _lbErase(d, W, H, a, b, c, e, px(0.05, W), 3, 2, null, true, 'adapt'));
+        res.light.type = true;
+      }
+    }
+    return res.pt || res.type ? res : null;
   }
   if (!fr) return _liveBgAnalyzeBar(d, W, H, frame, hasPt, hasText);
   const px = (f, dim) => Math.round(f * dim);
@@ -773,6 +791,8 @@ function _liveBgApply(box, res) {
   }
   const pt = box.querySelector('.bf-live-pt:not(.bf-live-drawn)');
   if (pt && res.pt) _liveBgPlace(pt, res.pt);
+  // (A textless printing whose plate was not found gets a drawn box.)
+  else if (pt && box.dataset.frame === 'showbare') pt.classList.add('bf-live-drawn');
   // The strip of gained abilities ends just above the type bar
   const gain = box.querySelector('.bf-live-gain');
   if (gain) {
