@@ -437,6 +437,12 @@ function _lbFindBar(d, W, H, bold, from, to) {
    Saga (left) or a Class (right), as fractions of the image. */
 const LB_BAR_FRAME = {
   'pw':    {},
+  // A planeswalker on the 2003 frame: its bar's top is at 58% of the height,
+  // or at 50% on the tall frame of one with four abilities. (Looked for over
+  // the whole card, a pale band between two abilities was taken for it:
+  // Liliana of the Dark Realms m14, Sarkhan Vol mma.)
+  // (bold: the type line's ink darkens the band's rows on a dim scan. Sarkhan Vol mma.)
+  'pw03':  { from: 0.47, to: 0.61, bold: true },
   // under: a token's text box, when it prints one, sits under its type bar
   // (left, gap below the bar, right, bottom); bar: where the bar's words are.
   'token': { plate: [0.791, 0.903, 0.930, 0.937], cut: [0.766, 0.889], under: [0.076, 0.014, 0.924, 0.922] },
@@ -449,7 +455,7 @@ function _liveBgAnalyzeBar(d, W, H, frame, hasPt, hasText, found) {
   const fr = LB_BAR_FRAME[frame];
   const px = (f, dim) => Math.round(f * dim);
   const res = { aspect: H / W };
-  const bar = found || _lbFindBar(d, W, H);
+  const bar = found || _lbFindBar(d, W, H, !!fr.bold, fr.from, fr.to);
   if (bar) {
     res.barTop = bar[0] / H;
     const a = px((fr.bar || [0.075])[0], W), c = px((fr.bar || [0, 0.86])[1], W), b = bar[0] + 2, e = bar[1] - 1;
@@ -489,7 +495,8 @@ function _liveBgAnalyzeBar(d, W, H, frame, hasPt, hasText, found) {
    white on a dark bar (true), or white with a dark shadow ('both');
    typeSeeds: the sides of that patch frame may come in from; texts: the text
    boxes, a Room's two doors left to right; plate: the printed power and
-   toughness; range: how far a text box's side is looked for from its place. */
+   toughness; range: how far a text box's side is looked for from its place;
+   half: the image is read turned around. */
 const LB_SIDE_FRAME = {
   // Every Room prints "Enchantment — Room": only that stretch of the bar is
   // cleaned (the bar is marbled, and its pale veins would pass for print).
@@ -501,6 +508,20 @@ const LB_SIDE_FRAME = {
   // 1997 card frame. Type line and power/toughness are white with a shadow,
   // straight on the coloured panel; the small text box differs by colour.
   'token97': { upright: true, type: [0.148, 0.666, 0.79, 0.699], light: 'both', typeSeeds: 'r', texts: [[0.160, 0.706, 0.830, 0.862]], plate: [0.762, 0.878, 0.881, 0.922], range: 0.025 },
+  // A flip card on the 2003 frame (Kamigawa): each half has a low text box,
+  // and under it a type bar that ends in the power/toughness box. A flipped
+  // card ('...b') is read turned around (half: true), as the battlefield
+  // shows it: its half sits 19 px lower, under the artist's line. A text
+  // box's foot is the top line of the type bar, and the name bar's lines are
+  // a few pixels above its top: the box is used as measured (fixed: its
+  // inside, no border line is looked for; a long dark run along a side is
+  // frame, a letter that touches a side is print).
+  'flip03':  { upright: true, fixed: true, type: [0.074, 0.253, 0.795, 0.299], typeSeeds: 'bar', texts: [[0.074, 0.1265, 0.910, 0.2426]], plate: [0.807, 0.257, 0.918, 0.301] },
+  'flip03b': { upright: true, fixed: true, half: true, type: [0.078, 0.281, 0.795, 0.325], typeSeeds: 'bar', texts: [[0.088, 0.150, 0.924, 0.2647]], plate: [0.807, 0.287, 0.918, 0.329] },
+  // The same on the 2015 frame (Nezumi Graverobber cm2, Budoka Gardener c18):
+  // the first half's type bar holds the set symbol before the P/T box.
+  'flip15':  { upright: true, fixed: true, type: [0.078, 0.2353, 0.738, 0.2838], typeSeeds: 'bar', texts: [[0.076, 0.0956, 0.926, 0.225]], plate: [0.822, 0.2426, 0.926, 0.2838] },
+  'flip15b': { upright: true, fixed: true, half: true, type: [0.078, 0.3132, 0.803, 0.3618], typeSeeds: 'bar', texts: [[0.074, 0.1735, 0.926, 0.3029]], plate: [0.822, 0.3206, 0.926, 0.3618] },
 };
 
 function _liveBgAnalyzeSide(d, W, H, frame, hasPt) {
@@ -528,8 +549,9 @@ function _liveBgAnalyzeSide(d, W, H, frame, hasPt) {
       if (edge === null) { seeds += s; return guess + inward * 6; }
       return edge + inward * 2;
     };
-    const x0 = side('l', px(t[0], W), my0, my1), x1 = side('r', px(t[2], W), my0, my1) + 1;
-    const y0 = side('t', px(t[1], H), mx0, mx1), y1 = side('b', px(t[3], H), mx0, mx1) + 1;
+    const x0 = fr.fixed ? px(t[0], W) : side('l', px(t[0], W), my0, my1), x1 = fr.fixed ? px(t[2], W) : side('r', px(t[2], W), my0, my1) + 1;
+    const y0 = fr.fixed ? px(t[1], H) : side('t', px(t[1], H), mx0, mx1), y1 = fr.fixed ? px(t[3], H) : side('b', px(t[3], H), mx0, mx1) + 1;
+    if (fr.fixed) seeds = 'LRTB';
     const keep = fr.cut ? [px(fr.cut[0], W), px(fr.cut[1], H)] : null;
     res.texts.push(_lbRect(x0, y0, x1, y1, W, H, _lbErase(d, W, H, x0, y0, x1, y1, px(0.015, W), px(0.015, W), 3, keep, seeds || 'none')));
   }
@@ -634,8 +656,9 @@ function _liveBgAnalyze(img, frame, hasPt, hasText, ind, page) {
   cv.width = W; cv.height = H;
   const g = cv.getContext('2d', { willReadFrequently: true });
   if (turned) { g.translate(W, 0); g.rotate(Math.PI / 2); }
+  else if (measured && measured.half) { g.translate(W, H); g.rotate(Math.PI); }      // a flipped flip card
   g.drawImage(img, 0, 0);
-  if (turned) g.setTransform(1, 0, 0, 1, 0, 0);
+  if (turned || (measured && measured.half)) g.setTransform(1, 0, 0, 1, 0, 0);
   const d = g.getImageData(0, 0, W, H).data;       // throws if the image is not readable
   if (measured) return _liveBgAnalyzeSide(d, W, H, frame, hasPt);
   // A showcase or borderless Saga ('showsaga') is read as a Saga when it has

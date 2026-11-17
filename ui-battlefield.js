@@ -452,7 +452,7 @@ function renderBattlefield() {
     const _imgSrc = (p.imageUri && _live.includes('data-src=')) ? p.imageUri.replace('/small/', '/normal/') : _bfCardImage(p.imageUri);
     return `
     <div class="bf-card ${isSelected ? 'bf-card-selected' : ''} ${hasSBA ? 'bf-card-sba' : ''} ${(p.isManualEffect || p.isSpell) ? 'bf-card-spell' : ''} ${p.tapped ? 'bf-card-tapped' : ''} ${_cardIsSideways(p) ? 'bf-card-sideways' : ''} ${p.isFaceDown ? 'bf-card-facedown' : ''}" data-id="${p.id}" data-sba="${sbaReasons.join(',')}" onclick="selectPermanent('${p.id}')" oncontextmenu="event.preventDefault(); event.stopPropagation(); openCardMenu(event, '${p.id}');">
-      ${p.imageUri ? `<img src="${_imgSrc}" alt="${escapeAttr(p.name)}" class="bf-card-img">` : `<div class="bf-card-no-img"><span>${escapeHtml(p.name)}</span></div>`}
+      ${p.imageUri ? `<img src="${_imgSrc}" alt="${escapeAttr(p.name)}" class="bf-card-img${_liveFlipped(p) ? ' bf-card-img-turned' : ''}">` : `<div class="bf-card-no-img"><span>${escapeHtml(p.name)}</span></div>`}
       ${p.label ? `<div class="bf-card-label" aria-hidden="true">${escapeHtml(p.label)}</div>` : ''}
       <div class="bf-card-overlay">${_live}</div>
       ${p._isEnchantPlayer && p._enchantedPlayerId ? `<div class="bf-card-spell-badge bf-card-enchant-player-badge">Enchanting: ${escapeHtml(Battlefield.getPlayerName(p._enchantedPlayerId))}</div>` : ''}
@@ -668,7 +668,8 @@ function _liveTypeSpot(p) {
 }
 
 // Which frame the card's image has, for the live patches: 'line' (the usual
-// one), or a frame whose type bar ui-live-bg.js finds in the image ('pw',
+// one), or a frame whose type bar ui-live-bg.js finds in the image ('pw': a
+// planeswalker on the 2015 or the 2003 frame,
 // 'token', 'token03' (the token frame of 2004 to 2014), 'saga', 'class'), a frame read from measured places ('room' and
 // 'battle', printed on their side, and 'token97', the promo tokens of 2001 to 2003),
 // or 'foot' (anything else: drawn boxes only).
@@ -677,16 +678,18 @@ function _liveKind(p) {
   const c = p.scryfallData || {};
   if (p.isFaceDown) return 'foot';
   const plain = !c.full_art && !c.textless && c.border_color !== 'borderless' && !(c.frame_effects || []).includes('showcase');
-  if (_liveTypeSpot(p) === 'line') return (p.printedTypes || []).includes('Planeswalker') ? (c.frame === '2015' ? 'pw' : 'foot') : 'line';
+  if (_liveTypeSpot(p) === 'line') return (p.printedTypes || []).includes('Planeswalker') ? ((c.frame === '2015' || c.frame === '2003') ? 'pw' : 'foot') : 'line';
   // The token frame of 2004 to 2014 (Scryfall calls some of them full-art)
   if (p.isToken && c.frame === '2003' && c.layout === 'token' && !c.textless && c.border_color !== 'borderless') return 'token03';
   // The promo tokens of 2001 to 2003: the lower part of the 1997 card frame
   if (p.isToken && c.frame === '1997' && c.layout === 'token' && ['mpr', 'pr2', 'p03'].includes(c.set)) return 'token97';
   // A showcase, borderless or full-art printing that may still have its boxes
   // in the usual places: tried as the usual frame once its image is read
-  // ('show'), with the drawn boxes kept for when it has not.
+  // ('show'), with the drawn boxes kept for when it has not. (An Adventure,
+  // Omen or prepare card is tried with only its own page of the book: the
+  // showcase frames of eld, woe, tdm and hob keep the book in the usual place.)
   if (!plain && c.frame === '2015' && !c.textless && !p.isToken
-      && ['normal', 'transform', 'modal_dfc', 'meld', 'mutate', 'prototype', 'leveler'].includes(c.layout || 'normal')
+      && ['normal', 'transform', 'modal_dfc', 'meld', 'mutate', 'prototype', 'leveler', 'adventure', 'prepare'].includes(c.layout || 'normal')
       && !(p.printedSubtypes || []).some(t => t === 'Saga' || t === 'Class' || t === 'Case' || t === 'Room')
       && !(p.printedTypes || []).some(t => t === 'Battle' || t === 'Planeswalker')) return 'show';
   // (The same for a Saga: tried as the Saga frame.)
@@ -703,6 +706,10 @@ function _liveKind(p) {
   if (c.textless && c.frame === '2015' && !p.isToken && !(p.printedSupertypes || []).includes('Basic')
       && ['normal', 'transform', 'modal_dfc', 'meld'].includes(c.layout || 'normal')
       && !(p.printedTypes || []).some(t => t === 'Battle' || t === 'Planeswalker')) return 'showbare';
+  // A flip card (Kamigawa): each half has its own small text box, type bar and
+  // power/toughness; a flipped one is shown turned around ('...b').
+  // (Two were reprinted on the 2015 frame, with the same halves in other places.)
+  if (c.layout === 'flip' && plain && !p.isToken && p.isTransformable && (c.frame === '2003' || c.frame === '2015')) return (c.frame === '2003' ? 'flip03' : 'flip15') + (_liveFlipped(p) ? 'b' : '');
   if (!plain || c.frame !== '2015') return 'foot';
   if (p.isRoom && p.roomFaces && c.layout === 'split') return 'room';
   if ((p.printedTypes || []).includes('Battle')) return 'battle';
@@ -711,6 +718,12 @@ function _liveKind(p) {
   if (c.layout === 'saga' || (c.layout === 'transform' && (p.printedSubtypes || []).includes('Saga'))) return 'saga';
   if (c.layout === 'class' || c.layout === 'case') return 'class';     // a Case has the Class frame: art left, text right
   return 'foot';
+}
+
+// A flip card that has been flipped: it is shown turned around, so the half
+// it now is reads upright.
+function _liveFlipped(p) {
+  return (p.scryfallData || {}).layout === 'flip' && !!p.isTransformable && (p.activeFaceIndex || 0) === 1 && !p.isFaceDown;
 }
 
 // A card whose text box is an open book: its own rules are on one page, the
@@ -755,6 +768,7 @@ function _liveTypeLineHtml(p, fs) {
   if (_liveKind(p) === 'battle') return `<div class="bf-live-type bf-live-type-battle bf-live-wait">${text || 'No types'}</div>`;
   // A promo token of 2001 to 2003 prints it in white on its coloured panel
   if (_liveKind(p) === 'token97') return `<div class="bf-live-type bf-live-type-t97 bf-live-light bf-live-wait">${text || 'No types'}</div>`;
+  if (_liveKind(p).startsWith('flip')) return `<div class="bf-live-type bf-live-type-flip bf-live-type-${_liveKind(p)} bf-live-wait">${text || 'No types'}</div>`;
   const look = spot === 'foot' ? ' bf-live-drawn' : _liveOldFrame(p) ? ' bf-live-light' : '';
   return `<div class="bf-live-type bf-live-type-${spot}${look}">${text || 'No types'}</div>`;
 }
@@ -780,9 +794,9 @@ function _livePtHtml(p, fs) {
   const kind = _liveKind(p);
   // (bare: a textless printing tried with its printed plate, see renderLivePatches)
   const bare = !!(_liveForce && _liveForce.p === p && _liveForce.bare);
-  const drawn = p.isFaceDown || p.printedPower === null || p.printedPower === undefined || (_liveTypeSpot(p) === 'foot' && !bare && kind !== 'token' && kind !== 'token03' && kind !== 'token97');
+  const drawn = p.isFaceDown || p.printedPower === null || p.printedPower === undefined || (_liveTypeSpot(p) === 'foot' && !bare && kind !== 'token' && kind !== 'token03' && kind !== 'token97' && !kind.startsWith('flip'));
   // A planeswalker's loyalty is where a P/T box would be: the box goes beside it
-  const look = drawn ? ' bf-live-drawn' + (kind === 'pw' ? ' bf-live-pt-pw' : kind === 'battle' ? ' bf-live-pt-battle' : '') : _liveOldFrame(p) ? ' bf-live-light' : '';
+  const look = drawn ? ' bf-live-drawn' + (kind === 'pw' ? ' bf-live-pt-pw' + ((p.scryfallData || {}).frame === '2003' ? ' bf-live-pt-pw03' : '') : kind === 'battle' ? ' bf-live-pt-battle' : kind.startsWith('flip') ? ' bf-live-pt-' + kind : '') : _liveOldFrame(p) ? ' bf-live-light' : '';
   // A drawn box is made to look like a printed one, in the frame's own colour
   const plate = (drawn || bare) ? ` style="--plate:${_livePlateColor(p)}"` : '';
   return `<div class="bf-live-pt${look}"${plate}>${escapeHtml(String(pw))}/${escapeHtml(String(tg))}</div>`;
@@ -808,7 +822,7 @@ function _liveTextBoxHtml(p, fs) {
   const token = kind === 'token' || kind === 'token03';
   // (A promo token of 2001 to 2003 always prints a text box: flavor text when it has no rules.)
   // (A textless token prints no text box, whatever its abilities.)
-  const column = kind === 'saga' || kind === 'class' || kind === 'token97' || (token && (p.printedAbilities || []).length > 0 && !(p.scryfallData || {}).textless);
+  const column = kind === 'saga' || kind === 'class' || kind === 'token97' || kind.startsWith('flip') || (token && (p.printedAbilities || []).length > 0 && !(p.scryfallData || {}).textless);
   // An ability it has twice is written once, as a card would print it
   // ("Flying" from the print and again from Levitation).
   // A keyword line of the print ("Defender, flying") counts word by word.
@@ -898,6 +912,11 @@ function _liveTextBoxHtml(p, fs) {
     const inner = paras.length ? bodyOf(paras, true) : '<p class="bf-live-none">No abilities</p>';
     return `<div class="bf-live-text bf-live-text-t97 bf-live-wait" data-max="4.4" data-min="1.8" style="font-size:3.4cqw">${inner}</div>`;
   }
+  // (A flip card's half has a low, wide box above its type bar.)
+  if (kind.startsWith('flip')) {
+    const inner = paras.length ? bodyOf(paras, true) : '<p class="bf-live-none">No abilities</p>';
+    return `<div class="bf-live-text bf-live-text-flip bf-live-text-${kind} bf-live-wait" data-max="4.2" data-min="1.6" style="font-size:3.4cqw">${inner}</div>`;
+  }
   // The largest font at which the paragraphs fit: the box is about 81cqw by
   // 33cqw inside (75cqw on an old frame), a character about half its font size wide.
   // (One page of an Adventure's or a prepare card's book is about 36cqw wide.)
@@ -940,7 +959,7 @@ function renderLivePatches(p, fs) {
     if (!asLine && !asFoot) return '';
     if (!p.imageUri) return asFoot ? `<div class="bf-live">${asFoot}</div>` : '';
     const pt = p.printedPower !== null && p.printedPower !== undefined;
-    return `<div class="bf-live bf-live-try" data-src="${escapeAttr(p.imageUri.replace('/small/', '/normal/'))}" data-frame="${tried}" data-ind="${tried === 'showbare' ? ((p.printedTypes || []).includes('Land') ? 1 : 0) : ind}" data-pt="${pt ? 1 : 0}" data-text="${(p.printedAbilities || []).length && !sc.textless ? 1 : 0}">${asLine}</div>`
+    return `<div class="bf-live bf-live-try" data-src="${escapeAttr(p.imageUri.replace('/small/', '/normal/'))}" data-frame="${tried}" data-ind="${tried === 'showbare' ? ((p.printedTypes || []).includes('Land') ? 1 : 0) : ind}" data-pt="${pt ? 1 : 0}" data-text="${(p.printedAbilities || []).length && !sc.textless ? 1 : 0}" data-page="${tried === 'show' ? _livePage(p) : ''}">${asLine}</div>`
       + `<div class="bf-live bf-live-fallback">${asFoot}</div>`;
   }
   const html = build();
@@ -950,7 +969,7 @@ function renderLivePatches(p, fs) {
   const kind = _liveKind(p);
   const usual = kind !== 'foot' && p.imageUri;
   const hasPt = p.printedPower !== null && p.printedPower !== undefined;
-  const frame = kind !== 'line' ? kind : _liveOldFrame(p) ? 'old' : ((p.scryfallData || {}).frame || '2015');
+  const frame = (kind === 'pw' && sc.frame === '2003') ? 'pw03' : kind !== 'line' ? kind : _liveOldFrame(p) ? 'old' : ((p.scryfallData || {}).frame || '2015');
   const attrs = usual
     ? ` data-src="${escapeAttr(p.imageUri.replace('/small/', '/normal/'))}" data-frame="${escapeAttr(frame)}" data-ind="${ind}" data-pt="${hasPt ? 1 : 0}" data-text="${(p.printedAbilities || []).length ? 1 : 0}" data-page="${kind === 'line' ? _livePage(p) : ''}"`
     : '';
