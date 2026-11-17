@@ -1,0 +1,15 @@
+{
+  "name": "Sentinel — base toughness becomes 1 plus the power of target creature",
+  "notes": "Found by tests/sweep.py (the sentence produced nothing). Read by _basePTFromOtherObject as Riptide Mangler is: the creature is picked after the ability is fired (setRefPerm) and its power is taken from the fire-time snapshot, so the Glorious Anthem added afterwards raises Sentinel's power only. Craw Wurm was 6/4 when the ability resolved: toughness 1 + 6 = 7. Who blocks whom is not recorded, so any other creature is offered; Sentinel itself is not.",
+  "steps": [
+    { "add": "Craw Wurm", "as": "wurm" },
+    { "add": "Sentinel", "as": "sentinel" },
+    { "fire": "@sentinel", "activated": 0, "as": "a1" },
+    { "call": ["setRefPerm", "@a1", "@wurm"] },
+    { "add": "Glorious Anthem" }
+  ],
+  "asserts": [
+    { "perm": "Sentinel", "final": { "power": 2, "toughness": 8 } },
+    { "perm": "Craw Wurm", "final": { "power": 7, "toughness": 5 } }
+  ]
+}

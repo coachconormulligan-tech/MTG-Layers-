@@ -267,6 +267,13 @@ function _basePTFromOtherObject(text, fullText) {
     ptFromRef = { power: null, toughness: null };
     ptFromRef[m[2].toLowerCase()] = { stat: m[4].toLowerCase(), add: 0 };
     obj = m[3]; dur = m[5] || '';
+  } else if (whole(`(${SELF})'s base (power|toughness) becomes? equal to (\\d+) plus the (power|toughness) of (target creature)((?: (?!until\\b)[^.,;\\n]+?)?)${DUR}(?=[.,;\\n]|$)`)) {
+    // "This creature's base toughness becomes equal to 1 plus the power of target creature
+    // blocking or blocked by this creature." (Sentinel). Who blocks whom is not recorded, so
+    // any other creature is offered (as for Sworn Defender).
+    ptFromRef = { power: null, toughness: null };
+    ptFromRef[m[2].toLowerCase()] = { stat: m[4].toLowerCase(), add: parseInt(m[3], 10) };
+    obj = m[5]; other = /\bthis (?:card|creature|permanent)\b/i.test(m[6] || ''); dur = m[7] || '';
   } else if (whole(`(${SELF})'s power becomes the toughness of target creature[^,.]*? minus (\\d+) until end of turn, and its toughness becomes (\\d+) plus the power of that creature until end of turn`)) {
     ptFromRef = { power: { stat: 'toughness', add: -parseInt(m[2], 10) }, toughness: { stat: 'power', add: parseInt(m[3], 10) } };
     obj = 'target creature'; other = true; dur = ' until end of turn';
