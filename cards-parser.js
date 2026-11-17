@@ -774,9 +774,10 @@ function parseCardEffects(permanent, card, opts = {}) {
       const enchantKnownMatch = oracleForAura.match(/^Enchant\s+(.+?)(?:\n|$)/im);
       if (enchantKnownMatch) {
         const enchantTarget = enchantKnownMatch[1].trim();
-        const _isPlayerOnly = /\bplayer\b/i.test(enchantTarget) &&
+        const _isPlayerOnly = /\b(?:player|opponent)\b/i.test(enchantTarget) &&
           !/\b(creature|artifact|planeswalker|enchantment|land|permanent)\b/i.test(enchantTarget);
         if (_isPlayerOnly) permanent._isEnchantPlayer = true;
+        if (_isPlayerOnly && /^opponent$/i.test(enchantTarget)) permanent._enchantOpponentOnly = true;
         const auraRestriction = buildAuraRestriction(enchantTarget);
         if (auraRestriction) {
           for (const eff of effects) {
@@ -820,12 +821,18 @@ function parseCardEffects(permanent, card, opts = {}) {
     oracleRaw = oracleRaw.split('\n').map(l => _D20_ROW_RE.test(l) ? '' : l).join('\n');
   }
 
-  // "Enchant player" cards: treat "enchanted player controls" as "you control"
-  // since we assume the user is the enchanted player.
-  if (/\benchant player\b/i.test(oracleRaw)) {
-    if (permanent) permanent._isEnchantPlayer = true;
-    oracleRaw = oracleRaw.replace(/\benchanted player(?:'s)?\s+controls?\b/gi, 'you control');
-    oracleRaw = oracleRaw.replace(/\benchanted player\b/gi, 'you');
+  // "Enchant player" / "Enchant opponent" cards: "enchanted player controls" is read as "you
+  // control" and "enchanted player" as "you"; the engine then reads "you" as the player the Aura
+  // is attached to (_enchantedPlayerScoped), and nobody until one is picked. "Enchant opponent"
+  // (Tenuous Truce, Psychic Possession) can be attached to an opponent only (_enchantOpponentOnly).
+  const _enchantPlayerM = oracleRaw.match(/^enchant (player|opponent)\s*$/im);
+  if (_enchantPlayerM) {
+    if (permanent) {
+      permanent._isEnchantPlayer = true;
+      if (/^opponent$/i.test(_enchantPlayerM[1])) permanent._enchantOpponentOnly = true;
+    }
+    oracleRaw = oracleRaw.replace(/\benchanted (?:player|opponent)(?:'s)?\s+controls?\b/gi, 'you control');
+    oracleRaw = oracleRaw.replace(/\benchanted (?:player|opponent)\b/gi, 'you');
   }
 
   // "Sacrifice a creature. When you do, all creatures get -X/-X …" (Tip the Scales): in a spell
@@ -2431,6 +2438,11 @@ function parseCardEffects(permanent, card, opts = {}) {
     // the picker's restriction is read off the sentence that chose it ("Choose target creature
     // you control.", "Exile target nonlegendary creature you control.").
     let _mcSourceYouControl = false, _mcLinkedCard = false, _mcPrintedDesc = '', _mcGainedKeywords = [];
+    // Is what is copied a target ("a copy of another target creature", "Choose target creature you
+    // control. Each other creature … becomes a copy of it")? Then shroud, hexproof and protection
+    // keep a permanent out of the copy picker (getCopyCandidates), as they do of a target picker.
+    // (copyRegex takes a leading "target " off: "a copy of target creature" leaves "creature".)
+    let _copySourceTargeted = /\b(?:copy|copies)\s+of\s+(?:up to one\s+|another\s+)?(?:other\s+)?target\b/i.test(copyMatch[0]);
     if (_massCopy) {
       copyClauseSpans[copyClauseSpans.length - 1].start = _massCopy.start;
       const _mcUntilRe = /\s+until\s+(?:end of turn|the next end step|your next turn)$/i;
@@ -2449,6 +2461,7 @@ function parseCardEffects(permanent, card, opts = {}) {
         const _mcBefore = oracleLower.substring(0, _massCopy.start);
         const _mcAnte = [..._mcBefore.matchAll(/\b(?:target|choose an?|chooses an?|on an?|attached to an?)\s+([^.,\n]+)/g)].pop();
         if (_mcAnte) targetDescRaw = (_mcAnte[1] + ' ' + targetDescRaw.replace(/^(?:it|them|that)\s*/, '')).trim();
+        if (_mcAnte && /^target\b/.test(_mcAnte[0])) _copySourceTargeted = true;
       }
       _mcSourceYouControl = /\byou control\b/.test(targetDescRaw);
     }
@@ -2527,6 +2540,7 @@ function parseCardEffects(permanent, card, opts = {}) {
     }
     // Parse "except" clause for copy modifications
     const copyParams = { copySource: null, restriction, maxManaValue: maxManaValueParam };
+    if (_copySourceTargeted) copyParams.sourceTargeted = true;
     if (_massCopy) {
       copyParams.massCopy = true;
       if (_mcSourceYouControl) copyParams.sourceYouControl = true;
@@ -4607,6 +4621,12 @@ function parseCardEffects(permanent, card, opts = {}) {
           // (A spell only, as for the boost above: Admiral Brass's fired "It has base power and
           // toughness 4/4" reads "target Pirate creature has …", the target already named.)
           : gbpIsTargetPhrase && permanent.isSpell ? { _oraclePos: Math.max(oracle.lastIndexOf('.', _gbpPTPos - 1), oracle.lastIndexOf('\n', _gbpPTPos - 1)) + 1 } : null));
+    // "Until your next turn, creatures target player controls have base power and toughness 1/1"
+    // (Mass Diminish): scoped to the chosen player, as the boost parser does (_applyTargetInfo).
+    if (gbpApplies.isTargetPlayerControl) {
+      for (let ei = _gbpEffCountBefore; ei < effects.length; ei++) effects[ei]._targetPlayerScoped = true;
+      if (permanent) permanent._targetsChosenPlayer = true;
+    }
 
     // Trailing "and are [type]" (Kudo/Graaz: "have base P/T X/Y and are Bears/Juggernauts")
     if (generalBasePTMatch[4]) {
@@ -6831,8 +6851,13 @@ function parseCardEffects(permanent, card, opts = {}) {
         // "This creature and up to one other target creature can't be blocked this turn"
         // (Martha Jones): the source, and a chosen target with its own picker.
         const conj = subj.match(/^(this\s+[\w-]+)\s+and\s+((?:another\s+|up to \w+\s+(?:other\s+)?)?target\s+.+?)(?:\s+(?:each|both))?$/i);
-        for (const part of conj ? [conj[1], conj[2]] : [subj]) {
+        for (let part of conj ? [conj[1], conj[2]] : [subj]) {
           if (!filterReferencesPermanents(part) && !/^this\s+[\w-]+$/i.test(part)) continue;
+          // "Target player can't cast spells this turn, and creatures that player controls can't
+          // attack this turn" (Oriss, Samite Guardian): the player picked for "target player".
+          if (/\bthat player controls?$/i.test(part) && /\btarget player\b/i.test(oracle.slice(contentStart, cantMatch.index))) {
+            part = part.replace(/\bthat player controls?$/i, 'target player controls');
+          }
           let b = buildAppliesToFromText(part);
           // "Creatures with power less than this creature's power" (Aura Gnarlid), "… less than the
           // number of Islands you control" (Kraken of the Straits): measured against the source.

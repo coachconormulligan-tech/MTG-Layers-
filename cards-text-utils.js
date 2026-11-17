@@ -1494,6 +1494,19 @@ function _buildAppliesToFromTextInner(filterText) {
       };
     }
   }
+  // "Creatures attacking you" — also "Creatures attacking enchanted player have trample" (Curse of
+  // Hospitality), whose "enchanted player" is read as "you" and "you" as the enchanted player.
+  const attackingYou = raw.match(/^(.+?)\s+(?:(?:that's|that is|that are)\s+)?attacking\s+you$/);
+  if (attackingYou) {
+    const inner = _buildAppliesToFromTextInner(attackingYou[1]);
+    if (inner && inner.fn && !inner.isSelf && !inner.isOpponentsControl) {
+      return {
+        fn: (p, allStates, effectCtrl) => (p.traits || []).includes('Attacking') && !!effectCtrl &&
+          _attackedPlayerId(p) === effectCtrl && inner.fn(p, allStates, effectCtrl),
+        desc: `${inner.desc} attacking you`,
+      };
+    }
+  }
   // "Each creature you control attacking a player" (Jurin, Leading the Charge): an attacker. The
   // site records only players as what a creature attacks, so every attacker is attacking one.
   const attackingPlayer = raw.match(/^(.+?)\s+(?:(?:that's|that is|that are)\s+)?attacking\s+a\s+player$/);

@@ -64,8 +64,9 @@ modal-modes-mismatch), each mode's list is judged against its own line ([mode N]
 list-mismatch), a target for one mode with the other left empty must change only itself, and a target
 for each at once must change both (second-mode-changes-nothing).
 
-An Aura is a unit of its own (kind "attach"), read from its "Enchant ..." line ("Enchant player" and
-"Enchant ... card in a graveyard" are skipped as "attach: enchant-player" / "attach: enchant-card"), on
+An Aura is a unit of its own (kind "attach"), read from its "Enchant ..." line ("Enchant ... card in a
+graveyard" is skipped as "attach: enchant-card"; "Enchant player" / "Enchant opponent" is the player
+unit below), on
 the fixed board plus witnesses only this unit sees: an opponent's and your creature with hexproof, your
 creature with shroud, an opponent's creature with protection from enchantments, one with protection from
 the Aura's colour and one of yours with protection from another colour. Check 2: the site attaches with
@@ -75,6 +76,20 @@ witness's words and the Aura's colours and types). Check 1: with nothing attache
 attached to each listed permanent, that permanent changes and no other (attach-changes-nothing,
 target-changes-others), and a plain "Enchanted creature gets +N/+N / has <keywords>" shows more than
 the Enchanted trait (grant-not-applied). Words of the Aura about itself or a group are not counted.
+
+A group that one picked player controls is a unit too: a spell or ability whose only target is "target
+player / target opponent" and whose text gives "<group> target opponent / that player / they controls"
+a continuous effect or a can't-rule ("Creatures target opponent controls get -1/-1", "Gain control of
+all creatures target opponent controls"; not "attack if able", "don't untap", "phase out", nor a group
+of which that player chose one: "Other creatures they control"), and an "Enchant player / opponent" Aura
+(label "player"), whose groups are its static "<group> enchanted player controls ..." and "Creatures
+attacking enchanted player have ..." lines. Check 2: the site shows a player list (no-player-picker:
+the opponent picker, the "target player" one or the enchanted-player one) offering the players the
+words allow ("target opponent", "Enchant opponent": not you; player-list-mismatch). Check 1: with no
+player picked nothing changes; with each listed player picked, only that player's group may change
+(target-changes-others) and some of it must (player-changes-nothing). A copy of a target ("becomes a
+copy of another target creature") has its copy list judged with an opponent's and your hexproof
+creature and your shroud creature added for that list alone.
 
 Also reported: crash (an exception anywhere) and no-targeted-effect (the text names a target but the
 parse produced no targeted effect, so there is no picker to audit - the sweep already covers
@@ -188,7 +203,9 @@ CODES = [
     ('list-mismatch', 'The target list differs from the permanents the text allows.'),
     ('copy-empty-list', 'The copy picker ("copy…") is empty although the words after "a copy of" allow permanents on the board.'),
     ('copy-list-mismatch', 'The copy picker lists other permanents than the words after "a copy of" allow.'),
-    ('player-list-mismatch', 'The player picker of "target player / target opponent / another player gains control of" offers other players than the text allows.'),
+    ('player-list-mismatch', 'A player picker ("target player / target opponent / another player gains control of", a group target opponent controls, the enchanted player) offers other players than the text allows.'),
+    ('no-player-picker', 'The text gives a group that target player / target opponent / the enchanted player controls a continuous effect, but the site offers no player list.'),
+    ('player-changes-nothing', 'With a player picked, no permanent of the group that player controls changes.'),
     ('changes-with-no-target', 'With no target chosen, some permanent changes.'),
     ('target-changes-others', 'With a target chosen, a permanent other than the target changes.'),
     ('target-changes-nothing', 'Choosing any listed target changes nothing.'),
@@ -215,7 +232,7 @@ CODES = [
     ('quote-not-fireable', 'The permanent that gets a quoted ability has it, but the site offers no Trigger / Activate button for it.'),
 ]
 CODE_ORDER = {c: i for i, (c, _) in enumerate(CODES)}
-CHECK2_CODES = {'empty-list', 'list-mismatch', 'no-picker', 'copy-empty-list', 'copy-list-mismatch', 'player-list-mismatch'}
+CHECK2_CODES = {'empty-list', 'list-mismatch', 'no-picker', 'copy-empty-list', 'copy-list-mismatch', 'player-list-mismatch', 'no-player-picker'}
 
 
 # ───────────────────────────── selecting cards ─────────────────────────────
@@ -404,6 +421,8 @@ def _finding_detail(f):
         return 'missing: %s; extra: %s' % (roles_key(f.get('missing', [])), roles_key(f.get('extra', [])))
     if c == 'player-list-mismatch':
         return 'text: %s, site: %s' % (', '.join(f.get('expectedPlayers', [])), ', '.join(f.get('actualPlayers', [])))
+    if c == 'player-changes-nothing':
+        return ', '.join(f.get('players', []))
     if c == 'changes-with-no-target':
         return '; '.join('%s: %s' % (x['role'], x['what']) for x in f.get('changed', [])[:4])
     if c == 'target-changes-others':

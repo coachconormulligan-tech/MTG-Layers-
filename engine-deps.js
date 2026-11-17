@@ -327,6 +327,11 @@ function effectAppliesToPerm(effect, permState, permanent, permId, allStates, ab
     if (!chosenOpp) return false;
     if (permState.controller !== chosenOpp) return false;
   }
+  // Likewise "creatures target player controls" and "creatures enchanted player controls": nobody
+  // until the player is picked. (They once fell back to "you", so a Curse of Death's Hold just
+  // added shrank its own controller's creatures.)
+  if (effect._targetPlayerScoped && !effect._targetPlayerId) return false;
+  if (effect._enchantedPlayerScoped && !effect._enchantedPlayerId) return false;
 
   if (effect.appliesTo) {
     // CR 613: If another part of the same ability already applied to this permanent

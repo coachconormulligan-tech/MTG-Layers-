@@ -114,13 +114,15 @@ function getTargetPickerKind(sourceId, finalState, info) {
 /* The players a player picker offers: 'opponent' (renderTargetOpponentSelect, "target opponent"),
    'player' (renderTargetPlayerSelect, "target player gains control of …"; not you when the text
    says "target opponent" or "another player", _chosenPlayerNotYou) and 'enchanted'
-   (renderEnchantedPlayerSelect, "Enchant player"). Returns player objects. */
+   (renderEnchantedPlayerSelect, "Enchant player"; not you for "Enchant opponent", _enchantOpponentOnly).
+   Returns player objects. */
 function getPlayerCandidates(sourceId, which) {
   const sourcePerm = Battlefield.getPermById(sourceId);
   const players = Battlefield.players || [];
   if (!sourcePerm) return [];
   const sourceCtrl = sourcePerm.controller || sourcePerm.owner || Battlefield.activePlayerId;
-  if (which === 'opponent' || (which === 'player' && sourcePerm._chosenPlayerNotYou)) return players.filter(pl => pl.id !== sourceCtrl);
+  if (which === 'opponent' || (which === 'player' && sourcePerm._chosenPlayerNotYou) ||
+      (which === 'enchanted' && sourcePerm._enchantOpponentOnly)) return players.filter(pl => pl.id !== sourceCtrl);
   return players.slice();
 }
 
@@ -166,6 +168,16 @@ function getCopyCandidates(sourceId) {
       || (!effect.params.sourceYouControl || tCtrl === srcPermForSnap.controller)
       && (!effect.params.sourceOpponentControls || tCtrl !== srcPermForSnap.controller);
     if (!(mvValid && ctrlValid && (!restriction || restriction(tState)))) continue;
+    // "A copy of target creature" (params.sourceTargeted): what is copied is a target, so shroud,
+    // hexproof of a permanent the source's controller doesn't control, and protection from the
+    // source keep it out (CR 702.18, 702.11, 702.16), as in the target pickers.
+    if (effect.params.sourceTargeted && srcPermForSnap) {
+      const tAbilities = fs ? (fs.abilities || []) : [];
+      if (_hasKeywordAbility(tAbilities, 'shroud')) continue;
+      const srcCtrl = srcPermForSnap.controller || srcPermForSnap.owner || 'player_0';
+      if (tCtrl !== srcCtrl && _hexproofFromSource(tAbilities, fs || tState, finalStates.get(sourceId), srcPermForSnap)) continue;
+      if (typeof _isProtectedFromSource === 'function' && _isProtectedFromSource(fs || tState, finalStates.get(sourceId), srcPermForSnap, t)) continue;
+    }
     candidates.push({ id: t.id, perm: t, state: fs, displayName: (fs ? fs.name : t.name) + (t.label ? ' ' + t.label : '') + (fs?.copySource ? ' (copy)' : '') });
   }
   return { candidates, currentTarget: effect.params._copyTargetPermId || '' };

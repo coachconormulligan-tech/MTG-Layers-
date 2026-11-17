@@ -1,0 +1,16 @@
+{
+  "name": "True Polymorph — the copy picker leaves out shroud and an opponent's hexproof",
+  "notes": "2026-11-17. \"… becomes a copy of another target artifact or creature\": what is copied is a target, but the copy picker (getCopyCandidates) never asked about shroud, hexproof or protection. A copy of a target now carries params.sourceTargeted (cards-parser.js, copy section) and the picker checks them as the target pickers do. Your own hexproof creature stays.",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"] },
+    { "add": "Grizzly Bears" },
+    { "add": "Slippery Bogle" },
+    { "add": "Blastoderm" },
+    { "add": "Gladecover Scout", "controller": "p2" },
+    { "add": "Runeclaw Bear", "controller": "p2" },
+    { "add": "True Polymorph", "spell": true }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "True Polymorph", "kind": "copy" }, "are": ["Grizzly Bears", "Runeclaw Bear", "Slippery Bogle"] }
+  ]
+}

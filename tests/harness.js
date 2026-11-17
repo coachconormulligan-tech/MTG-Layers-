@@ -151,7 +151,8 @@ function targetCandidateLists() {
   }
   // A copy card's copy picker ("copy…", getCopyCandidates): "kind": "copy", the battlefield
   // permanents it offers to be copied. And the player picker of "target player / target opponent /
-  // another player gains control of …" (getPlayerCandidates 'player'): "kind": "players", by name.
+  // another player gains control of …" (getPlayerCandidates 'player'), of "target opponent" and of an
+  // "Enchant player / opponent" Aura: "kind": "players", by name.
   for (const p of Battlefield.permanents) {
     const label = p.name + (p.label ? ' ' + p.label : '');
     const info = getEffectInfo(p.id, finalStates.get(p.id));
@@ -159,8 +160,10 @@ function targetCandidateLists() {
     if (copyEff && !copyEff.params.copyTargetZone) {
       out.push({ perm: label, kind: 'copy', candidates: getCopyCandidates(p.id).candidates.map(c => c.perm.name + (c.perm.label ? ' ' + c.perm.label : '')).sort() });
     }
-    if (p._targetsChosenPlayer) {
-      out.push({ perm: label, kind: 'players', candidates: getPlayerCandidates(p.id, 'player').map(pl => pl.name).sort() });
+    // (Or the "target opponent" picker, _targetsOpponentPlayer, or an Aura's enchanted-player one.)
+    const playerKind = p._targetsChosenPlayer ? 'player' : p._targetsOpponentPlayer ? 'opponent' : p._isEnchantPlayer ? 'enchanted' : null;
+    if (playerKind) {
+      out.push({ perm: label, kind: 'players', candidates: getPlayerCandidates(p.id, playerKind).map(pl => pl.name).sort() });
     }
   }
   // The Equip / Reconfigure / Fortify pop-up's list for each such ability of a permanent

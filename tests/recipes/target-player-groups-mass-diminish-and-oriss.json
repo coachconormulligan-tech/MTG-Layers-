@@ -1,0 +1,19 @@
+{
+  "name": "Mass Diminish and Oriss, Samite Guardian — a group target player controls gets the player picker",
+  "notes": "Found by tests/audit.py once player-group units were audited (2026-11-17). Mass Diminish's \"Until your next turn, creatures target player controls have base power and toughness 1/1\" had no player picker and shrank your own creatures: the base-P/T parser now scopes the group to the chosen player as the boost parser does. Oriss's \"Target player can't cast spells this turn, and creatures that player controls can't attack this turn\" gave nobody the rule: \"that player controls\" after \"target player\" is the chosen player's group (cards-parser.js, can't-rules).",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"], "as": "p2" },
+    { "add": "Grizzly Bears" },
+    { "add": "Runeclaw Bear", "controller": "p2" },
+    { "add": "Mass Diminish", "spell": true, "as": "md" },
+    { "call": ["setTargetPlayer", "@md", "@p2"] },
+    { "add": "Oriss, Samite Guardian", "as": "oriss" },
+    { "fire": "@oriss", "activated": 1, "as": "grandeur" },
+    { "call": ["setTargetPlayer", "@grandeur", "@p2"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2, "traits": { "$excludes": ["Can't attack"] } } },
+    { "perm": "Runeclaw Bear", "final": { "power": 1, "toughness": 1, "traits": { "$includes": ["Can't attack"] } } },
+    { "targetCandidates": { "perm": "Mass Diminish", "kind": "players" }, "are": ["Player 1", "Player 2"] }
+  ]
+}

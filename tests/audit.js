@@ -249,6 +249,11 @@ function offBattlefieldTrigger(fullText) {
    that names more than one target, or "up to N target …", is read by classifyTargets: it can be a
    singular unit too (one target the site models, the others one-shot), or { targets: [...] }. */
 function classifyUnitText(text) {
+  const r = classifyUnitText0(text);
+  if (r.skip) { const pg = classifyPlayerGroup(text); if (pg) return pg; }
+  return r;
+}
+function classifyUnitText0(text) {
   const t0 = String(text || '').replace(/’/g, "'");
   const quotedTarget = /["“][^"”]*\btargets?\b[^"”]*["”]/i.test(t0);
   const masked = t0.replace(/["“][^"”]*["”]/g, 'QUOTED');
@@ -813,19 +818,27 @@ function activatedPlans(permId, a) {
 /* ═════════════════════════ Auditing one unit ═════════════════════════ */
 
 // Runs fn, then puts the board back exactly as it was (as tests/sweep.js's fireAbility does).
+// The players picked for a source (setTargetPlayer, setTargetOpponent, setEnchantedPlayer), on the
+// permanent and on its effects: put back too, so one unit's pick never reaches the next.
+const PLAYER_PICK_KEYS = ['_targetPlayerId', '_targetOpponentPlayerId', '_enchantedPlayerId'];
 function withRestore(fn) {
   const savedPerms = Battlefield.permanents.slice(), savedEffects = Battlefield.effects.slice();
-  const effState = savedEffects.map(e => [e, e.targetId, e.targetIds ? e.targetIds.slice() : undefined, e.timestamp, e.disabled]);
+  const effState = savedEffects.map(e => [e, e.targetId, e.targetIds ? e.targetIds.slice() : undefined, e.timestamp, e.disabled,
+    PLAYER_PICK_KEYS.map(k => e[k]), e.params ? e.params.newController : undefined]);
+  const permPicks = savedPerms.map(p => [p, PLAYER_PICK_KEYS.map(k => p[k])]);
   try { return fn(); }
   finally {
     Battlefield.permanents = savedPerms;
     Battlefield.effects = savedEffects;
-    for (const [e, tid, tids, ts, dis] of effState) {
+    for (const [e, tid, tids, ts, dis, picks, nc] of effState) {
       e.targetId = tid;
       if (tids !== undefined) e.targetIds = tids;
       e.timestamp = ts;
       e.disabled = dis;
+      PLAYER_PICK_KEYS.forEach((k, i) => { if (picks[i] === undefined) delete e[k]; else e[k] = picks[i]; });
+      if (e.params) e.params.newController = nc;
     }
+    for (const [p, picks] of permPicks) PLAYER_PICK_KEYS.forEach((k, i) => { if (picks[i] === undefined) delete p[k]; else p[k] = picks[i]; });
     Battlefield.triggerCounts = new Map();
     Battlefield.activateCounts = new Map();
     Battlefield.updateLabels();
@@ -1001,10 +1014,34 @@ function prepareCopy(ctx, u, id, info, finding) {
   if (info.hasCopyToken) return { skip: 'copy-token-editor' };
   const eff = Battlefield.effects.find(e => e.sourceId === id && e.type === EFFECT_TYPE.COPY);
   if (!eff || eff.params.copyTargetZone) return { skip: 'copy-from-zone' };
-  const site = getCopyCandidates(id).candidates.map(c => c.id);
-  u.copyActual = rolesOf(site);
   const m = u.text.match(COPY_OF_RE);
   const tm = m && m[1].match(/^(?:(another|a second|up to one other|one other|other)\s+)?target\s+(.+)$/i);
+  // A copy of a target: witnesses only this list sees (an opponent's and your hexproof creature, your
+  // shroud creature), judged as a target picker would be. (No protection witness: added after the
+  // unit fired, its protection is newer than the spell or ability, which the site rightly ignores.)
+  const witnessIds = [];
+  if (tm) {
+    const srcSt = ctx.preStates.get(ctx.sourceId) || {};
+    const colors = stateColors(srcSt);
+    for (const e of auraWitnesses(colors).filter(w => /^(?:Hexproof|Shroud)$/.test(w.card.oracle_text))) {
+      const c = e.controller === 'p2' ? Battlefield.players[1].id : 'player_0';
+      const keep = Battlefield.activePlayerId;
+      Battlefield.activePlayerId = c;
+      const wp = Battlefield.addPermanent(JSON.parse(JSON.stringify(e.card)), { suppressPrompt: true, controller: c, owner: c });
+      Battlefield.activePlayerId = keep;
+      roleOf.set(wp.id, e.role);
+      witnessIds.push(wp.id);
+    }
+    if (witnessIds.length) {
+      Battlefield._invalidate();
+      const fsW = Battlefield.getAllFinalStates();
+      const preStates = new Map(ctx.preStates);
+      for (const w of witnessIds) preStates.set(w, fsW.get(w));
+      ctx = Object.assign({}, ctx, { preStates, universe: ctx.universe.concat(witnessIds.map(w => Battlefield.getPermById(w))) });
+    }
+  }
+  const siteAll = getCopyCandidates(id).candidates.map(c => c.id);
+  u.copyActual = rolesOf(siteAll);
   if (!tm) { u.copyPhraseUnknown = m ? m[1] : '(no "becomes a copy of")'; }
   else {
     u.copyPhrase = tm[2];
@@ -1023,14 +1060,23 @@ function prepareCopy(ctx, u, id, info, finding) {
         const kws = keywordsOf(st);
         if (kws.includes('shroud')) continue;
         if (kws.includes('hexproof') && ctrlOf(st, p) !== ctx.sourceCtrl) continue;
+        if (auditProtectedFrom(st, ctx.preStates.get(ctx.sourceId) || {})) continue;
         expected.push(p.id);
       }
       u.copyExpected = rolesOf(expected);
-      const missing = expected.filter(x => !site.includes(x)), extra = site.filter(x => !expected.includes(x));
-      if (!site.length && expected.length) finding('check2', 'copy-empty-list', { missing: rolesOf(missing), extra: [] });
+      const missing = expected.filter(x => !siteAll.includes(x)), extra = siteAll.filter(x => !expected.includes(x));
+      if (!siteAll.length && expected.length) finding('check2', 'copy-empty-list', { missing: rolesOf(missing), extra: [] });
       else if (missing.length || extra.length) finding('check2', 'copy-list-mismatch', { missing: rolesOf(missing), extra: rolesOf(extra) });
     }
   }
+  // The witnesses leave again before Check 1, which is judged on the board as it was.
+  if (witnessIds.length) {
+    Battlefield.permanents = Battlefield.permanents.filter(p => !witnessIds.includes(p.id));
+    Battlefield.effects = Battlefield.effects.filter(e => !witnessIds.includes(e.sourceId));
+    Battlefield.updateLabels();
+    Battlefield._invalidate();
+  }
+  const site = siteAll.filter(x => !witnessIds.includes(x));
   if (!site.length) return { skip: 'copy-nothing-to-copy' };
   const copyCard = Battlefield.copiableCardOf(site[0]);
   if (!copyCard) return { skip: 'copy-nothing-to-copy' };
@@ -1062,6 +1108,195 @@ function prepareGiveControl(ctx, u, id, finding) {
   Battlefield.setTargetPlayer(id, opp.id);
   Battlefield.evaluate();
   return null;
+}
+
+/* ═════════════════════════ A group that a picked player controls ═════════════════════════
+   "Creatures target opponent controls get -1/-1 until end of turn" (Neutralize the Guards), "each
+   creature target opponent controls loses all abilities …" (Curious Colossus), "Gain control of all
+   creatures target opponent controls until end of turn" (Call for Aid), and an Aura that enchants a
+   player ("Creatures enchanted player controls get -1/-1", Curse of Death's Hold): the permanents
+   reached are a group that one player controls, and that player is picked from a list. Read from
+   the text alone. */
+
+// The verbs after "<group> <player> controls" that make a group the site models: a continuous effect,
+// or a rule about attacking or blocking kept as a trait ("can't block this turn"). Others ("attack this
+// turn if able", "don't untap", "phase out", "separate … into two piles") are rules the site does not
+// keep or one-shot actions, so no player picker is expected for them.
+const PLAYER_GROUP_REQUIRED = /^(?:gets?|gains?|has|have|loses?|lose|becomes?|become|is|are|can't|cannot)$/;
+const GROUP_BOUNDARY_VERBS = new RegExp('\\b(?:gain control of|' + ONE_SHOT_VERBS.source.slice(5, -3) + '|gets?|gains?|has|have|loses?|lose|becomes?|become|is|are|until end of turn)\\b', 'g');
+
+/* The group clauses of a text (lower-cased, quotes masked): every "<group> <who> controls <verb>",
+   `whoRe` being the words that name the player. Returns [{ phrase, control, required, at }]; a group
+   that is the object of a one-shot verb ("Tap all creatures target opponent controls", "Destroy all
+   …") is not one: nothing about it lasts. */
+function playerGroupClauses(lower, whoRe) {
+  const out = [];
+  const re = new RegExp('\\s(?:' + whoRe + ')\\s+controls?\\s+((?:also\\s+)?[a-z\']+)', 'g');
+  let m;
+  while ((m = re.exec(lower))) {
+    const before = lower.slice(0, m.index);
+    const clause = before.slice(Math.max(before.lastIndexOf('.'), before.lastIndexOf(';'), before.lastIndexOf(','), before.lastIndexOf('—')) + 1);
+    let last = null, v;
+    GROUP_BOUNDARY_VERBS.lastIndex = 0;
+    while ((v = GROUP_BOUNDARY_VERBS.exec(clause))) last = v;
+    let phrase = clause, control = false;
+    if (last) {
+      const word = last[0];
+      if (word === 'gain control of') control = true;
+      else if (word !== 'until end of turn' && ONE_SHOT_VERBS.test(word) && !CONTINUOUS_VERBS.test(word)) continue;
+      phrase = clause.slice(last.index + word.length);
+      // "Creatures you control get +1/+1 and creatures target opponent controls get -1/-1".
+      if (!control && word !== 'until end of turn') { const a = phrase.indexOf(' and '); phrase = a >= 0 ? phrase.slice(a + 5) : ''; }
+    }
+    phrase = phrase.trim().replace(/^(?:then |and )/, '').replace(/^(?:each|all) /, '').trim();
+    if (!phrase) continue;
+    const verb = m[1].replace(/^also\s+/, '');
+    if (!control && !PLAYER_GROUP_REQUIRED.test(verb)) continue;
+    out.push({ phrase, control, required: true, at: m.index - clause.length });
+  }
+  return out;
+}
+
+/* A unit whose only target is one player and whose text gives a group that player controls a
+   continuous effect: { playerGroup: { who: 'opponent' | 'player', clauses } }, else null. */
+function classifyPlayerGroup(text) {
+  const lower = String(text || '').replace(/’/g, "'").replace(/["“][^"”]*["”]/g, 'QUOTED').toLowerCase();
+  const hits = [...lower.matchAll(/\btargets?\b/g)];
+  if (hits.length !== 1 || hits[0][0] !== 'target') return null;
+  const pm = lower.slice(hits[0].index).match(/^target (opponent|player)\b/);
+  if (!pm) return null;
+  if (/\b(?:any number of|up to \w+|each) target $/.test(lower.slice(0, hits[0].index + 7))) return null;
+  // "You and target opponent each gain control of all creatures the other controls" (Reins of Power).
+  if (/\beach gain control of\b/.test(lower)) return null;
+  // "Target opponent chooses a creature they control. Other creatures they control can't block this
+  // turn" (Goblin War Cry): which creature that player chose is not on the board.
+  if (/\bchooses? (?:a|an|one|two) [^.]*\. other\b/.test(lower)) return null;
+  const clauses = playerGroupClauses(lower, "target (?:opponent|player)|that (?:player|opponent)|they");
+  return clauses.length ? { playerGroup: { who: pm[1], clauses } } : null;
+}
+
+/* Words of the text outside its group clauses about other permanents: the source, a group of yours. */
+function playerGroupMixed(text, cardName, isSpell) {
+  const lower = String(text).replace(/’/g, "'").replace(/["“][^"”]*["”]/g, 'QUOTED').toLowerCase()
+    .replace(/[^.;,]*\s(?:target (?:opponent|player)|that (?:player|opponent)|they|enchanted (?:player|opponent))\s+controls?\b[^.;]*/g, ' ');
+  const names = [String(cardName || '').toLowerCase()];
+  if (names[0].indexOf(',') > 0) names.push(names[0].slice(0, names[0].indexOf(',')));
+  return (!isSpell && (SELF_WORDS.test(lower) || names.some(n => n.length > 2 && lower.includes(n)))) ||
+    /\byou control\b|\beach (?:other )?(?:creature|permanent)\b|\ball (?:other )?(?:creatures|permanents)\b/.test(lower);
+}
+
+/* Check 2 and Check 1 of a player-group unit, the unit already fired or the Aura added.
+   o: { sourceId, listIds (the site's list, or null: no player picker), expectedIds, set(pid),
+        groups: [{ phrase, control, required, attackers }], mixed, before }. */
+function judgePlayerGroup(ctx, u, o) {
+  const finding = (check, code, extra) => u.findings.push(Object.assign({ check, code }, extra || {}));
+  const pname = (id) => Battlefield.getPlayerName(id) || id;
+  u.playersExpected = o.expectedIds.map(pname);
+  u.playersActual = o.listIds ? o.listIds.map(pname) : [];
+  u.pickerKind = o.listIds ? 'players' : 'none';
+  if (!o.listIds) finding('check2', 'no-player-picker');
+  else if (o.expectedIds.length !== o.listIds.length || o.expectedIds.some(x => !o.listIds.includes(x))) {
+    finding('check2', 'player-list-mismatch', { expectedPlayers: u.playersExpected, actualPlayers: u.playersActual });
+  }
+  // Who is in each group, read before the unit (the controller then is the one that counts).
+  const tests = [];
+  for (const g of o.groups) {
+    if (g.attackers) { tests.push(Object.assign({ test: (st, p, ctx2, pid) => traitsOf(st, p).includes('Attacking') && ctrlOf(st, p) !== pid }, g)); continue; }
+    const interp = interpretPhrase(g.phrase.replace(/ and /g, ' or '), { plural: true, before: '' });
+    if (interp.unknown) { u.phraseUnknown = (u.phraseUnknown || []).concat(interp.unknown); continue; }
+    tests.push(Object.assign({ test: (st, p, ctx2, pid) => interp.test(st, p, ctx2) && ctrlOf(st, p) === pid && !(interp.excludeSource && p.id === ctx2.sourceId) }, g));
+  }
+  u.mixed = { source: false, group: !!o.mixed };
+  const now = diffSummaries(o.before, summarizeBoard());
+  u.check1 = { noTarget: now.map(c => ({ role: c.role, what: c.what })), perTarget: [], via: 'players' };
+  if (!o.mixed && now.length) finding('check1', 'changes-with-no-target', { changed: u.check1.noTarget });
+  if (u.phraseUnknown) return;
+  const tryIds = o.listIds && o.listIds.length ? o.listIds : o.listIds ? [] : o.expectedIds;
+  const othersSeen = [], nothing = [];
+  for (const pid of tryIds) {
+    let changed = [];
+    try {
+      o.set(pid);
+      Battlefield.evaluate();
+      changed = diffSummaries(o.before, summarizeBoard());
+    } finally { o.set(null); Battlefield.evaluate(); }
+    const label = 'player ' + pname(pid);
+    u.check1.perTarget.push({ target: label, changed: changed.map(c => ({ role: c.role, what: c.what })) });
+    const inGroup = (id) => {
+      const p = Battlefield.getPermById(id), st = ctx.preStates.get(id);
+      return !!(p && st && tests.some(t => t.test(st, p, ctx, pid)));
+    };
+    const others = changed.filter(c => !inGroup(c.id) && (!o.mixed || ctrlOf(ctx.preStates.get(c.id), Battlefield.getPermById(c.id) || {}) === pid));
+    if (others.length) othersSeen.push({ target: label, others: others.map(c => ({ role: c.role, what: c.what })) });
+    const required = ctx.universe.filter(p => { const st = ctx.preStates.get(p.id); return st && tests.some(t => t.required && t.test(st, p, ctx, pid)); });
+    if (required.length && !required.some(p => changed.some(c => c.id === p.id))) nothing.push(label);
+    const quiet = required.filter(p => !changed.some(c => c.id === p.id));
+    if (quiet.length && quiet.length < required.length) u.infos.push({ code: 'no-op-on-some', what: label + ': ' + rolesOf(quiet.map(p => p.id)).join(', ') });
+  }
+  u.expected = o.groups.map(g => g.attackers ? 'creatures attacking the player' : g.phrase + (g.control ? ' (control)' : ''));
+  if (othersSeen.length) finding('check1', 'target-changes-others', { examples: othersSeen.slice(0, 3), count: othersSeen.length });
+  if (nothing.length) finding('check1', 'player-changes-nothing', { players: nothing });
+}
+
+// A fired spell or ability of a player-group unit: the opponent picker (_targetsOpponentPlayer) or the
+// player picker (_targetsChosenPlayer), whichever the site shows.
+function auditFiredPlayerGroup(ctx, u, id) {
+  const pseudo = Battlefield.getPermById(id);
+  const kind = pseudo && pseudo._targetsOpponentPlayer ? 'opponent' : pseudo && pseudo._targetsChosenPlayer ? 'player' : null;
+  const pg = u.playerGroup;
+  judgePlayerGroup(ctx, u, {
+    sourceId: id,
+    listIds: kind ? getPlayerCandidates(id, kind).map(p => p.id) : null,
+    expectedIds: Battlefield.players.filter(p => pg.who === 'player' || p.id !== ctx.sourceCtrl).map(p => p.id),
+    set: (pid) => kind === 'opponent' ? Battlefield.setTargetOpponent(id, pid) : Battlefield.setTargetPlayer(id, pid),
+    groups: pg.clauses,
+    mixed: playerGroupMixed(u.text, ctx.cardName, u.kind === 'spell'),
+    before: ctx.before,
+  });
+  return { audited: true };
+}
+
+/* An Aura with "Enchant player" / "Enchant opponent" (kind "attach", label "player"): the site's
+   enchanted-player list (getPlayerCandidates 'enchanted') against the line, then each listed player
+   picked (setEnchantedPlayer, as the dropdown does): only the groups its other lines give that player
+   ("Creatures enchanted player controls …", "Creatures attacking enchanted player have trample") may
+   change. A triggered line is not fired here. */
+function auditEnchantPlayer(card, faceIndex, rec, face, text, phrase) {
+  const u = { kind: 'attach', index: undefined, label: 'player', text: text.slice(0, 400), phrase, findings: [], infos: [] };
+  let perm, ctx, beforeAura;
+  try {
+    buildBoard();
+    beforeAura = summarizeBoard();
+    perm = addAuditedCard(card, faceIndex, false);
+    roleOf.set(perm.id, 'source');
+    const preStates = Battlefield.getAllFinalStates();
+    const universe = Battlefield.permanents.filter(p => !p.isManualEffect && !p.isSpell);
+    ctx = { cardName: rec.name, sourceCtrl: 'player_0', sourceId: perm.id, preStates, before: summarizeBoard(), universe };
+  } catch (e) { rec.errors.push(errInfo('enchant player add', e)); return; }
+  try {
+    const statics = text.split('\n').filter(l => !/^(?:enchant|when|whenever|at)\b/i.test(l.trim()) && !/^[^"“]*:/.test(l));
+    const lower = statics.join('\n').replace(/’/g, "'").replace(/["“][^"”]*["”]/g, 'QUOTED').toLowerCase().replace(/\n/g, '. ');
+    const groups = playerGroupClauses(lower, 'enchanted (?:player|opponent)');
+    if (/\bcreatures attacking enchanted (?:player|opponent) (?:have|has|get|gets|gain)\b/.test(lower)) groups.push({ phrase: 'creatures attacking', attackers: true, required: true });
+    // With no player picked, nothing changes: measured against the board before the Aura.
+    const o = {
+      sourceId: perm.id,
+      listIds: perm._isEnchantPlayer ? getPlayerCandidates(perm.id, 'enchanted').map(p => p.id) : null,
+      expectedIds: Battlefield.players.filter(p => !/\bopponent\b/i.test(phrase) || p.id !== ctx.sourceCtrl).map(p => p.id),
+      set: (pid) => Battlefield.setEnchantedPlayer(perm.id, pid),
+      groups,
+      mixed: playerGroupMixed(statics.join('. '), rec.name, false),
+      before: ctx.before,
+    };
+    // Check 1's first half against the board before the Aura was added.
+    const noAura = diffSummaries(beforeAura, ctx.before);
+    judgePlayerGroup(ctx, u, o);
+    u.check1.noTarget = noAura.map(c => ({ role: c.role, what: c.what }));
+    u.findings = u.findings.filter(f => f.code !== 'changes-with-no-target');
+    if (!o.mixed && noAura.length) u.findings.push({ check: 'check1', code: 'changes-with-no-target', changed: u.check1.noTarget });
+  } catch (e) { u.findings.push({ check: 'check2', code: 'crash', error: errInfo('enchant player audit', e) }); }
+  finally { Battlefield._invalidate(); }
+  rec.units.push(u);
 }
 
 /* Audits one unit that has already been fired/cast: `id` is the permanent whose effects are the
@@ -1446,7 +1681,7 @@ function auditUnit(ctx, u, fire) {
       u.findings.push({ check: 'check2', code: 'crash', error: errInfo('fire ' + u.kind, e) });
       return { audited: true };
     }
-    try { return u.modePair ? auditFiredModePair(ctx, u, id) : u.targets ? auditFiredTargets(ctx, u, id) : auditFired(ctx, u, id); }
+    try { return u.modePair ? auditFiredModePair(ctx, u, id) : u.playerGroup ? auditFiredPlayerGroup(ctx, u, id) : u.targets ? auditFiredTargets(ctx, u, id) : auditFired(ctx, u, id); }
     catch (e) { u.findings.push({ check: 'check2', code: 'crash', error: errInfo('audit', e) }); return { audited: true }; }
   });
 }
@@ -1460,6 +1695,7 @@ function newUnit(kind, index, label, text, cls) {
   if (cls.targets) Object.assign(u, { targets: cls.targets, expectKind: cls.expectKind, maxTargets: cls.maxTargets,
     phrase: cls.targets.map(t => t.phrase).join(' / '), targetIndex: cls.targets[0].targetIndex });
   if (cls.origin) u.origin = cls.origin;
+  if (cls.playerGroup) Object.assign(u, { playerGroup: cls.playerGroup, phrase: cls.playerGroup.clauses.map(c => c.phrase).join(' / ') });
   return u;
 }
 
@@ -1499,7 +1735,7 @@ function auditModes(rec, perm, ctx, run, skip, spellText) {
     const label = 'mode ' + (mi + 1);
     const text = stripReminder(modeText);
     const cls = classifyUnitText(text);
-    if (!cls.singular && !cls.targets) { skip('spell', undefined, label, text, 'mode: ' + cls.skip); return; }
+    if (!cls.singular && !cls.targets && !cls.playerGroup) { skip('spell', undefined, label, text, 'mode: ' + cls.skip); return; }
     if (cls.singular) oneTarget.push({ mi, text, phrase: cls.phrase, targetIndex: cls.targetIndex, excludeSource: cls.excludeSource, max: 1 });
     else if (cls.expectKind === 'multi' && cls.targets.length === 1) {
       const t = cls.targets[0];
@@ -1737,6 +1973,7 @@ function auditAttach(card, faceIndex, rec, face) {
   if (!em) { skip('attach: no-enchant-line'); return; }
   const phrase = em[1].trim().replace(/\.$/, '');
   const lower = phrase.toLowerCase();
+  if (/^(?:player|opponent)$/.test(lower)) { auditEnchantPlayer(card, faceIndex, rec, face, text, phrase); return; }
   if (/\b(?:player|opponent)s?\b/.test(lower.replace(/\b(?:an opponent|that player) controls\b/g, ''))) { skip('attach: enchant-player'); return; }
   if (/\b(?:card|cards|graveyard|hand|library|spell)\b/.test(lower)) { skip('attach: enchant-card'); return; }
   const u = { kind: 'attach', index: undefined, label: '', text: text.slice(0, 400), phrase, findings: [], infos: [] };
@@ -2638,7 +2875,7 @@ function runQuotedUnit(o) {
       if (plan.skip) { skipQ(qi, label, q, plan.skip); continue; }
       const t = stripReminder(plan.text);
       const cls = classifyUnitText(t);
-      if (!cls.singular && !cls.targets) { skipQ(qi, label, t, cls.skip); continue; }
+      if (!cls.singular && !cls.targets && !cls.playerGroup) { skipQ(qi, label, t, cls.skip); continue; }
       const u = newUnit('quoted', qi, label, t, cls);
       u.bearer = roleName(bearer.id);
       Object.defineProperty(u, 'fullText', { value: stripReminder(ab.fullText || ''), enumerable: false });
@@ -2693,7 +2930,7 @@ function auditFace(card, faceIndex) {
     const text = stripReminder(face.oracle_text || '');
     if (perm.isModalSpell) { auditModes(rec, perm, ctx, run, skip, text); quotedLater(); return rec; }
     const cls = classifyUnitText(text);
-    if (!cls.singular && !cls.targets) { if (cls.skip !== 'target-in-quote') skip('spell', undefined, '', text, cls.skip); quotedLater(); return rec; }
+    if (!cls.singular && !cls.targets && !cls.playerGroup) { if (cls.skip !== 'target-in-quote') skip('spell', undefined, '', text, cls.skip); quotedLater(); return rec; }
     const u = newUnit('spell', undefined, '', text, cls);
     // Casting happened in addAuditedCard; the spell's own effects are the unit's.
     run(u, () => perm);
@@ -2715,7 +2952,7 @@ function auditFace(card, faceIndex) {
       if (plan.skip) { skip(kind, ab.index, '', stripReminder(ab.effectText), plan.skip); continue; }
       const text = stripReminder(plan.text);
       const cls = classifyUnitText(text);
-      if (!cls.singular && !cls.targets) { if (cls.skip !== 'target-in-quote') skip(kind, ab.index, plan.label, text, cls.skip); continue; }
+      if (!cls.singular && !cls.targets && !cls.playerGroup) { if (cls.skip !== 'target-in-quote') skip(kind, ab.index, plan.label, text, cls.skip); continue; }
       const u = newUnit(kind, ab.index, plan.label, text, cls);
       // (Not written to the raw output.)
       Object.defineProperty(u, 'fullText', { value: stripReminder(ab.fullText || ''), enumerable: false });

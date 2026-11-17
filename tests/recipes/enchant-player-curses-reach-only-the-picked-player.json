@@ -1,0 +1,22 @@
+{
+  "name": "Enchant player Curses — nobody until a player is picked; Enchant opponent lists opponents only; creatures attacking that player",
+  "notes": "Found by tests/audit.py once Enchant player Auras were audited (2026-11-17). A Curse just added read \"enchanted player\" as you: Curse of Death's Hold shrank its own controller's creatures until a player was picked. Now an effect scoped to the enchanted player (or to \"target player\") reaches nobody until one is picked (engine-deps.js), as \"target opponent\" already did. \"Enchant opponent\" (Tenuous Truce) was not read as enchanting a player at all, so it had no player list; it is now, and the list leaves you out (_enchantOpponentOnly, getPlayerCandidates 'enchanted'). \"Creatures attacking enchanted player have trample\" (Curse of Hospitality) reached nobody: \"creatures attacking you\" is now a subject (cards-text-utils.js).",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"], "as": "p2" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "call": ["toggleAttacking", "@bears"] },
+    { "add": "Runeclaw Bear", "controller": "p2" },
+    { "add": "Curse of Death's Hold" },
+    { "add": "Curse of Conformity", "as": "conformity" },
+    { "call": ["setEnchantedPlayer", "@conformity", "@p2"] },
+    { "add": "Curse of Hospitality", "as": "hospitality" },
+    { "call": ["setEnchantedPlayer", "@hospitality", "@p2"] },
+    { "add": "Tenuous Truce" }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2, "subtypes": ["Bear"], "abilities": { "$includes": ["Trample"] } } },
+    { "perm": "Runeclaw Bear", "final": { "power": 3, "toughness": 3, "subtypes": [] } },
+    { "targetCandidates": { "perm": "Curse of Death's Hold", "kind": "players" }, "are": ["Player 1", "Player 2"] },
+    { "targetCandidates": { "perm": "Tenuous Truce", "kind": "players" }, "are": ["Player 2"] }
+  ]
+}

@@ -28,7 +28,8 @@ Asserts are the hand-written facts the fixture exists to protect, checked on eve
         Equip / Reconfigure / Fortify pop-up has a list per such ability, { "perm": "Robe of the
         Archmagi", "kind": "equip", "equip": 1 }, 0-based in text order; empty when blocked. A
         copy card's copy picker: { "kind": "copy" }; the player picker of "target player / target
-        opponent gains control of": { "kind": "players" }, by player name)
+        opponent gains control of", of "creatures target opponent controls …" and of an "Enchant
+        player / opponent" Aura: { "kind": "players" }, by player name)
     { "zoneCard": { "name": "Regal Bunnicorn", "zone": "graveyard" }, "final": { "power": 1 },
       "cdaAbilities": ["This card's power and toughness are each equal to …"] }
         (a graveyard / exile / command-zone card as the Details pop-up evaluates it, "you" being

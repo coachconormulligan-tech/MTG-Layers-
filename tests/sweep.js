@@ -393,6 +393,13 @@ function addCard(card, faceIndex, isSpell) {
   if (perm.needsChosenCardType) Battlefield.setChosenCardType(perm.id, 'artifact');
   if (perm.needsChosenCardName) Battlefield.setChosenCardName(perm.id, 'Grizzly Bears');
   if (perm.needsChosenAbilities) Battlefield.setChosenAbilities(perm.id, perm.abilityChoices.slice(0, perm.abilityChoiceCount).join(' and '));
+  // An "Enchant player" Aura reaches nobody until it is attached to a player: you, as the site
+  // once assumed ("Enchant opponent": the other player).
+  if (perm._isEnchantPlayer && !perm._enchantedPlayerId) {
+    const other = (Battlefield.players || []).find(pl => pl.id !== 'player_0');
+    const pick = perm._enchantOpponentOnly ? (other && other.id) : 'player_0';
+    if (pick) Battlefield.setEnchantedPlayer(perm.id, pick);
+  }
   return perm;
 }
 
