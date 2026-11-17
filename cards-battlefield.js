@@ -650,6 +650,21 @@ const Battlefield = {
           .replace(/\bit\s+(gets?|gains?|has|becomes?|loses?)\b/i, _ifTarget + ' $1');
       }
     }
+    // "When this Aura enters, if it's on the battlefield, it loses "enchant creature card in a
+    // graveyard" and gains …" (Animate Dead, Dance of the Dead): both "it"s are the permanent
+    // that entered, never a pick.
+    {
+      const _entered = kind === 'trigger' && String(fullText || '').match(/^when(?:ever)?\s+(this\s+[\w-]+)\s+enters\b/i);
+      // (Written "This enchantment": the parser reads that, not "this Aura", as the card itself.
+      // "loses "…" and gains "…"" is two sentences, so each is read as the card's own.)
+      const _self = /^this\s+aura$/i.test(_entered ? _entered[1] : '') ? 'This enchantment'
+        : _entered ? _entered[1].charAt(0).toUpperCase() + _entered[1].slice(1).toLowerCase() : '';
+      if (_entered && /^if\s+it's\s+(?:still\s+)?on\s+the\s+battlefield,\s*it\s+(?:gets?|gains?|has|becomes?|loses?)\b/i.test(parsedEffectText)) {
+        parsedEffectText = parsedEffectText
+          .replace(/^if\s+it's\s+(?:still\s+)?on\s+the\s+battlefield,\s*it\s+/i, _self + ' ')
+          .replace(/^([^.]*?\bloses\s+"[^"]*")\s+and\s+gains\s+"(\w)/i, (_, lost, c) => `${lost}. ${_self} gains "${c.toUpperCase()}`);
+      }
+    }
     parsedEffectText = parsedEffectText.replace(/^if\s+[^,]+,\s*/i, '');
     parsedEffectText = _fireTimeBecomesRewrites(parsedEffectText, this.players.length);
     parsedEffectText = _writeOutEarthbend(parsedEffectText);
@@ -1166,7 +1181,10 @@ const Battlefield = {
       }
       return first;
     }
-    return this._addAbilityPseudo(sourcePermId, abilityIdx, effectText, fullText, 'trigger', firedAtStates, savedGuesses);
+    const pseudo = this._addAbilityPseudo(sourcePermId, abilityIdx, effectText, fullText, 'trigger', firedAtStates, savedGuesses);
+    // (Not on a restore, which replays the pseudo-permanent alone: the card is already back.)
+    if (pseudo) this._returnGraveyardEnchanted(sourcePermId, effectText);
+    return pseudo;
   },
 
   addActivatedAbility(sourcePermId, abilityIdx, effectText, fullText, firedAtStates, savedGuesses) {
@@ -2318,6 +2336,8 @@ const Battlefield = {
         }
       }
     }
+    // (An Aura on a graveyard card is moved off it: Animate Dead — setGraveyardEnchant.)
+    { const sp = this.getPermById(effectSourceId); if (sp && sp._graveyardEnchant) sp._graveyardEnchant = null; }
     const newTs = this.nextTimestamp++;
     const hasModalTargets = this.effects.some(e => e.sourceId === effectSourceId && e.modalModeIndex !== undefined);
     // "This creature and another target creature each get +1/+0" (Deadly Dancer): the half pinned
@@ -2753,6 +2773,59 @@ const Battlefield = {
     player.graveyard.splice(index, 1);
     player.gameState.graveyardCount = player.graveyard.length;
     this.evaluate();
+  },
+
+  /* An Aura on a card in a graveyard ("Enchant creature card in a graveyard" — Animate Dead):
+     the card it is on, kept as { playerId, card } (that card object in that player's graveyard).
+     It is then on no permanent. A null playerId clears it. */
+  setGraveyardEnchant(auraId, playerId, index) {
+    const perm = this.getPermById(auraId);
+    if (!perm) return;
+    const card = playerId != null ? ((this.getPlayer(playerId) || {}).graveyard || [])[index] : null;
+    this.setTarget(auraId, null);   // (also clears an earlier graveyard card)
+    perm._graveyardEnchant = card ? { playerId, card } : null;
+    this._invalidate();
+    this.evaluate();
+  },
+
+  // The graveyard card an Aura is on, with its place now: { playerId, index, card }, or null
+  // when there is none or the card has left that graveyard.
+  getGraveyardEnchant(auraId) {
+    const perm = this.getPermById(auraId);
+    const pick = perm && perm._graveyardEnchant;
+    if (!pick) return null;
+    const index = ((this.getPlayer(pick.playerId) || {}).graveyard || []).indexOf(pick.card);
+    return index >= 0 ? { playerId: pick.playerId, index, card: pick.card } : null;
+  },
+
+  /* "Return enchanted creature card to the battlefield under your control and attach this Aura
+     to it" (Animate Dead; "Put … onto the battlefield tapped …" — Dance of the Dead), fired: the
+     graveyard card the Aura is on leaves the graveyard as a permanent (owned by that graveyard's
+     player, controlled by the Aura's controller when the text says "under your control") and
+     the Aura is attached to it. Nothing happens when the Aura is on no graveyard card. */
+  _returnGraveyardEnchanted(auraId, effectText) {
+    const m = String(effectText || '').match(/\b(?:return|put)\s+enchanted\s+(?:[\w-]+\s+)*?card\s+(?:to|onto)\s+the\s+battlefield(\s+tapped)?(\s+under\s+your\s+control)?/i);
+    if (!m) return null;
+    const pick = this.getGraveyardEnchant(auraId);
+    const aura = this.getPermById(auraId);
+    if (!pick || !aura) return null;
+    const player = this.getPlayer(pick.playerId);
+    player.graveyard.splice(pick.index, 1);
+    player.gameState.graveyardCount = player.graveyard.length;
+    aura._graveyardEnchant = null;
+    const ctrl = m[2] ? (aura.controller || aura.owner || pick.playerId) : pick.playerId;
+    const prevActive = this.activePlayerId;
+    this.activePlayerId = pick.playerId;   // createPermanent reads activePlayerId for owner/controller
+    const np = this.addPermanent(pick.card, { suppressPrompt: true });
+    this.activePlayerId = prevActive;
+    if (!np) return null;
+    np.owner = pick.playerId;
+    np.controller = ctrl;
+    if (ctrl !== pick.playerId) np._enteredUnderControlOf = ctrl;
+    if (m[1]) np.tapped = true;
+    aura._returnedPermId = np.id;   // what "enchant creature put onto the battlefield with this Aura" allows
+    this.setTarget(auraId, np.id);
+    return np;
   },
 
   /* The top card of a player's library, for cards that read it (Conspicuous Snoop, Skill
@@ -3667,6 +3740,10 @@ const Battlefield = {
         chosenCardType: p.chosenCardType || null,
         chosenAbilities: p.chosenAbilities || null,
         linkedCards: (p.linkedCards && p.linkedCards.length) ? p.linkedCards : null,
+        // The graveyard card an Aura is on (Animate Dead), by its place in that graveyard.
+        graveyardEnchant: (g => g ? { playerId: g.playerId, index: g.index } : null)(this.getGraveyardEnchant(p.id)),
+        enteredUnderControlOf: p._enteredUnderControlOf || null,
+        returnedPermId: p._returnedPermId || null,
         targetOpponentPlayerId: p._targetOpponentPlayerId || null,
         targetPlayerId: p._targetPlayerId || null,
         enchantedPlayerId: p._enchantedPlayerId || null,
@@ -3863,11 +3940,16 @@ const Battlefield = {
       if (r.chosenCardType) this.setChosenCardType(np.id, r.chosenCardType);
       if (r.chosenAbilities) this.setChosenAbilities(np.id, r.chosenAbilities);
       for (const lc of r.linkedCards || []) this.addLinkedCard(np.id, lc);
+      if (r.graveyardEnchant) {
+        const gyCard = ((this.getPlayer(r.graveyardEnchant.playerId) || {}).graveyard || [])[r.graveyardEnchant.index];
+        if (gyCard) np._graveyardEnchant = { playerId: r.graveyardEnchant.playerId, card: gyCard };
+      }
       if (r.additionalCostPaid) this.setAdditionalCostPaid(np.id, true);
       if (r.additionalCostPaid2) this.setAdditionalCostPaid(np.id, true, 2);
       for (const n of (r.additionalCostPaidMore || [])) this.setAdditionalCostPaid(np.id, true, n);
       // Mutable runtime/display state.
       np.controller = r.controller || r.owner;
+      if (r.enteredUnderControlOf) np._enteredUnderControlOf = r.enteredUnderControlOf;
       np.tapped = !!r.tapped;
       np.traits = Array.isArray(r.traits) ? r.traits.slice() : [];
       if (r.attackingPlayerId) np.attackingPlayerId = r.attackingPlayerId;
@@ -4018,6 +4100,7 @@ const Battlefield = {
         }
       }
       if (r.primaryTarget && idMap[r.primaryTarget]) this.setTarget(nsId, idMap[r.primaryTarget]);
+      if (r.returnedPermId && idMap[r.returnedPermId]) { const rp = this.getPermById(nsId); if (rp) rp._returnedPermId = idMap[r.returnedPermId]; }
       if (r.refPermId && idMap[r.refPermId]) this.setRefPerm(nsId, idMap[r.refPermId]);
       if (r.multiTarget) r.multiTarget.forEach((tid, i) => { if (idMap[tid]) this.setMultiTarget(nsId, i, idMap[tid]); });
       for (const [slot, tid] of Object.entries(r.slotTargets || {})) { if (idMap[tid]) this.setSlottedTarget(nsId, Number(slot), idMap[tid]); }

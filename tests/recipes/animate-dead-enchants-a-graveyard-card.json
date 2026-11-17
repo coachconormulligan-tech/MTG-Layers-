@@ -1,0 +1,17 @@
+{
+  "name": "Animate Dead — lists only creature cards in graveyards until its trigger is fired",
+  "notes": "Memory: project_animate_dead_graveyard_card_picker_2026-11-16. The attach picker of an Aura with 'Enchant creature card in a graveyard' listed creatures on the battlefield. While the Aura has that line it now lists the creature cards in every graveyard (_graveyardEnchantCandidates in cards-targeting.js; Battlefield.setGraveyardEnchant). Lightning Bolt in the graveyard and Grizzly Bears on the battlefield are not listed.",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"] },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "call": ["addToGraveyard", "p1", "card:Hill Giant"] },
+    { "call": ["addToGraveyard", "p1", "card:Lightning Bolt"] },
+    { "call": ["addToGraveyard", "p2", "card:Serra Angel"] },
+    { "add": "Animate Dead", "as": "animate" }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Animate Dead" }, "are": ["Hill Giant", "Serra Angel"] },
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2 } },
+    { "perm": "Animate Dead", "final": { "abilities": { "$includes": ["Enchant creature card in a graveyard"] } } }
+  ]
+}

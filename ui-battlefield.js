@@ -338,7 +338,9 @@ function renderBattlefield() {
     const hasEffectTarget = (effectsBySourceId.get(p.id) || []).some(e =>
       e.scope === 'targeted' && !e.selfTarget && e.targetId);
     const hasEnchantPlayer = p._isEnchantPlayer && p._enchantedPlayerId;
-    if (!hasBestowTarget && !hasEffectTarget && !hasEnchantPlayer) {
+    // (On a card in a graveyard: Animate Dead before its trigger is fired.)
+    const onGraveyardCard = !!Battlefield.getGraveyardEnchant(p.id);
+    if (!hasBestowTarget && !hasEffectTarget && !hasEnchantPlayer && !onGraveyardCard) {
       unattachedAuraIds.add(p.id);
     }
   }

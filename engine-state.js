@@ -66,7 +66,9 @@ function createBaseState(permanent) {
     // back here would make the base state already "post-control-effect", which means the
     // CONTROL effect would produce no delta and Layer 2 would show as unmodified.
     // Starting from owner is the correct base: Layer 2 effects then apply on top.
-    controller: permanent.owner || 'player_0',
+    // (A card put onto the battlefield under another player's control starts there, CR 110.2a:
+    // "Return enchanted creature card to the battlefield under your control" — Animate Dead.)
+    controller: permanent._enteredUnderControlOf || permanent.owner || 'player_0',
     tapped: permanent.tapped || false,
     isCommander: (() => {
       if (typeof Battlefield === 'undefined' || !Battlefield.isCommander) return false;

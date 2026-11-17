@@ -1,0 +1,1206 @@
+{
+ "name": "Animate Dead — firing its trigger returns the graveyard card it is on, under your control, and may be on only that creature",
+ "notes": "Memory: project_animate_dead_graveyard_card_picker_2026-11-16. Animate Dead is put on Player 2's Serra Angel in the graveyard and its trigger fired. The fired 'if it's on the battlefield, it loses \"enchant creature card in a graveyard\" and gains \"…\"' was a pick of a creature (the 'it' guessed as 'target creature'); it is now the Aura's own (rewritten 'This enchantment loses … . This enchantment gains …' in _addAbilityPseudo). 'Return enchanted creature card to the battlefield under your control' moves the card (Battlefield._returnGraveyardEnchanted): Serra Angel is Player 1's, 3/4 with -1/-0, and the picker lists only Serra Angel ('enchant creature put onto the battlefield with this Aura': _returnedPermId), not Grizzly Bears.",
+ "recipe": {
+  "steps": [
+   {
+    "call": [
+     "addPlayer",
+     "Player 2"
+    ]
+   },
+   {
+    "add": "Grizzly Bears",
+    "as": "bears"
+   },
+   {
+    "call": [
+     "addToGraveyard",
+     "p1",
+     "card:Hill Giant"
+    ]
+   },
+   {
+    "call": [
+     "addToGraveyard",
+     "p2",
+     "card:Serra Angel"
+    ]
+   },
+   {
+    "add": "Animate Dead",
+    "as": "animate"
+   },
+   {
+    "call": [
+     "setGraveyardEnchant",
+     "@animate",
+     "p2",
+     0
+    ]
+   },
+   {
+    "fire": "@animate",
+    "trigger": 1
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Serra Angel",
+   "final": {
+    "controller": "player_0",
+    "power": 3,
+    "toughness": 4
+   }
+  },
+  {
+   "perm": "Grizzly Bears",
+   "final": {
+    "power": 2,
+    "toughness": 2
+   }
+  },
+  {
+   "perm": "Animate Dead",
+   "final": {
+    "abilities": {
+     "$includes": [
+      "Enchant creature put onto the battlefield with this Aura."
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Animate Dead",
+   "final": {
+    "abilities": {
+     "$excludes": [
+      "Enchant creature card in a graveyard"
+     ]
+    }
+   }
+  },
+  {
+   "targetCandidates": {
+    "perm": "Animate Dead"
+   },
+   "are": [
+    "Serra Angel"
+   ]
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+     "multiverse_ids": [
+      129586
+     ],
+     "mtgo_id": 27400,
+     "mtgo_foil_id": 27401,
+     "tcgplayer_id": 15153,
+     "cardmarket_id": 16432,
+     "name": "Grizzly Bears",
+     "lang": "en",
+     "released_at": "2007-07-13",
+     "uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "scryfall_uri": "https://scryfall.com/card/10e/268/grizzly-bears?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:43:21Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "normal": "https://cards.scryfall.io/normal/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "large": "https://cards.scryfall.io/large/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "png": "https://cards.scryfall.io/png/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.png?1783943001",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "grid": "https://cards.scryfall.io/grid/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "display": "https://cards.scryfall.io/display/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "art": "https://cards.scryfall.io/art/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "crop": "https://cards.scryfall.io/crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001"
+     },
+     "mana_cost": "{1}{G}",
+     "cmc": 2,
+     "type_line": "Creature — Bear",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set": "10e",
+     "set_name": "Tenth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A14c8f55d-d177-4c25-a931-ebeb9e6062a0&unique=prints",
+     "collector_number": "268",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"We cannot forget that among all of Dominaria's wonders, a system of life exists, with prey and predators that will never fight wars nor vie for ancient power.\"\n—Jolrael, empress of beasts",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "D. J. Cleland-Hura",
+     "artist_ids": [
+      "87d21070-2432-4167-8aab-5968af1c14f3"
+     ],
+     "illustration_id": "066bfe81-0f53-43da-a074-b2ecc5dcda72",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 8114,
+     "penny_rank": 10982,
+     "prices": {
+      "usd": "0.22",
+      "usd_foil": "3.29",
+      "usd_etched": null,
+      "eur": "0.11",
+      "eur_foil": "1.97",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129586&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "edhrec": "https://edhrec.com/route/?cc=Grizzly+Bears"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15153%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16432&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27400?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "cc0c2bab-4392-4e7b-9d14-2901f4ffbae8",
+     "oracle_id": "c0d8fef4-65f4-4769-982d-b397d2b7e977",
+     "multiverse_ids": [],
+     "resource_id": "EE8D0787A6A359CD4880A0ADF621CC1D6A76C2BB89C34FD27CA8C5EF7E65B0D7",
+     "mtgo_id": 148883,
+     "tcgplayer_id": 687375,
+     "cardmarket_id": 881527,
+     "name": "Animate Dead",
+     "lang": "en",
+     "released_at": "2026-04-24",
+     "uri": "https://api.scryfall.com/cards/cc0c2bab-4392-4e7b-9d14-2901f4ffbae8",
+     "scryfall_uri": "https://scryfall.com/card/soc/207/animate-dead?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T00:49:47Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/c/c/cc0c2bab-4392-4e7b-9d14-2901f4ffbae8.jpg?1783903787",
+      "normal": "https://cards.scryfall.io/normal/front/c/c/cc0c2bab-4392-4e7b-9d14-2901f4ffbae8.jpg?1783903787",
+      "large": "https://cards.scryfall.io/large/front/c/c/cc0c2bab-4392-4e7b-9d14-2901f4ffbae8.jpg?1783903787",
+      "png": "https://cards.scryfall.io/png/front/c/c/cc0c2bab-4392-4e7b-9d14-2901f4ffbae8.png?1783903787",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/c/c/cc0c2bab-4392-4e7b-9d14-2901f4ffbae8.jpg?1783903787",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/c/c/cc0c2bab-4392-4e7b-9d14-2901f4ffbae8.jpg?1783903787",
+      "thumb": "https://cards.scryfall.io/thumb/front/c/c/cc0c2bab-4392-4e7b-9d14-2901f4ffbae8.webp?1783903787",
+      "grid": "https://cards.scryfall.io/grid/front/c/c/cc0c2bab-4392-4e7b-9d14-2901f4ffbae8.webp?1783903787",
+      "display": "https://cards.scryfall.io/display/front/c/c/cc0c2bab-4392-4e7b-9d14-2901f4ffbae8.webp?1783903787",
+      "art": "https://cards.scryfall.io/art/front/c/c/cc0c2bab-4392-4e7b-9d14-2901f4ffbae8.webp?1783903787",
+      "crop": "https://cards.scryfall.io/crop/front/c/c/cc0c2bab-4392-4e7b-9d14-2901f4ffbae8.webp?1783903787"
+     },
+     "mana_cost": "{1}{B}",
+     "cmc": 2,
+     "type_line": "Enchantment — Aura",
+     "oracle_text": "Enchant creature card in a graveyard\nWhen this Aura enters, if it's on the battlefield, it loses \"enchant creature card in a graveyard\" and gains \"enchant creature put onto the battlefield with this Aura.\" Return enchanted creature card to the battlefield under your control and attach this Aura to it. When this Aura leaves the battlefield, that creature's controller sacrifices it.\nEnchanted creature gets -1/-0.",
+     "colors": [
+      "B"
+     ],
+     "color_identity": [
+      "B"
+     ],
+     "keywords": [
+      "Enchant"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "97fab8d1-480a-419d-ab14-663968e29b9c",
+     "set": "soc",
+     "set_name": "Secrets of Strixhaven Commander",
+     "set_type": "commander",
+     "set_uri": "https://api.scryfall.com/sets/97fab8d1-480a-419d-ab14-663968e29b9c",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Asoc&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/soc?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/cc0c2bab-4392-4e7b-9d14-2901f4ffbae8/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ac0d8fef4-65f4-4769-982d-b397d2b7e977&unique=prints",
+     "collector_number": "207",
+     "digital": false,
+     "rarity": "uncommon",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Bastien L. Deharme",
+     "artist_ids": [
+      "798f63ec-41ad-474e-9708-df08193345c6"
+     ],
+     "illustration_id": "5a5f615b-b606-48cf-aae8-5143baed2223",
+     "border_color": "black",
+     "frame": "2015",
+     "frame_effects": [
+      "enchantment"
+     ],
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 223,
+     "penny_rank": 192,
+     "prices": {
+      "usd": "7.05",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "6.92",
+      "eur_foil": null,
+      "tix": "0.21"
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DAnimate%2BDead",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DAnimate%2BDead",
+      "edhrec": "https://edhrec.com/route/?cc=Animate+Dead"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F687375%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=881527&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/148883?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": "perm_3",
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": "perm_3",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": 6,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d",
+     "oracle_id": "4b7ac066-e5c7-43e6-9e7e-2739b24a905d",
+     "multiverse_ids": [],
+     "tcgplayer_id": 695524,
+     "cardmarket_id": 904192,
+     "name": "Serra Angel",
+     "lang": "en",
+     "released_at": "2026-04-24",
+     "uri": "https://api.scryfall.com/cards/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d",
+     "scryfall_uri": "https://scryfall.com/card/fdn/740/serra-angel?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-08-24T09:18:11Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.jpg?1787563091",
+      "normal": "https://cards.scryfall.io/normal/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.jpg?1787563091",
+      "large": "https://cards.scryfall.io/large/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.jpg?1787563091",
+      "png": "https://cards.scryfall.io/png/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.png?1787563091",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.jpg?1787563091",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.jpg?1787563091",
+      "thumb": "https://cards.scryfall.io/thumb/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.webp?1787563091",
+      "grid": "https://cards.scryfall.io/grid/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.webp?1787563091",
+      "display": "https://cards.scryfall.io/display/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.webp?1787563091",
+      "art": "https://cards.scryfall.io/art/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.webp?1787563091",
+      "crop": "https://cards.scryfall.io/crop/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.webp?1787563091"
+     },
+     "mana_cost": "{3}{W}{W}",
+     "cmc": 5,
+     "type_line": "Creature — Angel",
+     "oracle_text": "Flying\nVigilance (Attacking doesn't cause this creature to tap.)",
+     "power": "4",
+     "toughness": "4",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [
+      "Flying",
+      "Vigilance"
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d",
+       "component": "combo_piece",
+       "name": "Serra Angel",
+       "type_line": "Creature — Angel",
+       "uri": "https://api.scryfall.com/cards/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d"
+      },
+      {
+       "object": "related_card",
+       "id": "ad2bbfa1-81e0-4683-b1dc-a3aaa9837690",
+       "component": "combo_piece",
+       "name": "Treizeci, Sun of Serra",
+       "type_line": "Legendary Creature — Human Knight",
+       "uri": "https://api.scryfall.com/cards/ad2bbfa1-81e0-4683-b1dc-a3aaa9837690"
+      }
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "arena",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a7ecb771-d1b6-4dec-8cf5-8d45179f21e0",
+     "set": "fdn",
+     "set_name": "Foundations",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a7ecb771-d1b6-4dec-8cf5-8d45179f21e0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Afdn&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/fdn?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A4b7ac066-e5c7-43e6-9e7e-2739b24a905d&unique=prints",
+     "collector_number": "740",
+     "digital": false,
+     "rarity": "uncommon",
+     "flavor_text": "Follow the light. In its absence, follow her.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Greg Staples",
+     "artist_ids": [
+      "93d65564-bf00-447b-8406-e2031f03b6b1"
+     ],
+     "illustration_id": "5f5651af-22fb-4fb8-a04c-1f34b5104bd9",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "setextension"
+     ],
+     "edhrec_rank": 9449,
+     "penny_rank": 12470,
+     "prices": {
+      "usd": "0.24",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.20",
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DSerra%2BAngel",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DSerra%2BAngel",
+      "edhrec": "https://edhrec.com/route/?cc=Serra+Angel"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F695524%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=904192&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Serra+Angel&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_1",
+    "controller": "player_0",
+    "timestamp": 5,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": "player_0",
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [
+   {
+    "id": "trig_perm_2_1_4",
+    "kind": "trigger",
+    "pseudoKind": "ability",
+    "sourceId": "perm_2",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 1,
+    "timestamp": 4,
+    "effectText": "This enchantment loses \"enchant creature card in a graveyard\". This enchantment gains \"Enchant creature put onto the battlefield with this Aura.\" Return enchanted creature card to the battlefield under your control and attach this Aura to it. When this Aura leaves the battlefield, that creature's controller sacrifices it.",
+    "xValue": null,
+    "hasXValue": false,
+    "cdaUserValue": null,
+    "linkedCards": null,
+    "fullText": "When this Aura enters, if it's on the battlefield, it loses \"enchant creature card in a graveyard\" and gains \"enchant creature put onto the battlefield with this Aura.\" Return enchanted creature card to the battlefield under your control and attach this Aura to it. When this Aura leaves the battlefield, that creature's controller sacrifices it.",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "guessedTargetSubjects": [],
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "forPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Grizzly Bears",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Bear"
+       ],
+       "power": 2,
+       "toughness": 2,
+       "basePower": 2,
+       "baseToughness": 2,
+       "abilities": [],
+       "colors": [
+        "G"
+       ],
+       "manaValue": 2,
+       "manaCost": "{1}{G}",
+       "isCreature": true,
+       "isToken": false,
+       "isEmblem": false,
+       "isSpell": false,
+       "isZoneCard": false,
+       "oracleText": "",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "attackingPlayerId": null,
+       "timesAttackedThisTurn": 0,
+       "allPrintedAbilities": [],
+       "cdaAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_2",
+      {
+       "name": "Animate Dead",
+       "types": [
+        "Enchantment"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Aura"
+       ],
+       "power": null,
+       "toughness": null,
+       "basePower": null,
+       "baseToughness": null,
+       "abilities": [
+        "Enchant creature card in a graveyard",
+        "When this Aura enters, if it's on the battlefield, it loses \"enchant creature card in a graveyard\" and gains \"enchant creature put onto the battlefield with this Aura.\" Return enchanted creature card to the battlefield under your control and attach this Aura to it. When this Aura leaves the battlefield, that creature's controller sacrifices it.",
+        "Enchanted creature gets -1/-0."
+       ],
+       "colors": [
+        "B"
+       ],
+       "manaValue": 2,
+       "manaCost": "{1}{B}",
+       "isCreature": false,
+       "isToken": false,
+       "isEmblem": false,
+       "isSpell": false,
+       "isZoneCard": false,
+       "oracleText": "Enchant creature card in a graveyard\nWhen this Aura enters, if it's on the battlefield, it loses \"enchant creature card in a graveyard\" and gains \"enchant creature put onto the battlefield with this Aura.\" Return enchanted creature card to the battlefield under your control and attach this Aura to it. When this Aura leaves the battlefield, that creature's controller sacrifices it.\nEnchanted creature gets -1/-0.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "attackingPlayerId": null,
+       "timesAttackedThisTurn": 0,
+       "allPrintedAbilities": [
+        "Enchant creature card in a graveyard",
+        "When this Aura enters, if it's on the battlefield, it loses \"enchant creature card in a graveyard\" and gains \"enchant creature put onto the battlefield with this Aura.\" Return enchanted creature card to the battlefield under your control and attach this Aura to it. When this Aura leaves the battlefield, that creature's controller sacrifices it.",
+        "Enchanted creature gets -1/-0."
+       ],
+       "cdaAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Animate Dead",
+       "imageUri": "https://cards.scryfall.io/small/front/c/c/cc0c2bab-4392-4e7b-9d14-2901f4ffbae8.jpg?1783903787",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Enchantment"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Aura"
+       ],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 2
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      },
+      {
+       "id": "player_1",
+       "name": "Player 2"
+      }
+     ]
+    },
+    "primaryTarget": "perm_2",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": 4,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null
+   }
+  ],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 1,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [
+     {
+      "object": "card",
+      "id": "14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8",
+      "oracle_id": "342199e0-15b6-4824-83da-25caef2592b3",
+      "multiverse_ids": [
+       129591
+      ],
+      "mtgo_id": 27040,
+      "mtgo_foil_id": 27041,
+      "tcgplayer_id": 15162,
+      "cardmarket_id": 16376,
+      "name": "Hill Giant",
+      "lang": "en",
+      "released_at": "2007-07-13",
+      "uri": "https://api.scryfall.com/cards/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8",
+      "scryfall_uri": "https://scryfall.com/card/10e/212/hill-giant?utm_source=api",
+      "layout": "normal",
+      "highres_image": true,
+      "image_status": "highres_scan",
+      "image_updated_at": "2026-07-13T11:43:38Z",
+      "image_uris": {
+       "small": "https://cards.scryfall.io/small/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+       "normal": "https://cards.scryfall.io/normal/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+       "large": "https://cards.scryfall.io/large/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+       "png": "https://cards.scryfall.io/png/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.png?1783943018",
+       "art_crop": "https://cards.scryfall.io/art_crop/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+       "border_crop": "https://cards.scryfall.io/border_crop/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+       "thumb": "https://cards.scryfall.io/thumb/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018",
+       "grid": "https://cards.scryfall.io/grid/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018",
+       "display": "https://cards.scryfall.io/display/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018",
+       "art": "https://cards.scryfall.io/art/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018",
+       "crop": "https://cards.scryfall.io/crop/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018"
+      },
+      "mana_cost": "{3}{R}",
+      "cmc": 4,
+      "type_line": "Creature — Giant",
+      "oracle_text": "",
+      "power": "3",
+      "toughness": "3",
+      "colors": [
+       "R"
+      ],
+      "color_identity": [
+       "R"
+      ],
+      "keywords": [],
+      "legalities": {
+       "standard": "not_legal",
+       "future": "not_legal",
+       "historic": "not_legal",
+       "timeless": "not_legal",
+       "gladiator": "not_legal",
+       "pioneer": "not_legal",
+       "modern": "legal",
+       "legacy": "legal",
+       "pauper": "legal",
+       "vintage": "legal",
+       "penny": "legal",
+       "commander": "legal",
+       "oathbreaker": "legal",
+       "standardbrawl": "not_legal",
+       "brawl": "not_legal",
+       "competitivebrawl": "not_legal",
+       "alchemy": "not_legal",
+       "paupercommander": "legal",
+       "duel": "legal",
+       "oldschool": "not_legal",
+       "premodern": "legal",
+       "predh": "legal",
+       "tlr": "not_legal"
+      },
+      "games": [
+       "paper",
+       "mtgo"
+      ],
+      "reserved": false,
+      "game_changer": false,
+      "foil": true,
+      "nonfoil": true,
+      "finishes": [
+       "nonfoil",
+       "foil"
+      ],
+      "oversized": false,
+      "promo": false,
+      "reprint": true,
+      "variation": false,
+      "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+      "set": "10e",
+      "set_name": "Tenth Edition",
+      "set_type": "core",
+      "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+      "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+      "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+      "rulings_uri": "https://api.scryfall.com/cards/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8/rulings",
+      "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A342199e0-15b6-4824-83da-25caef2592b3&unique=prints",
+      "collector_number": "212",
+      "digital": false,
+      "rarity": "common",
+      "flavor_text": "Fortunately, hill giants have large blind spots in which a human can easily hide. Unfortunately, these blind spots are beneath the bottoms of their feet.",
+      "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+      "artist": "Kev Walker",
+      "artist_ids": [
+       "f366a0ee-a0cd-466d-ba6a-90058c7a31a6"
+      ],
+      "illustration_id": "fd46160d-4dd0-4ab6-b452-cff004f5e6f2",
+      "border_color": "black",
+      "frame": "2003",
+      "full_art": false,
+      "textless": false,
+      "booster": true,
+      "story_spotlight": false,
+      "edhrec_rank": 29148,
+      "prices": {
+       "usd": "0.04",
+       "usd_foil": "0.83",
+       "usd_etched": null,
+       "eur": "0.02",
+       "eur_foil": "0.28",
+       "tix": "0.04"
+      },
+      "related_uris": {
+       "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129591&printed=false",
+       "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DHill%2BGiant",
+       "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DHill%2BGiant",
+       "edhrec": "https://edhrec.com/route/?cc=Hill+Giant"
+      },
+      "purchase_uris": {
+       "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15162%3Fpage%3D1",
+       "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16376&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+       "cardhoarder": "https://www.cardhoarder.com/cards/27040?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+      }
+     }
+    ],
+    "libraryTop": null,
+    "emblems": []
+   },
+   {
+    "id": "player_1",
+    "name": "Player 2",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": false,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 2,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Grizzly Bears",
+    "final": {
+     "name": "Grizzly Bears",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Bear"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "G"
+     ],
+     "abilities": []
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Animate Dead",
+    "final": {
+     "name": "Animate Dead",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Enchantment"
+     ],
+     "subtypes": [
+      "Aura"
+     ],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "B"
+     ],
+     "abilities": [
+      "When this Aura enters, if it's on the battlefield, it loses \"enchant creature card in a graveyard\" and gains \"enchant creature put onto the battlefield with this Aura.\" Return enchanted creature card to the battlefield under your control and attach this Aura to it. When this Aura leaves the battlefield, that creature's controller sacrifices it.",
+      "Enchanted creature gets -1/-0.",
+      "Enchant creature put onto the battlefield with this Aura."
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "Animate Dead (trigger)",
+      "Animate Dead (trigger)"
+     ]
+    }
+   },
+   {
+    "perm": "Serra Angel",
+    "final": {
+     "name": "Serra Angel",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Angel"
+     ],
+     "power": 3,
+     "toughness": 4,
+     "colors": [
+      "W"
+     ],
+     "abilities": [
+      "Flying",
+      "Vigilance"
+     ],
+     "traits": [
+      "Enchanted"
+     ]
+    },
+    "changedBy": {
+     "7c": [
+      "Animate Dead"
+     ]
+    }
+   }
+  ],
+  "order": {
+   "6": [
+    "Animate Dead (trigger)",
+    "Animate Dead (trigger)"
+   ],
+   "7c": [
+    "Animate Dead"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Animate Dead",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "target": "Serra Angel",
+    "params": {
+     "power": -1,
+     "toughness": 0
+    }
+   },
+   {
+    "source": "Animate Dead (trigger)",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "target": "Animate Dead",
+    "params": {
+     "ability": "Enchant creature put onto the battlefield with this Aura."
+    }
+   },
+   {
+    "source": "Animate Dead (trigger)",
+    "layer": "6",
+    "type": "remove_abilities",
+    "scope": "targeted",
+    "target": "Animate Dead",
+    "params": {
+     "specificAbilities": [
+      "enchant creature card in a graveyard"
+     ]
+    }
+   }
+  ]
+ }
+}

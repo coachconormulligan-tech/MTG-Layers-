@@ -436,7 +436,10 @@ function renderMultiTargetSelect(sourceId, maxTargets) {
 }
 
 function setEffectTarget(sourceId, targetId) {
-  Battlefield.setTarget(sourceId, targetId || null);
+  // A card in a graveyard ("gy:<playerId>:<index>"): an Aura that enchants one (Animate Dead).
+  const gy = /^gy:(.+):(\d+)$/.exec(targetId || '');
+  if (gy) Battlefield.setGraveyardEnchant(sourceId, gy[1], Number(gy[2]));
+  else Battlefield.setTarget(sourceId, targetId || null);
   Battlefield.evaluate();
   renderAll();
 }

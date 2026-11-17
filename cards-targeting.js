@@ -196,10 +196,64 @@ function getTargetCandidates(sourceId, opts) {
   }
 }
 
+/* An Aura that has "Enchant <type> card in a graveyard" (Animate Dead, Dance of the Dead,
+   Spellweaver Volute) is on a card in a graveyard, never on a permanent, for as long as it has
+   that ability: its list is the graveyard cards of that type ("your graveyard": its controller's
+   only; "an opponent's": the others'). Once its "When this Aura enters …" trigger is fired and
+   takes the ability away, the list is the battlefield's again. A candidate's id is
+   "gy:<playerId>:<index>", set with Battlefield.setGraveyardEnchant; its perm is
+   { name, label: null, card }. Returns null for any other source. */
+const _ENCHANT_GRAVEYARD_CARD_RE = /^enchant\s+(.+?)\s+card\s+in\s+(a|your|an opponent's)\s+graveyard\.?$/i;
+function _graveyardEnchantCandidates(sourceId) {
+  const perm = Battlefield.getPermById(sourceId);
+  if (!perm || perm.isManualEffect || perm.isSpell || !(perm.printedSubtypes || []).includes('Aura')) return null;
+  const fs = Battlefield.getAllFinalStates().get(sourceId);
+  const line = ((fs && fs.abilities) || []).map(a => String(a).trim().match(_ENCHANT_GRAVEYARD_CARD_RE)).find(Boolean);
+  if (!line) return null;
+  const auraRestriction = Battlefield.effects.find(e => e.sourceId === sourceId && e.auraRestriction)?.auraRestriction
+    || perm._auraRestriction;
+  const ctrl = perm.controller || perm.owner || Battlefield.activePlayerId;
+  const whose = line[2].toLowerCase();
+  const current = Battlefield.getGraveyardEnchant(sourceId);
+  const currentTarget = current ? `gy:${current.playerId}:${current.index}` : '';
+  const candidates = [];
+  for (const pl of Battlefield.players) {
+    if (whose === 'your' && pl.id !== ctrl) continue;
+    if (whose !== 'your' && whose !== 'a' && pl.id === ctrl) continue;
+    (pl.graveyard || []).forEach((card, idx) => {
+      const face = _resolveCardFace(card, 0);
+      const tl = parseTypeLine(face.type_line || card.type_line || '');
+      const state = { types: tl.types, supertypes: tl.supertypes, subtypes: tl.subtypes,
+        colors: face.colors || card.colors || [], isAllCreatureTypes: false };
+      if (auraRestriction && !auraRestriction(state)) return;
+      const name = face.name || card.name;
+      candidates.push({ id: `gy:${pl.id}:${idx}`, perm: { name, label: null, card }, state,
+        displayName: `${name} (${Battlefield.getPlayerName(pl.id)}'s graveyard)` });
+    });
+  }
+  return { candidates, currentTarget, currentTargets: currentTarget ? [currentTarget] : [], isNonTargeting: false, isAttached: false, inGraveyard: true };
+}
+
+// The id of the one permanent an Aura with "Enchant … put onto the battlefield with this Aura"
+// may be on, or null when that line is absent or it returned nothing still on the battlefield.
+function _putOntoBattlefieldWithAuraOnly(perm) {
+  if (!perm || !perm._returnedPermId || !Battlefield.getPermById(perm._returnedPermId)) return null;
+  const fs = Battlefield.getAllFinalStates().get(perm.id);
+  return ((fs && fs.abilities) || []).some(a => /^enchant\s+.+?\s+put\s+onto\s+the\s+battlefield\s+with\s+this\s+\w+\.?$/i.test(String(a).trim()))
+    ? perm._returnedPermId : null;
+}
+
 /* The picker for one target: the only one that knows about opponent/you-control restrictions,
    Auras and Equipment, and "choose" selections that do not target. */
 function _singleTargetCandidates(sourceId) {
+  const inGraveyard = _graveyardEnchantCandidates(sourceId);
+  if (inGraveyard) return inGraveyard;
   const sourcePerm = Battlefield.getPermById(sourceId);
+  // "Enchant creature put onto the battlefield with this Aura" (Animate Dead, Dance of the Dead,
+  // once fired): only the creature it returned (_returnedPermId, set by _returnGraveyardEnchanted),
+  // while that is on the battlefield. Fired with no graveyard card picked, nothing was returned
+  // and the usual list stands.
+  const putOntoOnly = _putOntoBattlefieldWithAuraOnly(sourcePerm);
   // (An effect pinned to the ability's own source is not the one the picker sets: "This creature
   // and another target creature each get +1/+0" — Deadly Dancer.)
   const current = Battlefield.effects.find(e => e.sourceId === sourceId && e.scope === 'targeted' && !e.selfTarget && !e._isCounterEffect && !e.disabled && !e._sourceHalf)
@@ -320,6 +374,7 @@ function _singleTargetCandidates(sourceId) {
       (!sourcePerm?._enchantNeedsOtherAura || _hasOtherAuraAttached(t.id, sourceId, finalStates)));
     // Dual Aura+Equipment: accept if valid for either attachment type; otherwise AND both.
     const validAttach = (auraRestriction && isEquipment) ? ((validAura && validAuraWords) || validEquip) : (validAura && validAuraWords && validEquip);
+    if (putOntoOnly && t.id !== putOntoOnly) continue;
     if (validAttach && validSpell && !hasShroud && !hasHexproof && !isProtected) {
       candidates.push({ id: t.id, perm: t, state: fs || tState, displayName: _targetPickerName(t, fs, true) });
     }

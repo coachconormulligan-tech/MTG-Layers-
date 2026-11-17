@@ -1,6 +1,6 @@
 {
   "name": "Aura attach pickers read the whole Enchant line; The Sound of Drums goads only what it enchants",
-  "notes": "Memory: project_audit_aura_attach_2026-11-11. buildAuraRestriction read only card types and subtypes, so 'Enchant red or green creature' (Controlled Instincts), 'tapped creature' (Entangling Vines), 'creature you don't control' (Captured by the Consulate) and 'artifact creature' (Domineer, read as artifact OR creature) listed too much; the picker now also checks the line as 'target <words>' (buildEnchantTargetRestriction, permanent._auraTargetRestriction). Daybreak Coronet's 'with another Aura attached to it' was a required Aura subtype, so it listed nothing ever (_enchantNeedsOtherAura). 'Enchanted creature is goaded' was a global effect matching every permanent. 'Enchant creature card in a graveyard' (Animate Dead) keeps the type test only: on the battlefield it is on the creature it returned.",
+  "notes": "Memory: project_audit_aura_attach_2026-11-11. buildAuraRestriction read only card types and subtypes, so 'Enchant red or green creature' (Controlled Instincts), 'tapped creature' (Entangling Vines), 'creature you don't control' (Captured by the Consulate) and 'artifact creature' (Domineer, read as artifact OR creature) listed too much; the picker now also checks the line as 'target <words>' (buildEnchantTargetRestriction, permanent._auraTargetRestriction). Daybreak Coronet's 'with another Aura attached to it' was a required Aura subtype, so it listed nothing ever (_enchantNeedsOtherAura). 'Enchanted creature is goaded' was a global effect matching every permanent. 'Enchant creature card in a graveyard' (Animate Dead) lists only creature cards in graveyards until its trigger is fired (none here): see the recipe animate-dead-enchants-a-graveyard-card.",
   "steps": [
     {
       "call": [
@@ -121,11 +121,7 @@
       "targetCandidates": {
         "perm": "Animate Dead"
       },
-      "are": [
-        "Grizzly Bears",
-        "Hill Giant",
-        "Ornithopter"
-      ]
+      "are": []
     },
     {
       "perm": "Hill Giant",

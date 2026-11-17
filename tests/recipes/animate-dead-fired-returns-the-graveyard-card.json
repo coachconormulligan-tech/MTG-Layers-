@@ -1,0 +1,91 @@
+{
+  "name": "Animate Dead — firing its trigger returns the graveyard card it is on, under your control, and may be on only that creature",
+  "notes": "Memory: project_animate_dead_graveyard_card_picker_2026-11-16. Animate Dead is put on Player 2's Serra Angel in the graveyard and its trigger fired. The fired 'if it's on the battlefield, it loses \"enchant creature card in a graveyard\" and gains \"…\"' was a pick of a creature (the 'it' guessed as 'target creature'); it is now the Aura's own (rewritten 'This enchantment loses … . This enchantment gains …' in _addAbilityPseudo). 'Return enchanted creature card to the battlefield under your control' moves the card (Battlefield._returnGraveyardEnchanted): Serra Angel is Player 1's, 3/4 with -1/-0, and the picker lists only Serra Angel ('enchant creature put onto the battlefield with this Aura': _returnedPermId), not Grizzly Bears.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Player 2"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Hill Giant"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p2",
+        "card:Serra Angel"
+      ]
+    },
+    {
+      "add": "Animate Dead",
+      "as": "animate"
+    },
+    {
+      "call": [
+        "setGraveyardEnchant",
+        "@animate",
+        "p2",
+        0
+      ]
+    },
+    {
+      "fire": "@animate",
+      "trigger": 1
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Serra Angel",
+      "final": {
+        "controller": "player_0",
+        "power": 3,
+        "toughness": 4
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 2,
+        "toughness": 2
+      }
+    },
+    {
+      "perm": "Animate Dead",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Enchant creature put onto the battlefield with this Aura."
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Animate Dead",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Enchant creature card in a graveyard"
+          ]
+        }
+      }
+    },
+    {
+      "targetCandidates": {
+        "perm": "Animate Dead"
+      },
+      "are": [
+        "Serra Angel"
+      ]
+    }
+  ]
+}
