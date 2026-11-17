@@ -1,0 +1,98 @@
+{
+  "name": "Harmless Offering, Donate, Bazaar Trader \u2014 who can be given control, and of what",
+  "notes": "Found by tests/audit.py once give-control units were audited (2026-11-17). \"Target opponent gains control of \u2026\" showed the any-player picker, you included; the player list (getPlayerCandidates, cards-targeting.js) now leaves you out when the text says \"target opponent\" or \"Choose another player\" (_chosenPlayerNotYou). Bazaar Trader's \"target artifact, creature, or land you control\" was split into two \"or\" choices, the first listing the opponent's creatures and no lands; a type list inside a target is no choice (cards-battlefield.js). Donate, cast after Harmless Offering, offered that spell as a permanent to give away: a spell on the stack is no permanent (CR 110.1), and _isPermanent (engine-helpers.js) now says so.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Player 2"
+      ]
+    },
+    {
+      "add": "Grizzly Bears"
+    },
+    {
+      "add": "Forest"
+    },
+    {
+      "add": "Ornithopter"
+    },
+    {
+      "add": "Hill Giant",
+      "controller": "p2"
+    },
+    {
+      "add": "Bazaar Trader",
+      "as": "trader"
+    },
+    {
+      "add": "Harmless Offering",
+      "spell": true
+    },
+    {
+      "add": "Donate",
+      "spell": true
+    },
+    {
+      "fire": "@trader",
+      "activated": 0
+    }
+  ],
+  "asserts": [
+    {
+      "targetCandidates": {
+        "perm": "Harmless Offering",
+        "kind": "players"
+      },
+      "are": [
+        "Player 2"
+      ]
+    },
+    {
+      "targetCandidates": {
+        "perm": "Donate",
+        "kind": "players"
+      },
+      "are": [
+        "Player 1",
+        "Player 2"
+      ]
+    },
+    {
+      "targetCandidates": {
+        "perm": "Harmless Offering",
+        "kind": "single"
+      },
+      "are": [
+        "Bazaar Trader",
+        "Forest",
+        "Grizzly Bears",
+        "Ornithopter"
+      ]
+    },
+    {
+      "targetCandidates": {
+        "perm": "Bazaar Trader (activated)",
+        "kind": "single"
+      },
+      "are": [
+        "Bazaar Trader",
+        "Forest",
+        "Grizzly Bears",
+        "Ornithopter"
+      ]
+    },
+    {
+      "targetCandidates": {
+        "perm": "Donate",
+        "kind": "single"
+      },
+      "are": [
+        "Bazaar Trader",
+        "Forest",
+        "Grizzly Bears",
+        "Ornithopter"
+      ]
+    }
+  ]
+}

@@ -20,7 +20,10 @@ A unit whose own text names one permanent target ("singular") is checked twice:
   Check 2  The site shows a single-target picker (not nothing, not a multi-target one), and the
            permanents in it are the ones the text allows. The text is read by a small closed-vocabulary
            interpreter in tests/audit.js that never calls the parser. Findings: no-picker,
-           picker-kind-<kind>, empty-list, list-mismatch.
+           picker-kind-<kind>, empty-list, list-mismatch. A copy ("Target X becomes a copy of
+           another target Y") also has its copy picker checked against Y (copy-empty-list,
+           copy-list-mismatch), and "target player / opponent gains control of" its player list
+           (player-list-mismatch); the first copy candidate, or the opponent, is then picked for Check 1.
   Check 1  Choosing no target changes no permanent, and choosing each listed permanent changes exactly
            that permanent. Findings: changes-with-no-target, target-changes-others,
            target-changes-nothing. (no-op-on-some, mixed-subject: information, not findings.)
@@ -183,6 +186,9 @@ CODES = [
     ('slot-count-mismatch', 'The site shows a different number of target pickers than the text names targets.'),
     ('empty-list', 'The target list is empty although the text allows permanents on the board.'),
     ('list-mismatch', 'The target list differs from the permanents the text allows.'),
+    ('copy-empty-list', 'The copy picker ("copy…") is empty although the words after "a copy of" allow permanents on the board.'),
+    ('copy-list-mismatch', 'The copy picker lists other permanents than the words after "a copy of" allow.'),
+    ('player-list-mismatch', 'The player picker of "target player / target opponent / another player gains control of" offers other players than the text allows.'),
     ('changes-with-no-target', 'With no target chosen, some permanent changes.'),
     ('target-changes-others', 'With a target chosen, a permanent other than the target changes.'),
     ('target-changes-nothing', 'Choosing any listed target changes nothing.'),
@@ -209,7 +215,7 @@ CODES = [
     ('quote-not-fireable', 'The permanent that gets a quoted ability has it, but the site offers no Trigger / Activate button for it.'),
 ]
 CODE_ORDER = {c: i for i, (c, _) in enumerate(CODES)}
-CHECK2_CODES = {'empty-list', 'list-mismatch', 'no-picker'}
+CHECK2_CODES = {'empty-list', 'list-mismatch', 'no-picker', 'copy-empty-list', 'copy-list-mismatch', 'player-list-mismatch'}
 
 
 # ───────────────────────────── selecting cards ─────────────────────────────
@@ -394,8 +400,10 @@ def _finding_detail(f):
         return 'text: %s, site: %s' % (f.get('expectedCount'), f.get('actual'))
     if c == 'second-pick-changes-nothing':
         return 'second pick %s' % f.get('target', '')
-    if c in ('empty-list', 'list-mismatch'):
+    if c in ('empty-list', 'list-mismatch', 'copy-empty-list', 'copy-list-mismatch'):
         return 'missing: %s; extra: %s' % (roles_key(f.get('missing', [])), roles_key(f.get('extra', [])))
+    if c == 'player-list-mismatch':
+        return 'text: %s, site: %s' % (', '.join(f.get('expectedPlayers', [])), ', '.join(f.get('actualPlayers', [])))
     if c == 'changes-with-no-target':
         return '; '.join('%s: %s' % (x['role'], x['what']) for x in f.get('changed', [])[:4])
     if c == 'target-changes-others':
@@ -592,6 +600,17 @@ def print_record(r):
             print('       actual:    blocked - %s' % u['blocked'])
         else:
             print('       actual:    %s' % (', '.join(u['actual']) if u.get('actual') else 'nothing' if u.get('actual') is not None else 'n/a'))
+        if u.get('copyActual') is not None or u.get('copyPhraseUnknown'):
+            print('       copy of:   "%s"' % (u.get('copyPhrase') or u.get('copyPhraseUnknown') or ''))
+            if u.get('copyPhraseUnknown'):
+                print('                  expected:  not judged (%s)' % u['copyPhraseUnknown'])
+            else:
+                print('                  expected:  %s' % (', '.join(u.get('copyExpected') or []) or 'nothing'))
+            print('                  actual:    %s' % (', '.join(u.get('copyActual') or []) or 'nothing'))
+            if u.get('copySource'):
+                print('                  chosen:    %s' % u['copySource'])
+        if u.get('playersActual') is not None:
+            print('       players:   text %s, site %s' % (', '.join(u.get('playersExpected', [])), ', '.join(u['playersActual'])))
         m = u.get('mixed') or {}
         c1 = u.get('check1')
         if c1:

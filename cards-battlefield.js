@@ -395,8 +395,9 @@ const Battlefield = {
           // "the color or colors of your choice" (Scuttlemutt).
           // Nor an "or" inside a target's own words: "deals 1 damage to target player or
           // planeswalker", "to target attacking or blocking creature" (Bladeback Sliver, Archery
-          // Training) offered "This creature deals planeswalker." as an option.
-          const orInTarget = parts.length === 2 && /\btarget\s+[^,.;"]*$/i.test(parts[0]) &&
+          // Training) offered "This creature deals planeswalker." as an option. A list of
+          // types counts too: "target artifact, creature, or land you control" (Bazaar Trader).
+          const orInTarget = parts.length === 2 && /\btarget\s+(?:[a-z-]+,\s+)*[^,.;"]*,?$/i.test(parts[0]) &&
             !/\btarget\b|\bdamage\b/i.test(parts[1].split(/[.;]/)[0]) && !/^[\dx+\-]/i.test(parts[1].trim());
           const orIsNoChoice = parts.length === 2 && ((parts[0].match(/"/g) || []).length % 2 === 1 ||
             /\b(?:attack|block|color)$/i.test(parts[0].trim()) || orInTarget);

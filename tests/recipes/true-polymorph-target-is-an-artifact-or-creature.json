@@ -1,0 +1,53 @@
+{
+  "name": "True Polymorph \u2014 the permanent that becomes the copy is a target artifact or creature",
+  "notes": "Found by tests/audit.py once copy units were audited (2026-11-17). \"Target artifact or creature becomes a copy of \u2026\": the copy effect had no restriction, so its picker listed every permanent, lands and enchantments included. The subject of a plain \"becomes a copy of\" is now read as the target (cards-parser.js, copy section).",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Player 2"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Forest"
+    },
+    {
+      "add": "Glorious Anthem"
+    },
+    {
+      "add": "Ornithopter",
+      "controller": "p2"
+    },
+    {
+      "add": "True Polymorph",
+      "spell": true,
+      "as": "spell"
+    }
+  ],
+  "asserts": [
+    {
+      "targetCandidates": {
+        "perm": "True Polymorph",
+        "kind": "single"
+      },
+      "are": [
+        "Grizzly Bears",
+        "Ornithopter"
+      ]
+    },
+    {
+      "targetCandidates": {
+        "perm": "True Polymorph",
+        "kind": "copy"
+      },
+      "are": [
+        "Grizzly Bears",
+        "Ornithopter"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "name": "Shapesharer \u2014 fired, the target Shapeshifter becomes the copy, not Shapesharer itself",
+  "notes": "Found by tests/audit.py (2026-11-17). \"Target Shapeshifter becomes a copy of target creature\": with no restriction the fired ability pinned the copy to its own source, so Shapesharer always became the copy and there was no picker for the Shapeshifter. Now the Shapeshifter is picked (any changeling counts), here a second Shapesharer.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Player 2"
+      ]
+    },
+    {
+      "add": "Shapesharer",
+      "as": "s1"
+    },
+    {
+      "add": "Shapesharer",
+      "as": "s2"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Hill Giant",
+      "controller": "p2"
+    },
+    {
+      "fire": "@s1",
+      "activated": 1,
+      "as": "a1"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@a1",
+        "@s2"
+      ]
+    },
+    {
+      "copy": [
+        "@a1",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "targetCandidates": {
+        "perm": "Shapesharer A (activated)",
+        "kind": "single"
+      },
+      "are": [
+        "Shapesharer A",
+        "Shapesharer B"
+      ]
+    },
+    {
+      "targetCandidates": {
+        "perm": "Shapesharer A (activated)",
+        "kind": "copy"
+      },
+      "are": [
+        "Grizzly Bears",
+        "Hill Giant",
+        "Shapesharer A",
+        "Shapesharer B"
+      ]
+    },
+    {
+      "perm": "Shapesharer B",
+      "final": {
+        "name": "Grizzly Bears",
+        "power": 2,
+        "toughness": 2
+      }
+    },
+    {
+      "perm": "Shapesharer A",
+      "final": {
+        "name": "Shapesharer"
+      }
+    }
+  ]
+}

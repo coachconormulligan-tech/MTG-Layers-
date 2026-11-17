@@ -1,0 +1,20 @@
+{
+  "name": "Saheeli, Sublime Artificer — the copy picker lists only an artifact or creature you control",
+  "notes": "Found by tests/audit.py (2026-11-17). \"…becomes a copy of another target artifact or creature you control\": the copy picker (getCopyCandidates) offered the opponent's creatures too. The copy's own words now carry sourceYouControl / sourceOpponentControls (cards-parser.js), checked by the copy picker; 30 \"copy of … you control / an opponent controls\" cards got the flag (Spark Double, Mirror Image, Mocking Doppelganger, …). Fired, Saheeli's ability also had no picker for the artifact that becomes the copy, which it now has.",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"] },
+    { "add": "Saheeli, Sublime Artificer", "as": "saheeli" },
+    { "add": "Ornithopter", "as": "thopter" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Hill Giant", "controller": "p2" },
+    { "add": "Juggernaut", "controller": "p2" },
+    { "fire": "@saheeli", "activated": 1, "as": "a1" },
+    { "call": ["setTarget", "@a1", "@thopter"] },
+    { "copy": ["@a1", "@bears"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Saheeli, Sublime Artificer (activated)", "kind": "single" }, "are": ["Ornithopter"] },
+    { "targetCandidates": { "perm": "Saheeli, Sublime Artificer (activated)", "kind": "copy" }, "are": ["Grizzly Bears", "Ornithopter"] },
+    { "perm": "Ornithopter", "final": { "name": "Grizzly Bears", "types": ["Creature", "Artifact"] } }
+  ]
+}

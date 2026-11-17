@@ -1,0 +1,16 @@
+{
+  "name": "Cytoshape — what is copied is the nonlegendary creature chosen first",
+  "notes": "Found by tests/audit.py (2026-11-17). \"Choose a nonlegendary creature on the battlefield. Target creature becomes a copy of that creature\": the copy picker read \"that creature\" as any permanent, and the target picker offered lands. \"that creature\" is now read back to the \"Choose a …\" on the same line (cards-parser.js), and the subject is the target.",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"] },
+    { "add": "Grizzly Bears" },
+    { "add": "Isamaru, Hound of Konda" },
+    { "add": "Forest" },
+    { "add": "Hill Giant", "controller": "p2" },
+    { "add": "Cytoshape", "spell": true }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Cytoshape", "kind": "single" }, "are": ["Grizzly Bears", "Hill Giant", "Isamaru, Hound of Konda"] },
+    { "targetCandidates": { "perm": "Cytoshape", "kind": "copy" }, "are": ["Grizzly Bears", "Hill Giant"] }
+  ]
+}

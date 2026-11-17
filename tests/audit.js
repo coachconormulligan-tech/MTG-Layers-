@@ -989,6 +989,81 @@ function boardCannotShow(ctx, u, tryIds) {
   return null;
 }
 
+/* A copy unit ("Target artifact or creature becomes a copy of another target artifact or creature",
+   True Polymorph): the permanent that becomes the copy is the unit's target, checked as any other;
+   what it copies is picked in the copy picker (getCopyCandidates, cards-targeting.js), checked here
+   against the words after "a copy of" (copy-empty-list, copy-list-mismatch). Then the first
+   permanent the copy picker lists is chosen, as setCopyTargetFromBattlefield (ui-targeting.js) does,
+   so that Check 1 sees each target become a copy. Returns { skip } for a copy the site picks some
+   other way: a token copy (the Copy editor), a card in a graveyard or exile, or nothing to copy. */
+const COPY_OF_RE = /\bbecomes?\s+a\s+copy\s+of\s+(.+?)(?=,?\s+except\b|\s+until\b|[.;]|$)/i;
+function prepareCopy(ctx, u, id, info, finding) {
+  if (info.hasCopyToken) return { skip: 'copy-token-editor' };
+  const eff = Battlefield.effects.find(e => e.sourceId === id && e.type === EFFECT_TYPE.COPY);
+  if (!eff || eff.params.copyTargetZone) return { skip: 'copy-from-zone' };
+  const site = getCopyCandidates(id).candidates.map(c => c.id);
+  u.copyActual = rolesOf(site);
+  const m = u.text.match(COPY_OF_RE);
+  const tm = m && m[1].match(/^(?:(another|a second|up to one other|one other|other)\s+)?target\s+(.+)$/i);
+  if (!tm) { u.copyPhraseUnknown = m ? m[1] : '(no "becomes a copy of")'; }
+  else {
+    u.copyPhrase = tm[2];
+    const interp = interpretPhrase(tm[2], { before: u.text.slice(0, m.index) });
+    if (interp.unknown) u.copyPhraseUnknown = interp.unknown;
+    else {
+      // "Another target …" is another than the first target, which is picked apart; the source
+      // is left out only when it is the one that becomes the copy ("this creature becomes a copy
+      // of another target creature").
+      const selfBecomes = /^(?:this|it\b)/i.test(u.text.slice(0, m.index).replace(/^.*[.,]\s*/, ''));
+      const expected = [];
+      for (const p of ctx.universe) {
+        if (selfBecomes && tm[1] && p.id === ctx.sourceId) continue;
+        const st = ctx.preStates.get(p.id);
+        if (!st || !interp.test(st, p, ctx)) continue;
+        const kws = keywordsOf(st);
+        if (kws.includes('shroud')) continue;
+        if (kws.includes('hexproof') && ctrlOf(st, p) !== ctx.sourceCtrl) continue;
+        expected.push(p.id);
+      }
+      u.copyExpected = rolesOf(expected);
+      const missing = expected.filter(x => !site.includes(x)), extra = site.filter(x => !expected.includes(x));
+      if (!site.length && expected.length) finding('check2', 'copy-empty-list', { missing: rolesOf(missing), extra: [] });
+      else if (missing.length || extra.length) finding('check2', 'copy-list-mismatch', { missing: rolesOf(missing), extra: rolesOf(extra) });
+    }
+  }
+  if (!site.length) return { skip: 'copy-nothing-to-copy' };
+  const copyCard = Battlefield.copiableCardOf(site[0]);
+  if (!copyCard) return { skip: 'copy-nothing-to-copy' };
+  eff.params._copyTargetPermId = site[0];
+  Battlefield.setCopySource(id, copyCard);
+  Battlefield.evaluate();
+  u.copySource = roleName(site[0]);
+  return null;
+}
+
+/* "Target player / target opponent gains control of target …", "Choose another player. That player
+   gains control of …": the player picker (getPlayerCandidates 'player') is checked against the words
+   (player-list-mismatch; "that player" is not judged), then the opponent is picked, so that Check 1
+   sees each target change hands. */
+function prepareGiveControl(ctx, u, id, finding) {
+  const site = getPlayerCandidates(id, 'player').map(p => p.id);
+  const full = (u.fullText || '') + ' ' + u.text;
+  const opponentOnly = /\b(?:target opponent|an opponent)\s+gains?\s+control\b|\bchoose another player\b/i.test(full);
+  const anyPlayer = /\btarget player\s+gains?\s+control\b/i.test(full);
+  const opp = Battlefield.players.find(p => p.id !== ctx.sourceCtrl);
+  if (opponentOnly || anyPlayer) {
+    const expected = Battlefield.players.filter(p => anyPlayer || p.id !== ctx.sourceCtrl).map(p => p.id);
+    u.playersExpected = expected; u.playersActual = site;
+    if (expected.length !== site.length || expected.some(x => !site.includes(x))) {
+      finding('check2', 'player-list-mismatch', { expectedPlayers: expected, actualPlayers: site });
+    }
+  }
+  if (!opp) return { skip: 'player-picker' };
+  Battlefield.setTargetPlayer(id, opp.id);
+  Battlefield.evaluate();
+  return null;
+}
+
 /* Audits one unit that has already been fired/cast: `id` is the permanent whose effects are the
    unit's (the ability pseudo-permanent, or the spell). */
 function auditFired(ctx, u, id) {
@@ -1002,10 +1077,11 @@ function auditFired(ctx, u, id) {
   const pseudo = Battlefield.getPermById(id);
   if (info.hasText) return { skip: 'text-change-modal' };
   if (info.hasExchangeControl) return { skip: 'exchange-control-modal' };
-  if (info.hasCopy) return { skip: 'copy-picker' };
   if (info.hasEquipSource) return { skip: 'equip' };
   if (pseudo && pseudo._refPick) return { skip: 'ref-picker' };
-  if (pseudo && (pseudo._targetsOpponentPlayer || pseudo._targetsChosenPlayer || pseudo._isEnchantPlayer)) return { skip: 'player-picker' };
+  if (pseudo && (pseudo._targetsOpponentPlayer || pseudo._isEnchantPlayer)) return { skip: 'player-picker' };
+  if (info.hasCopy) { const r = prepareCopy(ctx, u, id, info, finding); if (r) return r; }
+  if (pseudo && pseudo._targetsChosenPlayer) { const r = prepareGiveControl(ctx, u, id, finding); if (r) return r; }
   if (pseudo && pseudo.hasBestow) return { skip: 'bestow' };
   if (effs.some(e => e.auraRestriction)) return { skip: 'aura-attach' };
 
@@ -1211,10 +1287,11 @@ function auditFiredTargets(ctx, u, id) {
   const pseudo = Battlefield.getPermById(id);
   if (info.hasText) return { skip: 'text-change-modal' };
   if (info.hasExchangeControl) return { skip: 'exchange-control-modal' };
-  if (info.hasCopy) return { skip: 'copy-picker' };
   if (info.hasEquipSource) return { skip: 'equip' };
   if (pseudo && pseudo._refPick) return { skip: 'ref-picker' };
-  if (pseudo && (pseudo._targetsOpponentPlayer || pseudo._targetsChosenPlayer || pseudo._isEnchantPlayer)) return { skip: 'player-picker' };
+  if (pseudo && (pseudo._targetsOpponentPlayer || pseudo._isEnchantPlayer)) return { skip: 'player-picker' };
+  if (info.hasCopy) { const r = prepareCopy(ctx, u, id, info, finding); if (r) return r; }
+  if (pseudo && pseudo._targetsChosenPlayer) { const r = prepareGiveControl(ctx, u, id, finding); if (r) return r; }
   if (pseudo && pseudo.hasBestow) return { skip: 'bestow' };
   if (effs.some(e => e.auraRestriction)) return { skip: 'aura-attach' };
 

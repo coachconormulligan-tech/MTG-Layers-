@@ -2452,6 +2452,14 @@ function parseCardEffects(permanent, card, opts = {}) {
       }
       _mcSourceYouControl = /\byou control\b/.test(targetDescRaw);
     }
+    // "Choose a nonlegendary creature on the battlefield. Target creature becomes a copy of that
+    // creature" (Cytoshape): what is copied is the creature chosen earlier on the line.
+    const _cpThat = !_massCopy && isBecomesCopy && targetDescRaw.match(/^that (?:creature|permanent|artifact)(\s+until\s+.+)?$/);
+    if (_cpThat) {
+      const _cpLine = oracle.lastIndexOf('\n', copyMatch.index - 1) + 1;
+      const _cpAnte = [...oracleLower.substring(_cpLine, copyMatch.index).matchAll(/\bchoose an?\s+([^.,\n]+)/g)].pop();
+      if (_cpAnte) targetDescRaw = (/^[aeiou]/.test(_cpAnte[1]) ? 'an ' : 'a ') + _cpAnte[1].trim() + (_cpThat[1] || '');
+    }
     // Detect "mana value less than or equal to the amount of mana spent to cast" restriction.
     // Strip it from targetDesc so the type-restriction logic below isn't confused by it.
     let maxManaValueParam = null;
@@ -2531,6 +2539,12 @@ function parseCardEffects(permanent, card, opts = {}) {
       }
     }
     if (copyTargetZone) { copyParams.copyTargetZone = copyTargetZone; copyParams.copyTargetZoneOwner = copyTargetZoneOwner; }
+    // "…a copy of another target artifact or creature you control" (Saheeli, Sublime Artificer),
+    // "a creature an opponent controls" (Mocking Doppelganger): who controls what is copied.
+    else if (!_massCopy) {
+      if (/\byou control\b/.test(targetDesc)) copyParams.sourceYouControl = true;
+      else if (/\b(?:an opponent controls|you don't control)\b/.test(targetDesc)) copyParams.sourceOpponentControls = true;
+    }
     // Imprint: "becomes a copy of the exiled card" — Dermotaxi.
     // The copy source is resolved at apply time from the most-recent imprinted exile entry.
     // Self-target the source perm so the result of the activated ability is visible in the
@@ -2738,6 +2752,17 @@ function parseCardEffects(permanent, card, opts = {}) {
         if (/^(?:any number of|up to \w+) target\b/i.test(_cpSubject)) {
           const _cpApplies = buildAppliesToFromText(_cpSubject);
           if (_cpApplies && _cpApplies.isSpellTarget && _cpApplies.maxTargets > 1) _applyTargetInfo(_cpEff, _cpApplies, _cpApplies.fn);
+        } else {
+          // "Target artifact or creature becomes a copy of …" (True Polymorph), "Until your next
+          // turn, target legendary creature you control becomes a copy of …" (The Animus): the
+          // copy is that target. Without its restriction the picker offered every permanent, and
+          // a fired ability pinned the copy to its own source (Shapesharer became the copy, not
+          // the Shapeshifter it targets).
+          const _cpOne = stripDurationPrefix(_cpSubject.replace(/^.*,\s+(?=target\b)/i, '')).trim();
+          if (/^(?:up to one\s+)?(?:an?other\s+|other\s+)?target\b/i.test(_cpOne)) {
+            const _cpApplies = buildAppliesToFromText(_cpOne);
+            if (_cpApplies && _cpApplies.isSpellTarget && !(_cpApplies.maxTargets > 1)) _applyTargetInfo(_cpEff, _cpApplies, _cpApplies.fn);
+          }
         }
       }
     }
@@ -7061,6 +7086,12 @@ function parseCardEffects(permanent, card, opts = {}) {
           objMax = objInfo.maxTargets || 1;
         }
         permanent._targetsChosenPlayer = true;
+        // "Target opponent gains control of …" (Harmless Offering), "Choose another player. That
+        // player gains control of …" (Discerning Financier): the player picker leaves you out.
+        if (/\bopponent$/.test(who)) permanent._chosenPlayerNotYou = 'target opponent';
+        else if (/^that player$/.test(who) && /\bchoose another player\.\s*$/i.test(oracle.slice(lineStart + 1, gcMatch.index).replace(/that player\s*$/i, ''))) {
+          permanent._chosenPlayerNotYou = 'another player';
+        }
         if (objYouControl) permanent._youControlRequired = true;
         const eff = pushEff('2', EFFECT_TYPE.CONTROL,
           { newController: permanent._targetPlayerId || null, untilEndOfTurn: /until end of (?:turn|combat)/i.test(fullSentence) },

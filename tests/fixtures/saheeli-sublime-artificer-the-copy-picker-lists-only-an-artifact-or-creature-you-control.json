@@ -1,0 +1,1844 @@
+{
+ "name": "Saheeli, Sublime Artificer — the copy picker lists only an artifact or creature you control",
+ "notes": "Found by tests/audit.py (2026-11-17). \"…becomes a copy of another target artifact or creature you control\": the copy picker (getCopyCandidates) offered the opponent's creatures too. The copy's own words now carry sourceYouControl / sourceOpponentControls (cards-parser.js), checked by the copy picker; 30 \"copy of … you control / an opponent controls\" cards got the flag (Spark Double, Mirror Image, Mocking Doppelganger, …). Fired, Saheeli's ability also had no picker for the artifact that becomes the copy, which it now has.",
+ "recipe": {
+  "steps": [
+   {
+    "call": [
+     "addPlayer",
+     "Player 2"
+    ]
+   },
+   {
+    "add": "Saheeli, Sublime Artificer",
+    "as": "saheeli"
+   },
+   {
+    "add": "Ornithopter",
+    "as": "thopter"
+   },
+   {
+    "add": "Grizzly Bears",
+    "as": "bears"
+   },
+   {
+    "add": "Hill Giant",
+    "controller": "p2"
+   },
+   {
+    "add": "Juggernaut",
+    "controller": "p2"
+   },
+   {
+    "fire": "@saheeli",
+    "activated": 1,
+    "as": "a1"
+   },
+   {
+    "call": [
+     "setTarget",
+     "@a1",
+     "@thopter"
+    ]
+   },
+   {
+    "copy": [
+     "@a1",
+     "@bears"
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "targetCandidates": {
+    "perm": "Saheeli, Sublime Artificer (activated)",
+    "kind": "single"
+   },
+   "are": [
+    "Ornithopter"
+   ]
+  },
+  {
+   "targetCandidates": {
+    "perm": "Saheeli, Sublime Artificer (activated)",
+    "kind": "copy"
+   },
+   "are": [
+    "Grizzly Bears",
+    "Ornithopter"
+   ]
+  },
+  {
+   "perm": "Ornithopter",
+   "final": {
+    "name": "Grizzly Bears",
+    "types": [
+     "Creature",
+     "Artifact"
+    ]
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "ce35a39a-6dcd-4bbc-b43b-bd1a5425cb05",
+     "oracle_id": "ab655810-f67e-4576-9174-35b16f5e3235",
+     "multiverse_ids": [
+      625340
+     ],
+     "mtgo_id": 114211,
+     "tcgplayer_id": 505783,
+     "cardmarket_id": 723021,
+     "name": "Saheeli, Sublime Artificer",
+     "lang": "en",
+     "released_at": "2023-08-04",
+     "uri": "https://api.scryfall.com/cards/ce35a39a-6dcd-4bbc-b43b-bd1a5425cb05",
+     "scryfall_uri": "https://scryfall.com/card/cmm/935/saheeli-sublime-artificer?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T04:03:30Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/c/e/ce35a39a-6dcd-4bbc-b43b-bd1a5425cb05.jpg?1783915410",
+      "normal": "https://cards.scryfall.io/normal/front/c/e/ce35a39a-6dcd-4bbc-b43b-bd1a5425cb05.jpg?1783915410",
+      "large": "https://cards.scryfall.io/large/front/c/e/ce35a39a-6dcd-4bbc-b43b-bd1a5425cb05.jpg?1783915410",
+      "png": "https://cards.scryfall.io/png/front/c/e/ce35a39a-6dcd-4bbc-b43b-bd1a5425cb05.png?1783915410",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/c/e/ce35a39a-6dcd-4bbc-b43b-bd1a5425cb05.jpg?1783915410",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/c/e/ce35a39a-6dcd-4bbc-b43b-bd1a5425cb05.jpg?1783915410",
+      "thumb": "https://cards.scryfall.io/thumb/front/c/e/ce35a39a-6dcd-4bbc-b43b-bd1a5425cb05.webp?1783915410",
+      "grid": "https://cards.scryfall.io/grid/front/c/e/ce35a39a-6dcd-4bbc-b43b-bd1a5425cb05.webp?1783915410",
+      "display": "https://cards.scryfall.io/display/front/c/e/ce35a39a-6dcd-4bbc-b43b-bd1a5425cb05.webp?1783915410",
+      "art": "https://cards.scryfall.io/art/front/c/e/ce35a39a-6dcd-4bbc-b43b-bd1a5425cb05.webp?1783915410",
+      "crop": "https://cards.scryfall.io/crop/front/c/e/ce35a39a-6dcd-4bbc-b43b-bd1a5425cb05.webp?1783915410"
+     },
+     "mana_cost": "{1}{U/R}{U/R}",
+     "cmc": 3,
+     "type_line": "Legendary Planeswalker — Saheeli",
+     "oracle_text": "Whenever you cast a noncreature spell, create a 1/1 colorless Servo artifact creature token.\n−2: Target artifact you control becomes a copy of another target artifact or creature you control until end of turn, except it's an artifact in addition to its other types.",
+     "loyalty": "5",
+     "colors": [
+      "R",
+      "U"
+     ],
+     "color_identity": [
+      "R",
+      "U"
+     ],
+     "keywords": [],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "ce35a39a-6dcd-4bbc-b43b-bd1a5425cb05",
+       "component": "combo_piece",
+       "name": "Saheeli, Sublime Artificer",
+       "type_line": "Legendary Planeswalker — Saheeli",
+       "uri": "https://api.scryfall.com/cards/ce35a39a-6dcd-4bbc-b43b-bd1a5425cb05"
+      },
+      {
+       "object": "related_card",
+       "id": "e6a5faa3-b86e-4e05-93db-5db9507ae7d0",
+       "component": "token",
+       "name": "Servo",
+       "type_line": "Token Artifact Creature — Servo",
+       "uri": "https://api.scryfall.com/cards/e6a5faa3-b86e-4e05-93db-5db9507ae7d0"
+      }
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "cd05036f-2698-43e6-a48e-5c8d82f0a551",
+     "set": "cmm",
+     "set_name": "Commander Masters",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/cd05036f-2698-43e6-a48e-5c8d82f0a551",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Acmm&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/cmm?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/ce35a39a-6dcd-4bbc-b43b-bd1a5425cb05/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aab655810-f67e-4576-9174-35b16f5e3235&unique=prints",
+     "collector_number": "935",
+     "digital": false,
+     "rarity": "uncommon",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Wesley Burt",
+     "artist_ids": [
+      "b98c9d94-8bdb-49af-871d-7bac92274535"
+     ],
+     "illustration_id": "b41a053d-5921-44f3-8719-9dd2fc042c91",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 2530,
+     "penny_rank": 623,
+     "prices": {
+      "usd": "0.36",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.30",
+      "eur_foil": null,
+      "tix": "0.10"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=625340&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DSaheeli%252C%2BSublime%2BArtificer",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DSaheeli%252C%2BSublime%2BArtificer",
+      "edhrec": "https://edhrec.com/route/?cc=Saheeli%2C+Sublime+Artificer"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F505783%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=723021&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/114211?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {
+     "loyalty": 5
+    },
+    "counterTimestamps": {
+     "loyalty": 1
+    },
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "305078a5-ac18-4721-bba2-3434eba5b1cf",
+     "oracle_id": "a3a98bc9-caa0-49b7-951c-fe4e4f54e4ba",
+     "multiverse_ids": [
+      599107
+     ],
+     "mtgo_id": 107995,
+     "tcgplayer_id": 457188,
+     "cardmarket_id": 688483,
+     "name": "Ornithopter",
+     "lang": "en",
+     "released_at": "2023-01-13",
+     "uri": "https://api.scryfall.com/cards/305078a5-ac18-4721-bba2-3434eba5b1cf",
+     "scryfall_uri": "https://scryfall.com/card/dmr/233/ornithopter?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T04:53:30Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+      "normal": "https://cards.scryfall.io/normal/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+      "large": "https://cards.scryfall.io/large/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+      "png": "https://cards.scryfall.io/png/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.png?1783918410",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+      "thumb": "https://cards.scryfall.io/thumb/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.webp?1783918410",
+      "grid": "https://cards.scryfall.io/grid/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.webp?1783918410",
+      "display": "https://cards.scryfall.io/display/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.webp?1783918410",
+      "art": "https://cards.scryfall.io/art/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.webp?1783918410",
+      "crop": "https://cards.scryfall.io/crop/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.webp?1783918410"
+     },
+     "mana_cost": "{0}",
+     "cmc": 0,
+     "type_line": "Artifact Creature — Thopter",
+     "oracle_text": "Flying",
+     "power": "0",
+     "toughness": "2",
+     "colors": [],
+     "color_identity": [],
+     "keywords": [
+      "Flying"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "ca4c2884-e539-4b7f-980d-5d6a50220f2a",
+     "set": "dmr",
+     "set_name": "Dominaria Remastered",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/ca4c2884-e539-4b7f-980d-5d6a50220f2a",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Admr&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/dmr?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/305078a5-ac18-4721-bba2-3434eba5b1cf/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aa3a98bc9-caa0-49b7-951c-fe4e4f54e4ba&unique=prints",
+     "collector_number": "233",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"It has been my honor to improve on Thran's original design. Perhaps history will remember me in some small part for my work.\"\n—Urza, in his apprenticeship",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Franz Vohwinkel",
+     "artist_ids": [
+      "3a243c17-3baa-4b53-9599-645311cd7d3d"
+     ],
+     "illustration_id": "ba23fb60-f170-40cc-8d2e-fe88ba070269",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 783,
+     "penny_rank": 393,
+     "prices": {
+      "usd": "0.31",
+      "usd_foil": "0.38",
+      "usd_etched": null,
+      "eur": "0.24",
+      "eur_foil": "0.35",
+      "tix": "0.04"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=599107&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DOrnithopter",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DOrnithopter",
+      "edhrec": "https://edhrec.com/route/?cc=Ornithopter"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F457188%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=688483&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/107995?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+     "multiverse_ids": [
+      129586
+     ],
+     "mtgo_id": 27400,
+     "mtgo_foil_id": 27401,
+     "tcgplayer_id": 15153,
+     "cardmarket_id": 16432,
+     "name": "Grizzly Bears",
+     "lang": "en",
+     "released_at": "2007-07-13",
+     "uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "scryfall_uri": "https://scryfall.com/card/10e/268/grizzly-bears?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:43:21Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "normal": "https://cards.scryfall.io/normal/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "large": "https://cards.scryfall.io/large/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "png": "https://cards.scryfall.io/png/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.png?1783943001",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "grid": "https://cards.scryfall.io/grid/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "display": "https://cards.scryfall.io/display/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "art": "https://cards.scryfall.io/art/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "crop": "https://cards.scryfall.io/crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001"
+     },
+     "mana_cost": "{1}{G}",
+     "cmc": 2,
+     "type_line": "Creature — Bear",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set": "10e",
+     "set_name": "Tenth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A14c8f55d-d177-4c25-a931-ebeb9e6062a0&unique=prints",
+     "collector_number": "268",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"We cannot forget that among all of Dominaria's wonders, a system of life exists, with prey and predators that will never fight wars nor vie for ancient power.\"\n—Jolrael, empress of beasts",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "D. J. Cleland-Hura",
+     "artist_ids": [
+      "87d21070-2432-4167-8aab-5968af1c14f3"
+     ],
+     "illustration_id": "066bfe81-0f53-43da-a074-b2ecc5dcda72",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 8114,
+     "penny_rank": 10982,
+     "prices": {
+      "usd": "0.22",
+      "usd_foil": "3.29",
+      "usd_etched": null,
+      "eur": "0.11",
+      "eur_foil": "1.97",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129586&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "edhrec": "https://edhrec.com/route/?cc=Grizzly+Bears"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15153%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16432&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27400?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8",
+     "oracle_id": "342199e0-15b6-4824-83da-25caef2592b3",
+     "multiverse_ids": [
+      129591
+     ],
+     "mtgo_id": 27040,
+     "mtgo_foil_id": 27041,
+     "tcgplayer_id": 15162,
+     "cardmarket_id": 16376,
+     "name": "Hill Giant",
+     "lang": "en",
+     "released_at": "2007-07-13",
+     "uri": "https://api.scryfall.com/cards/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8",
+     "scryfall_uri": "https://scryfall.com/card/10e/212/hill-giant?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:43:38Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+      "normal": "https://cards.scryfall.io/normal/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+      "large": "https://cards.scryfall.io/large/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+      "png": "https://cards.scryfall.io/png/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.png?1783943018",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+      "thumb": "https://cards.scryfall.io/thumb/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018",
+      "grid": "https://cards.scryfall.io/grid/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018",
+      "display": "https://cards.scryfall.io/display/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018",
+      "art": "https://cards.scryfall.io/art/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018",
+      "crop": "https://cards.scryfall.io/crop/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018"
+     },
+     "mana_cost": "{3}{R}",
+     "cmc": 4,
+     "type_line": "Creature — Giant",
+     "oracle_text": "",
+     "power": "3",
+     "toughness": "3",
+     "colors": [
+      "R"
+     ],
+     "color_identity": [
+      "R"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set": "10e",
+     "set_name": "Tenth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A342199e0-15b6-4824-83da-25caef2592b3&unique=prints",
+     "collector_number": "212",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "Fortunately, hill giants have large blind spots in which a human can easily hide. Unfortunately, these blind spots are beneath the bottoms of their feet.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Kev Walker",
+     "artist_ids": [
+      "f366a0ee-a0cd-466d-ba6a-90058c7a31a6"
+     ],
+     "illustration_id": "fd46160d-4dd0-4ab6-b452-cff004f5e6f2",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 29148,
+     "prices": {
+      "usd": "0.04",
+      "usd_foil": "0.83",
+      "usd_etched": null,
+      "eur": "0.02",
+      "eur_foil": "0.28",
+      "tix": "0.04"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129591&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DHill%2BGiant",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DHill%2BGiant",
+      "edhrec": "https://edhrec.com/route/?cc=Hill+Giant"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15162%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16376&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27040?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_1",
+    "controller": "player_1",
+    "timestamp": 4,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_5",
+    "scryfallData": {
+     "object": "card",
+     "id": "f4468fff-cd6f-428c-b7a0-ff89f5bbea2e",
+     "oracle_id": "4ac9116f-36bc-4d71-b696-d6ee064e1d58",
+     "multiverse_ids": [
+      679997
+     ],
+     "mtgo_id": 133536,
+     "arena_id": 93968,
+     "tcgplayer_id": 589348,
+     "cardmarket_id": 795135,
+     "name": "Juggernaut",
+     "lang": "en",
+     "released_at": "2024-11-15",
+     "uri": "https://api.scryfall.com/cards/f4468fff-cd6f-428c-b7a0-ff89f5bbea2e",
+     "scryfall_uri": "https://scryfall.com/card/fdn/255/juggernaut?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T02:17:28Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/f/4/f4468fff-cd6f-428c-b7a0-ff89f5bbea2e.jpg?1783909048",
+      "normal": "https://cards.scryfall.io/normal/front/f/4/f4468fff-cd6f-428c-b7a0-ff89f5bbea2e.jpg?1783909048",
+      "large": "https://cards.scryfall.io/large/front/f/4/f4468fff-cd6f-428c-b7a0-ff89f5bbea2e.jpg?1783909048",
+      "png": "https://cards.scryfall.io/png/front/f/4/f4468fff-cd6f-428c-b7a0-ff89f5bbea2e.png?1783909048",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/f/4/f4468fff-cd6f-428c-b7a0-ff89f5bbea2e.jpg?1783909048",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/f/4/f4468fff-cd6f-428c-b7a0-ff89f5bbea2e.jpg?1783909048",
+      "thumb": "https://cards.scryfall.io/thumb/front/f/4/f4468fff-cd6f-428c-b7a0-ff89f5bbea2e.webp?1783909048",
+      "grid": "https://cards.scryfall.io/grid/front/f/4/f4468fff-cd6f-428c-b7a0-ff89f5bbea2e.webp?1783909048",
+      "display": "https://cards.scryfall.io/display/front/f/4/f4468fff-cd6f-428c-b7a0-ff89f5bbea2e.webp?1783909048",
+      "art": "https://cards.scryfall.io/art/front/f/4/f4468fff-cd6f-428c-b7a0-ff89f5bbea2e.webp?1783909048",
+      "crop": "https://cards.scryfall.io/crop/front/f/4/f4468fff-cd6f-428c-b7a0-ff89f5bbea2e.webp?1783909048"
+     },
+     "mana_cost": "{4}",
+     "cmc": 4,
+     "type_line": "Artifact Creature — Juggernaut",
+     "oracle_text": "This creature attacks each combat if able.\nThis creature can't be blocked by Walls.",
+     "power": "5",
+     "toughness": "3",
+     "colors": [],
+     "color_identity": [],
+     "keywords": [],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "56137a4a-6e5f-4049-b0f2-f70aa5be5199",
+       "component": "combo_piece",
+       "name": "Juggernaut Peddler",
+       "type_line": "Creature — Human Artificer",
+       "uri": "https://api.scryfall.com/cards/56137a4a-6e5f-4049-b0f2-f70aa5be5199"
+      },
+      {
+       "object": "related_card",
+       "id": "f4468fff-cd6f-428c-b7a0-ff89f5bbea2e",
+       "component": "combo_piece",
+       "name": "Juggernaut",
+       "type_line": "Artifact Creature — Juggernaut",
+       "uri": "https://api.scryfall.com/cards/f4468fff-cd6f-428c-b7a0-ff89f5bbea2e"
+      }
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "arena",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a7ecb771-d1b6-4dec-8cf5-8d45179f21e0",
+     "set": "fdn",
+     "set_name": "Foundations",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a7ecb771-d1b6-4dec-8cf5-8d45179f21e0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Afdn&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/fdn?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/f4468fff-cd6f-428c-b7a0-ff89f5bbea2e/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A4ac9116f-36bc-4d71-b696-d6ee064e1d58&unique=prints",
+     "collector_number": "255",
+     "digital": false,
+     "rarity": "uncommon",
+     "flavor_text": "Many a besieged city has surrendered upon hearing the distinctive rumble of the juggernaut.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Kev Walker",
+     "artist_ids": [
+      "f366a0ee-a0cd-466d-ba6a-90058c7a31a6"
+     ],
+     "illustration_id": "83c8920c-81ad-4ae2-a194-726a8c823942",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 18334,
+     "penny_rank": 9613,
+     "prices": {
+      "usd": "0.08",
+      "usd_foil": "0.14",
+      "usd_etched": null,
+      "eur": "0.04",
+      "eur_foil": "0.10",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=679997&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DJuggernaut",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DJuggernaut",
+      "edhrec": "https://edhrec.com/route/?cc=Juggernaut"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F589348%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=795135&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/133536?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_1",
+    "controller": "player_1",
+    "timestamp": 5,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [
+   {
+    "id": "act_perm_1_1_6",
+    "kind": "activated",
+    "pseudoKind": "ability",
+    "sourceId": "perm_1",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 1,
+    "timestamp": 6,
+    "effectText": "Target artifact you control becomes a copy of another target artifact or creature you control until end of turn, except it's an artifact in addition to its other types.",
+    "xValue": null,
+    "hasXValue": false,
+    "cdaUserValue": null,
+    "linkedCards": null,
+    "fullText": "−2: Target artifact you control becomes a copy of another target artifact or creature you control until end of turn, except it's an artifact in addition to its other types.",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "guessedTargetSubjects": [],
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "forPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Saheeli, Sublime Artificer",
+       "types": [
+        "Planeswalker"
+       ],
+       "supertypes": [
+        "Legendary"
+       ],
+       "subtypes": [
+        "Saheeli"
+       ],
+       "power": null,
+       "toughness": null,
+       "colors": [
+        "R",
+        "U"
+       ],
+       "abilities": [
+        "Whenever you cast a noncreature spell, create a 1/1 colorless Servo artifact creature token.",
+        "−2: Target artifact you control becomes a copy of another target artifact or creature you control until end of turn, except it's an artifact in addition to its other types."
+       ],
+       "oracleText": "Whenever you cast a noncreature spell, create a 1/1 colorless Servo artifact creature token.\n−2: Target artifact you control becomes a copy of another target artifact or creature you control until end of turn, except it's an artifact in addition to its other types.",
+       "manaValue": 3,
+       "manaCost": "{1}{U/R}{U/R}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "tapped": false,
+       "traits": [],
+       "counters": {
+        "loyalty": 5
+       }
+      }
+     ],
+     [
+      "perm_2",
+      {
+       "name": "Ornithopter",
+       "types": [
+        "Artifact",
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Thopter"
+       ],
+       "power": 0,
+       "toughness": 2,
+       "colors": [],
+       "abilities": [
+        "Flying"
+       ],
+       "oracleText": "Flying",
+       "manaValue": 0,
+       "manaCost": "{0}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "tapped": false,
+       "traits": [],
+       "counters": {},
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_3",
+      {
+       "name": "Grizzly Bears",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Bear"
+       ],
+       "power": 2,
+       "toughness": 2,
+       "colors": [
+        "G"
+       ],
+       "abilities": [],
+       "oracleText": "",
+       "manaValue": 2,
+       "manaCost": "{1}{G}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "tapped": false,
+       "traits": [],
+       "counters": {},
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_4",
+      {
+       "name": "Hill Giant",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Giant"
+       ],
+       "power": 3,
+       "toughness": 3,
+       "colors": [
+        "R"
+       ],
+       "abilities": [],
+       "oracleText": "",
+       "manaValue": 4,
+       "manaCost": "{3}{R}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "tapped": false,
+       "traits": [],
+       "counters": {},
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_5",
+      {
+       "name": "Juggernaut",
+       "types": [
+        "Artifact",
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Juggernaut"
+       ],
+       "power": 5,
+       "toughness": 3,
+       "colors": [],
+       "abilities": [
+        "This creature attacks each combat if able.",
+        "This creature can't be blocked by Walls."
+       ],
+       "oracleText": "This creature attacks each combat if able.\nThis creature can't be blocked by Walls.",
+       "manaValue": 4,
+       "manaCost": "{4}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "tapped": false,
+       "traits": [],
+       "counters": {},
+       "_protectionFrom": []
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Saheeli, Sublime Artificer",
+       "imageUri": "https://cards.scryfall.io/small/front/c/e/ce35a39a-6dcd-4bbc-b43b-bd1a5425cb05.jpg?1783915410",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {
+        "loyalty": 5
+       },
+       "printedTypes": [
+        "Planeswalker"
+       ],
+       "printedSupertypes": [
+        "Legendary"
+       ],
+       "printedSubtypes": [
+        "Saheeli"
+       ],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Ornithopter",
+       "imageUri": "https://cards.scryfall.io/small/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Artifact",
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Thopter"
+       ],
+       "printedPower": 0,
+       "printedToughness": 2,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Hill Giant",
+       "imageUri": "https://cards.scryfall.io/small/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Giant"
+       ],
+       "printedPower": 3,
+       "printedToughness": 3,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_5",
+       "name": "Juggernaut",
+       "imageUri": "https://cards.scryfall.io/small/front/f/4/f4468fff-cd6f-428c-b7a0-ff89f5bbea2e.jpg?1783909048",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Artifact",
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Juggernaut"
+       ],
+       "printedPower": 5,
+       "printedToughness": 3,
+       "timestamp": 5
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_1",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      },
+      {
+       "id": "player_1",
+       "name": "Player 2"
+      }
+     ]
+    },
+    "primaryTarget": "perm_2",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": {
+     "object": "card",
+     "id": "409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+     "multiverse_ids": [
+      129586
+     ],
+     "mtgo_id": 27400,
+     "mtgo_foil_id": 27401,
+     "tcgplayer_id": 15153,
+     "cardmarket_id": 16432,
+     "name": "Grizzly Bears",
+     "lang": "en",
+     "released_at": "2007-07-13",
+     "uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "scryfall_uri": "https://scryfall.com/card/10e/268/grizzly-bears?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:43:21Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "normal": "https://cards.scryfall.io/normal/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "large": "https://cards.scryfall.io/large/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "png": "https://cards.scryfall.io/png/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.png?1783943001",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "grid": "https://cards.scryfall.io/grid/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "display": "https://cards.scryfall.io/display/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "art": "https://cards.scryfall.io/art/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "crop": "https://cards.scryfall.io/crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001"
+     },
+     "mana_cost": "{1}{G}",
+     "cmc": 2,
+     "type_line": "Creature — Bear",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set": "10e",
+     "set_name": "Tenth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A14c8f55d-d177-4c25-a931-ebeb9e6062a0&unique=prints",
+     "collector_number": "268",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"We cannot forget that among all of Dominaria's wonders, a system of life exists, with prey and predators that will never fight wars nor vie for ancient power.\"\n—Jolrael, empress of beasts",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "D. J. Cleland-Hura",
+     "artist_ids": [
+      "87d21070-2432-4167-8aab-5968af1c14f3"
+     ],
+     "illustration_id": "066bfe81-0f53-43da-a074-b2ecc5dcda72",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 8114,
+     "penny_rank": 10982,
+     "prices": {
+      "usd": "0.22",
+      "usd_foil": "3.29",
+      "usd_etched": null,
+      "eur": "0.11",
+      "eur_foil": "1.97",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129586&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "edhrec": "https://edhrec.com/route/?cc=Grizzly+Bears"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15153%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16432&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27400?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "targetTs": 7,
+    "slotTs": {},
+    "copyTargetPermId": "perm_3",
+    "refPermId": null,
+    "choices": null
+   }
+  ],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   },
+   {
+    "id": "player_1",
+    "name": "Player 2",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": false,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 2,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Saheeli, Sublime Artificer",
+    "final": {
+     "name": "Saheeli, Sublime Artificer",
+     "controller": "player_0",
+     "supertypes": [
+      "Legendary"
+     ],
+     "types": [
+      "Planeswalker"
+     ],
+     "subtypes": [
+      "Saheeli"
+     ],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "R",
+      "U"
+     ],
+     "abilities": [
+      "Whenever you cast a noncreature spell, create a 1/1 colorless Servo artifact creature token.",
+      "−2: Target artifact you control becomes a copy of another target artifact or creature you control until end of turn, except it's an artifact in addition to its other types."
+     ],
+     "counters": {
+      "loyalty": 5
+     }
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Ornithopter",
+    "final": {
+     "name": "Grizzly Bears",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature",
+      "Artifact"
+     ],
+     "subtypes": [
+      "Bear"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "G"
+     ],
+     "abilities": [],
+     "oracleTextModified": true
+    },
+    "changedBy": {
+     "1": [
+      "Saheeli, Sublime Artificer (activated)"
+     ]
+    }
+   },
+   {
+    "perm": "Grizzly Bears",
+    "final": {
+     "name": "Grizzly Bears",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Bear"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "G"
+     ],
+     "abilities": []
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Hill Giant",
+    "final": {
+     "name": "Hill Giant",
+     "controller": "player_1",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Giant"
+     ],
+     "power": 3,
+     "toughness": 3,
+     "colors": [
+      "R"
+     ],
+     "abilities": []
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Juggernaut",
+    "final": {
+     "name": "Juggernaut",
+     "controller": "player_1",
+     "supertypes": [],
+     "types": [
+      "Artifact",
+      "Creature"
+     ],
+     "subtypes": [
+      "Juggernaut"
+     ],
+     "power": 5,
+     "toughness": 3,
+     "colors": [],
+     "abilities": [
+      "This creature attacks each combat if able.",
+      "This creature can't be blocked by Walls."
+     ]
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "1": [
+    "Saheeli, Sublime Artificer (activated)"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Saheeli, Sublime Artificer (activated)",
+    "layer": "1",
+    "type": "copy",
+    "scope": "targeted",
+    "target": "Ornithopter",
+    "params": {
+     "_copyTargetPermId": "@Grizzly Bears",
+     "addTypes": [
+      "Artifact"
+     ],
+     "copySource": {
+      "artist": "D. J. Cleland-Hura",
+      "artist_ids": [
+       "87d21070-2432-4167-8aab-5968af1c14f3"
+      ],
+      "booster": true,
+      "border_color": "black",
+      "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+      "cardmarket_id": 16432,
+      "cmc": 2,
+      "collector_number": "268",
+      "color_identity": [
+       "G"
+      ],
+      "colors": [
+       "G"
+      ],
+      "digital": false,
+      "edhrec_rank": 8114,
+      "finishes": [
+       "nonfoil",
+       "foil"
+      ],
+      "flavor_text": "\"We cannot forget that among all of Dominaria's wonders, a system of life exists, with prey and predators that will never fight wars nor vie for ancient power.\"\n—Jolrael, empress of beasts",
+      "foil": true,
+      "frame": "2003",
+      "full_art": false,
+      "game_changer": false,
+      "games": [
+       "paper",
+       "mtgo"
+      ],
+      "highres_image": true,
+      "id": "409f9b88-f03e-40b6-9883-68c14c37c0de",
+      "illustration_id": "066bfe81-0f53-43da-a074-b2ecc5dcda72",
+      "image_status": "highres_scan",
+      "image_updated_at": "2026-07-13T11:43:21Z",
+      "image_uris": {
+       "art": "https://cards.scryfall.io/art/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+       "art_crop": "https://cards.scryfall.io/art_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "border_crop": "https://cards.scryfall.io/border_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "crop": "https://cards.scryfall.io/crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+       "display": "https://cards.scryfall.io/display/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+       "grid": "https://cards.scryfall.io/grid/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+       "large": "https://cards.scryfall.io/large/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "normal": "https://cards.scryfall.io/normal/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "png": "https://cards.scryfall.io/png/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.png?1783943001",
+       "small": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "thumb": "https://cards.scryfall.io/thumb/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001"
+      },
+      "keywords": [],
+      "lang": "en",
+      "layout": "normal",
+      "legalities": {
+       "alchemy": "not_legal",
+       "brawl": "legal",
+       "commander": "legal",
+       "competitivebrawl": "legal",
+       "duel": "legal",
+       "future": "not_legal",
+       "gladiator": "legal",
+       "historic": "legal",
+       "legacy": "legal",
+       "modern": "legal",
+       "oathbreaker": "legal",
+       "oldschool": "not_legal",
+       "pauper": "legal",
+       "paupercommander": "legal",
+       "penny": "legal",
+       "pioneer": "not_legal",
+       "predh": "legal",
+       "premodern": "legal",
+       "standard": "not_legal",
+       "standardbrawl": "not_legal",
+       "timeless": "legal",
+       "tlr": "legal",
+       "vintage": "legal"
+      },
+      "mana_cost": "{1}{G}",
+      "mtgo_foil_id": 27401,
+      "mtgo_id": 27400,
+      "multiverse_ids": [
+       129586
+      ],
+      "name": "Grizzly Bears",
+      "nonfoil": true,
+      "object": "card",
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "oracle_text": "",
+      "oversized": false,
+      "penny_rank": 10982,
+      "power": "2",
+      "prices": {
+       "eur": "0.11",
+       "eur_foil": "1.97",
+       "tix": "0.03",
+       "usd": "0.22",
+       "usd_etched": null,
+       "usd_foil": "3.29"
+      },
+      "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A14c8f55d-d177-4c25-a931-ebeb9e6062a0&unique=prints",
+      "promo": false,
+      "purchase_uris": {
+       "cardhoarder": "https://www.cardhoarder.com/cards/27400?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall",
+       "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16432&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+       "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15153%3Fpage%3D1"
+      },
+      "rarity": "common",
+      "related_uris": {
+       "edhrec": "https://edhrec.com/route/?cc=Grizzly+Bears",
+       "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129586&printed=false",
+       "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+       "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears"
+      },
+      "released_at": "2007-07-13",
+      "reprint": true,
+      "reserved": false,
+      "rulings_uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de/rulings",
+      "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+      "scryfall_uri": "https://scryfall.com/card/10e/268/grizzly-bears?utm_source=api",
+      "set": "10e",
+      "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+      "set_name": "Tenth Edition",
+      "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+      "set_type": "core",
+      "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+      "story_spotlight": false,
+      "tcgplayer_id": 15153,
+      "textless": false,
+      "toughness": "2",
+      "type_line": "Creature — Bear",
+      "uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de",
+      "variation": false
+     },
+     "maxManaValue": null,
+     "restriction": "[fn]",
+     "sourceYouControl": true
+    }
+   }
+  ]
+ }
+}

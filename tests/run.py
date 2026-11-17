@@ -26,7 +26,9 @@ Asserts are the hand-written facts the fixture exists to protect, checked on eve
         target, { "kind": "modal", "mode": 3, "pick": 1 }, both 0-based. An Aura on the
         battlefield has the picker it is attached with: { "perm": "Pacifism" }. An Equipment's
         Equip / Reconfigure / Fortify pop-up has a list per such ability, { "perm": "Robe of the
-        Archmagi", "kind": "equip", "equip": 1 }, 0-based in text order; empty when blocked)
+        Archmagi", "kind": "equip", "equip": 1 }, 0-based in text order; empty when blocked. A
+        copy card's copy picker: { "kind": "copy" }; the player picker of "target player / target
+        opponent gains control of": { "kind": "players" }, by player name)
     { "zoneCard": { "name": "Regal Bunnicorn", "zone": "graveyard" }, "final": { "power": 1 },
       "cdaAbilities": ["This card's power and toughness are each equal to …"] }
         (a graveyard / exile / command-zone card as the Details pop-up evaluates it, "you" being

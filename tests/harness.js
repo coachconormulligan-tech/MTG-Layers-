@@ -149,6 +149,20 @@ function targetCandidateLists() {
     if (!pk || (pk.kind !== 'single' && pk.kind !== 'multi')) continue;
     out.push({ perm: p.name + (p.label ? ' ' + p.label : ''), kind: pk.kind, candidates: listNames(getTargetCandidates(p.id, pk)) });
   }
+  // A copy card's copy picker ("copy…", getCopyCandidates): "kind": "copy", the battlefield
+  // permanents it offers to be copied. And the player picker of "target player / target opponent /
+  // another player gains control of …" (getPlayerCandidates 'player'): "kind": "players", by name.
+  for (const p of Battlefield.permanents) {
+    const label = p.name + (p.label ? ' ' + p.label : '');
+    const info = getEffectInfo(p.id, finalStates.get(p.id));
+    const copyEff = info.hasCopyCard && Battlefield.effects.find(e => e.sourceId === p.id && e.type === EFFECT_TYPE.COPY);
+    if (copyEff && !copyEff.params.copyTargetZone) {
+      out.push({ perm: label, kind: 'copy', candidates: getCopyCandidates(p.id).candidates.map(c => c.perm.name + (c.perm.label ? ' ' + c.perm.label : '')).sort() });
+    }
+    if (p._targetsChosenPlayer) {
+      out.push({ perm: label, kind: 'players', candidates: getPlayerCandidates(p.id, 'player').map(pl => pl.name).sort() });
+    }
+  }
   // The Equip / Reconfigure / Fortify pop-up's list for each such ability of a permanent
   // (getEquipCandidates): "kind": "equip", "equip" k = its k-th such ability (0-based, in text
   // order: Robe of the Archmagi's "Equip Shaman, Warlock, or Wizard {1}" is 1). A blocked list

@@ -64,7 +64,7 @@ function _effectDisplayName(effect, allStates) {
    with addSpell (isSpell) are left to the caller: a "target spell or permanent" lists them;
    counts leave them out (_countsAsPermanent). */
 function _isPermanent(p) {
-  return !!p && !p.isEmblem && !p.isManualEffect && !p.isZoneCard;
+  return !!p && !p.isEmblem && !p.isManualEffect && !p.isZoneCard && !p.isSpell;
 }
 
 /* Is this effect a characteristic-defining ability (CR 604.3): one that defines its own object's

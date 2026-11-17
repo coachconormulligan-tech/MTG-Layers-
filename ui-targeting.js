@@ -3,7 +3,6 @@
 function renderCopyTargetSelect(sourceId) {
   const effect = Battlefield.effects.find(e => e.sourceId === sourceId && e.type === EFFECT_TYPE.COPY);
   if (!effect) return '';
-  const restriction = effect.params.restriction;
   const currentCopyName = effect.params.copySource ? effect.params.copySource.name : '';
 
   // Cards like Shifting Woodland copy "target permanent card in your graveyard" — the
@@ -21,48 +20,11 @@ function renderCopyTargetSelect(sourceId) {
     </select>`;
   }
 
-  // Mana value cap (e.g. Mockingbird: MV <= mana spent to cast)
-  let spentToCast = null;
-  if (effect.params.maxManaValue === 'spentToCast') {
-    const srcPerm = Battlefield.getPermById(sourceId);
-    if (srcPerm) spentToCast = getSpentToCast(srcPerm);
-  }
-
-  // Use final evaluated states for restriction checking
-  const finalStates = Battlefield.getAllFinalStates();
-  // For spells / triggered / activated abilities, prefer the snapshot captured at fire/cast time
-  // so targets are evaluated by what they WERE, not what they are now.
-  const srcPermForSnap = Battlefield.getPermById(sourceId);
-  const snapStates = srcPermForSnap?._firedAtStates || srcPermForSnap?._firedAtSnapshot?.states || null;
-  const lookupState = (id) => (snapStates && snapStates.has(id)) ? snapStates.get(id) : finalStates.get(id);
-  // Only show top cards of mutate stacks (non-top cards are not valid copy targets)
-  const targets = Battlefield.permanents.filter(p => {
-    if (p.isManualEffect || p.id === sourceId) return false;
-    const stack = Battlefield.getStack(p.id);
-    if (stack && stack[0] !== p.id) return false; // not top of stack
-    return true;
-  });
-
-  // Find currently selected target by matching copySource name to a battlefield perm
-  let currentTargetId = '';
-  if (effect.params._copyTargetPermId) {
-    currentTargetId = effect.params._copyTargetPermId;
-  }
-
+  // The battlefield list: getCopyCandidates (cards-targeting.js), which tests/audit.js reads too.
+  const { candidates, currentTarget } = getCopyCandidates(sourceId);
   return `<select class="ts-target-select" onchange="setCopyTargetFromBattlefield('${sourceId}', this.value)" onclick="event.stopPropagation()">
     <option value="">copy\u2026</option>
-    ${targets.map(t => {
-      const fs = lookupState(t.id);
-      const tState = fs
-        ? { types: fs.types || [], supertypes: fs.supertypes || [], subtypes: fs.subtypes || [], colors: fs.colors || [], isAllCreatureTypes: fs.isAllCreatureTypes, isToken: t.isToken, counters: fs.counters || {} }
-        : { types: t.printedTypes || [], supertypes: t.printedSupertypes || [], subtypes: t.printedSubtypes || [], colors: t.printedColors || [], isAllCreatureTypes: false, isToken: t.isToken, counters: t.counters || {} };
-      const mvValid = spentToCast === null || (t.manaValue || 0) <= spentToCast;
-      // "Choose target creature you control. Each other creature … becomes a copy of that creature".
-      const ctrlValid = !effect.params.sourceYouControl || !srcPermForSnap || (fs ? fs.controller : t.controller) === srcPermForSnap.controller;
-      const valid = mvValid && ctrlValid && (!restriction || restriction(tState));
-      const tCopyName = (fs ? fs.name : t.name) + (fs?.copySource ? ' (copy)' : '');
-      return valid ? `<option value="${t.id}" ${t.id === currentTargetId ? 'selected' : ''}>${escapeHtml(tCopyName)}</option>` : '';
-    }).join('')}
+    ${candidates.map(c => `<option value="${c.id}" ${c.id === currentTarget ? 'selected' : ''}>${escapeHtml(c.displayName)}</option>`).join('')}
   </select>`;
 }
 
@@ -364,9 +326,8 @@ function setRefPerm(sourceId, permId) {
 function renderTargetOpponentSelect(sourceId) {
   const sourcePerm = Battlefield.getPermById(sourceId);
   if (!sourcePerm) return '';
-  const sourceCtrl = sourcePerm.controller || sourcePerm.owner || Battlefield.activePlayerId;
   const current = sourcePerm._targetOpponentPlayerId || '';
-  const opponents = (Battlefield.players || []).filter(pl => pl.id !== sourceCtrl);
+  const opponents = getPlayerCandidates(sourceId, 'opponent');
   if (opponents.length === 0) return '';
   return `<select class="ts-target-select ts-target-opponent" onchange="setTargetOpponent('${sourceId}', this.value)" onclick="event.stopPropagation()">
     <option value="">\u2192 target opponent\u2026</option>
@@ -386,10 +347,10 @@ function renderTargetPlayerSelect(sourceId) {
   const sourcePerm = Battlefield.getPermById(sourceId);
   if (!sourcePerm) return '';
   const current = sourcePerm._targetPlayerId || '';
-  const players = Battlefield.players || [];
+  const players = getPlayerCandidates(sourceId, 'player');
   if (players.length === 0) return '';
   return `<select class="ts-target-select ts-target-player" onchange="setTargetPlayer('${sourceId}', this.value)" onclick="event.stopPropagation()">
-    <option value="">\u2192 target player\u2026</option>
+    <option value="">\u2192 ${sourcePerm._chosenPlayerNotYou || 'target player'}\u2026</option>
     ${buildPlayerSelectOptions(players, current)}
   </select>`;
 }
@@ -407,7 +368,7 @@ function renderEnchantedPlayerSelect(sourceId) {
   const sourcePerm = Battlefield.getPermById(sourceId);
   if (!sourcePerm) return '';
   const current = sourcePerm._enchantedPlayerId || '';
-  const players = Battlefield.players || [];
+  const players = getPlayerCandidates(sourceId, 'enchanted');
   if (players.length === 0) return '';
   return `<select class="ts-target-select ts-target-player" onchange="setEnchantedPlayer('${sourceId}', this.value)" onclick="event.stopPropagation()">
     <option value="">→ enchanted player…</option>

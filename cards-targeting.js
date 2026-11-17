@@ -111,6 +111,66 @@ function getTargetPickerKind(sourceId, finalState, info) {
   return { kind, slots: info.targetSlotCount, modes: info.activeModalTargetedModes, modeMaxTargets: info.modalModeMaxTargets, maxTargets: info.maxTargets, info };
 }
 
+/* The players a player picker offers: 'opponent' (renderTargetOpponentSelect, "target opponent"),
+   'player' (renderTargetPlayerSelect, "target player gains control of …"; not you when the text
+   says "target opponent" or "another player", _chosenPlayerNotYou) and 'enchanted'
+   (renderEnchantedPlayerSelect, "Enchant player"). Returns player objects. */
+function getPlayerCandidates(sourceId, which) {
+  const sourcePerm = Battlefield.getPermById(sourceId);
+  const players = Battlefield.players || [];
+  if (!sourcePerm) return [];
+  const sourceCtrl = sourcePerm.controller || sourcePerm.owner || Battlefield.activePlayerId;
+  if (which === 'opponent' || (which === 'player' && sourcePerm._chosenPlayerNotYou)) return players.filter(pl => pl.id !== sourceCtrl);
+  return players.slice();
+}
+
+/* The battlefield permanents a copy card's copy picker offers ("copy…", renderCopyTargetSelect in
+   ui-targeting.js): what the source becomes, or makes a permanent become, a copy of. A copy from a
+   graveyard or exile (params.copyTargetZone) is listed by _gatherCopyZoneCards instead.
+   Returns { candidates: [{ id, perm, state, displayName }], currentTarget }. */
+function getCopyCandidates(sourceId) {
+  const effect = Battlefield.effects.find(e => e.sourceId === sourceId && e.type === EFFECT_TYPE.COPY);
+  if (!effect || effect.params.copyTargetZone) return { candidates: [], currentTarget: '' };
+  const restriction = effect.params.restriction;
+  // Mana value cap (e.g. Mockingbird: MV <= mana spent to cast)
+  let spentToCast = null;
+  if (effect.params.maxManaValue === 'spentToCast') {
+    const srcPerm = Battlefield.getPermById(sourceId);
+    if (srcPerm) spentToCast = getSpentToCast(srcPerm);
+  }
+  // Final evaluated states, so cards that gain types through Layer 1+ are valid. For spells and
+  // fired abilities, the snapshot captured at fire/cast time: targets are judged by what they WERE.
+  const finalStates = Battlefield.getAllFinalStates();
+  const srcPermForSnap = Battlefield.getPermById(sourceId);
+  const snapStates = srcPermForSnap?._firedAtStates || srcPermForSnap?._firedAtSnapshot?.states || null;
+  const lookupState = (id) => (snapStates && snapStates.has(id)) ? snapStates.get(id) : finalStates.get(id);
+  // Only the top card of a mutate stack can be copied.
+  // (Not a spell, emblem or other pseudo-permanent: only a permanent can be copied here.)
+  const targets = Battlefield.permanents.filter(p => {
+    if (!_isPermanent(p) || p.id === sourceId) return false;
+    const stack = Battlefield.getStack(p.id);
+    if (stack && stack[0] !== p.id) return false;
+    return true;
+  });
+  const candidates = [];
+  for (const t of targets) {
+    const fs = lookupState(t.id);
+    const tState = fs
+      ? { types: fs.types || [], supertypes: fs.supertypes || [], subtypes: fs.subtypes || [], colors: fs.colors || [], isAllCreatureTypes: fs.isAllCreatureTypes, isToken: t.isToken, counters: fs.counters || {} }
+      : { types: t.printedTypes || [], supertypes: t.printedSupertypes || [], subtypes: t.printedSubtypes || [], colors: t.printedColors || [], isAllCreatureTypes: false, isToken: t.isToken, counters: t.counters || {} };
+    const mvValid = spentToCast === null || (t.manaValue || 0) <= spentToCast;
+    // "Choose target creature you control. Each other creature … becomes a copy of that creature".
+    // ("…another target artifact or creature you control", "a creature an opponent controls".)
+    const tCtrl = fs ? fs.controller : (t.controller || t.owner);
+    const ctrlValid = !srcPermForSnap
+      || (!effect.params.sourceYouControl || tCtrl === srcPermForSnap.controller)
+      && (!effect.params.sourceOpponentControls || tCtrl !== srcPermForSnap.controller);
+    if (!(mvValid && ctrlValid && (!restriction || restriction(tState)))) continue;
+    candidates.push({ id: t.id, perm: t, state: fs, displayName: (fs ? fs.name : t.name) + (t.label ? ' ' + t.label : '') + (fs?.copySource ? ' (copy)' : '') });
+  }
+  return { candidates, currentTarget: effect.params._copyTargetPermId || '' };
+}
+
 /* "Audit Bear A [Player 2]" - how a permanent is named in a picker. The modal-mode picker leaves
    the player off. */
 /* What a target restriction is asked about a candidate. The pickers' own tState carries only
