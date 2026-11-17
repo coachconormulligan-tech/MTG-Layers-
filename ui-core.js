@@ -139,6 +139,7 @@ function _doRenderAll() {
   renderGraveyardPanel();
   renderLibraryPanel();
   renderExilePanel();
+  renderZoneBar();
   renderInspector();
   decorateTargetPicks();   // "Pick" buttons beside the target lists (ui-targeting.js)
 }
@@ -173,6 +174,7 @@ function selectInspected(id) {
   renderInspector();
   renderTimestampPanel();
   renderCounterPanel();
+  renderZoneBar();
   decorateTargetPicks();
 }
 
@@ -1251,4 +1253,76 @@ function toggleLeftSection(headerEl) {
   if (section) section.classList.toggle('collapsed');
 }
 /* [END: SEARCH-UI] */
+
+/* [KEY: ZONE-DOCK] The zones and trackers under the timestamp list sit behind one
+   header, "Zones and game state", closed until wanted. Open, it is a plain list: a row
+   opens its panel underneath (one at a time; pressing it again closes it) and shows a
+   count when the zone holds anything. Exile, and with one player the graveyard and
+   library, have nothing to show in a panel but one row that opens their window, so
+   their rows open the window itself. The header carries the total, so a closed list
+   still says when something is in a zone. */
+const ZONE_KEYS = ['commander', 'emblem', 'graveyard', 'library', 'exile', 'game', 'counter'];
+const ZONE_SECTION_IDS = { commander: 'commander-section', emblem: 'emblem-section', graveyard: 'graveyard-section',
+  library: 'library-section', exile: 'exile-section', game: 'game-state-section', counter: 'counter-section' };
+let _zoneOpen = null;
+
+function _zoneCount(key) {
+  if (key === 'commander') return (Battlefield.commanders || []).length;
+  if (key === 'emblem') return (Battlefield.emblems || []).length;
+  if (key === 'graveyard') return Battlefield.players.reduce((n, pl) => n + (pl.graveyard || []).length, 0);
+  if (key === 'library') return Battlefield.players.filter(pl => pl.libraryTop).length;
+  if (key === 'exile') return Battlefield.getExileCount();
+  if (key === 'counter') {
+    const perm = Battlefield.inspectedId ? Battlefield.getPermById(Battlefield.inspectedId) : null;
+    return perm ? Object.values(perm.counters || {}).reduce((n, v) => n + (v > 0 ? v : 0), 0) : 0;
+  }
+  return 0;
+}
+
+function renderZoneBar() {
+  const dock = document.getElementById('zone-dock');
+  if (!dock) return;
+  // Counters belong to the selected card: with none selected there is nothing to open.
+  const perm = Battlefield.inspectedId ? Battlefield.getPermById(Battlefield.inspectedId) : null;
+  const canCount = !!perm && !perm.isManualEffect;
+  if (_zoneOpen === 'counter' && !canCount) _zoneOpen = null;
+
+  let total = 0;
+  for (const key of ZONE_KEYS) {
+    const n = _zoneCount(key);
+    if (key !== 'counter') total += n;
+    const row = dock.querySelector(`.zone-row[data-zone="${key}"]`);
+    if (row) {
+      row.classList.toggle('active', _zoneOpen === key);
+      row.querySelector('.zone-row-count').textContent = n ? String(n) : '';
+      if (key === 'counter') {
+        row.disabled = !canCount;
+        row.title = canCount ? '' : 'Select a card to see its counters';
+      }
+    }
+    (document.getElementById(ZONE_SECTION_IDS[key]) || dock.querySelector('.' + ZONE_SECTION_IDS[key]))
+      ?.classList.toggle('zone-open', key === _zoneOpen);
+  }
+  const totalEl = document.getElementById('zone-total');
+  if (totalEl) totalEl.textContent = total ? String(total) : '';
+}
+
+function toggleZonePane(key) {
+  if (key === 'exile') { openExileModal(); return; }
+  if ((key === 'graveyard' || key === 'library') && Battlefield.players.length === 1) {
+    (key === 'graveyard' ? openGraveyardModal : openLibraryModal)(Battlefield.players[0].id);
+    return;
+  }
+  _zoneOpen = _zoneOpen === key ? null : key;
+  renderZoneBar();
+}
+
+/* Open a zone's panel, and the list around it (after a commander or emblem is added). */
+function openZonePane(key) {
+  _zoneOpen = key;
+  document.getElementById('zone-dock')?.classList.remove('collapsed');
+  renderZoneBar();
+}
+/* [END: ZONE-DOCK] */
+
 

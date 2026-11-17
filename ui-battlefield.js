@@ -46,6 +46,68 @@ function _bfCardImage(uri) {
 }
 
 /* [KEY: BATTLEFIELD-UI] */
+/* Drag a card onto another to change the order they entered in: dropped on a card's
+   left half it gets the timestamp just before that card, on its right half the one just
+   after. The same reorder as dragging in the Timestamp Order list (reorderTimestamps),
+   over every permanent on the board, so other players' cards keep their places. An Aura
+   or Equipment stays drawn behind what it is attached to; only its timestamp moves.
+   Listeners are bound once on the grid, which outlives every re-render. */
+let _bfDragId = null;
+function _initBattlefieldDrag(container) {
+  if (container._bfDragBound) return;
+  container._bfDragBound = true;
+  const clearMarks = () => container.querySelectorAll('.bf-drop-before, .bf-drop-after')
+    .forEach(el => el.classList.remove('bf-drop-before', 'bf-drop-after'));
+  const targetOf = (e) => {
+    const card = e.target.closest ? e.target.closest('.bf-card[data-id]') : null;
+    if (!card || !_bfDragId || card.dataset.id === _bfDragId) return null;
+    const r = card.getBoundingClientRect();
+    return { card, after: e.clientX > r.left + r.width / 2 };
+  };
+
+  container.addEventListener('dragstart', (e) => {
+    const card = e.target.closest ? e.target.closest('.bf-card[data-id]') : null;
+    if (!card) return;
+    _bfDragId = card.dataset.id;
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', _bfDragId);
+    const r = card.getBoundingClientRect();
+    try { e.dataTransfer.setDragImage(card, e.clientX - r.left, e.clientY - r.top); } catch (err) { /* keep the default image */ }
+    setTimeout(() => card.classList.add('bf-card-dragging'), 0);
+  });
+
+  container.addEventListener('dragover', (e) => {
+    if (!_bfDragId) return;
+    const t = targetOf(e);
+    clearMarks();
+    if (!t) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    t.card.classList.add(t.after ? 'bf-drop-after' : 'bf-drop-before');
+  });
+
+  container.addEventListener('drop', (e) => {
+    const t = targetOf(e);
+    if (!t) return;
+    e.preventDefault();
+    const dragId = _bfDragId, targetId = t.card.dataset.id;
+    const order = Battlefield.permanents.slice().sort((a, b) => a.timestamp - b.timestamp).map(p => p.id);
+    const from = order.indexOf(dragId);
+    if (from < 0 || !order.includes(targetId)) return;
+    order.splice(from, 1);
+    order.splice(order.indexOf(targetId) + (t.after ? 1 : 0), 0, dragId);
+    Battlefield.reorderTimestamps(order);
+    Battlefield.evaluate();
+    renderAll();
+  });
+
+  container.addEventListener('dragend', () => {
+    _bfDragId = null;
+    clearMarks();
+    container.querySelectorAll('.bf-card-dragging').forEach(el => el.classList.remove('bf-card-dragging'));
+  });
+}
+
 function renderBattlefield() {
   const container = document.getElementById('battlefield');
   // Compute final states first so Layer 2 control-changing effects are reflected in the display
@@ -453,7 +515,7 @@ function renderBattlefield() {
     const _live = renderLivePatches(p, _cardFs);
     const _imgSrc = (p.imageUri && _live.includes('data-src=')) ? p.imageUri.replace('/small/', '/normal/') : _bfCardImage(p.imageUri);
     return `
-    <div class="bf-card ${isSelected ? 'bf-card-selected' : ''} ${hasSBA ? 'bf-card-sba' : ''} ${(p.isManualEffect || p.isSpell) ? 'bf-card-spell' : ''} ${p.tapped ? 'bf-card-tapped' : ''} ${_cardIsSideways(p) ? 'bf-card-sideways' : ''} ${p.isFaceDown ? 'bf-card-facedown' : ''}" data-id="${p.id}" data-sba="${sbaReasons.join(',')}" onclick="selectPermanent('${p.id}')" oncontextmenu="event.preventDefault(); event.stopPropagation(); openCardMenu(event, '${p.id}');">
+    <div class="bf-card ${isSelected ? 'bf-card-selected' : ''} ${hasSBA ? 'bf-card-sba' : ''} ${(p.isManualEffect || p.isSpell) ? 'bf-card-spell' : ''} ${p.tapped ? 'bf-card-tapped' : ''} ${_cardIsSideways(p) ? 'bf-card-sideways' : ''} ${p.isFaceDown ? 'bf-card-facedown' : ''}" data-id="${p.id}" data-sba="${sbaReasons.join(',')}" draggable="true" onclick="selectPermanent('${p.id}')" oncontextmenu="event.preventDefault(); event.stopPropagation(); openCardMenu(event, '${p.id}');">
       ${p.imageUri ? `<img src="${_imgSrc}" alt="${escapeAttr(p.name)}" class="bf-card-img${_liveFlipped(p) ? ' bf-card-img-turned' : ''}">` : `<div class="bf-card-no-img"><span>${escapeHtml(p.name)}</span></div>`}
       ${p.label ? `<div class="bf-card-label" aria-hidden="true">${escapeHtml(p.label)}</div>` : ''}
       <div class="bf-card-overlay">${_live}</div>
@@ -514,6 +576,7 @@ function renderBattlefield() {
     </div>`;
   }
 
+  _initBattlefieldDrag(container);
   container.innerHTML = renderItems.map(item => {
     if (item.type === 'card') {
       return wrapWithAttachers(item.perm, renderCardDiv(item.perm));

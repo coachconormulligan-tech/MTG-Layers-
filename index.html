@@ -6,7 +6,7 @@
   <title>MTG Layer Inspector - CR 613</title>
   <link rel="icon" type="image/png" href="assets/layer-inspector-tab.png">
   <link rel="apple-touch-icon" href="assets/layer-inspector-tab.png">
-  <link rel="stylesheet" href="styles.css?v=147">
+  <link rel="stylesheet" href="styles.css?v=149">
 </head>
 <body>
 
@@ -126,67 +126,28 @@
       <!-- Resize handle for timestamp section -->
       <div class="section-v-resize" data-resize-above=".timestamp-section"></div>
 
-      <!-- Command Zone -->
-      <div class="commander-section accordion-section collapsed" id="commander-section">
+      <!-- Zones and game state: one header, closed until wanted; a row opens its panel or window (ui-core.js) -->
+      <div class="zone-dock accordion-section collapsed" id="zone-dock">
         <div class="panel-title accordion-header" onclick="toggleLeftSection(this)">
-          <span>Command Zone</span>
+          <span>Zones and game state <span class="zone-total" id="zone-total"></span></span>
           <span class="accordion-chevron">&#x25BC;</span>
         </div>
-        <div class="panel-body" id="commander-panel"></div>
-      </div>
-
-      <!-- Emblems -->
-      <div class="emblem-section accordion-section collapsed" id="emblem-section">
-        <div class="panel-title accordion-header" onclick="toggleLeftSection(this)">
-          <span>Emblems</span>
-          <span class="accordion-chevron">&#x25BC;</span>
+        <div class="zone-list">
+          <button class="zone-row" data-zone="commander" onclick="toggleZonePane('commander')"><span>Command zone</span><span class="zone-row-count"></span></button>
+          <div class="zone-pane commander-section" id="commander-section"><div class="panel-body" id="commander-panel"></div></div>
+          <button class="zone-row" data-zone="emblem" onclick="toggleZonePane('emblem')"><span>Emblems</span><span class="zone-row-count"></span></button>
+          <div class="zone-pane emblem-section" id="emblem-section"><div class="panel-body" id="emblem-panel"></div></div>
+          <button class="zone-row" data-zone="graveyard" onclick="toggleZonePane('graveyard')"><span>Graveyard</span><span class="zone-row-count"></span></button>
+          <div class="zone-pane graveyard-section" id="graveyard-section"><div class="panel-body" id="graveyard-panel"></div></div>
+          <button class="zone-row" data-zone="library" onclick="toggleZonePane('library')"><span>Library</span><span class="zone-row-count"></span></button>
+          <div class="zone-pane graveyard-section" id="library-section"><div class="panel-body" id="library-panel"></div></div>
+          <button class="zone-row" data-zone="exile" onclick="toggleZonePane('exile')"><span>Exile</span><span class="zone-row-count"></span></button>
+          <div class="zone-pane exile-section" id="exile-section"><div class="panel-body" id="exile-panel"></div></div>
+          <button class="zone-row" data-zone="game" onclick="toggleZonePane('game')"><span>Game state</span><span class="zone-row-count"></span></button>
+          <div class="zone-pane game-state-section" id="game-state-section"><div class="panel-body" id="game-state-panel"></div></div>
+          <button class="zone-row" data-zone="counter" onclick="toggleZonePane('counter')"><span>Counters</span><span class="zone-row-count"></span></button>
+          <div class="zone-pane counter-section" id="counter-section" style="display:none;"><div class="panel-body" id="counter-panel"></div></div>
         </div>
-        <div class="panel-body" id="emblem-panel"></div>
-      </div>
-
-      <!-- Graveyard -->
-      <div class="graveyard-section accordion-section collapsed" id="graveyard-section">
-        <div class="panel-title accordion-header" onclick="toggleLeftSection(this)">
-          <span>Graveyard</span>
-          <span class="accordion-chevron">&#x25BC;</span>
-        </div>
-        <div class="panel-body" id="graveyard-panel"></div>
-      </div>
-
-      <!-- Library (top card only) -->
-      <div class="graveyard-section accordion-section collapsed" id="library-section">
-        <div class="panel-title accordion-header" onclick="toggleLeftSection(this)">
-          <span>Library</span>
-          <span class="accordion-chevron">&#x25BC;</span>
-        </div>
-        <div class="panel-body" id="library-panel"></div>
-      </div>
-
-      <!-- Exile -->
-      <div class="exile-section accordion-section collapsed" id="exile-section">
-        <div class="panel-title accordion-header" onclick="toggleLeftSection(this)">
-          <span>Exile</span>
-          <span class="accordion-chevron">&#x25BC;</span>
-        </div>
-        <div class="panel-body" id="exile-panel"></div>
-      </div>
-
-      <!-- Game State Tracking -->
-      <div class="game-state-section accordion-section collapsed">
-        <div class="panel-title accordion-header" onclick="toggleLeftSection(this)">
-          <span>Game State</span>
-          <span class="accordion-chevron">&#x25BC;</span>
-        </div>
-        <div class="panel-body" id="game-state-panel"></div>
-      </div>
-
-      <!-- Counters -->
-      <div id="counter-section" class="counter-section accordion-section collapsed" style="display:none;">
-        <div class="panel-title accordion-header" onclick="toggleLeftSection(this)">
-          <span>Counters</span>
-          <span class="accordion-chevron">&#x25BC;</span>
-        </div>
-        <div class="panel-body" id="counter-panel"></div>
       </div>
     </div>
 
@@ -277,13 +238,13 @@
   <!-- ui -->
   <script src="ui-helpers.js?v=12"></script>
   <script src="ui-dom-builders.js?v=1"></script>
-  <script src="ui-core.js?v=41"></script>
+  <script src="ui-core.js?v=43"></script>
   <script src="ui-pages.js?v=13"></script>
   <script src="ui-battlefield.js?v=81"></script>
   <script src="ui-card-menu.js?v=1"></script>
   <script src="ui-live-bg.js?v=55"></script>
   <script src="ui-timestamp.js?v=15"></script>
-  <script src="ui-zones.js?v=24"></script>
+  <script src="ui-zones.js?v=25"></script>
   <script src="ui-abilities.js?v=16"></script>
   <script src="ui-targeting.js?v=28"></script>
   <script src="ui-effect-inputs.js?v=22"></script>

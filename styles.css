@@ -3110,6 +3110,35 @@ body.utility-page-open .utility-page-shell {
   z-index: 4;
 }
 
+/* [KEY: ZONE-DOCK] -- zones and trackers behind one header; open, a plain list of rows */
+.zone-dock { flex: 0 0 auto; border-top: 1px solid var(--border); }
+.zone-dock .panel-title { border-bottom: 0; }
+.zone-dock:not(.collapsed) .panel-title { border-bottom: 1px solid var(--border); }
+.zone-total:not(:empty) { margin-left: 6px; padding: 0 6px; font-family: var(--mono); font-size: var(--fs-xs); letter-spacing: 0; color: var(--text); background: var(--surface2); border-radius: 8px; }
+.zone-list { max-height: 55vh; overflow-y: auto; padding: 4px 0; }
+.zone-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  width: 100%;
+  padding: 6px 14px;
+  font-size: var(--fs-body);
+  text-align: left;
+  color: var(--text-dim);
+  background: transparent;
+  border: 0;
+}
+.zone-row:hover:not(:disabled) { color: var(--text); background: var(--surface2); filter: none; }
+.zone-row.active { color: var(--text); }
+.zone-row:disabled { opacity: .4; cursor: default; }
+.zone-row-count:not(:empty) { font-family: var(--mono); font-size: var(--fs-sm); color: var(--text); }
+.zone-pane { display: none; border-top: 0 !important; background: var(--bg); }
+.zone-pane.zone-open { display: block; }
+/* [END: ZONE-DOCK] */
+
+/* Dragging a battlefield card onto another to change the timestamp order */
+.bf-card-dragging { opacity: .35; }
+.bf-drop-before { box-shadow: -5px 0 0 0 var(--accent2) !important; }
+.bf-drop-after  { box-shadow:  5px 0 0 0 var(--accent2) !important; }
+
 /* [KEY: LANDING] -- Dedicated landing page (card staging → "Examine final state") */
 .landing-page { display: none; }
 body.landing-active .landing-page { display: flex; }

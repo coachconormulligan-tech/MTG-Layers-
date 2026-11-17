@@ -115,7 +115,7 @@ function renderCommanderPanel() {
 function openCommanderSearch() {
   _commanderSearchOpen = true;
   // The section defaults to collapsed; expand it so the search box is visible.
-  document.getElementById('commander-section')?.classList.remove('collapsed');
+  openZonePane('commander');
   renderCommanderPanel();
 }
 
@@ -300,7 +300,7 @@ function _renderEmblemText(e, previewText, finalStates) {
 function openEmblemSearch() {
   _emblemSearchOpen = true;
   // The section defaults to collapsed; expand it so the search box is visible.
-  document.getElementById('emblem-section')?.classList.remove('collapsed');
+  openZonePane('emblem');
   renderEmblemPanel();
 }
 
