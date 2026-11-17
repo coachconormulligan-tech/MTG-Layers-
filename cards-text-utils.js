@@ -633,7 +633,8 @@ function _resolveItPronoun(text) {
              costLabel2: the second toggle of a spell with two cast conditions, or null }. */
 // A subject, then a continuous-effect verb, in the sentence's first clause — not an
 // imperative ("gain control of …", "you gain 3 life").
-const _BRANCH_CONTINUOUS_VERB_RE = /^[^,]+?\s(?:gets?|gains?|ha(?:s|ve)|becomes?|loses?)\b/i;
+// (A rule kept as a trait too: "Otherwise, it can't attack or block." — Bonds of Faith.)
+const _BRANCH_CONTINUOUS_VERB_RE = /^[^,]+?\s(?:gets?|gains?|ha(?:s|ve)|becomes?|loses?|can't (?:attack|block|be blocked|be the targets?))\b/i;
 const _BRANCH_PRONOUN_RE = /^(?:it|that (?:creature|permanent)|those (?:creatures|permanents)|they)\b/i;
 // "If it's a Vehicle, it becomes …", "As long as it's red, it has …", "If it doesn't have
 // rampage, that creature gains …": [1] If / As long as, [2] the condition, [3] the effect.

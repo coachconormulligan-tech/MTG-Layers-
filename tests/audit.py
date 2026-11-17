@@ -27,6 +27,13 @@ A unit whose own text names one permanent target ("singular") is checked twice:
   Check 1  Choosing no target changes no permanent, and choosing each listed permanent changes exactly
            that permanent. Findings: changes-with-no-target, target-changes-others,
            target-changes-nothing. (no-op-on-some, mixed-subject: information, not findings.)
+           A rule about attacking, blocking or being targeted that the site keeps as a trait
+           ("Target creature can't block this turn", "… gets +2/+0 and can't be blocked", "Put a
+           +1/+1 counter on target creature. It can't be blocked this turn") must reach the chosen
+           target as a "Can't …" trait in those words (rule-trait-missing), naming the card, not
+           the fired ability (rule-trait-names-ability). "Can't be regenerated / countered",
+           "becomes blocked", "is dealt damage" stay skipped (not-a-layer-effect), as does a rule
+           after damage ("deals 2 damage to target creature. That creature can't block").
            Before target-changes-nothing is reported, the board is adjusted in the one way the text
            asks for and the targets are tried again: a listed permanent is handed to the opponent
            ("gain control of"), given the keyword being removed ("loses first strike"), the source
@@ -209,6 +216,8 @@ CODES = [
     ('changes-with-no-target', 'With no target chosen, some permanent changes.'),
     ('target-changes-others', 'With a target chosen, a permanent other than the target changes.'),
     ('target-changes-nothing', 'Choosing any listed target changes nothing.'),
+    ('rule-trait-missing', 'The target\'s words say it "can\'t attack / block / be blocked / be the target", but the chosen target gets no "Can\'t ..." trait saying so.'),
+    ('rule-trait-names-ability', 'A "Can\'t ..." trait of the target names the fired ability ("... (activated)") instead of the card with the ability.'),
     ('second-pick-changes-nothing', 'Of an "up to N" picker, a target chosen in the second pick (with one in the first) changes nothing.'),
     ('picker-not-modal', 'Two modes of a modal spell that each name one target are picked, but the site shows no picker per mode.'),
     ('modal-modes-mismatch', 'The per-mode pickers are not for the two modes picked.'),

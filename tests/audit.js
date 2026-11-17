@@ -179,6 +179,22 @@ function diffSummaries(before, after) {
   return changed;
 }
 
+// The traits permanent `id` has in summary `after` and not in `before`.
+function newTraits(before, after, id) {
+  const a = before.get(id), b = after.get(id);
+  if (!b) return [];
+  return b.traits.filter(x => !(a ? a.traits : []).includes(x));
+}
+// A trait naming a fired ability's pseudo-permanent ("Can't block Burning-Tree Bloodscale
+// (activated)"): the ability's source is the card (CR 113.7), and its name is the card's.
+function namesFiredPseudo(trait) { return /\((?:activated|trigger|triggered|spell)\)/i.test(trait); }
+// The "Can't …" rules of the target's words (cantRulesOf) no gained trait states.
+function missingRules(rules, gained) {
+  if (!rules || !rules.length) return [];
+  const g = gained.map(x => x.toLowerCase().replace(/’/g, "'"));
+  return rules.filter(r => !g.some(x => x === r || x.startsWith(r + ' ')));
+}
+
 /* ═════════════════════════ Classification from the text ═════════════════════════ */
 
 const NUMBER_WORDS = '(?:one|two|three|four|five|six|seven|eight|nine|ten|x|\\d+)';
@@ -227,7 +243,7 @@ const SAME_PERMANENT_VERBS = /^(?:put|puts|untap|tap|taps|attach|choose|goad)$/;
 // A later sentence whose subject is the target, through a pronoun ("…. Untap it. Until end of turn,
 // it gets +1/+1 and becomes a Doctor").
 // ("… Then that creature gets +1/+1 until end of turn and fights …" — Ent's Fury.)
-const LATER_PRONOUN_EFFECT = /\.\s+(?:until end of turn,\s*|then\s+)?(?:it|that (?:creature|permanent|land|artifact))\s+(?:also\s+)?(?:gets?|gains?|has|becomes?|loses?|is)\b/;
+const LATER_PRONOUN_EFFECT = /\.\s+(?:until end of turn,\s*|then\s+)?(?:it|that (?:creature|permanent|land|artifact))\s+(?:also\s+)?(?:gets?|gains?|has|becomes?|loses?|is|can't (?:attack|block|be blocked))\b/;
 
 /* Does every event of a trigger's condition happen with the card in the hand or off the
    battlefield ("When you cycle this card", "When this creature dies", "When you cycle this card and
@@ -270,7 +286,7 @@ function classifyUnitText0(text) {
   if (/\bany $/.test(before)) return { skip: 'any-target' };
   if (new RegExp('\\b' + NUMBER_WORDS + ' (?:other )?$').test(before)) return classifyTargets(text, 'n-target');
   const r = classifyAt(lower, idx, lower.length, {});
-  return r.layer ? { singular: true, phrase: r.phrase, excludeSource: r.excludeSource, targetIndex: r.targetIndex } : { skip: r.skip };
+  return r.layer ? { singular: true, phrase: r.phrase, excludeSource: r.excludeSource, targetIndex: r.targetIndex, rules: r.rules } : { skip: r.skip };
 }
 
 /* One "target" of a unit's text, at `idx` of `lower` (the text, lower-cased, quotes masked), its
@@ -290,6 +306,7 @@ function classifyAt(lower, idx, end, opts) {
   // subject of "gets / gains / becomes", and no parse could be expected to give it a targeted effect.
   let clauseBefore = before.slice(Math.max(before.lastIndexOf('.'), before.lastIndexOf(';')) + 1);
   let verbAfter = after.slice(phrase.length).trim();
+  let rules = [];
   // (classifyTargets: "Target player creates X Zombies, then up to one target creature gets -1/-1".)
   if (opts.each) clauseBefore = clauseBefore.replace(/^.*(?:,\s*|\s)then\s/, ' ');
   if (opts.each) verbAfter = verbAfter.replace(/^(?:each|both)\s+/, '');
@@ -317,7 +334,11 @@ function classifyAt(lower, idx, end, opts) {
     const pronounGrant = (opts.plural
       ? /\b(?:they|those (?:creatures|permanents|lands|artifacts))\s+(?:each\s+)?(?:also\s+)?(?:gain|have|become|lose|get)\b/
       : /\b(?:it|that (?:creature|permanent|land|artifact))\s+(?:also\s+)?(?:gets?|gains?|has|becomes?|loses?)\b/).test(later);
-    if (/^(?:can|can't|cannot)\b/.test(verbAfter) && !/\b(?:gets?|gains?|has|have|becomes?|loses?)\b/.test(ownSentence) && !pronounGrant) return { skip: 'not-a-layer-effect' };
+    // ("Target creature can't block / can't be blocked / can't attack or block this turn": the
+    // site keeps these as traits in the card's words, so they are audited, Check 1 asking that the
+    // target alone gets the "Can't …" trait. "Can't be regenerated", "can't be countered" are not.)
+    rules = cantRulesOf(verbAfter, opts.plural);
+    if (/^(?:can|can't|cannot)\b/.test(verbAfter) && !CANT_RULE_RE.test(verbAfter) && !/\b(?:gets?|gains?|has|have|becomes?|loses?)\b/.test(ownSentence) && !pronounGrant) return { skip: 'not-a-layer-effect' };
   }
   // Likewise: "target unblocked creature becomes blocked", damage "… by target creature is dealt to
   // its controller instead", "which player … target attacking creature is attacking", "When target
@@ -335,7 +356,27 @@ function classifyAt(lower, idx, end, opts) {
   if (/^(?:players?|opponents?)\b|(?:\bor|\band\/or|,)\s+(?:another\s+)?(?:players?|opponents?)\b/.test(phrase)) return { skip: 'not-a-permanent' };
   if (!opts.plural && /\b(?:creatures|artifacts|enchantments|lands|planeswalkers|permanents)\b/.test(phrase)) return { skip: 'plural-target' };
   // ("Up to one other target creature": classifyTargets only, so a singular unit reads as before.)
-  return { layer: true, phrase, excludeSource: /\banother $/.test(before) || /^other /.test(phrase) || (!!opts.each && /\bother $/.test(before)), targetIndex: idx };
+  return { layer: true, phrase, excludeSource: /\banother $/.test(before) || /^other /.test(phrase) || (!!opts.each && /\bother $/.test(before)), targetIndex: idx, rules };
+}
+/* The rules about attacking, blocking and being targeted that the site keeps as traits (the
+   "Can't …" rules of cards-parser.js), said of the target: in its own sentence ("Target creature
+   gets +2/+0 and can't be blocked this turn"), or in the next one through a pronoun ("… It can't
+   block this turn"). Each is returned as its words, lower-case: "can't block", "can't attack or block". */
+const CANT_RULE_RE = /^can't (?:attack|block|be blocked|be the targets?)\b/;
+function cantRulesOf(verbAfter, plural) {
+  const sentences = verbAfter.split(/\.\s*/);
+  const words = [sentences[0]];
+  const pronoun = plural ? /^(?:until end of turn,\s*)?(?:they|those (?:creatures|permanents))\s+/ : /^(?:until end of turn,\s*)?(?:it|that (?:creature|permanent))\s+/;
+  if (sentences[1] && pronoun.test(sentences[1])) words.push(sentences[1].replace(pronoun, ''));
+  const out = [];
+  for (const w of words) {
+    // ("… gets +2/+0 and can't be blocked", "can't block, and …": the rule's own verb after "and".)
+    for (const m of w.matchAll(/(?:^|\band\s+|,\s+)(can't (?:attack or block|attack|block|be blocked|be the targets?))\b/g)) {
+      const r = m[1].replace(/targets$/, 'target');
+      if (!out.includes(r)) out.push(r);
+    }
+  }
+  return out;
 }
 // The count of "any number of target …" (classifyTargets).
 const ANY_NUMBER = 'any';
@@ -343,7 +384,7 @@ const ANY_NUMBER = 'any';
 // creatures each get +1/+1", in the very next sentence ("Tap up to two target creatures. … Create a
 // 1/1 Eldrazi Scion token. It has …": the token is "it").
 // ("Choose any number of target creatures. Each of those creatures gains persist" - Cauldron Haze.)
-const LATER_PLURAL_PRONOUN_EFFECT = /^[^.]*\.\s+(?:until end of turn,\s*)?(?:(?:they|those (?:creatures|permanents|lands|artifacts))\s+(?:each\s+)?(?:also\s+)?(?:gain|have|become|lose|get|are(?! now attacking))|each of (?:those (?:creatures|permanents|lands|artifacts)|them)\s+(?:also\s+)?(?:gains|has|becomes|loses|gets|is))\b/;
+const LATER_PLURAL_PRONOUN_EFFECT = /^[^.]*\.\s+(?:until end of turn,\s*)?(?:(?:they|those (?:creatures|permanents|lands|artifacts))\s+(?:each\s+)?(?:also\s+)?(?:gain|have|become|lose|get|are(?! now attacking)|can't (?:attack|block|be blocked))|each of (?:those (?:creatures|permanents|lands|artifacts)|them)\s+(?:also\s+)?(?:gains|has|becomes|loses|gets|is))\b/;
 
 /* A unit whose text names more than one target, or "up to N target …" (`origin`, which is also the
    first part of every skip reason it returns). Each target is read on its own (classifyAt) and how
@@ -383,7 +424,7 @@ function classifyTargets(text, origin) {
     const r = classifyAt(lower, idx, k + 1 < hits.length ? hits[k + 1] : lower.length, { plural: count === ANY_NUMBER || count > 1, each: true });
     if (r.skip === 'possessive-target') return skip('possessive-target');
     if (!r.layer) { reasons.push(r.skip); continue; }
-    layers.push({ phrase: r.phrase, excludeSource: r.excludeSource, targetIndex: r.targetIndex, count,
+    layers.push({ phrase: r.phrase, excludeSource: r.excludeSource, targetIndex: r.targetIndex, count, rules: r.rules,
       plural: count === ANY_NUMBER || count > 1, sourceNotJudged: r.excludeSource && /\b(?:an)?other $/.test(before) && layers.length + reasons.length > 0 });
   }
   if (!layers.length) {
@@ -392,7 +433,7 @@ function classifyTargets(text, origin) {
   }
   if (layers.length === 1 && layers[0].count === 1 && !layers[0].sourceNotJudged) {
     const t = layers[0];
-    return { singular: true, phrase: t.phrase, excludeSource: t.excludeSource, targetIndex: t.targetIndex, origin };
+    return { singular: true, phrase: t.phrase, excludeSource: t.excludeSource, targetIndex: t.targetIndex, rules: t.rules, origin };
   }
   if (layers.length === 1) {
     const t = layers[0];
@@ -1409,10 +1450,12 @@ function auditFired(ctx, u, id) {
   const tryTargets = (ids, from, record) => {
     let ok = false, clean = true;
     for (const tid of ids.slice(0, 14)) {
-      let changed = [];
+      let changed = [], gained = [];
       try {
         applyTarget(id, picker, tid);
-        changed = diffSummaries(from, summarizeBoard());
+        const now = summarizeBoard();
+        changed = diffSummaries(from, now);
+        gained = newTraits(from, now, tid);
       } catch (e) {
         if (record) finding('check1', 'crash', { error: errInfo('set target', e) });
         clean = false;
@@ -1431,11 +1474,17 @@ function auditFired(ctx, u, id) {
       u.check1.perTarget.push({ target: role, changed: changed.map(c => ({ role: c.role, what: c.what })) });
       if (targetChanged) anyTargetChanged = true; else noOp.push(role);
       if (others.length) othersSeen.push({ target: role, others: others.map(c => ({ role: c.role, what: c.what })) });
+      const lacking = missingRules(u.rules, gained);
+      if (targetChanged && lacking.length) ruleMissing.push({ target: role, missing: lacking, gained });
+      if (targetChanged && u.rules && gained.some(namesFiredPseudo)) ruleNamesPseudo.push({ target: role, gained });
     }
     return ok && clean;
   };
+  const ruleMissing = [], ruleNamesPseudo = [];
   tryTargets(tryIds, before, true);
   if (othersSeen.length) finding('check1', 'target-changes-others', { examples: othersSeen.slice(0, 3), count: othersSeen.length });
+  if (ruleMissing.length) finding('check1', 'rule-trait-missing', { examples: ruleMissing.slice(0, 3), count: ruleMissing.length });
+  if (ruleNamesPseudo.length) finding('check1', 'rule-trait-names-ability', { examples: ruleNamesPseudo.slice(0, 3), count: ruleNamesPseudo.length });
   if (tryIds.length && !anyTargetChanged && !othersSeen.length) {
     // "-1/-1 for each Swamp you control", "where X is the number of cards in your graveyard": the board has
     // none, so the right answer may be a change of 0. Only for text that does nothing but give +N/-N,
@@ -1600,8 +1649,8 @@ function auditFiredTargets(ctx, u, id) {
     const tryTargets = (ids, from, record) => {
       let ok = false, clean = true;
       for (const tid of ids.slice(0, 14)) {
-        let changed = [];
-        try { applyPick(id, pick, tid); changed = diffSummaries(from, summarizeBoard()); }
+        let changed = [], gained = [];
+        try { applyPick(id, pick, tid); const now = summarizeBoard(); changed = diffSummaries(from, now); gained = newTraits(from, now, tid); }
         catch (e) { if (record) finding('check1', 'crash', { slot: label, error: errInfo('set target', e) }); clean = false; break; }
         finally { try { applyPick(id, pick, null); } catch (e) { /* restored by the caller */ } }
         const role = roleName(tid);
@@ -1614,11 +1663,17 @@ function auditFiredTargets(ctx, u, id) {
         rec.perTarget.push({ target: role, changed: changed.map(c => ({ role: c.role, what: c.what })) });
         if (targetChanged) anyTargetChanged = true; else noOp.push(role);
         if (others.length) othersSeen.push({ target: role, others: others.map(c => ({ role: c.role, what: c.what })) });
+        const lacking = missingRules(t ? t.rules : u.rules, gained);
+        if (targetChanged && lacking.length) ruleMissing.push({ target: role, missing: lacking, gained });
+        if (targetChanged && (t ? t.rules : u.rules) && gained.some(namesFiredPseudo)) ruleNamesPseudo.push({ target: role, gained });
       }
       return ok && clean;
     };
+    const ruleMissing = [], ruleNamesPseudo = [];
     tryTargets(tryIds, before, true);
     if (othersSeen.length) finding('check1', 'target-changes-others', { slot: label, examples: othersSeen.slice(0, 3), count: othersSeen.length });
+    if (ruleMissing.length) finding('check1', 'rule-trait-missing', { slot: label, examples: ruleMissing.slice(0, 3), count: ruleMissing.length });
+    if (ruleNamesPseudo.length) finding('check1', 'rule-trait-names-ability', { slot: label, examples: ruleNamesPseudo.slice(0, 3), count: ruleNamesPseudo.length });
     if (tryIds.length && !anyTargetChanged && !othersSeen.length) {
       if (COUNT_DEPENDENT.test(u.text) && /\bgets?\b/i.test(u.text) && !/\b(?:gains?|has|have|becomes?|loses?)\b/i.test(u.text)) u.infos.push({ code: 'count-or-condition-dependent', roles: [], slot: label });
       else {
@@ -1691,6 +1746,7 @@ function auditUnit(ctx, u, fire) {
 function newUnit(kind, index, label, text, cls) {
   const u = { kind, index, label, text, findings: [], infos: [],
     phrase: cls.phrase, excludeSource: cls.excludeSource, targetIndex: cls.targetIndex };
+  if (cls.rules && cls.rules.length) u.rules = cls.rules;
   // Several targets, or "up to N" (classifyTargets): one phrase per target of the text.
   if (cls.targets) Object.assign(u, { targets: cls.targets, expectKind: cls.expectKind, maxTargets: cls.maxTargets,
     phrase: cls.targets.map(t => t.phrase).join(' / '), targetIndex: cls.targets[0].targetIndex });

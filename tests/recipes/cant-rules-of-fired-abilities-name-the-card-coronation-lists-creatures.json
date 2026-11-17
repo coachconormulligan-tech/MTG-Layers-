@@ -1,0 +1,18 @@
+{
+  "name": "Can't-rules of fired abilities — Burning-Tree Bloodscale's trait names the card; Coronation of Chaos lists creatures",
+  "notes": "Found by tests/audit.py once targeted \"can't block / can't be blocked / can't attack (or block)\" units were audited (2026-11-17). Burning-Tree Bloodscale's \"Target creature can't block this creature this turn\" gave its target \"Can't block Burning-Tree Bloodscale (activated)\": _resolveTraitText read \"this creature\" as the fired ability's pseudo-permanent; it is now the card with the ability (CR 113.7). Coronation of Chaos (\"Up to three target creatures can't block this turn. Goad them.\") listed nothing: the goad effect took a restriction built from the word \"them\", which held for no permanent, and the multi-target picker uses the first restriction it finds.",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"], "as": "p2" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Runeclaw Bear", "controller": "p2", "as": "rune" },
+    { "add": "Burning-Tree Bloodscale", "as": "bts" },
+    { "fire": "@bts", "activated": 1, "as": "act" },
+    { "call": ["setTarget", "@act", "@rune"] },
+    { "add": "Coronation of Chaos" }
+  ],
+  "asserts": [
+    { "perm": "Runeclaw Bear", "final": { "traits": { "$includes": ["Can't block Burning-Tree Bloodscale"] } } },
+    { "perm": "Grizzly Bears", "final": { "traits": { "$excludes": ["Can't block Burning-Tree Bloodscale"] } } },
+    { "targetCandidates": { "perm": "Coronation of Chaos" }, "are": ["Grizzly Bears", "Runeclaw Bear", "Burning-Tree Bloodscale"] }
+  ]
+}

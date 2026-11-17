@@ -198,6 +198,18 @@ const CONDITION_PARSERS = [
   },
 
   // --- Equipped / enchanted traits ---
+  // "As long as you control enchanted creature, it gets +2/+2. Otherwise, it can't block."
+  // (Mishra's Domination): who controls the permanent it is attached to, the source's controller
+  // being "you". Must precede the bare "is enchanted" check, which held for an opponent's creature.
+  (ct, srcId) => {
+    const m = ct.match(/^you (don't |do not )?control (?:the )?(?:enchanted|equipped) (?:creature|permanent|artifact|land|planeswalker)$/);
+    if (!m) return null;
+    return (state, allStates) => {
+      const src = (allStates && allStates.get(srcId)) || (typeof Battlefield !== 'undefined' ? Battlefield.getPermById(srcId) : null);
+      if (!src || !state) return false;
+      return (state.controller === src.controller) !== !!m[1];
+    };
+  },
   // "equipped or enchanted" — either satisfies. Must precede the individual checks.
   (ct) => /\b(?:equipped\b.*\bor\b.*enchanted|enchanted\b.*\bor\b.*equipped)\b/.test(ct)
     ? (s) => (s.traits || []).includes('Equipped') || (s.traits || []).includes('Enchanted')
@@ -2081,7 +2093,9 @@ function parseCardEffects(permanent, card, opts = {}) {
       const sentence = full.slice(sentStart, sentEnd < 0 ? full.length : offset + match.length + sentEnd);
       const body = sentence.replace(match, '').replace(/\x04\d+\x04/g, '').replace(/^[\s,]+/, '')
         .replace(/^(?:then|instead)\s+/i, '').replace(/\balso\s+/i, '');
-      gatesNothing = !/\b(?:gets?|gains?|ha(?:s|ve)|becomes?|loses?)\b/i.test(
+      // (A rule kept as a trait is something on the board: "If you're the monarch, creatures
+      // can't block this turn." — Aragorn, King of Gondor.)
+      gatesNothing = !/\b(?:gets?|gains?|ha(?:s|ve)|becomes?|loses?)\b|\bcan't (?:attack|block|be blocked|be the targets?)\b/i.test(
         body.replace(/\b(?:gains?|loses?) (?:\w+ )?life\b|\bgains? control\b/gi, ''));
     }
     const cond = _parseCondition(condText);
@@ -2147,6 +2161,23 @@ function parseCardEffects(permanent, card, opts = {}) {
       break;
     }
     return cond;
+  }
+
+  // The condition whose marker stood in the same sentence as `pos` ("Gain control of target
+  // creature … for as long as you control this Vehicle. That creature can't attack or block for
+  // as long as you control this Vehicle." — Possession Engine: each sentence has its own), else
+  // the line's (_getConditionForSentence).
+  function _getConditionOfOwnSentence(pos) {
+    const p = _getMatchContentPos(pos);
+    const lineStart = oracle.lastIndexOf('\n', p - 1) + 1;
+    const lineNum = oracle.substring(0, lineStart).split('\n').length - 1;
+    for (const [key, i] of _markerAt) {
+      if (!key.startsWith(lineNum + ':')) continue;
+      const at = lineStart + Number(key.slice(key.indexOf(':') + 1));
+      if (/[.;](?=[\s,]|$)/.test(oracle.slice(Math.min(p, at), Math.max(p, at)))) continue;
+      return _asLongAsConditions[i];
+    }
+    return _getConditionForSentence(pos);
   }
 
   // Inject saga chapter lore counter conditions into _lineConditionMap.
@@ -6733,7 +6764,10 @@ function parseCardEffects(permanent, card, opts = {}) {
       // "Untap and goad that creature" (Besmirch): the creature already named, not every creature.
       eff.scope = 'targeted';
       eff.appliesTo = null;
-      eff.targetRestriction = fn || null;
+      // ("Up to three target creatures can't block this turn. Goad them." — Coronation of Chaos:
+      // "them" names no kind of permanent, and its filter held for none, which emptied the
+      // picker. The target's own words restrict it.)
+      eff.targetRestriction = /^(?:it|them)$/i.test(targetText) ? null : (fn || null);
       eff._pronounTarget = true; // never a target slot of its own (Kitt Kanto, Mayhem Diva)
     }
     // A condition on its line gates it like any other effect ("When you do, … Goad that creature."
@@ -6822,7 +6856,9 @@ function parseCardEffects(permanent, card, opts = {}) {
       _cantSeen.add(key);
       const params = { ability: rule, isTrait: true, traitOnly: true, traitPlayers: true };
       const ruleDesc = `${subj.charAt(0).toUpperCase() + subj.slice(1)} ${rule.charAt(0).toLowerCase() + rule.slice(1)}.`;
-      const cantCond = _getConditionForPos(contentStart);
+      // (The condition of its own sentence: "Up to one target creature can't block this turn. If
+      // you're the monarch, creatures can't block this turn." — the first rule has none.)
+      const cantCond = _getConditionOfOwnSentence(contentStart);
       // The target slot of the sentence's other effects ("Target creature gets +2/+0 and can't
       // be blocked this turn") is theirs by position.
       const _sameSentence = effects.find(e => e._oraclePos !== undefined && _getMatchContentPos(e._oraclePos) === contentStart);

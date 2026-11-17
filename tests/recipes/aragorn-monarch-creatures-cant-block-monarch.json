@@ -1,0 +1,16 @@
+{
+  "name": "Aragorn, King of Gondor — \"If you're the monarch, creatures can't block\" (monarch)",
+  "notes": "The other half of aragorn-monarch-creatures-cant-block-not-monarch (2026-11-17): as the monarch, the second sentence reaches every creature.",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"], "as": "p2" },
+    { "call": ["updateGameState", "isMonarch", true] },
+    { "add": "Grizzly Bears" },
+    { "add": "Runeclaw Bear", "controller": "p2", "as": "rune" },
+    { "add": "Aragorn, King of Gondor", "as": "arag" },
+    { "fire": "@arag", "trigger": 2, "as": "trig" }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "traits": { "$includes": ["Can't block"] } } },
+    { "perm": "Runeclaw Bear", "final": { "traits": { "$includes": ["Can't block"] } } }
+  ]
+}

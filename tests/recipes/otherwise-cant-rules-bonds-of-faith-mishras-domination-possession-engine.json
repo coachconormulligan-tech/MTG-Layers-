@@ -1,0 +1,30 @@
+{
+  "name": "\"Otherwise, it can't …\" — Bonds of Faith, Mishra's Domination; Possession Engine's rule lasts while you control it",
+  "notes": "Found while auditing targeted can't-rules (2026-11-17). \"Enchanted creature gets +2/+2 as long as it's a Human. Otherwise, it can't attack or block.\" (Bonds of Faith) gave the Human \"Can't attack or block\" and every other creature nothing: the branch splitter (_splitConditionalBranches) did not count a can't-rule as continuous, so the \"Otherwise\" sentence kept the line's own condition. It now goes to a line of its own with the condition negated (_BRANCH_CONTINUOUS_VERB_RE). Possession Engine's second sentence has its own \"for as long as you control this Vehicle\" (_getConditionOfOwnSentence).",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"], "as": "p2" },
+    { "add": "Elite Vanguard", "as": "human" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Llanowar Elves", "as": "elves" },
+    { "add": "Runeclaw Bear", "controller": "p2", "as": "rune" },
+    { "add": "Bonds of Faith", "as": "b1" },
+    { "call": ["setTarget", "@b1", "@human"] },
+    { "add": "Bonds of Faith", "as": "b2" },
+    { "call": ["setTarget", "@b2", "@bears"] },
+    { "add": "Mishra's Domination", "as": "m1" },
+    { "call": ["setTarget", "@m1", "@elves"] },
+    { "add": "Mishra's Domination", "as": "m2" },
+    { "call": ["setTarget", "@m2", "@rune"] },
+    { "add": "Phyrexian Walker", "controller": "p2", "as": "walker" },
+    { "add": "Possession Engine", "as": "engine" },
+    { "fire": "@engine", "trigger": 0, "as": "trig" },
+    { "call": ["setTarget", "@trig", "@walker"] }
+  ],
+  "asserts": [
+    { "perm": "Elite Vanguard", "final": { "power": 4, "toughness": 3, "traits": { "$excludes": ["Can't attack or block"] } } },
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2, "traits": { "$includes": ["Can't attack or block"] } } },
+    { "perm": "Llanowar Elves", "final": { "power": 3, "toughness": 3, "traits": { "$excludes": ["Can't block"] } } },
+    { "perm": "Runeclaw Bear", "final": { "power": 2, "toughness": 2, "traits": { "$includes": ["Can't block"] } } },
+    { "perm": "Phyrexian Walker", "final": { "controller": "player_0", "traits": { "$includes": ["Can't attack or block"] } } }
+  ]
+}

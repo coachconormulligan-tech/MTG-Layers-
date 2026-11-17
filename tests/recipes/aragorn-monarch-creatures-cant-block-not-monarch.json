@@ -1,0 +1,16 @@
+{
+  "name": "Aragorn, King of Gondor — \"If you're the monarch, creatures can't block\" (not the monarch)",
+  "notes": "Found by tests/audit.py once targeted can't-rules were audited (2026-11-17). The \"if\" of a later sentence was dropped as gating nothing when that sentence had no get/gain/have verb, so \"If you're the monarch, creatures can't block this turn\" applied to every creature whether or not you were the monarch (cards-parser.js, Pattern D: a can't-rule now counts as an effect). The can't-rule takes the condition of its own sentence (_getConditionOfOwnSentence), so the first sentence's target is not gated by it. See also aragorn-monarch-creatures-cant-block-monarch.",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"], "as": "p2" },
+    { "call": ["updateGameState", "isMonarch", false] },
+    { "add": "Grizzly Bears" },
+    { "add": "Runeclaw Bear", "controller": "p2", "as": "rune" },
+    { "add": "Aragorn, King of Gondor", "as": "arag" },
+    { "fire": "@arag", "trigger": 2, "as": "trig" }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "traits": { "$excludes": ["Can't block"] } } },
+    { "perm": "Runeclaw Bear", "final": { "traits": { "$excludes": ["Can't block"] } } }
+  ]
+}

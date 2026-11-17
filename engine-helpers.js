@@ -172,7 +172,15 @@ function _resolveTraitText(ab, effect, state) {
   if (!effect.params.traitPlayers) return ab;
   if (/^can't attack (?:you|planeswalkers you control)\b/i.test(ab) && state.controller === srcCtrl) return null;
   const you = name(srcCtrl), them = name(state.controller);
-  const srcName = _effectDisplayName(effect, effect._allStates);
+  let srcName = _effectDisplayName(effect, effect._allStates);
+  // A fired ability's "this creature" is the card with the ability (CR 113.7: "Target creature
+  // can't block this creature this turn" — Burning-Tree Bloodscale), not "… (activated)".
+  const srcPerm = (typeof Battlefield !== 'undefined' && Battlefield.getPermById) ? Battlefield.getPermById(effect.sourceId) : null;
+  if (srcPerm && srcPerm.abilitySourceId) {
+    const card = Battlefield.getPermById(srcPerm.abilitySourceId);
+    srcName = card ? _effectDisplayName({ sourceId: card.id, sourceName: card.name }, effect._allStates)
+      : String(srcPerm.name || srcName).replace(/\s+\((?:activated|trigger|triggered)\)$/i, '');
+  }
   // "They" is the permanent's controller only once that player has been named ("unless their
   // controller pays {2} for each creature they control …").
   const named = /\b(?:their|its|that (?:creature|permanent)'s) controller\b/i.test(ab);
