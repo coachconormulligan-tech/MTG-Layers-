@@ -123,8 +123,16 @@ function targetCandidateLists() {
       out.push({ perm: p.name + (p.label ? ' ' + p.label : ''), kind: 'single', candidates: r.blocked ? [] : (r.candidates || []).map(c => c.perm.name + (c.perm.label ? ' ' + c.perm.label : '')).sort() });
       continue;
     }
-    if (!p.isManualEffect && !p.isSpell) continue;
     const pk = getTargetPickerKind(p.id, finalStates.get(p.id));
+    // Any other permanent on the battlefield with a single picker of its own: an Equipment with no
+    // Equip line (Bloodthirsty Blade), whose picker says what it is attached to.
+    if (!p.isManualEffect && !p.isSpell) {
+      if (pk && pk.kind === 'single' && _isPermanent(p)) {
+        const r = getTargetCandidates(p.id, { kind: 'single' });
+        out.push({ perm: p.name + (p.label ? ' ' + p.label : ''), kind: 'single', candidates: r.blocked ? [] : (r.candidates || []).map(c => c.perm.name + (c.perm.label ? ' ' + c.perm.label : '')).sort() });
+      }
+      continue;
+    }
     const listNames = (r) => r.blocked ? [] : (r.candidates || []).map(c => c.perm.name + (c.perm.label ? ' ' + c.perm.label : '')).sort();
     // A picker per target of the text ("Target creature gets +2/+0 … Up to one other target
     // creature gets +0/+2" - Rally Maneuver): one list per "slot", 0-based.

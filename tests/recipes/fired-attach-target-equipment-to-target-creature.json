@@ -1,0 +1,179 @@
+{
+  "name": "Brass Squire, Felidar Umbra — \"attach target Equipment you control to target creature\" and \"Attach this Aura to target creature\" attach once picked",
+  "notes": "Memory: project_fired_attach_to_target_2026-11-18. Brass Squire's ability gets a picker per target (slot 1 the Equipment you control, slot 2 the creature you control); once both are picked Bonesplitter is attached to Grizzly Bears (+2/+0). The opponent's Short Sword is not in slot 1. Felidar Umbra, on Runeclaw Bear, is moved to Grizzly Bears by its own activated ability: Runeclaw Bear loses lifelink. Bloodthirsty Blade has no Equip line; its own picker lists what its \"{1}: Attach this Equipment to target creature an opponent controls\" allows (Gray Ogre), and keeps Savannah Lions, yours, which Brass Squire attached it to.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Runeclaw Bear",
+      "as": "runeclaw"
+    },
+    {
+      "add": "Short Sword",
+      "as": "sword",
+      "controller": "p2"
+    },
+    {
+      "add": "Bonesplitter",
+      "as": "bone"
+    },
+    {
+      "add": "Brass Squire",
+      "as": "squire"
+    },
+    {
+      "fire": "@squire",
+      "activated": 0,
+      "as": "s1"
+    },
+    {
+      "call": [
+        "setSlottedTarget",
+        "@s1",
+        0,
+        "@bone"
+      ]
+    },
+    {
+      "call": [
+        "setSlottedTarget",
+        "@s1",
+        1,
+        "@bears"
+      ]
+    },
+    {
+      "add": "Felidar Umbra",
+      "as": "umbra"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@umbra",
+        "@runeclaw"
+      ]
+    },
+    {
+      "fire": "@umbra",
+      "activated": 2,
+      "as": "u1"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@u1",
+        "@bears"
+      ]
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Savannah Lions",
+      "as": "lions"
+    },
+    {
+      "add": "Bloodthirsty Blade",
+      "as": "blade"
+    },
+    {
+      "fire": "@squire",
+      "activated": 0,
+      "as": "s2"
+    },
+    {
+      "call": [
+        "setSlottedTarget",
+        "@s2",
+        0,
+        "@blade"
+      ]
+    },
+    {
+      "call": [
+        "setSlottedTarget",
+        "@s2",
+        1,
+        "@lions"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "targetCandidates": {
+        "perm": "Brass Squire (activated) A",
+        "kind": "slotted",
+        "slot": 0
+      },
+      "are": [
+        "Bonesplitter"
+      ]
+    },
+    {
+      "targetCandidates": {
+        "perm": "Brass Squire (activated) A",
+        "kind": "slotted",
+        "slot": 1
+      },
+      "are": [
+        "Grizzly Bears",
+        "Runeclaw Bear",
+        "Brass Squire"
+      ]
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 4,
+        "toughness": 2,
+        "abilities": [
+          "Lifelink"
+        ],
+        "traits": {
+          "$includes": [
+            "Equipped",
+            "Enchanted"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Runeclaw Bear",
+      "final": {
+        "power": 2,
+        "toughness": 2,
+        "abilities": []
+      }
+    },
+    {
+      "targetCandidates": {
+        "perm": "Bloodthirsty Blade"
+      },
+      "are": [
+        "Gray Ogre",
+        "Savannah Lions"
+      ]
+    },
+    {
+      "perm": "Savannah Lions",
+      "final": {
+        "power": 4,
+        "traits": {
+          "$includes": [
+            "Equipped"
+          ]
+        }
+      }
+    }
+  ]
+}

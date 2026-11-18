@@ -286,6 +286,8 @@ function classifyUnitText0(text) {
   const lower = masked.toLowerCase();
   const hits = [...lower.matchAll(/\btargets?\b/g)];
   if (!hits.length) return { skip: quotedTarget ? 'target-in-quote' : 'no-target' };
+  const pair = classifyAttachPair(text);
+  if (pair) return pair;
   if (hits.length > 1) return classifyTargets(text, 'multiple-targets');
   if (hits[0][0] === 'targets') return { skip: 'targets-verb' };
   const idx = hits[0].index;
@@ -296,7 +298,7 @@ function classifyUnitText0(text) {
   if (/\bany $/.test(before)) return { skip: 'any-target' };
   if (new RegExp('\\b' + NUMBER_WORDS + ' (?:other )?$').test(before)) return classifyTargets(text, 'n-target');
   const r = classifyAt(lower, idx, lower.length, {});
-  return r.layer ? { singular: true, phrase: r.phrase, excludeSource: r.excludeSource, targetIndex: r.targetIndex, rules: r.rules } : { skip: r.skip };
+  return r.layer ? { singular: true, phrase: r.phrase, excludeSource: r.excludeSource, targetIndex: r.targetIndex, rules: r.rules, attach: r.attach } : { skip: r.skip };
 }
 
 /* One "target" of a unit's text, at `idx` of `lower` (the text, lower-cased, quotes masked), its
@@ -333,9 +335,14 @@ function classifyAt(lower, idx, end, opts) {
   const actionVerbs = [...clauseBefore.replace(/\bputs? [^.;]*?\bcounters? (?:and [^.;]*?\bcounters? )?on (?:each of )?(?:up to \w+ |\w+ )?(?:other |another )?$/, 'put on ')
     .matchAll(new RegExp(ONE_SHOT_VERBS.source, 'g'))].map(m => m[0]);
   const keepsTarget = actionVerbs.length > 0 && actionVerbs.every(v => SAME_PERMANENT_VERBS.test(v));
+  // "Attach it / this Equipment / Sting to target creature you control" (Embercleave, Felidar Umbra):
+  // the site attaches the Aura or Equipment to the target once it is picked, so the target changes
+  // as an equip does (auditFace decides whether "it" is the card itself: attachIsSource).
+  const attachM = clauseBefore.match(/\battach (it|this [a-z]+|~|[a-z][^.;,]*?) to (?:up to one )?(?:another )?$/);
+  const attaches = attachM && !/\btarget\b/.test(attachM[1]) ? attachM[1] : null;
   const pronounEffect = keepsTarget && (opts.plural ? LATER_PLURAL_PRONOUN_EFFECT : LATER_PRONOUN_EFFECT).test(verbAfter);
   const traitVerb = clauseBefore.match(TRAIT_VERB_BEFORE);
-  if (!takesControl && !pronounEffect && !traitVerb && (ONE_SHOT_VERBS.test(clauseBefore) || !CONTINUOUS_VERBS.test(verbAfter))) return { skip: 'one-shot-action' };
+  if (!takesControl && !pronounEffect && !traitVerb && !attaches && (ONE_SHOT_VERBS.test(clauseBefore) || !CONTINUOUS_VERBS.test(verbAfter))) return { skip: 'one-shot-action' };
   // "Target creature can't be blocked this turn" / "can't be regenerated" / "can attack as though
   // it didn't have defender": a rule about the target, not a change to what it is. The site does
   // not model these, so there is no targeted effect to expect.
@@ -370,7 +377,7 @@ function classifyAt(lower, idx, end, opts) {
   if (/^(?:players?|opponents?)\b|(?:\bor|\band\/or|,)\s+(?:another\s+)?(?:players?|opponents?)\b/.test(phrase)) return { skip: 'not-a-permanent' };
   if (!opts.plural && /\b(?:creatures|artifacts|enchantments|lands|planeswalkers|permanents)\b/.test(phrase)) return { skip: 'plural-target' };
   // ("Up to one other target creature": classifyTargets only, so a singular unit reads as before.)
-  return { layer: true, phrase, excludeSource: /\banother $/.test(before) || /^other /.test(phrase) || (!!opts.each && /\bother $/.test(before)), targetIndex: idx, rules };
+  return { layer: true, phrase, excludeSource: /\banother $/.test(before) || /^other /.test(phrase) || (!!opts.each && /\bother $/.test(before)), targetIndex: idx, rules, attach: attaches };
 }
 /* The rules about attacking, blocking and being targeted that the site keeps as traits (the
    "Can't …" rules of cards-parser.js), said of the target: in its own sentence ("Target creature
@@ -438,7 +445,7 @@ function classifyTargets(text, origin) {
     const r = classifyAt(lower, idx, k + 1 < hits.length ? hits[k + 1] : lower.length, { plural: count === ANY_NUMBER || count > 1, each: true });
     if (r.skip === 'possessive-target') return skip('possessive-target');
     if (!r.layer) { reasons.push(r.skip); continue; }
-    layers.push({ phrase: r.phrase, excludeSource: r.excludeSource, targetIndex: r.targetIndex, count, rules: r.rules,
+    layers.push({ phrase: r.phrase, excludeSource: r.excludeSource, targetIndex: r.targetIndex, count, rules: r.rules, attach: r.attach,
       plural: count === ANY_NUMBER || count > 1, sourceNotJudged: r.excludeSource && /\b(?:an)?other $/.test(before) && layers.length + reasons.length > 0 });
   }
   if (!layers.length) {
@@ -447,7 +454,7 @@ function classifyTargets(text, origin) {
   }
   if (layers.length === 1 && layers[0].count === 1 && !layers[0].sourceNotJudged) {
     const t = layers[0];
-    return { singular: true, phrase: t.phrase, excludeSource: t.excludeSource, targetIndex: t.targetIndex, rules: t.rules, origin };
+    return { singular: true, phrase: t.phrase, excludeSource: t.excludeSource, targetIndex: t.targetIndex, rules: t.rules, attach: t.attach, origin };
   }
   if (layers.length === 1) {
     const t = layers[0];
@@ -1790,6 +1797,9 @@ function auditUnit(ctx, u, fire) {
   // Everything about a unit happens on a board that is put back afterwards.
   return withRestore(() => {
     let id;
+    // (An attach pair's witnesses are on the board before it is fired: a picker leaves out what
+    // arrived after the ability.)
+    if (u.attachPair) ctx = addAttachPairWitnesses(ctx);
     try {
       const pseudo = fire();
       if (!pseudo) return { skip: 'fire-returned-nothing' };
@@ -1799,7 +1809,7 @@ function auditUnit(ctx, u, fire) {
       u.findings.push({ check: 'check2', code: 'crash', error: errInfo('fire ' + u.kind, e) });
       return { audited: true };
     }
-    try { return u.modePair ? auditFiredModePair(ctx, u, id) : u.playerGroup ? auditFiredPlayerGroup(ctx, u, id) : u.targets ? auditFiredTargets(ctx, u, id) : auditFired(ctx, u, id); }
+    try { return u.attachPair ? auditFiredAttachPair(ctx, u, id) : u.modePair ? auditFiredModePair(ctx, u, id) : u.playerGroup ? auditFiredPlayerGroup(ctx, u, id) : u.targets ? auditFiredTargets(ctx, u, id) : auditFired(ctx, u, id); }
     catch (e) { u.findings.push({ check: 'check2', code: 'crash', error: errInfo('audit', e) }); return { audited: true }; }
   });
 }
@@ -1810,12 +1820,116 @@ function newUnit(kind, index, label, text, cls) {
   const u = { kind, index, label, text, findings: [], infos: [],
     phrase: cls.phrase, excludeSource: cls.excludeSource, targetIndex: cls.targetIndex };
   if (cls.rules && cls.rules.length) u.rules = cls.rules;
+  if (cls.attach) u.attach = cls.attach;
+  if (cls.attachPair) Object.assign(u, { attachPair: cls.attachPair, phrase: cls.attachPair.what + ' / ' + cls.attachPair.to, targetIndex: cls.attachPair.whatIdx,
+    expectKind: 'slotted', targets: [{ phrase: cls.attachPair.what, targetIndex: cls.attachPair.whatIdx }, { phrase: cls.attachPair.to, targetIndex: cls.attachPair.toIdx }] });
   // Several targets, or "up to N" (classifyTargets): one phrase per target of the text.
   if (cls.targets) Object.assign(u, { targets: cls.targets, expectKind: cls.expectKind, maxTargets: cls.maxTargets,
     phrase: cls.targets.map(t => t.phrase).join(' / '), targetIndex: cls.targets[0].targetIndex });
   if (cls.origin) u.origin = cls.origin;
   if (cls.playerGroup) Object.assign(u, { playerGroup: cls.playerGroup, phrase: cls.playerGroup.clauses.map(c => c.phrase).join(' / ') });
   return u;
+}
+
+/* ─── "Attach target Equipment you control to target creature you control" ───
+   (Brass Squire, Kor Outfitter, Magnetic Theft; "target Aura you control" — Aura Finesse.) The site
+   gives the ability a picker per target ("slotted": slot 1 the Aura or Equipment, slot 2 what it is
+   attached to) and attaches once both are picked (Battlefield._applyFiredAttach). Judged on the board
+   plus witnesses only this unit sees: an unattached Equipment of each player's and an Aura of each
+   player's on one of their creatures. Check 2: each list against its target's words. Check 1: nothing
+   changes until both are picked; with the first Aura or Equipment the list offers, each listed
+   permanent of slot 2 must change it alone (and what that Aura was on before); with the first of slot
+   2, each listed Aura or Equipment likewise; clearing slot 2 must put the board back. */
+const ATTACH_PAIR_RE = /\battach (?:up to one )?(target ((?:aura|equipment)(?: or (?:aura|equipment))?\b[^.;]*?)) to (?:up to one )?(?:another )?(target ([^.;]+))/;
+function classifyAttachPair(text) {
+  const lower = String(text || '').replace(/’/g, "'").replace(/["“][^"”]*["”]/g, (q) => 'q'.repeat(q.length)).toLowerCase();
+  const m = lower.match(ATTACH_PAIR_RE);
+  if (!m || /\bany number of target\b/.test(lower)) return null;
+  const whatIdx = m.index + m[0].indexOf(m[1]), toIdx = m.index + m[0].lastIndexOf(m[3]);
+  const to = extractPhrase(lower.slice(toIdx + 'target'.length).trim());
+  if (!to) return null;
+  return { attachPair: { what: m[2].trim(), to, whatIdx, toIdx } };
+}
+function attachPairWitnesses() {
+  const mk = (name, typeLine, text, controller, role) => ({ role, controller, card: {
+    name, layout: 'normal', type_line: typeLine, oracle_text: text, mana_cost: '{1}', cmc: 1,
+    colors: [], color_identity: [], keywords: [] } });
+  return [
+    mk('Audit Blade', 'Artifact — Equipment', 'Equipped creature gets +1/+0.\nEquip {1}', 'p1', 'your equipment'),
+    mk('Audit Blade', 'Artifact — Equipment', 'Equipped creature gets +1/+0.\nEquip {1}', 'p2', "opponent's equipment"),
+    Object.assign(mk('Audit Charm', 'Enchantment — Aura', 'Enchant creature\nEnchanted creature gets +0/+1.', 'p1', 'your aura'), { on: 'your bear' }),
+    Object.assign(mk('Audit Charm', 'Enchantment — Aura', 'Enchant creature\nEnchanted creature gets +0/+1.', 'p2', "opponent's aura"), { on: "opponent's zombie" }),
+  ];
+}
+function addAttachPairWitnesses(ctx) {
+  const byRole = (role) => [...roleOf.keys()].find(k => roleOf.get(k) === role && Battlefield.getPermById(k));
+  const added = [];
+  for (const w of attachPairWitnesses()) {
+    const c = w.controller === 'p2' ? Battlefield.players[1].id : 'player_0';
+    Battlefield.activePlayerId = c;
+    const p = Battlefield.addPermanent(JSON.parse(JSON.stringify(w.card)), { suppressPrompt: true, controller: c, owner: c });
+    roleOf.set(p.id, w.role);
+    added.push(p.id);
+    if (w.on && byRole(w.on)) Battlefield.setTarget(p.id, byRole(w.on));
+  }
+  Battlefield.activePlayerId = 'player_0';
+  Battlefield._invalidate();
+  return Object.assign({}, ctx, { preStates: Battlefield.getAllFinalStates(), before: summarizeBoard(), universe: ctx.universe.concat(added.map(x => Battlefield.getPermById(x))) });
+}
+function auditFiredAttachPair(c2, u, id) {
+  const finding = (check, code, extra) => u.findings.push(Object.assign({ check, code }, extra || {}));
+  const before = c2.before;
+  const kind = getTargetPickerKind(id, Battlefield.getAllFinalStates().get(id));
+  u.pickerKind = kind.kind;
+  if (kind.kind !== 'slotted' || kind.slots !== 2) { finding('check2', 'wrong-picker-kind', { expected: 'slotted', actual: kind.kind + (kind.slots ? ' ' + kind.slots : '') }); return { audited: true }; }
+  const pa = u.attachPair, picks = [{ kind: 'slotted', slot: 0 }, { kind: 'slotted', slot: 1 }];
+  const lists = picks.map(pk => ((candidatesForPick(id, pk).candidates) || []).map(c => c.id));
+  u.picks = [];
+  [[pa.what, pa.whatIdx], [pa.to, pa.toIdx]].forEach(([phrase, idx], k) => {
+    const rec = { pick: pickLabel(picks[k]), phrase, expected: null, actual: rolesOf(lists[k]), perTarget: [] };
+    u.picks.push(rec);
+    const exp = expectedForTarget(c2, u, { phrase, targetIndex: idx, plural: false });
+    if (exp.unknown) { rec.phraseUnknown = exp.unknown; u.phraseUnknown = (u.phraseUnknown || []).concat(exp.unknown); return; }
+    rec.expected = rolesOf(exp.ids);
+    const missing = exp.ids.filter(x => !lists[k].includes(x)), extra = lists[k].filter(x => !exp.unjudged.includes(x) && !exp.ids.includes(x));
+    if (!lists[k].length && exp.ids.length) finding('check2', 'empty-list', { slot: rec.pick, missing: rolesOf(missing), extra: [] });
+    else if (missing.length || extra.length) finding('check2', 'list-mismatch', { slot: rec.pick, missing: rolesOf(missing), extra: rolesOf(extra) });
+  });
+  /* Check 1 */
+  const attachedOf = (x) => Battlefield._attachedTargetOf(x);
+  u.check1 = { noTarget: diffSummaries(before, summarizeBoard()).map(c => ({ role: c.role, what: c.what })), perTarget: [] };
+  if (u.check1.noTarget.length) finding('check1', 'changes-with-no-target', { changed: u.check1.noTarget });
+  if (!lists[0].length || !lists[1].length) return { audited: true };
+  // The Aura or Equipment tried first: an unattached one when the list has one.
+  const what0 = lists[0].find(x => !attachedOf(x)) || lists[0][0];
+  applyPick(id, picks[0], what0);
+  const half = diffSummaries(before, summarizeBoard());
+  if (half.length) finding('check1', 'changes-with-one-target', { changed: half.map(c => ({ role: c.role, what: c.what })) });
+  applyPick(id, picks[0], null);
+  const others = [], noOp = [], notUndone = [];
+  const tryPair = (what, to) => {
+    const prev = attachedOf(what);
+    applyPick(id, picks[0], what);
+    applyPick(id, picks[1], to);
+    const changed = diffSummaries(before, summarizeBoard());
+    const allowed = new Set([to, prev].filter(Boolean));
+    u.check1.perTarget.push({ target: roleName(what) + ' to ' + roleName(to), changed: changed.map(c => ({ role: c.role, what: c.what })) });
+    if (to !== prev && !changed.some(c => c.id === to)) noOp.push(roleName(what) + ' to ' + roleName(to));
+    const bad = changed.filter(c => !allowed.has(c.id));
+    if (bad.length) others.push({ target: roleName(what) + ' to ' + roleName(to), others: bad.map(c => ({ role: c.role, what: c.what })) });
+    applyPick(id, picks[1], null);
+    applyPick(id, picks[0], null);
+    const left = diffSummaries(before, summarizeBoard());
+    if (left.length) notUndone.push({ target: roleName(what) + ' to ' + roleName(to), left: left.map(c => ({ role: c.role, what: c.what })) });
+  };
+  for (const to of lists[1].slice(0, 10)) tryPair(what0, to);
+  const to0 = lists[1].find(x => x !== attachedOf(what0)) || lists[1][0];
+  for (const what of lists[0].slice(0, 6)) if (what !== what0) tryPair(what, to0);
+  if (others.length) finding('check1', 'target-changes-others', { examples: others.slice(0, 3), count: others.length });
+  if (noOp.length === u.check1.perTarget.length) finding('check1', 'target-changes-nothing', { tried: noOp.length });
+  else if (noOp.length) u.infos.push({ code: 'no-op-on-some', roles: noOp });
+  if (notUndone.length) finding('check1', 'attach-not-undone', { examples: notUndone.slice(0, 3), count: notUndone.length });
+  return { audited: true };
 }
 
 /* ─── Modal spells ───
@@ -3008,6 +3122,24 @@ function runQuotedUnit(o) {
   finally { Battlefield._invalidate(); }
 }
 
+/* Is the thing an "attach … to target …" attaches the card itself? Read from the words: the card
+   must be an Aura or Equipment (or its ability makes it an Aura: "becomes an Aura enchantment …
+   Attach it to target creature" — the Licids), and the thing must be "this <word>", the card's name
+   (or the part before its comma: "Attach Sting to …"), or "it" in an activated ability or in a
+   trigger whose own subject is the card ("When this Equipment enters / is turned face up"). Not "it"
+   of "Whenever an Equipment you control enters" (Sigarda's Aid) or of a token the ability makes. */
+function attachIsSource(what, kind, fullText, typeLine, cardName, text) {
+  const becomesAura = /\bbecomes an aura\b/i.test(text);
+  if (!/\b(?:equipment|aura)\b/i.test(typeLine) && !becomesAura) return false;
+  const names = [cardName, cardName.split(',')[0]].map(n => n.toLowerCase()).filter(n => n.length > 2);
+  if (/^this [a-z]+$|^~$/.test(what) || names.includes(what)) return true;
+  if (what !== 'it') return false;
+  if (becomesAura || kind === 'activated') return true;
+  // (After an ability word: "A Test of Your Reflexes! — When this Equipment enters, …" — Magitek Scythe.)
+  const cond = (String(fullText || '').replace(/’/g, "'").replace(/^[^{\n.;"—]+—\s*/, '').match(/^(?:when|whenever|at)\b([^,]*)/i) || [])[1] || '';
+  return new RegExp('^\\s*(?:this (?:equipment|aura|artifact|card|permanent)|~' + names.map(n => '|' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('') + ')\\s+(?:enters|is turned face up)\\b', 'i').test(cond);
+}
+
 function auditFace(card, faceIndex) {
   const face = _resolveCardFace(card, faceIndex);
   const typeLine = face.type_line || card.type_line || '';
@@ -3049,10 +3181,12 @@ function auditFace(card, faceIndex) {
     const text = stripReminder(face.oracle_text || '');
     if (perm.isModalSpell) { auditModes(rec, perm, ctx, run, skip, text); quotedLater(); return rec; }
     const cls = classifyUnitText(text);
-    if (!cls.singular && !cls.targets && !cls.playerGroup) { if (cls.skip !== 'target-in-quote') skip('spell', undefined, '', text, cls.skip); quotedLater(); return rec; }
+    if (!cls.singular && !cls.targets && !cls.playerGroup && !cls.attachPair) { if (cls.skip !== 'target-in-quote') skip('spell', undefined, '', text, cls.skip); quotedLater(); return rec; }
     const u = newUnit('spell', undefined, '', text, cls);
     // Casting happened in addAuditedCard; the spell's own effects are the unit's.
-    run(u, () => perm);
+    // (An attach pair's witnesses come before the spell: it is cast again once they are there.)
+    if (cls.attachPair) run(u, () => { Battlefield.removePermanent(perm.id); return addAuditedCard(card, faceIndex, true); });
+    else run(u, () => perm);
     quotedLater();
     return rec;
   }
@@ -3071,7 +3205,8 @@ function auditFace(card, faceIndex) {
       if (plan.skip) { skip(kind, ab.index, '', stripReminder(ab.effectText), plan.skip); continue; }
       const text = stripReminder(plan.text);
       const cls = classifyUnitText(text);
-      if (!cls.singular && !cls.targets && !cls.playerGroup) { if (cls.skip !== 'target-in-quote') skip(kind, ab.index, plan.label, text, cls.skip); continue; }
+      if (!cls.singular && !cls.targets && !cls.playerGroup && !cls.attachPair) { if (cls.skip !== 'target-in-quote') skip(kind, ab.index, plan.label, text, cls.skip); continue; }
+      if (cls.attach && !attachIsSource(cls.attach, kind, stripReminder(ab.fullText || ''), typeLine, rec.name, text)) { skip(kind, ab.index, plan.label, text, 'attach-not-the-source'); continue; }
       const u = newUnit(kind, ab.index, plan.label, text, cls);
       // (Not written to the raw output.)
       Object.defineProperty(u, 'fullText', { value: stripReminder(ab.fullText || ''), enumerable: false });

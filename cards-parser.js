@@ -6719,7 +6719,11 @@ function parseCardEffects(permanent, card, opts = {}) {
     // The subject is the last clause before the verb, not the sentences in front of it ("You may
     // have an opponent gain control of it. It is goaded …" — Vislor Turlough — goaded every
     // permanent the opponents control).
-    const filterText = traitStateMatch[1].trim().split(/\.\s+|,\s+/).pop().trim();
+    let filterText = traitStateMatch[1].trim().split(/\.\s+|,\s+/).pop().trim();
+    // "Equipped creature gets +2/+0 and is goaded" (Bloodthirsty Blade): the subject ends at its
+    // first verb. (Read as a filter, "equipped creature gets +2/+0 and" goaded every Equipped
+    // creature on the board.)
+    if (/\s+and$/i.test(filterText)) filterText = filterText.replace(/\s+(?:gets?|gains?|has|have|loses?|can't|can|becomes?|is|are)\b.*$/i, '');
     const traitName = TRAIT_KEYWORDS[traitStateMatch[2].toLowerCase()];
     if (!traitName) continue;
     // "if this creature is suspected, …" is a condition, not a grant.
@@ -6813,6 +6817,65 @@ function parseCardEffects(permanent, card, opts = {}) {
     // behind the toggle for what was done — Kitt Kanto).
     const traitVerbCond = _getConditionForSentence(traitVerbMatch.index);
     if (traitVerbCond) eff.asLongAsCondition = traitVerbCond;
+  }
+
+  // --- Attaching, in a fired ability ---
+  // "When this Equipment enters, attach it to target creature you control" (Embercleave), "{1}{W}:
+  // Attach this Aura to target creature you control" (Felidar Umbra), "Attach target Equipment you
+  // control to target creature you control" (Brass Squire). Attaching is done, not kept: each
+  // target is a marker (_attachMarker) that applies to nothing and only gives the ability its
+  // pickers; Battlefield.setTarget / setSlottedTarget attach the permanent once they are picked
+  // (_applyFiredAttach). "It" is the ability's source only when the trigger names it ("When this
+  // Equipment enters", not "Whenever an Equipment you control enters" — Sigarda's Aid) or the
+  // ability makes it an Aura first (the Licids). A token the ability makes ("create a Role token
+  // and attach it") and "any number of Equipment" are not read. A condition on the line ("if the gift
+  // was promised", "When you do") gets no toggle: the attaching is done only once a target is picked.
+  // (A spell: "Attach target Aura you control to target creature" — Aura Finesse.)
+  if ((permanent.isTriggeredAbility || permanent.isActivatedAbility || permanent.isSpell) && typeof Battlefield !== 'undefined') {
+    const _attSrc = Battlefield.getPermById(permanent.abilitySourceId);
+    const _attSubs = (_attSrc && _attSrc.printedSubtypes) || [];
+    const _attFull = String(permanent.abilityFullText || '');
+    const _becomesAura = /\bbecomes an aura\b/i.test(oracle);
+    const _attIsAttachment = _attSubs.includes('Equipment') || _attSubs.includes('Aura') || _becomesAura;
+    const _attNames = _attSrc ? [_attSrc.name, _attSrc.name.split(',')[0]].filter(n => n && n.length > 2) : [];
+    const _attEsc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const _attSelfRe = new RegExp('^(?:this (?:equipment|aura|artifact|card|creature|permanent)|~' +
+      _attNames.map(n => '|' + _attEsc(n)).join('') + ')$', 'i');
+    // A trigger whose own subject is the source ("When Mithril Coat enters", "When this Equipment is
+    // turned face up", "Whenever equipped creature dies").
+    // (After an ability word: "A Test of Your Reflexes! — When this Equipment enters" — Magitek Scythe.)
+    const _attCond = permanent.isTriggeredAbility ? (_attFull.replace(/^[^{\n.;"—]+—\s*/, '').match(/^(?:when|whenever|at)\b([^,]*)/i) || [])[1] || '' : '';
+    const _attCondIsSelf = new RegExp('^\\s*(?:this (?:equipment|aura|artifact|card|creature|permanent)|~' +
+      _attNames.map(n => '|' + _attEsc(n)).join('') + ')\\s+(?:enters|is turned face up)\\b', 'i').test(_attCond);
+    const attachRegex = /\battach\s+(it|this\s+[a-z]+|~|(?:up to one\s+)?target\s+(?:aura|equipment|aura or equipment)\b[^.;]*?|[A-Z][^.;]*?)\s+to\s+((?:up to one\s+)?(?:another\s+)?target\s+[^.;]+?)\s*(?=[.;]|$)/gi;
+    let attM;
+    while ((attM = attachRegex.exec(oracle)) !== null) {
+      if ((oracle.slice(0, attM.index).match(/"/g) || []).length % 2) continue;
+      const what = attM[1].trim(), toText = attM[2].trim();
+      if (/^(?:up to one\s+)?(?:another\s+)?target\s+(?:player|opponent|permanent or player)\b/i.test(toText)) continue;
+      const toBuilt = buildAppliesToFromText(toText);
+      if (!toBuilt.isSpellTarget) continue;
+      const mkMarker = (built, text, role, pos) => {
+        const eff = pushEff('7c', EFFECT_TYPE.MODIFY_PT, { power: 0, toughness: 0 },
+          { appliesTo: null, scope: 'targeted', selfTarget: false },
+          role === 'attach' ? `Attach ${what.replace(/^up to one\s+/i, '')} to ${text}.` : `The ${text.replace(/^(?:up to one\s+)?target\s+/i, '')} to attach.`,
+          { _oraclePos: pos, _attachMarker: role });
+        eff.targetRestriction = built.fn || null;
+        return eff;
+      };
+      if (/^(?:up to one\s+)?target\b/i.test(what)) {
+        // "Attach target Equipment you control to target creature you control": the first picker is
+        // the Aura or Equipment, the second what it is attached to.
+        const whatBuilt = buildAppliesToFromText(what);
+        if (!whatBuilt.isSpellTarget) continue;
+        mkMarker(whatBuilt, what, 'attachment', attM.index);
+        mkMarker(toBuilt, toText, 'attach', attM.index + attM[0].indexOf(toText));
+        continue;
+      }
+      const isSelf = /^it$/i.test(what) ? (_attIsAttachment && (permanent.isActivatedAbility || _attCondIsSelf || _becomesAura)) : (_attIsAttachment && _attSelfRe.test(what));
+      if (!isSelf) continue;
+      mkMarker(toBuilt, toText, 'attach', attM.index);
+    }
   }
 
   // --- Rules about attacking, blocking and being targeted, kept as traits ---

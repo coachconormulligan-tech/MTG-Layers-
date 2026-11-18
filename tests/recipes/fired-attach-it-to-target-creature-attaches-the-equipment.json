@@ -1,0 +1,27 @@
+{
+  "name": "Embercleave, Bloodthirsty Blade — a fired \"attach it to target creature\" attaches the Equipment; removing it puts it back",
+  "notes": "Memory: project_fired_attach_to_target_2026-11-18. Fired, \"When this Equipment enters, attach it to target creature you control\" had no picker and did nothing (the player had to use the Equip button). The ability now has an inert targeted marker (_attachMarker) for its picker, and picking the target attaches the source (Battlefield._applyFiredAttach). Embercleave was equipped to Grizzly Bears first; its trigger moved it to Runeclaw Bear. Removing the second trigger puts it back on Grizzly Bears; the first trigger, still on the board, keeps Embercleave where the saved board has it. Bloodthirsty Blade's \"Attach this Equipment to target creature an opponent controls\" lists only the opponent's creature and goads it; its \"Equipped creature gets +2/+0 and is goaded\" read the subject as a filter (\"equipped creature gets +2/+0 and\") and goaded Grizzly Bears too, which Embercleave equips. The Blade has no Equip line, so the site shows its own single picker: it listed only your creatures (the Equip rule), never the opponent's Gray Ogre it is attached to; it now lists what its own attach ability allows (an opponent's creature), plus whatever it is attached to now.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Runeclaw Bear", "as": "runeclaw" },
+    { "add": "Gray Ogre", "as": "ogre", "controller": "p2" },
+    { "add": "Embercleave", "as": "ec" },
+    { "fire": "@ec", "trigger": 2, "as": "t1" },
+    { "call": ["setTarget", "@t1", "@bears"] },
+    { "fire": "@ec", "trigger": 2, "as": "t2" },
+    { "call": ["setTarget", "@t2", "@runeclaw"] },
+    { "call": ["removePermanent", "@t2"] },
+    { "add": "Bloodthirsty Blade", "as": "blade" },
+    { "fire": "@blade", "activated": 1, "as": "b1" },
+    { "call": ["setTarget", "@b1", "@ogre"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Embercleave (trigger)" }, "are": ["Grizzly Bears", "Runeclaw Bear"] },
+    { "targetCandidates": { "perm": "Bloodthirsty Blade (activated)" }, "are": ["Gray Ogre"] },
+    { "targetCandidates": { "perm": "Bloodthirsty Blade" }, "are": ["Gray Ogre"] },
+    { "perm": "Grizzly Bears", "final": { "power": 3, "toughness": 3, "abilities": ["Double strike", "Trample"], "traits": ["Equipped"] } },
+    { "perm": "Runeclaw Bear", "final": { "power": 2, "toughness": 2, "abilities": [] } },
+    { "perm": "Gray Ogre", "final": { "power": 4, "traits": { "$includes": ["Equipped"] } } }
+  ]
+}

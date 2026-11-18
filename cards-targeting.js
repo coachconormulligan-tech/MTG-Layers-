@@ -484,6 +484,32 @@ function _singleTargetCandidates(sourceId) {
     }
   }
 
+  // An Equipment is shown with this picker when it has no Equip or Reconfigure line (with one it
+  // gets the Equip pop-up, getEquipCandidates). Its list is then what its own attach abilities
+  // allow ("{1}: Attach this Equipment to target creature an opponent controls" — Bloodthirsty
+  // Blade: the opponents' creatures; "+1: Attach this Equipment to up to one target creature you
+  // control" — Luxior), with the Equip ability's "creature you control" (CR 702.6a) when it has
+  // one, and any creature (CR 301.5c) when it has neither. What it is attached to now stays listed,
+  // whatever put it there (Magnetic Theft, Brass Squire).
+  let equipIsYours = false, attachRestrictions = null;
+  if (isEquipment) {
+    const fsSrc = finalStates.get(sourceId);
+    const activated = Battlefield.extractActivatedAbilities(fsSrc ? (fsSrc.abilities || []) : (sourcePerm?.printedAbilities || []));
+    equipIsYours = activated.some(a => a.isEquip || a.isReconfigure);
+    if (!equipIsYours && typeof buildAppliesToFromText === 'function') {
+      const names = sourcePerm ? [sourcePerm.name, sourcePerm.name.split(',')[0]].filter(n => n && n.length > 2) : [];
+      const selfRe = new RegExp('\\battach\\s+(?:it|this\\s+[a-z]+|~' + names.map(n => '|' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('') + ')\\s+to\\s+(?:up to one\\s+)?(target\\s+[^.;]+)', 'i');
+      const fns = [];
+      for (const a of activated) {
+        const m = String(a.effectText || a.fullText || '').match(selfRe);
+        if (!m) continue;
+        const built = buildAppliesToFromText(m[1].trim());
+        if (built && built.isSpellTarget && built.fn) fns.push(built.fn);
+      }
+      if (fns.length) attachRestrictions = fns;
+    }
+  }
+
   // Check if this is a non-targeting selection (from "it" pronoun conversion).
   // These abilities don't actually target, so they bypass shroud/hexproof.
   const isNonTargeting = sourcePerm && sourcePerm._nonTargetingSelection;
@@ -500,7 +526,9 @@ function _singleTargetCandidates(sourceId) {
       : { types: t.printedTypes || [], supertypes: t.printedSupertypes || [], subtypes: t.printedSubtypes || [], colors: t.printedColors || [], isAllCreatureTypes: false };
     const validAura = !auraRestriction || auraRestriction(tState);
     const tCtrlForEquip = t.controller || t.owner || 'player_0';
-    const validEquip = !isEquipment || (tState.types.includes('Creature') && tCtrlForEquip === sourceCtrl);
+    const validEquip = !isEquipment || t.id === currentTarget || (tState.types.includes('Creature') &&
+      (!equipIsYours || tCtrlForEquip === sourceCtrl) &&
+      (!attachRestrictions || attachRestrictions.some(r => r(_restrictionState(tState, fs, t), finalStates, sourceCtrl))));
     const validSpell = !spellRestriction || spellRestriction(_restrictionState(tState, fs, t), snapStates || finalStates, sourceCtrl);
     // Shroud/hexproof prevent being targeted — but non-targeting selections bypass them
     const tAbilities = !isNonTargeting && fs ? (fs.abilities || []) : [];
@@ -523,7 +551,7 @@ function _singleTargetCandidates(sourceId) {
     // Dual Aura+Equipment: accept if valid for either attachment type; otherwise AND both.
     const validAttach = (auraRestriction && isEquipment) ? ((validAura && validAuraWords) || validEquip) : (validAura && validAuraWords && validEquip);
     if (putOntoOnly && t.id !== putOntoOnly) continue;
-    if (validAttach && validSpell && !hasShroud && !hasHexproof && !isProtected) {
+    if ((validAttach && validSpell && !hasShroud && !hasHexproof && !isProtected) || (isEquipment && !equipIsYours && t.id === currentTarget)) {
       candidates.push({ id: t.id, perm: t, state: fs || tState, displayName: _targetPickerName(t, fs, true) });
     }
   }

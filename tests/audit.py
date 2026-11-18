@@ -90,6 +90,23 @@ attached to each listed permanent, that permanent changes and no other (attach-c
 target-changes-others), and a plain "Enchanted creature gets +N/+N / has <keywords>" shows more than
 the Enchanted trait (grant-not-applied). Words of the Aura about itself or a group are not counted.
 
+A fired "attach it / this Equipment / this Aura / <its name> to [up to one] target ..." is an ordinary
+unit (Embercleave, Felidar Umbra, the Licids): the site attaches the card to the target once it is
+picked (Battlefield._applyFiredAttach), so the target must change as an equip does. "It" counts only
+when the words make it the card (attachIsSource in tests/audit.js): the card is an Aura or Equipment, or
+the ability makes it an Aura ("becomes an Aura enchantment ... Attach it"), and "it" is in an activated
+ability or a trigger whose own subject is the card ("When this Equipment enters / is turned face up");
+otherwise "attach-not-the-source" (Sigarda's Aid's "Whenever an Equipment you control enters", a token
+the ability makes, Hammer of Nazahn's "that Equipment"). "Attach target Equipment / Aura [you control]
+to target creature ..." (Brass Squire, Magnetic Theft, Aura Finesse) is a unit with a picker per target
+(slot 1 the Aura or Equipment, slot 2 what it goes on), judged on the board plus witnesses only it sees
+(an unattached Equipment of each player's, an Aura of each player's on one of their creatures; a
+spell is cast again after they are added, as a picker leaves out what arrived after its spell). Check 2:
+each list against its target's words. Check 1: nothing changes with neither or only the first picked
+(changes-with-one-target); with the first listed Aura or Equipment, each permanent of slot 2 must change
+alone (with what that Aura was on before), and likewise each listed Aura or Equipment with the first of
+slot 2; clearing both must put the board back (attach-not-undone). "Any number of Equipment" is skipped.
+
 A group that one picked player controls is a unit too: a spell or ability whose only target is "target
 player / target opponent" and whose text gives "<group> target opponent / that player / they controls"
 a continuous effect or a can't-rule ("Creatures target opponent controls get -1/-1", "Gain control of
@@ -249,6 +266,8 @@ CODES = [
     ('crew-changes-others', 'Crewing changes a permanent other than the Vehicle (its text names no group).'),
     ('saddle-changes-others', 'Saddling changes a permanent other than the Mount (its text names no group).'),
     ('remove-leaves-change', 'After the crewed / saddled pseudo-permanent is removed, the board is not as before.'),
+    ('changes-with-one-target', 'An "attach target Equipment to target creature" changes the board with only the Equipment picked.'),
+    ('attach-not-undone', 'After an "attach target Equipment to target creature" has both its targets cleared, the board is not as before.'),
     ('quote-not-granted', 'A quoted ability naming a target never reaches the permanent its grant names (attached, targeted, the token, the card, its group).'),
     ('quote-text-changed', 'The permanent that gets a quoted ability has it in other words (the granting card\'s name read as "this card").'),
     ('quote-not-fireable', 'The permanent that gets a quoted ability has it, but the site offers no Trigger / Activate button for it.'),

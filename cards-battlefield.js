@@ -1254,23 +1254,7 @@ const Battlefield = {
     if (!perm || !targetId) return null;
     this.setTarget(permId, targetId);
     if (abilityIdx === null || abilityIdx === undefined) return null;
-    // Synthetic tracking effect — drives the 'Equipped' trait on runtime Equipment.
-    let synthEff = this.effects.find(e => e.sourceId === permId && e._isEquipTargetEff);
-    if (!synthEff) {
-      synthEff = {
-        id: permId + '_equip_synth',
-        layer: '7c', type: EFFECT_TYPE.MODIFY_PT,
-        params: { power: 0, toughness: 0 },
-        scope: 'targeted', selfTarget: false,
-        requiresCreatureTarget: true,
-        _isEquipTargetEff: true,
-        targetId: null,
-        sourceId: permId, sourceName: perm.name,
-        timestamp: perm.timestamp,
-        desc: 'Equipment attachment tracker',
-      };
-      this.effects.push(synthEff);
-    }
+    const synthEff = this._ensureEquipTracker(permId);
     synthEff.targetId = targetId;
     const permDisplayName = perm.label ? perm.name + ' ' + perm.label : perm.name;
     const targetPerm = this.getPermById(targetId);
@@ -1295,6 +1279,29 @@ const Battlefield = {
       }
     }
     return pseudo;
+  },
+
+  /* The synthetic tracking effect of an Equipment: drives the 'Equipped' trait on runtime
+     Equipment (and on an Equipment with no targeted effect of its own). */
+  _ensureEquipTracker(permId) {
+    let synthEff = this.effects.find(e => e.sourceId === permId && e._isEquipTargetEff);
+    if (!synthEff) {
+      const perm = this.getPermById(permId);
+      synthEff = {
+        id: permId + '_equip_synth',
+        layer: '7c', type: EFFECT_TYPE.MODIFY_PT,
+        params: { power: 0, toughness: 0 },
+        scope: 'targeted', selfTarget: false,
+        requiresCreatureTarget: true,
+        _isEquipTargetEff: true,
+        targetId: null,
+        sourceId: permId, sourceName: perm ? perm.name : '',
+        timestamp: perm ? perm.timestamp : 0,
+        desc: 'Equipment attachment tracker',
+      };
+      this.effects.push(synthEff);
+    }
+    return synthEff;
   },
 
   /* Exchange triggered abilities (Exchange of Words text-swap, Gilded Drake-style
@@ -2077,6 +2084,8 @@ const Battlefield = {
   removePermanent(id) {
     // If removing a crew/saddle effect pseudo-perm, strip the trait from the source.
     const removingPerm = this.getPermById(id);
+    // A fired "attach … to target …" puts back what it moved (_applyFiredAttach).
+    if (removingPerm && removingPerm._attach) this._undoFiredAttach(removingPerm);
     if (removingPerm?._isCrewEffect && removingPerm.abilitySourceId) {
       const src = this.getPermById(removingPerm.abilitySourceId);
       if (src?.traits) src.traits = src.traits.filter(t => t !== 'Crewed');
@@ -2366,6 +2375,59 @@ const Battlefield = {
     // The validation above called getAllFinalStates() which re-cached state with the old
     // targetId. Re-invalidate now so callers get a fresh evaluation after the mutation.
     this._invalidate();
+    if (this.effects.some(e => e.sourceId === effectSourceId && e._attachMarker)) this._applyFiredAttach(effectSourceId);
+  },
+
+  /* What an Aura or Equipment is attached to: the target of its own targeted effects. */
+  _attachedTargetOf(permId) {
+    const own = this.effects.filter(e => e.sourceId === permId && e.scope === 'targeted' && !e.selfTarget && !e._isCounterEffect);
+    const e = own.find(x => x.targetId && !x._isEquipTargetEff) || own.find(x => x.targetId);
+    return e ? e.targetId : null;
+  },
+
+  /* Attach an Aura or Equipment to a permanent (or, with null, unattach it), as its own attach
+     picker or the Equip pop-up does; setTarget turns away a target it cannot be attached to. */
+  _attachPermTo(permId, targetId) {
+    // (An Equipment with no targeted effect of its own is attached through its tracker.)
+    const perm = this.getPermById(permId);
+    if (targetId && perm && (perm.printedSubtypes || []).includes('Equipment') &&
+        !this.effects.some(e => e.sourceId === permId && e.scope === 'targeted' && !e.selfTarget && !e._isCounterEffect)) {
+      this._ensureEquipTracker(permId);
+    }
+    this.setTarget(permId, targetId || null);
+  },
+
+  /* A fired "attach … to target …" (the _attachMarker effects of cards-parser.js): once its
+     targets are picked the Aura or Equipment (the ability's source, or the first target) is
+     attached, and what it was attached to before is kept on the ability. A new pick first undoes
+     the attachment it made, if it still stands; so does removing the ability (removePermanent). */
+  _applyFiredAttach(pseudoId) {
+    const pseudo = this.getPermById(pseudoId);
+    if (!pseudo || this._restoringTargets) return;
+    const marks = this.effects.filter(e => e.sourceId === pseudoId && e._attachMarker);
+    if (!marks.length) return;
+    const whatEff = marks.find(e => e._attachMarker === 'attachment');
+    const toEff = marks.find(e => e._attachMarker === 'attach');
+    const what = whatEff ? whatEff.targetId : pseudo.abilitySourceId;
+    const to = toEff ? toEff.targetId : null;
+    const made = pseudo._attach;
+    if (made && (made.what !== what || made.to !== to)) {
+      this._undoFiredAttach(pseudo);
+    }
+    if (what && to && what !== to && !pseudo._attach && this.getPermById(what)) {
+      const prev = this._attachedTargetOf(what);
+      if (prev === to) return;
+      this._attachPermTo(what, to);
+      if (this._attachedTargetOf(what) === to) pseudo._attach = { what, to, prev: prev || null };
+    }
+  },
+  _undoFiredAttach(pseudo) {
+    const made = pseudo && pseudo._attach;
+    if (!made) return;
+    pseudo._attach = null;
+    if (this.getPermById(made.what) && this._attachedTargetOf(made.what) === made.to) {
+      this._attachPermTo(made.what, made.prev && this.getPermById(made.prev) ? made.prev : null);
+    }
   },
 
   /* Ids of the permanents attached to this one: Auras, Equipment and bestowed cards whose own
@@ -2489,6 +2551,7 @@ const Battlefield = {
       }
     });
     this._invalidate();
+    if (this.effects.some(e => e.sourceId === sourceId && e._attachMarker)) this._applyFiredAttach(sourceId);
   },
 
   /* Set a specific target slot for multi-target effects (e.g. "up to two target creatures") */
@@ -3814,6 +3877,9 @@ const Battlefield = {
         owner: p.owner || 'player_0',
         controller: p.controller || p.owner || 'player_0',
         equipTargetId: p._equipTargetId || null,
+        // What a fired "attach … to target …" attached, to what, and what it was attached to
+        // before (_applyFiredAttach), so removing the ability later puts it back.
+        attach: p._attach ? { what: p._attach.what, to: p._attach.to, prev: p._attach.prev || null } : null,
         // Player-level targets (chosen opponent / chosen player / enchanted player) live
         // on the pseudo-perm just like on real perms, so capture them too — a triggered
         // ability that targets an opponent would otherwise lose its choice on restore.
@@ -4152,8 +4218,18 @@ const Battlefield = {
         this.setModalModeSelections(nsId, active);
       }
     };
-    for (const r of data.perms || []) { reapplyTargets(r); reapplyChoices(r); }
-    for (const f of data.firedAbilities || []) { reapplyTargets(f); reapplyChoices(f); }
+    // (A fired "attach … to target …" gets its targets back without attaching anything: each
+    // Aura and Equipment already has the target it was saved with, which may be a later one.)
+    this._restoringTargets = true;
+    try {
+      for (const r of data.perms || []) { reapplyTargets(r); reapplyChoices(r); }
+      for (const f of data.firedAbilities || []) { reapplyTargets(f); reapplyChoices(f); }
+    } finally { this._restoringTargets = false; }
+    for (const f of data.firedAbilities || []) {
+      const pseudo = f.attach && idMap[f.id] && this.getPermById(idMap[f.id]);
+      const tr = (id) => id ? (idMap[id] || null) : null;
+      if (pseudo && tr(f.attach.what) && tr(f.attach.to)) pseudo._attach = { what: tr(f.attach.what), to: tr(f.attach.to), prev: tr(f.attach.prev) };
+    }
 
     // setTarget / setSlottedTarget above assigned FRESH timestamps to targeted effects
     // (in array-iteration order), which scrambles last-timestamp-wins layer ordering for

@@ -24,7 +24,8 @@ Asserts are the hand-written facts the fixture exists to protect, checked on eve
         "slotted", "slot": 1 }, slots 0-based. Two modes of a modal spell picked together have a
         picker per mode, { "kind": "modal", "mode": 2 }, and a mode of up to N targets one per
         target, { "kind": "modal", "mode": 3, "pick": 1 }, both 0-based. An Aura on the
-        battlefield has the picker it is attached with: { "perm": "Pacifism" }. An Equipment's
+        battlefield has the picker it is attached with: { "perm": "Pacifism" }, as has an Equipment
+        with no Equip line: { "perm": "Bloodthirsty Blade" }. An Equipment's
         Equip / Reconfigure / Fortify pop-up has a list per such ability, { "perm": "Robe of the
         Archmagi", "kind": "equip", "equip": 1 }, 0-based in text order; empty when blocked. A
         copy card's copy picker: { "kind": "copy" } (a graveyard or exile copy's by card name); the
