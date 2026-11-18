@@ -1,0 +1,16 @@
+{
+  "name": "Goblin Skycutter — fired \"That creature loses flying\" keeps \"with flying\" in its target",
+  "notes": "Found by tests/audit.py (2026-11-17). Fired, \"It deals 2 damage to target creature with flying. That creature loses flying until end of turn\" was rewritten to \"Target creature loses flying\": the target phrase reader (_TARGET_PHRASE_RE in cards-helpers.js) stopped before \"with flying\", so the picker listed every creature. It now keeps a \"with / without <keyword>\" tail.",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"], "as": "p2" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Wind Drake", "controller": "p2", "as": "drake" },
+    { "add": "Goblin Skycutter", "as": "gs" },
+    { "fire": "@gs", "activated": 0, "as": "act" },
+    { "call": ["setTarget", "@act", "@drake"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Goblin Skycutter (activated)" }, "are": ["Wind Drake"] },
+    { "perm": "Wind Drake", "final": { "abilities": { "$excludes": ["Flying"] } } }
+  ]
+}

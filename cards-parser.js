@@ -5709,7 +5709,10 @@ function parseCardEffects(permanent, card, opts = {}) {
 
   // ---- Fix: Specific ability removal: "loses flying", "loses deathtouch, vigilance, and first strike" ----
   // Also handles: "[filter] lose/loses [abilities]" and "enchanted creature loses [abilities]"
-  const losesSpecificRegex = /(?:^|[.;])\s*(.+?)\s+(?:you (?:control|own)\s+)?(?:loses?)\s+(?!all\b)(.+?)(?:\.|$)/gmi;
+  // The subject keeps to its own sentence ([^.;\n], as loseAllAbilitiesRegex below): "Vertigo deals
+  // 2 damage to target creature with flying. That creature loses flying" read the whole line as the
+  // subject, a filter that took flying from no creature, and the spell had no target.
+  const losesSpecificRegex = /(?:^|[.;])\s*([^.;\n]+?)\s+(?:you (?:control|own)\s+)?(?:loses?)\s+(?!all\b)(.+?)(?:\.|$)/gmi;
   let losesSpecificMatch;
   while ((losesSpecificMatch = losesSpecificRegex.exec(oracle)) !== null) {
     // The effect of a triggered or activated ability waits for the ability to be fired ("When
@@ -5738,6 +5741,8 @@ function parseCardEffects(permanent, card, opts = {}) {
     // "target opponent loses 1 life", "loses the game": a player losing something, not an ability.
     // "When you lose control of this card" (Khârn the Betrayer) likewise.
     if (/\blife\b|\bthe game\b|^control of\b/.test(lostText)) continue;
+    // "If you lose the flip, …" (Squee's Revenge, Goblin Kites): a player losing a coin flip.
+    if (/^(?:the|a) flip\b/.test(lostText)) continue;
     // Skip "loses the type [X]" / "loses the subtype [X]" — handled by losesTypeRegex above
     if (/^the\s+(?:type|subtype)\b/.test(lostText)) continue;
     // Skip non-permanent filters
@@ -6636,6 +6641,13 @@ function parseCardEffects(permanent, card, opts = {}) {
   // ("Those creatures can't block this turn" after "up to three target creatures" — Wrap in Flames.)
   const _pronounSubjectSentence = /(?:^|[.;]\s*|\n)(?:(?:until end of turn|then|if you do|when you do),?\s+)?(?:it|they|that (?:creature|permanent|land|artifact|enchantment)|those (?:creatures|permanents))\s+(?:also\s+)?(?:gets?|gains?|has|have|becomes?|loses?|is|are|can't)\b/i;
   function _pronounAntecedentRestriction(pos) {
+    const info = _pronounAntecedentInfo(pos);
+    return info ? info.fn : null;
+  }
+  // The same antecedent, read whole: its restriction (fn) and how many it allows (maxTargets) —
+  // "deals 1 damage to each of up to two target creatures. Those creatures can't block this turn"
+  // (Sparkmage's Gambit) is two targets, not one.
+  function _pronounAntecedentInfo(pos) {
     if (!_pronounSubjectSentence.test(oracle.replace(/["“][^"”]*["”]/g, '""'))) return null;
     const _targetRe = /\b((?:(?:up to \w+|another|other)\s+)*target\s+[^.;"\n]+)/gi;
     const masked = oracle.replace(/["“][^"”]*["”]/g, (q) => ' '.repeat(q.length));
@@ -6659,11 +6671,11 @@ function parseCardEffects(permanent, card, opts = {}) {
     const _returned = _returnedCardTargetPhrase(phrase);
     if (_returned) {
       const info = buildAppliesToFromText(_returned);
-      return info && info.isTargeted && typeof info.fn === 'function' ? info.fn : null;
+      return info && info.isTargeted && typeof info.fn === 'function' ? info : null;
     }
     if (/\b(?:player|opponent|spell|card|cards|ability)\b/i.test(phrase.replace(/\b(?:an? )?opponents? controls?$|\byou (?:don't )?control$/i, ''))) return null;
     const info = buildAppliesToFromText(phrase);
-    return info && info.isTargeted && typeof info.fn === 'function' ? info.fn : null;
+    return info && info.isTargeted && typeof info.fn === 'function' ? info : null;
   }
 
   // --- Trait parsing: goaded, suspected, and similar status traits ---
@@ -6881,7 +6893,14 @@ function parseCardEffects(permanent, card, opts = {}) {
           // (Extraction Specialist), "… deals 2 damage to target creature. That creature can't
           // block this turn" (Mugging). With nothing else to restrict the target, the picker
           // offered every permanent.
-          if (/\btarget\b/i.test(before)) { eff.targetRestriction = _pronounAntecedentRestriction(contentStart) || (() => true); eff._pronounTarget = true; }
+          if (/\btarget\b/i.test(before)) {
+            const ante = _pronounAntecedentInfo(contentStart);
+            eff.targetRestriction = (ante && ante.fn) || (() => true);
+            eff._pronounTarget = true;
+            // "… to each of up to two target creatures. Those creatures can't block this turn"
+            // (Sparkmage's Gambit, Wrap in Flames): as many targets as the antecedent allows.
+            if (/^(?:they|those\s)/i.test(subj) && ante && ante.maxTargets > 1) { eff.maxTargets = ante.maxTargets; eff.targetIds = []; }
+          }
         }
       } else {
         // "This creature and up to one other target creature can't be blocked this turn"

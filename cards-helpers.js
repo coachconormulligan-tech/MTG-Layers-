@@ -80,8 +80,11 @@ const _TARGET_PHRASE_NOUN = String.raw`creature|land|artifact|enchantment|planes
 // Case-sensitive on purpose: a capitalised word is a subtype ("target Mount or Vehicle").
 // ("Tap target creature an opponent controls. It loses all abilities …" — Merfolk Trickster: the
 // controller words are part of the target, or the pronoun's rewrite lost them.)
+// ("It deals 2 damage to target creature with flying. That creature loses flying until end of
+// turn" — Goblin Skycutter: "with flying" is part of the target too.)
+const _TARGET_PHRASE_KEYWORD = String.raw`\s+with(?:out)?\s+(?:flying|reach|defender|trample|haste|vigilance|menace|deathtouch|lifelink|first strike|double strike|indestructible|hexproof|shroud|shadow|horsemanship)\b`;
 const _TARGET_PHRASE_RE = new RegExp(
-  String.raw`^target\s+((?:(?:${_TARGET_PHRASE_WORD}|${_TARGET_PHRASE_NOUN}|or|[A-Z][\w'-]*),?\s+)*(?:${_TARGET_PHRASE_NOUN}|[A-Z][\w'-]*)\b)(\s+(?:you (?:control|own|don't control)|an opponent controls|your opponents control)\b)?`);
+  String.raw`^target\s+((?:(?:${_TARGET_PHRASE_WORD}|${_TARGET_PHRASE_NOUN}|or|[A-Z][\w'-]*),?\s+)*(?:${_TARGET_PHRASE_NOUN}|[A-Z][\w'-]*)\b)(?:${_TARGET_PHRASE_KEYWORD})?(\s+(?:you (?:control|own|don't control)|an opponent controls|your opponents control)\b)?(?:${_TARGET_PHRASE_KEYWORD})?`);
 function _isKnownSubtypeWord(word) {
   if (typeof TypeCatalog === 'undefined') return false;
   return ['creatureTypes', 'landTypes', 'artifactTypes', 'enchantmentTypes', 'planeswalkerTypes', 'battleTypes']

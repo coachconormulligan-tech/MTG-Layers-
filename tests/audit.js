@@ -238,8 +238,10 @@ function extractPhrase(after) {
 
 const ONE_SHOT_VERBS = /\b(?:create|creates|destroy|destroys|exile|exiles|put|puts|return|returns|untap|tap|taps|sacrifice|deals?|draw|choose|attach|fights?|regenerate|counter|search|reveal|goad|transform|flip|amass|bolster|manifest|populate|copy|copies|proliferate|remove|move)\b/;
 const CONTINUOUS_VERBS = /^(?:gets?|gains?|has|have|becomes?|become|loses?|lose|can|can't|cannot|assumes|is|are|isn't)\b/;
-// One-shot verbs after which the target is still the same permanent on the battlefield.
-const SAME_PERMANENT_VERBS = /^(?:put|puts|untap|tap|taps|attach|choose|goad)$/;
+// One-shot verbs after which the target is still the same permanent on the battlefield. (Damage
+// too: the site keeps no damage, so "Mugging deals 2 damage to target creature. That creature can't
+// block this turn" leaves the target in place and its later sentence is a targeted effect.)
+const SAME_PERMANENT_VERBS = /^(?:put|puts|untap|tap|taps|attach|choose|goad|deal|deals)$/;
 // A later sentence whose subject is the target, through a pronoun ("…. Untap it. Until end of turn,
 // it gets +1/+1 and becomes a Doctor").
 // ("… Then that creature gets +1/+1 until end of turn and fights …" — Ent's Fury.)
