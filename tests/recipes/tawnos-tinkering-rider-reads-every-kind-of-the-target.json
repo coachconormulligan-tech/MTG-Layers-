@@ -1,0 +1,18 @@
+{
+  "name": "Tawnos's Tinkering — the rider's \"it\" is an artifact, creature or land you control",
+  "notes": "Found by the audit (2026-11-17). \"Put two +1/+1 counters on target artifact, creature, or land you control. Untap that permanent. If it isn't a creature, it becomes a 0/0 creature in addition to its other types.\" The rider's antecedent (_branchAntecedent) stopped at the first comma of the list and read \"target artifact\", so the picker listed only artifacts. Now it lists every artifact, creature and land you control, and a land picked becomes a creature (the counters are put on by hand, as with every spell).",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"] },
+    { "add": "Forest" },
+    { "add": "Grizzly Bears" },
+    { "add": "Ornithopter" },
+    { "add": "Hill Giant", "controller": "p2" },
+    { "add": "Tawnos's Tinkering", "spell": true, "as": "tt" },
+    { "call": ["setTarget", "@tt", "@Forest"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Tawnos's Tinkering" }, "are": ["Forest", "Grizzly Bears", "Ornithopter"] },
+    { "perm": "Forest", "final": { "types": { "$includes": ["Creature", "Land"] }, "power": 0, "toughness": 0 } },
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2 } }
+  ]
+}

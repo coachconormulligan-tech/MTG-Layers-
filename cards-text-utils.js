@@ -744,7 +744,8 @@ function _branchAntecedent(sentences, i) {
         ? subj[1] : null;
     }
     if (subj) continue;
-    const tgt = s.match(/\b((?:another )?target [a-z\s-]*?(?:creature|permanent|artifact|land|enchantment|planeswalker)s?(?: or (?:creature|permanent|artifact|land|enchantment|planeswalker)s?)*(?: (?:you control|an opponent controls|you don't control))?)(?=[\s.,]|$)/i);
+    // (A list of kinds: "target artifact, creature, or land you control" — Tawnos's Tinkering.)
+    const tgt = s.match(/\b((?:another )?target [a-z\s-]*?(?:creature|permanent|artifact|land|enchantment|planeswalker)s?(?:,? (?:or |and\/or )?(?:creature|permanent|artifact|land|enchantment|planeswalker)s?(?=[\s.,]|$))*(?: (?:you control|an opponent controls|you don't control))?)(?=[\s.,]|$)/i);
     if (tgt) return tgt[1];
   }
   return null;

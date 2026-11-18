@@ -964,7 +964,10 @@ const Battlefield = {
     // So is the X of an activation cost: "{X}: Until end of turn, creatures you control have base
     // power and toughness X/X …" (Mirror Entity), "{X}{R}{G}, {T}: Target creature gets +X/+0 …"
     // (Kessig Wolf Run). Not an X the text defines itself ("where X is …").
-    const costPaidX = kind === 'activated' && /^[^:]*\{X\}[^:]*:/.test(fullText || '') &&
+    // And the X of "Monstrosity X" read by its trigger: "When this creature becomes monstrous,
+    // goad up to X target creatures your opponents control" (Death Kiss; CR 702.94c).
+    const costPaidX = (kind === 'activated' && /^[^:]*\{X\}[^:]*:/.test(fullText || '') ||
+        kind === 'trigger' && /\bbecomes monstrous\b/i.test(fullText || '')) &&
       /\bX\b/.test(parsedEffectText) && !/\bwhere X is\b/i.test(parsedEffectText);
     if (_PAID_TIMES_X_RE.test(parsedEffectText) || cardValueText || costPaidX) {
       pseudoPerm.hasXValue = true;
@@ -2428,6 +2431,10 @@ const Battlefield = {
   setTargetOpponent(effectSourceId, playerId) {
     this._invalidate();
     const perm = this.getPermById(effectSourceId);
+    // "Target opponent chooses a creature they control" (Goblin War Cry): what was chosen was the
+    // old opponent's. (Only on a change: a restore sets the same opponent again after the pick.)
+    if (perm && perm._refPick && perm._refPick.targetOpponentControls &&
+        (perm._targetOpponentPlayerId || null) !== (playerId || null)) this.setRefPerm(effectSourceId, null);
     if (perm) perm._targetOpponentPlayerId = playerId || null;
     this.effects.forEach(e => {
       if (e.sourceId === effectSourceId && e._targetsOpponentPlayer) {

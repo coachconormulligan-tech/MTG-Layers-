@@ -27,7 +27,9 @@ Asserts are the hand-written facts the fixture exists to protect, checked on eve
         battlefield has the picker it is attached with: { "perm": "Pacifism" }. An Equipment's
         Equip / Reconfigure / Fortify pop-up has a list per such ability, { "perm": "Robe of the
         Archmagi", "kind": "equip", "equip": 1 }, 0-based in text order; empty when blocked. A
-        copy card's copy picker: { "kind": "copy" }; the player picker of "target player / target
+        copy card's copy picker: { "kind": "copy" } (a graveyard or exile copy's by card name); the
+        reference picker ("choose…": Belligerent Yearling, Goblin War Cry's chosen creature):
+        { "kind": "ref" }; the player picker of "target player / target
         opponent gains control of", of "creatures target opponent controls …" and of an "Enchant
         player / opponent" Aura: { "kind": "players" }, by player name)
     { "zoneCard": { "name": "Regal Bunnicorn", "zone": "graveyard" }, "final": { "power": 1 },

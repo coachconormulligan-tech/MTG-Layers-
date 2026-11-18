@@ -245,7 +245,15 @@ const SAME_PERMANENT_VERBS = /^(?:put|puts|untap|tap|taps|attach|choose|goad|dea
 // A later sentence whose subject is the target, through a pronoun ("…. Untap it. Until end of turn,
 // it gets +1/+1 and becomes a Doctor").
 // ("… Then that creature gets +1/+1 until end of turn and fights …" — Ent's Fury.)
-const LATER_PRONOUN_EFFECT = /\.\s+(?:until end of turn,\s*|then\s+)?(?:it|that (?:creature|permanent|land|artifact))\s+(?:also\s+)?(?:gets?|gains?|has|becomes?|loses?|is|can't (?:attack|block|be blocked))\b/;
+// ("Until your next turn, it can't attack or block" — Academic Probation; "If it isn't a creature, it
+// becomes a 0/0 Robot creature" — Donatello; "If you do, that land becomes …" — Cyclone Sire; "You may
+// have it gain reach until end of turn" — Academic Dispute.)
+const LATER_PRONOUN_LEAD = "(?:until (?:end of turn|your next turn),\\s*|then\\s+|if (?:you do|it's a creature|it isn't a creature|it's not a creature|(?:it|that (?:creature|permanent|land|artifact)) is(?:n't| not)? an? (?:creature|artifact|land)),\\s*)?";
+const LATER_PRONOUN_EFFECT = new RegExp("\\.\\s+" + LATER_PRONOUN_LEAD + "(?:(?:it|that (?:creature|permanent|land|artifact))\\s+(?:also\\s+)?(?:gets?|gains?|has|becomes?|loses?|is|can't (?:attack|block|be blocked))|(?:you may )?have (?:it|that (?:creature|permanent|land|artifact)) (?:get|gain|become(?! no longer)|lose))\\b");
+// "Goad target creature", "you gain 3 life and suspect up to one target creature an opponent controls":
+// the target gets the Goaded / Suspected designation, which the site keeps as a trait (CR 701.15,
+// 701.60), so it is audited like a "can't …" rule: the chosen target alone must get that trait.
+const TRAIT_VERB_BEFORE = /\b(goads?|suspects?) (?:each of )?(?:up to \w+ |one or two |\w+ )?(?:other |another )?$/;
 
 /* Does every event of a trigger's condition happen with the card in the hand or off the
    battlefield ("When you cycle this card", "When this creature dies", "When you cycle this card and
@@ -320,11 +328,14 @@ function classifyAt(lower, idx, end, opts) {
   // subject of a continuous verb, so that sentence is a targeted effect. Not "create a token that's
   // a copy of target …. It gains haste" (the token is "it") nor return / exile / destroy (the target
   // leaves or changes zones): every one-shot verb before the target must be one of these.
-  const actionVerbs = [...clauseBefore.replace(/\bputs? [^.;]*?\bcounters? (?:and [^.;]*?\bcounters? )?on $/, 'put on ')
+  // (The count and "another" stand between "on" and "target": "Put a +1/+1 counter on up to one
+  // target creature. It gains indestructible" — Basri Ket; "on each of up to two target creatures".)
+  const actionVerbs = [...clauseBefore.replace(/\bputs? [^.;]*?\bcounters? (?:and [^.;]*?\bcounters? )?on (?:each of )?(?:up to \w+ |\w+ )?(?:other |another )?$/, 'put on ')
     .matchAll(new RegExp(ONE_SHOT_VERBS.source, 'g'))].map(m => m[0]);
   const keepsTarget = actionVerbs.length > 0 && actionVerbs.every(v => SAME_PERMANENT_VERBS.test(v));
   const pronounEffect = keepsTarget && (opts.plural ? LATER_PLURAL_PRONOUN_EFFECT : LATER_PRONOUN_EFFECT).test(verbAfter);
-  if (!takesControl && !pronounEffect && (ONE_SHOT_VERBS.test(clauseBefore) || !CONTINUOUS_VERBS.test(verbAfter))) return { skip: 'one-shot-action' };
+  const traitVerb = clauseBefore.match(TRAIT_VERB_BEFORE);
+  if (!takesControl && !pronounEffect && !traitVerb && (ONE_SHOT_VERBS.test(clauseBefore) || !CONTINUOUS_VERBS.test(verbAfter))) return { skip: 'one-shot-action' };
   // "Target creature can't be blocked this turn" / "can't be regenerated" / "can attack as though
   // it didn't have defender": a rule about the target, not a change to what it is. The site does
   // not model these, so there is no targeted effect to expect.
@@ -340,6 +351,7 @@ function classifyAt(lower, idx, end, opts) {
     // site keeps these as traits in the card's words, so they are audited, Check 1 asking that the
     // target alone gets the "Can't …" trait. "Can't be regenerated", "can't be countered" are not.)
     rules = cantRulesOf(verbAfter, opts.plural);
+    if (traitVerb) rules.unshift(/^goad/.test(traitVerb[1]) ? 'goaded' : 'suspected');
     if (/^(?:can|can't|cannot)\b/.test(verbAfter) && !CANT_RULE_RE.test(verbAfter) && !/\b(?:gets?|gains?|has|have|becomes?|loses?)\b/.test(ownSentence) && !pronounGrant) return { skip: 'not-a-layer-effect' };
   }
   // Likewise: "target unblocked creature becomes blocked", damage "… by target creature is dealt to
@@ -579,6 +591,8 @@ function thatPlayerReading(before) {
   if (/\b(?:each|an|target|for each) opponent\b|\bopponent's\b/.test(s)) return 'opponent';
   if (/\b(?:this \w+|~|you control) (?:deals?|deal) combat damage to a player\b/.test(s)) return 'opponent';
   if (/\b(?:this \w+|~|you control) attacks? a player\b/.test(s)) return 'opponent';
+  // ("Whenever you attack a player, goad target creature that player controls" — Seifer.)
+  if (/\byou attack a player\b/.test(s)) return 'opponent';
   return null;
 }
 
@@ -610,7 +624,7 @@ function interpretPhrase(phrase, env) {
     .replace(/\b(power|toughness|mana value) x\b/g, '$1 ' + X_VALUE);
   let excludeSource = false;
   s = s.replace(/^(?:another|other) /, () => { excludeSource = true; return ''; });
-  const cut = s.search(/ (?:you control|you don't control|you own|an opponent controls|that player controls|they control|defending player controls|other than|that isn't|whose controller|attacking the same|with |without )/);
+  const cut = s.search(/ (?:you control|you don't control|you own|an opponent controls|your opponents control|that player controls|they control|defending player controls|other than|that isn't|whose controller|attacking the same|with |without )/);
   const head = cut >= 0 ? s.slice(0, cut) : s;
   let tail = cut >= 0 ? s.slice(cut).trim() : '';
 
@@ -651,7 +665,7 @@ function interpretPhrase(phrase, env) {
   while (tail && guard++ < 10) {
     let m;
     if ((m = tail.match(/^you control\b\s*/))) { clauseTests.push((st, p, ctx) => ctrlOf(st, p) === ctx.sourceCtrl); tail = tail.slice(m[0].length); continue; }
-    if ((m = tail.match(/^(?:you don't control|an opponent controls)\b\s*/))) { clauseTests.push((st, p, ctx) => ctrlOf(st, p) !== ctx.sourceCtrl); tail = tail.slice(m[0].length); continue; }
+    if ((m = tail.match(/^(?:you don't control|an opponent controls|your opponents control)\b\s*/))) { clauseTests.push((st, p, ctx) => ctrlOf(st, p) !== ctx.sourceCtrl); tail = tail.slice(m[0].length); continue; }
     if ((m = tail.match(/^you own but don't control\b\s*/))) { clauseTests.push((st, p, ctx) => (p.owner || 'player_0') === ctx.sourceCtrl && ctrlOf(st, p) !== ctx.sourceCtrl); tail = tail.slice(m[0].length); continue; }
     // "Target creature that player controls": see thatPlayerReading.
     if ((m = tail.match(/^(?:that player controls|they control)\b\s*/))) {
@@ -1085,25 +1099,44 @@ function prepareCopy(ctx, u, id, info, finding) {
   }
   const siteAll = getCopyCandidates(id).candidates.map(c => c.id);
   u.copyActual = rolesOf(siteAll);
-  if (!tm) { u.copyPhraseUnknown = m ? m[1] : '(no "becomes a copy of")'; }
+  // What a pronoun copies, read off the text by the audit itself: "Choose a nonlegendary creature on
+  // the battlefield. Target creature becomes a copy of that creature" (the last "choose a …" before
+  // it), and "Whenever you cast a permanent spell …, … becomes a copy of that spell": a spell cast
+  // becomes a permanent its caster controls, never a token or a land (CR 305.1, 111.1), and is
+  // added to the board, so "a nontoken nonland permanent you control".
+  let phrase = tm ? tm[2] : null;
+  if (!tm && m) {
+    const what = m[1].trim().toLowerCase();
+    if (what === 'that spell') {
+      const sp = ((u.fullText || '') + ' ' + u.text).match(/\byou cast an?\s+(permanent|creature|artifact|enchantment) spell\b/i);
+      if (sp) phrase = 'nontoken ' + (sp[1].toLowerCase() === 'permanent' ? 'nonland permanent' : sp[1].toLowerCase()) + ' you control';
+    } else if (/^(?:it|that (?:creature|permanent|artifact))$/.test(what)) {
+      const ch = [...u.text.slice(0, m.index).matchAll(/\bchoose an?\s+([^.,\n]+)/gi)].pop();
+      if (ch) phrase = ch[1].trim().replace(/\s+on the battlefield$/i, "");
+    }
+    if (phrase) u.copyAntecedent = m[1];
+  }
+  if (!phrase) { u.copyPhraseUnknown = m ? m[1] : '(no "becomes a copy of")'; }
   else {
-    u.copyPhrase = tm[2];
-    const interp = interpretPhrase(tm[2], { before: u.text.slice(0, m.index) });
+    u.copyPhrase = phrase;
+    const interp = interpretPhrase(phrase, { before: u.text.slice(0, m.index) });
     if (interp.unknown) u.copyPhraseUnknown = interp.unknown;
     else {
       // "Another target …" is another than the first target, which is picked apart; the source
       // is left out only when it is the one that becomes the copy ("this creature becomes a copy
       // of another target creature").
-      const selfBecomes = /^(?:this|it\b)/i.test(u.text.slice(0, m.index).replace(/^.*[.,]\s*/, ''));
+      const selfBecomes = tm && /^(?:this|it\b)/i.test(u.text.slice(0, m.index).replace(/^.*[.,]\s*/, ''));
       const expected = [];
       for (const p of ctx.universe) {
         if (selfBecomes && tm[1] && p.id === ctx.sourceId) continue;
         const st = ctx.preStates.get(p.id);
         if (!st || !interp.test(st, p, ctx)) continue;
+        // (Only a target is kept out by shroud, hexproof and protection: a chosen creature or a
+        // spell is not targeted.)
         const kws = keywordsOf(st);
-        if (kws.includes('shroud')) continue;
-        if (kws.includes('hexproof') && ctrlOf(st, p) !== ctx.sourceCtrl) continue;
-        if (auditProtectedFrom(st, ctx.preStates.get(ctx.sourceId) || {})) continue;
+        if (tm && kws.includes('shroud')) continue;
+        if (tm && kws.includes('hexproof') && ctrlOf(st, p) !== ctx.sourceCtrl) continue;
+        if (tm && auditProtectedFrom(st, ctx.preStates.get(ctx.sourceId) || {})) continue;
         expected.push(p.id);
       }
       u.copyExpected = rolesOf(expected);
@@ -1212,10 +1245,16 @@ function classifyPlayerGroup(text) {
   // "You and target opponent each gain control of all creatures the other controls" (Reins of Power).
   if (/\beach gain control of\b/.test(lower)) return null;
   // "Target opponent chooses a creature they control. Other creatures they control can't block this
-  // turn" (Goblin War Cry): which creature that player chose is not on the board.
-  if (/\bchooses? (?:a|an|one|two) [^.]*\. other\b/.test(lower)) return null;
+  // turn" (Goblin War Cry): the creature chosen is picked after the player (chosen: its noun), and
+  // the group is the rest. Any other "chooses … . Other" is not modelled.
+  let chosen = null;
+  if (/\bchooses? (?:a|an|one|two) [^.]*\. other\b/.test(lower)) {
+    const cm = lower.match(/\btarget opponent chooses an? ([a-z -]+?) they control\. other /);
+    if (!cm) return null;
+    chosen = { noun: cm[1] };
+  }
   const clauses = playerGroupClauses(lower, "target (?:opponent|player)|that (?:player|opponent)|they");
-  return clauses.length ? { playerGroup: { who: pm[1], clauses } } : null;
+  return clauses.length ? { playerGroup: Object.assign({ who: pm[1], clauses }, chosen ? { chosen } : {}) } : null;
 }
 
 /* Words of the text outside its group clauses about other permanents: the source, a group of yours. */
@@ -1257,13 +1296,34 @@ function judgePlayerGroup(ctx, u, o) {
   const tryIds = o.listIds && o.listIds.length ? o.listIds : o.listIds ? [] : o.expectedIds;
   const othersSeen = [], nothing = [];
   for (const pid of tryIds) {
-    let changed = [];
+    let changed = [], chosenId = null;
+    const label = 'player ' + pname(pid);
     try {
       o.set(pid);
       Battlefield.evaluate();
       changed = diffSummaries(o.before, summarizeBoard());
-    } finally { o.set(null); Battlefield.evaluate(); }
-    const label = 'player ' + pname(pid);
+      // The one the player chose (o.chosen): nothing before it is picked; its list ("choose…",
+      // getRefCandidates) is that player's permanents of the noun; picked, it is left out.
+      if (o.chosen) {
+        if (changed.length) finding('check1', 'changes-before-choice', { target: label, changed: changed.map(c => ({ role: c.role, what: c.what })) });
+        const interpC = interpretPhrase(o.chosen.noun, { plural: false, before: '' });
+        const site = getRefCandidates(o.sourceId).map(p => p.id);
+        if (interpC.unknown) u.phraseUnknown = (u.phraseUnknown || []).concat(interpC.unknown);
+        else {
+          const exp = ctx.universe.filter(p => { const st = ctx.preStates.get(p.id); return st && ctrlOf(st, p) === pid && interpC.test(st, p, ctx); }).map(p => p.id);
+          u.chosenExpected = rolesOf(exp); u.chosenActual = rolesOf(site);
+          if (exp.length !== site.length || exp.some(x => !site.includes(x))) finding('check2', 'chosen-list-mismatch', { missing: rolesOf(exp.filter(x => !site.includes(x))), extra: rolesOf(site.filter(x => !exp.includes(x))) });
+        }
+        chosenId = site[0] || null;
+        if (chosenId) {
+          Battlefield.setRefPerm(o.sourceId, chosenId);
+          Battlefield.evaluate();
+          changed = diffSummaries(o.before, summarizeBoard());
+          if (changed.some(c => c.id === chosenId)) finding('check1', 'chosen-changed', { target: label, chosen: roleName(chosenId) });
+          changed = changed.filter(c => c.id !== chosenId);
+        }
+      }
+    } finally { if (o.chosen) Battlefield.setRefPerm(o.sourceId, null); o.set(null); Battlefield.evaluate(); }
     u.check1.perTarget.push({ target: label, changed: changed.map(c => ({ role: c.role, what: c.what })) });
     const inGroup = (id) => {
       const p = Battlefield.getPermById(id), st = ctx.preStates.get(id);
@@ -1273,7 +1333,7 @@ function judgePlayerGroup(ctx, u, o) {
     if (others.length) othersSeen.push({ target: label, others: others.map(c => ({ role: c.role, what: c.what })) });
     const required = ctx.universe.filter(p => { const st = ctx.preStates.get(p.id); return st && tests.some(t => t.required && t.test(st, p, ctx, pid)); });
     if (required.length && !required.some(p => changed.some(c => c.id === p.id))) nothing.push(label);
-    const quiet = required.filter(p => !changed.some(c => c.id === p.id));
+    const quiet = required.filter(p => p.id !== chosenId && !changed.some(c => c.id === p.id));
     if (quiet.length && quiet.length < required.length) u.infos.push({ code: 'no-op-on-some', what: label + ': ' + rolesOf(quiet.map(p => p.id)).join(', ') });
   }
   u.expected = o.groups.map(g => g.attackers ? 'creatures attacking the player' : g.phrase + (g.control ? ' (control)' : ''));
@@ -1293,6 +1353,7 @@ function auditFiredPlayerGroup(ctx, u, id) {
     expectedIds: Battlefield.players.filter(p => pg.who === 'player' || p.id !== ctx.sourceCtrl).map(p => p.id),
     set: (pid) => kind === 'opponent' ? Battlefield.setTargetOpponent(id, pid) : Battlefield.setTargetPlayer(id, pid),
     groups: pg.clauses,
+    chosen: pg.chosen || null,
     mixed: playerGroupMixed(u.text, ctx.cardName, u.kind === 'spell'),
     before: ctx.before,
   });

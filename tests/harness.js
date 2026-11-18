@@ -159,7 +159,12 @@ function targetCandidateLists() {
     const copyEff = info.hasCopyCard && Battlefield.effects.find(e => e.sourceId === p.id && e.type === EFFECT_TYPE.COPY);
     if (copyEff && !copyEff.params.copyTargetZone) {
       out.push({ perm: label, kind: 'copy', candidates: getCopyCandidates(p.id).candidates.map(c => c.perm.name + (c.perm.label ? ' ' + c.perm.label : '')).sort() });
+    } else if (copyEff) {
+      // A copy of a card in a graveyard or exile: the zone cards the picker lists, by card name.
+      out.push({ perm: label, kind: 'copy', candidates: _gatherCopyZoneCards(copyEff, p.id).map(zc => zc.name).sort() });
     }
+    // The reference picker ("choose…", getRefCandidates): "kind": "ref", by name.
+    if (p._refPick) out.push({ perm: label, kind: 'ref', candidates: getRefCandidates(p.id).map(r => r.name + (r.label ? ' ' + r.label : '')).sort() });
     // (Or the "target opponent" picker, _targetsOpponentPlayer, or an Aura's enchanted-player one.)
     const playerKind = p._targetsChosenPlayer ? 'player' : p._targetsOpponentPlayer ? 'opponent' : p._isEnchantPlayer ? 'enchanted' : null;
     if (playerKind) {
@@ -251,6 +256,7 @@ function summarizeBoard() {
    A recipe builds a board from card names instead of a downloaded board:
      { "add": "Card Name", "as": "alias", "controller": "p2", "spell": true, "x": 3, "opts": {...} }
      { "call": ["anyBattlefieldMethod", arg, ...], "as": "alias" }
+     { "copy": ["@copier", "@target"] }, { "copyFromZone": ["@copier", "Card Name"] }   (a copy picker's pick)
      { "fire": "@alias", "trigger": 1, "as": "alias", "vote": ["blue", "red"], "color": "red" }   (or "activated": 0)
    "fire" fires the ability at that index of the permanent's current ability list, taking the
    effect text from extractTriggeredAbilities / extractActivatedAbilities as the site's ability
@@ -313,6 +319,15 @@ function buildFromRecipe(recipe, cards) {
       const sd = tp.scryfallData;
       const multiFace = sd && sd.card_faces && sd.card_faces.length > 1 && !sd._isFaceResolved;
       Battlefield.setCopySource(copier, JSON.parse(JSON.stringify((multiFace && Battlefield.copiableCardOf(target)) || sd)));
+    } else if (step.copyFromZone) {
+      // { "copyFromZone": ["@copier", "Card Name"] } — pick that card in the copy picker's zone list
+      // (a graveyard or exile, _gatherCopyZoneCards), as setCopyTargetFromZone does.
+      const [copier, name] = [arg(step.copyFromZone[0]), step.copyFromZone[1]];
+      const eff = Battlefield.effects.find(e => e.sourceId === copier && e.type === EFFECT_TYPE.COPY);
+      const picked = eff && eff.params.copyTargetZone && _gatherCopyZoneCards(eff, copier).find(zc => zc.name === name);
+      if (!picked) throw new Error('copyFromZone step: no zone copy or no card "' + name + '" in its list');
+      eff.params._copyTargetZoneRef = picked.value;
+      Battlefield.setCopySource(copier, JSON.parse(JSON.stringify(picked.card)));
     } else if (step.fire) {
       const id = arg(step.fire);
       const states = Battlefield.getAllFinalStates();

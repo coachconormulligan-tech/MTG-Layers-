@@ -183,6 +183,82 @@ function getCopyCandidates(sourceId) {
   return { candidates, currentTarget: effect.params._copyTargetPermId || '' };
 }
 
+/* Gather the candidate copy-target cards for a COPY effect whose target lives in a
+   non-battlefield zone (graveyard / exile): the zone list of the copy picker (renderCopyTargetSelect,
+   setCopyTargetFromZone in ui-targeting.js; tests/harness.js reads it too). Returns [{ value, name, card }] filtered by
+   the effect's restriction. "your graveyard" is scoped to the source's controller; "a/any
+   graveyard" spans every player. Exile is a flat list of entries keyed by owner. */
+function _gatherCopyZoneCards(effect, sourceId) {
+  const zone = effect.params.copyTargetZone;
+  if (!zone) return [];
+  const restriction = effect.params.restriction;
+  const srcPerm = Battlefield.getPermById(sourceId);
+  const controllerId = srcPerm ? (srcPerm.controller || srcPerm.owner) : Battlefield.activePlayerId;
+  const ownerScope = effect.params.copyTargetZoneOwner || 'any';
+  const passes = (card) => {
+    if (!restriction) return true;
+    const tl = parseTypeLine(card.type_line || '');
+    return restriction({ types: tl.types, supertypes: tl.supertypes, subtypes: tl.subtypes,
+      colors: card.colors || [], isAllCreatureTypes: false, isToken: false });
+  };
+  const out = [];
+  if (zone === 'graveyard') {
+    for (const pl of Battlefield.players) {
+      if (ownerScope === 'you' && pl.id !== controllerId) continue;
+      (pl.graveyard || []).forEach((card, idx) => {
+        if (passes(card)) out.push({ value: `gy:${pl.id}:${idx}`, name: card.name, card });
+      });
+    }
+  } else if (zone === 'exile') {
+    (Battlefield.exile || []).forEach((entry) => {
+      if (ownerScope === 'you' && entry.owner !== controllerId) return;
+      const card = entry.card;
+      if (card && passes(card)) out.push({ value: `ex:${entry.id}`, name: card.name, card });
+    });
+  }
+  return out;
+}
+
+/* The permanents the reference picker offers (renderRefPermSelect in ui-targeting.js): the object a
+   fired ability takes its numbers or abilities from (Belligerent Yearling, Quicksilver Elemental),
+   the permanent chosen as Scheming Fence enters, or the one a group leaves out ("Target opponent
+   chooses a creature they control. Other creatures they control …" — Goblin War Cry, whose list is
+   the picked opponent's, empty until one is picked: targetOpponentControls). Returns permanents. */
+function getRefCandidates(sourceId) {
+  const sourcePerm = Battlefield.getPermById(sourceId);
+  const pick = sourcePerm && sourcePerm._refPick;
+  const eff = Battlefield.effects.find(e => e.sourceId === sourceId && _takesFromRef(e));
+  if (!pick || !eff) return [];
+  const current = eff.params.refPermId || '';
+  const sourceCtrl = sourcePerm.controller || sourcePerm.owner || Battlefield.activePlayerId;
+  const oppId = pick.targetOpponentControls ? (sourcePerm._targetOpponentPlayerId || null) : null;
+  if (pick.targetOpponentControls && !oppId) return [];
+  const applies = buildAppliesToFromText(pick.filter);
+  const finalStates = Battlefield.getAllFinalStates();
+  // A fired ability's choice is judged on the board it was fired on.
+  const snapStates = sourcePerm._firedAtStates || null;
+  return Battlefield.permanents.filter(p => {
+    if (!_isPermanent(p)) return false;
+    if (pick.excludeSource && p.id === (sourcePerm.abilitySourceId || sourcePerm.id)) return false;
+    if (p.timestamp >= sourcePerm.timestamp && p.id !== current) return false;
+    const stack = Battlefield.getStack(p.id);
+    if (stack && stack.length >= 2 && stack[0] !== p.id) return false;
+    const fs = (snapStates && snapStates.get(p.id)) || finalStates.get(p.id);
+    if (!fs) return false;
+    const ctrl = fs.controller || p.controller || p.owner || 'player_0';
+    if (pick.youControl && ctrl !== sourceCtrl) return false;
+    if (pick.opponentControls && ctrl === sourceCtrl) return false;
+    if (oppId && ctrl !== oppId) return false;
+    if (applies.fn && !applies.isSelf && !applies.fn(fs, finalStates, sourceCtrl)) return false;
+    if (pick.isTarget) {
+      const abilities = fs.abilities || [];
+      if (abilities.some(a => /\bshroud\b/i.test(a))) return false;
+      if ((p.controller || p.owner || 'player_0') !== sourceCtrl && abilities.some(a => /\bhexproof\b/i.test(a))) return false;
+    }
+    return true;
+  });
+}
+
 /* "Audit Bear A [Player 2]" - how a permanent is named in a picker. The modal-mode picker leaves
    the player off. */
 /* What a target restriction is asked about a candidate. The pickers' own tState carries only

@@ -1,0 +1,23 @@
+{
+  "name": "Kaya, Spirits' Justice — fired, the target token becomes a copy of a creature card in exile",
+  "notes": "Found by tests/audit.py (2026-11-17). \"You may choose a creature card from among them. Until end of turn, target token you control becomes a copy of it, except it has flying.\" \"It\" was not read back, so the copy picker listed every permanent on the battlefield. Now it is read back to \"a creature card from among them\", the cards the trigger put into exile: the picker lists the creature cards in exile (not Lightning Bolt), and the token becomes Hill Giant with flying.",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"] },
+    { "add": "Kaya, Spirits' Justice", "as": "kaya" },
+    { "add": "Grizzly Bears", "as": "token", "opts": { "isToken": true } },
+    { "add": "Llanowar Elves", "as": "elves" },
+    { "add": "Serra Angel", "controller": "p2" },
+    { "call": ["addToExile", "card:Hill Giant"] },
+    { "call": ["addToExile", "card:Lightning Bolt"] },
+    { "fire": "@kaya", "trigger": 0, "as": "a1" },
+    { "call": ["setTarget", "@a1", "@token"] },
+    { "copyFromZone": ["@a1", "Hill Giant"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Kaya, Spirits' Justice (trigger)", "kind": "single" }, "are": ["Grizzly Bears"] },
+    { "targetCandidates": { "perm": "Kaya, Spirits' Justice (trigger)", "kind": "copy" }, "are": ["Hill Giant"] },
+    { "perm": "Grizzly Bears", "final": { "name": "Hill Giant", "power": 3, "toughness": 3 } },
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$includes": ["Flying"] } } },
+    { "perm": "Llanowar Elves", "final": { "name": "Llanowar Elves" } }
+  ]
+}

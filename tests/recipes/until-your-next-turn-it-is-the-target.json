@@ -1,0 +1,24 @@
+{
+  "name": "Nissa, Vital Force and Academic Probation — \"Until your next turn, it …\" is the target",
+  "notes": "Found by the audit (2026-11-17), once it read a target's later \"it\" sentence after \"Until your next turn,\". Nissa, Vital Force's +1, fired: \"Untap target land you control. Until your next turn, it becomes a 5/5 Elemental creature with haste.\" The pronoun was written out as the target, but the type parser only took a later sentence's own target after \"Until end of turn,\", so the effects were global and reached nobody. Academic Probation's second mode, \"Choose target nonland permanent. Until your next turn, it can't attack or block …\": the pronoun-subject test accepted \"Until end of turn, it\" only, so the target's words were dropped and the picker listed lands.",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"] },
+    { "add": "Forest", "as": "f1" },
+    { "add": "Forest", "as": "f2" },
+    { "add": "Grizzly Bears" },
+    { "add": "Mountain", "controller": "p2" },
+    { "add": "Nissa, Vital Force", "as": "nissa" },
+    { "fire": "@nissa", "activated": 0, "as": "plus" },
+    { "call": ["setTarget", "@plus", "@f1"] },
+    { "add": "Academic Probation", "spell": true, "as": "ap" },
+    { "call": ["setModalModeSelections", "@ap", [1]] },
+    { "call": ["setTarget", "@ap", "@Grizzly Bears"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Nissa, Vital Force (activated)" }, "are": ["Forest A", "Forest B"] },
+    { "perm": "Forest A", "final": { "types": { "$includes": ["Creature", "Land"] }, "subtypes": { "$includes": ["Elemental", "Forest"] }, "power": 5, "toughness": 5, "abilities": { "$includes": ["Haste"] } } },
+    { "perm": "Forest B", "final": { "types": ["Land"], "power": null } },
+    { "targetCandidates": { "perm": "Academic Probation" }, "are": ["Grizzly Bears", "Nissa, Vital Force"] },
+    { "perm": "Grizzly Bears", "final": { "traits": ["Can't attack or block"] } }
+  ]
+}

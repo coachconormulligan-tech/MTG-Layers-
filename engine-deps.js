@@ -77,6 +77,8 @@ function effectAppliesToPerm(effect, permState, permanent, permId, allStates, ab
   // "…base power becomes equal to that creature's power" / "gains all activated abilities of
   // target creature": nothing until that object is picked.
   if (_takesFromRef(effect) && !effect.params.refPermId) return false;
+  // "Other creatures they control can't block" (Goblin War Cry): every one but the chosen one.
+  if (effect.params && effect.params.exceptRef && permId === effect.params.refPermId) return false;
 
   // "For each" boosts whose count is currently 0 (e.g. Strata Scythe with no matching lands):
   // hide the layer row entirely rather than showing an inert +0/+0 entry. Only suppress when

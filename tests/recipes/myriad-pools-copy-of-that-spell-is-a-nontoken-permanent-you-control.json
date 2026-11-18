@@ -1,0 +1,23 @@
+{
+  "name": "The Myriad Pools — fired, \"a copy of that spell\" lists nontoken nonland permanents you control",
+  "notes": "Found by tests/audit.py (2026-11-17). \"Whenever you cast a permanent spell using mana produced by The Myriad Pools, up to one other target permanent you control becomes a copy of that spell until end of turn.\" \"That spell\" was not read, so the copy picker listed every permanent, an opponent's and the land itself included. The site holds no permanent spell on the stack (the card is added to the battlefield), so what is copied is read back from \"you cast a permanent spell\" as a nontoken nonland permanent you control: here Hill Giant, not the token, the Forest or the opponent's Serra Angel.",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"] },
+    { "add": "The Everflowing Well // The Myriad Pools", "as": "well" },
+    { "call": ["flipCard", "@well"] },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Hill Giant", "as": "giant" },
+    { "add": "Runeclaw Bear", "as": "tok", "opts": { "isToken": true } },
+    { "add": "Forest" },
+    { "add": "Serra Angel", "controller": "p2" },
+    { "fire": "@well", "trigger": 1, "as": "a1" },
+    { "call": ["setTarget", "@a1", "@bears"] },
+    { "copy": ["@a1", "@giant"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "The Myriad Pools (trigger)", "kind": "copy" }, "are": ["Grizzly Bears", "Hill Giant"] },
+    { "perm": "Grizzly Bears", "final": { "name": "Hill Giant", "power": 3, "toughness": 3 } },
+    { "perm": "Hill Giant", "final": { "name": "Hill Giant" } },
+    { "perm": "Runeclaw Bear", "final": { "name": "Runeclaw Bear" } }
+  ]
+}

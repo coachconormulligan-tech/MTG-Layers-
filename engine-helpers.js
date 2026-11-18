@@ -235,8 +235,10 @@ function additiveDeltaDiffers(before1, after1, before2, after2) {
 // Does this effect read something from an object picked after its ability was fired
 // (params.refPermId)? Base P/T from another creature (Belligerent Yearling) and activated
 // abilities of a target (Quicksilver Elemental). The effect itself stays on its own subject.
+// Or a group that leaves the picked object out (params.exceptRef: "Target opponent chooses a
+// creature they control. Other creatures they control can't block this turn" — Goblin War Cry).
 function _takesFromRef(effect) {
-  return !!(effect && effect.params && (effect.params.ptFromRef || effect.params.abilitiesFromRef || effect.params.powerBoundFromRef));
+  return !!(effect && effect.params && (effect.params.ptFromRef || effect.params.abilitiesFromRef || effect.params.powerBoundFromRef || effect.params.exceptRef));
 }
 
 // Whether a target's state is within the bound a fired ability takes from the object picked for

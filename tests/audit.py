@@ -34,6 +34,12 @@ A unit whose own text names one permanent target ("singular") is checked twice:
            the fired ability (rule-trait-names-ability). "Can't be regenerated / countered",
            "becomes blocked", "is dealt damage" stay skipped (not-a-layer-effect), as does a rule
            after damage ("deals 2 damage to target creature. That creature can't block").
+           "Goad / suspect target …" is checked the same way: the chosen target alone must get
+           the Goaded / Suspected trait (rule-trait-missing). A later sentence about the target
+           through "it" / "that creature" is read after "Until end of turn," / "Until your next
+           turn,", "If you do," / "If it isn't a creature," and as "You may have it gain / get /
+           become / lose …" (not "become no longer …"), also when "a counter on up to one /
+           another / each of up to two target …" came before.
            Before target-changes-nothing is reported, the board is adjusted in the one way the text
            asks for and the targets are tried again: a listed permanent is handed to the opponent
            ("gain control of"), given the keyword being removed ("loses first strike"), the source
@@ -94,7 +100,11 @@ attacking enchanted player have ..." lines. Check 2: the site shows a player lis
 the opponent picker, the "target player" one or the enchanted-player one) offering the players the
 words allow ("target opponent", "Enchant opponent": not you; player-list-mismatch). Check 1: with no
 player picked nothing changes; with each listed player picked, only that player's group may change
-(target-changes-others) and some of it must (player-changes-nothing). A copy of a target ("becomes a
+(target-changes-others) and some of it must (player-changes-nothing). "Target opponent chooses a
+creature they control. Other creatures they control …" (Goblin War Cry) has a second pick, the chosen
+creature (the reference picker, getRefCandidates): with the player picked and nothing chosen nothing
+changes (changes-before-choice), the list is that player's creatures (chosen-list-mismatch), and once
+one is chosen it is left out (chosen-changed). A copy of a target ("becomes a
 copy of another target creature") has its copy list judged with an opponent's and your hexproof
 creature and your shroud creature added for that list alone.
 
@@ -213,6 +223,9 @@ CODES = [
     ('player-list-mismatch', 'A player picker ("target player / target opponent / another player gains control of", a group target opponent controls, the enchanted player) offers other players than the text allows.'),
     ('no-player-picker', 'The text gives a group that target player / target opponent / the enchanted player controls a continuous effect, but the site offers no player list.'),
     ('player-changes-nothing', 'With a player picked, no permanent of the group that player controls changes.'),
+    ('chosen-list-mismatch', 'The list of what the picked player chooses ("Target opponent chooses a creature they control") offers other permanents than that player\'s of that kind.'),
+    ('changes-before-choice', 'With the player picked but nothing chosen yet, some permanent changes.'),
+    ('chosen-changed', 'The permanent the player chose changes, although the group is "other" than it.'),
     ('changes-with-no-target', 'With no target chosen, some permanent changes.'),
     ('target-changes-others', 'With a target chosen, a permanent other than the target changes.'),
     ('target-changes-nothing', 'Choosing any listed target changes nothing.'),
@@ -241,7 +254,7 @@ CODES = [
     ('quote-not-fireable', 'The permanent that gets a quoted ability has it, but the site offers no Trigger / Activate button for it.'),
 ]
 CODE_ORDER = {c: i for i, (c, _) in enumerate(CODES)}
-CHECK2_CODES = {'empty-list', 'list-mismatch', 'no-picker', 'copy-empty-list', 'copy-list-mismatch', 'player-list-mismatch', 'no-player-picker'}
+CHECK2_CODES = {'empty-list', 'list-mismatch', 'no-picker', 'copy-empty-list', 'copy-list-mismatch', 'player-list-mismatch', 'no-player-picker', 'chosen-list-mismatch'}
 
 
 # ───────────────────────────── selecting cards ─────────────────────────────
@@ -629,7 +642,8 @@ def print_record(r):
         else:
             print('       actual:    %s' % (', '.join(u['actual']) if u.get('actual') else 'nothing' if u.get('actual') is not None else 'n/a'))
         if u.get('copyActual') is not None or u.get('copyPhraseUnknown'):
-            print('       copy of:   "%s"' % (u.get('copyPhrase') or u.get('copyPhraseUnknown') or ''))
+            print('       copy of:   "%s"%s' % (u.get('copyPhrase') or u.get('copyPhraseUnknown') or '',
+                                          ' (read back from "%s")' % u['copyAntecedent'] if u.get('copyAntecedent') else ''))
             if u.get('copyPhraseUnknown'):
                 print('                  expected:  not judged (%s)' % u['copyPhraseUnknown'])
             else:
@@ -639,6 +653,8 @@ def print_record(r):
                 print('                  chosen:    %s' % u['copySource'])
         if u.get('playersActual') is not None:
             print('       players:   text %s, site %s' % (', '.join(u.get('playersExpected', [])), ', '.join(u['playersActual'])))
+        if u.get('chosenActual') is not None:
+            print('       chosen:    text %s, site %s' % (', '.join(u.get('chosenExpected', [])), ', '.join(u['chosenActual'])))
         m = u.get('mixed') or {}
         c1 = u.get('check1')
         if c1:

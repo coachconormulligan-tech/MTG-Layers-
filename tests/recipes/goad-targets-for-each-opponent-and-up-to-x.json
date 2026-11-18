@@ -1,0 +1,24 @@
+{
+  "name": "Frenzied Gorespawn and Death Kiss — goad a target that player controls, goad up to X targets",
+  "notes": "Found by the audit (2026-11-17), once it read \"goad / suspect target …\" as the Goaded / Suspected trait. Frenzied Gorespawn: \"When this creature enters, for each opponent, goad target creature that player controls.\" Fired as one ability, \"that player\" was read as no one in particular and the picker listed your own creatures; it now fires once an opponent (the Nihiloor split, _forEachOpponentReflexiveText), each picking among that opponent's creatures (a saved board keeps the split text, so only --build exercises the split itself). Death Kiss: \"When this creature becomes monstrous, goad up to X target creatures your opponents control.\" The goad verb parser set no maxTargets, so the picker took one creature; with X = 2 it now takes two.",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"] },
+    { "add": "Grizzly Bears" },
+    { "add": "Hill Giant", "controller": "p2" },
+    { "add": "Serra Angel", "controller": "p2" },
+    { "add": "Frenzied Gorespawn", "as": "fg" },
+    { "fire": "@fg", "trigger": 0, "as": "fgt" },
+    { "call": ["setTarget", "@fgt", "@Hill Giant"] },
+    { "add": "Death Kiss", "as": "dk" },
+    { "fire": "@dk", "trigger": 2, "as": "dkt" },
+    { "call": ["setXValue", "@dkt", 2] },
+    { "call": ["setMultiTarget", "@dkt", 0, "@Hill Giant"] },
+    { "call": ["setMultiTarget", "@dkt", 1, "@Serra Angel"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Frenzied Gorespawn (trigger)" }, "are": ["Hill Giant", "Serra Angel"] },
+    { "targetCandidates": { "perm": "Death Kiss (trigger)" }, "are": ["Hill Giant", "Serra Angel"] },
+    { "perm": "Serra Angel", "final": { "traits": { "$includes": ["Goaded by Player 1"] } } },
+    { "perm": "Grizzly Bears", "final": { "traits": { "$excludes": ["Goaded by Player 1"] } } }
+  ]
+}

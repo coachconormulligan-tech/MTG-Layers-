@@ -93,9 +93,10 @@ function renderTimestampPanel() {
       ${bestowBadge}
       ${effInfo.hasCopyCard ? renderCopyTargetSelect(p.id) : ''}
       ${renderTargetPickers(p.id, getTargetPickerKind(p.id, finalStates.get(p.id), effInfo))}
-      ${p._refPick ? renderRefPermSelect(p.id) : ''}
+      ${p._refPick && !p._refPick.targetOpponentControls ? renderRefPermSelect(p.id) : ''}
       ${p._needsChosenExileCard ? renderChosenExileSelect(p.id) : ''}
       ${p._targetsOpponentPlayer ? renderTargetOpponentSelect(p.id) : ''}
+      ${p._refPick && p._refPick.targetOpponentControls ? renderRefPermSelect(p.id) : ''}
       ${p._targetsChosenPlayer ? renderTargetPlayerSelect(p.id) : ''}
       ${p._isEnchantPlayer ? renderEnchantedPlayerSelect(p.id) : ''}
       <div class="ts-actions">

@@ -1,0 +1,127 @@
+{
+  "name": "Goblin War Cry — the creature the opponent chose can block, their other creatures can't",
+  "notes": "Left open by the audit (2026-11-17). \"Target opponent chooses a creature they control. Other creatures they control can't block this turn.\" \"They\" was not read, so the spell reached nobody even with the opponent picked. Now, once the opponent is picked, the reference picker lists that opponent's creatures; the one picked keeps blocking and the rest get \"Can't block\". Nobody is reached until both are picked (an unmeasurable choice is never assumed). Eunuchs' Intrigues has the same text. Here Eunuchs' Intrigues has its opponent picked but no creature chosen, so it reaches nobody: Serra Angel, spared by Goblin War Cry, can still block.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Player 2"
+      ]
+    },
+    {
+      "add": "Grizzly Bears"
+    },
+    {
+      "add": "Hill Giant",
+      "controller": "p2"
+    },
+    {
+      "add": "Serra Angel",
+      "controller": "p2"
+    },
+    {
+      "add": "Llanowar Elves",
+      "controller": "p2"
+    },
+    {
+      "add": "Goblin War Cry",
+      "spell": true,
+      "as": "cry"
+    },
+    {
+      "add": "Eunuchs' Intrigues",
+      "spell": true,
+      "as": "intr"
+    },
+    {
+      "call": [
+        "setTargetOpponent",
+        "@cry",
+        "p2"
+      ]
+    },
+    {
+      "call": [
+        "setTargetOpponent",
+        "@intr",
+        "p2"
+      ]
+    },
+    {
+      "call": [
+        "setRefPerm",
+        "@cry",
+        "@Serra Angel"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "targetCandidates": {
+        "perm": "Goblin War Cry",
+        "kind": "players"
+      },
+      "are": [
+        "Player 2"
+      ]
+    },
+    {
+      "targetCandidates": {
+        "perm": "Goblin War Cry",
+        "kind": "ref"
+      },
+      "are": [
+        "Hill Giant",
+        "Llanowar Elves",
+        "Serra Angel"
+      ]
+    },
+    {
+      "targetCandidates": {
+        "perm": "Eunuchs' Intrigues",
+        "kind": "ref"
+      },
+      "are": [
+        "Hill Giant",
+        "Llanowar Elves",
+        "Serra Angel"
+      ]
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "traits": [
+          "Can't block"
+        ]
+      }
+    },
+    {
+      "perm": "Llanowar Elves",
+      "final": {
+        "traits": [
+          "Can't block"
+        ]
+      }
+    },
+    {
+      "perm": "Serra Angel",
+      "final": {
+        "traits": {
+          "$excludes": [
+            "Can't block"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "traits": {
+          "$excludes": [
+            "Can't block"
+          ]
+        }
+      }
+    }
+  ]
+}

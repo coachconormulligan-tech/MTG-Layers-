@@ -97,41 +97,6 @@ function setCopyTargetFromBattlefield(sourceId, targetPermId) {
   renderAll();
 }
 
-/* Gather the candidate copy-target cards for a COPY effect whose target lives in a
-   non-battlefield zone (graveyard / exile). Returns [{ value, name, card }] filtered by
-   the effect's restriction. "your graveyard" is scoped to the source's controller; "a/any
-   graveyard" spans every player. Exile is a flat list of entries keyed by owner. */
-function _gatherCopyZoneCards(effect, sourceId) {
-  const zone = effect.params.copyTargetZone;
-  if (!zone) return [];
-  const restriction = effect.params.restriction;
-  const srcPerm = Battlefield.getPermById(sourceId);
-  const controllerId = srcPerm ? (srcPerm.controller || srcPerm.owner) : Battlefield.activePlayerId;
-  const ownerScope = effect.params.copyTargetZoneOwner || 'any';
-  const passes = (card) => {
-    if (!restriction) return true;
-    const tl = parseTypeLine(card.type_line || '');
-    return restriction({ types: tl.types, supertypes: tl.supertypes, subtypes: tl.subtypes,
-      colors: card.colors || [], isAllCreatureTypes: false, isToken: false });
-  };
-  const out = [];
-  if (zone === 'graveyard') {
-    for (const pl of Battlefield.players) {
-      if (ownerScope === 'you' && pl.id !== controllerId) continue;
-      (pl.graveyard || []).forEach((card, idx) => {
-        if (passes(card)) out.push({ value: `gy:${pl.id}:${idx}`, name: card.name, card });
-      });
-    }
-  } else if (zone === 'exile') {
-    (Battlefield.exile || []).forEach((entry) => {
-      if (ownerScope === 'you' && entry.owner !== controllerId) return;
-      const card = entry.card;
-      if (card && passes(card)) out.push({ value: `ex:${entry.id}`, name: card.name, card });
-    });
-  }
-  return out;
-}
-
 /* When a copy card whose target lives in a graveyard/exile picks from the zone dropdown,
    build the copySource directly from the chosen card's data (zone cards are stored as raw
    Scryfall card objects, so no Layer-1 re-derivation is needed). */
@@ -260,28 +225,9 @@ function renderRefPermSelect(sourceId) {
   const eff = Battlefield.effects.find(e => e.sourceId === sourceId && _takesFromRef(e));
   if (!pick || !eff) return '';
   const current = eff.params.refPermId || '';
-  const sourceCtrl = sourcePerm.controller || sourcePerm.owner || Battlefield.activePlayerId;
-  const applies = buildAppliesToFromText(pick.filter);
   const finalStates = Battlefield.getAllFinalStates();
-  const snapStates = sourcePerm._firedAtStates || null;
-  const options = Battlefield.permanents.filter(p => {
-    if (p.isManualEffect || p.isSpell) return false;
-    if (pick.excludeSource && p.id === (sourcePerm.abilitySourceId || sourcePerm.id)) return false;
-    if (p.timestamp >= sourcePerm.timestamp && p.id !== current) return false;
-    const stack = Battlefield.getStack(p.id);
-    if (stack && stack.length >= 2 && stack[0] !== p.id) return false;
-    const fs = (snapStates && snapStates.get(p.id)) || finalStates.get(p.id);
-    if (!fs) return false;
-    if (pick.youControl && (fs.controller || p.controller || p.owner || 'player_0') !== sourceCtrl) return false;
-    if (pick.opponentControls && (fs.controller || p.controller || p.owner || 'player_0') === sourceCtrl) return false;
-    if (applies.fn && !applies.isSelf && !applies.fn(fs, finalStates, sourceCtrl)) return false;
-    if (pick.isTarget) {
-      const abilities = fs.abilities || [];
-      if (abilities.some(a => /\bshroud\b/i.test(a))) return false;
-      if ((p.controller || p.owner || 'player_0') !== sourceCtrl && abilities.some(a => /\bhexproof\b/i.test(a))) return false;
-    }
-    return true;
-  });
+  // The list: getRefCandidates (cards-targeting.js), which tests/harness.js reads too.
+  const options = getRefCandidates(sourceId);
   return `<select class="ts-target-select" onchange="setRefPerm('${sourceId}', this.value)" onclick="event.stopPropagation()">
     <option value="">${pick.isTarget ? '\u2192 target\u2026' : '\u2192 choose\u2026'}</option>
     ${options.map(t => `<option value="${t.id}" ${t.id === current ? 'selected' : ''}>${escapeHtml(_refPermDisplayName(t, finalStates))}</option>`).join('')}

@@ -2498,11 +2498,29 @@ function parseCardEffects(permanent, card, opts = {}) {
     }
     // "Choose a nonlegendary creature on the battlefield. Target creature becomes a copy of that
     // creature" (Cytoshape): what is copied is the creature chosen earlier on the line.
-    const _cpThat = !_massCopy && isBecomesCopy && targetDescRaw.match(/^that (?:creature|permanent|artifact)(\s+until\s+.+)?$/);
+    // "You may choose a creature card from among them. … target token you control becomes a copy
+    // of it" (Kaya, Spirits' Justice): "it" is read back the same way, and "from among them" is
+    // the cards the trigger put into exile, so the copy picker lists the exile zone.
+    // "Whenever you cast a permanent spell …, … becomes a copy of that spell" (The Myriad Pools):
+    // the site holds no permanent spell on the stack; the card is added to the battlefield, so
+    // what is copied is a nontoken permanent of the spell's kind you control (CR 707.2: the
+    // spell's copiable values are its card's).
+    const _cpThat = !_massCopy && isBecomesCopy && targetDescRaw.match(/^(?:that (?:creature|permanent|artifact|spell)|it)(\s+until\s+.+)?$/);
     if (_cpThat) {
       const _cpLine = oracle.lastIndexOf('\n', copyMatch.index - 1) + 1;
+      const _cpFull = (permanent.abilityFullText || oracle).toLowerCase();
       const _cpAnte = [...oracleLower.substring(_cpLine, copyMatch.index).matchAll(/\bchoose an?\s+([^.,\n]+)/g)].pop();
-      if (_cpAnte) targetDescRaw = (/^[aeiou]/.test(_cpAnte[1]) ? 'an ' : 'a ') + _cpAnte[1].trim() + (_cpThat[1] || '');
+      if (/^that spell\b/.test(targetDescRaw)) {
+        const _cpSpell = _cpFull.match(/\byou cast an?\s+((?:[a-z]+\s+)*?)spell\b/);
+        const _cpKind = _cpSpell ? _cpSpell[1].trim() : '';
+        if (_cpSpell && /^(?:permanent|creature|artifact|enchantment|planeswalker|artifact creature)$/.test(_cpKind))
+          targetDescRaw = 'a nontoken ' + (_cpKind === 'permanent' ? 'nonland permanent' : _cpKind) + ' you control' + (_cpThat[1] || '');
+      } else if (_cpAnte) {
+        let _cpDesc = _cpAnte[1].trim();
+        if (/\bfrom among them$/.test(_cpDesc) && /\b(?:are|is) put into exile\b/.test(_cpFull))
+          _cpDesc = _cpDesc.replace(/\s*from among them$/, ' in exile');
+        targetDescRaw = (/^[aeiou]/.test(_cpDesc) ? 'an ' : 'a ') + _cpDesc + (_cpThat[1] || '');
+      }
     }
     // Detect "mana value less than or equal to the amount of mana spent to cast" restriction.
     // Strip it from targetDesc so the type-restriction logic below isn't confused by it.
@@ -2554,6 +2572,11 @@ function parseCardEffects(permanent, card, opts = {}) {
     if (_massCopy && /\btoken\b/.test(targetDesc)) {
       const _tokBase = restriction;
       restriction = (p) => !!p.isToken && (!_tokBase || _tokBase(p));
+    }
+    // "a nontoken nonland permanent you control" (The Myriad Pools' "that spell", read above).
+    if (/\bnontoken\b/.test(targetDesc)) {
+      const _ntBase = restriction;
+      restriction = (p) => !p.isToken && (!_ntBase || _ntBase(p));
     }
     // "target creature with a counter on it" (Volrath, the Shapestealer) / "with a +1/+1
     // counter on it" — restrict to permanents currently carrying a (or a specific) counter.
@@ -3407,8 +3430,10 @@ function parseCardEffects(permanent, card, opts = {}) {
         filterText = _lastSentence;
       }
       // "…, then shuffle. Until end of turn, target land becomes …" (Rampaging Growth). Not on a
-      // triggered line read as part of the whole card (Sparkshaper Visionary).
-      else if (/^until end of turn,\s*(?:(?:up to \w+|any number of|\w+ or \w+|\w+)\s+(?:other\s+)?)?target\s/i.test(_lastSentence) &&
+      // triggered line read as part of the whole card (Sparkshaper Visionary). ("Untap target land
+      // you control. Until your next turn, it becomes a 5/5 Elemental creature" — Nissa, Vital
+      // Force, fired, its pronoun written out as the target.)
+      else if (/^until (?:end of turn|your next turn),\s*(?:(?:up to \w+|any number of|\w+ or \w+|\w+)\s+(?:other\s+)?)?target\s/i.test(_lastSentence) &&
                !_isInTriggeredSentence(mStart + setTypeMatch[0].search(/\S/))) filterText = _lastSentence;
       // "Put two +1/+1 counters on this card. This card becomes a God Warrior Hero" (Donald Blake).
       // Not on a triggered line read as a whole card ("When … dies, return it. She's a land named
@@ -6639,7 +6664,9 @@ function parseCardEffects(permanent, card, opts = {}) {
   // Only for a text whose sentence has a pronoun for its subject: "This creature and up to one
   // other target creature each get +3/+3" (Razorgrass Invoker) is the source's own effect.
   // ("Those creatures can't block this turn" after "up to three target creatures" — Wrap in Flames.)
-  const _pronounSubjectSentence = /(?:^|[.;]\s*|\n)(?:(?:until end of turn|then|if you do|when you do),?\s+)?(?:it|they|that (?:creature|permanent|land|artifact|enchantment)|those (?:creatures|permanents))\s+(?:also\s+)?(?:gets?|gains?|has|have|becomes?|loses?|is|are|can't)\b/i;
+  // ("Choose target nonland permanent. Until your next turn, it can't attack or block" — Academic
+  // Probation: the antecedent's words restrict the target.)
+  const _pronounSubjectSentence = /(?:^|[.;]\s*|\n)(?:(?:until end of turn|until your next turn|then|if you do|when you do),?\s+)?(?:it|they|that (?:creature|permanent|land|artifact|enchantment)|those (?:creatures|permanents))\s+(?:also\s+)?(?:gets?|gains?|has|have|becomes?|loses?|is|are|can't)\b/i;
   function _pronounAntecedentRestriction(pos) {
     const info = _pronounAntecedentInfo(pos);
     return info ? info.fn : null;
@@ -6755,7 +6782,8 @@ function parseCardEffects(permanent, card, opts = {}) {
     // belongs to the ability being granted.
     if ((oracle.slice(0, traitVerbMatch.index).match(/"/g) || []).length % 2) continue;
     const targetText = traitVerbMatch[2].trim();
-    const { fn, desc: filterDesc, isSpellTarget } = buildAppliesToFromText(targetText);
+    const _traitBuilt = buildAppliesToFromText(targetText);
+    const { fn, desc: filterDesc, isSpellTarget } = _traitBuilt;
     // A pronoun in a permanent's own triggered or activated ability is goaded when the ability
     // is fired, not statically ("At the beginning of combat …, … Goad that creature." — Kitt
     // Kanto, Mayhem Diva — goaded every creature while she was on the battlefield).
@@ -6769,10 +6797,9 @@ function parseCardEffects(permanent, card, opts = {}) {
       { appliesTo: fn, scope: fn ? 'global' : 'targeted', selfTarget: false },
       `${verb} ${targetText}. ${filterDesc}`,
       { _oraclePos: traitVerbMatch.index });
-    if (isSpellTarget) {
-      eff.scope = 'targeted';
-      eff.targetRestriction = fn || null;
-    } else if ((permanent.isManualEffect || permanent.isSpell) && /^(?:it|them|(?:that|those)\s+\w+)$/i.test(targetText)) {
+    // ("Goad up to X target creatures your opponents control" — Death Kiss: a picker of X.)
+    if (isSpellTarget) _applyTargetInfo(eff, _traitBuilt, fn);
+    else if ((permanent.isManualEffect || permanent.isSpell) && /^(?:it|them|(?:that|those)\s+\w+)$/i.test(targetText)) {
       // "Untap and goad that creature" (Besmirch): the creature already named, not every creature.
       eff.scope = 'targeted';
       eff.appliesTo = null;
@@ -6863,6 +6890,17 @@ function parseCardEffects(permanent, card, opts = {}) {
       // "The chosen creatures attack if able, and other creatures can't attack" (Oracle en-Vec):
       // which creatures were chosen is not on the board.
       if (/^other\b/i.test(subj) && /\bthe chosen creatures\b/i.test(oracle.slice(contentStart, cantMatch.index))) continue;
+      // "Target opponent chooses a creature they control. Other creatures they control can't block
+      // this turn" (Goblin War Cry, Eunuchs' Intrigues): the group is that opponent's creatures
+      // (the "target opponent" pass in cards-parser-post.js scopes a global effect to the picked
+      // opponent), less the one they chose, picked with the reference picker (permanent._refPick,
+      // params.exceptRef). Nobody is reached until both are picked.
+      let _ocGroup = null, _ocNoun = null;
+      {
+        const ocSubj = subj.match(/^other\s+(.+?)\s+they control$/i);
+        const ocChoose = ocSubj && /\btarget opponent chooses an?\s+([a-z -]+?)\s+they control\.\s*$/i.exec(oracle.slice(0, contentStart));
+        if (ocChoose) { _ocGroup = ocSubj[1]; _ocNoun = ocChoose[1].trim().toLowerCase(); }
+      }
       const key = `${contentStart}|${subj}|${rule}`.toLowerCase();
       if (_cantSeen.has(key)) continue;
       _cantSeen.add(key);
@@ -6906,7 +6944,7 @@ function parseCardEffects(permanent, card, opts = {}) {
         // "This creature and up to one other target creature can't be blocked this turn"
         // (Martha Jones): the source, and a chosen target with its own picker.
         const conj = subj.match(/^(this\s+[\w-]+)\s+and\s+((?:another\s+|up to \w+\s+(?:other\s+)?)?target\s+.+?)(?:\s+(?:each|both))?$/i);
-        for (let part of conj ? [conj[1], conj[2]] : [subj]) {
+        for (let part of conj ? [conj[1], conj[2]] : [_ocGroup || subj]) {
           if (!filterReferencesPermanents(part) && !/^this\s+[\w-]+$/i.test(part)) continue;
           // "Target player can't cast spells this turn, and creatures that player controls can't
           // attack this turn" (Oriss, Samite Guardian): the player picked for "target player".
@@ -6925,6 +6963,13 @@ function parseCardEffects(permanent, card, opts = {}) {
             `${ruleDesc} ${b.desc || ''}`.trim(), { _oraclePos: cantPos });
           _applyTargetInfo(eff, { isSpellTarget: !!b.needsTargetSelection, maxTargets: b.maxTargets || 1, isTargetPlayerControl: !!b.isTargetPlayerControl }, b.fn);
           if (conj && b.isSelf) eff._sourceHalf = true;
+          if (_ocGroup) {
+            eff.params.exceptRef = true;
+            eff.params.refPermId = permanent._chosenRefPermId || null;
+            permanent._refPick = { filter: _ocNoun, isTarget: false, excludeSource: false,
+              youControl: false, opponentControls: false, targetOpponentControls: true,
+              label: `Chosen ${_ocNoun}` };
+          }
           if (b.judgedAfterPT) eff._judgedAfterPT = true;
           if (cantCond) eff.asLongAsCondition = cantCond;
         }

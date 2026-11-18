@@ -346,10 +346,17 @@ function _powerBoundFromChosenObject(text) {
 // each picking its own tapped creature and its own target among that opponent's creatures.
 // Returns the text one of them resolves ("Gain control of target creature an opponent controls
 // …"), or null. Battlefield.addTriggeredAbility fires it once an opponent.
+// Likewise with no reflexive part: "For each opponent, goad target creature that player
+// controls" (Frenzied Gorespawn), "… goad up to one target creature that player controls. Those
+// creatures can't block this turn" (Sontaran General): each target is among that opponent's
+// permanents, which one ability read as any creature (the picker listed your own).
 function _forEachOpponentReflexiveText(text) {
-  const m = String(text || '').match(/^for each opponent, tap up to one untapped creature you control\.\s+When you do,\s*([^]+)$/i);
-  if (!m || !/\btarget \w+ that player controls\b/i.test(m[1])) return null;
-  const rest = m[1].replace(/\b(target \w+) that player controls\b/i, '$1 an opponent controls');
+  const t = String(text || '');
+  const m = t.match(/^for each opponent, tap up to one untapped creature you control\.\s+When you do,\s*([^]+)$/i) ||
+    t.match(/^for each opponent,\s*([^]+)$/i);
+  const thatPlayer = /\b(target (?:[\w-]+ ){1,3}?)that player controls\b/i;
+  if (!m || !thatPlayer.test(m[1])) return null;
+  const rest = m[1].replace(thatPlayer, '$1an opponent controls');
   return rest.charAt(0).toUpperCase() + rest.slice(1);
 }
 
