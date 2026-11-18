@@ -383,7 +383,8 @@ function _exchangeControlSlotRules(text) {
     const c = /\byou\s+neither\s+own\s+nor\s+control\b/i.test(two[1]) ? 'neither' : ctrl(two[1]);
     return c ? { controllerA: c, controllerB: c, boundByA: null, typeA: null, typeB: null } : null;
   }
-  const m = String(text || '').match(/\btarget\s+(.+?)\s+and\s+target\s+([^.;\n]+)/i);
+  // ("… and another target permanent that shares one of those types with it" — Legerdemain.)
+  const m = String(text || '').match(/\btarget\s+(.+?)\s+and\s+(?:another\s+)?target\s+([^.;\n]+)/i);
   if (!m) return null;
   let boundByA = null;
   const pm = m[2].match(/\bwith\s+(power|toughness)\s+(less|greater)\s+than\s+(or\s+equal\s+to\s+)?that\s+(?:creature|permanent)'s\s+(power|toughness)\b/i);

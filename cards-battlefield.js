@@ -1103,6 +1103,15 @@ const Battlefield = {
       }
     }
     _pinAbilityEffectsToSource(newEffects, sourcePermId);
+    // "Exchange control of this creature and target creature" (Phyrexian Infiltrator, Avarice
+    // Totem): "this creature" is the ability's source (CR 113.7), not the fired-ability row the
+    // text was parsed for. (injectTriggeredExchange does the same for a trigger and on restore.)
+    for (const e of newEffects) {
+      if (e.type === EFFECT_TYPE.CONTROL && e.params && e.params.exchangeControl && e.params.exchangeMode === 'self_and_target') {
+        e.params.exchangeSelfId = sourcePermId;
+        e.params.exchangeTargetA = sourcePermId;
+      }
+    }
     // "…becomes a copy of another target creature you control …. If you do, this card and
     // target creature you control each get +2/+0 and gain haste" (Gogo, Mysterious Mime, its
     // "that creature" written out above): the second of the pair is the creature copied. Its

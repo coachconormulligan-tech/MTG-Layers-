@@ -1,0 +1,19 @@
+{
+  "name": "Legerdemain — B must share one of A's types (artifact or creature): with a creature as A, an artifact is not offered and is not exchanged",
+  "notes": "\"Exchange control of target artifact or creature and another target permanent that shares one of those types with it.\" Found by the exchange-control audit unit (2026-11-18). _exchangeControlSlotRules read \"target X and target Y\" but not \"… and another target Y\", so the pair rule (shareTypesWithA) was never set: with Grizzly Bears as A, Sol Ring was offered as B and the two were exchanged. Now B with Grizzly Bears as A is the opponent's Hill Giant alone, and the Bears and Sol Ring pair exchanges nothing (CR 701.12b).",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Mind Stone", "as": "stone" },
+    { "add": "Hill Giant", "as": "giant", "controller": "p2" },
+    { "add": "Sol Ring", "as": "ring", "controller": "p2" },
+    { "add": "Forest", "as": "forest", "controller": "p2" },
+    { "add": "Legerdemain", "as": "spell", "spell": true },
+    { "call": ["setExchangeControlTargets", "@spell", "@bears", "@ring"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Legerdemain", "slot": "b" }, "are": ["Hill Giant"] },
+    { "perm": "Grizzly Bears", "final": { "controller": "player_0" } },
+    { "perm": "Sol Ring", "final": { "controller": "player_1" } }
+  ]
+}

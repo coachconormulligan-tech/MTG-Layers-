@@ -107,6 +107,20 @@ each list against its target's words. Check 1: nothing changes with neither or o
 alone (with what that Aura was on before), and likewise each listed Aura or Equipment with the first of
 slot 2; clearing both must put the board back (attach-not-undone). "Any number of Equipment" is skipped.
 
+"Exchange control of two target creatures", "... of target X and [another] target Y", "... of this creature
+and [up to one] target Y" (Switcheroo, Oko, Thief of Crowns, Gilded Drake) is a unit too (classifyExchange,
+auditFiredExchange in tests/audit.js): the site's Exchange pop-up, Permanent A and Permanent B
+(getExchangeControlCandidates), judged on the board plus hexproof, shroud and protection witnesses added
+before it is fired (a mode of a modal spell gets none). Check 2: the pop-up is there and of the right kind
+(no-exchange-picker, exchange-mode-mismatch; with "this ...", A is the card: exchange-self-not-the-card);
+A's and B's lists against each target's words; then B as narrowed by each of a few A against the pair rule
+the words state ("that share a card / permanent type", "controlled by different players", "that shares one
+of those types with it", B not A) (pair-list-mismatch); a bound against A ("with power less than or equal
+to that creature's power") is not judged. Check 1: nothing changes with no pick or with A alone; a pair of
+two players' permanents swaps exactly those two controllers (exchange-not-swapped, target-changes-others),
+one player's pair changes nothing, and clearing the picks puts the board back (exchange-not-undone).
+Juxtapose, "that spell" (Perplexing Chimera), "those permanents" and an exchange with a spell are skipped.
+
 A group that one picked player controls is a unit too: a spell or ability whose only target is "target
 player / target opponent" and whose text gives "<group> target opponent / that player / they controls"
 a continuous effect or a can't-rule ("Creatures target opponent controls get -1/-1", "Gain control of
@@ -268,6 +282,12 @@ CODES = [
     ('remove-leaves-change', 'After the crewed / saddled pseudo-permanent is removed, the board is not as before.'),
     ('changes-with-one-target', 'An "attach target Equipment to target creature" changes the board with only the Equipment picked.'),
     ('attach-not-undone', 'After an "attach target Equipment to target creature" has both its targets cleared, the board is not as before.'),
+    ('no-exchange-picker', 'An "exchange control of ..." gets no Exchange pop-up.'),
+    ('exchange-mode-mismatch', 'The Exchange pop-up is of the other kind ("two targets" against "this ... and target ...").'),
+    ('exchange-self-not-the-card', 'In "exchange control of this creature and target ...", Permanent A is not the card itself (CR 113.7).'),
+    ('pair-list-mismatch', "Permanent B's list, narrowed by a Permanent A, is not what the pair rule the words state allows."),
+    ('exchange-not-swapped', "A pair of two players' permanents does not swap their two controllers."),
+    ('exchange-not-undone', "After an exchange's picks are cleared, the board is not as before."),
     ('quote-not-granted', 'A quoted ability naming a target never reaches the permanent its grant names (attached, targeted, the token, the card, its group).'),
     ('quote-text-changed', 'The permanent that gets a quoted ability has it in other words (the granting card\'s name read as "this card").'),
     ('quote-not-fireable', 'The permanent that gets a quoted ability has it, but the site offers no Trigger / Activate button for it.'),
@@ -462,6 +482,15 @@ def _finding_detail(f):
         return 'missing: %s; extra: %s' % (roles_key(f.get('missing', [])), roles_key(f.get('extra', [])))
     if c == 'player-list-mismatch':
         return 'text: %s, site: %s' % (', '.join(f.get('expectedPlayers', [])), ', '.join(f.get('actualPlayers', [])))
+    if c == 'pair-list-mismatch':
+        return '; '.join('with A %s: missing %s; extra %s' % (e['a'], roles_key(e.get('missing', [])), roles_key(e.get('extra', [])))
+                         for e in f.get('examples', [])[:2])
+    if c in ('exchange-not-swapped', 'exchange-not-undone'):
+        return '; '.join(e if isinstance(e, str) else e.get('target', '') for e in f.get('examples', [])[:3])
+    if c == 'exchange-mode-mismatch':
+        return 'text: %s, site: %s' % (f.get('expected'), f.get('actual'))
+    if c in ('exchange-self-not-the-card', 'no-exchange-picker'):
+        return 'site: %s' % f.get('actual')
     if c == 'player-changes-nothing':
         return ', '.join(f.get('players', []))
     if c == 'changes-with-no-target':

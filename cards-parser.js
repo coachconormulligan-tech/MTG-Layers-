@@ -7517,10 +7517,11 @@ function parseCardEffects(permanent, card, opts = {}) {
         exchangeSelfId = permanent.id;
         maxTargets = 1;
         targetTypeText = captured.replace(/^this\s+\S+\s+and\s+/i, '').trim();
-      } else if (/^two\s+target\s+/i.test(captured)) {
-        // Pattern B: "two target [type]"
-        targetTypeText = captured.replace(/^two\s+target\s+/i, '').trim();
-      } else if (/^target\s+.+?\s+and\s+target\s+/i.test(captured)) {
+      } else if (/^two\s+(?:other\s+)?target\s+/i.test(captured)) {
+        // Pattern B: "two target [type]", "two other target creatures controlled by different
+        // players" (Kitsune, Dragon's Daughter: neither may be the source).
+        targetTypeText = captured.replace(/^two\s+(?:other\s+)?target\s+/i, '').trim();
+      } else if (/^target\s+.+?\s+and\s+(?:another\s+)?target\s+/i.test(captured)) {
         // Pattern B variant: "target X and target Y" (Trade the Helm)
         targetTypeText = captured;
       } else if (/^those\s+/i.test(captured)) {
@@ -7556,7 +7557,7 @@ function parseCardEffects(permanent, card, opts = {}) {
       // For "target X and target Y" this is X. Each target's own type text (Oko, Thief of
       // Crowns' B "creature with power 3 or less") is exchangeSlotRules.typeA / typeB, which the
       // exchange-control picker and the engine use in its place (cards-targeting.js).
-      const splitTargets = cleanTypeText.match(/^(.+?)\s+and\s+target\s+(.+)$/i);
+      const splitTargets = cleanTypeText.match(/^(.+?)\s+and\s+(?:another\s+)?target\s+(.+)$/i);
       if (splitTargets) cleanTypeText = splitTargets[1].trim();
       if (cleanTypeText) {
         const btResult = buildAppliesToFromText(cleanTypeText);
@@ -7577,6 +7578,7 @@ function parseCardEffects(permanent, card, opts = {}) {
           exchangeSelfId,
           shareTypeRequired,
           differentPlayersRequired,
+          ...(/^two\s+other\s+target\b/i.test(captured) ? { exchangeOtherThanSource: true } : {}),
           ...(exchangeSlotRules ? { exchangeSlotRules } : {}),
           exchangeTargeted: _exchangeControlTargeted(captured),
         },

@@ -56,7 +56,8 @@ function getEffectInfo(permId, finalState) {
       !(e.type === EFFECT_TYPE.CONTROL && e.params && e.params.exchangeControl));
     modalModeMaxTargets[mi] = m ? m.maxTargets : 1;
   }
-  const exchangeControlEff = effs.find(e => e.type === EFFECT_TYPE.CONTROL && e.params.exchangeControl);
+  const exchangeControlEff = effs.find(e => e.type === EFFECT_TYPE.CONTROL && e.params.exchangeControl && !e.disabled) ||
+    effs.find(e => e.type === EFFECT_TYPE.CONTROL && e.params.exchangeControl);
   const hasExchangeControl = !!exchangeControlEff;
   // Equipment/Reconfigure/Fortify: use the final computed state when available so that abilities
   // gained or removed by continuous effects are reflected (e.g. Humility removing equip ability).
@@ -821,13 +822,22 @@ function getEquipCandidates(permId, abilityIdx) {
    live board only where the source has no snapshot. */
 
 function _exchangeControlEffect(sourceId) {
-  return Battlefield.effects.find(e => e.sourceId === sourceId && e.type === EFFECT_TYPE.CONTROL && e.params && e.params.exchangeControl) || null;
+  // (A modal spell has one per mode: "Exchange control of two target creatures / artifacts /
+  // enchantments" — Shifting Grift. The picked mode's is the one not disabled.)
+  const all = Battlefield.effects.filter(e => e.sourceId === sourceId && e.type === EFFECT_TYPE.CONTROL && e.params && e.params.exchangeControl);
+  return all.find(e => !e.disabled) || all[0] || null;
 }
 
 /* The states of the board as the source was cast or fired (a Map by id), or null. */
 function _exchangeControlSnapshot(sourceId) {
   const src = Battlefield.getPermById(sourceId);
   return (src && (src._firedAtStates || src._castStates || (src._firedAtSnapshot && src._firedAtSnapshot.states))) || null;
+}
+
+/* The permanent a fired ability comes from (CR 113.7), or the source itself. */
+function _exchangeControlSourceCard(sourceId) {
+  const src = Battlefield.getPermById(sourceId);
+  return (src && (src.abilitySourceId || src.id)) || sourceId;
 }
 
 /* The player "you" means: the controller of the spell or ability. */
@@ -939,6 +949,12 @@ function exchangeControlPairProblem(effect, aId, bId, stateOf, you) {
   if (!effect || !aId || !bId) return null;
   if (aId === bId) return 'Cannot exchange with itself.';
   const p = effect.params;
+  // "Two other target creatures" (Kitsune, Dragon's Daughter).
+  if (p.exchangeOtherThanSource && typeof Battlefield !== 'undefined') {
+    const card = _exchangeControlSourceCard(effect.sourceId);
+    const cardPerm = Battlefield.getPermById(card);
+    if (aId === card || bId === card) return `Neither permanent may be ${cardPerm ? cardPerm.name : 'the source'}.`;
+  }
   const stA = stateOf(aId), stB = stateOf(bId);
   if (p.shareTypeRequired && stA && stB) {
     const typesA = new Set(stA.types || []);
@@ -1006,9 +1022,11 @@ function getExchangeControlCandidates(sourceId, slot, aId) {
   const stateOf = (id) => (snap && snap.has(id)) ? snap.get(id) : (finalStates.get(id) || null);
   const you = _exchangeControlYou(sourceId);
   const current = slot === 'a' ? effect.params.exchangeTargetA : effect.params.exchangeTargetB;
+  const otherThan = effect.params.exchangeOtherThanSource ? _exchangeControlSourceCard(sourceId) : null;
   const out = [];
   for (const t of Battlefield.permanents) {
     if (!_isPermanent(t) || t.isSpell) continue;
+    if (t.id === otherThan) continue;
     const stack = Battlefield.getStack(t.id);
     if (stack && stack.length >= 2 && stack[0] !== t.id) continue;
     if (snap && !snap.has(t.id) && t.id !== current && !laterOk) continue;

@@ -1,0 +1,20 @@
+{
+  "name": "Shifting Grift — with only the artifact mode picked, the exchange lists and swaps artifacts, not creatures",
+  "notes": "Spree: \"+ {2} — Exchange control of two target creatures. + {1} — … two target artifacts. + {1} — … two target enchantments.\" Found by the exchange-control audit unit (2026-11-18). Each mode has its own exchange effect, and the modal, getEffectInfo and getExchangeControlCandidates took the first (creatures) whichever mode was picked, so a pair of artifacts could not be chosen and a pair from the list was refused by the engine. _exchangeControlEffect now takes the one not disabled.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Mind Stone", "as": "stone" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Sol Ring", "as": "ring", "controller": "p2" },
+    { "add": "Hill Giant", "as": "giant", "controller": "p2" },
+    { "add": "Shifting Grift", "as": "spell", "spell": true },
+    { "call": ["setModalModeSelections", "@spell", [1]] },
+    { "call": ["setExchangeControlTargets", "@spell", "@stone", "@ring"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Shifting Grift", "slot": "a" }, "are": ["Mind Stone", "Sol Ring"] },
+    { "perm": "Mind Stone", "final": { "controller": "player_1" } },
+    { "perm": "Sol Ring", "final": { "controller": "player_0" } },
+    { "perm": "Grizzly Bears", "final": { "controller": "player_0" } }
+  ]
+}

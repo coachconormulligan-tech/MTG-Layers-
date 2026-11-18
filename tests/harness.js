@@ -197,9 +197,9 @@ function targetCandidateLists() {
   // narrowed by the current Permanent A, if any. "Exchange control of this creature and target
   // creature …" (Gilded Drake) has only "b", A being the source.
   for (const p of Battlefield.permanents) {
-    const ex = Battlefield.effects.find(e => e.sourceId === p.id && e.type === EFFECT_TYPE.CONTROL && e.params.exchangeControl &&
-      (e.params.exchangeMode === 'two_targets' || e.params.exchangeMode === 'self_and_target'));
-    if (!ex) continue;
+    // (The site's own pick: a modal spell's exchange is the picked mode's — Shifting Grift.)
+    const ex = _exchangeControlEffect(p.id);
+    if (!ex || (ex.params.exchangeMode !== 'two_targets' && ex.params.exchangeMode !== 'self_and_target')) continue;
     const label = p.name + (p.label ? ' ' + p.label : '');
     const names = (list) => list.map(c => c.perm.name + (c.perm.label ? ' ' + c.perm.label : '')).sort();
     if (ex.params.exchangeMode === 'self_and_target') {

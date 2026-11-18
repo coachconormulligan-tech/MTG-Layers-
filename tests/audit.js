@@ -288,6 +288,8 @@ function classifyUnitText0(text) {
   if (!hits.length) return { skip: quotedTarget ? 'target-in-quote' : 'no-target' };
   const pair = classifyAttachPair(text);
   if (pair) return pair;
+  const exch = classifyExchange(text);
+  if (exch) return exch;
   if (hits.length > 1) return classifyTargets(text, 'multiple-targets');
   if (hits[0][0] === 'targets') return { skip: 'targets-verb' };
   const idx = hits[0].index;
@@ -631,7 +633,7 @@ function interpretPhrase(phrase, env) {
     .replace(/\b(power|toughness|mana value) x\b/g, '$1 ' + X_VALUE);
   let excludeSource = false;
   s = s.replace(/^(?:another|other) /, () => { excludeSource = true; return ''; });
-  const cut = s.search(/ (?:you control|you don't control|you own|an opponent controls|your opponents control|that player controls|they control|defending player controls|other than|that isn't|whose controller|attacking the same|with |without )/);
+  const cut = s.search(/ (?:you control|you don't control|you neither own|you own|an opponent controls|your opponents control|that player controls|they control|defending player controls|other than|that isn't|whose controller|attacking the same|with |without )/);
   const head = cut >= 0 ? s.slice(0, cut) : s;
   let tail = cut >= 0 ? s.slice(cut).trim() : '';
 
@@ -673,6 +675,8 @@ function interpretPhrase(phrase, env) {
     let m;
     if ((m = tail.match(/^you control\b\s*/))) { clauseTests.push((st, p, ctx) => ctrlOf(st, p) === ctx.sourceCtrl); tail = tail.slice(m[0].length); continue; }
     if ((m = tail.match(/^(?:you don't control|an opponent controls|your opponents control)\b\s*/))) { clauseTests.push((st, p, ctx) => ctrlOf(st, p) !== ctx.sourceCtrl); tail = tail.slice(m[0].length); continue; }
+    // ("Target permanent you neither own nor control" — Conjured Currency.)
+    if ((m = tail.match(/^you neither own nor control\b\s*/))) { clauseTests.push((st, p, ctx) => (p.owner || 'player_0') !== ctx.sourceCtrl && ctrlOf(st, p) !== ctx.sourceCtrl); tail = tail.slice(m[0].length); continue; }
     if ((m = tail.match(/^you own but don't control\b\s*/))) { clauseTests.push((st, p, ctx) => (p.owner || 'player_0') === ctx.sourceCtrl && ctrlOf(st, p) !== ctx.sourceCtrl); tail = tail.slice(m[0].length); continue; }
     // "Target creature that player controls": see thatPlayerReading.
     if ((m = tail.match(/^(?:that player controls|they control)\b\s*/))) {
@@ -814,14 +818,14 @@ function triggerPlans(permId, t) {
   const vote = parseVoteOptions(t.effectText);
   if (vote && vote.decidedByMost) {
     const text = resolveVoteText(t.effectText, [vote.options[0]]);
-    return [{ label: 'vote ' + vote.options[0], text, fire: () => fireTriggeredWithText(permId, t.index, text, t.fullText, finalStates) }];
+    return [{ label: 'vote ' + vote.options[0], text, fire: () => fireTriggeredWithText(permId, t.index, text, t.fullText, Battlefield.getAllFinalStates()) }];
   }
   // fireTriggeredAbility: "gains protection from the color of your choice" -> openColorChoicePopup; red is chosen.
   if (PROTECTION_CHOICE.test(t.effectText)) {
     const text = t.effectText.replace(/the\s+color\s+of\s+your\s+choice/i, COLOR_NAME.R);
-    return [{ label: '', text, fire: () => fireTriggeredWithText(permId, t.index, text, t.fullText, finalStates) }];
+    return [{ label: '', text, fire: () => fireTriggeredWithText(permId, t.index, text, t.fullText, Battlefield.getAllFinalStates()) }];
   }
-  return [{ label: '', text: t.effectText, fire: () => fireTriggeredWithText(permId, t.index, t.effectText, t.fullText, finalStates) }];
+  return [{ label: '', text: t.effectText, fire: () => fireTriggeredWithText(permId, t.index, t.effectText, t.fullText, Battlefield.getAllFinalStates()) }];
 }
 
 /* The same for an activated ability: ui-abilities.js fireActivatedAbility. */
@@ -868,15 +872,15 @@ function activatedPlans(permId, a) {
   // fireActivatedAbility: "Choose a color. …" -> openColorChoicePopup, with final states.
   if (/^choose a color\./i.test(a.effectText)) {
     const text = a.effectText.replace(/^choose a color\.\s*/i, '').replace(/\bthat color\b/gi, COLOR_NAME.R);
-    return [{ label: '', text, fire: () => Battlefield.addActivatedAbility(permId, a.index, text, a.fullText, finalStates) }];
+    return [{ label: '', text, fire: () => Battlefield.addActivatedAbility(permId, a.index, text, a.fullText, Battlefield.getAllFinalStates()) }];
   }
   // fireActivatedAbility: a vote decided by most votes -> openVotePopup. The first option is taken as the winner.
   const vote = parseVoteOptions(a.effectText);
   if (vote && vote.decidedByMost) {
     const text = resolveVoteText(a.effectText, [vote.options[0]]);
-    return [{ label: 'vote ' + vote.options[0], text, fire: () => Battlefield.addActivatedAbility(permId, a.index, text, a.fullText, finalStates) }];
+    return [{ label: 'vote ' + vote.options[0], text, fire: () => Battlefield.addActivatedAbility(permId, a.index, text, a.fullText, Battlefield.getAllFinalStates()) }];
   }
-  return [{ label: '', text: a.effectText, fire: () => Battlefield.addActivatedAbility(permId, a.index, a.effectText, a.fullText, finalStates) }];
+  return [{ label: '', text: a.effectText, fire: () => Battlefield.addActivatedAbility(permId, a.index, a.effectText, a.fullText, Battlefield.getAllFinalStates()) }];
 }
 
 /* ═════════════════════════ Auditing one unit ═════════════════════════ */
@@ -1800,6 +1804,8 @@ function auditUnit(ctx, u, fire) {
     // (An attach pair's witnesses are on the board before it is fired: a picker leaves out what
     // arrived after the ability.)
     if (u.attachPair) ctx = addAttachPairWitnesses(ctx);
+    // (Not for a mode of a modal spell: it was cast, and its board taken, before them.)
+    if (u.exchange && u.modeIndex === undefined) ctx = addExchangeWitnesses(ctx);
     try {
       const pseudo = fire();
       if (!pseudo) return { skip: 'fire-returned-nothing' };
@@ -1809,7 +1815,7 @@ function auditUnit(ctx, u, fire) {
       u.findings.push({ check: 'check2', code: 'crash', error: errInfo('fire ' + u.kind, e) });
       return { audited: true };
     }
-    try { return u.attachPair ? auditFiredAttachPair(ctx, u, id) : u.modePair ? auditFiredModePair(ctx, u, id) : u.playerGroup ? auditFiredPlayerGroup(ctx, u, id) : u.targets ? auditFiredTargets(ctx, u, id) : auditFired(ctx, u, id); }
+    try { return u.exchange ? auditFiredExchange(ctx, u, id) : u.attachPair ? auditFiredAttachPair(ctx, u, id) : u.modePair ? auditFiredModePair(ctx, u, id) : u.playerGroup ? auditFiredPlayerGroup(ctx, u, id) : u.targets ? auditFiredTargets(ctx, u, id) : auditFired(ctx, u, id); }
     catch (e) { u.findings.push({ check: 'check2', code: 'crash', error: errInfo('audit', e) }); return { audited: true }; }
   });
 }
@@ -1827,6 +1833,8 @@ function newUnit(kind, index, label, text, cls) {
   if (cls.targets) Object.assign(u, { targets: cls.targets, expectKind: cls.expectKind, maxTargets: cls.maxTargets,
     phrase: cls.targets.map(t => t.phrase).join(' / '), targetIndex: cls.targets[0].targetIndex });
   if (cls.origin) u.origin = cls.origin;
+  if (cls.exchange) Object.assign(u, { exchange: cls.exchange, targetIndex: (cls.exchange.a || cls.exchange.b).idx,
+    phrase: cls.exchange.a ? cls.exchange.a.phrase + ' / ' + cls.exchange.b.phrase : cls.exchange.self + ' / ' + cls.exchange.b.phrase });
   if (cls.playerGroup) Object.assign(u, { playerGroup: cls.playerGroup, phrase: cls.playerGroup.clauses.map(c => c.phrase).join(' / ') });
   return u;
 }
@@ -1932,6 +1940,212 @@ function auditFiredAttachPair(c2, u, id) {
   return { audited: true };
 }
 
+/* ─── Exchange control ───
+   "Exchange control of two target creatures" (Switcheroo), "… of target artifact or creature you
+   control and target creature an opponent controls with power 3 or less" (Oko, Thief of Crowns),
+   "… of this creature and up to one target creature an opponent controls" (Gilded Drake): a
+   layer-2 effect the site gives its own pop-up (ui-modal-text-change.js), Permanent A and
+   Permanent B, listed by getExchangeControlCandidates (cards-targeting.js) and set with
+   Battlefield.setExchangeControlTargets. With "this …", A is the card and only B is picked.
+   Check 2: A's list and B's list (no A picked) against each target's words; then, for a few A, B's
+   list narrowed by A against the pair rule the words state ("that share a card type", "controlled
+   by different players", "another target permanent that shares one of those types with it", B not
+   A). A bound against A ("with power less than or equal to that creature's power", "with equal or
+   lesser mana value") is the site's to judge: that narrowed list is not checked (pairUnjudged).
+   Check 1: nothing changes with no pick, nor with A alone; a pair of two players' permanents swaps
+   exactly those two controllers (exchange-not-swapped, target-changes-others), a pair of one
+   player's changes nothing, and clearing B puts the board back (exchange-not-undone). */
+const EXCHANGE_RE = /\bexchange control of ([^.;]+)/;
+function classifyExchange(text) {
+  const lower = String(text || '').replace(/’/g, "'").replace(/["“][^"”]*["”]/g, (q) => 'q'.repeat(q.length)).toLowerCase();
+  const m = lower.match(EXCHANGE_RE);
+  if (!m) return null;
+  const at = m.index + m[0].length - m[1].length;
+  let words = m[1].trim();
+  const pair = {};
+  // Rules about the two together, said once after both.
+  const strip = (s) => s
+    .replace(/\s+that share (?:a )?card type\b/, () => { pair.shareCardType = true; return ''; })
+    .replace(/\s+that share (?:a )?permanent type\b/, () => { pair.sharePermanentType = true; return ''; })
+    .replace(/\s+controlled by different players\b/, () => { pair.differentPlayers = true; return ''; })
+    .replace(/\s+that shares? a card type with it\b/, () => { pair.shareCardType = true; return ''; })
+    .replace(/\s+that shares? one of those types with it\b/, () => { pair.shareTypesWithA = true; return ''; })
+    .replace(/\s+with (?:power|toughness) (?:less|greater) than (?:or equal to )?that (?:creature|permanent)'s (?:power|toughness)\b/, () => { pair.unjudged = 'bound by A'; return ''; })
+    .replace(/\s+with equal or lesser mana value\b/, () => { pair.unjudged = 'bound by A'; return ''; })
+    .trim();
+  // (Sudden Substitution: "target noncreature spell and target creature".)
+  if (/\bspells?\b/.test(words)) return { skip: 'exchange: not-a-permanent' };
+  let r;
+  if ((r = words.match(/^two (other )?target (.+)$/))) {
+    const phrase = strip(r[2]);
+    const idx = at + m[1].indexOf('target');
+    const t = { phrase, idx, plural: true, excludeSource: !!r[1] };
+    return { exchange: { mode: 'two_targets', a: t, b: Object.assign({}, t), pair } };
+  }
+  if ((r = words.match(/^(this \w+|~) and (up to one )?(another )?target (.+)$/))) {
+    const idx = at + m[1].lastIndexOf('target');
+    return { exchange: { mode: 'self_and_target', self: r[1], b: { phrase: strip(r[4]), idx, plural: false, excludeSource: true }, pair } };
+  }
+  if ((r = words.match(/^target (.+?) and (another )?target (.+)$/))) {
+    const idxA = at + m[1].indexOf('target'), idxB = at + m[1].lastIndexOf('target');
+    if (r[2]) pair.notA = true;
+    return { exchange: { mode: 'two_targets', a: { phrase: strip(r[1]), idx: idxA, plural: false }, b: { phrase: strip(r[3]), idx: idxB, plural: false }, pair } };
+  }
+  return null;
+}
+
+const PERMANENT_TYPES = ['Artifact', 'Creature', 'Enchantment', 'Land', 'Planeswalker', 'Battle'];
+/* Does the pair (a, b) meet the rule the words state? true / false, or null when it is not judged. */
+function exchangePairOk(ctx, ex, a, b) {
+  const pr = ex.pair;
+  if (pr.unjudged) return null;
+  if (a === b) return false;
+  const stA = ctx.preStates.get(a), stB = ctx.preStates.get(b);
+  if (!stA || !stB) return null;
+  const tA = stA.types || [], tB = stB.types || [];
+  if (pr.shareCardType && !tB.some(t => tA.includes(t))) return false;
+  if (pr.sharePermanentType && !tB.some(t => PERMANENT_TYPES.includes(t) && tA.includes(t))) return false;
+  if (pr.differentPlayers && ctrlOf(stA, Battlefield.getPermById(a)) === ctrlOf(stB, Battlefield.getPermById(b))) return false;
+  if (pr.shareTypesWithA) {
+    // "Target artifact or creature and another target permanent that shares one of those types
+    // with it": one of the types named for A that A has.
+    const named = PERMANENT_TYPES.filter(t => new RegExp('\\b' + t.toLowerCase() + 's?\\b').test(ex.a.phrase));
+    if (!tB.some(t => named.includes(t) && tA.includes(t))) return false;
+  }
+  return true;
+}
+
+/* Witnesses only an exchange unit sees, added before it is fired (the lists offer only what was on
+   the board then): hexproof of each player, your shroud creature, protection from enchantments and
+   from the card's colour of the opponent's, protection from another colour of yours. Protection is
+   judged by the audit (ctx.judgeProtection). */
+function addExchangeWitnesses(ctx) {
+  const src = ctx.preStates.get(ctx.sourceId) || {};
+  const added = [];
+  for (const w of auraWitnesses(stateColors(src))) {
+    const c = w.controller === 'p2' ? Battlefield.players[1].id : 'player_0';
+    Battlefield.activePlayerId = c;
+    const p = Battlefield.addPermanent(JSON.parse(JSON.stringify(w.card)), { suppressPrompt: true, controller: c, owner: c });
+    roleOf.set(p.id, w.role.replace("the Aura's colour", "the card's colour"));
+    added.push(p.id);
+  }
+  Battlefield.activePlayerId = 'player_0';
+  Battlefield._invalidate();
+  return Object.assign({}, ctx, { judgeProtection: true, preStates: Battlefield.getAllFinalStates(), before: summarizeBoard(), universe: ctx.universe.concat(added.map(x => Battlefield.getPermById(x))) });
+}
+
+function auditFiredExchange(ctx, u, id) {
+  const finding = (check, code, extra) => u.findings.push(Object.assign({ check, code }, extra || {}));
+  const ex = u.exchange;
+  const before = ctx.before;
+  const info = getEffectInfo(id, Battlefield.getAllFinalStates().get(id));
+  if (!info.hasExchangeControl) {
+    u.pickerKind = getTargetPickerKind(id, Battlefield.getAllFinalStates().get(id)).kind;
+    finding('check2', 'no-exchange-picker', { actual: u.pickerKind });
+    return { audited: true };
+  }
+  u.pickerKind = 'exchange ' + info.exchangeControlMode;
+  if (info.exchangeControlMode !== ex.mode) { finding('check2', 'exchange-mode-mismatch', { expected: ex.mode, actual: info.exchangeControlMode }); return { audited: true }; }
+  const eff = _exchangeControlEffect(id);
+  const self = ex.mode === 'self_and_target';
+  const selfId = self ? eff.params.exchangeSelfId : null;
+  if (self && selfId !== ctx.sourceId) finding('check2', 'exchange-self-not-the-card', { actual: selfId ? roleName(selfId) : null });
+  // As the pop-up sets them (ui-modal-text-change.js): A is the card itself with "this …".
+  const set = (a, b) => { Battlefield.setExchangeControlTargets(id, self ? selfId : a, b); Battlefield._invalidate(); };
+  const listOf = (slot, aId) => getExchangeControlCandidates(id, slot, aId).map(c => c.id);
+
+  /* Check 2 */
+  const slots = self ? ['b'] : ['a', 'b'];
+  const lists = {}, expected = {};
+  u.picks = [];
+  for (const s of slots) {
+    const t = ex[s];
+    lists[s] = listOf(s, null);
+    // ("Another target permanent that shares one of those types with it": B has one of A's types.)
+    const named = s === 'b' && ex.pair.shareTypesWithA ? PERMANENT_TYPES.filter(ty => new RegExp('\\b' + ty.toLowerCase() + 's?\\b').test(ex.a.phrase)) : null;
+    const rec = { pick: 'permanent ' + s.toUpperCase(), phrase: t.phrase, expected: null, actual: rolesOf(lists[s]) };
+    u.picks.push(rec);
+    const exp = expectedForTarget(ctx, u, { phrase: t.phrase, targetIndex: t.idx, plural: t.plural, excludeSource: t.excludeSource });
+    if (exp.unknown) { rec.phraseUnknown = exp.unknown; u.phraseUnknown = (u.phraseUnknown || []).concat(exp.unknown); continue; }
+    if (named) exp.ids = exp.ids.filter(x => ((ctx.preStates.get(x) || {}).types || []).some(ty => named.includes(ty)));
+    expected[s] = exp.ids;
+    rec.expected = rolesOf(exp.ids);
+    const missing = exp.ids.filter(x => !lists[s].includes(x)), extra = lists[s].filter(x => !exp.unjudged.includes(x) && !exp.ids.includes(x));
+    if (!lists[s].length && exp.ids.length) finding('check2', 'empty-list', { slot: rec.pick, missing: rolesOf(missing), extra: [] });
+    else if (missing.length || extra.length) finding('check2', 'list-mismatch', { slot: rec.pick, missing: rolesOf(missing), extra: rolesOf(extra) });
+  }
+  // B as narrowed by each of a few A.
+  const narrowed = new Map();
+  if (!self) {
+    if (ex.pair.unjudged) u.pairUnjudged = ex.pair.unjudged;
+    const pairBad = [];
+    for (const a of lists.a.slice(0, 8)) {
+      const listB = listOf('b', a);
+      narrowed.set(a, listB);
+      if (!expected.b || ex.pair.unjudged) continue;
+      const exp = expected.b.filter(b => exchangePairOk(ctx, ex, a, b));
+      const missing = exp.filter(x => !listB.includes(x)), extra = listB.filter(x => !exp.includes(x));
+      if (missing.length || extra.length) pairBad.push({ a: roleName(a), missing: rolesOf(missing), extra: rolesOf(extra) });
+    }
+    if (pairBad.length) finding('check2', 'pair-list-mismatch', { examples: pairBad.slice(0, 3), count: pairBad.length });
+  }
+
+  /* Check 1 */
+  u.check1 = { noTarget: diffSummaries(before, summarizeBoard()).map(c => ({ role: c.role, what: c.what })), perTarget: [], via: 'picker' };
+  if (u.check1.noTarget.length) finding('check1', 'changes-with-no-target', { changed: u.check1.noTarget });
+  const ctrl0 = (x) => ctrlOf(ctx.preStates.get(x), Battlefield.getPermById(x));
+  if (!self && lists.a.length) {
+    set(lists.a[0], null);
+    const half = diffSummaries(before, summarizeBoard());
+    if (half.length) finding('check1', 'changes-with-one-target', { changed: half.map(c => ({ role: c.role, what: c.what })) });
+    set(null, null);
+  }
+  const others = [], notSwapped = [], notUndone = [], noOp = [];
+  const tried = new Set();
+  const tryPair = (a, b) => {
+    const key = a + '|' + b;
+    if (tried.has(key)) return;
+    tried.add(key);
+    const label = roleName(a) + ' and ' + roleName(b);
+    set(a, b);
+    const changed = diffSummaries(before, summarizeBoard());
+    const fs = Battlefield.getAllFinalStates();
+    u.check1.perTarget.push({ target: label, changed: changed.map(c => ({ role: c.role, what: c.what })) });
+    const cA = ctrl0(a), cB = ctrl0(b);
+    const bad = changed.filter(c => cA === cB || (c.id !== a && c.id !== b));
+    if (bad.length) others.push({ target: label, others: bad.map(c => ({ role: c.role, what: c.what })) });
+    if (cA !== cB && (ctrlOf(fs.get(a), Battlefield.getPermById(a)) !== cB || ctrlOf(fs.get(b), Battlefield.getPermById(b)) !== cA)) notSwapped.push(label);
+    if (cA === cB) noOp.push(label);
+    set(self ? null : a, null);
+    if (!self) set(null, null);
+    const left = diffSummaries(before, summarizeBoard());
+    if (left.length) notUndone.push({ target: label, left: left.map(c => ({ role: c.role, what: c.what })) });
+  };
+  if (self) {
+    for (const b of lists.b.slice(0, 14)) tryPair(selfId, b);
+  } else {
+    // Each of a few A with a B of the other player where it can have one; then each B not yet
+    // tried with an A that may have it.
+    for (const a of lists.a.slice(0, 8)) {
+      const bs = narrowed.get(a) || [];
+      const b = bs.find(x => ctrl0(x) !== ctrl0(a)) || bs[0];
+      if (b) tryPair(a, b);
+    }
+    const triedB = new Set([...tried].map(k => k.split('|')[1]));
+    for (const b of lists.b.slice(0, 10)) {
+      if (triedB.has(b)) continue;
+      const as = lists.a.filter(a => (narrowed.get(a) || listOf('b', a)).includes(b));
+      const a = as.find(x => ctrl0(x) !== ctrl0(b)) || as[0];
+      if (a) tryPair(a, b);
+    }
+  }
+  if (others.length) finding('check1', 'target-changes-others', { examples: others.slice(0, 3), count: others.length });
+  if (notSwapped.length) finding('check1', 'exchange-not-swapped', { examples: notSwapped.slice(0, 3), count: notSwapped.length });
+  if (notUndone.length) finding('check1', 'exchange-not-undone', { examples: notUndone.slice(0, 3), count: notUndone.length });
+  if (tried.size && noOp.length === tried.size) u.infos.push({ code: 'board-cannot-show', roles: [], what: 'every pair the lists allow is one player\'s' });
+  return { audited: true };
+}
+
 /* ─── Modal spells ───
    The Modes pop-up (ui-abilities.js applyModalModePopup) picks the modes: a repeatable spell
    ("you may choose the same mode more than once") by counts, any other by the set of active
@@ -1968,7 +2182,7 @@ function auditModes(rec, perm, ctx, run, skip, spellText) {
     const label = 'mode ' + (mi + 1);
     const text = stripReminder(modeText);
     const cls = classifyUnitText(text);
-    if (!cls.singular && !cls.targets && !cls.playerGroup) { skip('spell', undefined, label, text, 'mode: ' + cls.skip); return; }
+    if (!cls.singular && !cls.targets && !cls.playerGroup && !cls.exchange) { skip('spell', undefined, label, text, 'mode: ' + cls.skip); return; }
     if (cls.singular) oneTarget.push({ mi, text, phrase: cls.phrase, targetIndex: cls.targetIndex, excludeSource: cls.excludeSource, max: 1 });
     else if (cls.expectKind === 'multi' && cls.targets.length === 1) {
       const t = cls.targets[0];
@@ -3109,6 +3323,7 @@ function runQuotedUnit(o) {
       const t = stripReminder(plan.text);
       const cls = classifyUnitText(t);
       if (!cls.singular && !cls.targets && !cls.playerGroup) { skipQ(qi, label, t, cls.skip); continue; }
+      if (cls.exchange) { skipQ(qi, label, t, 'exchange'); continue; }
       const u = newUnit('quoted', qi, label, t, cls);
       u.bearer = roleName(bearer.id);
       Object.defineProperty(u, 'fullText', { value: stripReminder(ab.fullText || ''), enumerable: false });
@@ -3181,11 +3396,11 @@ function auditFace(card, faceIndex) {
     const text = stripReminder(face.oracle_text || '');
     if (perm.isModalSpell) { auditModes(rec, perm, ctx, run, skip, text); quotedLater(); return rec; }
     const cls = classifyUnitText(text);
-    if (!cls.singular && !cls.targets && !cls.playerGroup && !cls.attachPair) { if (cls.skip !== 'target-in-quote') skip('spell', undefined, '', text, cls.skip); quotedLater(); return rec; }
+    if (!cls.singular && !cls.targets && !cls.playerGroup && !cls.attachPair && !cls.exchange) { if (cls.skip !== 'target-in-quote') skip('spell', undefined, '', text, cls.skip); quotedLater(); return rec; }
     const u = newUnit('spell', undefined, '', text, cls);
     // Casting happened in addAuditedCard; the spell's own effects are the unit's.
     // (An attach pair's witnesses come before the spell: it is cast again once they are there.)
-    if (cls.attachPair) run(u, () => { Battlefield.removePermanent(perm.id); return addAuditedCard(card, faceIndex, true); });
+    if (cls.attachPair || cls.exchange) run(u, () => { Battlefield.removePermanent(perm.id); return addAuditedCard(card, faceIndex, true); });
     else run(u, () => perm);
     quotedLater();
     return rec;
@@ -3205,7 +3420,7 @@ function auditFace(card, faceIndex) {
       if (plan.skip) { skip(kind, ab.index, '', stripReminder(ab.effectText), plan.skip); continue; }
       const text = stripReminder(plan.text);
       const cls = classifyUnitText(text);
-      if (!cls.singular && !cls.targets && !cls.playerGroup && !cls.attachPair) { if (cls.skip !== 'target-in-quote') skip(kind, ab.index, plan.label, text, cls.skip); continue; }
+      if (!cls.singular && !cls.targets && !cls.playerGroup && !cls.attachPair && !cls.exchange) { if (cls.skip !== 'target-in-quote') skip(kind, ab.index, plan.label, text, cls.skip); continue; }
       if (cls.attach && !attachIsSource(cls.attach, kind, stripReminder(ab.fullText || ''), typeLine, rec.name, text)) { skip(kind, ab.index, plan.label, text, 'attach-not-the-source'); continue; }
       const u = newUnit(kind, ab.index, plan.label, text, cls);
       // (Not written to the raw output.)

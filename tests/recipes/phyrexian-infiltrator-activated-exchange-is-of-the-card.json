@@ -1,0 +1,68 @@
+{
+  "name": "Phyrexian Infiltrator — an activated \"exchange control of this creature and target creature\" exchanges the card, which is not one of its own targets",
+  "notes": "\"{2}{U}{U}: Exchange control of this creature and target creature.\" Found by the exchange-control audit unit (2026-11-18). A fired activated ability's exchange was parsed for the ability's row, so \"this creature\" was that row: the modal offered Phyrexian Infiltrator itself as Permanent B and a pick exchanged nothing. Only a trigger (injectTriggeredExchange) and a restored board pointed it at the card. _addAbilityPseudo now does it for every fired ability (CR 113.7). Same for Avarice Totem and Eyes Everywhere. The suite restores boards, and restore already did this, so this recipe passes on the old code too: the live path is checked by the audit (exchange-self-not-the-card) and was verified in the preview.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant",
+      "controller": "p2"
+    },
+    {
+      "add": "Phyrexian Infiltrator",
+      "as": "inf"
+    },
+    {
+      "fire": "@inf",
+      "activated": 0,
+      "as": "a"
+    },
+    {
+      "call": [
+        "setExchangeControlTargets",
+        "@a",
+        "@inf",
+        "@giant"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "targetCandidates": {
+        "perm": "Phyrexian Infiltrator (activated)",
+        "slot": "b"
+      },
+      "are": [
+        "Grizzly Bears",
+        "Hill Giant"
+      ]
+    },
+    {
+      "perm": "Phyrexian Infiltrator",
+      "final": {
+        "controller": "player_1"
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "controller": "player_0"
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "controller": "player_0"
+      }
+    }
+  ]
+}

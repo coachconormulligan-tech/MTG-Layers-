@@ -215,8 +215,7 @@ function applyExchangeTargets(sourceId) {
 /* ===== Exchange Control Modal ===== */
 
 function openExchangeControlModal(permId) {
-  const effect = Battlefield.effects.find(e =>
-    e.sourceId === permId && e.type === EFFECT_TYPE.CONTROL && e.params.exchangeControl);
+  const effect = _exchangeControlEffect(permId);
   if (!effect) return;
 
   const mode = effect.params.exchangeMode;

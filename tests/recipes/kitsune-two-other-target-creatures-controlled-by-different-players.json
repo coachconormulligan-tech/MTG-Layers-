@@ -1,0 +1,20 @@
+{
+  "name": "Kitsune, Dragon's Daughter — \"two other target creatures controlled by different players\" lists every creature but Kitsune, and B only the other player's",
+  "notes": "\"Whenever Kitsune enters or deals combat damage to a player, you may exchange control of two other target creatures controlled by different players.\" Found by the exchange-control audit unit (2026-11-18). The parser read \"two target …\" but not \"two other target …\", so the type text stayed \"two other target creatures\", which nothing matches: both lists were empty. Now the type is \"creatures\" and params.exchangeOtherThanSource keeps Kitsune out of both lists and out of any pair (exchangeControlPairProblem, which the engine also asks).",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Runeclaw Bear", "as": "rune" },
+    { "add": "Hill Giant", "as": "giant", "controller": "p2" },
+    { "add": "Kitsune, Dragon's Daughter", "as": "k" },
+    { "fire": "@k", "trigger": 1, "as": "t" },
+    { "call": ["setExchangeControlTargets", "@t", "@bears", "@giant"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Kitsune, Dragon's Daughter (trigger)", "slot": "a" }, "are": ["Grizzly Bears", "Hill Giant", "Runeclaw Bear"] },
+    { "targetCandidates": { "perm": "Kitsune, Dragon's Daughter (trigger)", "slot": "b" }, "are": ["Hill Giant"] },
+    { "perm": "Grizzly Bears", "final": { "controller": "player_1" } },
+    { "perm": "Hill Giant", "final": { "controller": "player_0" } },
+    { "perm": "Kitsune, Dragon's Daughter", "final": { "controller": "player_0" } }
+  ]
+}
