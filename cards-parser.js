@@ -751,7 +751,10 @@ function parseCardEffects(permanent, card, opts = {}) {
     let _anyKnownMatch = false;
     const _handledLines = new Set();
     for (let li = 0; li < _knownLines.length; li++) {
-      const lineKey = _knownLines[li].toLowerCase();
+      // (A mode's line, "• Change the text of target spell or permanent by …" — Spectral Shift, is
+      // looked up without its bullet; the modal pass below gives its effects their mode.)
+      let lineKey = _knownLines[li].toLowerCase();
+      if (!KNOWN_ABILITY_EFFECTS[lineKey] && /^\u2022\s*/.test(lineKey)) lineKey = lineKey.replace(/^\u2022\s*/, '');
       if (!KNOWN_ABILITY_EFFECTS[lineKey]) continue;
       _anyKnownMatch = true;
       _handledLines.add(li);

@@ -12,7 +12,7 @@
 function getEffectInfo(permId, finalState) {
   const effs = Battlefield.effects.filter(e => e.sourceId === permId);
   const perm = Battlefield.getPermById(permId);
-  const textEff = effs.find(e => e.type === EFFECT_TYPE.TEXT_CHANGE);
+  const textEff = _textChangeEffect(permId);
   // A copy-source picker only where the source picks what it copies; "<target> becomes a copy
   // of this creature" (The Flood of Mars) takes an ordinary target instead.
   // A mass copy whose source is a linked card (Deceiver of Form) has the "Linked card" button.
@@ -1048,4 +1048,29 @@ function getExchangeControlCandidates(sourceId, slot, aId) {
     out.push({ id: t.id, perm: t, state: fs || tState, displayName: _targetPickerName(t, finalStates.get(t.id), true) });
   }
   return out;
+}
+
+/* A source's text-change effect: the one switched on (the picked mode of a modal spell, Spectral
+   Shift: its other mode's would set the pop-up's kind of word), else the first. */
+function _textChangeEffect(sourceId) {
+  const effs = Battlefield.effects.filter(e => e.sourceId === sourceId && e.type === EFFECT_TYPE.TEXT_CHANGE);
+  return effs.find(e => !e.disabled) || effs[0] || null;
+}
+
+/* The text-change pop-up's "Target Permanent" list (openStandardTextModal / openCreatureTypeModal
+   in ui-modal-text-change.js): "Change the text of target spell or permanent by replacing …"
+   (Sleight of Mind, Magical Hack, Artificial Evolution, Balduvian Shaman). The pop-up picks the
+   target of every targeted effect of the source (setTextChangeConfig), so its list is the single
+   picker's: the effect's targetRestriction, "you control", the source's Enchant restriction, and
+   shroud, an opponent's hexproof and protection from the source (CR 702.18, 702.11, 702.16), which
+   the pop-up's own list left out. */
+function getTextChangeCandidates(sourceId) {
+  const effect = _textChangeEffect(sourceId);
+  if (!effect) return { candidates: [], currentTarget: '' };
+  const r = _singleTargetCandidates(sourceId);
+  if (r.blocked) return { candidates: [], currentTarget: effect.targetId || '' };
+  // (A restriction kept in params, New Blood's "target creature", is read here as the pop-up read it.)
+  const pr = effect.params && effect.params.targetRestriction;
+  const candidates = pr ? r.candidates.filter(c => pr(c.state || createBaseState(c.perm))) : r.candidates;
+  return { candidates, currentTarget: effect.targetId || '' };
 }

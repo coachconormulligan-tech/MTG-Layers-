@@ -1,0 +1,1718 @@
+{
+ "name": "Balduvian Shaman — fired text change lists only a white enchantment you control without cumulative upkeep",
+ "notes": "Memory: project_text_change_audit_2026-11-18. The KNOWN_ABILITY_EFFECTS entry carried the '{T}: ' cost, so it matched the card's printed line (a static text change and cumulative upkeep on the card itself) and never the fired ability; once matched as written by _addAbilityPseudo ('That enchantment' read as its target), the restriction is on the effects themselves with youControlRequired. Honor of the Pure is the only valid target: Royal Decree has cumulative upkeep, Glorious Anthem is the opponent's, Bad Moon is black. Nothing changes until a target is picked (the cumulative upkeep used to land on the Shaman); then white becomes black on Honor of the Pure and it gains cumulative upkeep.",
+ "recipe": {
+  "steps": [
+   {
+    "call": [
+     "addPlayer",
+     "Opponent"
+    ]
+   },
+   {
+    "add": "Honor of the Pure",
+    "as": "honor"
+   },
+   {
+    "add": "Royal Decree",
+    "as": "decree"
+   },
+   {
+    "add": "Bad Moon",
+    "as": "moon"
+   },
+   {
+    "add": "Glorious Anthem",
+    "as": "anthem",
+    "controller": "p2"
+   },
+   {
+    "add": "Balduvian Shaman",
+    "as": "shaman"
+   },
+   {
+    "fire": "@shaman",
+    "activated": 0,
+    "as": "a"
+   },
+   {
+    "call": [
+     "setTextChangeConfig",
+     "@a",
+     "@honor",
+     [
+      {
+       "from": "white",
+       "to": "black"
+      }
+     ]
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "targetCandidates": {
+    "perm": "Balduvian Shaman (activated)",
+    "kind": "text"
+   },
+   "are": [
+    "Honor of the Pure"
+   ]
+  },
+  {
+   "perm": "Balduvian Shaman",
+   "final": {
+    "abilities": {
+     "$excludes": [
+      "Cumulative upkeep {1}"
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Honor of the Pure",
+   "final": {
+    "abilities": [
+     "Black creatures you control get +1/+1.",
+     "Cumulative upkeep {1}"
+    ]
+   }
+  },
+  {
+   "perm": "Bad Moon",
+   "final": {
+    "abilities": [
+     "Black creatures get +1/+1."
+    ]
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "650a6831-c352-4ca7-9f8f-43ea99a1cf33",
+     "oracle_id": "eb4188bb-62df-4309-bde1-f66318fe2f05",
+     "multiverse_ids": [
+      233237
+     ],
+     "mtgo_id": 41133,
+     "mtgo_foil_id": 41134,
+     "tcgplayer_id": 47681,
+     "cardmarket_id": 247989,
+     "name": "Honor of the Pure",
+     "lang": "en",
+     "released_at": "2011-07-15",
+     "uri": "https://api.scryfall.com/cards/650a6831-c352-4ca7-9f8f-43ea99a1cf33",
+     "scryfall_uri": "https://scryfall.com/card/m12/23/honor-of-the-pure?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:11:42Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/6/5/650a6831-c352-4ca7-9f8f-43ea99a1cf33.jpg?1783941102",
+      "normal": "https://cards.scryfall.io/normal/front/6/5/650a6831-c352-4ca7-9f8f-43ea99a1cf33.jpg?1783941102",
+      "large": "https://cards.scryfall.io/large/front/6/5/650a6831-c352-4ca7-9f8f-43ea99a1cf33.jpg?1783941102",
+      "png": "https://cards.scryfall.io/png/front/6/5/650a6831-c352-4ca7-9f8f-43ea99a1cf33.png?1783941102",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/6/5/650a6831-c352-4ca7-9f8f-43ea99a1cf33.jpg?1783941102",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/6/5/650a6831-c352-4ca7-9f8f-43ea99a1cf33.jpg?1783941102",
+      "thumb": "https://cards.scryfall.io/thumb/front/6/5/650a6831-c352-4ca7-9f8f-43ea99a1cf33.webp?1783941102",
+      "grid": "https://cards.scryfall.io/grid/front/6/5/650a6831-c352-4ca7-9f8f-43ea99a1cf33.webp?1783941102",
+      "display": "https://cards.scryfall.io/display/front/6/5/650a6831-c352-4ca7-9f8f-43ea99a1cf33.webp?1783941102",
+      "art": "https://cards.scryfall.io/art/front/6/5/650a6831-c352-4ca7-9f8f-43ea99a1cf33.webp?1783941102",
+      "crop": "https://cards.scryfall.io/crop/front/6/5/650a6831-c352-4ca7-9f8f-43ea99a1cf33.webp?1783941102"
+     },
+     "mana_cost": "{1}{W}",
+     "cmc": 2,
+     "type_line": "Enchantment",
+     "oracle_text": "White creatures you control get +1/+1.",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "5cdd2643-229c-4441-a62a-c34e4b531e1c",
+     "set": "m12",
+     "set_name": "Magic 2012",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/5cdd2643-229c-4441-a62a-c34e4b531e1c",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Am12&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/m12?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/650a6831-c352-4ca7-9f8f-43ea99a1cf33/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aeb4188bb-62df-4309-bde1-f66318fe2f05&unique=prints",
+     "collector_number": "23",
+     "digital": false,
+     "rarity": "rare",
+     "flavor_text": "Together the soldiers were like a golden blade, cutting down their enemies and scarring the darkness.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Greg Staples",
+     "artist_ids": [
+      "93d65564-bf00-447b-8406-e2031f03b6b1"
+     ],
+     "illustration_id": "0c1b3c92-2d0d-4333-a927-9b62429d86b0",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 7862,
+     "penny_rank": 720,
+     "prices": {
+      "usd": "0.81",
+      "usd_foil": "4.74",
+      "usd_etched": null,
+      "eur": "0.38",
+      "eur_foil": "2.03",
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=233237&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DHonor%2Bof%2Bthe%2BPure",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DHonor%2Bof%2Bthe%2BPure",
+      "edhrec": "https://edhrec.com/route/?cc=Honor+of+the+Pure"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F47681%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=247989&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/41133?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "41367363-7af7-423f-9423-78fb92043712",
+     "oracle_id": "fca14cbd-5ffc-441f-bccb-7ec22b03acbb",
+     "multiverse_ids": [
+      184715
+     ],
+     "mtgo_id": 30720,
+     "mtgo_foil_id": 30721,
+     "name": "Royal Decree",
+     "lang": "en",
+     "released_at": "2008-09-22",
+     "uri": "https://api.scryfall.com/cards/41367363-7af7-423f-9423-78fb92043712",
+     "scryfall_uri": "https://scryfall.com/card/me2/31/royal-decree?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:37:18Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/1/41367363-7af7-423f-9423-78fb92043712.jpg?1783942638",
+      "normal": "https://cards.scryfall.io/normal/front/4/1/41367363-7af7-423f-9423-78fb92043712.jpg?1783942638",
+      "large": "https://cards.scryfall.io/large/front/4/1/41367363-7af7-423f-9423-78fb92043712.jpg?1783942638",
+      "png": "https://cards.scryfall.io/png/front/4/1/41367363-7af7-423f-9423-78fb92043712.png?1783942638",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/1/41367363-7af7-423f-9423-78fb92043712.jpg?1783942638",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/1/41367363-7af7-423f-9423-78fb92043712.jpg?1783942638",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/1/41367363-7af7-423f-9423-78fb92043712.webp?1783942638",
+      "grid": "https://cards.scryfall.io/grid/front/4/1/41367363-7af7-423f-9423-78fb92043712.webp?1783942638",
+      "display": "https://cards.scryfall.io/display/front/4/1/41367363-7af7-423f-9423-78fb92043712.webp?1783942638",
+      "art": "https://cards.scryfall.io/art/front/4/1/41367363-7af7-423f-9423-78fb92043712.webp?1783942638",
+      "crop": "https://cards.scryfall.io/crop/front/4/1/41367363-7af7-423f-9423-78fb92043712.webp?1783942638"
+     },
+     "mana_cost": "{2}{W}{W}",
+     "cmc": 4,
+     "type_line": "Enchantment",
+     "oracle_text": "Cumulative upkeep {W} (At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay its upkeep cost for each age counter on it.)\nWhenever a Swamp, Mountain, black permanent, or red permanent becomes tapped, this enchantment deals 1 damage to that permanent's controller.",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [
+      "Cumulative upkeep"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "mtgo"
+     ],
+     "reserved": true,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "7d51a13b-dcd2-4ec2-b3a7-c89288e00b4e",
+     "set": "me2",
+     "set_name": "Masters Edition II",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/7d51a13b-dcd2-4ec2-b3a7-c89288e00b4e",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Ame2&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/me2?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/41367363-7af7-423f-9423-78fb92043712/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Afca14cbd-5ffc-441f-bccb-7ec22b03acbb&unique=prints",
+     "collector_number": "31",
+     "digital": true,
+     "rarity": "rare",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Pete Venters",
+     "artist_ids": [
+      "d54c4a1a-c0c5-4834-84db-125d341f3ad8"
+     ],
+     "illustration_id": "8d518128-482a-4947-b2e1-26b561bd659d",
+     "border_color": "black",
+     "frame": "1997",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 26357,
+     "prices": {
+      "usd": null,
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": null,
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=184715&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DRoyal%2BDecree",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DRoyal%2BDecree",
+      "edhrec": "https://edhrec.com/route/?cc=Royal+Decree"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fmagic%2Fproduct%3FproductLineName%3Dmagic%26q%3DRoyal%2BDecree%26view%3Dgrid",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products/Search?referrer=scryfall&searchString=Royal+Decree&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/30720?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "8f8a75da-ea3c-43e7-9d32-1c92f8ec0fd2",
+     "oracle_id": "fc5d3341-cbce-49e5-93cc-8add92479dca",
+     "multiverse_ids": [
+      393879
+     ],
+     "tcgplayer_id": 93696,
+     "cardmarket_id": 269915,
+     "name": "Bad Moon",
+     "lang": "en",
+     "released_at": "2014-12-05",
+     "uri": "https://api.scryfall.com/cards/8f8a75da-ea3c-43e7-9d32-1c92f8ec0fd2",
+     "scryfall_uri": "https://scryfall.com/card/gvl/48/bad-moon?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T10:32:32Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/8/f/8f8a75da-ea3c-43e7-9d32-1c92f8ec0fd2.jpg?1783938752",
+      "normal": "https://cards.scryfall.io/normal/front/8/f/8f8a75da-ea3c-43e7-9d32-1c92f8ec0fd2.jpg?1783938752",
+      "large": "https://cards.scryfall.io/large/front/8/f/8f8a75da-ea3c-43e7-9d32-1c92f8ec0fd2.jpg?1783938752",
+      "png": "https://cards.scryfall.io/png/front/8/f/8f8a75da-ea3c-43e7-9d32-1c92f8ec0fd2.png?1783938752",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/8/f/8f8a75da-ea3c-43e7-9d32-1c92f8ec0fd2.jpg?1783938752",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/8/f/8f8a75da-ea3c-43e7-9d32-1c92f8ec0fd2.jpg?1783938752",
+      "thumb": "https://cards.scryfall.io/thumb/front/8/f/8f8a75da-ea3c-43e7-9d32-1c92f8ec0fd2.webp?1783938752",
+      "grid": "https://cards.scryfall.io/grid/front/8/f/8f8a75da-ea3c-43e7-9d32-1c92f8ec0fd2.webp?1783938752",
+      "display": "https://cards.scryfall.io/display/front/8/f/8f8a75da-ea3c-43e7-9d32-1c92f8ec0fd2.webp?1783938752",
+      "art": "https://cards.scryfall.io/art/front/8/f/8f8a75da-ea3c-43e7-9d32-1c92f8ec0fd2.webp?1783938752",
+      "crop": "https://cards.scryfall.io/crop/front/8/f/8f8a75da-ea3c-43e7-9d32-1c92f8ec0fd2.webp?1783938752"
+     },
+     "mana_cost": "{1}{B}",
+     "cmc": 2,
+     "type_line": "Enchantment",
+     "oracle_text": "Black creatures get +1/+1.",
+     "colors": [
+      "B"
+     ],
+     "color_identity": [
+      "B"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "db352daa-9827-44ca-ba19-511969a97689",
+     "set": "gvl",
+     "set_name": "Duel Decks Anthology: Garruk vs. Liliana",
+     "set_type": "duel_deck",
+     "set_uri": "https://api.scryfall.com/sets/db352daa-9827-44ca-ba19-511969a97689",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Agvl&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/gvl?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/8f8a75da-ea3c-43e7-9d32-1c92f8ec0fd2/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Afc5d3341-cbce-49e5-93cc-8add92479dca&unique=prints",
+     "collector_number": "48",
+     "digital": false,
+     "rarity": "rare",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Gary Leach",
+     "artist_ids": [
+      "fb608209-fd37-435a-b2fb-a158aeb3f927"
+     ],
+     "illustration_id": "900cdf96-e5b7-4f23-8377-3825572a1da2",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 7383,
+     "prices": {
+      "usd": "4.20",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "1.99",
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=393879&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DBad%2BMoon",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DBad%2BMoon",
+      "edhrec": "https://edhrec.com/route/?cc=Bad+Moon"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F93696%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=269915&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Bad+Moon&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "17d154d3-7ae5-43ff-9978-d974285e2c89",
+     "oracle_id": "e3886fe8-9b76-4613-8891-4ec74657c087",
+     "multiverse_ids": [
+      485344
+     ],
+     "mtgo_id": 81269,
+     "arena_id": 71803,
+     "tcgplayer_id": 215674,
+     "cardmarket_id": 470879,
+     "name": "Glorious Anthem",
+     "lang": "en",
+     "released_at": "2020-07-03",
+     "uri": "https://api.scryfall.com/cards/17d154d3-7ae5-43ff-9978-d974285e2c89",
+     "scryfall_uri": "https://scryfall.com/card/m21/21/glorious-anthem?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T08:19:01Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/1/7/17d154d3-7ae5-43ff-9978-d974285e2c89.jpg?1783930741",
+      "normal": "https://cards.scryfall.io/normal/front/1/7/17d154d3-7ae5-43ff-9978-d974285e2c89.jpg?1783930741",
+      "large": "https://cards.scryfall.io/large/front/1/7/17d154d3-7ae5-43ff-9978-d974285e2c89.jpg?1783930741",
+      "png": "https://cards.scryfall.io/png/front/1/7/17d154d3-7ae5-43ff-9978-d974285e2c89.png?1783930741",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/1/7/17d154d3-7ae5-43ff-9978-d974285e2c89.jpg?1783930741",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/1/7/17d154d3-7ae5-43ff-9978-d974285e2c89.jpg?1783930741",
+      "thumb": "https://cards.scryfall.io/thumb/front/1/7/17d154d3-7ae5-43ff-9978-d974285e2c89.webp?1783930741",
+      "grid": "https://cards.scryfall.io/grid/front/1/7/17d154d3-7ae5-43ff-9978-d974285e2c89.webp?1783930741",
+      "display": "https://cards.scryfall.io/display/front/1/7/17d154d3-7ae5-43ff-9978-d974285e2c89.webp?1783930741",
+      "art": "https://cards.scryfall.io/art/front/1/7/17d154d3-7ae5-43ff-9978-d974285e2c89.webp?1783930741",
+      "crop": "https://cards.scryfall.io/crop/front/1/7/17d154d3-7ae5-43ff-9978-d974285e2c89.webp?1783930741"
+     },
+     "mana_cost": "{1}{W}{W}",
+     "cmc": 3,
+     "type_line": "Enchantment",
+     "oracle_text": "Creatures you control get +1/+1.",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "arena",
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "bc94aba1-7376-4e02-a12d-3a2efb66ab0f",
+     "set": "m21",
+     "set_name": "Core Set 2021",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/bc94aba1-7376-4e02-a12d-3a2efb66ab0f",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Am21&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/m21?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/17d154d3-7ae5-43ff-9978-d974285e2c89/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ae3886fe8-9b76-4613-8891-4ec74657c087&unique=prints",
+     "collector_number": "21",
+     "digital": false,
+     "rarity": "rare",
+     "flavor_text": "The songs of angels are perceived not as words in the ears but as stirrings in the soul.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Raymond Swanland",
+     "artist_ids": [
+      "e956bacc-077d-4c12-b6bc-ba798b718af9"
+     ],
+     "illustration_id": "8f05bbfe-383a-454a-b8d3-94d7234797ba",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 7262,
+     "penny_rank": 4278,
+     "preview": {
+      "source": "CoolStuffInc",
+      "source_uri": "https://www.coolstuffinc.com/a/abesargent-06122020-core-set-2021-glory-days-are-here-again",
+      "previewed_at": "2020-06-12"
+     },
+     "prices": {
+      "usd": "0.41",
+      "usd_foil": "0.49",
+      "usd_etched": null,
+      "eur": "0.19",
+      "eur_foil": "0.42",
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=485344&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGlorious%2BAnthem",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGlorious%2BAnthem",
+      "edhrec": "https://edhrec.com/route/?cc=Glorious+Anthem"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F215674%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=470879&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/81269?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_1",
+    "controller": "player_1",
+    "timestamp": 4,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_5",
+    "scryfallData": {
+     "object": "card",
+     "id": "74859723-8ddf-4ee6-a0a7-87192c84e8ad",
+     "oracle_id": "3354c3d3-5713-4139-beb2-4fa17f6b47d9",
+     "multiverse_ids": [
+      2495
+     ],
+     "tcgplayer_id": 4598,
+     "cardmarket_id": 6271,
+     "name": "Balduvian Shaman",
+     "lang": "en",
+     "released_at": "1995-06-03",
+     "uri": "https://api.scryfall.com/cards/74859723-8ddf-4ee6-a0a7-87192c84e8ad",
+     "scryfall_uri": "https://scryfall.com/card/ice/59/balduvian-shaman?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T12:58:38Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/7/4/74859723-8ddf-4ee6-a0a7-87192c84e8ad.jpg?1783947518",
+      "normal": "https://cards.scryfall.io/normal/front/7/4/74859723-8ddf-4ee6-a0a7-87192c84e8ad.jpg?1783947518",
+      "large": "https://cards.scryfall.io/large/front/7/4/74859723-8ddf-4ee6-a0a7-87192c84e8ad.jpg?1783947518",
+      "png": "https://cards.scryfall.io/png/front/7/4/74859723-8ddf-4ee6-a0a7-87192c84e8ad.png?1783947518",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/7/4/74859723-8ddf-4ee6-a0a7-87192c84e8ad.jpg?1783947518",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/7/4/74859723-8ddf-4ee6-a0a7-87192c84e8ad.jpg?1783947518",
+      "thumb": "https://cards.scryfall.io/thumb/front/7/4/74859723-8ddf-4ee6-a0a7-87192c84e8ad.webp?1783947518",
+      "grid": "https://cards.scryfall.io/grid/front/7/4/74859723-8ddf-4ee6-a0a7-87192c84e8ad.webp?1783947518",
+      "display": "https://cards.scryfall.io/display/front/7/4/74859723-8ddf-4ee6-a0a7-87192c84e8ad.webp?1783947518",
+      "art": "https://cards.scryfall.io/art/front/7/4/74859723-8ddf-4ee6-a0a7-87192c84e8ad.webp?1783947518",
+      "crop": "https://cards.scryfall.io/crop/front/7/4/74859723-8ddf-4ee6-a0a7-87192c84e8ad.webp?1783947518"
+     },
+     "mana_cost": "{U}",
+     "cmc": 1,
+     "type_line": "Creature — Human Cleric Shaman",
+     "oracle_text": "{T}: Change the text of target white enchantment you control that doesn't have cumulative upkeep by replacing all instances of one color word with another. (For example, you may change \"black creatures can't attack\" to \"blue creatures can't attack.\") That enchantment gains \"Cumulative upkeep {1}.\" (At the beginning of its controller's upkeep, that player puts an age counter on it, then sacrifices it unless they pay its upkeep cost for each age counter on it.)",
+     "power": "1",
+     "toughness": "1",
+     "colors": [
+      "U"
+     ],
+     "color_identity": [
+      "U"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "b0e08eea-5c01-4406-a6e2-dcd09c5e5b67",
+     "set": "ice",
+     "set_name": "Ice Age",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/b0e08eea-5c01-4406-a6e2-dcd09c5e5b67",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aice&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/ice?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/74859723-8ddf-4ee6-a0a7-87192c84e8ad/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A3354c3d3-5713-4139-beb2-4fa17f6b47d9&unique=prints",
+     "collector_number": "59",
+     "digital": false,
+     "rarity": "common",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Quinton Hoover",
+     "artist_ids": [
+      "1a2db619-92a5-431a-822b-101cdcc5bd5d"
+     ],
+     "illustration_id": "76c41ac7-60e0-44d7-823c-d092b70454bf",
+     "border_color": "black",
+     "frame": "1993",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 29909,
+     "prices": {
+      "usd": "0.12",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.08",
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=2495&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DBalduvian%2BShaman",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DBalduvian%2BShaman",
+      "edhrec": "https://edhrec.com/route/?cc=Balduvian+Shaman"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F4598%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=6271&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Balduvian+Shaman&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 5,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [
+   {
+    "id": "act_perm_5_0_6",
+    "kind": "activated",
+    "pseudoKind": "ability",
+    "sourceId": "perm_5",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 0,
+    "timestamp": 6,
+    "effectText": "Change the text of target white enchantment you control that doesn't have cumulative upkeep by replacing all instances of one color word with another. Target white enchantment you control gains \"Cumulative upkeep {1}.\"",
+    "xValue": null,
+    "hasXValue": false,
+    "cdaUserValue": null,
+    "linkedCards": null,
+    "fullText": "{T}: Change the text of target white enchantment you control that doesn't have cumulative upkeep by replacing all instances of one color word with another. That enchantment gains \"Cumulative upkeep {1}.\"",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "guessedTargetSubjects": [],
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "attach": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "forPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Honor of the Pure",
+       "types": [
+        "Enchantment"
+       ],
+       "supertypes": [],
+       "subtypes": [],
+       "power": null,
+       "toughness": null,
+       "basePower": null,
+       "baseToughness": null,
+       "abilities": [
+        "White creatures you control get +1/+1."
+       ],
+       "colors": [
+        "W"
+       ],
+       "manaValue": 2,
+       "manaCost": "{1}{W}",
+       "isCreature": false,
+       "isToken": false,
+       "isEmblem": false,
+       "isSpell": false,
+       "isZoneCard": false,
+       "oracleText": "White creatures you control get +1/+1.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "attackingPlayerId": null,
+       "timesAttackedThisTurn": 0,
+       "allPrintedAbilities": [
+        "White creatures you control get +1/+1."
+       ],
+       "cdaAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false,
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_2",
+      {
+       "name": "Royal Decree",
+       "types": [
+        "Enchantment"
+       ],
+       "supertypes": [],
+       "subtypes": [],
+       "power": null,
+       "toughness": null,
+       "basePower": null,
+       "baseToughness": null,
+       "abilities": [
+        "Cumulative upkeep {W}",
+        "Whenever a Swamp, Mountain, black permanent, or red permanent becomes tapped, this enchantment deals 1 damage to that permanent's controller."
+       ],
+       "colors": [
+        "W"
+       ],
+       "manaValue": 4,
+       "manaCost": "{2}{W}{W}",
+       "isCreature": false,
+       "isToken": false,
+       "isEmblem": false,
+       "isSpell": false,
+       "isZoneCard": false,
+       "oracleText": "Cumulative upkeep {W}\nWhenever a Swamp, Mountain, black permanent, or red permanent becomes tapped, this enchantment deals 1 damage to that permanent's controller.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "attackingPlayerId": null,
+       "timesAttackedThisTurn": 0,
+       "allPrintedAbilities": [
+        "Cumulative upkeep {W}",
+        "Whenever a Swamp, Mountain, black permanent, or red permanent becomes tapped, this enchantment deals 1 damage to that permanent's controller."
+       ],
+       "cdaAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false,
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_3",
+      {
+       "name": "Bad Moon",
+       "types": [
+        "Enchantment"
+       ],
+       "supertypes": [],
+       "subtypes": [],
+       "power": null,
+       "toughness": null,
+       "basePower": null,
+       "baseToughness": null,
+       "abilities": [
+        "Black creatures get +1/+1."
+       ],
+       "colors": [
+        "B"
+       ],
+       "manaValue": 2,
+       "manaCost": "{1}{B}",
+       "isCreature": false,
+       "isToken": false,
+       "isEmblem": false,
+       "isSpell": false,
+       "isZoneCard": false,
+       "oracleText": "Black creatures get +1/+1.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "attackingPlayerId": null,
+       "timesAttackedThisTurn": 0,
+       "allPrintedAbilities": [
+        "Black creatures get +1/+1."
+       ],
+       "cdaAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false,
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_4",
+      {
+       "name": "Glorious Anthem",
+       "types": [
+        "Enchantment"
+       ],
+       "supertypes": [],
+       "subtypes": [],
+       "power": null,
+       "toughness": null,
+       "basePower": null,
+       "baseToughness": null,
+       "abilities": [
+        "Creatures you control get +1/+1."
+       ],
+       "colors": [
+        "W"
+       ],
+       "manaValue": 3,
+       "manaCost": "{1}{W}{W}",
+       "isCreature": false,
+       "isToken": false,
+       "isEmblem": false,
+       "isSpell": false,
+       "isZoneCard": false,
+       "oracleText": "Creatures you control get +1/+1.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "attackingPlayerId": null,
+       "timesAttackedThisTurn": 0,
+       "allPrintedAbilities": [
+        "Creatures you control get +1/+1."
+       ],
+       "cdaAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_1",
+       "controller": "player_1",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_5",
+      {
+       "name": "Balduvian Shaman",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Human",
+        "Cleric",
+        "Shaman"
+       ],
+       "power": 1,
+       "toughness": 1,
+       "basePower": 1,
+       "baseToughness": 1,
+       "abilities": [
+        "{T}: Change the text of target white enchantment you control that doesn't have cumulative upkeep by replacing all instances of one color word with another. That enchantment gains \"Cumulative upkeep {1}.\""
+       ],
+       "colors": [
+        "U"
+       ],
+       "manaValue": 1,
+       "manaCost": "{U}",
+       "isCreature": true,
+       "isToken": false,
+       "isEmblem": false,
+       "isSpell": false,
+       "isZoneCard": false,
+       "oracleText": "{T}: Change the text of target white enchantment you control that doesn't have cumulative upkeep by replacing all instances of one color word with another. That enchantment gains \"Cumulative upkeep {1}.\"",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "attackingPlayerId": null,
+       "timesAttackedThisTurn": 0,
+       "allPrintedAbilities": [
+        "{T}: Change the text of target white enchantment you control that doesn't have cumulative upkeep by replacing all instances of one color word with another. That enchantment gains \"Cumulative upkeep {1}.\""
+       ],
+       "cdaAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false,
+       "_protectionFrom": []
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Honor of the Pure",
+       "imageUri": "https://cards.scryfall.io/small/front/6/5/650a6831-c352-4ca7-9f8f-43ea99a1cf33.jpg?1783941102",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Enchantment"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Royal Decree",
+       "imageUri": "https://cards.scryfall.io/small/front/4/1/41367363-7af7-423f-9423-78fb92043712.jpg?1783942638",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Enchantment"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Bad Moon",
+       "imageUri": "https://cards.scryfall.io/small/front/8/f/8f8a75da-ea3c-43e7-9d32-1c92f8ec0fd2.jpg?1783938752",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Enchantment"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Glorious Anthem",
+       "imageUri": "https://cards.scryfall.io/small/front/1/7/17d154d3-7ae5-43ff-9978-d974285e2c89.jpg?1783930741",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Enchantment"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_5",
+       "name": "Balduvian Shaman",
+       "imageUri": "https://cards.scryfall.io/small/front/7/4/74859723-8ddf-4ee6-a0a7-87192c84e8ad.jpg?1783947518",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Human",
+        "Cleric",
+        "Shaman"
+       ],
+       "printedPower": 1,
+       "printedToughness": 1,
+       "timestamp": 5
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      },
+      {
+       "id": "player_1",
+       "name": "Opponent"
+      }
+     ]
+    },
+    "primaryTarget": "perm_1",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": 6,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": {
+     "textChange": {
+      "targetId": "perm_1",
+      "replacements": [
+       {
+        "from": "white",
+        "to": "black"
+       }
+      ]
+     }
+    }
+   }
+  ],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   },
+   {
+    "id": "player_1",
+    "name": "Opponent",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": false,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 2,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Honor of the Pure",
+    "final": {
+     "name": "Honor of the Pure",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Enchantment"
+     ],
+     "subtypes": [],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "W"
+     ],
+     "abilities": [
+      "Black creatures you control get +1/+1.",
+      "Cumulative upkeep {1}"
+     ],
+     "oracleTextModified": true
+    },
+    "changedBy": {
+     "3": [
+      "Balduvian Shaman (activated)"
+     ],
+     "6": [
+      "Balduvian Shaman (activated)"
+     ]
+    }
+   },
+   {
+    "perm": "Royal Decree",
+    "final": {
+     "name": "Royal Decree",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Enchantment"
+     ],
+     "subtypes": [],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "W"
+     ],
+     "abilities": [
+      "Cumulative upkeep {W}",
+      "Whenever a Swamp, Mountain, black permanent, or red permanent becomes tapped, this enchantment deals 1 damage to that permanent's controller."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Bad Moon",
+    "final": {
+     "name": "Bad Moon",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Enchantment"
+     ],
+     "subtypes": [],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "B"
+     ],
+     "abilities": [
+      "Black creatures get +1/+1."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Glorious Anthem",
+    "final": {
+     "name": "Glorious Anthem",
+     "controller": "player_1",
+     "supertypes": [],
+     "types": [
+      "Enchantment"
+     ],
+     "subtypes": [],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "W"
+     ],
+     "abilities": [
+      "Creatures you control get +1/+1."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Balduvian Shaman",
+    "final": {
+     "name": "Balduvian Shaman",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Human",
+      "Cleric",
+      "Shaman"
+     ],
+     "power": 1,
+     "toughness": 1,
+     "colors": [
+      "U"
+     ],
+     "abilities": [
+      "{T}: Change the text of target white enchantment you control that doesn't have cumulative upkeep by replacing all instances of one color word with another. That enchantment gains \"Cumulative upkeep {1}.\""
+     ]
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "3": [
+    "Balduvian Shaman (activated)"
+   ],
+   "6": [
+    "Balduvian Shaman (activated)"
+   ],
+   "7c": [
+    "Honor of the Pure",
+    "Bad Moon",
+    "Glorious Anthem"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Honor of the Pure",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "global",
+    "params": {
+     "power": 1,
+     "toughness": 1
+    }
+   },
+   {
+    "source": "Bad Moon",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "global",
+    "params": {
+     "power": 1,
+     "toughness": 1
+    }
+   },
+   {
+    "source": "Glorious Anthem",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "global",
+    "params": {
+     "power": 1,
+     "toughness": 1
+    }
+   },
+   {
+    "source": "Balduvian Shaman (activated)",
+    "layer": "3",
+    "type": "text_change",
+    "scope": "targeted",
+    "target": "Honor of the Pure",
+    "params": {
+     "changeType": "color_only",
+     "replacements": [
+      {
+       "from": "white",
+       "to": "black"
+      }
+     ]
+    }
+   },
+   {
+    "source": "Balduvian Shaman (activated)",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "target": "Honor of the Pure",
+    "params": {
+     "ability": "Cumulative upkeep {1}"
+    }
+   }
+  ]
+ }
+}

@@ -1,0 +1,675 @@
+{
+ "name": "Spectral Shift — each mode is a text change of its own kind",
+ "notes": "Memory: project_text_change_audit_2026-11-18. The KNOWN_ABILITY_EFFECTS lookup never matched a mode's bullet line, so neither mode had an effect. The bullet is now dropped for the lookup and the modal pass gives each its mode; the pop-up, getEffectInfo and setTextChangeConfig take the mode picked (_textChangeEffect). With the colour mode picked, white becomes black on Honor of the Pure.",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Honor of the Pure",
+    "as": "honor"
+   },
+   {
+    "add": "Spectral Shift",
+    "as": "shift",
+    "spell": true
+   },
+   {
+    "call": [
+     "setModalModeSelections",
+     "@shift",
+     [
+      1
+     ]
+    ]
+   },
+   {
+    "call": [
+     "setTextChangeConfig",
+     "@shift",
+     "@honor",
+     [
+      {
+       "from": "white",
+       "to": "black"
+      }
+     ]
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "targetCandidates": {
+    "perm": "Spectral Shift",
+    "kind": "text"
+   },
+   "are": [
+    "Honor of the Pure"
+   ]
+  },
+  {
+   "perm": "Honor of the Pure",
+   "final": {
+    "abilities": [
+     "Black creatures you control get +1/+1."
+    ]
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "650a6831-c352-4ca7-9f8f-43ea99a1cf33",
+     "oracle_id": "eb4188bb-62df-4309-bde1-f66318fe2f05",
+     "multiverse_ids": [
+      233237
+     ],
+     "mtgo_id": 41133,
+     "mtgo_foil_id": 41134,
+     "tcgplayer_id": 47681,
+     "cardmarket_id": 247989,
+     "name": "Honor of the Pure",
+     "lang": "en",
+     "released_at": "2011-07-15",
+     "uri": "https://api.scryfall.com/cards/650a6831-c352-4ca7-9f8f-43ea99a1cf33",
+     "scryfall_uri": "https://scryfall.com/card/m12/23/honor-of-the-pure?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:11:42Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/6/5/650a6831-c352-4ca7-9f8f-43ea99a1cf33.jpg?1783941102",
+      "normal": "https://cards.scryfall.io/normal/front/6/5/650a6831-c352-4ca7-9f8f-43ea99a1cf33.jpg?1783941102",
+      "large": "https://cards.scryfall.io/large/front/6/5/650a6831-c352-4ca7-9f8f-43ea99a1cf33.jpg?1783941102",
+      "png": "https://cards.scryfall.io/png/front/6/5/650a6831-c352-4ca7-9f8f-43ea99a1cf33.png?1783941102",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/6/5/650a6831-c352-4ca7-9f8f-43ea99a1cf33.jpg?1783941102",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/6/5/650a6831-c352-4ca7-9f8f-43ea99a1cf33.jpg?1783941102",
+      "thumb": "https://cards.scryfall.io/thumb/front/6/5/650a6831-c352-4ca7-9f8f-43ea99a1cf33.webp?1783941102",
+      "grid": "https://cards.scryfall.io/grid/front/6/5/650a6831-c352-4ca7-9f8f-43ea99a1cf33.webp?1783941102",
+      "display": "https://cards.scryfall.io/display/front/6/5/650a6831-c352-4ca7-9f8f-43ea99a1cf33.webp?1783941102",
+      "art": "https://cards.scryfall.io/art/front/6/5/650a6831-c352-4ca7-9f8f-43ea99a1cf33.webp?1783941102",
+      "crop": "https://cards.scryfall.io/crop/front/6/5/650a6831-c352-4ca7-9f8f-43ea99a1cf33.webp?1783941102"
+     },
+     "mana_cost": "{1}{W}",
+     "cmc": 2,
+     "type_line": "Enchantment",
+     "oracle_text": "White creatures you control get +1/+1.",
+     "colors": [
+      "W"
+     ],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "5cdd2643-229c-4441-a62a-c34e4b531e1c",
+     "set": "m12",
+     "set_name": "Magic 2012",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/5cdd2643-229c-4441-a62a-c34e4b531e1c",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Am12&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/m12?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/650a6831-c352-4ca7-9f8f-43ea99a1cf33/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aeb4188bb-62df-4309-bde1-f66318fe2f05&unique=prints",
+     "collector_number": "23",
+     "digital": false,
+     "rarity": "rare",
+     "flavor_text": "Together the soldiers were like a golden blade, cutting down their enemies and scarring the darkness.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Greg Staples",
+     "artist_ids": [
+      "93d65564-bf00-447b-8406-e2031f03b6b1"
+     ],
+     "illustration_id": "0c1b3c92-2d0d-4333-a927-9b62429d86b0",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 7862,
+     "penny_rank": 720,
+     "prices": {
+      "usd": "0.81",
+      "usd_foil": "4.74",
+      "usd_etched": null,
+      "eur": "0.38",
+      "eur_foil": "2.03",
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=233237&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DHonor%2Bof%2Bthe%2BPure",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DHonor%2Bof%2Bthe%2BPure",
+      "edhrec": "https://edhrec.com/route/?cc=Honor+of+the+Pure"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F47681%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=247989&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/41133?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "b1a3f75d-9a79-4c16-8f50-43a18add4579",
+     "oracle_id": "99eb4f63-841f-4b6b-9794-82bc2ed7b758",
+     "multiverse_ids": [
+      73572
+     ],
+     "mtgo_id": 20918,
+     "mtgo_foil_id": 20919,
+     "tcgplayer_id": 11902,
+     "cardmarket_id": 613,
+     "name": "Spectral Shift",
+     "lang": "en",
+     "released_at": "2004-06-04",
+     "uri": "https://api.scryfall.com/cards/b1a3f75d-9a79-4c16-8f50-43a18add4579",
+     "scryfall_uri": "https://scryfall.com/card/5dn/37/spectral-shift?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T12:06:42Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/b/1/b1a3f75d-9a79-4c16-8f50-43a18add4579.jpg?1783944402",
+      "normal": "https://cards.scryfall.io/normal/front/b/1/b1a3f75d-9a79-4c16-8f50-43a18add4579.jpg?1783944402",
+      "large": "https://cards.scryfall.io/large/front/b/1/b1a3f75d-9a79-4c16-8f50-43a18add4579.jpg?1783944402",
+      "png": "https://cards.scryfall.io/png/front/b/1/b1a3f75d-9a79-4c16-8f50-43a18add4579.png?1783944402",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/b/1/b1a3f75d-9a79-4c16-8f50-43a18add4579.jpg?1783944402",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/b/1/b1a3f75d-9a79-4c16-8f50-43a18add4579.jpg?1783944402",
+      "thumb": "https://cards.scryfall.io/thumb/front/b/1/b1a3f75d-9a79-4c16-8f50-43a18add4579.webp?1783944402",
+      "grid": "https://cards.scryfall.io/grid/front/b/1/b1a3f75d-9a79-4c16-8f50-43a18add4579.webp?1783944402",
+      "display": "https://cards.scryfall.io/display/front/b/1/b1a3f75d-9a79-4c16-8f50-43a18add4579.webp?1783944402",
+      "art": "https://cards.scryfall.io/art/front/b/1/b1a3f75d-9a79-4c16-8f50-43a18add4579.webp?1783944402",
+      "crop": "https://cards.scryfall.io/crop/front/b/1/b1a3f75d-9a79-4c16-8f50-43a18add4579.webp?1783944402"
+     },
+     "mana_cost": "{1}{U}",
+     "cmc": 2,
+     "type_line": "Instant",
+     "oracle_text": "Choose one —\n• Change the text of target spell or permanent by replacing all instances of one basic land type with another. (This effect lasts indefinitely.)\n• Change the text of target spell or permanent by replacing all instances of one color word with another. (This effect lasts indefinitely.)\nEntwine {2} (Choose both if you pay the entwine cost.)",
+     "colors": [
+      "U"
+     ],
+     "color_identity": [
+      "U"
+     ],
+     "keywords": [
+      "Entwine"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "e4bc1b87-5476-463c-8640-4c414ecf1763",
+     "set": "5dn",
+     "set_name": "Fifth Dawn",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/e4bc1b87-5476-463c-8640-4c414ecf1763",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A5dn&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/5dn?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/b1a3f75d-9a79-4c16-8f50-43a18add4579/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A99eb4f63-841f-4b6b-9794-82bc2ed7b758&unique=prints",
+     "collector_number": "37",
+     "digital": false,
+     "rarity": "rare",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "John Avon",
+     "artist_ids": [
+      "798f3932-30e0-4420-aa3f-db4d613f89ca"
+     ],
+     "illustration_id": "b63c2156-7a60-4c32-afbd-820be2501b18",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 19301,
+     "penny_rank": 11828,
+     "prices": {
+      "usd": "0.54",
+      "usd_foil": "6.11",
+      "usd_etched": null,
+      "eur": "0.38",
+      "eur_foil": "1.96",
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=73572&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DSpectral%2BShift",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DSpectral%2BShift",
+      "edhrec": "https://edhrec.com/route/?cc=Spectral+Shift"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F11902%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=613&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/20918?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": true,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {
+     "0": "perm_1",
+     "1": "perm_1"
+    },
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": {
+     "textChange": {
+      "targetId": "perm_1",
+      "replacements": [
+       {
+        "from": "white",
+        "to": "black"
+       }
+      ]
+     },
+     "modalDisabled": {
+      "0": true,
+      "1": false
+     }
+    },
+    "firedAtSnapshot": {
+     "states": [
+      [
+       "perm_1",
+       {
+        "name": "Honor of the Pure",
+        "types": [
+         "Enchantment"
+        ],
+        "supertypes": [],
+        "subtypes": [],
+        "power": null,
+        "toughness": null,
+        "basePower": null,
+        "baseToughness": null,
+        "abilities": [
+         "White creatures you control get +1/+1."
+        ],
+        "colors": [
+         "W"
+        ],
+        "manaValue": 2,
+        "manaCost": "{1}{W}",
+        "isCreature": false,
+        "isToken": false,
+        "isEmblem": false,
+        "isSpell": false,
+        "isZoneCard": false,
+        "oracleText": "White creatures you control get +1/+1.",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "attackingPlayerId": null,
+        "timesAttackedThisTurn": 0,
+        "allPrintedAbilities": [
+         "White creatures you control get +1/+1."
+        ],
+        "cdaAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ]
+     ],
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Honor of the Pure",
+       "imageUri": "https://cards.scryfall.io/small/front/6/5/650a6831-c352-4ca7-9f8f-43ea99a1cf33.jpg?1783941102",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Enchantment"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 1
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    }
+   }
+  ],
+  "firedAbilities": [],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Honor of the Pure",
+    "final": {
+     "name": "Honor of the Pure",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Enchantment"
+     ],
+     "subtypes": [],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "W"
+     ],
+     "abilities": [
+      "Black creatures you control get +1/+1."
+     ],
+     "oracleTextModified": true
+    },
+    "changedBy": {
+     "3": [
+      "Spectral Shift"
+     ]
+    }
+   },
+   {
+    "perm": "Spectral Shift",
+    "final": {
+     "name": "Spectral Shift",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Instant"
+     ],
+     "subtypes": [],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "U"
+     ],
+     "abilities": [
+      "Choose one —",
+      "• Change the text of target spell or permanent by replacing all instances of one basic land type with another.",
+      "• Change the text of target spell or permanent by replacing all instances of one color word with another.",
+      "Entwine {2}"
+     ]
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "3": [
+    "Spectral Shift"
+   ],
+   "7c": [
+    "Honor of the Pure"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Honor of the Pure",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "global",
+    "params": {
+     "power": 1,
+     "toughness": 1
+    }
+   },
+   {
+    "source": "Spectral Shift",
+    "layer": "3",
+    "type": "text_change",
+    "scope": "targeted",
+    "disabled": true,
+    "target": "Honor of the Pure",
+    "params": {
+     "changeType": "land_only",
+     "replacements": [
+      {
+       "from": "white",
+       "to": "black"
+      }
+     ]
+    }
+   },
+   {
+    "source": "Spectral Shift",
+    "layer": "3",
+    "type": "text_change",
+    "scope": "targeted",
+    "target": "Honor of the Pure",
+    "params": {
+     "changeType": "color_only",
+     "replacements": [
+      {
+       "from": "white",
+       "to": "black"
+      }
+     ]
+    }
+   }
+  ]
+ }
+}

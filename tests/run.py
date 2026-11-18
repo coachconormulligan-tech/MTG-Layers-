@@ -32,7 +32,8 @@ Asserts are the hand-written facts the fixture exists to protect, checked on eve
         reference picker ("choose…": Belligerent Yearling, Goblin War Cry's chosen creature):
         { "kind": "ref" }; the player picker of "target player / target
         opponent gains control of", of "creatures target opponent controls …" and of an "Enchant
-        player / opponent" Aura: { "kind": "players" }, by player name)
+        player / opponent" Aura: { "kind": "players" }, by player name; the text-change pop-up's
+        target list ("Change the text of target …": Sleight of Mind): { "kind": "text" })
     { "zoneCard": { "name": "Regal Bunnicorn", "zone": "graveyard" }, "final": { "power": 1 },
       "cdaAbilities": ["This card's power and toughness are each equal to …"] }
         (a graveyard / exile / command-zone card as the Details pop-up evaluates it, "you" being

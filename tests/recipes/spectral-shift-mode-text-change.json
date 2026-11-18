@@ -1,0 +1,14 @@
+{
+  "name": "Spectral Shift — each mode is a text change of its own kind",
+  "notes": "Memory: project_text_change_audit_2026-11-18. The KNOWN_ABILITY_EFFECTS lookup never matched a mode's bullet line, so neither mode had an effect. The bullet is now dropped for the lookup and the modal pass gives each its mode; the pop-up, getEffectInfo and setTextChangeConfig take the mode picked (_textChangeEffect). With the colour mode picked, white becomes black on Honor of the Pure.",
+  "steps": [
+    { "add": "Honor of the Pure", "as": "honor" },
+    { "add": "Spectral Shift", "as": "shift", "spell": true },
+    { "call": ["setModalModeSelections", "@shift", [1]] },
+    { "call": ["setTextChangeConfig", "@shift", "@honor", [{ "from": "white", "to": "black" }]] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Spectral Shift", "kind": "text" }, "are": ["Honor of the Pure"] },
+    { "perm": "Honor of the Pure", "final": { "abilities": ["Black creatures you control get +1/+1."] } }
+  ]
+}

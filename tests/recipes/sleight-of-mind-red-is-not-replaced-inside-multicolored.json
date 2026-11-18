@@ -1,0 +1,12 @@
+{
+  "name": "Sleight of Mind — red to blue leaves \"monocolored\" and \"multicolored\" alone",
+  "notes": "Memory: project_text_change_audit_2026-11-18. The text change replaced the word anywhere it appeared, so red became blue inside \"monocolored\" and \"multicolored\" (\"monocoloblue\"). A colour word is now replaced whole or after \"non\", a basic land type at the start of a word, a creature type whole (engine-apply.js, CR 612.2).",
+  "steps": [
+    { "add": "General Ferrous Rokiric", "as": "gen" },
+    { "add": "Sleight of Mind", "as": "som", "spell": true },
+    { "call": ["setTextChangeConfig", "@som", "@gen", [{ "from": "red", "to": "blue" }]] }
+  ],
+  "asserts": [
+    { "perm": "General Ferrous Rokiric", "final": { "abilities": ["Hexproof from monocolored", "Whenever you cast a multicolored spell, create a 4/4 blue and white Golem artifact creature token."] } }
+  ]
+}

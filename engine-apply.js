@@ -1099,7 +1099,16 @@ function applyEffect(state, effect, context) {
             return pluralTo.toLowerCase();
           });
         }
-        const regex = new RegExp(escaped, 'gi');
+        // Only the word itself (CR 612.2): a colour word whole or after "non" ("nonblack"), not
+        // inside another ("multicolored", "entered": "red" made "multicoloblue"); a basic land type
+        // at the start of a word ("Islandwalk", "Forests"; not "explains"); a creature type whole
+        // (its plurals are pairs of their own; "Rat" is not in "separate").
+        const _isColorWord = /^(?:white|blue|black|red|green)$/i.test(from);
+        const _isLandWord = /^(?:plains|islands?|swamps?|mountains?|forests?)$/i.test(from);
+        const regex = _isColorWord ? new RegExp('(?:(?<=\\bnon)|(?<![a-z]))' + escaped + '(?![a-z])', 'gi')
+          : _isLandWord ? new RegExp('(?<![a-z])' + escaped, 'gi')
+          : changeType === 'creature_type' ? new RegExp('(?<![a-z])' + escaped + '(?![a-z])', 'gi')
+          : new RegExp(escaped, 'gi');
         text = text.replace(regex, (match) => {
           if (match[0] === match[0].toUpperCase()) return to.charAt(0).toUpperCase() + to.slice(1);
           return to.toLowerCase();

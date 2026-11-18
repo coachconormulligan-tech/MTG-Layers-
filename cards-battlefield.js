@@ -2735,8 +2735,10 @@ const Battlefield = {
      (e.g. Balduvian Shaman's Layer 6 ADD_ABILITY). */
   setTextChangeConfig(effectSourceId, targetId, replacements) {
     this._invalidate();
+    // (Of a modal spell, the picked mode's: Spectral Shift's other mode is of another kind of word.)
+    const anyOn = this.effects.some(e => e.sourceId === effectSourceId && e.type === EFFECT_TYPE.TEXT_CHANGE && !e.disabled);
     this.effects.forEach(e => {
-      if (e.sourceId === effectSourceId && e.type === EFFECT_TYPE.TEXT_CHANGE) {
+      if (e.sourceId === effectSourceId && e.type === EFFECT_TYPE.TEXT_CHANGE && !(anyOn && e.disabled)) {
         if (targetId !== undefined) e.targetId = targetId;
         if (replacements !== undefined) e.params.replacements = replacements;
       }

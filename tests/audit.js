@@ -292,6 +292,8 @@ function classifyUnitText0(text) {
   if (exch) return exch;
   const selfCopy = classifySelfCopy(text);
   if (selfCopy) return selfCopy;
+  const textChange = classifyTextChange(text);
+  if (textChange) return textChange;
   if (hits.length > 1) return classifyTargets(text, 'multiple-targets');
   if (hits[0][0] === 'targets') return { skip: 'targets-verb' };
   const idx = hits[0].index;
@@ -1808,6 +1810,7 @@ function auditUnit(ctx, u, fire) {
     if (u.attachPair) ctx = addAttachPairWitnesses(ctx);
     // (Not for a mode of a modal spell: it was cast, and its board taken, before them.)
     if ((u.exchange || u.selfCopy) && u.modeIndex === undefined) ctx = addTargetingWitnesses(ctx);
+    if (u.textChange && u.modeIndex === undefined) ctx = addTextChangeWitnesses(ctx);
     try {
       const pseudo = fire();
       if (!pseudo) return { skip: 'fire-returned-nothing' };
@@ -1817,7 +1820,7 @@ function auditUnit(ctx, u, fire) {
       u.findings.push({ check: 'check2', code: 'crash', error: errInfo('fire ' + u.kind, e) });
       return { audited: true };
     }
-    try { return u.selfCopy ? auditFiredSelfCopy(ctx, u, id) : u.exchange ? auditFiredExchange(ctx, u, id) : u.attachPair ? auditFiredAttachPair(ctx, u, id) : u.modePair ? auditFiredModePair(ctx, u, id) : u.playerGroup ? auditFiredPlayerGroup(ctx, u, id) : u.targets ? auditFiredTargets(ctx, u, id) : auditFired(ctx, u, id); }
+    try { return u.textChange ? auditFiredTextChange(ctx, u, id) : u.selfCopy ? auditFiredSelfCopy(ctx, u, id) : u.exchange ? auditFiredExchange(ctx, u, id) : u.attachPair ? auditFiredAttachPair(ctx, u, id) : u.modePair ? auditFiredModePair(ctx, u, id) : u.playerGroup ? auditFiredPlayerGroup(ctx, u, id) : u.targets ? auditFiredTargets(ctx, u, id) : auditFired(ctx, u, id); }
     catch (e) { u.findings.push({ check: 'check2', code: 'crash', error: errInfo('audit', e) }); return { audited: true }; }
   });
 }
@@ -1836,6 +1839,7 @@ function newUnit(kind, index, label, text, cls) {
     phrase: cls.targets.map(t => t.phrase).join(' / '), targetIndex: cls.targets[0].targetIndex });
   if (cls.origin) u.origin = cls.origin;
   if (cls.selfCopy) Object.assign(u, { selfCopy: cls.selfCopy, targetIndex: cls.selfCopy.idx, phrase: cls.selfCopy.phrase });
+  if (cls.textChange) Object.assign(u, { textChange: cls.textChange, targetIndex: cls.textChange.idx, phrase: cls.textChange.phrase });
   if (cls.exchange) Object.assign(u, { exchange: cls.exchange, targetIndex: (cls.exchange.a || cls.exchange.b).idx,
     phrase: cls.exchange.a ? cls.exchange.a.phrase + ' / ' + cls.exchange.b.phrase : cls.exchange.self + ' / ' + cls.exchange.b.phrase });
   if (cls.playerGroup) Object.assign(u, { playerGroup: cls.playerGroup, phrase: cls.playerGroup.clauses.map(c => c.phrase).join(' / ') });
@@ -2023,7 +2027,8 @@ function exchangePairOk(ctx, ex, a, b) {
    from the card's colour of the opponent's, protection from another colour of yours. Protection is
    judged by the audit (ctx.judgeProtection). */
 function addTargetingWitnesses(ctx) {
-  const src = ctx.preStates.get(ctx.sourceId) || {};
+  // (A spell's ctx.preStates is the board before it was cast: its colours are read from the board now.)
+  const src = ctx.preStates.get(ctx.sourceId) || Battlefield.getAllFinalStates().get(ctx.sourceId) || {};
   const added = [];
   for (const w of auraWitnesses(stateColors(src))) {
     const c = w.controller === 'p2' ? Battlefield.players[1].id : 'player_0';
@@ -2265,6 +2270,131 @@ function auditFiredSelfCopy(ctx, u, id) {
   return { audited: true };
 }
 
+/* ─── "Change the text of target … by replacing all instances of one color word / basic land type /
+   creature type with another" ───
+   (Sleight of Mind, Magical Hack, Mind Bend, Crystal Spray, Artificial Evolution, Balduvian Shaman.)
+   The site picks the target and the words in the text-change pop-up (ui-modal-text-change.js),
+   whose list is getTextChangeCandidates (cards-targeting.js), and sets them with
+   Battlefield.setTextChangeConfig. Judged with the exchange's witnesses plus three enchantments
+   (a white one of each player's, one of yours with cumulative upkeep). Check 2: the list against
+   the target's words ("spell or" dropped: no spell is on the board). Check 1: nothing changes
+   before a pick; each listed permanent picked with a word of its own of the kinds the text names
+   (read here, from its text and type line: a colour word, a basic land type, a creature type)
+   replaced by another must change it alone, and clearing the pick must put the board back. */
+const TEXT_CHANGE_RE = /\bchange the text of target ([^.;]*?) by replacing all instances of one (color word|basic land type|creature type) with another(?: or one (color word|basic land type|creature type) with another)?/;
+function classifyTextChange(text) {
+  const lower = String(text || '').replace(/’/g, "'").replace(/["“][^"”]*["”]/g, (q) => 'q'.repeat(q.length)).toLowerCase();
+  const m = lower.match(TEXT_CHANGE_RE);
+  if (!m) return null;
+  const idx = m.index + m[0].indexOf('target');
+  const kinds = [m[2], m[3]].filter(Boolean).map(k => k === 'color word' ? 'color' : k === 'basic land type' ? 'land' : 'creature');
+  const phrase = m[1].replace(/^spell or /, '').replace(/ or spell$/, '')
+    .replace(/\s+that doesn't have ([a-z ]+)$/, ' without $1').trim();
+  if (/\bspells?\b/.test(phrase)) return { skip: 'text-change: not-a-permanent' };
+  return { textChange: { phrase, idx, kinds } };
+}
+
+function textChangeWitnesses() {
+  const mk = (name, text, controller, role) => ({ role, controller, card: {
+    name, layout: 'normal', type_line: 'Enchantment', oracle_text: text, mana_cost: '{1}{W}', cmc: 2,
+    colors: ['W'], color_identity: ['W'], keywords: [] } });
+  return [
+    mk('Audit White Banner', 'Protection from red', 'p1', 'your white enchantment'),
+    mk('Audit Rival Banner', 'Protection from red', 'p2', "opponent's white enchantment"),
+    mk('Audit Ancient Banner', 'Cumulative upkeep {1}', 'p1', 'your white enchantment with cumulative upkeep'),
+  ];
+}
+
+function addTextChangeWitnesses(ctx) {
+  const added = [];
+  for (const w of textChangeWitnesses()) {
+    const c = w.controller === 'p2' ? Battlefield.players[1].id : 'player_0';
+    Battlefield.activePlayerId = c;
+    const p = Battlefield.addPermanent(JSON.parse(JSON.stringify(w.card)), { suppressPrompt: true, controller: c, owner: c });
+    roleOf.set(p.id, w.role);
+    added.push(p.id);
+  }
+  Battlefield.activePlayerId = 'player_0';
+  Battlefield._invalidate();
+  const c2 = Object.assign({}, ctx, { universe: ctx.universe.concat(added.map(x => Battlefield.getPermById(x))) });
+  return addTargetingWitnesses(c2);
+}
+
+const TC_COLORS = ['white', 'blue', 'black', 'red', 'green'];
+const TC_LANDS = ['Plains', 'Island', 'Swamp', 'Mountain', 'Forest'];
+// A word of the target's own of one of the kinds the text names, and the word it becomes.
+function textChangeWord(st, perm, kinds) {
+  const text = String((st && st.oracleText) || perm.oracleText || '');
+  const subs = (st && st.subtypes) || perm.printedSubtypes || [];
+  const types = (st && st.types) || perm.printedTypes || [];
+  for (const k of kinds) {
+    if (k === 'color') {
+      const m = text.match(/(?:^|[^a-z]|non)(white|blue|black|red|green)(?![a-z])/i);
+      if (m) { const from = m[1].toLowerCase(); return { from, to: TC_COLORS.find(c => c !== from) }; }
+    } else if (k === 'land') {
+      const from = TC_LANDS.find(l => subs.includes(l) || new RegExp('\\b' + l, 'i').test(text));
+      if (from) return { from, to: TC_LANDS.find(l => l !== from) };
+    } else if (k === 'creature' && types.includes('Creature')) {
+      const from = subs.find(s => TypeCatalog.creatureTypes && TypeCatalog.creatureTypes.has(s));
+      if (from) return { from, to: from === 'Goblin' ? 'Elf' : 'Goblin' };
+    }
+  }
+  return null;
+}
+
+function auditFiredTextChange(ctx, u, id) {
+  const finding = (check, code, extra) => u.findings.push(Object.assign({ check, code }, extra || {}));
+  const tc = u.textChange;
+  const before = ctx.before;
+  const info = getEffectInfo(id, Battlefield.getAllFinalStates().get(id));
+  if (!info.hasText) {
+    u.pickerKind = getTargetPickerKind(id, Battlefield.getAllFinalStates().get(id)).kind;
+    finding('check2', 'no-text-change-picker', { actual: u.pickerKind });
+    return { audited: true };
+  }
+  u.pickerKind = 'text ' + info.textChangeType;
+
+  /* Check 2 */
+  const list = getTextChangeCandidates(id).candidates.map(c => c.id);
+  u.actual = rolesOf(list);
+  const exp = expectedForTarget(ctx, u, { phrase: tc.phrase, targetIndex: tc.idx, plural: false });
+  if (exp.unknown) u.phraseUnknown = exp.unknown;
+  else {
+    u.expected = rolesOf(exp.ids);
+    const missing = exp.ids.filter(x => !list.includes(x)), extra = list.filter(x => !exp.unjudged.includes(x) && !exp.ids.includes(x));
+    if (!list.length && exp.ids.length) finding('check2', 'empty-list', { missing: rolesOf(missing), extra: [] });
+    else if (missing.length || extra.length) finding('check2', 'list-mismatch', { missing: rolesOf(missing), extra: rolesOf(extra) });
+  }
+
+  /* Check 1 */
+  u.check1 = { noTarget: diffSummaries(before, summarizeBoard()).map(c => ({ role: c.role, what: c.what })), perTarget: [], via: 'text pop-up' };
+  if (u.check1.noTarget.length) finding('check1', 'changes-with-no-target', { changed: u.check1.noTarget });
+  const from = summarizeBoard();
+  const others = [], noOp = [], notUndone = [], noWord = [];
+  for (const x of list) {
+    const label = roleName(x);
+    const word = textChangeWord(ctx.preStates.get(x), Battlefield.getPermById(x), tc.kinds);
+    if (!word) { noWord.push(label); continue; }
+    Battlefield.setTextChangeConfig(id, x, [word]);
+    Battlefield.evaluate();
+    const changed = diffSummaries(from, summarizeBoard());
+    u.check1.perTarget.push({ target: label, word: word.from + ' → ' + word.to, changed: changed.map(c => ({ role: c.role, what: c.what })) });
+    if (!changed.some(c => c.id === x)) noOp.push(label + ' (' + word.from + ')');
+    const bad = changed.filter(c => c.id !== x);
+    if (bad.length) others.push({ target: label, others: bad.map(c => ({ role: c.role, what: c.what })) });
+    Battlefield.setTextChangeConfig(id, '', []);
+    Battlefield._invalidate();
+    Battlefield.evaluate();
+    const left = diffSummaries(from, summarizeBoard());
+    if (left.length) notUndone.push({ target: label, left: left.map(c => ({ role: c.role, what: c.what })) });
+  }
+  if (noWord.length) u.infos.push({ code: 'no-word-to-change', roles: noWord });
+  if (others.length) finding('check1', 'target-changes-others', { examples: others.slice(0, 3), count: others.length });
+  if (noOp.length) finding('check1', 'text-change-changes-nothing', { examples: noOp.slice(0, 4), count: noOp.length });
+  if (notUndone.length) finding('check1', 'text-change-not-undone', { examples: notUndone.slice(0, 3), count: notUndone.length });
+  return { audited: true };
+}
+
 /* ─── Modal spells ───
    The Modes pop-up (ui-abilities.js applyModalModePopup) picks the modes: a repeatable spell
    ("you may choose the same mode more than once") by counts, any other by the set of active
@@ -2301,7 +2431,7 @@ function auditModes(rec, perm, ctx, run, skip, spellText) {
     const label = 'mode ' + (mi + 1);
     const text = stripReminder(modeText);
     const cls = classifyUnitText(text);
-    if (!cls.singular && !cls.targets && !cls.playerGroup && !cls.exchange && !cls.selfCopy) { skip('spell', undefined, label, text, 'mode: ' + cls.skip); return; }
+    if (!cls.singular && !cls.targets && !cls.playerGroup && !cls.exchange && !cls.selfCopy && !cls.textChange) { skip('spell', undefined, label, text, 'mode: ' + cls.skip); return; }
     if (cls.singular) oneTarget.push({ mi, text, phrase: cls.phrase, targetIndex: cls.targetIndex, excludeSource: cls.excludeSource, max: 1 });
     else if (cls.expectKind === 'multi' && cls.targets.length === 1) {
       const t = cls.targets[0];
@@ -3442,7 +3572,7 @@ function runQuotedUnit(o) {
       const t = stripReminder(plan.text);
       const cls = classifyUnitText(t);
       if (!cls.singular && !cls.targets && !cls.playerGroup) { skipQ(qi, label, t, cls.skip); continue; }
-      if (cls.exchange || cls.selfCopy) { skipQ(qi, label, t, cls.exchange ? 'exchange' : 'self-copy'); continue; }
+      if (cls.exchange || cls.selfCopy || cls.textChange) { skipQ(qi, label, t, cls.exchange ? 'exchange' : cls.textChange ? 'text-change' : 'self-copy'); continue; }
       const u = newUnit('quoted', qi, label, t, cls);
       u.bearer = roleName(bearer.id);
       Object.defineProperty(u, 'fullText', { value: stripReminder(ab.fullText || ''), enumerable: false });
@@ -3515,11 +3645,11 @@ function auditFace(card, faceIndex) {
     const text = stripReminder(face.oracle_text || '');
     if (perm.isModalSpell) { auditModes(rec, perm, ctx, run, skip, text); quotedLater(); return rec; }
     const cls = classifyUnitText(text);
-    if (!cls.singular && !cls.targets && !cls.playerGroup && !cls.attachPair && !cls.exchange && !cls.selfCopy) { if (cls.skip !== 'target-in-quote') skip('spell', undefined, '', text, cls.skip); quotedLater(); return rec; }
+    if (!cls.singular && !cls.targets && !cls.playerGroup && !cls.attachPair && !cls.exchange && !cls.selfCopy && !cls.textChange) { if (cls.skip !== 'target-in-quote') skip('spell', undefined, '', text, cls.skip); quotedLater(); return rec; }
     const u = newUnit('spell', undefined, '', text, cls);
     // Casting happened in addAuditedCard; the spell's own effects are the unit's.
     // (An attach pair's witnesses come before the spell: it is cast again once they are there.)
-    if (cls.attachPair || cls.exchange || cls.selfCopy) run(u, () => { Battlefield.removePermanent(perm.id); return addAuditedCard(card, faceIndex, true); });
+    if (cls.attachPair || cls.exchange || cls.selfCopy || cls.textChange) run(u, () => { Battlefield.removePermanent(perm.id); return addAuditedCard(card, faceIndex, true); });
     else run(u, () => perm);
     quotedLater();
     return rec;
@@ -3539,7 +3669,7 @@ function auditFace(card, faceIndex) {
       if (plan.skip) { skip(kind, ab.index, '', stripReminder(ab.effectText), plan.skip); continue; }
       const text = stripReminder(plan.text);
       const cls = classifyUnitText(text);
-      if (!cls.singular && !cls.targets && !cls.playerGroup && !cls.attachPair && !cls.exchange && !cls.selfCopy) { if (cls.skip !== 'target-in-quote') skip(kind, ab.index, plan.label, text, cls.skip); continue; }
+      if (!cls.singular && !cls.targets && !cls.playerGroup && !cls.attachPair && !cls.exchange && !cls.selfCopy && !cls.textChange) { if (cls.skip !== 'target-in-quote') skip(kind, ab.index, plan.label, text, cls.skip); continue; }
       if (cls.attach && !attachIsSource(cls.attach, kind, stripReminder(ab.fullText || ''), typeLine, rec.name, text)) { skip(kind, ab.index, plan.label, text, 'attach-not-the-source'); continue; }
       const u = newUnit(kind, ab.index, plan.label, text, cls);
       // (Not written to the raw output.)

@@ -269,16 +269,23 @@ const KNOWN_ABILITY_EFFECTS = {
       desc: 'This creature has the full text, name, mana cost, color, types, P/T of the top creature card of your graveyard (and adds its own abilities).' },
   ],
 
-  /* Balduvian Shaman: color text change on white enchantment + grants cumulative upkeep */
-  '{t}: change the text of target white enchantment you control that doesn\'t have cumulative upkeep by replacing all instances of one color word with another. that enchantment gains "cumulative upkeep {1}."': [
+  /* Balduvian Shaman: color text change on white enchantment + grants cumulative upkeep.
+     The fired ability's text, as _addAbilityPseudo writes it (no "{T}: ", "That enchantment" read as
+     its target): until it is activated it does nothing. */
+  'change the text of target white enchantment you control that doesn\'t have cumulative upkeep by replacing all instances of one color word with another. target white enchantment you control gains "cumulative upkeep {1}."': [
+    // (The restriction on the effects themselves, as the target pickers and _pinAbilityEffectsToSource
+    // read it: unpicked, the cumulative upkeep landed on the Shaman.)
     { layer: '3', type: EFFECT_TYPE.TEXT_CHANGE,
-      params: { changeType: 'color_only', replacements: [],
-                targetRestriction: (p) => p.types.includes('Enchantment') && p.colors.includes('W') && !p.oracleText.toLowerCase().includes('cumulative upkeep') },
-      appliesTo: null, scope: 'targeted',
+      params: { changeType: 'color_only', replacements: [] },
+      targetRestriction: (p) => (p.types || []).includes('Enchantment') && (p.colors || []).includes('W') &&
+        !(p.abilities || []).some(a => /^cumulative upkeep\b/i.test(String(a))),
+      appliesTo: null, scope: 'targeted', youControlRequired: true,
       desc: 'Change one color word in target white enchantment\'s text to another. (Must not have cumulative upkeep.)' },
     { layer: '6', type: EFFECT_TYPE.ADD_ABILITY,
       params: { ability: 'Cumulative upkeep {1}' },
-      appliesTo: null, scope: 'targeted',
+      targetRestriction: (p) => (p.types || []).includes('Enchantment') && (p.colors || []).includes('W') &&
+        !(p.abilities || []).some(a => /^cumulative upkeep\b/i.test(String(a))),
+      appliesTo: null, scope: 'targeted', youControlRequired: true,
       desc: 'That enchantment gains "Cumulative upkeep {1}".' },
   ],
 

@@ -1,0 +1,16 @@
+{
+  "name": "Sleight of Mind — text-change list leaves out shroud, an opponent's hexproof and protection from blue",
+  "notes": "Memory: project_text_change_audit_2026-11-18. The text-change pop-up built its own target list (every permanent but the source, plus the effect's and Enchant restrictions) with no targeting rules. It is now getTextChangeCandidates (cards-targeting.js), the single picker's list: shroud (Argothian Enchantress), an opponent's hexproof (the opponent's Gladecover Scout) and protection from blue (Karoo Meerkat) are not offered; your own hexproof Gladecover Scout is.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears" },
+    { "add": "Argothian Enchantress" },
+    { "add": "Gladecover Scout", "as": "mine" },
+    { "add": "Gladecover Scout", "as": "theirs", "controller": "p2" },
+    { "add": "Karoo Meerkat", "controller": "p2" },
+    { "add": "Sleight of Mind", "spell": true }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Sleight of Mind", "kind": "text" }, "are": ["Gladecover Scout", "Grizzly Bears"] }
+  ]
+}

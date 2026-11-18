@@ -1,0 +1,20 @@
+{
+  "name": "Balduvian Shaman — fired text change lists only a white enchantment you control without cumulative upkeep",
+  "notes": "Memory: project_text_change_audit_2026-11-18. The KNOWN_ABILITY_EFFECTS entry carried the '{T}: ' cost, so it matched the card's printed line (a static text change and cumulative upkeep on the card itself) and never the fired ability; once matched as written by _addAbilityPseudo ('That enchantment' read as its target), the restriction is on the effects themselves with youControlRequired. Honor of the Pure is the only valid target: Royal Decree has cumulative upkeep, Glorious Anthem is the opponent's, Bad Moon is black. Nothing changes until a target is picked (the cumulative upkeep used to land on the Shaman); then white becomes black on Honor of the Pure and it gains cumulative upkeep.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Honor of the Pure", "as": "honor" },
+    { "add": "Royal Decree", "as": "decree" },
+    { "add": "Bad Moon", "as": "moon" },
+    { "add": "Glorious Anthem", "as": "anthem", "controller": "p2" },
+    { "add": "Balduvian Shaman", "as": "shaman" },
+    { "fire": "@shaman", "activated": 0, "as": "a" },
+    { "call": ["setTextChangeConfig", "@a", "@honor", [{ "from": "white", "to": "black" }]] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Balduvian Shaman (activated)", "kind": "text" }, "are": ["Honor of the Pure"] },
+    { "perm": "Balduvian Shaman", "final": { "abilities": { "$excludes": ["Cumulative upkeep {1}"] } } },
+    { "perm": "Honor of the Pure", "final": { "abilities": ["Black creatures you control get +1/+1.", "Cumulative upkeep {1}"] } },
+    { "perm": "Bad Moon", "final": { "abilities": ["Black creatures get +1/+1."] } }
+  ]
+}

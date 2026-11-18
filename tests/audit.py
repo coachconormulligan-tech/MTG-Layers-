@@ -132,6 +132,17 @@ do") and nothing else ("... and that creature each get +2/+0" allows the copied 
 name unless an "except its name is" keeps its own (copy-name-wrong), and clearing the pick must put the
 board back (copy-not-undone). A copy of a card in a graveyard or exile and a group's copy are skipped.
 
+"Change the text of target ... by replacing all instances of one color word / basic land type / creature
+type with another" (Sleight of Mind, Magical Hack, Mind Bend, Artificial Evolution, Balduvian Shaman) is a
+unit too (classifyTextChange, auditFiredTextChange): the text-change pop-up picks the target and the words
+(getTextChangeCandidates, Battlefield.setTextChangeConfig). Judged with the exchange's witnesses plus a
+white enchantment of each player's and one of yours with cumulative upkeep. Check 2: the pop-up is there
+(no-text-change-picker) and lists what the target's words allow, "spell or" left out (empty-list,
+list-mismatch). Check 1: nothing changes before a pick; each listed permanent with a word of its own of the
+kinds the text names (read by the audit from its text and type line) replaced by another must change it
+(text-change-changes-nothing) and nothing else (target-changes-others), and clearing the pick must put
+the board back (text-change-not-undone).
+
 A group that one picked player controls is a unit too: a spell or ability whose only target is "target
 player / target opponent" and whose text gives "<group> target opponent / that player / they controls"
 a continuous effect or a can't-rule ("Creatures target opponent controls get -1/-1", "Gain control of
@@ -300,6 +311,9 @@ CODES = [
     ('exchange-not-swapped', "A pair of two players' permanents does not swap their two controllers."),
     ('exchange-not-undone', "After an exchange's picks are cleared, the board is not as before."),
     ('no-copy-picker', '"This creature becomes a copy of target ..." gets no copy picker.'),
+    ('no-text-change-picker', '"Change the text of target ... by replacing ..." gets no text-change pop-up.'),
+    ('text-change-changes-nothing', 'A listed permanent with a word of the kind the text names replaced by another does not change.'),
+    ('text-change-not-undone', "After the text-change pop-up's pick is cleared, the board is not as before."),
     ('copy-changes-nothing', 'No permanent the copy picker lists makes the card a copy of it, even with the toggles answered Yes.'),
     ('copy-name-wrong', 'The card made a copy does not have the copied name, and no "except its name is" keeps its own.'),
     ('copy-not-undone', "After the copy picker's pick is cleared, the board is not as before."),
@@ -500,13 +514,13 @@ def _finding_detail(f):
     if c == 'pair-list-mismatch':
         return '; '.join('with A %s: missing %s; extra %s' % (e['a'], roles_key(e.get('missing', [])), roles_key(e.get('extra', [])))
                          for e in f.get('examples', [])[:2])
-    if c in ('exchange-not-swapped', 'exchange-not-undone', 'copy-name-wrong', 'copy-not-undone'):
+    if c in ('exchange-not-swapped', 'exchange-not-undone', 'copy-name-wrong', 'copy-not-undone', 'text-change-changes-nothing', 'text-change-not-undone'):
         return '; '.join(e if isinstance(e, str) else e.get('target', '') for e in f.get('examples', [])[:3])
     if c == 'exchange-mode-mismatch':
         return 'text: %s, site: %s' % (f.get('expected'), f.get('actual'))
     if c == 'copy-changes-nothing':
         return 'tried %d' % f.get('tried', 0)
-    if c in ('exchange-self-not-the-card', 'no-exchange-picker', 'no-copy-picker'):
+    if c in ('exchange-self-not-the-card', 'no-exchange-picker', 'no-copy-picker', 'no-text-change-picker'):
         return 'site: %s' % f.get('actual')
     if c == 'player-changes-nothing':
         return ', '.join(f.get('players', []))

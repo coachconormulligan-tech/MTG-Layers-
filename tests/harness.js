@@ -193,6 +193,15 @@ function targetCandidateLists() {
         candidates: r.blocked ? [] : r.candidates.map(c => c.perm.name + (c.perm.label ? ' ' + c.perm.label : '')).sort() });
     });
   }
+  // The text-change pop-up's "Target Permanent" list (getTextChangeCandidates): "kind": "text".
+  // ("Change the text of target spell or permanent by replacing …": Sleight of Mind, Balduvian Shaman.)
+  for (const p of Battlefield.permanents) {
+    if (!_textChangeEffect(p.id)) continue;
+    const ce = _textChangeEffect(p.id).params.changeType;
+    if (ce !== 'color_or_land' && ce !== 'color_only' && ce !== 'land_only' && ce !== 'creature_type') continue;
+    out.push({ perm: p.name + (p.label ? ' ' + p.label : ''), kind: 'text',
+      candidates: getTextChangeCandidates(p.id).candidates.map(c => c.perm.name + (c.perm.label ? ' ' + c.perm.label : '')).sort() });
+  }
   // The exchange-control modal's two lists (getExchangeControlCandidates): "slot" "a", and "b" as
   // narrowed by the current Permanent A, if any. "Exchange control of this creature and target
   // creature …" (Gilded Drake) has only "b", A being the source.

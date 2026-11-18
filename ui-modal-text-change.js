@@ -9,7 +9,7 @@ let _textModalSelectedWord = null;
 
 function openTextChangeModal(permId) {
   _textModalSourceId = permId;
-  const effect = Battlefield.effects.find(e => e.sourceId === permId && e.type === EFFECT_TYPE.TEXT_CHANGE);
+  const effect = _textChangeEffect(permId);
   if (!effect) return;
   const changeType = effect.params.changeType || 'color_or_land';
   if (changeType === 'color_global') return openSwirlModal(permId, effect);
@@ -27,30 +27,9 @@ function openStandardTextModal(permId, effect) {
 
   const overlay = _createModalOverlay('text-modal-overlay', closeTextChangeModal);
 
-  let otherPerms = Battlefield.permanents.filter(p => {
-    if (!_isPermanent(p) || p.id === permId) return false;
-    const stack = Battlefield.getStack(p.id);
-    if (stack && stack[0] !== p.id) return false; // non-top mutate members are not valid targets
-    return true;
-  });
-  if (effect.params.targetRestriction) {
-    const finalStates = Battlefield.getAllFinalStates();
-    otherPerms = otherPerms.filter(p => {
-      const fs = finalStates.get(p.id);
-      const state = fs || createBaseState(p);
-      return effect.params.targetRestriction(state);
-    });
-  }
-  // Also apply aura restriction from "Enchant [type]" line
-  const _auraR = effect.auraRestriction
-    || Battlefield.effects.find(e => e.sourceId === permId && e.auraRestriction)?.auraRestriction
-    || Battlefield.getPermById(permId)?._auraRestriction;
-  if (_auraR) {
-    otherPerms = otherPerms.filter(p => {
-      const st = { types: p.printedTypes || [], supertypes: p.printedSupertypes || [], subtypes: p.printedSubtypes || [] };
-      return _auraR(st);
-    });
-  }
+  // The list is the single picker's (cards-targeting.js): Enchant and target restrictions,
+  // "you control", shroud, an opponent's hexproof and protection from the source.
+  const otherPerms = getTextChangeCandidates(permId).candidates.map(c => c.perm);
 
   overlay.innerHTML = _modalShell({
     title: 'Configure Text Change',
@@ -375,31 +354,9 @@ function openCreatureTypeModal(permId, effect) {
   const overlay = _createModalOverlay('text-modal-overlay', closeTextChangeModal);
   overlay.dataset.excludeTypes = JSON.stringify(excludeTypes);
 
-  let otherPerms = Battlefield.permanents.filter(p => {
-    if (!_isPermanent(p) || p.id === permId) return false;
-    const stack = Battlefield.getStack(p.id);
-    if (stack && stack[0] !== p.id) return false; // non-top mutate members are not valid targets
-    return true;
-  });
-  // Apply target restriction from known ability params (e.g. New Blood: "target creature")
-  if (effect.params.targetRestriction) {
-    const finalStates = Battlefield.getAllFinalStates();
-    otherPerms = otherPerms.filter(p => {
-      const fs = finalStates.get(p.id);
-      const state = fs || createBaseState(p);
-      return effect.params.targetRestriction(state);
-    });
-  }
-  // Apply aura restriction from "Enchant [type]" line
-  const _auraR2 = effect.auraRestriction
-    || Battlefield.effects.find(e => e.sourceId === permId && e.auraRestriction)?.auraRestriction
-    || Battlefield.getPermById(permId)?._auraRestriction;
-  if (_auraR2) {
-    otherPerms = otherPerms.filter(p => {
-      const st = { types: p.printedTypes || [], supertypes: p.printedSupertypes || [], subtypes: p.printedSubtypes || [] };
-      return _auraR2(st);
-    });
-  }
+  // The list is the single picker's (cards-targeting.js): Enchant and target restrictions,
+  // "you control", shroud, an opponent's hexproof and protection from the source.
+  const otherPerms = getTextChangeCandidates(permId).candidates.map(c => c.perm);
 
   overlay.innerHTML = _modalShell({
     title: 'Creature Type Text Change',
@@ -619,7 +576,7 @@ function addCreatureTypeReplacement() {
 /* --- Common helpers --- */
 function getTextChangeMaxReps() {
   if (!_textModalSourceId) return 1;
-  const effect = Battlefield.effects.find(e => e.sourceId === _textModalSourceId && e.type === EFFECT_TYPE.TEXT_CHANGE);
+  const effect = _textChangeEffect(_textModalSourceId);
   return effect?.params?.maxReplacements || 1;
 }
 
@@ -663,7 +620,7 @@ function updateToOptions() {
   const fromSelect = document.getElementById('text-from-select');
   const toSelect = document.getElementById('text-to-select');
   if (!fromSelect || !toSelect) return;
-  const effect = Battlefield.effects.find(e => e.sourceId === _textModalSourceId && e.type === EFFECT_TYPE.TEXT_CHANGE);
+  const effect = _textChangeEffect(_textModalSourceId);
   const changeType = effect?.params.changeType || 'color_or_land';
   const options = getReplacementOptionsForWord(fromSelect.value, changeType);
   toSelect.innerHTML = options.map(w => `<option value="${w}">${w}</option>`).join('');
@@ -676,7 +633,7 @@ function textChangeTargetSelected() {
   const perm = Battlefield.getPermById(targetId);
   if (!perm) { container.innerHTML = ''; return; }
 
-  const effect = Battlefield.effects.find(e => e.sourceId === _textModalSourceId && e.type === EFFECT_TYPE.TEXT_CHANGE);
+  const effect = _textChangeEffect(_textModalSourceId);
   const changeType = effect?.params.changeType || 'color_or_land';
   const colors = ['white', 'blue', 'black', 'red', 'green'];
   const lands = ['plains', 'island', 'swamp', 'mountain', 'forest'];
@@ -765,7 +722,7 @@ function selectEditableWord(word) {
   };
   const singularWord = PLURAL_TO_SINGULAR_LAND[word.toLowerCase()] || word;
   _textModalSelectedWord = singularWord;
-  const effect = Battlefield.effects.find(e => e.sourceId === _textModalSourceId && e.type === EFFECT_TYPE.TEXT_CHANGE);
+  const effect = _textChangeEffect(_textModalSourceId);
   const changeType = effect?.params.changeType || 'color_or_land';
   populateTextDropdowns(changeType, singularWord);
   // Highlight both singular and plural forms of the word
@@ -785,7 +742,7 @@ function renderTextReplacements() {
     return;
   }
   // Check if this is a creature_type or land change to show plural info
-  const effect = Battlefield.effects.find(e => e.sourceId === _textModalSourceId && e.type === EFFECT_TYPE.TEXT_CHANGE);
+  const effect = _textChangeEffect(_textModalSourceId);
   const isCreatureType = effect?.params?.changeType === 'creature_type';
   const isLandType = effect?.params?.changeType === 'color_or_land' || effect?.params?.changeType === 'land_only';
   container.innerHTML = _textModalReplacements.map((r, i) => {
