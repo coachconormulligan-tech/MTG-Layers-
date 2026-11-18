@@ -867,6 +867,15 @@ const Battlefield = {
       parsedEffectText = parsedEffectText.replace(/\bswitch\s+its\s+(?=power|toughness)/gi, (m) => `${m[0]}witch ${owner}'s `);
       if (!triggerIsSelf) didItConversion = true;
     }
+    // "Whenever this creature attacks, you may have it become a copy of another target Dinosaur you
+    // control" (Sunfrill Imitator): with no target before it, "it" is the source, as the copy's
+    // own subject ("this creature becomes a copy of another target …" leaves the card out).
+    if (triggerIsSelf) {
+      const _itCopy = parsedEffectText.search(/\bit\s+becomes?\s+a\s+copy\s+of\b/i);
+      if (_itCopy >= 0 && !/\btarget\b/i.test(parsedEffectText.slice(0, _itCopy))) {
+        parsedEffectText = parsedEffectText.slice(0, _itCopy) + 'this creature ' + parsedEffectText.slice(_itCopy).replace(/^it\s+/i, '');
+      }
+    }
     if (/\bit\b/i.test(parsedEffectText)) {
       // Replace "it gets/gains/has/is/becomes/loses" → "target [subject] gets/gains/..."
       // (Not "Target opponent whose turn it is puts …" — The Beamtown Bullies.)

@@ -155,6 +155,9 @@ function getCopyCandidates(sourceId) {
     if (stack && stack[0] !== p.id) return false;
     return true;
   });
+  // ("Another target creature": not the card the ability is on — Cryptoplasm.)
+  const otherThanCard = effect.params.copyOtherThanSource && srcPermForSnap ? (srcPermForSnap.abilitySourceId || sourceId) : null;
+  const copyCtrl = srcPermForSnap ? (srcPermForSnap.controller || srcPermForSnap.owner) : Battlefield.activePlayerId;
   const candidates = [];
   for (const t of targets) {
     const fs = lookupState(t.id);
@@ -169,6 +172,8 @@ function getCopyCandidates(sourceId) {
       || (!effect.params.sourceYouControl || tCtrl === srcPermForSnap.controller)
       && (!effect.params.sourceOpponentControls || tCtrl !== srcPermForSnap.controller);
     if (!(mvValid && ctrlValid && (!restriction || restriction(tState)))) continue;
+    if (t.id === otherThanCard) continue;
+    if (effect.params.targetFilter && !effect.params.targetFilter(_restrictionState(tState, fs, t), snapStates || finalStates, copyCtrl)) continue;
     // "A copy of target creature" (params.sourceTargeted): what is copied is a target, so shroud,
     // hexproof of a permanent the source's controller doesn't control, and protection from the
     // source keep it out (CR 702.18, 702.11, 702.16), as in the target pickers.

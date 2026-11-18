@@ -290,6 +290,8 @@ function classifyUnitText0(text) {
   if (pair) return pair;
   const exch = classifyExchange(text);
   if (exch) return exch;
+  const selfCopy = classifySelfCopy(text);
+  if (selfCopy) return selfCopy;
   if (hits.length > 1) return classifyTargets(text, 'multiple-targets');
   if (hits[0][0] === 'targets') return { skip: 'targets-verb' };
   const idx = hits[0].index;
@@ -1805,7 +1807,7 @@ function auditUnit(ctx, u, fire) {
     // arrived after the ability.)
     if (u.attachPair) ctx = addAttachPairWitnesses(ctx);
     // (Not for a mode of a modal spell: it was cast, and its board taken, before them.)
-    if (u.exchange && u.modeIndex === undefined) ctx = addExchangeWitnesses(ctx);
+    if ((u.exchange || u.selfCopy) && u.modeIndex === undefined) ctx = addTargetingWitnesses(ctx);
     try {
       const pseudo = fire();
       if (!pseudo) return { skip: 'fire-returned-nothing' };
@@ -1815,7 +1817,7 @@ function auditUnit(ctx, u, fire) {
       u.findings.push({ check: 'check2', code: 'crash', error: errInfo('fire ' + u.kind, e) });
       return { audited: true };
     }
-    try { return u.exchange ? auditFiredExchange(ctx, u, id) : u.attachPair ? auditFiredAttachPair(ctx, u, id) : u.modePair ? auditFiredModePair(ctx, u, id) : u.playerGroup ? auditFiredPlayerGroup(ctx, u, id) : u.targets ? auditFiredTargets(ctx, u, id) : auditFired(ctx, u, id); }
+    try { return u.selfCopy ? auditFiredSelfCopy(ctx, u, id) : u.exchange ? auditFiredExchange(ctx, u, id) : u.attachPair ? auditFiredAttachPair(ctx, u, id) : u.modePair ? auditFiredModePair(ctx, u, id) : u.playerGroup ? auditFiredPlayerGroup(ctx, u, id) : u.targets ? auditFiredTargets(ctx, u, id) : auditFired(ctx, u, id); }
     catch (e) { u.findings.push({ check: 'check2', code: 'crash', error: errInfo('audit', e) }); return { audited: true }; }
   });
 }
@@ -1833,6 +1835,7 @@ function newUnit(kind, index, label, text, cls) {
   if (cls.targets) Object.assign(u, { targets: cls.targets, expectKind: cls.expectKind, maxTargets: cls.maxTargets,
     phrase: cls.targets.map(t => t.phrase).join(' / '), targetIndex: cls.targets[0].targetIndex });
   if (cls.origin) u.origin = cls.origin;
+  if (cls.selfCopy) Object.assign(u, { selfCopy: cls.selfCopy, targetIndex: cls.selfCopy.idx, phrase: cls.selfCopy.phrase });
   if (cls.exchange) Object.assign(u, { exchange: cls.exchange, targetIndex: (cls.exchange.a || cls.exchange.b).idx,
     phrase: cls.exchange.a ? cls.exchange.a.phrase + ' / ' + cls.exchange.b.phrase : cls.exchange.self + ' / ' + cls.exchange.b.phrase });
   if (cls.playerGroup) Object.assign(u, { playerGroup: cls.playerGroup, phrase: cls.playerGroup.clauses.map(c => c.phrase).join(' / ') });
@@ -2015,11 +2018,11 @@ function exchangePairOk(ctx, ex, a, b) {
   return true;
 }
 
-/* Witnesses only an exchange unit sees, added before it is fired (the lists offer only what was on
+/* Witnesses only an exchange or self-copy unit sees, added before it is fired (the lists offer only what was on
    the board then): hexproof of each player, your shroud creature, protection from enchantments and
    from the card's colour of the opponent's, protection from another colour of yours. Protection is
    judged by the audit (ctx.judgeProtection). */
-function addExchangeWitnesses(ctx) {
+function addTargetingWitnesses(ctx) {
   const src = ctx.preStates.get(ctx.sourceId) || {};
   const added = [];
   for (const w of auraWitnesses(stateColors(src))) {
@@ -2146,6 +2149,122 @@ function auditFiredExchange(ctx, u, id) {
   return { audited: true };
 }
 
+/* ─── The card becomes a copy of a target ───
+   "This creature becomes a copy of another target creature" (Cryptoplasm, Mirage Mirror,
+   Thespian's Stage, Absorbing Man's "up to one target …"): the target is what is copied, picked
+   in the copy picker ("copy…", getCopyCandidates, cards-targeting.js), and what changes is the
+   card itself. Check 2: the site gives a copy picker (no-copy-picker) and it lists what the words
+   after "a copy of" allow, judged with hexproof, shroud and protection witnesses (copy-empty-list,
+   copy-list-mismatch). Check 1: nothing changes before a pick; each listed permanent picked as
+   setCopyTargetFromBattlefield (ui-targeting.js) does must change the card (copy-changes-nothing
+   when none does) and nothing else (target-changes-others), give it the copied permanent's name
+   unless an "except its name is …" says otherwise (copy-name-wrong), and clearing the pick must
+   put the board back (copy-not-undone). A copy of a card in a graveyard or exile, and a group
+   ("Each other creature becomes a copy of target …") are not this unit. */
+const SELF_COPY_RE = /\b(this [a-z]+|~|it|he|she)\s+(?:becomes?|become)\s+a\s+copy\s+of\s+(up to one\s+)?((?:an)?other\s+|one other\s+)?target\s+/;
+function classifySelfCopy(text) {
+  const lower = String(text || '').replace(/’/g, "'").replace(/["“][^"”]*["”]/g, (q) => 'q'.repeat(q.length)).toLowerCase();
+  const m = lower.match(SELF_COPY_RE);
+  if (!m) return null;
+  // ("You may have it become a copy of another target Dinosaur" — Sunfrill Imitator: "it" is the
+  // card only when nothing else stands before it in its sentence.)
+  if (/^(?:it|he|she)$/.test(m[1])) {
+    // ("Target creature you control gains hexproof …. Until end of turn, it becomes a copy of up
+    // to one other target creature" — Fleeting Reflection: "it" is that target.)
+    // Not this unit, then: the text is read as before.
+    if (/\btarget\b/.test(lower.slice(0, m.index))) return null;
+    const head = lower.slice(0, m.index).replace(/^.*[.;]\s*/, '');
+    if (/\b(?:target|token|card|creature|permanent|that|each|another)\b/.test(head.replace(/^.*\bwhen(?:ever)?\b[^,]*,\s*/, ''))) return null;
+  }
+  const idx = m.index + m[0].length - 'target '.length;
+  const phrase = extractPhrase(lower.slice(m.index + m[0].length).trim());
+  if (!phrase) return { skip: 'self-copy: empty-phrase' };
+  if (/\b(?:card|cards|graveyard|exile|spell)\b/.test(phrase)) return { skip: 'self-copy: not-a-permanent' };
+  return { selfCopy: { subject: m[1], phrase, idx, excludeSource: !!m[3], upToOne: !!m[2] } };
+}
+
+function auditFiredSelfCopy(ctx, u, id) {
+  const finding = (check, code, extra) => u.findings.push(Object.assign({ check, code }, extra || {}));
+  const sc = u.selfCopy;
+  const before = ctx.before;
+  const info = getEffectInfo(id, Battlefield.getAllFinalStates().get(id));
+  if (info.hasCopyToken) return { skip: 'copy-token-editor' };
+  if (!info.hasCopy) {
+    u.pickerKind = getTargetPickerKind(id, Battlefield.getAllFinalStates().get(id)).kind;
+    finding('check2', 'no-copy-picker', { actual: u.pickerKind });
+    return { audited: true };
+  }
+  u.pickerKind = 'copy';
+  const eff = Battlefield.effects.find(e => e.sourceId === id && e.type === EFFECT_TYPE.COPY);
+  if (!eff || eff.params.copyTargetZone) return { skip: 'copy-from-zone' };
+  if (eff.params.massCopy) return { skip: 'mass-copy' };
+
+  /* Check 2 */
+  const list = getCopyCandidates(id).candidates.map(c => c.id);
+  u.actual = rolesOf(list);
+  const exp = expectedForTarget(ctx, u, { phrase: sc.phrase, targetIndex: sc.idx, plural: false, excludeSource: sc.excludeSource });
+  if (exp.unknown) u.phraseUnknown = exp.unknown;
+  else {
+    u.expected = rolesOf(exp.ids);
+    const missing = exp.ids.filter(x => !list.includes(x)), extra = list.filter(x => !exp.unjudged.includes(x) && !exp.ids.includes(x));
+    if (!list.length && exp.ids.length) finding('check2', 'copy-empty-list', { missing: rolesOf(missing), extra: [] });
+    else if (missing.length || extra.length) finding('check2', 'copy-list-mismatch', { missing: rolesOf(missing), extra: rolesOf(extra) });
+  }
+
+  /* Check 1 */
+  u.check1 = { noTarget: diffSummaries(before, summarizeBoard()).map(c => ({ role: c.role, what: c.what })), perTarget: [], via: 'picker' };
+  if (u.check1.noTarget.length) finding('check1', 'changes-with-no-target', { changed: u.check1.noTarget });
+  const card = ctx.sourceId;
+  const keepsName = /\bexcept (?:its|his|her|their) name is\b|\bexcept (?:it|he|she)'s named\b/i.test(u.text);
+  const pairedWithCopied = /\band that (?:creature|permanent) each\b/i.test(u.text);
+  let others = [], wrongName = [], notUndone = [], noOp = [];
+  const tryAll = (from) => {
+    others = []; wrongName = []; notUndone = []; noOp = [];
+    u.check1.perTarget = [];
+    for (const x of list.slice(0, 12)) {
+      if (x === card) continue;
+      const copyCard = Battlefield.copiableCardOf(x);
+      if (!copyCard) continue;
+      eff.params._copyTargetPermId = x;
+      Battlefield.setCopySource(id, copyCard);
+      Battlefield.evaluate();
+      const changed = diffSummaries(from, summarizeBoard());
+      const label = roleName(x);
+      u.check1.perTarget.push({ target: label, changed: changed.map(c => ({ role: c.role, what: c.what })) });
+      if (!changed.some(c => c.id === card)) noOp.push(label);
+      // ("… Gogo and that creature each get +2/+0": the copied creature too.)
+      const bad = changed.filter(c => c.id !== card && !(pairedWithCopied && c.id === x));
+      if (bad.length) others.push({ target: label, others: bad.map(c => ({ role: c.role, what: c.what })) });
+      const fs = Battlefield.getAllFinalStates().get(card);
+      if (!keepsName && fs && copyCard.name && fs.name !== copyCard.name) wrongName.push(label + ' (named ' + fs.name + ')');
+      eff.params.copySource = null;
+      delete eff.params._copyTargetPermId;
+      Battlefield._invalidate();
+      Battlefield.evaluate();
+      const left = diffSummaries(from, summarizeBoard());
+      if (left.length) notUndone.push({ target: label, left: left.map(c => ({ role: c.role, what: c.what })) });
+    }
+  };
+  tryAll(before);
+  // "You may have this card become a copy of …. If you do, …" (Gogo, Mysterious Mime): the copy
+  // waits for its toggle, which starts at No. Answered Yes, the picks are tried again.
+  const pseudo = Battlefield.getPermById(id);
+  if (u.check1.perTarget.length && noOp.length === u.check1.perTarget.length && pseudo && pseudo.additionalCostLabel && !pseudo.additionalCostPaid) {
+    const slots = [1, 2, 3, 4, 5, 6].filter(n => pseudo['additionalCostLabel' + (n > 1 ? n : '')]);
+    slots.forEach(n => Battlefield.setAdditionalCostPaid(id, true, n));
+    Battlefield._invalidate();
+    tryAll(summarizeBoard());
+    if (noOp.length < u.check1.perTarget.length) u.infos.push({ code: 'shown-on-adjusted-board', roles: [], what: 'toggles answered Yes' });
+  }
+  const tried = u.check1.perTarget.length;
+  if (others.length) finding('check1', 'target-changes-others', { examples: others.slice(0, 3), count: others.length });
+  if (tried && noOp.length === tried) finding('check1', 'copy-changes-nothing', { tried });
+  else if (noOp.length) u.infos.push({ code: 'no-op-on-some', roles: noOp });
+  if (wrongName.length) finding('check1', 'copy-name-wrong', { examples: wrongName.slice(0, 3), count: wrongName.length });
+  if (notUndone.length) finding('check1', 'copy-not-undone', { examples: notUndone.slice(0, 3), count: notUndone.length });
+  return { audited: true };
+}
+
 /* ─── Modal spells ───
    The Modes pop-up (ui-abilities.js applyModalModePopup) picks the modes: a repeatable spell
    ("you may choose the same mode more than once") by counts, any other by the set of active
@@ -2182,7 +2301,7 @@ function auditModes(rec, perm, ctx, run, skip, spellText) {
     const label = 'mode ' + (mi + 1);
     const text = stripReminder(modeText);
     const cls = classifyUnitText(text);
-    if (!cls.singular && !cls.targets && !cls.playerGroup && !cls.exchange) { skip('spell', undefined, label, text, 'mode: ' + cls.skip); return; }
+    if (!cls.singular && !cls.targets && !cls.playerGroup && !cls.exchange && !cls.selfCopy) { skip('spell', undefined, label, text, 'mode: ' + cls.skip); return; }
     if (cls.singular) oneTarget.push({ mi, text, phrase: cls.phrase, targetIndex: cls.targetIndex, excludeSource: cls.excludeSource, max: 1 });
     else if (cls.expectKind === 'multi' && cls.targets.length === 1) {
       const t = cls.targets[0];
@@ -3323,7 +3442,7 @@ function runQuotedUnit(o) {
       const t = stripReminder(plan.text);
       const cls = classifyUnitText(t);
       if (!cls.singular && !cls.targets && !cls.playerGroup) { skipQ(qi, label, t, cls.skip); continue; }
-      if (cls.exchange) { skipQ(qi, label, t, 'exchange'); continue; }
+      if (cls.exchange || cls.selfCopy) { skipQ(qi, label, t, cls.exchange ? 'exchange' : 'self-copy'); continue; }
       const u = newUnit('quoted', qi, label, t, cls);
       u.bearer = roleName(bearer.id);
       Object.defineProperty(u, 'fullText', { value: stripReminder(ab.fullText || ''), enumerable: false });
@@ -3396,11 +3515,11 @@ function auditFace(card, faceIndex) {
     const text = stripReminder(face.oracle_text || '');
     if (perm.isModalSpell) { auditModes(rec, perm, ctx, run, skip, text); quotedLater(); return rec; }
     const cls = classifyUnitText(text);
-    if (!cls.singular && !cls.targets && !cls.playerGroup && !cls.attachPair && !cls.exchange) { if (cls.skip !== 'target-in-quote') skip('spell', undefined, '', text, cls.skip); quotedLater(); return rec; }
+    if (!cls.singular && !cls.targets && !cls.playerGroup && !cls.attachPair && !cls.exchange && !cls.selfCopy) { if (cls.skip !== 'target-in-quote') skip('spell', undefined, '', text, cls.skip); quotedLater(); return rec; }
     const u = newUnit('spell', undefined, '', text, cls);
     // Casting happened in addAuditedCard; the spell's own effects are the unit's.
     // (An attach pair's witnesses come before the spell: it is cast again once they are there.)
-    if (cls.attachPair || cls.exchange) run(u, () => { Battlefield.removePermanent(perm.id); return addAuditedCard(card, faceIndex, true); });
+    if (cls.attachPair || cls.exchange || cls.selfCopy) run(u, () => { Battlefield.removePermanent(perm.id); return addAuditedCard(card, faceIndex, true); });
     else run(u, () => perm);
     quotedLater();
     return rec;
@@ -3420,7 +3539,7 @@ function auditFace(card, faceIndex) {
       if (plan.skip) { skip(kind, ab.index, '', stripReminder(ab.effectText), plan.skip); continue; }
       const text = stripReminder(plan.text);
       const cls = classifyUnitText(text);
-      if (!cls.singular && !cls.targets && !cls.playerGroup && !cls.attachPair && !cls.exchange) { if (cls.skip !== 'target-in-quote') skip(kind, ab.index, plan.label, text, cls.skip); continue; }
+      if (!cls.singular && !cls.targets && !cls.playerGroup && !cls.attachPair && !cls.exchange && !cls.selfCopy) { if (cls.skip !== 'target-in-quote') skip(kind, ab.index, plan.label, text, cls.skip); continue; }
       if (cls.attach && !attachIsSource(cls.attach, kind, stripReminder(ab.fullText || ''), typeLine, rec.name, text)) { skip(kind, ab.index, plan.label, text, 'attach-not-the-source'); continue; }
       const u = newUnit(kind, ab.index, plan.label, text, cls);
       // (Not written to the raw output.)

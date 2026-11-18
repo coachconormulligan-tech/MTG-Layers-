@@ -1,0 +1,13 @@
+{
+  "name": "Sunfrill Imitator — \"you may have it become a copy of another target Dinosaur you control\": \"it\" is the card, and only your other Dinosaurs are offered",
+  "notes": "\"Whenever this creature attacks, you may have it become a copy of another target Dinosaur you control, except its name is Sunfrill Imitator and it has this ability.\" Found by the self-copy audit unit (2026-11-18). Two faults: the fired text turned \"it\" into a guessed \"target creature\" (_addAbilityPseudo), so the card was offered as its own copy; and the copy restriction is built from card-type words only, so \"Dinosaur\" was dropped and every creature, artifact, enchantment and land was offered. With a trigger about the card itself, \"it become(s) a copy of\" now reads \"this creature …\", and params.targetFilter (buildAppliesToFromText of the copied object's words) is asked as well when they hold more than type words.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Ripjaw Raptor", "as": "raptor" },
+    { "add": "Sunfrill Imitator", "as": "s" },
+    { "fire": "@s", "trigger": 0, "as": "t" }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Sunfrill Imitator (trigger)", "kind": "copy" }, "are": ["Ripjaw Raptor"] }
+  ]
+}

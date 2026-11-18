@@ -1,0 +1,16 @@
+{
+  "name": "The Mycosynth Gardens — \"a copy of target nontoken artifact you control with mana value X\" offers only the artifacts of that mana value",
+  "notes": "\"{X}, {T}: This land becomes a copy of target nontoken artifact you control with mana value X.\" Found by the self-copy audit unit (2026-11-18). The copy restriction read only the type words, so every nontoken artifact you control was offered whatever X was. With X = 2, Mind Stone (mana value 2) is offered and Sol Ring (1) is not; the opponent's Fellwar Stone (2) is not yours.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Mind Stone", "as": "stone" },
+    { "add": "Sol Ring", "as": "ring" },
+    { "add": "Fellwar Stone", "as": "fell", "controller": "p2" },
+    { "add": "The Mycosynth Gardens", "as": "g" },
+    { "fire": "@g", "activated": 2, "as": "a" },
+    { "call": ["setXValue", "@a", 2] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "The Mycosynth Gardens (activated)", "kind": "copy" }, "are": ["Mind Stone"] }
+  ]
+}

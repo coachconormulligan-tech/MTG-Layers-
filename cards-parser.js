@@ -2595,6 +2595,36 @@ function parseCardEffects(permanent, card, opts = {}) {
     // Parse "except" clause for copy modifications
     const copyParams = { copySource: null, restriction, maxManaValue: maxManaValueParam };
     if (_copySourceTargeted) copyParams.sourceTargeted = true;
+    // What is copied, as a target picker reads it: the type words above leave out a subtype
+    // ("another target Dinosaur you control" — Sunfrill Imitator), "attacking" (Tilonalli's
+    // Skinshifter) and "with mana value X" (The Mycosynth Gardens). getCopyCandidates asks this
+    // too, on a _restrictionState.
+    if (!_massCopy && !copyTargetZone && _copySourceTargeted) {
+      const _cfDesc = targetDesc
+        .replace(/^(?:up\s+to\s+one\s+)?(?:another\s+|other\s+|one\s+other\s+)?(?:target\s+)?/i, '')
+        .replace(/\s+until\s+(?:end of turn|the next end step|your next turn)\b.*$/i, '')
+        .replace(/\s+on\s+the\s+battlefield\b.*$/i, '')
+        .trim();
+      // Only for words the type test does not read ("artifact, non-Aura enchantment, or land" —
+      // Absorbing Man — is read there, and the generic reader takes that list for "land").
+      const _cfRest = _cfDesc.toLowerCase()
+        .replace(/\bwith\s+(?:(?:a|an)\s+)?[\w+/]*\s*counters?\s+on\s+(?:it|them)\b/g, ' ')
+        .replace(/\b(?:you control|an opponent controls|you don't control|and\/or|or|and|non-?aura|nonland|nonlegendary|nontoken|creatures?|artifacts?|enchantments?|planeswalkers?|lands?|permanents?)\b/g, ' ')
+        .replace(/[\s,]+/g, '');
+      // (Nor words about another object or a choice, which that reader cannot know: "that crewed it
+      // this turn" — Mindlink Mech, "card exiled with it" — Mimeoplasm, "of the chosen type" —
+      // Mirror of the Forebears.)
+      const _cfUnread = /\b(?:cards?|exiled|crewed|chosen|that|named)\b/i.test(_cfDesc);
+      const _cf = _cfRest && !_cfUnread ? buildAppliesToFromText(_cfDesc) : null;
+      if (_cf && _cf.fn && !_cf.isSelf && !_cf.isSpellTarget) copyParams.targetFilter = _cf.fn;
+    }
+    // "This creature becomes a copy of another target creature" (Cryptoplasm): the card itself
+    // is not one of the targets. (Not True Polymorph's "target X becomes a copy of another target
+    // Y": "another" is other than the first target.)
+    if (!_massCopy && isBecomesCopy && /^(?:up\s+to\s+one\s+)?(?:another|other|one\s+other)\b/i.test(targetDescRaw)) {
+      const _ocHead = oracleLower.slice(Math.max(oracleLower.lastIndexOf('.', copyMatch.index - 1), oracleLower.lastIndexOf('\n', copyMatch.index - 1)) + 1, copyMatch.index);
+      if (/(?:^|[\s,])(?:this\s+[a-z]+|it|he|she)\s*$/.test(_ocHead) && !/\btarget\b/.test(_ocHead)) copyParams.copyOtherThanSource = true;
+    }
     if (_massCopy) {
       copyParams.massCopy = true;
       if (_mcSourceYouControl) copyParams.sourceYouControl = true;

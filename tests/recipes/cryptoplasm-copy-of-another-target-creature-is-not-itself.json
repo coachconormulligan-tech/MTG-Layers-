@@ -1,0 +1,17 @@
+{
+  "name": "Cryptoplasm — \"become a copy of another target creature\" does not offer Cryptoplasm itself",
+  "notes": "\"At the beginning of your upkeep, you may have this creature become a copy of another target creature, except it has this ability.\" Found by the self-copy audit unit (2026-11-18). getCopyCandidates left out the fired ability's row but never the card, so the copy picker of every \"this creature becomes a copy of another target …\" offered the card itself (Cryptoplasm, Protean Thaumaturge, Aurora Shifter, Cephalid Facetaker, Crystalline Resonance, Gogo, Hulkling, Impossible Man, Irma, Silent Hallcreeper). The parser now sets params.copyOtherThanSource when the card is what becomes the copy. Picking Hill Giant makes Cryptoplasm a Hill Giant once the toggle is Yes.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Hill Giant", "as": "giant", "controller": "p2" },
+    { "add": "Cryptoplasm", "as": "c" },
+    { "fire": "@c", "trigger": 0, "as": "t" },
+    { "call": ["setAdditionalCostPaid", "@t", true, 1] },
+    { "copy": ["@t", "@giant"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Cryptoplasm (trigger)", "kind": "copy" }, "are": ["Grizzly Bears", "Hill Giant"] },
+    { "perm": "Cryptoplasm", "final": { "name": "Hill Giant" } }
+  ]
+}

@@ -121,6 +121,17 @@ two players' permanents swaps exactly those two controllers (exchange-not-swappe
 one player's pair changes nothing, and clearing the picks puts the board back (exchange-not-undone).
 Juxtapose, "that spell" (Perplexing Chimera), "those permanents" and an exchange with a spell are skipped.
 
+"This creature / ~ / it becomes a copy of [up to one] [another] target ..." (Cryptoplasm, Mirage Mirror,
+Thespian's Stage, Absorbing Man) is a unit too (classifySelfCopy, auditFiredSelfCopy): the target is what is
+copied, picked in the copy picker (getCopyCandidates), and what changes is the card. "It" is the card only
+with no target before it. Judged with the same witnesses as an exchange. Check 2: a copy picker is there
+(no-copy-picker) and lists what the words after "a copy of" allow (copy-empty-list, copy-list-mismatch).
+Check 1: nothing changes before a pick; each listed permanent picked must change the card (copy-changes-
+nothing, judged again with the unit's toggles answered Yes: "You may have this card become a copy ... If you
+do") and nothing else ("... and that creature each get +2/+0" allows the copied one), give it the copied
+name unless an "except its name is" keeps its own (copy-name-wrong), and clearing the pick must put the
+board back (copy-not-undone). A copy of a card in a graveyard or exile and a group's copy are skipped.
+
 A group that one picked player controls is a unit too: a spell or ability whose only target is "target
 player / target opponent" and whose text gives "<group> target opponent / that player / they controls"
 a continuous effect or a can't-rule ("Creatures target opponent controls get -1/-1", "Gain control of
@@ -288,6 +299,10 @@ CODES = [
     ('pair-list-mismatch', "Permanent B's list, narrowed by a Permanent A, is not what the pair rule the words state allows."),
     ('exchange-not-swapped', "A pair of two players' permanents does not swap their two controllers."),
     ('exchange-not-undone', "After an exchange's picks are cleared, the board is not as before."),
+    ('no-copy-picker', '"This creature becomes a copy of target ..." gets no copy picker.'),
+    ('copy-changes-nothing', 'No permanent the copy picker lists makes the card a copy of it, even with the toggles answered Yes.'),
+    ('copy-name-wrong', 'The card made a copy does not have the copied name, and no "except its name is" keeps its own.'),
+    ('copy-not-undone', "After the copy picker's pick is cleared, the board is not as before."),
     ('quote-not-granted', 'A quoted ability naming a target never reaches the permanent its grant names (attached, targeted, the token, the card, its group).'),
     ('quote-text-changed', 'The permanent that gets a quoted ability has it in other words (the granting card\'s name read as "this card").'),
     ('quote-not-fireable', 'The permanent that gets a quoted ability has it, but the site offers no Trigger / Activate button for it.'),
@@ -485,11 +500,13 @@ def _finding_detail(f):
     if c == 'pair-list-mismatch':
         return '; '.join('with A %s: missing %s; extra %s' % (e['a'], roles_key(e.get('missing', [])), roles_key(e.get('extra', [])))
                          for e in f.get('examples', [])[:2])
-    if c in ('exchange-not-swapped', 'exchange-not-undone'):
+    if c in ('exchange-not-swapped', 'exchange-not-undone', 'copy-name-wrong', 'copy-not-undone'):
         return '; '.join(e if isinstance(e, str) else e.get('target', '') for e in f.get('examples', [])[:3])
     if c == 'exchange-mode-mismatch':
         return 'text: %s, site: %s' % (f.get('expected'), f.get('actual'))
-    if c in ('exchange-self-not-the-card', 'no-exchange-picker'):
+    if c == 'copy-changes-nothing':
+        return 'tried %d' % f.get('tried', 0)
+    if c in ('exchange-self-not-the-card', 'no-exchange-picker', 'no-copy-picker'):
         return 'site: %s' % f.get('actual')
     if c == 'player-changes-nothing':
         return ', '.join(f.get('players', []))

@@ -1,0 +1,17 @@
+{
+  "name": "Tilonalli's Skinshifter — \"it becomes a copy of another target nonlegendary attacking creature\" offers only the other attacking creature",
+  "notes": "\"Whenever this creature attacks, it becomes a copy of another target nonlegendary attacking creature until end of turn.\" Found by the self-copy audit unit (2026-11-18). The copy picker offered every permanent on the board, the Skinshifter included: \"attacking\" was not read (the type-word restriction) and \"it\" was taken for a guessed target. Now only the attacking Grizzly Bears is offered (not Hill Giant, which is not attacking), and picking it makes the Skinshifter a Grizzly Bears.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Hill Giant", "as": "giant" },
+    { "add": "Tilonalli's Skinshifter", "as": "sk" },
+    { "call": ["toggleAttacking", "@bears"] },
+    { "call": ["toggleAttacking", "@sk"] },
+    { "fire": "@sk", "trigger": 1, "as": "t" },
+    { "copy": ["@t", "@bears"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Tilonalli's Skinshifter (trigger)", "kind": "copy" }, "are": ["Grizzly Bears"] },
+    { "perm": "Tilonalli's Skinshifter", "final": { "name": "Grizzly Bears", "power": 2 } }
+  ]
+}
