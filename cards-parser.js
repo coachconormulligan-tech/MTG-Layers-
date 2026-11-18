@@ -6738,12 +6738,15 @@ function parseCardEffects(permanent, card, opts = {}) {
     return info && info.isTargeted && typeof info.fn === 'function' ? info : null;
   }
 
-  // --- Trait parsing: goaded, suspected, and similar status traits ---
+  // --- Trait parsing: goaded, suspected, detained, and similar status traits ---
   // Matches patterns like: "goads target creature", "suspect it", "becomes goaded",
-  // "is goaded", "[filter] are goaded", "[filter] becomes suspected"
+  // "is goaded", "[filter] are goaded", "[filter] becomes suspected", "detain target creature"
+  // (CR 701.35: until that player's next turn it can't attack or block and its activated
+  // abilities can't be activated; kept as "Detained by Player 1", like goad).
   const TRAIT_KEYWORDS = {
     'goaded': 'Goaded', 'goad': 'Goaded', 'goads': 'Goaded',
     'suspected': 'Suspected', 'suspect': 'Suspected', 'suspects': 'Suspected',
+    'detain': 'Detained', 'detains': 'Detained',
   };
   // Pattern: "[filter] is/are/becomes goaded/suspected"
   const traitStateRegex = /\b(.+?)\s+(?:is|are|becomes?)\s+(goaded|suspected)\b/gi;
@@ -6808,8 +6811,8 @@ function parseCardEffects(permanent, card, opts = {}) {
         { _oraclePos: saddledMatch.index, targetRestriction: fn || null });
     }
   }
-  // Pattern: "goad/goads/suspect/suspects [target/filter]"
-  const traitVerbRegex = /\b(goads?|suspects?)\s+(.+?)(?:\.|,|$)/gi;
+  // Pattern: "goad/goads/suspect/suspects/detain/detains [target/filter]"
+  const traitVerbRegex = /\b(goads?|suspects?|detains?)\s+(.+?)(?:\.|,|$)/gi;
   let traitVerbMatch;
   while ((traitVerbMatch = traitVerbRegex.exec(oracle)) !== null) {
     const verb = traitVerbMatch[1].toLowerCase();
@@ -6827,7 +6830,10 @@ function parseCardEffects(permanent, card, opts = {}) {
     // ("When this creature enters, suspect it." — Barbed Servitor — is a trigger like any other:
     // fired, it suspects its source.)
     // (Any object but a target: "you may suspect one of the other creatures" — Frantic Scapegoat.)
-    if (!isSpellTarget && !permanent.isSpell && !permanent.isManualEffect &&
+    // (A target too: "When this creature enters, detain target creature an opponent controls" —
+    // Azorius Arrester; "… goad target creature that player controls" — Alela, Cunning Conqueror —
+    // gave the unfired card a target picker of its own.)
+    if (!permanent.isSpell && !permanent.isManualEffect &&
         (_isInTriggeredSentence(traitVerbMatch.index) || _isInActivatedEffect(traitVerbMatch.index))) continue;
     const eff = pushEff('6', EFFECT_TYPE.ADD_ABILITY,
       { ability: traitName, isTrait: true, traitOnly: true },

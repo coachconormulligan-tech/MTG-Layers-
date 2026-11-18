@@ -1,0 +1,16 @@
+{
+  "name": "Alela, Cunning Conqueror — \"goad target creature that player controls\" waits for the trigger",
+  "notes": "2026-11-18, found with detain: the trait-verb parser (goad / suspect / detain) skipped a verb in a permanent's own trigger or activated ability only when its object was not a target, so 30 goad / suspect cards (Alela, Bothersome Quasit, Hot Pursuit, Nelly Borca …) had a targeted Goaded / Suspected effect on the unfired card, a target picker the card itself does not have. Now only the fired trigger has it, as with every other targeted trigger (Trusted Pegasus).",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"] },
+    { "add": "Hill Giant", "controller": "p2" },
+    { "add": "Alela, Cunning Conqueror", "as": "al" },
+    { "fire": "@al", "trigger": 2, "as": "alt" },
+    { "call": ["setTarget", "@alt", "@Hill Giant"] }
+  ],
+  "asserts": [
+    { "noEffect": { "source": "Alela, Cunning Conqueror", "type": "add_ability" } },
+    { "effect": { "source": "Alela, Cunning Conqueror (trigger)", "type": "add_ability", "params": { "ability": "Goaded" } } },
+    { "perm": "Hill Giant", "final": { "traits": ["Goaded by Player 1"] } }
+  ]
+}

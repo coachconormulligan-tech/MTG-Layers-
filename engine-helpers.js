@@ -160,7 +160,7 @@ function getEffectControllerId(effect, allStates) {
   return effect.ownerId || 'player_0';
 }
 /* The words of a trait-only effect as they read on one permanent: "Goaded" names the player
-   who goaded it, and in a rule about attacking, blocking or targeting "you" is the controller
+   who goaded it ("Detained" the player who detained it), and in a rule about attacking, blocking or targeting "you" is the controller
    of the effect's source, "their controller" the controller of the permanent, and "this
    creature" the source by name. Returns null when the rule says nothing about this permanent
    ("can't attack you" on a creature of the player it protects). */
@@ -169,6 +169,8 @@ function _resolveTraitText(ab, effect, state) {
   const livePerm = (!effect._allStates && typeof Battlefield !== 'undefined' && Battlefield.getPermById) ? Battlefield.getPermById(effect.sourceId) : null;
   const srcCtrl = (livePerm && livePerm.controller) || getEffectControllerId(effect, effect._allStates);
   if (ab === 'Goaded') return `Goaded by ${name(srcCtrl)}`;
+  // Detained until the detaining player's next turn (CR 701.35a).
+  if (ab === 'Detained') return `Detained by ${name(srcCtrl)}`;
   if (!effect.params.traitPlayers) return ab;
   if (/^can't attack (?:you|planeswalkers you control)\b/i.test(ab) && state.controller === srcCtrl) return null;
   const you = name(srcCtrl), them = name(state.controller);

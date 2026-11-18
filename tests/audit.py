@@ -34,8 +34,8 @@ A unit whose own text names one permanent target ("singular") is checked twice:
            the fired ability (rule-trait-names-ability). "Can't be regenerated / countered",
            "becomes blocked", "is dealt damage" stay skipped (not-a-layer-effect), as does a rule
            after damage ("deals 2 damage to target creature. That creature can't block").
-           "Goad / suspect target …" is checked the same way: the chosen target alone must get
-           the Goaded / Suspected trait (rule-trait-missing). A later sentence about the target
+           "Goad / suspect / detain target …" is checked the same way: the chosen target alone must get
+           the Goaded / Suspected / Detained trait (rule-trait-missing). A later sentence about the target
            through "it" / "that creature" is read after "Until end of turn," / "Until your next
            turn,", "If you do," / "If it isn't a creature," and as "You may have it gain / get /
            become / lose …" (not "become no longer …"), also when "a counter on up to one /

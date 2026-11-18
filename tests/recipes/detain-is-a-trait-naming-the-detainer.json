@@ -1,0 +1,22 @@
+{
+  "name": "Azorius Arrester and Lavinia of the Tenth — detain is a \"Detained by <player>\" trait on what it detains",
+  "notes": "Found by the audit (2026-11-18): \"detain …\" (CR 701.35: until that player's next turn the permanent can't attack or block and its activated abilities can't be activated) was skipped as a one-shot action and did nothing. It is now a trait like goad, naming the player who detained (_resolveTraitText). Azorius Arrester's fired trigger detains only its target, among the opponent's creatures; Lavinia's fired trigger detains each nonland permanent the opponents control with mana value 4 or less (Hill Giant, not Serra Angel, not your Bears). The unfired Arrester has no detain effect of its own: a trait verb in a permanent's own trigger waits for the trigger, a target too (it used to give the card a target picker).",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"] },
+    { "add": "Grizzly Bears" },
+    { "add": "Hill Giant", "controller": "p2" },
+    { "add": "Serra Angel", "controller": "p2" },
+    { "add": "Azorius Arrester", "as": "aa" },
+    { "fire": "@aa", "trigger": 0, "as": "aat" },
+    { "call": ["setTarget", "@aat", "@Serra Angel"] },
+    { "add": "Lavinia of the Tenth", "as": "lav" },
+    { "fire": "@lav", "trigger": 1 }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Azorius Arrester (trigger)" }, "are": ["Hill Giant", "Serra Angel"] },
+    { "noEffect": { "source": "Azorius Arrester", "type": "add_ability" } },
+    { "perm": "Serra Angel", "final": { "traits": ["Detained by Player 1"] } },
+    { "perm": "Hill Giant", "final": { "traits": ["Detained by Player 1"] } },
+    { "perm": "Grizzly Bears", "final": { "traits": { "$excludes": ["Detained by Player 1"] } } }
+  ]
+}

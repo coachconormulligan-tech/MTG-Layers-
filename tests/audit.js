@@ -253,7 +253,8 @@ const LATER_PRONOUN_EFFECT = new RegExp("\\.\\s+" + LATER_PRONOUN_LEAD + "(?:(?:
 // "Goad target creature", "you gain 3 life and suspect up to one target creature an opponent controls":
 // the target gets the Goaded / Suspected designation, which the site keeps as a trait (CR 701.15,
 // 701.60), so it is audited like a "can't …" rule: the chosen target alone must get that trait.
-const TRAIT_VERB_BEFORE = /\b(goads?|suspects?) (?:each of )?(?:up to \w+ |one or two |\w+ )?(?:other |another )?$/;
+// ("Detain up to two target creatures your opponents control": Detained, CR 701.35.)
+const TRAIT_VERB_BEFORE = /\b(goads?|suspects?|detains?) (?:each of )?(?:up to \w+ |one or two |\w+ )?(?:other |another )?$/;
 
 /* Does every event of a trigger's condition happen with the card in the hand or off the
    battlefield ("When you cycle this card", "When this creature dies", "When you cycle this card and
@@ -364,7 +365,7 @@ function classifyAt(lower, idx, end, opts) {
     // site keeps these as traits in the card's words, so they are audited, Check 1 asking that the
     // target alone gets the "Can't …" trait. "Can't be regenerated", "can't be countered" are not.)
     rules = cantRulesOf(verbAfter, opts.plural);
-    if (traitVerb) rules.unshift(/^goad/.test(traitVerb[1]) ? 'goaded' : 'suspected');
+    if (traitVerb) rules.unshift(/^goad/.test(traitVerb[1]) ? 'goaded' : /^detain/.test(traitVerb[1]) ? 'detained' : 'suspected');
     if (/^(?:can|can't|cannot)\b/.test(verbAfter) && !CANT_RULE_RE.test(verbAfter) && !/\b(?:gets?|gains?|has|have|becomes?|loses?)\b/.test(ownSentence) && !pronounGrant) return { skip: 'not-a-layer-effect' };
   }
   // Likewise: "target unblocked creature becomes blocked", damage "… by target creature is dealt to
