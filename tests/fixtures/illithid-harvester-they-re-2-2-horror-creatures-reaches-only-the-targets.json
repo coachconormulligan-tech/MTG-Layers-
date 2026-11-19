@@ -1,6 +1,6 @@
 {
  "name": "Illithid Harvester — \"They're 2/2 Horror creatures\" reaches only the targets",
- "notes": "Memory: project_im_a_doctor_pronoun_subject_2026-10-14. The fired trigger's 'They're' subject ran back over the previous sentence and made every creature a 2/2 Horror. A bare 'it / they' now takes the earlier 'target …' phrase, without its closing 'face down' (read as two required subtypes, which emptied the picker). The site offers a single-target picker for 'any number of target', so one target is set here.",
+ "notes": "Memory: project_im_a_doctor_pronoun_subject_2026-10-14. The fired trigger's 'They're' subject ran back over the previous sentence and made every creature a 2/2 Horror. A bare 'it / they' now takes the earlier 'target …' phrase, without its closing 'face down' (read as two required subtypes, which emptied the picker). Since 2026-11-19 the trigger turns its targets face down when picked (_applyFiredFace), with the multi-target picker 'any number of' asks for: the Horror 2/2 is its face-down characteristics, and Craw Wurm and Gray Ogre stay as they are.",
  "recipe": {
   "steps": [
    {
@@ -39,8 +39,9 @@
    },
    {
     "call": [
-     "setTarget",
+     "setMultiTarget",
      "@t",
+     0,
      "@giant"
     ]
    }
@@ -224,6 +225,8 @@
     "counterTimestamps": {},
     "isFaceDown": false,
     "faceDownMode": null,
+    "faceDownAs": null,
+    "face": null,
     "roomLocked": null,
     "cdaUserValue": null,
     "classLevel": null,
@@ -240,6 +243,9 @@
     "chosenCardType": null,
     "chosenAbilities": null,
     "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
     "targetOpponentPlayerId": null,
     "targetPlayerId": null,
     "enchantedPlayerId": null,
@@ -248,6 +254,7 @@
     "multiTarget": null,
     "slotTargets": {},
     "modalTargets": {},
+    "modalTargetIds": {},
     "copySource": null,
     "targetTs": null,
     "slotTs": {},
@@ -403,8 +410,19 @@
     ],
     "counters": {},
     "counterTimestamps": {},
-    "isFaceDown": false,
-    "faceDownMode": null,
+    "isFaceDown": true,
+    "faceDownMode": "plain",
+    "faceDownAs": {
+     "power": 2,
+     "toughness": 2,
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Horror"
+     ]
+    },
+    "face": null,
     "roomLocked": null,
     "cdaUserValue": null,
     "classLevel": null,
@@ -421,6 +439,9 @@
     "chosenCardType": null,
     "chosenAbilities": null,
     "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
     "targetOpponentPlayerId": null,
     "targetPlayerId": null,
     "enchantedPlayerId": null,
@@ -429,6 +450,7 @@
     "multiTarget": null,
     "slotTargets": {},
     "modalTargets": {},
+    "modalTargetIds": {},
     "copySource": null,
     "targetTs": null,
     "slotTs": {},
@@ -584,6 +606,8 @@
     "counterTimestamps": {},
     "isFaceDown": false,
     "faceDownMode": null,
+    "faceDownAs": null,
+    "face": null,
     "roomLocked": null,
     "cdaUserValue": null,
     "classLevel": null,
@@ -600,6 +624,9 @@
     "chosenCardType": null,
     "chosenAbilities": null,
     "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
     "targetOpponentPlayerId": null,
     "targetPlayerId": null,
     "enchantedPlayerId": null,
@@ -608,6 +635,7 @@
     "multiTarget": null,
     "slotTargets": {},
     "modalTargets": {},
+    "modalTargetIds": {},
     "copySource": null,
     "targetTs": null,
     "slotTs": {},
@@ -811,6 +839,8 @@
     "counterTimestamps": {},
     "isFaceDown": false,
     "faceDownMode": null,
+    "faceDownAs": null,
+    "face": null,
     "roomLocked": null,
     "cdaUserValue": null,
     "classLevel": null,
@@ -827,6 +857,9 @@
     "chosenCardType": null,
     "chosenAbilities": null,
     "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
     "targetOpponentPlayerId": null,
     "targetPlayerId": null,
     "enchantedPlayerId": null,
@@ -835,6 +868,7 @@
     "multiTarget": null,
     "slotTargets": {},
     "modalTargets": {},
+    "modalTargetIds": {},
     "copySource": null,
     "targetTs": null,
     "slotTs": {},
@@ -868,9 +902,18 @@
     "owner": "player_0",
     "controller": "player_0",
     "equipTargetId": null,
+    "attach": null,
+    "face": [
+     {
+      "id": "perm_2",
+      "dir": "down",
+      "ts": 2
+     }
+    ],
     "targetOpponentPlayerId": null,
     "targetPlayerId": null,
     "enchantedPlayerId": null,
+    "forPlayerId": null,
     "firedAtStates": [
      [
       "perm_1",
@@ -895,6 +938,10 @@
        "manaCost": "{2}{R}",
        "isCreature": true,
        "isToken": false,
+       "isFaceDown": false,
+       "isEmblem": false,
+       "isSpell": false,
+       "isZoneCard": false,
        "oracleText": "",
        "hasChangeling": false,
        "isAllCreatureTypes": false,
@@ -910,6 +957,7 @@
        "attackingPlayerId": null,
        "timesAttackedThisTurn": 0,
        "allPrintedAbilities": [],
+       "cdaAbilities": [],
        "conditionalAbilityIndices": null,
        "conditionalAbilityConditions": null,
        "sagaChapterThresholds": null,
@@ -946,6 +994,10 @@
        "manaCost": "{3}{R}",
        "isCreature": true,
        "isToken": false,
+       "isFaceDown": false,
+       "isEmblem": false,
+       "isSpell": false,
+       "isZoneCard": false,
        "oracleText": "",
        "hasChangeling": false,
        "isAllCreatureTypes": false,
@@ -963,6 +1015,7 @@
        "attackingPlayerId": null,
        "timesAttackedThisTurn": 0,
        "allPrintedAbilities": [],
+       "cdaAbilities": [],
        "conditionalAbilityIndices": null,
        "conditionalAbilityConditions": null,
        "sagaChapterThresholds": null,
@@ -999,6 +1052,10 @@
        "manaCost": "{4}{G}{G}",
        "isCreature": true,
        "isToken": false,
+       "isFaceDown": false,
+       "isEmblem": false,
+       "isSpell": false,
+       "isZoneCard": false,
        "oracleText": "",
        "hasChangeling": false,
        "isAllCreatureTypes": false,
@@ -1014,6 +1071,7 @@
        "attackingPlayerId": null,
        "timesAttackedThisTurn": 0,
        "allPrintedAbilities": [],
+       "cdaAbilities": [],
        "conditionalAbilityIndices": null,
        "conditionalAbilityConditions": null,
        "sagaChapterThresholds": null,
@@ -1052,6 +1110,10 @@
        "manaCost": "{4}{U}",
        "isCreature": true,
        "isToken": false,
+       "isFaceDown": false,
+       "isEmblem": false,
+       "isSpell": false,
+       "isZoneCard": false,
        "oracleText": "Ceremorphosis — When this creature enters, turn any number of target tapped nontoken creatures face down. They're 2/2 Horror creatures.",
        "hasChangeling": false,
        "isAllCreatureTypes": false,
@@ -1069,6 +1131,7 @@
        "allPrintedAbilities": [
         "Ceremorphosis — When this creature enters, turn any number of target tapped nontoken creatures face down. They're 2/2 Horror creatures."
        ],
+       "cdaAbilities": [],
        "conditionalAbilityIndices": null,
        "conditionalAbilityConditions": null,
        "sagaChapterThresholds": null,
@@ -1194,12 +1257,15 @@
       }
      ]
     },
-    "primaryTarget": "perm_2",
-    "multiTarget": null,
+    "primaryTarget": null,
+    "multiTarget": [
+     "perm_2"
+    ],
     "slotTargets": {},
     "modalTargets": {},
+    "modalTargetIds": {},
     "copySource": null,
-    "targetTs": 6,
+    "targetTs": null,
     "slotTs": {},
     "copyTargetPermId": null,
     "refPermId": null,
@@ -1297,22 +1363,13 @@
      ],
      "power": 2,
      "toughness": 2,
-     "colors": [
-      "R"
-     ],
+     "colors": [],
      "abilities": [],
      "traits": [
       "Tapped"
      ]
     },
-    "changedBy": {
-     "4": [
-      "Illithid Harvester (trigger)"
-     ],
-     "7b": [
-      "Illithid Harvester (trigger)"
-     ]
-    }
+    "changedBy": {}
    },
    {
     "perm": "Craw Wurm",
@@ -1360,39 +1417,22 @@
    }
   ],
   "order": {
-   "4": [
-    "Illithid Harvester (trigger)"
-   ],
-   "7b": [
+   "7c": [
     "Illithid Harvester (trigger)"
    ]
   },
   "effects": [
    {
     "source": "Illithid Harvester (trigger)",
-    "layer": "4",
-    "type": "set_types",
+    "layer": "7c",
+    "type": "modify_pt",
     "scope": "targeted",
-    "target": "Hill Giant",
+    "targets": [
+     "Hill Giant"
+    ],
     "params": {
-     "keepSupertypes": true,
-     "subtypes": [
-      "Horror"
-     ],
-     "types": [
-      "Creature"
-     ]
-    }
-   },
-   {
-    "source": "Illithid Harvester (trigger)",
-    "layer": "7b",
-    "type": "set_pt",
-    "scope": "targeted",
-    "target": "Hill Giant",
-    "params": {
-     "power": 2,
-     "toughness": 2
+     "power": 0,
+     "toughness": 0
     }
    }
   ]

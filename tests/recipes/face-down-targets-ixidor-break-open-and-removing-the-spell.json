@@ -1,0 +1,27 @@
+{
+  "name": "Ixidor, Reality Sculptor and Break Open — \"target face-down creature\" lists face-down creatures, and turns the pick face up",
+  "notes": "2026-11-19. The target filter read \"face-down\" as a creature subtype, so every \"target face-down creature\" picker was empty and Ixidor's \"Face-down creatures get +1/+1\" reached nobody; it now reads the permanent's face-down state (buildAppliesToFromText, carried in createBaseState, snapshotState and _restrictionState). Ixidor's fired ability is picked on the opponent's face-down Gray Ogre and turns it face up (a 2/2 Ogre again); your face-down Hill Giant stays face down and gets +1/+1 (a 3/3). Break Open (\"… an opponent controls\") lists only the opponent's face-down creature, and turns nothing once it is removed: Craw Wurm, picked and then the spell taken away, is face down again.",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"] },
+    { "add": "Hill Giant", "as": "giant" },
+    { "call": ["setFaceDown", "@giant", "morph"] },
+    { "add": "Gray Ogre", "as": "ogre", "controller": "p2" },
+    { "call": ["setFaceDown", "@ogre", "morph"] },
+    { "add": "Craw Wurm", "as": "wurm", "controller": "p2" },
+    { "call": ["setFaceDown", "@wurm", "morph"] },
+    { "add": "Ixidor, Reality Sculptor", "as": "ix" },
+    { "fire": "@ix", "activated": 1, "as": "ixa" },
+    { "call": ["setTarget", "@ixa", "@ogre"] },
+    { "add": "Break Open", "spell": true, "as": "bo" },
+    { "call": ["setTarget", "@bo", "@wurm"] },
+    { "call": ["removePermanent", "@bo"] },
+    { "add": "Break Open", "spell": true, "as": "bo2" }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Ixidor, Reality Sculptor (activated)" }, "are": ["Hill Giant", "Gray Ogre", "Craw Wurm"] },
+    { "targetCandidates": { "perm": "Break Open" }, "are": ["Craw Wurm"] },
+    { "perm": "Gray Ogre", "final": { "subtypes": ["Ogre"], "power": 2, "toughness": 2 } },
+    { "perm": "Hill Giant", "final": { "subtypes": [], "power": 3, "toughness": 3, "colors": [] } },
+    { "perm": "Craw Wurm", "final": { "subtypes": [], "power": 3, "toughness": 3 } }
+  ]
+}

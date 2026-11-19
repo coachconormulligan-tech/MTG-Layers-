@@ -318,13 +318,22 @@ function classifyUnitText0(text) {
 function classifyAt(lower, idx, end, opts) {
   const before = lower.slice(0, idx);
   const after = lower.slice(idx + 'target'.length, end).trim();
-  const phrase = extractPhrase(after);
+  // "Switch target creature's power and toughness until end of turn" (Twisted Image): the target is
+  // the possessor, and the switch (layer 7e) the continuous effect.
+  // ("Switch the power and toughness of each of up to two target creatures" — Invert.)
+  const switchM = /\bswitch(?:es)? $/.test(before) ? after.match(/^([^.;']+?)'s (?:base )?(?:power and toughness|toughness and power)\b/) : null;
+  const switchOf = /\bswitch the (?:base )?(?:power and toughness|toughness and power) of (?:each of )?(?:up to \w+ |any number of )?(?:other |another )?$/.test(before);
+  // "Turn target face-down creature face up", "turn any number of target tapped nontoken creatures
+  // face down" (Ixidor, Illithid Harvester): the site turns the picked target (_applyFiredFace), so
+  // the target changes as an attach's does.
+  const faceM = /\bturn (?:any number of |up to \w+ )?(?:another )?$/.test(before) ? after.match(/^([^.;]+?) face (down|up)\b/) : null;
+  const phrase = switchM ? switchM[1].trim() : faceM ? faceM[1].trim() : extractPhrase(after);
   if (!phrase) return { skip: 'empty-phrase' };
   // The engine models continuous effects only. "Destroy / exile / put a counter on / create a token
   // that's a copy of target ..." is a one-shot action: the target is the object of a verb, not the
   // subject of "gets / gains / becomes", and no parse could be expected to give it a targeted effect.
   let clauseBefore = before.slice(Math.max(before.lastIndexOf('.'), before.lastIndexOf(';')) + 1);
-  let verbAfter = after.slice(phrase.length).trim();
+  let verbAfter = (switchM ? after.slice(switchM[0].length) : faceM ? after.slice(faceM[0].length) : after.slice(phrase.length)).trim();
   let rules = [];
   // (classifyTargets: "Target player creates X Zombies, then up to one target creature gets -1/-1".)
   if (opts.each) clauseBefore = clauseBefore.replace(/^.*(?:,\s*|\s)then\s/, ' ');
@@ -349,7 +358,7 @@ function classifyAt(lower, idx, end, opts) {
   const attaches = attachM && !/\btarget\b/.test(attachM[1]) ? attachM[1] : null;
   const pronounEffect = keepsTarget && (opts.plural ? LATER_PLURAL_PRONOUN_EFFECT : LATER_PRONOUN_EFFECT).test(verbAfter);
   const traitVerb = clauseBefore.match(TRAIT_VERB_BEFORE);
-  if (!takesControl && !pronounEffect && !traitVerb && !attaches && (ONE_SHOT_VERBS.test(clauseBefore) || !CONTINUOUS_VERBS.test(verbAfter))) return { skip: 'one-shot-action' };
+  if (!takesControl && !pronounEffect && !traitVerb && !attaches && !switchM && !switchOf && !faceM && (ONE_SHOT_VERBS.test(clauseBefore) || !CONTINUOUS_VERBS.test(verbAfter))) return { skip: 'one-shot-action' };
   // "Target creature can't be blocked this turn" / "can't be regenerated" / "can attack as though
   // it didn't have defender": a rule about the target, not a change to what it is. The site does
   // not model these, so there is no targeted effect to expect.
@@ -380,7 +389,7 @@ function classifyAt(lower, idx, end, opts) {
   if (/'s\b/.test(phrase.replace(/\b(?:than|equal to) this \w+'s\b/g, ''))) return { skip: 'possessive-target' };
   // "creature or player", "target opponent", "creature card in a graveyard", "spell". ("creature that
   // player controls" and "this card creature" are permanents; the interpreter reports what it cannot read.)
-  if (!/^this /.test(phrase) && /\b(?:spell|spells|ability|abilities|card|cards|graveyard|library|hand|instant|sorcery)\b/.test(phrase.replace(/\b(?:than|equal to) this card's\b/g, ''))) return { skip: 'not-a-permanent' };
+  if (!/^this /.test(phrase) && /\b(?:spell|spells|ability|abilities|card|cards|graveyard|library|hand|instant|sorcery)\b/.test(phrase.replace(/\b(?:than|equal to) this card's\b/g, '').replace(/\bwith (?:a morph ability|morph abilities)\b/g, ''))) return { skip: 'not-a-permanent' };
   if (/^(?:players?|opponents?)\b|(?:\bor|\band\/or|,)\s+(?:another\s+)?(?:players?|opponents?)\b/.test(phrase)) return { skip: 'not-a-permanent' };
   if (!opts.plural && /\b(?:creatures|artifacts|enchantments|lands|planeswalkers|permanents)\b/.test(phrase)) return { skip: 'plural-target' };
   // ("Up to one other target creature": classifyTargets only, so a singular unit reads as before.)
@@ -547,6 +556,8 @@ function wordConstraint(w, negated) {
   else if (w === 'monocolored') c = { kind: 'adj', test: (st) => stateColors(st).length === 1 };
   else if (SUPERTYPE_WORDS.has(w)) c = { kind: 'adj', test: (st) => hasCI(st.supertypes, w) };
   else if (w === 'token') c = { kind: 'adj', test: (st, p) => !!p.isToken };
+  else if (w === 'face-down') c = { kind: 'adj', test: (st, p) => !!p.isFaceDown };
+  else if (w === 'face-up') c = { kind: 'adj', test: (st, p) => !p.isFaceDown };
   else if (w === 'attacking') c = { kind: 'adj', test: (st, p) => traitsOf(st, p).includes('Attacking') };
   else if (w === 'blocking') c = { kind: 'adj', test: (st, p) => traitsOf(st, p).includes('Blocking') };
   else if (w === 'tapped') c = { kind: 'adj', test: (st, p) => !!p.tapped || traitsOf(st, p).includes('Tapped') };
@@ -744,6 +755,9 @@ function interpretPhrase(phrase, env) {
     }
     if ((m = tail.match(/^with (?:a|an) \+1\/\+1 counter on it\s*/))) { clauseTests.push((st, p) => counterCount(st, p, '+1/+1') > 0); tail = tail.slice(m[0].length); continue; }
     if ((m = tail.match(/^with (?:a|an) counter on it\s*/))) { clauseTests.push((st, p) => anyCounter(st, p) > 0); tail = tail.slice(m[0].length); continue; }
+    // "Target creature with a morph ability" (Backslide): morph or megamorph among its abilities now
+    // (a face-down creature has none).
+    if ((m = tail.match(/^with (?:a morph ability|morph abilities)\s*/))) { clauseTests.push((st) => (st.abilities || []).some(a => /^(?:morph|megamorph)\b/i.test(String(a)))); tail = tail.slice(m[0].length); continue; }
     if ((m = tail.match(/^with (power|toughness|mana value) (\d+) or (less|greater|more)\s*/))) {
       const [, stat, n, dir] = m; const num = Number(n);
       clauseTests.push((st, p) => { const v = statValue(st, p, stat); return v !== null && (dir === 'less' ? v <= num : v >= num); });
@@ -986,6 +1000,21 @@ function boardAdjustments(ctx, u, unitId, pseudo, tryIds) {
       out.push({ what: (n - have) + ' ' + kind + ' counters put on the source', apply: () => {
         Battlefield.addCounter(src.id, kind, n - have);
         return () => Battlefield.removeCounter(src.id, kind, n - have);
+      } });
+    }
+  }
+  // "Switch target creature's power and toughness" shows nothing on a creature whose power and
+  // toughness are equal, as every creature of the audit board's are: each listed creature is given
+  // one more printed power (the audit's own change to the board, not something a card does).
+  if ((/\bswitch(?:es)? (?:up to \w+ )?(?:another )?target [^.;']+'s (?:base )?(?:power and toughness|toughness and power)\b/i.test(u.text) ||
+       /\bswitch the (?:base )?(?:power and toughness|toughness and power) of [^.;]*\btarget\b/i.test(u.text)) && tryIds.length) {
+    const square = tryIds.map(tid => Battlefield.getPermById(tid)).filter(p => p && p.printedPower != null && String(p.printedPower) === String(p.printedToughness) && /^\d+$/.test(String(p.printedPower)));
+    if (square.length) {
+      out.push({ what: 'every listed creature given 1 more printed power', apply: () => {
+        const was = square.map(p => [p, p.printedPower]);
+        was.forEach(([p, v]) => { p.printedPower = (typeof v === 'number' ? v : parseInt(v, 10)) + 1; });
+        Battlefield._invalidate();
+        return () => { was.forEach(([p, v]) => { p.printedPower = v; }); Battlefield._invalidate(); };
       } });
     }
   }
@@ -1812,6 +1841,7 @@ function auditUnit(ctx, u, fire) {
     // (Not for a mode of a modal spell: it was cast, and its board taken, before them.)
     if ((u.exchange || u.selfCopy) && u.modeIndex === undefined) ctx = addTargetingWitnesses(ctx);
     if (u.textChange && u.modeIndex === undefined) ctx = addTextChangeWitnesses(ctx);
+    if (FACE_TURN_RE.test(u.text) && u.modeIndex === undefined) ctx = addFaceWitnesses(ctx, u.text);
     try {
       const pseudo = fire();
       if (!pseudo) return { skip: 'fire-returned-nothing' };
@@ -2306,6 +2336,31 @@ function textChangeWitnesses() {
   ];
 }
 
+/* "Turn target face-down creature face up", "turn target creature with a morph ability face down":
+   the board has no face-down creature and none with morph. A face-down 3/1 and a 3/1 with morph
+   on each side (CR 702.37), added before the unit is fired. */
+const FACE_TURN_RE = /\bturn\b[^.;]*\bface (?:down|up)\b/i;
+function addFaceWitnesses(ctx, text) {
+  const mk = (name, oracle) => ({ name, layout: 'normal', type_line: 'Creature — Beast', oracle_text: oracle, mana_cost: '{2}{G}', cmc: 3,
+    colors: ['G'], color_identity: ['G'], keywords: oracle ? ['Morph'] : [], power: '3', toughness: '1' });
+  const want = [];
+  if (/\bface-down\b/i.test(text)) want.push(['Audit Hidden Beast', '', 'p1', 'your face-down creature', true], ['Audit Masked Beast', '', 'p2', "opponent's face-down creature", true]);
+  if (/\bmorph abilit/i.test(text)) want.push(['Audit Morphling Beast', 'Morph {2}{G}', 'p1', 'your creature with morph', false], ['Audit Shifting Beast', 'Morph {2}{G}', 'p2', "opponent's creature with morph", false]);
+  if (!want.length) return ctx;
+  const added = [];
+  for (const [name, oracle, ctl, role, down] of want) {
+    const c = ctl === 'p2' ? Battlefield.players[1].id : 'player_0';
+    Battlefield.activePlayerId = c;
+    const p = Battlefield.addPermanent(mk(name, oracle), { suppressPrompt: true, controller: c, owner: c });
+    if (down) Battlefield.setFaceDown(p.id, 'morph');
+    roleOf.set(p.id, role);
+    added.push(p.id);
+  }
+  Battlefield.activePlayerId = 'player_0';
+  Battlefield._invalidate();
+  return Object.assign({}, ctx, { preStates: Battlefield.getAllFinalStates(), before: summarizeBoard(), universe: ctx.universe.concat(added.map(x => Battlefield.getPermById(x))) });
+}
+
 function addTextChangeWitnesses(ctx) {
   const added = [];
   for (const w of textChangeWitnesses()) {
@@ -2545,7 +2600,28 @@ function auditFiredModePair(ctx, u, id) {
     if (othersSeen.length) finding('check1', 'target-changes-others', { slot: label, examples: othersSeen.slice(0, 3), count: othersSeen.length });
     // (Each mode alone was already judged on its own line; a target that changes nothing here as
     // well is information unless it changed itself there.)
-    if (tryIds.length && !ok.length && !othersSeen.length) {
+    // (Tried again on the board adjusted as the mode's own words ask: boardAdjustments.)
+    let shownOn = null;
+    if (tryIds.length && !ok.length && !othersSeen.length && !(COUNT_DEPENDENT.test(m.text) && /\bgets?\b/i.test(m.text))) {
+      for (const adj of boardAdjustments(ctx, { text: m.text }, id, null, tryIds)) {
+        let undo = null;
+        try {
+          undo = adj.apply();
+          Battlefield._invalidate();
+          const from = summarizeBoard();
+          for (const tid of tryIds.slice(0, 14)) {
+            let ch = [];
+            try { Battlefield.setModalModeTarget(id, m.mi, tid, slotOf(m)); Battlefield._invalidate(); ch = diffSummaries(from, summarizeBoard()); }
+            finally { Battlefield.setModalModeTarget(id, m.mi, null, slotOf(m)); Battlefield._invalidate(); }
+            if (ch.some(c => c.id === tid) && !ch.some(c => c.id !== tid && !(mixed[k].source && c.id === ctx.sourceId))) { shownOn = adj.what; break; }
+          }
+        } catch (e) { /* not shown */ }
+        finally { try { if (undo) undo(); } catch (e) { /* restored by the caller */ } Battlefield._invalidate(); }
+        if (shownOn) break;
+      }
+    }
+    if (shownOn) u.infos.push({ code: 'shown-on-adjusted-board', roles: [], slot: label, what: shownOn });
+    else if (tryIds.length && !ok.length && !othersSeen.length) {
       if (COUNT_DEPENDENT.test(m.text) && /\bgets?\b/i.test(m.text)) u.infos.push({ code: 'count-or-condition-dependent', roles: [], slot: label });
       else finding('check1', 'target-changes-nothing', { slot: label, tried: tryIds.length });
     } else if (ok.length && noOp.length) u.infos.push({ code: 'no-op-on-some', roles: noOp, slot: label });
@@ -3650,7 +3726,8 @@ function auditFace(card, faceIndex) {
     const u = newUnit('spell', undefined, '', text, cls);
     // Casting happened in addAuditedCard; the spell's own effects are the unit's.
     // (An attach pair's witnesses come before the spell: it is cast again once they are there.)
-    if (cls.attachPair || cls.exchange || cls.selfCopy || cls.textChange) run(u, () => { Battlefield.removePermanent(perm.id); return addAuditedCard(card, faceIndex, true); });
+    // (So do the face-down and morph witnesses of "turn target … face down / up": FACE_TURN_RE.)
+    if (cls.attachPair || cls.exchange || cls.selfCopy || cls.textChange || FACE_TURN_RE.test(text)) run(u, () => { Battlefield.removePermanent(perm.id); return addAuditedCard(card, faceIndex, true); });
     else run(u, () => perm);
     quotedLater();
     return rec;

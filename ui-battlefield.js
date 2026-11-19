@@ -538,7 +538,7 @@ function renderBattlefield() {
       ${p._isCrewEffect ? '<div class="bf-card-spell-badge bf-card-crew-badge">CREWED</div>' : p._isSaddleEffect ? '<div class="bf-card-spell-badge bf-card-saddle-badge">SADDLED</div>' : p.isActivatedAbility ? '<div class="bf-card-spell-badge bf-card-activated-badge">ACTIVATED</div>' : ''}
       ${Battlefield.isCommander(p.id) ? '<div class="bf-card-commander-badge">CMDR</div>' : ''}
       ${p.classLevel ? `<div class="bf-card-class-badge">LVL ${p.classLevel}</div>` : ''}
-      ${p.isFaceDown ? `<div class="bf-card-facedown-badge">${p.faceDownMode === 'cloak' ? 'CLOAK' : p.faceDownMode === 'manifest' ? 'MANIFEST' : 'MORPH'}</div>` : ''}
+      ${p.isFaceDown ? `<div class="bf-card-facedown-badge">${p.faceDownMode === 'cloak' ? 'CLOAK' : p.faceDownMode === 'manifest' ? 'MANIFEST' : p.faceDownMode === 'plain' ? 'FACE DOWN' : 'MORPH'}</div>` : ''}
       ${hasSBA ? `<div class="bf-card-sba-badge" title="State-based action required">\u26a0</div>` : ''}
       ${renderBfCounterBadges(p)}
     </div>`;

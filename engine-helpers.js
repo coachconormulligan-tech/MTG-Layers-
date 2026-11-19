@@ -114,6 +114,7 @@ function snapshotState(state) {
     manaCost:   state.manaCost || '',
     isCreature: state.types.includes('Creature'),
     isToken:    state.isToken || false,
+    isFaceDown: state.isFaceDown || false,
     isEmblem:   state.isEmblem || false,
     isSpell:    state.isSpell || false,
     isZoneCard: state.isZoneCard || false,

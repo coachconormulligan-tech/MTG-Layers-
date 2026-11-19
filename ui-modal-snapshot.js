@@ -206,7 +206,7 @@ function renderSnapshotBoard(container, snap) {
     if (p._isCrewEffect) parts.push('<div class="bf-card-spell-badge bf-card-crew-badge">CREWED</div>');
     if (p._isSaddleEffect) parts.push('<div class="bf-card-spell-badge bf-card-saddle-badge">SADDLED</div>');
     if (p.isFaceDown) {
-      const m = p.faceDownMode === 'cloak' ? 'CLOAK' : p.faceDownMode === 'manifest' ? 'MANIFEST' : 'MORPH';
+      const m = p.faceDownMode === 'cloak' ? 'CLOAK' : p.faceDownMode === 'manifest' ? 'MANIFEST' : p.faceDownMode === 'plain' ? 'FACE DOWN' : 'MORPH';
       parts.push(`<div class="bf-card-facedown-badge">${m}</div>`);
     }
     return parts.join('');

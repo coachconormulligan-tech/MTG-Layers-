@@ -2104,6 +2104,8 @@ const Battlefield = {
     const removingPerm = this.getPermById(id);
     // A fired "attach … to target …" puts back what it moved (_applyFiredAttach).
     if (removingPerm && removingPerm._attach) this._undoFiredAttach(removingPerm);
+    // So does a fired "turn target … face down / up" (_applyFiredFace).
+    if (removingPerm && removingPerm._face) { const recs = removingPerm._face; removingPerm._face = null; recs.forEach(r => this._undoFaceRecord(r)); }
     if (removingPerm?._isCrewEffect && removingPerm.abilitySourceId) {
       const src = this.getPermById(removingPerm.abilitySourceId);
       if (src?.traits) src.traits = src.traits.filter(t => t !== 'Crewed');
@@ -2224,13 +2226,17 @@ const Battlefield = {
      - morph: face down 2/2 creature with no abilities
      - cloak: face down 2/2 creature with Ward 2
      - manifest: face down 2/2 creature with no abilities */
-  setFaceDown(id, mode) {
+  /* (mode 'plain': turned face down by a spell or ability, CR 701.34; `as` the characteristics
+     it says the permanent has face down, { power, toughness, types, subtypes }, CR 708.2a.
+     opts.timestamp: turned back up by undoing what turned it down, it keeps the one it had.) */
+  setFaceDown(id, mode, as, opts) {
     const perm = this.getPermById(id);
     if (!perm) return;
     if (perm.isFaceDown) {
       // Turn face up: restore original card data
       perm.isFaceDown = false;
       perm.faceDownMode = null;
+      perm.faceDownAs = null;
       perm.printedTypes = [...(perm._originalTypes || perm.printedTypes)];
       perm.printedSupertypes = [...(perm._originalSupertypes || perm.printedSupertypes)];
       perm.printedSubtypes = [...(perm._originalSubtypes || perm.printedSubtypes)];
@@ -2240,12 +2246,14 @@ const Battlefield = {
       perm.printedColors = [...(perm._originalColors || perm.printedColors)];
       perm.oracleText = perm._originalOracleText || perm.oracleText;
       // Turning face up gives a new timestamp (CR 613.7d)
-      perm.timestamp = this.nextTimestamp++;
+      perm.timestamp = opts && opts.timestamp != null ? opts.timestamp : this.nextTimestamp++;
       // Re-parse effects with the new timestamp
       this.effects = this.effects.filter(e => e.sourceId !== id);
       const card = perm.scryfallData || { name: perm.name, oracle_text: perm.oracleText, type_line: '', colors: perm.printedColors };
       const newEffects = parseCardEffects(perm, card);
       this.effects.push(...newEffects);
+      // Its counters stay on it (they were removed with its other effects).
+      this._syncCounterEffects(id);
     } else {
       // Save original state
       perm._originalTypes = [...perm.printedTypes];
@@ -2265,6 +2273,13 @@ const Battlefield = {
       perm.printedPower = 2;
       perm.printedToughness = 2;
       perm.printedColors = [];
+      perm.faceDownAs = as || null;
+      if (as) {
+        perm.printedTypes = (as.types || ['Creature']).slice();
+        perm.printedSubtypes = (as.subtypes || []).slice();
+        perm.printedPower = as.power;
+        perm.printedToughness = as.toughness;
+      }
       if (mode === 'cloak') {
         perm.printedAbilities = ['Ward {2}'];
         perm.oracleText = 'Ward {2}';
@@ -2277,6 +2292,9 @@ const Battlefield = {
       const fakeCard = { name: perm.name, oracle_text: perm.oracleText, type_line: 'Creature', colors: [], cmc: 0 };
       const newEffects = parseCardEffects(perm, fakeCard);
       this.effects.push(...newEffects);
+      // (A face-down permanent keeps its counters: Grizzly Bears with a +1/+1 counter, turned
+      // face down, is a 3/3. They were removed with its other effects and lost.)
+      this._syncCounterEffects(id);
     }
     this._invalidate();
     this.evaluate();
@@ -2394,6 +2412,7 @@ const Battlefield = {
     // targetId. Re-invalidate now so callers get a fresh evaluation after the mutation.
     this._invalidate();
     if (this.effects.some(e => e.sourceId === effectSourceId && e._attachMarker)) this._applyFiredAttach(effectSourceId);
+    if (this.effects.some(e => e.sourceId === effectSourceId && e._faceMarker)) this._applyFiredFace(effectSourceId);
   },
 
   /* What an Aura or Equipment is attached to: the target of its own targeted effects. */
@@ -2446,6 +2465,47 @@ const Battlefield = {
     if (this.getPermById(made.what) && this._attachedTargetOf(made.what) === made.to) {
       this._attachPermTo(made.what, made.prev && this.getPermById(made.prev) ? made.prev : null);
     }
+  },
+
+  /* A fired "turn target … face down / up" (the _faceMarker effects of cards-parser.js): each
+     picked target is turned, and what was done is kept on the ability (pseudo._face: one record
+     per target, with its timestamp before and, for face up, how it was face down). A target no
+     longer picked, or a mode switched off, is turned back if it is still as the ability left it;
+     so is every target when the ability is removed (removePermanent). Face down, a creature with
+     morph or megamorph is a morph; any other a plain face-down 2/2, or what the text says it is
+     (faceDownAs). */
+  _applyFiredFace(pseudoId) {
+    const pseudo = this.getPermById(pseudoId);
+    if (!pseudo || this._restoringTargets) return;
+    const marks = this.effects.filter(e => e.sourceId === pseudoId && e._faceMarker && !e.disabled);
+    const wanted = new Map();
+    for (const m of marks) for (const t of [m.targetId, ...(m.targetIds || [])]) if (t && this.getPermById(t) && !wanted.has(t)) wanted.set(t, m);
+    const keep = [];
+    for (const rec of pseudo._face || []) {
+      const m = wanted.get(rec.id);
+      if (m && m._faceMarker === rec.dir) keep.push(rec); else this._undoFaceRecord(rec);
+    }
+    for (const [tid, m] of wanted) {
+      if (keep.some(r => r.id === tid)) continue;
+      const perm = this.getPermById(tid);
+      if (m._faceMarker === 'down' && !perm.isFaceDown) {
+        const ts = perm.timestamp;
+        const morph = (perm.printedAbilities || []).some(a => /^(?:morph|megamorph)\b/i.test(String(a)));
+        this.setFaceDown(tid, morph ? 'morph' : 'plain', m.faceDownAs || null);
+        if (perm.isFaceDown) keep.push({ id: tid, dir: 'down', ts });
+      } else if (m._faceMarker === 'up' && perm.isFaceDown) {
+        const rec = { id: tid, dir: 'up', ts: perm.timestamp, mode: perm.faceDownMode || 'morph', as: perm.faceDownAs || null };
+        this.setFaceDown(tid);
+        if (!perm.isFaceDown) keep.push(rec);
+      }
+    }
+    pseudo._face = keep.length ? keep : null;
+  },
+  _undoFaceRecord(rec) {
+    const perm = rec && this.getPermById(rec.id);
+    if (!perm) return;
+    if (rec.dir === 'down' && perm.isFaceDown) this.setFaceDown(rec.id, null, null, { timestamp: rec.ts });
+    else if (rec.dir === 'up' && !perm.isFaceDown) { perm.timestamp = rec.ts; this.setFaceDown(rec.id, rec.mode, rec.as); }
   },
 
   /* Ids of the permanents attached to this one: Auras, Equipment and bestowed cards whose own
@@ -2570,6 +2630,7 @@ const Battlefield = {
     });
     this._invalidate();
     if (this.effects.some(e => e.sourceId === sourceId && e._attachMarker)) this._applyFiredAttach(sourceId);
+    if (this.effects.some(e => e.sourceId === sourceId && e._faceMarker)) this._applyFiredFace(sourceId);
   },
 
   /* Set a specific target slot for multi-target effects (e.g. "up to two target creatures") */
@@ -2584,6 +2645,7 @@ const Battlefield = {
         while (e.targetIds.length > 0 && !e.targetIds[e.targetIds.length - 1]) e.targetIds.pop();
       }
     });
+    if (this.effects.some(e => e.sourceId === effectSourceId && e._faceMarker)) this._applyFiredFace(effectSourceId);
     this.evaluate();
   },
 
@@ -2608,6 +2670,7 @@ const Battlefield = {
         }
       }
     });
+    if (this.effects.some(e => e.sourceId === effectSourceId && e._faceMarker)) this._applyFiredFace(effectSourceId);
   },
 
   /* Select a specific modal mode by effect ID. For choose-one cards, this always
@@ -2656,6 +2719,8 @@ const Battlefield = {
         }
       }
     }
+    // (A mode switched off no longer turns its target: _applyFiredFace reads only switched-on modes.)
+    if (siblingEffs.some(e => e._faceMarker)) this._applyFiredFace(eff.sourceId);
   },
 
   /* Set modal mode counts for repeatable modal spells.
@@ -3364,7 +3429,7 @@ const Battlefield = {
       subtypes: p.printedSubtypes || [], power: p.printedPower, toughness: p.printedToughness,
       colors: p.printedColors || [], abilities: p.printedAbilities || [], oracleText: p.oracleText || '',
       manaValue: p.manaValue || 0, manaCost: p.manaCost || '', timesAttackedThisTurn: p.timesAttackedThisTurn || 0,
-      owner: p.owner || 'player_0', controller: p.owner || 'player_0', isToken: !!p.isToken,
+      owner: p.owner || 'player_0', controller: p.owner || 'player_0', isToken: !!p.isToken, isFaceDown: !!p.isFaceDown,
       // ("Tap up to one untapped creature you control" — Nihiloor — reads tapped off these.)
       tapped: !!p.tapped, traits: [...(p.traits || [])], counters: { ...(p.counters || {}) } });
     const hasTraits = realPerms.some(rp => rp.traits && rp.traits.length > 0);
@@ -3813,6 +3878,9 @@ const Battlefield = {
         counterTimestamps: { ...(p.counterTimestamps || {}) },
         isFaceDown: !!p.isFaceDown,
         faceDownMode: p.faceDownMode || null,
+        faceDownAs: p.faceDownAs || null,
+        // What a spell's "turn target … face down / up" turned (_applyFiredFace).
+        face: p._face ? p._face.map(r => Object.assign({}, r)) : null,
         roomLocked: p.roomLocked ? p.roomLocked.slice() : null,
         cdaUserValue: p.cdaUserValue ?? null,
         classLevel: p.classLevel ?? null,
@@ -3900,6 +3968,8 @@ const Battlefield = {
         // What a fired "attach … to target …" attached, to what, and what it was attached to
         // before (_applyFiredAttach), so removing the ability later puts it back.
         attach: p._attach ? { what: p._attach.what, to: p._attach.to, prev: p._attach.prev || null } : null,
+        // What a fired "turn target … face down / up" turned (_applyFiredFace).
+        face: p._face ? p._face.map(r => Object.assign({}, r)) : null,
         // Player-level targets (chosen opponent / chosen player / enchanted player) live
         // on the pseudo-perm just like on real perms, so capture them too — a triggered
         // ability that targets an opponent would otherwise lose its choice on restore.
@@ -4060,7 +4130,7 @@ const Battlefield = {
       if (r.targetPlayerId) this.setTargetPlayer(np.id, r.targetPlayerId);
       if (r.enchantedPlayerId) this.setEnchantedPlayer(np.id, r.enchantedPlayerId);
       // Face-down last (re-parses to a 2/2 with no oracle text).
-      if (r.isFaceDown && !np.isFaceDown) this.setFaceDown(np.id, r.faceDownMode || 'morph');
+      if (r.isFaceDown && !np.isFaceDown) this.setFaceDown(np.id, r.faceDownMode || 'morph', r.faceDownAs || null);
       // Re-stamp effects to the restored timestamp. Counter effects are excluded: they
       // carry their own per-counter timestamps (from counterTimestamps) so a counter added
       // after a same-sublayer effect (e.g. a power-doubling trigger) keeps its later order.
@@ -4249,6 +4319,12 @@ const Battlefield = {
       const pseudo = f.attach && idMap[f.id] && this.getPermById(idMap[f.id]);
       const tr = (id) => id ? (idMap[id] || null) : null;
       if (pseudo && tr(f.attach.what) && tr(f.attach.to)) pseudo._attach = { what: tr(f.attach.what), to: tr(f.attach.to), prev: tr(f.attach.prev) };
+    }
+    for (const f of [...(data.perms || []), ...(data.firedAbilities || [])]) {
+      const pseudo = f.face && idMap[f.id] && this.getPermById(idMap[f.id]);
+      if (!pseudo) continue;
+      const recs = f.face.filter(r => idMap[r.id]).map(r => Object.assign({}, r, { id: idMap[r.id] }));
+      pseudo._face = recs.length ? recs : null;
     }
 
     // setTarget / setSlottedTarget above assigned FRESH timestamps to targeted effects

@@ -1,0 +1,17 @@
+{
+  "name": "Invert — \"switch the power and toughness of each of up to two target creatures\" switches only the targets",
+  "notes": "Found by the audit (2026-11-19), once it read \"switch target creature's power and toughness\" and \"switch the power and toughness of … target …\" as layer-7d units. \"each of\" in front of \"up to two target creatures\" hid the target, so the switch was global: every creature on the board was switched as soon as Invert was cast. The switch parser now drops \"each of\" before a target (Inversion Behemoth's \"each of any number of target creatures\" already read). Goblin Piker, not picked, stays 2/1.",
+  "steps": [
+    { "add": "Craw Wurm" },
+    { "add": "Ornithopter" },
+    { "add": "Goblin Piker" },
+    { "add": "Invert // Invent", "spell": true, "as": "inv" },
+    { "call": ["setMultiTarget", "@inv", 0, "@Craw Wurm"] },
+    { "call": ["setMultiTarget", "@inv", 1, "@Ornithopter"] }
+  ],
+  "asserts": [
+    { "perm": "Craw Wurm", "final": { "power": 4, "toughness": 6 } },
+    { "perm": "Ornithopter", "final": { "power": 2, "toughness": 0 } },
+    { "perm": "Goblin Piker", "final": { "power": 2, "toughness": 1 } }
+  ]
+}

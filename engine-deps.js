@@ -34,6 +34,8 @@ function effectAppliesToPerm(effect, permState, permanent, permId, allStates, ab
   // A fired "attach … to target …" marks what is attached and to what; attaching is done by
   // Battlefield._applyFiredAttach, so the marker itself applies to nothing.
   if (effect._attachMarker) return false;
+  // (So is a fired "turn target … face down / up": Battlefield._applyFiredFace.)
+  if (effect._faceMarker) return false;
   // Zone-card / spell / permanent scope gate.
   // A zone card (exile / graveyard / command zone) is neither a permanent nor a stack
   // spell — it only receives effects flagged to reach cards outside the battlefield

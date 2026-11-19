@@ -4807,7 +4807,10 @@ function parseCardEffects(permanent, card, opts = {}) {
   const switchPTRegex = /(?:switch(?:es)?\s+(.+?)'s\s+(?:base\s+)?(?:power\s+and\s+toughness|toughness\s+and\s+power)|switch\s+the\s+(?:base\s+)?(?:power\s+and\s+toughness|toughness\s+and\s+power)\s+of\s+(.+?)|(.+?)'s\s+(?:base\s+)?(?:power\s+and\s+toughness|toughness\s+and\s+power)\s+(?:are|is)\s+switched)(?:\s+until\s+end\s+of\s+turn)?(?:\s*\.|$)/gmi;
   let switchPTMatch;
   while ((switchPTMatch = switchPTRegex.exec(oracle)) !== null) {
-    const rawFilter = (switchPTMatch[1] || switchPTMatch[2] || switchPTMatch[3] || '').trim();
+    // ("Switch the power and toughness of each of up to two target creatures" — Invert: "each of"
+    // hid the target, and the switch reached every creature.)
+    const rawFilter = (switchPTMatch[1] || switchPTMatch[2] || switchPTMatch[3] || '').trim()
+      .replace(/^each of\s+(?=(?:up to \w+\s+|any number of\s+|\w+\s+)?(?:other\s+|another\s+)?target\b)/i, '');
     if (!rawFilter) continue;
     if (!filterReferencesPermanents(rawFilter)) continue;
     const switchCond = _getConditionForPos(switchPTMatch.index);
@@ -8191,6 +8194,61 @@ function parseCardEffects(permanent, card, opts = {}) {
         { power: 0, toughness: 0, fromExiledCardMV: true },
         { appliesTo: null, scope: 'targeted', selfTarget: isSelf || undefined, affectsSelf: isSelf || false },
         `Gets +X/+X, where X is the exiled card's mana value.`);
+    }
+  }
+
+  // --- Turning face down / face up, in a fired ability or a spell ---
+  // "Turn target creature face down. It's a 2/2 Cyberman artifact creature." (Cyber Conversion),
+  // "turn any number of target tapped nontoken creatures face down. They're 2/2 Horror creatures."
+  // (Illithid Harvester), "Turn target face-down creature face up." (Ixidor, Reality Sculptor).
+  // Turning is done, not kept: as with attaching, each target is a marker (_faceMarker) that
+  // applies to nothing and only gives the ability its picker; once a target is picked
+  // Battlefield._applyFiredFace turns it. The sentence after "face down" that says what it is
+  // gives its face-down characteristics (CR 708.2a) and no effect of its own: the target-picked
+  // 2/2 Cyberman artifact creature is what is face down, not a face-down 2/2 that later becomes one.
+  if (permanent.isTriggeredAbility || permanent.isActivatedAbility || permanent.isSpell) {
+    const faceRegex = /\bturn\s+((?:up to \w+\s+|any number of\s+)?(?:another\s+)?target\s+[^.;]+?)\s+face\s+(down|up)\b/gi;
+    let fm;
+    while ((fm = faceRegex.exec(oracle)) !== null) {
+      if ((oracle.slice(0, fm.index).match(/"/g) || []).length % 2) continue;
+      const text = fm[1].trim(), dir = fm[2].toLowerCase();
+      const built = buildAppliesToFromText(text);
+      if (!built.isSpellTarget) continue;
+      let as = null;
+      if (dir === 'down') {
+        const from = fm.index + fm[0].length;
+        // (By here a pronoun subject reads as the target: "It's a 2/2 …" is "Target creature is a 2/2 …".)
+        const am = oracle.slice(from).match(/^\.\s+(?:it's|it is|they're|they are|(?:that|those|target) (?:[a-z]+ )?(?:creatures?|permanents?) (?:is|are))\s+(?:an?\s+)?(\d+)\/(\d+)\s+([a-z' -]+?)\s*(?=[.;\n]|$)/i);
+        if (am) {
+          const types = [], subtypes = [];
+          for (const w of am[3].trim().split(/\s+/)) {
+            const t = normalizeTypeWord(w.toLowerCase());
+            if (t && t.check === 'type') { if (!types.includes(t.value)) types.push(t.value); }
+            else subtypes.push(singularizeCreatureType(w));
+          }
+          if (types.includes('Creature')) {
+            as = { power: parseInt(am[1], 10), toughness: parseInt(am[2], 10), types, subtypes };
+            // The type and base P/T effects that sentence made (they carry no position): what
+            // it says is what is face down.
+            const same = (a, b) => (a || []).slice().sort().join() === (b || []).slice().sort().join();
+            for (let i = effects.length - 1; i >= 0; i--) {
+              const e = effects[i];
+              if (e.scope !== 'targeted' || e.selfTarget || e._faceMarker) continue;
+              const pr = e.params || {};
+              const typeEff = (e.type === EFFECT_TYPE.ADD_TYPE || e.type === EFFECT_TYPE.SET_TYPE || e.type === 'set_types') &&
+                same(pr.subtypes, subtypes) && same((pr.types || []).filter(t => t !== 'Creature'), types.filter(t => t !== 'Creature'));
+              const ptEff = e.type === EFFECT_TYPE.SET_PT && pr.power === as.power && pr.toughness === as.toughness;
+              if (typeEff || ptEff) effects.splice(i, 1);
+            }
+          }
+        }
+      }
+      const desc = `Turn ${text} face ${dir}.` + (as ? ` It's a ${as.power}/${as.toughness} ${[...as.subtypes, ...as.types].join(' ')}.` : '');
+      const eff = pushEff('7c', EFFECT_TYPE.MODIFY_PT, { power: 0, toughness: 0 },
+        { appliesTo: null, scope: 'targeted', selfTarget: false },
+        desc.charAt(0).toUpperCase() + desc.slice(1), { _oraclePos: fm.index, _faceMarker: dir, faceDownAs: as });
+      _applyTargetInfo(eff, built, built.fn);
+      if (!eff.targetRestriction) eff.targetRestriction = built.fn || null;
     }
   }
 

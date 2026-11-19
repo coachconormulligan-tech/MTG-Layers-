@@ -1,0 +1,18 @@
+{
+  "name": "Cyber Conversion — the picked target is turned face down as a 2/2 Cyberman artifact creature, and a new pick turns it back",
+  "notes": "Conor's decision 2026-11-19: a fired spell or ability that turns a target face down or face up does it once the target is picked, as attaching does (_applyFiredFace in cards-battlefield.js; the parser's _faceMarker effects only give the picker). Cyber Conversion's \"It's a 2/2 Cyberman artifact creature\" is its face-down characteristics (CR 708.2a, faceDownAs), no longer a layer-4 type change and a layer-7b P/T setting on a face-up creature. Grizzly Bears was picked first, then Hill Giant: the Bears is turned back face up with its +1/+1 counter (setFaceDown used to drop a permanent's counters both ways), and the Giant is a face-down 2/2 Cyberman artifact creature with no colour or abilities.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "call": ["addCounter", "@bears", "+1/+1", 1] },
+    { "add": "Hill Giant", "as": "giant" },
+    { "add": "Cyber Conversion", "spell": true, "as": "cc" },
+    { "call": ["setTarget", "@cc", "@bears"] },
+    { "call": ["setTarget", "@cc", "@giant"] }
+  ],
+  "asserts": [
+    { "perm": "Hill Giant", "final": { "types": { "$includes": ["Artifact", "Creature"] }, "subtypes": ["Cyberman"], "power": 2, "toughness": 2, "colors": [], "abilities": [] } },
+    { "perm": "Grizzly Bears", "final": { "types": ["Creature"], "subtypes": ["Bear"], "power": 3, "toughness": 3, "colors": ["G"] } },
+    { "noEffect": { "source": "Cyber Conversion", "layer": "4" } },
+    { "noEffect": { "source": "Cyber Conversion", "layer": "7b" } }
+  ]
+}

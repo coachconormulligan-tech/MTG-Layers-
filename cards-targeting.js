@@ -303,6 +303,9 @@ function _restrictionState(tState, fs, t) {
     counters: src.counters || t.counters || {},
     manaValue: src.manaValue ?? t.manaValue ?? 0,
     isToken: !!t.isToken,
+    // ("Turn target face-down creature face up" — Ixidor, Reality Sculptor: as it was when the
+    // ability was fired, so the creature it turned face up stays its pick.)
+    isFaceDown: src.isFaceDown !== undefined ? !!src.isFaceDown : !!t.isFaceDown,
     // ("Enchant tapped creature" — Entangling Vines, Glimmerdust Nap.)
     tapped: src.tapped ?? !!t.tapped,
     traits: tState.traits || src.traits || t.traits || [],

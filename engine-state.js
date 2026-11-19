@@ -35,6 +35,7 @@ function createBaseState(permanent) {
     manaCost:   permanent.manaCost || '',
     isCreature: permanent.printedTypes.includes('Creature'),
     isToken:    permanent.isToken || false,
+    isFaceDown: !!permanent.isFaceDown, // "target face-down creature" (Ixidor, Reality Sculptor)
     isEmblem:   permanent.isEmblem || false, // an emblem's state: no permanent, so no count sees it (CR 114.5)
     isZoneCard: permanent.isZoneCard || false, // a graveyard / exile / command-zone card on computeZoneCardState's board: no permanent either
     oracleText: permanent.oracleText || '',

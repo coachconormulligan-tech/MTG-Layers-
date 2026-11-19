@@ -1996,6 +1996,15 @@ function _buildAppliesToFromTextInner(filterText) {
   const withKeywordFilter = f.match(/^(.+?)\s+with\s+(.+)$/);
   if (withKeywordFilter) {
     const kwCandidate = withKeywordFilter[2].toLowerCase().trim();
+    // "Target creature with a morph ability" (Backslide, Master of the Veil): morph or megamorph
+    // among its abilities now (a face-down creature has none).
+    if (/^(?:a morph ability|morph abilities)$/.test(kwCandidate)) {
+      const baseFilter = buildAppliesToFromText(withKeywordFilter[1]);
+      return {
+        fn: (p, ...rest) => baseFilter.fn(p, ...rest) && (p.abilities || []).some(a => /^(?:morph|megamorph)\b/i.test(String(a))),
+        desc: `Applies to: ${baseFilter.desc.replace('Applies to: ', '')} with a morph ability`,
+      };
+    }
     if (FILTER_KEYWORDS.has(kwCandidate)) {
       const baseFilter = buildAppliesToFromText(withKeywordFilter[1]);
       const kw = kwCandidate;
@@ -2024,6 +2033,7 @@ function _buildAppliesToFromTextInner(filterText) {
   let requireCommander = false;
   let requireOutlaw = false;
   let requireTapped = false;
+  let requireFaceDown = null; // true: "face-down", false: "face-up"
   let requireUntapped = false;
   let baseTypeWord = null;
   let hasNegation = false;
@@ -2090,6 +2100,9 @@ function _buildAppliesToFromTextInner(filterText) {
       requiredTraits.push('Equipped');
     } else if (word === 'fortified') {
       requiredTraits.push('Fortified');
+    } else if (word === 'face-down' || word === 'face-up') {
+      // "Target face-down creature" (Ixidor, Reality Sculptor; Break Open).
+      requireFaceDown = word === 'face-down' ? true : false;
     } else if (word === 'tapped') {
       requireTapped = true;
     } else if (word === 'untapped') {
@@ -2152,7 +2165,7 @@ function _buildAppliesToFromTextInner(filterText) {
   // If we parsed multiple qualifiers, build a composite filter
   if (requiredTypes.length > 0 || requiredSubtypes.length > 0 || requiredSupertypes.length > 0 ||
       requiredColors.length > 0 || negatedColors.length > 0 || requiredTraits.length > 0 || negatedTraits.length > 0 ||
-      negatedTypes.length > 0 || negatedSubtypes.length > 0 || negatedSupertypes.length > 0 || requireNontoken || requireToken || requireCommander || requireTapped || requireUntapped) {
+      negatedTypes.length > 0 || negatedSubtypes.length > 0 || negatedSupertypes.length > 0 || requireNontoken || requireToken || requireCommander || requireTapped || requireUntapped || requireFaceDown !== null) {
     const checks = [];
     const descParts = [];
 
@@ -2217,6 +2230,11 @@ function _buildAppliesToFromTextInner(filterText) {
     if (requireTapped) {
       checks.push((p) => p.tapped === true);
       descParts.push('tapped');
+    }
+    if (requireFaceDown !== null) {
+      const down = requireFaceDown;
+      checks.push((p) => !!p.isFaceDown === down);
+      descParts.push(down ? 'face-down' : 'face-up');
     }
     if (requireUntapped) {
       checks.push((p) => p.tapped === false);
