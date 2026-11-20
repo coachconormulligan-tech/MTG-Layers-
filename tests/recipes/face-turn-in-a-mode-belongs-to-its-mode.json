@@ -1,0 +1,19 @@
+{
+  "name": "Expose the Culprit — \"Turn target face-down creature face up\" is its own mode, picked and turned there",
+  "notes": "2026-11-20. The face-down / face-up marker (_faceMarker) was read after the modes of a modal spell were tagged, so it had no mode: the mode's target pick never reached it and the face-down creature stayed face down. The face block now runs before the tagging, as the phasing one does. Expose the Culprit, mode 1 alone, picked on the opponent's face-down Gray Ogre, turns it face up (a 2/2 Ogre again); your face-down Hill Giant stays face down.",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"] },
+    { "add": "Hill Giant", "as": "giant" },
+    { "call": ["setFaceDown", "@giant", "morph"] },
+    { "add": "Gray Ogre", "as": "ogre", "controller": "p2" },
+    { "call": ["setFaceDown", "@ogre", "morph"] },
+    { "add": "Expose the Culprit", "spell": true, "as": "etc" },
+    { "call": ["setModalModeSelections", "@etc", [0]] },
+    { "call": ["setModalModeTarget", "@etc", 0, "@ogre"] }
+  ],
+  "asserts": [
+    { "perm": "Gray Ogre", "final": { "subtypes": ["Ogre"], "power": 2, "toughness": 2 } },
+    { "perm": "Hill Giant", "final": { "subtypes": [], "power": 2, "toughness": 2 } },
+    { "targetCandidates": { "perm": "Expose the Culprit" }, "are": ["Hill Giant", "Gray Ogre"] }
+  ]
+}
