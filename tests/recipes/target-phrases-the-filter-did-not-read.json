@@ -1,0 +1,33 @@
+{
+  "name": "Target phrases the filter did not read — Havoc Eater, Norritt, Mirror of the Forebears, Admiral Beckett Brass, Secret Tunnel, Jabari's Influence",
+  "notes": "Found from the audit's \"phrases not understood\" list (2026-11-20). Havoc Eater's \"for each opponent, goad up to one target creature that opponent controls\" offered every permanent (lands, planeswalkers, the card): the words are rewritten as \"… an opponent controls\", as \"they control\" already was. Norritt / Nettling Imp's \"non-Wall creature the active player has controlled continuously since the beginning of the turn\" offered every permanent: the player words are dropped (any player's, as for Kitt Kanto's \"that player\"), also in the pronoun's antecedent. Mirror of the Forebears' fired copy ignored the chosen creature type: _addAbilityPseudo writes the source's chosen type into the fired text. Admiral Beckett Brass's \"controlled by a player who was dealt combat damage by three or more Pirates\" offered nothing: any player's. Secret Tunnel's \"creatures you control that share a creature type\" offered nothing: a creature that shares a type with another the words allow. Jabari's Influence's \"creature that attacked you this turn\" offered nothing: a creature marked attacking you (\"that attacked / blocked this turn\": attacking / blocking).",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"], "as": "p2" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Runeclaw Bear", "as": "rune" },
+    { "add": "Hill Giant", "as": "giant" },
+    { "add": "Gray Ogre", "controller": "p2", "as": "ogre" },
+    { "add": "Forest", "controller": "p2", "as": "forest" },
+    { "call": ["toggleAttacking", "@ogre"] },
+    { "add": "Havoc Eater", "as": "havoc" },
+    { "fire": "@havoc", "trigger": 1, "as": "h1" },
+    { "add": "Norritt", "as": "norritt" },
+    { "fire": "@norritt", "activated": 1, "as": "n1" },
+    { "add": "Mirror of the Forebears", "as": "mir" },
+    { "call": ["setChosenCreatureType", "@mir", "Bear"] },
+    { "fire": "@mir", "activated": 1, "as": "m1" },
+    { "add": "Admiral Beckett Brass", "as": "adm" },
+    { "fire": "@adm", "trigger": 1, "as": "a1" },
+    { "add": "Secret Tunnel", "as": "st" },
+    { "fire": "@st", "activated": 2, "as": "s1" },
+    { "add": "Jabari's Influence", "spell": true, "as": "jab" }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Havoc Eater (trigger)" }, "are": ["Gray Ogre"] },
+    { "targetCandidates": { "perm": "Norritt (activated)" }, "are": ["Grizzly Bears", "Runeclaw Bear", "Hill Giant", "Gray Ogre", "Havoc Eater", "Norritt"] },
+    { "targetCandidates": { "perm": "Mirror of the Forebears (activated)", "kind": "copy" }, "are": ["Grizzly Bears", "Runeclaw Bear"] },
+    { "targetCandidates": { "perm": "Admiral Beckett Brass (trigger)" }, "are": ["Grizzly Bears", "Runeclaw Bear", "Hill Giant", "Gray Ogre", "Havoc Eater", "Norritt", "Mirror of the Forebears", "Admiral Beckett Brass"] },
+    { "targetCandidates": { "perm": "Secret Tunnel (activated)" }, "are": ["Grizzly Bears", "Runeclaw Bear"] },
+    { "targetCandidates": { "perm": "Jabari's Influence" }, "are": ["Gray Ogre"] }
+  ]
+}

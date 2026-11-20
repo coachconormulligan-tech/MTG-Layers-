@@ -208,7 +208,11 @@ const WORD_COUNT = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 
 const PERMANENT_NOUNS = new Set(['creature', 'artifact', 'enchantment', 'land', 'planeswalker', 'permanent', 'battle']);
 
 function stripReminder(text) {
-  return _stripReminderText(String(text || '')).replace(/\s+/g, ' ').trim();
+  // A line with no closing stop is a keyword line ("Changeling", "Kicker {3}"): it ends a sentence,
+  // or it ran into the next one ("Changeling Creatures target player controls …").
+  return _stripReminderText(String(text || '')).split('\n')
+    .map(l => !l.trim() || /[.:;"\u201d)\u2014]\s*$/.test(l) ? l : l.replace(/\s*$/, '.'))
+    .join(' ').replace(/\s+/g, ' ').trim();
 }
 
 // Where the phrase after "target" ends: at a verb that says what happens to it, a clause break, or
@@ -718,7 +722,7 @@ function interpretPhrase(phrase, env) {
     .replace(/\b(power|toughness|mana value) x\b/g, '$1 ' + X_VALUE);
   let excludeSource = false;
   s = s.replace(/^(?:another|other) /, () => { excludeSource = true; return ''; });
-  const cut = s.search(/ (?:you control|you don't control|you neither own|you own|an opponent controls|your opponents control|that player controls|they control|defending player controls|other than|that isn't|whose controller|attacking the same|with |without )/);
+  const cut = s.search(/ (?:you control|you don't control|you neither own|you own|an opponent controls|your opponents control|that player controls|that opponent controls|they control|defending player controls|the active player|controlled by an? (?:player|opponent) who|that attacked|that blocked|that share a creature type|of the chosen type|other than|that isn't|whose controller|attacking the same|with |without )/);
   const head = cut >= 0 ? s.slice(0, cut) : s;
   let tail = cut >= 0 ? s.slice(cut).trim() : '';
 
@@ -766,6 +770,41 @@ function interpretPhrase(phrase, env) {
     // "Target creature that player controls": see thatPlayerReading.
     if ((m = tail.match(/^(?:that player controls|they control)\b\s*/))) {
       if (thatPlayerReading(env && env.before) === 'opponent') clauseTests.push((st, p, ctx) => ctrlOf(st, p) !== ctx.sourceCtrl);
+      tail = tail.slice(m[0].length); continue;
+    }
+    // "For each opponent, goad up to one target creature that opponent controls" (Havoc Eater).
+    if ((m = tail.match(/^that opponent controls\b\s*/))) { clauseTests.push((st, p, ctx) => ctrlOf(st, p) !== ctx.sourceCtrl); tail = tail.slice(m[0].length); continue; }
+    // Words about a player the board cannot name: "… the active player has controlled continuously
+    // since the beginning of the turn" (Norritt), "… controlled by a player who was dealt combat
+    // damage by three or more Pirates this turn" (Admiral Beckett Brass). Any player's.
+    if ((m = tail.match(/^(?:the active player|controlled by an? (?:player|opponent) who)\b.*$/))) { tail = ''; continue; }
+    // "Target creature that attacked you this turn" (Jabari's Influence), "… that attacked / blocked
+    // this turn": the combat the board marks.
+    if ((m = tail.match(/^that attacked you(?: this turn)?\b\s*/))) {
+      clauseTests.push((st, p, ctx) => traitsOf(st, p).includes('Attacking') && ctrlOf(st, p) !== ctx.sourceCtrl);
+      tail = tail.slice(m[0].length); continue;
+    }
+    if ((m = tail.match(/^that (attacked|blocked)(?: this turn)?\b\s*/))) {
+      const tr = m[1] === 'attacked' ? 'Attacking' : 'Blocking';
+      clauseTests.push((st, p) => traitsOf(st, p).includes(tr));
+      tail = tail.slice(m[0].length); continue;
+    }
+    // "Two target creatures you control that share a creature type" (Secret Tunnel): one that
+    // shares a creature type with another the rest of the words allow (read on the board before).
+    if ((m = tail.match(/^that share a creature type\b\s*/))) {
+      const before = clauseTests.slice(), head = () => headTest;
+      clauseTests.push((st, p, ctx) => [...(ctx.preStates || new Map()).entries()].some(([id, q]) => {
+        if (id === p.id || !q) return false;
+        const qp = Battlefield.getPermById(id);
+        if (!qp || !(head() ? head()(q, qp) : true) || !before.every(t => t(q, qp, ctx))) return false;
+        return (st.subtypes || []).some(t => hasCI(q.subtypes, String(t).toLowerCase()));
+      }));
+      tail = tail.slice(m[0].length); continue;
+    }
+    // "Target creature you control of the chosen type" (Mirror of the Forebears): with no type
+    // chosen on the card, any.
+    if ((m = tail.match(/^of the chosen type\b\s*/))) {
+      clauseTests.push((st, p, ctx) => { const src = Battlefield.getPermById(ctx.sourceId) || {}; const owner = Battlefield.getPermById(src.abilitySourceId) || src; const t = owner.chosenCreatureType || src.chosenCreatureType; return !t || hasCI(st.subtypes, String(t).toLowerCase()); });
       tail = tail.slice(m[0].length); continue;
     }
     // CR 506.2: in a two-player game the defending player is the one being attacked. On the board

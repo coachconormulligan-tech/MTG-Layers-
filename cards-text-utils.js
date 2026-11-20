@@ -1281,6 +1281,15 @@ function buildAppliesToFromText(filterText) {
   // "Target creature that player controls" (Kitt Kanto, Mayhem Diva: the player whose turn it
   // is): which player is not known here, so any player's creature is offered.
   if (_tinfo.needsTargetSelection) _tinfo.cleaned = _tinfo.cleaned.replace(/\s+that player controls(?=\s|$)/i, '').trim() || _tinfo.cleaned;
+  // "Target non-Wall creature the active player has controlled continuously since the beginning
+  // of the turn" (Norritt, Nettling Imp; "has" has cut the phrase by now): likewise, and how long
+  // is not kept. (Unread, the words left no filter: every permanent was offered, the card itself
+  // too.)
+  if (_tinfo.needsTargetSelection) _tinfo.cleaned = _tinfo.cleaned.replace(/\s+the active player\b.*$/i, '').trim() || _tinfo.cleaned;
+  // "Target nonland permanent controlled by a player who was dealt combat damage by three or more
+  // Pirates this turn" (Admiral Beckett Brass): the board keeps no damage, so any player's (the
+  // unread words left nothing to pick).
+  if (_tinfo.needsTargetSelection) _tinfo.cleaned = _tinfo.cleaned.replace(/\s+controlled by an? (?:player|opponent) who\b.*$/i, '').trim() || _tinfo.cleaned;
   // "Target creature you control other than this creature" (Hisoka's Guard): the source is kept
   // out as for "another" (_addAbilityPseudo reads "other"); "other than enchanted creature" (Due
   // Diligence): the creature its source is attached to, likewise (_excludeAttachedTo).
@@ -1452,7 +1461,14 @@ function _parseBasePTQualifier(text) {
 }
 
 function _buildAppliesToFromTextInner(filterText) {
-  const raw = filterText.toLowerCase().trim();
+  // "Target creature that attacked you this turn" (Jabari's Influence), "… that attacked / blocked
+  // this turn" (Besieged Viking Village, Sizzling Barrage): the board keeps combat as the player
+  // marks it, so a creature still marked attacking (attacking you) or blocking. Unread, "attacked"
+  // was taken for a subtype and nothing was offered.
+  const raw = filterText.toLowerCase().trim()
+    .replace(/^(.+?)\s+that attacked you(?: this turn)?$/, '$1 attacking you')
+    .replace(/^(.+?)\s+that (attacked|blocked)(?: this turn)?$/, (_, what, verb) =>
+      `${verb === 'attacked' ? 'attacking' : 'blocking'} ${what.replace(/^(?:an?|the)\s+/, '')}`);
   // "Creatures you don't control get -1/-1" (Orzhov Pontiff): everybody's but yours. (A group;
   // "a land you don't control" - what Herald of Leshrac's upkeep cost takes - is one object.)
   const _notYours = /\byou don't control$/.test(raw) && !/^(?:an?|another|target|up to)\b/.test(raw);
@@ -1493,6 +1509,27 @@ function _buildAppliesToFromTextInner(filterText) {
             inner.fn(p, allStates, effectCtrl);
         },
         desc: `${inner.desc} attacking your opponents`,
+      };
+    }
+  }
+  // "Two target creatures you control that share a creature type" (Secret Tunnel): a creature that
+  // shares one with another the words allow (the pair itself is the player's to pick). Unread,
+  // "share" was taken for a subtype and nothing was offered. (Changeling is every type.)
+  const shareType = raw.match(/^(.+?)\s+that share a creature type$/);
+  if (shareType) {
+    const inner = _buildAppliesToFromTextInner(shareType[1]);
+    if (inner && inner.fn && !inner.isSelf) {
+      const isChangeling = (s) => (s.abilities || []).some(a => /^changeling\b/i.test(a));
+      return {
+        fn: (p, allStates, effectCtrl) => {
+          if (!inner.fn(p, allStates, effectCtrl)) return false;
+          // (Counted, not compared by identity: p may be a cast-time copy of its own state in
+          // allStates, so it counts itself once and needs one more.)
+          const states = allStates && allStates.values ? [...allStates.values()] : [];
+          return states.filter(q => q && inner.fn(q, allStates, effectCtrl) &&
+            (isChangeling(p) || isChangeling(q) || (p.subtypes || []).some(t => (q.subtypes || []).includes(t)))).length >= 2;
+        },
+        desc: `${inner.desc} that share a creature type`,
       };
     }
   }

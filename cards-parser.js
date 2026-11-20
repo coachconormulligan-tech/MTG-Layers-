@@ -914,6 +914,13 @@ function parseCardEffects(permanent, card, opts = {}) {
     const opponents = Math.max(1, ((typeof Battlefield !== 'undefined' && Battlefield.players) || []).length - 1);
     return opponents === 1 ? `up to one target ${kind} an opponent controls` : `up to ${opponents} target ${kind}s your opponents control`;
   });
+  // "For each opponent, goad up to one target creature that opponent controls" (Havoc Eater):
+  // the same, with a one-word verb before the target. ("That opponent controls" was no word the
+  // filter knew, so the picker offered every permanent: lands, planeswalkers, the card itself.)
+  oracleRaw = oracleRaw.replace(/\bfor each opponent, (\w+) up to one target ([^.,]+?) (?:they|that (?:player|opponent)) controls?\b/gi, (_, verb, kind) => {
+    const opponents = Math.max(1, ((typeof Battlefield !== 'undefined' && Battlefield.players) || []).length - 1);
+    return opponents === 1 ? `${verb} up to one target ${kind} an opponent controls` : `${verb} up to ${opponents} target ${kind}s your opponents control`;
+  });
   // "… for as long as you control this Saga": read as a condition it would replace the
   // chapter's own lore-counter condition, and the effect already ends when the Saga is removed.
   oracleRaw = oracleRaw.replace(/\s+for as long as you control this saga\b/gi, '');
@@ -6764,7 +6771,11 @@ function parseCardEffects(permanent, card, opts = {}) {
       // "Double target creature's power and it gains first strike" (Legion Leadership), "double
       // target creature's power …. That creature must be blocked" (Neyith): the creature, not its
       // power ("power" read as a required subtype left the picker empty).
-      .replace(/['’]s\s+(?:base\s+)?(?:power|toughness)\b.*$/i, '').trim();
+      .replace(/['’]s\s+(?:base\s+)?(?:power|toughness)\b.*$/i, '')
+      // "Choose target non-Wall creature the active player has controlled continuously since the
+      // beginning of the turn. That creature attacks …" (Norritt): any player's, as in
+      // buildAppliesToFromText.
+      .replace(/\s+the active player\b.*$/i, '').trim();
     // The predicate is not the target's words: "Until end of turn, target creature gets +1/+1 for
     // each creature you control and gains trample. It must be blocked this turn if able" (King
     // Harald's Revenge: the target is any creature). Nor is a player before it: "Target player
@@ -7533,6 +7544,9 @@ function parseCardEffects(permanent, card, opts = {}) {
         isTargeted = true;
         const restrictText = objectTargetInfo.cleaned
           .replace(/\s+(?:an?\s+)?(?:opponent(?:'?s?)?\s+controls?|that player controls|you\s+(?:control|don'?t\s+control))\b/i, '')
+          // ("… controlled by a player who was dealt combat damage by three or more Pirates this
+          // turn" — Admiral Beckett Brass: the board keeps no damage, so any player's.)
+          .replace(/\s+controlled by an? (?:player|opponent) who\b.*$/i, '')
           .trim();
         // ("… with mana value less than or equal to the number of Vampires you control" —
         // Dominating Vampire; "… with power less than this creature's power" — Vodalian Mindsinger.)

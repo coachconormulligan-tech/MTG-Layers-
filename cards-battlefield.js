@@ -945,6 +945,15 @@ const Battlefield = {
     // (A pronoun written out as its target starts its sentence with a capital: "Untap that
     // creature. Target nonlegendary creature an opponent controls gains haste" — Grishnákh.)
     parsedEffectText = parsedEffectText.replace(/(^|\.\s+|\n)target\b/g, '$1Target');
+    // A creature type the source chose as it entered is written into the fired text, as
+    // _reparseWithChoices writes it into the card's: "{1}: … becomes a copy of target creature you
+    // control of the chosen type" (Mirror of the Forebears) offered every creature of yours.
+    if (sourcePerm.chosenCreatureType && /\bof the chosen (?:creature )?type\b/i.test(parsedEffectText)) {
+      const ct = sourcePerm.chosenCreatureType;
+      parsedEffectText = parsedEffectText
+        .replace(/\b(creatures?\b[^.]*?\byou control)\s+of the chosen (?:creature )?type\b/gi, `${ct} $1`)
+        .replace(/\bof the chosen (?:creature )?type\b/gi, ct);
+    }
     let shownText = parsedEffectText;
     for (const r of [refPT || refAb || refBound, otherAb]) if (r) shownText = shownText.replace(r.plain, r.original);
     pseudoPerm.oracleText = shownText;
