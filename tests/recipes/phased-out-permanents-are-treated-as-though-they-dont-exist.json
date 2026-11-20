@@ -1,0 +1,203 @@
+{
+  "name": "Phasing — a phased-out permanent is treated as though it doesn't exist (Vodalian Illusionist, Slip Out the Back, Clever Concealment)",
+  "notes": "2026-11-20. CR 702.26: phasing was not modelled, so every fired \"target … phases out\" was skipped by the audit and did nothing. A phased-out permanent now gets no state in _evaluateBoard: its own effects stop (Glorious Anthem phased out by hand: Llanowar Elves is 1/1), nothing counts it (Kird Ape's Forest phased out: Kird Ape 1/1), and no picker offers it but the one of the ability that phased it out (Giant Growth lists neither the Illusionist's pick nor Slip Out the Back's). An Aura on it phases out with it (Holy Strength on Gray Ogre, CR 702.26g). Vodalian Illusionist's fired ability phases out its pick (the opponent's Gray Ogre); Slip Out the Back reads \"It phases out\" through its antecedent (Craw Wurm); Clever Concealment's multi picker phases out Hill Giant, and removing the spell phases it back in. Holy Strength's attach picker keeps Gray Ogre, which it phased out with.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Player 2"
+      ]
+    },
+    {
+      "add": "Forest",
+      "as": "forest"
+    },
+    {
+      "add": "Kird Ape",
+      "as": "ape"
+    },
+    {
+      "add": "Llanowar Elves",
+      "as": "elves"
+    },
+    {
+      "add": "Glorious Anthem",
+      "as": "anthem"
+    },
+    {
+      "call": [
+        "setPhasedOut",
+        "@anthem",
+        true
+      ]
+    },
+    {
+      "call": [
+        "setPhasedOut",
+        "@forest",
+        true
+      ]
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Gray Ogre",
+      "as": "ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "Holy Strength",
+      "as": "hs"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@hs",
+        "@ogre"
+      ]
+    },
+    {
+      "add": "Craw Wurm",
+      "as": "wurm",
+      "controller": "p2"
+    },
+    {
+      "add": "Vodalian Illusionist",
+      "as": "vi"
+    },
+    {
+      "fire": "@vi",
+      "activated": 0,
+      "as": "via"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@via",
+        "@ogre"
+      ]
+    },
+    {
+      "add": "Slip Out the Back",
+      "spell": true,
+      "as": "sotb"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@sotb",
+        "@wurm"
+      ]
+    },
+    {
+      "add": "Clever Concealment",
+      "spell": true,
+      "as": "cc"
+    },
+    {
+      "call": [
+        "setMultiTarget",
+        "@cc",
+        0,
+        "@giant"
+      ]
+    },
+    {
+      "call": [
+        "removePermanent",
+        "@cc"
+      ]
+    },
+    {
+      "add": "Giant Growth",
+      "spell": true,
+      "as": "gg"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Glorious Anthem",
+      "final": {
+        "phasedOut": true
+      }
+    },
+    {
+      "perm": "Llanowar Elves",
+      "final": {
+        "power": 1,
+        "toughness": 1
+      }
+    },
+    {
+      "perm": "Kird Ape",
+      "final": {
+        "power": 1,
+        "toughness": 1
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "phasedOut": true,
+        "power": 2,
+        "toughness": 2
+      }
+    },
+    {
+      "perm": "Holy Strength",
+      "final": {
+        "phasedOut": true
+      }
+    },
+    {
+      "perm": "Craw Wurm",
+      "final": {
+        "phasedOut": true
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "power": 3,
+        "toughness": 3
+      }
+    },
+    {
+      "targetCandidates": {
+        "perm": "Vodalian Illusionist (activated)"
+      },
+      "are": [
+        "Kird Ape",
+        "Llanowar Elves",
+        "Hill Giant",
+        "Gray Ogre",
+        "Vodalian Illusionist"
+      ]
+    },
+    {
+      "targetCandidates": {
+        "perm": "Giant Growth"
+      },
+      "are": [
+        "Kird Ape",
+        "Llanowar Elves",
+        "Hill Giant",
+        "Vodalian Illusionist"
+      ]
+    },
+    {
+      "targetCandidates": {
+        "perm": "Holy Strength"
+      },
+      "are": [
+        "Kird Ape",
+        "Llanowar Elves",
+        "Hill Giant",
+        "Gray Ogre",
+        "Vodalian Illusionist"
+      ]
+    }
+  ]
+}

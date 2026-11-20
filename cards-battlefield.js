@@ -2115,6 +2115,11 @@ const Battlefield = {
     if (removingPerm && removingPerm._attach) this._undoFiredAttach(removingPerm);
     // So does a fired "turn target … face down / up" (_applyFiredFace).
     if (removingPerm && removingPerm._face) { const recs = removingPerm._face; removingPerm._face = null; recs.forEach(r => this._undoFaceRecord(r)); }
+    // And a fired "target … phases out" phases its targets back in (_applyFiredPhase); Auras and
+    // Equipment that phased out with a removed permanent phase in (CR 702.26h).
+    for (const p of [...this.permanents]) {
+      if (p.phasedOut && p.id !== id && (p.phasedOutBy === id || p.phasedOutWith === id)) this.setPhasedOut(p.id, false);
+    }
     if (removingPerm?._isCrewEffect && removingPerm.abilitySourceId) {
       const src = this.getPermById(removingPerm.abilitySourceId);
       if (src?.traits) src.traits = src.traits.filter(t => t !== 'Crewed');
@@ -2422,6 +2427,7 @@ const Battlefield = {
     this._invalidate();
     if (this.effects.some(e => e.sourceId === effectSourceId && e._attachMarker)) this._applyFiredAttach(effectSourceId);
     if (this.effects.some(e => e.sourceId === effectSourceId && e._faceMarker)) this._applyFiredFace(effectSourceId);
+    if (this.effects.some(e => e.sourceId === effectSourceId && e._phaseMarker)) this._applyFiredPhase(effectSourceId);
   },
 
   /* What an Aura or Equipment is attached to: the target of its own targeted effects. */
@@ -2515,6 +2521,55 @@ const Battlefield = {
     if (!perm) return;
     if (rec.dir === 'down' && perm.isFaceDown) this.setFaceDown(rec.id, null, null, { timestamp: rec.ts });
     else if (rec.dir === 'up' && !perm.isFaceDown) { perm.timestamp = rec.ts; this.setFaceDown(rec.id, rec.mode, rec.as); }
+  },
+
+  /* Phasing (CR 702.26). A phased-out permanent is treated as though it doesn't exist
+     (_evaluateBoard, _isPermanent); it keeps its counters, tapped state and timestamp, and
+     phasing in is not entering the battlefield (CR 702.26d). Auras and Equipment attached to it
+     phase out with it, "indirectly" (CR 702.26g: phasedOutWith), and phase in only with it
+     (CR 702.26h). `by` is the fired ability that phased it out (_applyFiredPhase): that
+     ability's picker keeps listing it. */
+  setPhasedOut(id, out, by) {
+    const perm = this.getPermById(id);
+    if (!perm || perm.isManualEffect || perm.isSpell || perm.isEmblem || perm.isZoneCard) return;
+    if (!!perm.phasedOut === !!out) return;
+    this._invalidate();
+    if (out) {
+      const attached = this._attachedTo(id);
+      perm.phasedOut = true;
+      perm.phasedOutBy = by || null;
+      perm.phasedOutWith = null;
+      for (const aid of attached) {
+        const a = this.getPermById(aid);
+        if (!a || a.phasedOut) continue;
+        this.setPhasedOut(aid, true);
+        a.phasedOutWith = id;
+      }
+    } else {
+      perm.phasedOut = false;
+      perm.phasedOutBy = null;
+      perm.phasedOutWith = null;
+      for (const a of [...this.permanents]) if (a.phasedOut && a.phasedOutWith === id) this.setPhasedOut(a.id, false);
+    }
+    this._invalidate();
+  },
+
+  /* A fired "target … phases out" (the _phaseMarker effects of cards-parser.js): each picked
+     target phases out, marked as this ability's (phasedOutBy). A target no longer picked, or a
+     mode switched off, phases back in, as does every target when the ability is removed
+     (removePermanent). Restoring a board phases nothing: the flags are saved on the permanents. */
+  _applyFiredPhase(pseudoId) {
+    const pseudo = this.getPermById(pseudoId);
+    if (!pseudo || this._restoringTargets) return;
+    const wanted = new Set();
+    for (const m of this.effects) {
+      if (m.sourceId !== pseudoId || !m._phaseMarker || m.disabled) continue;
+      for (const t of [m.targetId, ...(m.targetIds || [])]) if (t && this.getPermById(t)) wanted.add(t);
+    }
+    for (const p of [...this.permanents]) {
+      if (p.phasedOut && p.phasedOutBy === pseudoId && !wanted.has(p.id)) this.setPhasedOut(p.id, false);
+    }
+    for (const t of wanted) this.setPhasedOut(t, true, pseudoId);
   },
 
   /* Ids of the permanents attached to this one: Auras, Equipment and bestowed cards whose own
@@ -2640,6 +2695,7 @@ const Battlefield = {
     this._invalidate();
     if (this.effects.some(e => e.sourceId === sourceId && e._attachMarker)) this._applyFiredAttach(sourceId);
     if (this.effects.some(e => e.sourceId === sourceId && e._faceMarker)) this._applyFiredFace(sourceId);
+    if (this.effects.some(e => e.sourceId === sourceId && e._phaseMarker)) this._applyFiredPhase(sourceId);
   },
 
   /* Set a specific target slot for multi-target effects (e.g. "up to two target creatures") */
@@ -2655,6 +2711,7 @@ const Battlefield = {
       }
     });
     if (this.effects.some(e => e.sourceId === effectSourceId && e._faceMarker)) this._applyFiredFace(effectSourceId);
+    if (this.effects.some(e => e.sourceId === effectSourceId && e._phaseMarker)) this._applyFiredPhase(effectSourceId);
     this.evaluate();
   },
 
@@ -2680,6 +2737,7 @@ const Battlefield = {
       }
     });
     if (this.effects.some(e => e.sourceId === effectSourceId && e._faceMarker)) this._applyFiredFace(effectSourceId);
+    if (this.effects.some(e => e.sourceId === effectSourceId && e._phaseMarker)) this._applyFiredPhase(effectSourceId);
   },
 
   /* Select a specific modal mode by effect ID. For choose-one cards, this always
@@ -2730,6 +2788,7 @@ const Battlefield = {
     }
     // (A mode switched off no longer turns its target: _applyFiredFace reads only switched-on modes.)
     if (siblingEffs.some(e => e._faceMarker)) this._applyFiredFace(eff.sourceId);
+    if (siblingEffs.some(e => e._phaseMarker)) this._applyFiredPhase(eff.sourceId);
   },
 
   /* Set modal mode counts for repeatable modal spells.
@@ -3406,7 +3465,7 @@ const Battlefield = {
       const _fallback = (p) => ({ name: p.name, types: p.printedTypes, supertypes: p.printedSupertypes,
         subtypes: p.printedSubtypes || [], power: p.printedPower, toughness: p.printedToughness,
         colors: p.printedColors || [], abilities: p.printedAbilities || [], oracleText: p.oracleText || '',
-        owner: p.owner || 'player_0', controller: p.owner || 'player_0' });
+        owner: p.owner || 'player_0', controller: p.owner || 'player_0', phasedOut: !!p.phasedOut || undefined });
       const map = new Map();
       for (const p of realPerms) map.set(p.id, result.finalStates.get(p.id) || _fallback(p));
       this._cachedFinalStates = map;
@@ -3440,7 +3499,8 @@ const Battlefield = {
       manaValue: p.manaValue || 0, manaCost: p.manaCost || '', timesAttackedThisTurn: p.timesAttackedThisTurn || 0,
       owner: p.owner || 'player_0', controller: p.owner || 'player_0', isToken: !!p.isToken, isFaceDown: !!p.isFaceDown,
       // ("Tap up to one untapped creature you control" — Nihiloor — reads tapped off these.)
-      tapped: !!p.tapped, traits: [...(p.traits || [])], counters: { ...(p.counters || {}) } });
+      tapped: !!p.tapped, traits: [...(p.traits || [])], counters: { ...(p.counters || {}) },
+      phasedOut: !!p.phasedOut || undefined });
     const hasTraits = realPerms.some(rp => rp.traits && rp.traits.length > 0);
     if (realPerms.length === 0) { this._cachedFinalStates = new Map(); this._cachedFinalStatesVersion = this._cacheVersion; return this._cachedFinalStates; }
     if (this.effects.length === 0 && !hasTraits) {
@@ -3888,6 +3948,10 @@ const Battlefield = {
         isFaceDown: !!p.isFaceDown,
         faceDownMode: p.faceDownMode || null,
         faceDownAs: p.faceDownAs || null,
+        // Phasing (setPhasedOut): only when phased out, so older boards read the same.
+        phasedOut: p.phasedOut || undefined,
+        phasedOutBy: (p.phasedOut && p.phasedOutBy) || undefined,
+        phasedOutWith: (p.phasedOut && p.phasedOutWith) || undefined,
         // What a spell's "turn target … face down / up" turned (_applyFiredFace).
         face: p._face ? p._face.map(r => Object.assign({}, r)) : null,
         roomLocked: p.roomLocked ? p.roomLocked.slice() : null,
@@ -4334,6 +4398,15 @@ const Battlefield = {
       if (!pseudo) continue;
       const recs = f.face.filter(r => idMap[r.id]).map(r => Object.assign({}, r, { id: idMap[r.id] }));
       pseudo._face = recs.length ? recs : null;
+    }
+    // Phasing last, once every target is wired up (setPhasedOut's flags, ids translated).
+    for (const r of data.perms || []) {
+      const np = r.phasedOut && idMap[r.id] && this.getPermById(idMap[r.id]);
+      if (!np) continue;
+      np.phasedOut = true;
+      np.phasedOutBy = (r.phasedOutBy && idMap[r.phasedOutBy]) || null;
+      np.phasedOutWith = (r.phasedOutWith && idMap[r.phasedOutWith]) || null;
+      this._invalidate();
     }
 
     // setTarget / setSlottedTarget above assigned FRESH timestamps to targeted effects

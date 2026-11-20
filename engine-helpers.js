@@ -62,9 +62,17 @@ function _effectDisplayName(effect, allStates) {
    evaluates on a throwaway copy of the board (isZoneCard, computeZoneCardState): it is a card,
    not a permanent (CR 110.1), so the battlefield's counts on that run leave it out. Spells cast
    with addSpell (isSpell) are left to the caller: a "target spell or permanent" lists them;
-   counts leave them out (_countsAsPermanent). */
-function _isPermanent(p) {
-  return !!p && !p.isEmblem && !p.isManualEffect && !p.isZoneCard && !p.isSpell;
+   counts leave them out (_countsAsPermanent).
+   Nor a phased-out permanent (CR 702.26b: treated as though it doesn't exist), unless the picker
+   of `keepPhasedBy` is asking: the fired ability that phased it out, or an Aura or Equipment that
+   phased out with it, keeps it as its pick. */
+function _isPermanent(p, keepPhasedBy) {
+  if (!p || p.isEmblem || p.isManualEffect || p.isZoneCard || p.isSpell) return false;
+  if (!p.phasedOut) return true;
+  if (keepPhasedBy == null) return false;
+  if (p.phasedOutBy === keepPhasedBy) return true;
+  const src = typeof Battlefield !== 'undefined' ? Battlefield.getPermById(keepPhasedBy) : null;
+  return !!(src && src.phasedOut && src.phasedOutWith === p.id);
 }
 
 /* Is this effect a characteristic-defining ability (CR 604.3): one that defines its own object's

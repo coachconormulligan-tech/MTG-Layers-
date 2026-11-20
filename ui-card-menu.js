@@ -58,6 +58,9 @@ function buildCardMenuItems(permId) {
     ] });
   }
 
+  // (One phased out with what it is attached to phases in only with it, CR 702.26h.)
+  if (!p.phasedOutWith && !p.isManualEffect && !p.isSpell && !p.isEmblem) items.push({ label: p.phasedOut ? 'Phase in' : 'Phase out', hint: p.phasedOut ? '' : 'Treated as though it doesn\'t exist', run: () => togglePhased(permId) });
+
   if (isCreature) {
     sep();
     items.push({ label: traits.includes('Attacking') ? 'Remove attacking' : 'Mark as attacking', key: 'A', run: () => toggleAttacking(permId) });

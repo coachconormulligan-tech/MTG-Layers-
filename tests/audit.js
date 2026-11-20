@@ -132,7 +132,7 @@ function summarizeState(st) {
     abilities: sorted(st.abilities),
     counters: JSON.stringify(Object.keys(st.counters || {}).sort().map(k => [k, st.counters[k]]).filter(x => x[1])),
     traits: sorted(st.traits),
-    flags: ['isAllCreatureTypes', 'isAllLandTypes', 'allAbilitiesRemoved', 'oracleTextModified'].filter(k => st[k]).join(','),
+    flags: ['isAllCreatureTypes', 'isAllLandTypes', 'allAbilitiesRemoved', 'oracleTextModified', 'phasedOut'].filter(k => st[k]).join(','),
   };
 }
 
@@ -384,9 +384,17 @@ function classifyAt(lower, idx, end, opts) {
   if (reqRules.some(r => r.includes('@it')) && /\btarget\b/.test(before)) reqRules = [];
   // ("Tap target creature. It doesn't untap during its controller's next untap step": a rule the
   // site keeps as a trait, the tap staying the player's.)
+  // "Target creature phases out", "any number of target … phase out", and through a pronoun after
+  // an action that leaves the target where it is ("Put a +1/+1 counter on target creature. It
+  // phases out" — Slip Out the Back; "Untap another target nonland permanent, then it phases out"):
+  // the site phases the picked target out (_applyFiredPhase), so the target changes (its phasedOut
+  // flag) as an attach's does. Not one that phases out later ("at the beginning of the next end step").
+  const PHASE_LATER = '(?!\\s+(?:at|during)\\b)';
+  const phaseOut = new RegExp('^phases? out\\b' + PHASE_LATER).test(verbAfter) ||
+    ((keepsTarget || !actionVerbs.length) && new RegExp('^[^.;]*?(?:\\.\\s+|,\\s*then\\s+)(?:it|they|that (?:creature|permanent)|those (?:creatures|permanents))\\s+phases? out\\b' + PHASE_LATER).test(verbAfter));
   const untapRules = untapRulesOf(verbAfter, opts.plural);
   if (untapRules.length && (keepsTarget || !actionVerbs.length)) for (const r of untapRules) if (!reqRules.includes(r)) reqRules.push(r);
-  if (!takesControl && !pronounEffect && !traitVerb && !attaches && !switchM && !switchOf && !doubleM && !doubleOf && !faceM && !reqRules.length && (ONE_SHOT_VERBS.test(clauseBefore) || !CONTINUOUS_VERBS.test(verbAfter))) return { skip: 'one-shot-action' };
+  if (!takesControl && !pronounEffect && !traitVerb && !attaches && !switchM && !switchOf && !doubleM && !doubleOf && !faceM && !phaseOut && !reqRules.length && (ONE_SHOT_VERBS.test(clauseBefore) || !CONTINUOUS_VERBS.test(verbAfter))) return { skip: 'one-shot-action' };
   // "Target creature can't be blocked this turn" / "can't be regenerated" / "can attack as though
   // it didn't have defender": a rule about the target, not a change to what it is. The site does
   // not model these, so there is no targeted effect to expect.

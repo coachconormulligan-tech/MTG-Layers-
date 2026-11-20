@@ -61,7 +61,7 @@ function _summarizeState(st) {
   };
   // Flags only recorded when set, so adding a new default-false flag to the engine
   // doesn't invalidate every fixture.
-  for (const k of ['isAllCreatureTypes', 'isAllLandTypes', 'allAbilitiesRemoved', 'oracleTextModified']) {
+  for (const k of ['isAllCreatureTypes', 'isAllLandTypes', 'allAbilitiesRemoved', 'oracleTextModified', 'phasedOut']) {
     if (st[k]) s[k] = true;
   }
   if (st.counters && Object.keys(st.counters).length) s.counters = _plain(st.counters);

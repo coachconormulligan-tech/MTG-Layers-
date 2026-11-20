@@ -438,6 +438,20 @@ function evaluateAllPermanents(allPermanents, allEffects) {
 }
 
 function _evaluateBoard(allPermanents, allEffects, tracedIds, permanent) {
+  // PHASING (CR 702.26b): a phased-out permanent is treated as though it doesn't exist. It gets no
+  // state (so no effect reaches it, nothing counts it and no condition sees it) and its own
+  // effects are left out (its abilities, its Aura's or Equipment's grants, its counters). An
+  // ability it fired is an object of its own (CR 113.7a) and stays. Its trace is its printed
+  // state, flagged phasedOut; Auras and Equipment on it phased out with it (setPhasedOut).
+  let phasedTraced = [];
+  if (allPermanents.some(p => p.phasedOut)) {
+    const gone = new Set(allPermanents.filter(p => p.phasedOut).map(p => p.id));
+    phasedTraced = allPermanents.filter(p => gone.has(p.id) && tracedIds.includes(p.id));
+    allPermanents = allPermanents.filter(p => !gone.has(p.id));
+    allEffects = allEffects.filter(e => !gone.has(e.sourceId));
+    tracedIds = tracedIds.filter(id => !gone.has(id));
+  }
+
   // Build mutable states for ALL real permanents
   const allStates = new Map();
   for (const p of allPermanents) {
@@ -809,6 +823,12 @@ function _evaluateBoard(allPermanents, allEffects, tracedIds, permanent) {
   const finalStates = new Map();
   for (const [pid, st] of allStates) {
     finalStates.set(pid, snapshotState(st));
+  }
+  for (const p of phasedTraced) {
+    const snap = snapshotState(createBaseState(p));
+    snap.phasedOut = true;
+    finalStates.set(p.id, snap);
+    results.set(p.id, { base: snap, layers: [], final: snap, phasedOut: true });
   }
   for (const result of results.values()) result.finalStates = finalStates;
 

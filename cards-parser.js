@@ -6748,8 +6748,9 @@ function parseCardEffects(permanent, card, opts = {}) {
   // The same antecedent, read whole: its restriction (fn) and how many it allows (maxTargets) —
   // "deals 1 damage to each of up to two target creatures. Those creatures can't block this turn"
   // (Sparkmage's Gambit) is two targets, not one.
-  function _pronounAntecedentInfo(pos) {
-    if (!_pronounSubjectSentence.test(oracle.replace(/["“][^"”]*["”]/g, '""'))) return null;
+  function _pronounAntecedentInfo(pos, anyVerb) {
+    // (anyVerb: the caller has read the pronoun's sentence itself — "It phases out.")
+    if (!anyVerb && !_pronounSubjectSentence.test(oracle.replace(/["“][^"”]*["”]/g, '""'))) return null;
     // (A count too: "Tap X target creatures. They don't untap …" — Plant Tadpoles, X read as 2.)
     const _targetRe = /\b((?:(?:up to \w+|another|other|one|two|three|four|five|six|seven|eight|nine|ten|\d+)\s+)*target\s+[^.;"\n]+)/gi;
     const masked = oracle.replace(/["“][^"”]*["”]/g, (q) => ' '.repeat(q.length));
@@ -7917,6 +7918,53 @@ function parseCardEffects(permanent, card, opts = {}) {
     // the modes are tagged, below: "Two target creatures each get +2/+0" gave Invigorated Rampage's
     // other mode, "Target creature gets +4/+0", a picker of two.)
     if (!(_isModalSpell && _modalModeLineMap.size > 0)) _propagateMaxTargets(effects);
+  }
+
+  // --- Phasing out a target, in a fired ability or a spell (CR 702.26) ---
+  // (Before the modes are tagged: "• Target creature an opponent controls phases out" is a mode — Sapphire Charm.)
+  // "Target creature phases out." (Vodalian Illusionist), "Any number of target nonland permanents
+  // you control phase out." (Clever Concealment), "Put a +1/+1 counter on target creature. It
+  // phases out." (Slip Out the Back), "Untap another target nonland permanent, then it phases
+  // out" (The Pandorica). Phasing is done, not kept, as turning face down is: each is a marker
+  // (_phaseMarker) that applies to nothing and gives the ability its picker; once a target is
+  // picked Battlefield._applyFiredPhase phases it out, and the engine treats it as though it
+  // doesn't exist. Not one that phases out later ("at the beginning of the next end step" —
+  // Vronos, Masked Inquisitor; "at end of combat"). How long it stays out ("until this
+  // enchantment leaves the battlefield" — Oubliette) is the player's: removing the fired
+  // ability phases it back in.
+  if (permanent.isTriggeredAbility || permanent.isActivatedAbility || permanent.isSpell) {
+    const masked = oracle.replace(/["“][^"”]*["”]/g, (q) => ' '.repeat(q.length));
+    // (Commas inside the subject — "Target artifact, creature, or land phases out" (Reality
+    // Ripple) — but not ", then it phases out", which is the pronoun's.)
+    const phaseRegex = /\b((?:up to \w+\s+|any number of\s+)?(?:another\s+|other\s+)?target\s+(?:(?!,\s*then\b)[^.;:"])+?|it|they|that (?:creature|permanent)|those (?:creatures|permanents))\s+phases?\s+out\b/gi;
+    let pm;
+    while ((pm = phaseRegex.exec(masked)) !== null) {
+      const before = masked.slice(0, pm.index);
+      // The subject opens its sentence or clause ("When …, target creature phases out", "…, then it phases out").
+      if (!/(?:^|[.;:,—•\n]\s*|\bthen\s+|\bif you do,?\s+)$/i.test(before)) continue;
+      if (/^\s+(?:at|during)\b/i.test(masked.slice(pm.index + pm[0].length))) continue;
+      const subj = pm[1].trim();
+      // ("Target permanent can't phase out" — Spatial Binding: a rule, not phasing.)
+      if (/\b(?:can't|cannot|can not|doesn't|don't|won't)$/i.test(subj)) continue;
+      let built, text;
+      if (/\btarget\b/i.test(subj)) {
+        text = subj;
+        built = buildAppliesToFromText(text);
+        if (!built || !built.isSpellTarget) continue;
+      } else {
+        // A pronoun: the target before it (_pronounAntecedentInfo, read whatever verb follows).
+        built = _pronounAntecedentInfo(pm.index, true);
+        if (!built) continue;
+        const ant = [...before.matchAll(/\b(?:(?:up to \w+|any number of|another|other)\s+)*target\s+[^.;,:"]+/gi)].pop();
+        text = ant ? ant[0].replace(/\s+(?:until|this turn)\b.*$/i, '').trim() : 'target permanent';
+      }
+      const desc = `${text.charAt(0).toUpperCase() + text.slice(1)} ${/^(?:any number of|up to (?!one\b)\w+|two|three)\b/i.test(text) ? 'phase' : 'phases'} out.`;
+      const eff = pushEff('7c', EFFECT_TYPE.MODIFY_PT, { power: 0, toughness: 0 },
+        { appliesTo: null, scope: 'targeted', selfTarget: false },
+        desc, { _oraclePos: pm.index, _phaseMarker: true });
+      _applyTargetInfo(eff, built, built.fn);
+      if (!eff.targetRestriction) eff.targetRestriction = built.fn || null;
+    }
   }
 
   // --- Tag and sort modal spell effects by mode order ---

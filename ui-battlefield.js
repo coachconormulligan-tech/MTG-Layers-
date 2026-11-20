@@ -407,6 +407,20 @@ function renderBattlefield() {
     }
   }
 
+  // A phased-out permanent is treated as though it doesn't exist (CR 702.26b): no state-based
+  // action looks at it, and a legend phased out does not count against one on the battlefield.
+  {
+    const phased = new Set(perms.filter(p => p.phasedOut).map(p => p.id));
+    if (phased.size) {
+      for (const ids of legendaryByName.values()) {
+        const here = ids.filter(id => !phased.has(id));
+        if (here.length < 2) ids.forEach(id => legendViolationIds.delete(id));
+      }
+      for (const set of [legendViolationIds, zeroToughnessIds, noLoyaltyIds, sagaFinishedIds, creatureAttachedIds, protectionUnattachedIds, illegalAuraAttachIds, equipNonCreatureIds, unattachedAuraIds]) {
+        for (const id of phased) set.delete(id);
+      }
+    }
+  }
   const sbaIds = new Set([...legendViolationIds, ...zeroToughnessIds, ...noLoyaltyIds, ...sagaFinishedIds, ...creatureAttachedIds, ...protectionUnattachedIds, ...illegalAuraAttachIds, ...equipNonCreatureIds, ...unattachedAuraIds]);
 
   // Determine which perms are in mutate stacks
@@ -515,7 +529,7 @@ function renderBattlefield() {
     const _live = renderLivePatches(p, _cardFs);
     const _imgSrc = (p.imageUri && _live.includes('data-src=')) ? p.imageUri.replace('/small/', '/normal/') : _bfCardImage(p.imageUri);
     return `
-    <div class="bf-card ${isSelected ? 'bf-card-selected' : ''} ${hasSBA ? 'bf-card-sba' : ''} ${(p.isManualEffect || p.isSpell) ? 'bf-card-spell' : ''} ${p.tapped ? 'bf-card-tapped' : ''} ${_cardIsSideways(p) ? 'bf-card-sideways' : ''} ${p.isFaceDown ? 'bf-card-facedown' : ''}" data-id="${p.id}" data-sba="${sbaReasons.join(',')}" draggable="true" onclick="selectPermanent('${p.id}')" oncontextmenu="event.preventDefault(); event.stopPropagation(); openCardMenu(event, '${p.id}');">
+    <div class="bf-card ${isSelected ? 'bf-card-selected' : ''} ${hasSBA ? 'bf-card-sba' : ''} ${(p.isManualEffect || p.isSpell) ? 'bf-card-spell' : ''} ${p.tapped ? 'bf-card-tapped' : ''} ${_cardIsSideways(p) ? 'bf-card-sideways' : ''} ${p.isFaceDown ? 'bf-card-facedown' : ''} ${p.phasedOut ? 'bf-card-phased' : ''}" data-id="${p.id}" data-sba="${sbaReasons.join(',')}" draggable="true" onclick="selectPermanent('${p.id}')" oncontextmenu="event.preventDefault(); event.stopPropagation(); openCardMenu(event, '${p.id}');">
       ${p.imageUri ? `<img src="${_imgSrc}" alt="${escapeAttr(p.name)}" class="bf-card-img${_liveFlipped(p) ? ' bf-card-img-turned' : ''}">` : `<div class="bf-card-no-img"><span>${escapeHtml(p.name)}</span></div>`}
       ${p.label ? `<div class="bf-card-label" aria-hidden="true">${escapeHtml(p.label)}</div>` : ''}
       <div class="bf-card-overlay">${_live}</div>
@@ -539,6 +553,7 @@ function renderBattlefield() {
       ${Battlefield.isCommander(p.id) ? '<div class="bf-card-commander-badge">CMDR</div>' : ''}
       ${p.classLevel ? `<div class="bf-card-class-badge">LVL ${p.classLevel}</div>` : ''}
       ${p.isFaceDown ? `<div class="bf-card-facedown-badge">${p.faceDownMode === 'cloak' ? 'CLOAK' : p.faceDownMode === 'manifest' ? 'MANIFEST' : p.faceDownMode === 'plain' ? 'FACE DOWN' : 'MORPH'}</div>` : ''}
+      ${p.phasedOut ? `<div class="bf-card-phased-badge" title="Treated as though it doesn't exist (rule 702.26)${p.phasedOutWith ? '. Phased out with what it is attached to' : ''}">PHASED OUT</div>` : ''}
       ${hasSBA ? `<div class="bf-card-sba-badge" title="State-based action required">\u26a0</div>` : ''}
       ${renderBfCounterBadges(p)}
     </div>`;
@@ -1139,6 +1154,15 @@ function flipCard(id) {
 
 function setFaceDown(permId, mode) {
   Battlefield.setFaceDown(permId, mode);
+  renderAll();
+}
+
+/* Phasing (CR 702.26): a phased-out permanent is treated as though it doesn't exist; what is
+   attached to it phases out and in with it (Battlefield.setPhasedOut). */
+function togglePhased(permId) {
+  const p = Battlefield.getPermById(permId);
+  if (!p) return;
+  Battlefield.setPhasedOut(permId, !p.phasedOut);
   renderAll();
 }
 

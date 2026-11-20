@@ -212,6 +212,18 @@ function _renderInspectorBody() {
   </div>`;
   }
 
+  // Phased out (CR 702.26b): its own effects apply to nothing and no other effect reaches it,
+  // so the layers below are empty and the state is the printed one.
+  if (perm?.phasedOut) {
+    const host = perm.phasedOutWith ? Battlefield.getPermById(perm.phasedOutWith) : null;
+    html += `<div class="insp-section insp-phased">
+      <div class="insp-section-body"><div class="state-block">
+        <div class="state-row">Phased out${host ? ` with ${escapeHtml(host.name)}` : ''}: treated as though it doesn't exist (rule 702.26), so none of its abilities apply and no other effect reaches it.${host ? ' It phases in with ' + escapeHtml(host.name) + '.' : ''}</div>
+        ${host ? '' : `<button class="insp-flip-btn" onclick="togglePhased('${perm.id}')">Phase in</button>`}
+      </div></div>
+    </div>`;
+  }
+
   if (perm?.isRoom && perm.roomFaces) {
     html += `<div class="insp-section insp-rooms-section">
       <div class="insp-section-head" onclick="this.parentElement.classList.toggle('collapsed')">

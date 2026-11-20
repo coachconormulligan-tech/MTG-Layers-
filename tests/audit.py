@@ -158,7 +158,8 @@ the board back (text-change-not-undone).
 A group that one picked player controls is a unit too: a spell or ability whose only target is "target
 player / target opponent" and whose text gives "<group> target opponent / that player / they controls"
 a continuous effect or a can't-rule ("Creatures target opponent controls get -1/-1", "Gain control of
-all creatures target opponent controls"; not "attack if able", "don't untap", "phase out", nor a group
+all creatures target opponent controls"; not "attack if able", "don't untap", "phase out" (a picked
+target that phases out is an ordinary unit: the site phases it out, so it changes alone), nor a group
 of which that player chose one: "Other creatures they control"), and an "Enchant player / opponent" Aura
 (label "player"), whose groups are its static "<group> enchanted player controls ..." and "Creatures
 attacking enchanted player have ..." lines. Check 2: the site shows a player list (no-player-picker:
