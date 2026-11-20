@@ -614,7 +614,8 @@ function _updateModalModeContent() {
   }
 
   const maxLabel = maxActive === Infinity ? '∞' : maxActive;
-  const constraintLabel = maxActive === 1 ? 'Choose one'
+  const constraintLabel = perm.isD20Spell ? 'Pick the d20 roll'
+    : maxActive === 1 ? 'Choose one'
     : minActive === 1 && maxActive === 2 ? 'Choose one or both'
     : minActive === 1 ? 'Choose one or more'
     : `Choose ${maxLabel}`;

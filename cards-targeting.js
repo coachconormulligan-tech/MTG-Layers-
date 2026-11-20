@@ -428,6 +428,14 @@ function _singleTargetCandidates(sourceId) {
     e.sourceId === sourceId && e.scope === 'targeted' && !e.selfTarget && !e.disabled && e.youControlRequired)
     || !!(sourcePerm?._youControlRequired);
   const sourceCtrl = sourcePerm?.controller || sourcePerm?.owner || Battlefield.activePlayerId;
+  // Who controls a candidate is judged as the spell was cast or the ability fired, like its other
+  // words: "Untap target creature an opponent controls and gain control of it" (Ray of Command,
+  // Power of Persuasion) left the creature it took out of its own list.
+  const _castStatesForCtrl = _castTimeStates(sourcePerm);
+  const ctrlOf = (p) => {
+    const st = _castStatesForCtrl && _castStatesForCtrl.get(p.id);
+    return (st && st.controller) || p.controller || p.owner || 'player_0';
+  };
   // Exclude non-top mutate stack members — a stack is one target (only the top is selectable)
   const targets = Battlefield.permanents.filter(p => {
     // (An emblem is no permanent, CR 114.4: never a target, though its pseudo-permanent is in the list.)
@@ -442,9 +450,9 @@ function _singleTargetCandidates(sourceId) {
     // even if the card is later moved to a timestamp after the spell.
     if (sourcePerm && (sourcePerm.isManualEffect || sourcePerm.isSpell) && p.timestamp >= sourcePerm.timestamp && p.id !== currentTarget) return false;
     // "target creature an opponent controls" — exclude permanents the source's controller controls
-    if (opponentControlRequired && (p.controller || p.owner || 'player_0') === sourceCtrl) return false;
+    if (opponentControlRequired && ctrlOf(p) === sourceCtrl) return false;
     // "enchant creature you control" — exclude permanents controlled by opponents
-    if (youControlRequired && (p.controller || p.owner || 'player_0') !== sourceCtrl) return false;
+    if (youControlRequired && ctrlOf(p) !== sourceCtrl) return false;
     return true;
   });
 

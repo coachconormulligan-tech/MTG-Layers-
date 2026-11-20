@@ -1,0 +1,120 @@
+{
+  "name": "A spell's d20 rows are the roll, picked as a mode; a taken target stays in its opponent-only list — Cone of Cold, Overwhelming Encounter, Power of Persuasion, Ray of Command",
+  "notes": "An instant's or sorcery's d20 table (\"Roll a d20. / 1—9 | … / 10—19 | … / 20 | …\") was read as plain lines (2026-11-20): every row applied whatever the roll, so Cone of Cold's 1—9 still gave the untap rule and Power of Persuasion always gained control, and a row's \"1—9 |\" hid its subject, so Overwhelming Encounter's +2/+2 reached nobody. The parser reads the rows as the spell's \"choose one\" modes (the mode keeps its range for the Modes pop-up, headed \"Pick the d20 roll\"; the range is dropped from what is parsed), and a line outside the table is no mode. A permanent's rows already waited for its ability to be fired (_d20Rows). Power of Persuasion's \"Gain control of it\" now takes the words of the one target named before it (an opponent's creature). The single picker judged \"an opponent controls\" by who controls the creature now, so a spell that took it (Ray of Command) dropped it from its own list; it is judged as the spell was cast.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Player 2"
+      ],
+      "as": "p2"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Runeclaw Bear",
+      "controller": "p2",
+      "as": "rune"
+    },
+    {
+      "add": "Gray Ogre",
+      "controller": "p2",
+      "as": "ogre"
+    },
+    {
+      "add": "Cone of Cold",
+      "spell": true,
+      "as": "cone"
+    },
+    {
+      "add": "Overwhelming Encounter",
+      "spell": true,
+      "as": "enc"
+    },
+    {
+      "add": "Power of Persuasion",
+      "spell": true,
+      "as": "pop"
+    },
+    {
+      "call": [
+        "setModalModeSelections",
+        "@pop",
+        [
+          2
+        ]
+      ]
+    },
+    {
+      "call": [
+        "setModalModeTarget",
+        "@pop",
+        2,
+        "@ogre"
+      ]
+    },
+    {
+      "add": "Ray of Command",
+      "spell": true,
+      "as": "ray"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@ray",
+        "@rune"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Runeclaw Bear",
+      "final": {
+        "controller": "player_0",
+        "traits": {
+          "$excludes": [
+            "Doesn't untap during Player 2's next untap step"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 4,
+        "toughness": 4,
+        "abilities": {
+          "$includes": [
+            "Vigilance",
+            "Trample"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "controller": "player_0"
+      }
+    },
+    {
+      "targetCandidates": {
+        "perm": "Power of Persuasion"
+      },
+      "are": [
+        "Runeclaw Bear",
+        "Gray Ogre"
+      ]
+    },
+    {
+      "targetCandidates": {
+        "perm": "Ray of Command"
+      },
+      "are": [
+        "Runeclaw Bear"
+      ]
+    }
+  ]
+}

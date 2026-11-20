@@ -1631,6 +1631,28 @@ function parseCardEffects(permanent, card, opts = {}) {
     if (didRewrite) oracle = rebuilt.join('\n');
   }
 
+  // --- A spell's d20 table ---
+  // "Roll a d20. / 1—9 | Tap all creatures your opponents control. / 10—19 | … / 20 | …"
+  // (Cone of Cold, Overwhelming Encounter, Power of Persuasion): one row happens, the one the
+  // roll gives. The rows are read as the spell's modes, "choose one", so the Modes pop-up picks
+  // the roll; read as plain lines, every row applied at once. (A permanent's rows wait for its
+  // ability to be fired, see _d20Rows.) The mode keeps its range for the pop-up ("1—9 | …");
+  // the range is dropped from what is parsed.
+  const _D20_SPELL_ROW_RE = /^\s*\d+(?:\s*[—–-]\s*\d+|\+)?\s*\|\s*/;
+  let _isD20Spell = false;
+  if (/\b(?:instant|sorcery)\b/i.test(card.type_line || '') && /\broll a d20\b/i.test(oracle)) {
+    const ls = oracle.split('\n');
+    const first = ls.findIndex(l => _D20_SPELL_ROW_RE.test(l));
+    if (first > 0 && ls.filter(l => _D20_SPELL_ROW_RE.test(l)).length >= 2 && /\broll a d20\b/i.test(ls.slice(0, first).join('\n'))) {
+      const rebuilt = ls.slice(0, first);
+      rebuilt.push('Choose one —');
+      for (const l of ls.slice(first)) rebuilt.push(_D20_SPELL_ROW_RE.test(l) ? '• ' + l.trim() : l);
+      oracle = rebuilt.join('\n');
+      _isD20Spell = true;
+      if (permanent) permanent.isD20Spell = true;
+    }
+  }
+
   // --- Modal spell preprocessing ---
   // Detects modal spells (Choose one/two/three, Spree, Tiered, pawprint modes)
   // and strips header lines + mode prefixes so downstream parsers see clean effect text.
@@ -1722,7 +1744,7 @@ function parseCardEffects(permanent, card, opts = {}) {
           // This is a mode line — record its cleaned line index → mode index
           _modalModeLineMap.set(cleaned.length, modeIdx);
           _modalModeTexts.push(modeText);
-          cleaned.push(modeText);
+          cleaned.push(_isD20Spell ? modeText.replace(_D20_SPELL_ROW_RE, '') : modeText);
           modeIdx++;
         } else {
           // Keep other lines as-is (non-mode content)
@@ -7495,7 +7517,7 @@ function parseCardEffects(permanent, card, opts = {}) {
       // ("Target creature you don't control" — Firbolg Flutist, Spreading Insurrection — likewise.)
       // ("For each opponent, gain control of target permanent that player controls" — Blatant
       // Thievery: an opponent's.)
-      const opponentCtrlRequired = /\bopponent(?:'?s?)?\s+controls?\b/i.test(fullSentence)
+      let opponentCtrlRequired = /\bopponent(?:'?s?)?\s+controls?\b/i.test(fullSentence)
         || /\btarget\b[^.,]*?\byou\s+don'?t\s+control\b/i.test(objectText)
         || (/\bfor each opponent\b/i.test(fullSentence) && /\bthat player controls\b/i.test(objectText));
 
@@ -7530,6 +7552,19 @@ function parseCardEffects(permanent, card, opts = {}) {
         isTargeted = true;
         const nounM = pronounM[1].match(/^(?:that|those|the(?:\s+chosen)?)\s+(\w+)$/i);
         controlRestriction = (nounM && buildAppliesToFromText(nounM[1]).fn) || (() => true);
+        // The one target named before it: "Choose target creature an opponent controls, then roll
+        // a d20. … 20 | Gain control of it …" (Power of Persuasion). Its words are the pick's.
+        const _priorTargets = [...oracle.slice(0, gcMatch.index).replace(/["\u201c][^"\u201d]*["\u201d]/g, '').matchAll(/\btarget\s+([^.;,\n]+)/gi)];
+        if (_priorTargets.length === 1) {
+          // ("Untap target permanent and gain control of it" — Word of Seizing: not what is done to it.)
+          const words = _priorTargets[0][1].replace(/\s+(?:and|then|or)\b.*$/i, '').trim();
+          const own = words.replace(/\s+(?:an?\s+)?(?:opponent(?:'?s?)?\s+controls?|you\s+don'?t\s+control)$/i, '').trim();
+          if (own && !/\b(?:player|opponent|spell|card|cards|ability)\b/i.test(own)) {
+            const info = buildAppliesToFromText('target ' + own);
+            if (info && typeof info.fn === 'function') controlRestriction = info.fn;
+            if (own !== words) opponentCtrlRequired = true;
+          }
+        }
       }
       const effectScope = isTargeted ? 'targeted' : 'global';
 
@@ -7895,6 +7930,9 @@ function parseCardEffects(permanent, card, opts = {}) {
       if (eff._oraclePos !== undefined) {
         const mode = _getModalModeForPos(eff._oraclePos);
         if (mode >= 0) { eff.modalModeIndex = mode; continue; }
+        // A d20 spell's lines outside its table happen whatever the roll: "Creatures you control
+        // gain vigilance and trample until end of turn. Roll a d20." (Overwhelming Encounter).
+        if (_isD20Spell) continue;
         // On a permanent, a line outside the bullets is no mode at all: "Attacking creatures
         // you control have deathtouch. / {1}{G}, {T}: Choose one — • …" (Bow of Nylea). Guessed
         // into a mode by its words, the static effect was switched off with that mode.
@@ -7917,7 +7955,11 @@ function parseCardEffects(permanent, card, opts = {}) {
       // Fallback: desc-based specificity matching (penalize unmatched line words)
       const effDesc = (eff.desc || '').toLowerCase();
       let bestMode = 0, bestSpec = -Infinity;
-      for (const [lineIdx, modeIdx] of sortedModes) {
+      // (A d20 spell's other lines are candidates too, as no mode: see above.)
+      const candidates = _isD20Spell
+        ? oLines.map((_, li) => [li, _modalModeLineMap.has(li) ? _modalModeLineMap.get(li) : -1])
+        : sortedModes;
+      for (const [lineIdx, modeIdx] of candidates) {
         const lineText = (oLines[lineIdx] || '').toLowerCase();
         if (!lineText) continue;
         const words = lineText.replace(/[^a-z0-9+\-/ ]/g, '').trim().split(/\s+/).filter(w => w.length > 2);
@@ -7926,7 +7968,7 @@ function parseCardEffects(permanent, card, opts = {}) {
         const spec = hits * 10 - misses;
         if (spec > bestSpec) { bestSpec = spec; bestMode = modeIdx; }
       }
-      eff.modalModeIndex = bestMode;
+      if (bestMode >= 0) eff.modalModeIndex = bestMode;
     }
     // On a permanent, the modes of a triggered ability ("When this creature enters or the
     // creature it haunts dies, choose one — • Creatures you control get +1/+1 until end of
