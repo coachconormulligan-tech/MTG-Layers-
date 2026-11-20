@@ -4297,9 +4297,9 @@ function parseCardEffects(permanent, card, opts = {}) {
   //   possessive: "double target creature's power" / "double this card's power" (Unleash Fury, Tifa)
   // Triggered/activated sentences are skipped here and re-parsed from the pseudo-perm at fire time.
   const _doubleForms = [
-    { re: /\bdouble\s+(?:the\s+)?(power and toughness|power|toughness)\s+of\s+(.+?)(?=\s+until\b|[.,]|$)/gi, ptGroup: 1, filterGroup: 2 },
-    { re: /\bdouble\s+(.+?)['’]s\s+(power and toughness|power|toughness)\b/gi, ptGroup: 2, filterGroup: 1 },
-    { re: /\bdouble\s+(its)\s+(power and toughness|power|toughness)\b/gi, ptGroup: 2, filterGroup: 1, pronoun: true },
+    { re: /\b(?:double|triple)\s+(?:the\s+)?(power and toughness|power|toughness)\s+of\s+(.+?)(?=\s+until\b|[.,]|$)/gi, ptGroup: 1, filterGroup: 2 },
+    { re: /\b(?:double|triple)\s+(.+?)['’]s\s+(power and toughness|power|toughness)\b/gi, ptGroup: 2, filterGroup: 1 },
+    { re: /\b(?:double|triple)\s+(its)\s+(power and toughness|power|toughness)\b/gi, ptGroup: 2, filterGroup: 1, pronoun: true },
   ];
   for (const _df of _doubleForms) {
     let _dm;
@@ -4322,14 +4322,22 @@ function parseCardEffects(permanent, card, opts = {}) {
       if (_dFilter.includes('"')) continue;
       const _dDoublePower = /power/.test(_ptWhich);
       const _dDoubleToughness = /toughness/.test(_ptWhich);
+      // "Triple target creature's power and toughness" (Tifa's Limit Break) gives it twice its
+      // value; "double target creature's power X times" (Exponential Growth, X = 2) 2^X - 1 times.
+      let _dFactor = /^triple/i.test(_dm[0]) ? 3 : 2;
+      {
+        const _dTimes = oracle.slice(_dm.index + _dm[0].length).match(/^\s+(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s+times\b/i);
+        const _dN = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10 };
+        if (_dTimes) _dFactor = Math.pow(_dFactor, _dN[_dTimes[1].toLowerCase()] || parseInt(_dTimes[1], 10) || 1);
+      }
       const { fn: _dFn, desc: _dDesc, isSelf: _dIsSelf, isTargeted: _dIsTargeted,
               needsTargetSelection: _dNeedsTarget, maxTargets: _dMaxTgts } = buildAppliesToFromText(_dFilter);
       const _dBuildResult = { isSpellTarget: !!_dNeedsTarget, maxTargets: _dMaxTgts || 1 };
       const _dSelfAffect = _dIsSelf ? true : detectSelfAffect(_dFilter);
       const _dEff = pushEff('7c', EFFECT_TYPE.MODIFY_PT,
-        { power: 0, toughness: 0, doublePower: _dDoublePower, doubleToughness: _dDoubleToughness },
+        Object.assign({ power: 0, toughness: 0, doublePower: _dDoublePower, doubleToughness: _dDoubleToughness }, _dFactor !== 2 ? { ptFactor: _dFactor } : {}),
         { isSelf: _dIsSelf, isTargeted: _dIsTargeted, fn: _dFn, selfAffect: _dSelfAffect },
-        `Doubles ${_ptWhich}. ${_dDesc}`,
+        `${_dFactor === 3 ? 'Triples' : _dFactor === 2 ? 'Doubles' : `Multiplies by ${_dFactor}`} ${_ptWhich}. ${_dDesc}`,
         { _oraclePos: _dm.index });
       _applyTargetInfo(_dEff, _dBuildResult, _dFn);
       // (A Saga chapter's doubling waits for its lore counter like the rest of the chapter.)
@@ -6703,7 +6711,7 @@ function parseCardEffects(permanent, card, opts = {}) {
   // ("Choose target nonland permanent. Until your next turn, it can't attack or block" — Academic
   // Probation: the antecedent's words restrict the target. "Untap target creature you don't
   // control. That creature blocks this turn if able" — Provoke.)
-  const _pronounSubjectSentence = /(?:^|[.;]\s*|\n)(?:(?:until end of turn|until your next turn|then|if you do|when you do),?\s+)?(?:it|they|that (?:creature|permanent|land|artifact|enchantment)|those (?:creatures|permanents))\s+(?:also\s+)?(?:gets?|gains?|has|have|becomes?|loses?|is|are|can't|(?:attacks?|blocks?|attack or block|attacks or blocks|must be blocked)\b[^.;\n]*?\bif able)\b/i;
+  const _pronounSubjectSentence = /(?:^|[.;]\s*|\n)(?:(?:until end of turn|until your next turn|then|if you do|when you do),?\s+)?(?:it|they|that (?:creature|permanent|land|artifact|enchantment)|those (?:creatures|permanents))\s+(?:also\s+)?(?:gets?|gains?|has|have|becomes?|loses?|is|are|can't|(?:doesn't|don't) untap|(?:attacks?|blocks?|attack or block|attacks or blocks|must be blocked)\b[^.;\n]*?\bif able)\b/i;
   function _pronounAntecedentRestriction(pos) {
     const info = _pronounAntecedentInfo(pos);
     return info ? info.fn : null;
@@ -6713,7 +6721,8 @@ function parseCardEffects(permanent, card, opts = {}) {
   // (Sparkmage's Gambit) is two targets, not one.
   function _pronounAntecedentInfo(pos) {
     if (!_pronounSubjectSentence.test(oracle.replace(/["“][^"”]*["”]/g, '""'))) return null;
-    const _targetRe = /\b((?:(?:up to \w+|another|other)\s+)*target\s+[^.;"\n]+)/gi;
+    // (A count too: "Tap X target creatures. They don't untap …" — Plant Tadpoles, X read as 2.)
+    const _targetRe = /\b((?:(?:up to \w+|another|other|one|two|three|four|five|six|seven|eight|nine|ten|\d+)\s+)*target\s+[^.;"\n]+)/gi;
     const masked = oracle.replace(/["“][^"”]*["”]/g, (q) => ' '.repeat(q.length));
     let hits = pos ? [...masked.slice(0, pos).matchAll(_targetRe)] : [];
     if (!hits.length) {
@@ -6729,14 +6738,18 @@ function parseCardEffects(permanent, card, opts = {}) {
       .replace(/,?\s+if\b.*$/i, '')
       // "Gain control of target creature until end of turn": how long, not which creature.
       .replace(/\s+(?:until|for as long as|this turn|during)\b.*$/i, '')
-      .replace(/\s+face (?:down|up)$/i, '').trim();
+      .replace(/\s+face (?:down|up)$/i, '')
+      // "Double target creature's power and it gains first strike" (Legion Leadership), "double
+      // target creature's power …. That creature must be blocked" (Neyith): the creature, not its
+      // power ("power" read as a required subtype left the picker empty).
+      .replace(/['’]s\s+(?:base\s+)?(?:power|toughness)\b.*$/i, '').trim();
     // The predicate is not the target's words: "Until end of turn, target creature gets +1/+1 for
     // each creature you control and gains trample. It must be blocked this turn if able" (King
     // Harald's Revenge: the target is any creature). Nor is a player before it: "Target player
     // gains control of up to three target nonattacking creatures …. They block this turn if able"
     // (Domineering Will).
     {
-      const lastTarget = [...phrase.matchAll(/\b(?:(?:up to \w+|another|other)\s+)*target\s/gi)].pop();
+      const lastTarget = [...phrase.matchAll(/\b(?:(?:up to \w+|another|other|one|two|three|four|five|six|seven|eight|nine|ten|\d+)\s+)*target\s/gi)].pop();
       if (lastTarget) phrase = phrase.slice(lastTarget.index);
     }
     phrase = phrase
@@ -6748,7 +6761,8 @@ function parseCardEffects(permanent, card, opts = {}) {
       const info = buildAppliesToFromText(_returned);
       return info && info.isTargeted && typeof info.fn === 'function' ? info : null;
     }
-    if (/\b(?:player|opponent|spell|card|cards|ability)\b/i.test(phrase.replace(/\b(?:an? )?opponents? controls?$|\byou (?:don't )?control$/i, ''))) return null;
+    // ("Tap target creature that player controls" — Somnophore: a creature, of the player dealt damage.)
+    if (/\b(?:player|opponent|spell|card|cards|ability)\b/i.test(phrase.replace(/\b(?:an? )?opponents? controls?$|\byou (?:don't )?control$|\bthat player controls?$/i, ''))) return null;
     const info = buildAppliesToFromText(phrase);
     return info && info.isTargeted && typeof info.fn === 'function' ? info : null;
   }
@@ -6950,6 +6964,10 @@ function parseCardEffects(permanent, card, opts = {}) {
     for (const m of oracle.matchAll(/\bcan't\s+(attack|block|be blocked|be the targets?)\b/gi)) _ruleHits.push({ m, kind: 'cant' });
     for (const m of oracle.matchAll(/\b(must be blocked|attacks or blocks|attack or block|attacks?|blocks?)\b([^.;,\n"]*?)\s*\bif able\b/gi)) _ruleHits.push({ m, kind: 'must' });
     for (const m of oracle.matchAll(/\ball creatures able to block\s+([^.;,\n"]+?)(?:\s+(?:this turn|this combat|each combat))?\s+do so\b/gi)) _ruleHits.push({ m, kind: 'lure' });
+    // And "doesn't untap during its controller's (next) untap step" (Claustrophobia, Frost
+    // Breath's "Those creatures don't untap …", Choke's "Islands don't untap during their
+    // controllers' untap steps"): a rule about the permanent, not a tap (that stays the player's).
+    for (const m of oracle.matchAll(/\b(?:doesn't|don't|does not|do not) untap during\s+([^.;\n"]+)/gi)) _ruleHits.push({ m, kind: 'untap' });
     _ruleHits.sort((a, b) => a.m.index - b.m.index);
     // A fired trigger about the card itself ("When this creature attacks, target creature
     // defending player controls blocks it this combat if able" — Avalanche Tusker), or a fired
@@ -7007,6 +7025,22 @@ function parseCardEffects(permanent, card, opts = {}) {
           : /^attacks? or blocks?$/.test(verb) ? 'Attacks or blocks'
           : /^attack/.test(verb) ? 'Attacks' : 'Blocks';
         rule = `${V}${mid ? ' ' + mid : ''} if able`;
+      } else if (hit.kind === 'untap') {
+        // The rule is whose untap step, said of one permanent; another clause after "and" is not
+        // the rule's ("and its activated abilities can't be activated" — Hold for Questioning),
+        // nor how long it lasts ("for as long as this artifact remains tapped" — Amber Prison).
+        let tail = cantMatch[1]
+          .replace(/,?\s+and\s+(?:its|their|it|they|can't|at|put|gets?|gains?|has|have|loses?|is|are)\b.*$/i, '')
+          .replace(/,?\s+(?:for\s+)?as long as\b.*$/i, '')
+          .replace(/[,\s]+$/, '');
+        // ("Creatures that player controls don't untap during the player's next untap step" —
+        // Pollen Lullaby: that player controls them.)
+        // ("Lands target player controls don't untap during their next untap step" — Mana Vapors.)
+        tail = tail.replace(/^(?:their controllers?'s?|that player's|the player's|his or her|their(?=\s+(?:next\s+)?untap\b))\s+/i, "its controller's ")
+          .replace(/\b(?<!two )untap steps\b/i, 'untap step');
+        // Only whose step the board knows: not "target player's" (Blinding Beam), "the Hydra's".
+        if (!/^(?:its controller's|your)\s+(?:next\s+(?:two\s+)?)?untap steps?\b/i.test(tail)) continue;
+        rule = `Doesn't untap during ${tail}`;
       } else {
         rule = 'All creatures able to block it do so';
       }
@@ -7015,6 +7049,12 @@ function parseCardEffects(permanent, card, opts = {}) {
       // block this turn. , that creature attacks during its controller's next combat phase if
       // able" — Sizzling Soloist's "If this is the second time …".)
       subj = subj.replace(/^[,\s]+/, '');
+      // "Tap all creatures target player controls. Those creatures don't untap during that
+      // player's next untap step" (Sleep): "those" is the group just tapped, not a target.
+      if (hit.kind === 'untap' && /^(?:they|those (?:creatures|permanents|lands|artifacts))$/i.test(subj)) {
+        const tapped = oracle.slice(0, contentStart).match(/\btap all ([^.;\n]+?)\.\s*$/i);
+        if (tapped) subj = tapped[1].trim();
+      }
       // "You may have target creature block it this turn if able" (Giant Ambush Beetle).
       if (hit.kind === 'must') subj = subj.replace(/^(?:you may\s+)?have\s+/i, '');
       // "The chosen creatures attack if able" (Oracle en-Vec): not on the board.
@@ -7124,7 +7164,8 @@ function parseCardEffects(permanent, card, opts = {}) {
       const _sameSentence = effects.find(e => e._oraclePos !== undefined && _getMatchContentPos(e._oraclePos) === contentStart);
       const cantPos = _secondTargetAt >= 0 ? _secondTargetAt : _sameSentence ? _sameSentence._oraclePos : contentStart;
       let eff;
-      if (/^(?:it|they|that (?:creature|permanent)|those (?:creatures|permanents))$/i.test(subj)) {
+      // ("Tap target land an opponent controls. That land doesn't untap …" — Stensia Innkeeper.)
+      if (/^(?:it|they|that (?:creature|permanent|land|artifact|enchantment)|those (?:creatures|permanents|lands|artifacts|enchantments))$/i.test(subj)) {
         // A pronoun: in a permanent's own text it is what an Aura or Equipment is attached to;
         // fired (or in a spell) the target already named, or with no target the source.
         const attached = !_cantFired && before.match(/\b((?:enchanted|equipped)\s+(?:creature|permanent|land|artifact))\b(?![\s\S]*\b(?:enchanted|equipped)\s)/i);

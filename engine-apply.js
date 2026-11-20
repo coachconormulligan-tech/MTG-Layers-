@@ -558,8 +558,10 @@ function applyEffect(state, effect, context) {
         // computed at apply time from the value as it currently exists (CR 107.16 doubling).
         // Capture both before any mutation so "double power and toughness" reads originals.
         if (effect.params.doublePower || effect.params.doubleToughness) {
-          if (effect.params.doublePower) modPow = state.power;
-          if (effect.params.doubleToughness) modTou = state.toughness;
+          // (Tripled, or doubled X times: ptFactor, the value grows by factor - 1 times itself.)
+          const k = (effect.params.ptFactor || 2) - 1;
+          if (effect.params.doublePower) modPow = state.power * k;
+          if (effect.params.doubleToughness) modTou = state.toughness * k;
         }
         // "+X/+X where X is [its | this creature's] power/toughness" — magnitude is a P/T
         // characteristic. charFrom 'self' reads the recipient's own value (Berserk: +X/+0,

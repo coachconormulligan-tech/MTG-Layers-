@@ -1,0 +1,157 @@
+{
+  "name": "Double / triple a target's power: the picker reads \"target creature\", tripling and \"X times\" are factors — Legion Leadership, Neyith, Tifa's Limit Break, Exponential Growth, Bulk Up",
+  "notes": "Found while auditing \"double target creature's power\" (2026-11-20; the parser already doubled, the audit skipped it as one-shot). Legion Leadership (\"double target creature's power and it gains first strike\") and Neyith of the Dire Hunt (\"… That creature must be blocked this combat if able\") had an empty picker: the pronoun's antecedent was read as \"target creature's power\" and \"power\" became a required subtype. _pronounAntecedentInfo drops the possessive \"'s power / toughness\" tail. \"Triple target creature's power and toughness\" (Tifa's Limit Break, mode 3) was read by nothing and \"double target creature's power X times\" (Exponential Growth) doubled once: params.ptFactor (3, or 2^X) and engine-apply adds the value (factor - 1) times.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Player 2"
+      ],
+      "as": "p2"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Gray Ogre",
+      "controller": "p2",
+      "as": "ogre"
+    },
+    {
+      "add": "Runeclaw Bear",
+      "controller": "p2",
+      "as": "rune"
+    },
+    {
+      "add": "Legion Leadership // Legion Stronghold",
+      "spell": true,
+      "as": "ll"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@ll",
+        "@bears"
+      ]
+    },
+    {
+      "add": "Tifa's Limit Break",
+      "spell": true,
+      "as": "tifa"
+    },
+    {
+      "call": [
+        "setModalModeSelections",
+        "@tifa",
+        [
+          2
+        ]
+      ]
+    },
+    {
+      "call": [
+        "setModalModeTarget",
+        "@tifa",
+        2,
+        "@giant"
+      ]
+    },
+    {
+      "add": "Exponential Growth",
+      "spell": true,
+      "x": 2,
+      "as": "eg"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@eg",
+        "@ogre"
+      ]
+    },
+    {
+      "add": "Bulk Up",
+      "spell": true,
+      "as": "bulk"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@bulk",
+        "@rune"
+      ]
+    },
+    {
+      "add": "Neyith of the Dire Hunt",
+      "as": "ney"
+    },
+    {
+      "fire": "@ney",
+      "trigger": 1,
+      "as": "nt"
+    }
+  ],
+  "asserts": [
+    {
+      "targetCandidates": {
+        "perm": "Legion Leadership"
+      },
+      "are": [
+        "Grizzly Bears",
+        "Hill Giant",
+        "Gray Ogre",
+        "Runeclaw Bear"
+      ]
+    },
+    {
+      "targetCandidates": {
+        "perm": "Neyith of the Dire Hunt (trigger)"
+      },
+      "are": [
+        "Grizzly Bears",
+        "Hill Giant",
+        "Gray Ogre",
+        "Runeclaw Bear",
+        "Neyith of the Dire Hunt"
+      ]
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 4,
+        "toughness": 2,
+        "abilities": {
+          "$includes": [
+            "First strike"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "power": 9,
+        "toughness": 9
+      }
+    },
+    {
+      "perm": "Gray Ogre",
+      "final": {
+        "power": 8,
+        "toughness": 2
+      }
+    },
+    {
+      "perm": "Runeclaw Bear",
+      "final": {
+        "power": 4,
+        "toughness": 2
+      }
+    }
+  ]
+}

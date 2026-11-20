@@ -1,0 +1,39 @@
+{
+  "name": "\"Doesn't untap during its controller's (next) untap step\" is a trait — Claustrophobia, Choke, Frost Breath, Sleep, Abominable Treefolk, Amber Prison, Hold for Questioning",
+  "notes": "A rule about untapping (CR 502.3) was read by nothing (2026-11-20): ~95 targeted units of the behavioural audit were skipped as one-shot (\"Tap target creature. It doesn't untap during its controller's next untap step\"), and Auras and statics (Claustrophobia, Choke) showed nothing. The rule block of cards-parser.js now keeps \"Doesn't untap during <whose> [next] untap step\" as a trait in the card's words: \"their controllers' untap steps\", \"that player's\" and \"their\" are said of one permanent as \"its controller's\", which _resolveTraitText names; how long it lasts (\"for as long as this artifact remains tapped\") and another clause after \"and\" (Hold for Questioning) are not the rule. The tap itself stays the player's (fired abilities never tap). Sleep's \"Those creatures\" are the creatures of the picked player.",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"], "as": "p2" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Runeclaw Bear", "controller": "p2", "as": "rune" },
+    { "add": "Hill Giant", "controller": "p2", "as": "giant" },
+    { "add": "Gray Ogre", "controller": "p2", "as": "ogre" },
+    { "add": "Island", "controller": "p2", "as": "island" },
+    { "add": "Ornithopter", "controller": "p2", "as": "thopter" },
+    { "add": "Claustrophobia", "as": "claus" },
+    { "call": ["setTarget", "@claus", "@rune"] },
+    { "add": "Choke" },
+    { "add": "Frost Breath", "spell": true, "as": "fb" },
+    { "call": ["setMultiTarget", "@fb", 0, "@giant"] },
+    { "call": ["setMultiTarget", "@fb", 1, "@bears"] },
+    { "add": "Sleep", "spell": true, "as": "sleep" },
+    { "call": ["setTargetPlayer", "@sleep", "p2"] },
+    { "add": "Abominable Treefolk", "as": "tree" },
+    { "fire": "@tree", "trigger": 2, "as": "t1" },
+    { "call": ["setTarget", "@t1", "@ogre"] },
+    { "add": "Amber Prison", "as": "amber" },
+    { "fire": "@amber", "activated": 1, "as": "a1" },
+    { "call": ["setTarget", "@a1", "@thopter"] },
+    { "add": "Hold for Questioning", "as": "hold" },
+    { "call": ["setTarget", "@hold", "@thopter"] }
+  ],
+  "asserts": [
+    { "perm": "Runeclaw Bear", "final": { "traits": { "$includes": ["Doesn't untap during Player 2's untap step", "Doesn't untap during Player 2's next untap step"] } } },
+    { "perm": "Island", "final": { "traits": ["Doesn't untap during Player 2's untap step"] } },
+    { "perm": "Hill Giant", "final": { "traits": ["Doesn't untap during Player 2's next untap step"] } },
+    { "perm": "Grizzly Bears", "final": { "traits": ["Doesn't untap during Player 1's next untap step"] } },
+    { "perm": "Gray Ogre", "final": { "traits": ["Doesn't untap during Player 2's next untap step"] } },
+    { "perm": "Ornithopter", "final": { "traits": { "$includes": ["Doesn't untap during Player 2's untap step"] } } },
+    { "perm": "Abominable Treefolk", "final": { "traits": { "$excludes": ["Doesn't untap during Player 1's next untap step"] } } },
+    { "targetCandidates": { "perm": "Abominable Treefolk (trigger)" }, "are": ["Runeclaw Bear", "Hill Giant", "Gray Ogre", "Ornithopter"] }
+  ]
+}

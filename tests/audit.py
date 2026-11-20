@@ -42,6 +42,10 @@ A unit whose own text names one permanent target ("singular") is checked twice:
            "if able"; "blocks it" names the card when the ability is the card's activated ability or
            a trigger about the card, and is otherwise skipped (requirement-of-another: Fighter
            Class, Grappling Hook); "blocks it" of an earlier target leaves that target one-shot.
+           So is "doesn't untap during its controller's (next) untap step" ("Tap target creature. It
+           doesn't untap …", "Target permanent doesn't untap …", "Those creatures don't untap …"): the
+           trait must begin "Doesn't untap during" and end "[next ]untap step"; the tap stays the
+           player's. Not "during target player's next untap step".
            "Goad / suspect / detain target …" is checked the same way: the chosen target alone must get
            the Goaded / Suspected / Detained trait (rule-trait-missing). A later sentence about the target
            through "it" / "that creature" is read after "Until end of turn," / "Until your next

@@ -255,7 +255,7 @@ const SAME_PERMANENT_VERBS = /^(?:put|puts|untap|tap|taps|attach|choose|goad|dea
 // becomes a 0/0 Robot creature" — Donatello; "If you do, that land becomes …" — Cyclone Sire; "You may
 // have it gain reach until end of turn" — Academic Dispute.)
 const LATER_PRONOUN_LEAD = "(?:until (?:end of turn|your next turn),\\s*|then\\s+|if (?:you do|it's a creature|it isn't a creature|it's not a creature|(?:it|that (?:creature|permanent|land|artifact)) is(?:n't| not)? an? (?:creature|artifact|land)),\\s*)?";
-const LATER_PRONOUN_EFFECT = new RegExp("\\.\\s+" + LATER_PRONOUN_LEAD + "(?:(?:it|that (?:creature|permanent|land|artifact))\\s+(?:also\\s+)?(?:gets?|gains?|has|becomes?|loses?|is|can't (?:attack|block|be blocked)|(?:attacks?|blocks?|must be blocked)\\b[^.;,]*?\\bif able)|(?:you may )?have (?:it|that (?:creature|permanent|land|artifact)) (?:get|gain|become(?! no longer)|lose))\\b");
+const LATER_PRONOUN_EFFECT = new RegExp("\\.\\s+" + LATER_PRONOUN_LEAD + "(?:(?:it|that (?:creature|permanent|land|artifact))\\s+(?:also\\s+)?(?:gets?|gains?|has|becomes?|loses?|is|can't (?:attack|block|be blocked)|doesn't untap during|(?:attacks?|blocks?|must be blocked)\\b[^.;,]*?\\bif able)|(?:you may )?have (?:it|that (?:creature|permanent|land|artifact)) (?:get|gain|become(?! no longer)|lose))\\b");
 // "Goad target creature", "you gain 3 life and suspect up to one target creature an opponent controls":
 // the target gets the Goaded / Suspected designation, which the site keeps as a trait (CR 701.15,
 // 701.60), so it is audited like a "can't …" rule: the chosen target alone must get that trait.
@@ -329,17 +329,22 @@ function classifyAt(lower, idx, end, opts) {
   // ("Switch the power and toughness of each of up to two target creatures" — Invert.)
   const switchM = /\bswitch(?:es)? $/.test(before) ? after.match(/^([^.;']+?)'s (?:base )?(?:power and toughness|toughness and power)\b/) : null;
   const switchOf = /\bswitch the (?:base )?(?:power and toughness|toughness and power) of (?:each of )?(?:up to \w+ |any number of )?(?:other |another )?$/.test(before);
+  // "Double target creature's power [and toughness]" (Bulk Up, Epic Fight), "double the power [and
+  // toughness] of target creature you control" (Unleash Fury, Dragonclaw Strike): layer 7c, the
+  // target's current power added to it, so audited like a switch.
+  const doubleM = !switchM && /\b(?:double|triple) $/.test(before) ? after.match(/^([^.;']+?)'s (?:power and toughness|power|toughness)\b/) : null;
+  const doubleOf = /\b(?:double|triple) the (?:power and toughness|power|toughness) of (?:each of )?(?:up to \w+ |any number of )?(?:other |another )?$/.test(before);
   // "Turn target face-down creature face up", "turn any number of target tapped nontoken creatures
   // face down" (Ixidor, Illithid Harvester): the site turns the picked target (_applyFiredFace), so
   // the target changes as an attach's does.
   const faceM = /\bturn (?:any number of |up to \w+ )?(?:another )?$/.test(before) ? after.match(/^([^.;]+?) face (down|up)\b/) : null;
-  const phrase = switchM ? switchM[1].trim() : faceM ? faceM[1].trim() : extractPhrase(after);
+  const phrase = switchM ? switchM[1].trim() : doubleM ? doubleM[1].trim() : faceM ? faceM[1].trim() : extractPhrase(after);
   if (!phrase) return { skip: 'empty-phrase' };
   // The engine models continuous effects only. "Destroy / exile / put a counter on / create a token
   // that's a copy of target ..." is a one-shot action: the target is the object of a verb, not the
   // subject of "gets / gains / becomes", and no parse could be expected to give it a targeted effect.
   let clauseBefore = before.slice(Math.max(before.lastIndexOf('.'), before.lastIndexOf(';')) + 1);
-  let verbAfter = (switchM ? after.slice(switchM[0].length) : faceM ? after.slice(faceM[0].length) : after.slice(phrase.length)).trim();
+  let verbAfter = (switchM ? after.slice(switchM[0].length) : doubleM ? after.slice(doubleM[0].length) : faceM ? after.slice(faceM[0].length) : after.slice(phrase.length)).trim();
   let rules = [];
   // (classifyTargets: "Target player creates X Zombies, then up to one target creature gets -1/-1".)
   if (opts.each) clauseBefore = clauseBefore.replace(/^.*(?:,\s*|\s)then\s/, ' ');
@@ -373,7 +378,11 @@ function classifyAt(lower, idx, end, opts) {
   // ("Up to one other target creature blocks it this turn if able" — Monstrous Step: "it" is the
   // first target, which the site cannot name in a trait; this target stays a one-shot.)
   if (reqRules.some(r => r.includes('@it')) && /\btarget\b/.test(before)) reqRules = [];
-  if (!takesControl && !pronounEffect && !traitVerb && !attaches && !switchM && !switchOf && !faceM && !reqRules.length && (ONE_SHOT_VERBS.test(clauseBefore) || !CONTINUOUS_VERBS.test(verbAfter))) return { skip: 'one-shot-action' };
+  // ("Tap target creature. It doesn't untap during its controller's next untap step": a rule the
+  // site keeps as a trait, the tap staying the player's.)
+  const untapRules = untapRulesOf(verbAfter, opts.plural);
+  if (untapRules.length && (keepsTarget || !actionVerbs.length)) for (const r of untapRules) if (!reqRules.includes(r)) reqRules.push(r);
+  if (!takesControl && !pronounEffect && !traitVerb && !attaches && !switchM && !switchOf && !doubleM && !doubleOf && !faceM && !reqRules.length && (ONE_SHOT_VERBS.test(clauseBefore) || !CONTINUOUS_VERBS.test(verbAfter))) return { skip: 'one-shot-action' };
   // "Target creature can't be blocked this turn" / "can't be regenerated" / "can attack as though
   // it didn't have defender": a rule about the target, not a change to what it is. The site does
   // not model these, so there is no targeted effect to expect.
@@ -456,13 +465,32 @@ function requirementRulesOf(verbAfter) {
   }
   return out;
 }
+/* "Doesn't untap during its controller's (next) untap step", said of the target in its own sentence
+   ("Target permanent doesn't untap …" — Ajani Vengeant) or the next one through a pronoun ("Tap
+   target creature. It doesn't untap …", "Those creatures don't untap …"): the site keeps it as a
+   trait naming whose step, so it is "doesn't untap during…[next ]untap step" (missingRules). Only
+   a step the board knows: its controller's, theirs, yours; not "target player's". */
+function untapRulesOf(verbAfter, plural) {
+  const sentences = verbAfter.split(/\.\s*/);
+  const words = [sentences[0]];
+  const pronoun = plural ? /^(?:until end of turn,\s*)?(?:they|those (?:creatures|permanents|lands|artifacts))\s+/ : /^(?:until end of turn,\s*)?(?:it|that (?:creature|permanent|land|artifact))\s+/;
+  if (sentences[1] && pronoun.test(sentences[1])) words.push(sentences[1].replace(pronoun, ''));
+  const out = [];
+  for (const w of words) {
+    const m = w.match(/(?:^|\band\s+|,\s+)(?:doesn't|don't|does not|do not) untap during (its controller's|their controllers?'s?|your|their) (next )?untap steps?\b/);
+    if (!m) continue;
+    const r = "doesn't untap during…" + (m[2] ? 'next ' : '') + 'untap step';
+    if (!out.includes(r)) out.push(r);
+  }
+  return out;
+}
 // The count of "any number of target …" (classifyTargets).
 const ANY_NUMBER = 'any';
 // The plural of LATER_PRONOUN_EFFECT: "Untap up to two target creatures. They gain haste" / "Those
 // creatures each get +1/+1", in the very next sentence ("Tap up to two target creatures. … Create a
 // 1/1 Eldrazi Scion token. It has …": the token is "it").
 // ("Choose any number of target creatures. Each of those creatures gains persist" - Cauldron Haze.)
-const LATER_PLURAL_PRONOUN_EFFECT = /^[^.]*\.\s+(?:until end of turn,\s*)?(?:(?:they|those (?:creatures|permanents|lands|artifacts))\s+(?:each\s+)?(?:also\s+)?(?:gain|have|become|lose|get|are(?! now attacking)|can't (?:attack|block|be blocked))|each of (?:those (?:creatures|permanents|lands|artifacts)|them)\s+(?:also\s+)?(?:gains|has|becomes|loses|gets|is))\b/;
+const LATER_PLURAL_PRONOUN_EFFECT = /^[^.]*\.\s+(?:until end of turn,\s*)?(?:(?:they|those (?:creatures|permanents|lands|artifacts))\s+(?:each\s+)?(?:also\s+)?(?:gain|have|become|lose|get|are(?! now attacking)|can't (?:attack|block|be blocked)|don't untap during)|each of (?:those (?:creatures|permanents|lands|artifacts)|them)\s+(?:also\s+)?(?:gains|has|becomes|loses|gets|is))\b/;
 
 /* A unit whose text names more than one target, or "up to N target …" (`origin`, which is also the
    first part of every skip reason it returns). Each target is read on its own (classifyAt) and how
@@ -525,7 +553,7 @@ function classifyTargets(text, origin) {
 /* Does the text outside the target's own clause also name the source or a group? Kept as one
    small function so it can be tuned: { source, group }. */
 const SELF_WORDS = /\bthis (?:creature|permanent|card|artifact|enchantment|land|token|vehicle|equipment|aura|planeswalker|spell|saga|class)\b|~/;
-const GROUP_WORDS = /(?<!for )\beach (?:other )?(?:creature|permanent|artifact|land|enchantment|planeswalker)\b|\b(?:all|every) (?:other )?(?:creatures|permanents|artifacts|lands|enchantments|planeswalkers)\b|\bother (?:\w+ )?(?:creatures|permanents|artifacts|lands|enchantments)\b|\b\w+s you control (?:get|have|gain)\b/;
+const GROUP_WORDS = /(?<!for )\beach (?:other )?(?:creature|permanent|artifact|land|enchantment|planeswalker)\b|\b(?:all|every) (?:other )?(?:creatures|permanents|artifacts|lands|enchantments|planeswalkers)\b|\bother (?:\w+ )?(?:creatures|permanents|artifacts|lands|enchantments)\b|\b\w+s you control (?:get|have|gain|don't untap)\b/;
 function mixedSubject(text, targetIndex, cardName, isSpell) {
   const lower = String(text).replace(/’/g, "'").replace(/["“][^"”]*["”]/g, 'QUOTED').toLowerCase()
     // "… for as long as this creature remains tapped" says how long, not who (same length kept:

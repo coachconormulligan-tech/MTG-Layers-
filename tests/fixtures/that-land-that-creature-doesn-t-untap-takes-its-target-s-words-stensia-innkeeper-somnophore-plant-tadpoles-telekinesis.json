@@ -1,0 +1,5193 @@
+{
+ "name": "\"That land / that creature doesn't untap\" takes its target's words — Stensia Innkeeper, Somnophore, Plant Tadpoles, Telekinesis",
+ "notes": "Found while auditing the doesn't-untap rules (2026-11-20). \"Tap target land an opponent controls. That land doesn't untap …\" (Stensia Innkeeper): \"that land\" was read as a group (every land got the trait); the pronoun subjects of the rule block now include that land / artifact / enchantment and their plurals. \"Tap target creature that player controls\" (Somnophore): _pronounAntecedentInfo gave up on the word \"player\" and the picker offered every permanent; \"that player controls\" is now read like \"an opponent controls\" (the player dealt damage is not known, so any creature). \"Tap X target creatures. They don't untap …\" (Plant Tadpoles, X = 2): the antecedent dropped a bare count before \"target\", so a single picker; it now keeps \"two / 2 / X-as-a-number target\". Telekinesis keeps \"next two untap steps\" plural.",
+ "recipe": {
+  "steps": [
+   {
+    "call": [
+     "addPlayer",
+     "Player 2"
+    ],
+    "as": "p2"
+   },
+   {
+    "add": "Grizzly Bears",
+    "as": "bears"
+   },
+   {
+    "add": "Forest",
+    "as": "forest"
+   },
+   {
+    "add": "Runeclaw Bear",
+    "controller": "p2",
+    "as": "rune"
+   },
+   {
+    "add": "Hill Giant",
+    "controller": "p2",
+    "as": "giant"
+   },
+   {
+    "add": "Mountain",
+    "controller": "p2",
+    "as": "mtn"
+   },
+   {
+    "add": "Plains",
+    "controller": "p2",
+    "as": "plains"
+   },
+   {
+    "add": "Stensia Innkeeper",
+    "as": "inn"
+   },
+   {
+    "fire": "@inn",
+    "trigger": 0,
+    "as": "t1"
+   },
+   {
+    "call": [
+     "setTarget",
+     "@t1",
+     "@mtn"
+    ]
+   },
+   {
+    "add": "Somnophore",
+    "as": "somno"
+   },
+   {
+    "fire": "@somno",
+    "trigger": 1,
+    "as": "t2"
+   },
+   {
+    "call": [
+     "setTarget",
+     "@t2",
+     "@giant"
+    ]
+   },
+   {
+    "add": "Illithid Harvester",
+    "spell": true,
+    "x": 2,
+    "opts": {
+     "faceIndex": 1
+    },
+    "as": "tad"
+   },
+   {
+    "call": [
+     "setMultiTarget",
+     "@tad",
+     0,
+     "@rune"
+    ]
+   },
+   {
+    "call": [
+     "setMultiTarget",
+     "@tad",
+     1,
+     "@bears"
+    ]
+   },
+   {
+    "add": "Telekinesis",
+    "spell": true,
+    "as": "tk"
+   },
+   {
+    "call": [
+     "setTarget",
+     "@tk",
+     "@giant"
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Mountain",
+   "final": {
+    "traits": [
+     "Doesn't untap during Player 2's next untap step"
+    ]
+   }
+  },
+  {
+   "perm": "Plains",
+   "final": {
+    "traits": {
+     "$excludes": [
+      "Doesn't untap during Player 2's next untap step"
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Forest",
+   "final": {
+    "traits": {
+     "$excludes": [
+      "Doesn't untap during Player 1's next untap step"
+     ]
+    }
+   }
+  },
+  {
+   "targetCandidates": {
+    "perm": "Stensia Innkeeper (trigger)"
+   },
+   "are": [
+    "Mountain",
+    "Plains"
+   ]
+  },
+  {
+   "targetCandidates": {
+    "perm": "Somnophore (trigger)"
+   },
+   "are": [
+    "Grizzly Bears",
+    "Runeclaw Bear",
+    "Hill Giant",
+    "Stensia Innkeeper",
+    "Somnophore"
+   ]
+  },
+  {
+   "perm": "Hill Giant",
+   "final": {
+    "traits": {
+     "$includes": [
+      "Doesn't untap during Player 2's untap step",
+      "Doesn't untap during Player 2's next two untap steps"
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Runeclaw Bear",
+   "final": {
+    "traits": [
+     "Doesn't untap during Player 2's next untap step"
+    ]
+   }
+  },
+  {
+   "perm": "Grizzly Bears",
+   "final": {
+    "traits": [
+     "Doesn't untap during Player 1's next untap step"
+    ]
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+     "multiverse_ids": [
+      129586
+     ],
+     "mtgo_id": 27400,
+     "mtgo_foil_id": 27401,
+     "tcgplayer_id": 15153,
+     "cardmarket_id": 16432,
+     "name": "Grizzly Bears",
+     "lang": "en",
+     "released_at": "2007-07-13",
+     "uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "scryfall_uri": "https://scryfall.com/card/10e/268/grizzly-bears?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:43:21Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "normal": "https://cards.scryfall.io/normal/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "large": "https://cards.scryfall.io/large/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "png": "https://cards.scryfall.io/png/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.png?1783943001",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "grid": "https://cards.scryfall.io/grid/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "display": "https://cards.scryfall.io/display/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "art": "https://cards.scryfall.io/art/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "crop": "https://cards.scryfall.io/crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001"
+     },
+     "mana_cost": "{1}{G}",
+     "cmc": 2,
+     "type_line": "Creature — Bear",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set": "10e",
+     "set_name": "Tenth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A14c8f55d-d177-4c25-a931-ebeb9e6062a0&unique=prints",
+     "collector_number": "268",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"We cannot forget that among all of Dominaria's wonders, a system of life exists, with prey and predators that will never fight wars nor vie for ancient power.\"\n—Jolrael, empress of beasts",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "D. J. Cleland-Hura",
+     "artist_ids": [
+      "87d21070-2432-4167-8aab-5968af1c14f3"
+     ],
+     "illustration_id": "066bfe81-0f53-43da-a074-b2ecc5dcda72",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 8114,
+     "penny_rank": 10982,
+     "prices": {
+      "usd": "0.22",
+      "usd_foil": "3.29",
+      "usd_etched": null,
+      "eur": "0.11",
+      "eur_foil": "1.97",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129586&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "edhrec": "https://edhrec.com/route/?cc=Grizzly+Bears"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15153%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16432&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27400?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "faceDownAs": null,
+    "face": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "dce15387-4114-4b3e-91aa-5b42b45c44ac",
+     "oracle_id": "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
+     "multiverse_ids": [],
+     "name": "Forest",
+     "lang": "en",
+     "released_at": "2026-11-13",
+     "uri": "https://api.scryfall.com/cards/dce15387-4114-4b3e-91aa-5b42b45c44ac",
+     "scryfall_uri": "https://scryfall.com/card/trk/325/forest?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-08-06T02:01:15Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+      "normal": "https://cards.scryfall.io/normal/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+      "large": "https://cards.scryfall.io/large/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+      "png": "https://cards.scryfall.io/png/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.png?1785981675",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+      "thumb": "https://cards.scryfall.io/thumb/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.webp?1785981675",
+      "grid": "https://cards.scryfall.io/grid/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.webp?1785981675",
+      "display": "https://cards.scryfall.io/display/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.webp?1785981675",
+      "art": "https://cards.scryfall.io/art/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.webp?1785981675",
+      "crop": "https://cards.scryfall.io/crop/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.webp?1785981675"
+     },
+     "mana_cost": "",
+     "cmc": 0,
+     "type_line": "Basic Land — Forest",
+     "oracle_text": "({T}: Add {G}.)",
+     "colors": [],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "produced_mana": [
+      "G"
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "4fae200d-5757-4924-8cf4-ab2a5ef2ccc0",
+       "component": "combo_piece",
+       "name": "Forest",
+       "type_line": "Basic Land — Forest",
+       "uri": "https://api.scryfall.com/cards/4fae200d-5757-4924-8cf4-ab2a5ef2ccc0"
+      },
+      {
+       "object": "related_card",
+       "id": "aed8ae06-ae54-4a16-8830-6547164ce6ae",
+       "component": "combo_piece",
+       "name": "Gilt-Leaf Alchemist",
+       "type_line": "Creature — Elf Druid",
+       "uri": "https://api.scryfall.com/cards/aed8ae06-ae54-4a16-8830-6547164ce6ae"
+      }
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo",
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "b47039dc-da5a-448c-8feb-e77d458108a6",
+     "set": "trk",
+     "set_name": "Star Trek",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/b47039dc-da5a-448c-8feb-e77d458108a6",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Atrk&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/trk?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/dce15387-4114-4b3e-91aa-5b42b45c44ac/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ab34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6&unique=prints",
+     "collector_number": "325",
+     "digital": false,
+     "rarity": "common",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Bastien Grivet",
+     "artist_ids": [
+      "434a6cf6-c6bf-4f87-84db-d0a902393b9e"
+     ],
+     "illustration_id": "5a6bbfa9-4075-48e4-b06a-78e31477bd3f",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "universesbeyond"
+     ],
+     "prices": {
+      "usd": null,
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DForest",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DForest",
+      "edhrec": "https://edhrec.com/route/?cc=Forest"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fmagic%2Fproduct%3FproductLineName%3Dmagic%26q%3DForest%26view%3Dgrid",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products/Search?referrer=scryfall&searchString=Forest&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Forest&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "faceDownAs": null,
+    "face": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "d1995238-79cc-4381-9595-71ef11ea1e36",
+     "oracle_id": "ec49dfcf-d16d-4621-af4b-4a6f09043221",
+     "multiverse_ids": [
+      383368
+     ],
+     "mtgo_id": 53290,
+     "mtgo_foil_id": 53291,
+     "tcgplayer_id": 90949,
+     "cardmarket_id": 267595,
+     "name": "Runeclaw Bear",
+     "lang": "en",
+     "released_at": "2014-07-18",
+     "uri": "https://api.scryfall.com/cards/d1995238-79cc-4381-9595-71ef11ea1e36",
+     "scryfall_uri": "https://scryfall.com/card/m15/197/runeclaw-bear?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T10:39:22Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
+      "normal": "https://cards.scryfall.io/normal/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
+      "large": "https://cards.scryfall.io/large/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
+      "png": "https://cards.scryfall.io/png/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.png?1783939162",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
+      "thumb": "https://cards.scryfall.io/thumb/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.webp?1783939162",
+      "grid": "https://cards.scryfall.io/grid/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.webp?1783939162",
+      "display": "https://cards.scryfall.io/display/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.webp?1783939162",
+      "art": "https://cards.scryfall.io/art/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.webp?1783939162",
+      "crop": "https://cards.scryfall.io/crop/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.webp?1783939162"
+     },
+     "mana_cost": "{1}{G}",
+     "cmc": 2,
+     "type_line": "Creature — Bear",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "6ce49890-3b37-42a5-8932-dbeef1d7b62c",
+     "set": "m15",
+     "set_name": "Magic 2015",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/6ce49890-3b37-42a5-8932-dbeef1d7b62c",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Am15&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/m15?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/d1995238-79cc-4381-9595-71ef11ea1e36/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aec49dfcf-d16d-4621-af4b-4a6f09043221&unique=prints",
+     "collector_number": "197",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "The magic of the elves leaves its mark on the forest. The magic of the forest leaves its mark on the animals who live there. The animals of the forest leave their mark on all who trespass.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Jesper Ejsing",
+     "artist_ids": [
+      "a5f8354a-8b51-4e59-96b2-0e3aeae4fa1d"
+     ],
+     "illustration_id": "0bb0db79-2039-4f8b-a8ac-d7c952f07ba5",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 9229,
+     "penny_rank": 10859,
+     "prices": {
+      "usd": "0.14",
+      "usd_foil": "0.51",
+      "usd_etched": null,
+      "eur": "0.11",
+      "eur_foil": "0.36",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=383368&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DRuneclaw%2BBear",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DRuneclaw%2BBear",
+      "edhrec": "https://edhrec.com/route/?cc=Runeclaw+Bear"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F90949%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=267595&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/53290?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_1",
+    "controller": "player_1",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "faceDownAs": null,
+    "face": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8",
+     "oracle_id": "342199e0-15b6-4824-83da-25caef2592b3",
+     "multiverse_ids": [
+      129591
+     ],
+     "mtgo_id": 27040,
+     "mtgo_foil_id": 27041,
+     "tcgplayer_id": 15162,
+     "cardmarket_id": 16376,
+     "name": "Hill Giant",
+     "lang": "en",
+     "released_at": "2007-07-13",
+     "uri": "https://api.scryfall.com/cards/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8",
+     "scryfall_uri": "https://scryfall.com/card/10e/212/hill-giant?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:43:38Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+      "normal": "https://cards.scryfall.io/normal/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+      "large": "https://cards.scryfall.io/large/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+      "png": "https://cards.scryfall.io/png/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.png?1783943018",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+      "thumb": "https://cards.scryfall.io/thumb/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018",
+      "grid": "https://cards.scryfall.io/grid/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018",
+      "display": "https://cards.scryfall.io/display/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018",
+      "art": "https://cards.scryfall.io/art/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018",
+      "crop": "https://cards.scryfall.io/crop/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.webp?1783943018"
+     },
+     "mana_cost": "{3}{R}",
+     "cmc": 4,
+     "type_line": "Creature — Giant",
+     "oracle_text": "",
+     "power": "3",
+     "toughness": "3",
+     "colors": [
+      "R"
+     ],
+     "color_identity": [
+      "R"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set": "10e",
+     "set_name": "Tenth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A342199e0-15b6-4824-83da-25caef2592b3&unique=prints",
+     "collector_number": "212",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "Fortunately, hill giants have large blind spots in which a human can easily hide. Unfortunately, these blind spots are beneath the bottoms of their feet.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Kev Walker",
+     "artist_ids": [
+      "f366a0ee-a0cd-466d-ba6a-90058c7a31a6"
+     ],
+     "illustration_id": "fd46160d-4dd0-4ab6-b452-cff004f5e6f2",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 29148,
+     "prices": {
+      "usd": "0.04",
+      "usd_foil": "0.83",
+      "usd_etched": null,
+      "eur": "0.02",
+      "eur_foil": "0.28",
+      "tix": "0.04"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129591&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DHill%2BGiant",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DHill%2BGiant",
+      "edhrec": "https://edhrec.com/route/?cc=Hill+Giant"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15162%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16376&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27040?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_1",
+    "controller": "player_1",
+    "timestamp": 4,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "faceDownAs": null,
+    "face": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_5",
+    "scryfallData": {
+     "object": "card",
+     "id": "2a844b96-6616-4c39-8f4f-5d14a3b2bd55",
+     "oracle_id": "a3fb7228-e76b-4e96-a40e-20b5fed75685",
+     "multiverse_ids": [],
+     "name": "Mountain",
+     "lang": "en",
+     "released_at": "2026-11-13",
+     "uri": "https://api.scryfall.com/cards/2a844b96-6616-4c39-8f4f-5d14a3b2bd55",
+     "scryfall_uri": "https://scryfall.com/card/trk/323/mountain?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-08-06T02:01:06Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/2/a/2a844b96-6616-4c39-8f4f-5d14a3b2bd55.jpg?1785981666",
+      "normal": "https://cards.scryfall.io/normal/front/2/a/2a844b96-6616-4c39-8f4f-5d14a3b2bd55.jpg?1785981666",
+      "large": "https://cards.scryfall.io/large/front/2/a/2a844b96-6616-4c39-8f4f-5d14a3b2bd55.jpg?1785981666",
+      "png": "https://cards.scryfall.io/png/front/2/a/2a844b96-6616-4c39-8f4f-5d14a3b2bd55.png?1785981666",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/2/a/2a844b96-6616-4c39-8f4f-5d14a3b2bd55.jpg?1785981666",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/2/a/2a844b96-6616-4c39-8f4f-5d14a3b2bd55.jpg?1785981666",
+      "thumb": "https://cards.scryfall.io/thumb/front/2/a/2a844b96-6616-4c39-8f4f-5d14a3b2bd55.webp?1785981666",
+      "grid": "https://cards.scryfall.io/grid/front/2/a/2a844b96-6616-4c39-8f4f-5d14a3b2bd55.webp?1785981666",
+      "display": "https://cards.scryfall.io/display/front/2/a/2a844b96-6616-4c39-8f4f-5d14a3b2bd55.webp?1785981666",
+      "art": "https://cards.scryfall.io/art/front/2/a/2a844b96-6616-4c39-8f4f-5d14a3b2bd55.webp?1785981666",
+      "crop": "https://cards.scryfall.io/crop/front/2/a/2a844b96-6616-4c39-8f4f-5d14a3b2bd55.webp?1785981666"
+     },
+     "mana_cost": "",
+     "cmc": 0,
+     "type_line": "Basic Land — Mountain",
+     "oracle_text": "({T}: Add {R}.)",
+     "colors": [],
+     "color_identity": [
+      "R"
+     ],
+     "keywords": [],
+     "produced_mana": [
+      "R"
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo",
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "b47039dc-da5a-448c-8feb-e77d458108a6",
+     "set": "trk",
+     "set_name": "Star Trek",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/b47039dc-da5a-448c-8feb-e77d458108a6",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Atrk&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/trk?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/2a844b96-6616-4c39-8f4f-5d14a3b2bd55/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aa3fb7228-e76b-4e96-a40e-20b5fed75685&unique=prints",
+     "collector_number": "323",
+     "digital": false,
+     "rarity": "common",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Bastien Grivet",
+     "artist_ids": [
+      "434a6cf6-c6bf-4f87-84db-d0a902393b9e"
+     ],
+     "illustration_id": "5f46014a-fd97-4fb0-a7d4-de58c9e63f18",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "universesbeyond"
+     ],
+     "prices": {
+      "usd": null,
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DMountain",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DMountain",
+      "edhrec": "https://edhrec.com/route/?cc=Mountain"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fmagic%2Fproduct%3FproductLineName%3Dmagic%26q%3DMountain%26view%3Dgrid",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products/Search?referrer=scryfall&searchString=Mountain&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Mountain&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_1",
+    "controller": "player_1",
+    "timestamp": 5,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "faceDownAs": null,
+    "face": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_6",
+    "scryfallData": {
+     "object": "card",
+     "id": "8ab0f4c0-b331-4c57-b68f-2e24bb5ba06c",
+     "oracle_id": "bc71ebf6-2056-41f7-be35-b2e5c34afa99",
+     "multiverse_ids": [],
+     "name": "Plains",
+     "lang": "en",
+     "released_at": "2026-11-13",
+     "uri": "https://api.scryfall.com/cards/8ab0f4c0-b331-4c57-b68f-2e24bb5ba06c",
+     "scryfall_uri": "https://scryfall.com/card/trk/317/plains?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-08-06T02:00:32Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/8/a/8ab0f4c0-b331-4c57-b68f-2e24bb5ba06c.jpg?1785981632",
+      "normal": "https://cards.scryfall.io/normal/front/8/a/8ab0f4c0-b331-4c57-b68f-2e24bb5ba06c.jpg?1785981632",
+      "large": "https://cards.scryfall.io/large/front/8/a/8ab0f4c0-b331-4c57-b68f-2e24bb5ba06c.jpg?1785981632",
+      "png": "https://cards.scryfall.io/png/front/8/a/8ab0f4c0-b331-4c57-b68f-2e24bb5ba06c.png?1785981632",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/8/a/8ab0f4c0-b331-4c57-b68f-2e24bb5ba06c.jpg?1785981632",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/8/a/8ab0f4c0-b331-4c57-b68f-2e24bb5ba06c.jpg?1785981632",
+      "thumb": "https://cards.scryfall.io/thumb/front/8/a/8ab0f4c0-b331-4c57-b68f-2e24bb5ba06c.webp?1785981632",
+      "grid": "https://cards.scryfall.io/grid/front/8/a/8ab0f4c0-b331-4c57-b68f-2e24bb5ba06c.webp?1785981632",
+      "display": "https://cards.scryfall.io/display/front/8/a/8ab0f4c0-b331-4c57-b68f-2e24bb5ba06c.webp?1785981632",
+      "art": "https://cards.scryfall.io/art/front/8/a/8ab0f4c0-b331-4c57-b68f-2e24bb5ba06c.webp?1785981632",
+      "crop": "https://cards.scryfall.io/crop/front/8/a/8ab0f4c0-b331-4c57-b68f-2e24bb5ba06c.webp?1785981632"
+     },
+     "mana_cost": "",
+     "cmc": 0,
+     "type_line": "Basic Land — Plains",
+     "oracle_text": "({T}: Add {W}.)",
+     "colors": [],
+     "color_identity": [
+      "W"
+     ],
+     "keywords": [],
+     "produced_mana": [
+      "W"
+     ],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo",
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "b47039dc-da5a-448c-8feb-e77d458108a6",
+     "set": "trk",
+     "set_name": "Star Trek",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/b47039dc-da5a-448c-8feb-e77d458108a6",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Atrk&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/trk?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/8ab0f4c0-b331-4c57-b68f-2e24bb5ba06c/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Abc71ebf6-2056-41f7-be35-b2e5c34afa99&unique=prints",
+     "collector_number": "317",
+     "digital": false,
+     "rarity": "common",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Bastien Grivet",
+     "artist_ids": [
+      "434a6cf6-c6bf-4f87-84db-d0a902393b9e"
+     ],
+     "illustration_id": "a5785ab2-b9f7-422f-a587-91e71c07e7a6",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "universesbeyond"
+     ],
+     "prices": {
+      "usd": null,
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DPlains",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DPlains",
+      "edhrec": "https://edhrec.com/route/?cc=Plains"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fmagic%2Fproduct%3FproductLineName%3Dmagic%26q%3DPlains%26view%3Dgrid",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products/Search?referrer=scryfall&searchString=Plains&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards?affiliate_id=scryfall&data%5Bsearch%5D=Plains&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_1",
+    "controller": "player_1",
+    "timestamp": 6,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "faceDownAs": null,
+    "face": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_7",
+    "scryfallData": {
+     "object": "card",
+     "id": "ee40c471-70c8-4171-a214-ce932c4c7e2e",
+     "oracle_id": "8a7f446b-557a-41cc-b9ef-369e220a0eeb",
+     "multiverse_ids": [
+      414445
+     ],
+     "mtgo_id": 61414,
+     "mtgo_foil_id": 61415,
+     "tcgplayer_id": 120540,
+     "cardmarket_id": 291167,
+     "name": "Stensia Innkeeper",
+     "lang": "en",
+     "released_at": "2016-07-22",
+     "uri": "https://api.scryfall.com/cards/ee40c471-70c8-4171-a214-ce932c4c7e2e",
+     "scryfall_uri": "https://scryfall.com/card/emn/145/stensia-innkeeper?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T10:10:54Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/e/e/ee40c471-70c8-4171-a214-ce932c4c7e2e.jpg?1783937454",
+      "normal": "https://cards.scryfall.io/normal/front/e/e/ee40c471-70c8-4171-a214-ce932c4c7e2e.jpg?1783937454",
+      "large": "https://cards.scryfall.io/large/front/e/e/ee40c471-70c8-4171-a214-ce932c4c7e2e.jpg?1783937454",
+      "png": "https://cards.scryfall.io/png/front/e/e/ee40c471-70c8-4171-a214-ce932c4c7e2e.png?1783937454",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/e/e/ee40c471-70c8-4171-a214-ce932c4c7e2e.jpg?1783937454",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/e/e/ee40c471-70c8-4171-a214-ce932c4c7e2e.jpg?1783937454",
+      "thumb": "https://cards.scryfall.io/thumb/front/e/e/ee40c471-70c8-4171-a214-ce932c4c7e2e.webp?1783937454",
+      "grid": "https://cards.scryfall.io/grid/front/e/e/ee40c471-70c8-4171-a214-ce932c4c7e2e.webp?1783937454",
+      "display": "https://cards.scryfall.io/display/front/e/e/ee40c471-70c8-4171-a214-ce932c4c7e2e.webp?1783937454",
+      "art": "https://cards.scryfall.io/art/front/e/e/ee40c471-70c8-4171-a214-ce932c4c7e2e.webp?1783937454",
+      "crop": "https://cards.scryfall.io/crop/front/e/e/ee40c471-70c8-4171-a214-ce932c4c7e2e.webp?1783937454"
+     },
+     "mana_cost": "{3}{R}",
+     "cmc": 4,
+     "type_line": "Creature — Vampire",
+     "oracle_text": "When this creature enters, tap target land an opponent controls. That land doesn't untap during its controller's next untap step.",
+     "power": "3",
+     "toughness": "3",
+     "colors": [
+      "R"
+     ],
+     "color_identity": [
+      "R"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "5f0e4093-334f-4439-bbb5-a0affafd0ffc",
+     "set": "emn",
+     "set_name": "Eldritch Moon",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/5f0e4093-334f-4439-bbb5-a0affafd0ffc",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aemn&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/emn?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/ee40c471-70c8-4171-a214-ce932c4c7e2e/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A8a7f446b-557a-41cc-b9ef-369e220a0eeb&unique=prints",
+     "collector_number": "145",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"The perils of the road, you say? Don't worry. You won't have to face those again.\"",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Winona Nelson",
+     "artist_ids": [
+      "e45fe8d3-75d6-42c9-a2df-e945ad81ea27"
+     ],
+     "illustration_id": "fd1f459f-4142-4f3f-a515-bf374784375b",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 29345,
+     "prices": {
+      "usd": "0.14",
+      "usd_foil": "0.36",
+      "usd_etched": null,
+      "eur": "0.08",
+      "eur_foil": "0.16",
+      "tix": "0.04"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=414445&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DStensia%2BInnkeeper",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DStensia%2BInnkeeper",
+      "edhrec": "https://edhrec.com/route/?cc=Stensia+Innkeeper"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F120540%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=291167&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/61414?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 7,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "faceDownAs": null,
+    "face": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_8",
+    "scryfallData": {
+     "object": "card",
+     "id": "c35aa7a8-5579-46b7-83ef-f5ecc2b31847",
+     "oracle_id": "86541bba-7db8-4893-addf-8a4a42168ce4",
+     "multiverse_ids": [
+      5745
+     ],
+     "mtgo_id": 11789,
+     "mtgo_foil_id": 11790,
+     "tcgplayer_id": 7047,
+     "cardmarket_id": 10304,
+     "name": "Somnophore",
+     "lang": "en",
+     "released_at": "1998-10-12",
+     "uri": "https://api.scryfall.com/cards/c35aa7a8-5579-46b7-83ef-f5ecc2b31847",
+     "scryfall_uri": "https://scryfall.com/card/usg/97/somnophore?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T12:39:15Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/c/3/c35aa7a8-5579-46b7-83ef-f5ecc2b31847.jpg?1783946355",
+      "normal": "https://cards.scryfall.io/normal/front/c/3/c35aa7a8-5579-46b7-83ef-f5ecc2b31847.jpg?1783946355",
+      "large": "https://cards.scryfall.io/large/front/c/3/c35aa7a8-5579-46b7-83ef-f5ecc2b31847.jpg?1783946355",
+      "png": "https://cards.scryfall.io/png/front/c/3/c35aa7a8-5579-46b7-83ef-f5ecc2b31847.png?1783946355",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/c/3/c35aa7a8-5579-46b7-83ef-f5ecc2b31847.jpg?1783946355",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/c/3/c35aa7a8-5579-46b7-83ef-f5ecc2b31847.jpg?1783946355",
+      "thumb": "https://cards.scryfall.io/thumb/front/c/3/c35aa7a8-5579-46b7-83ef-f5ecc2b31847.webp?1783946355",
+      "grid": "https://cards.scryfall.io/grid/front/c/3/c35aa7a8-5579-46b7-83ef-f5ecc2b31847.webp?1783946355",
+      "display": "https://cards.scryfall.io/display/front/c/3/c35aa7a8-5579-46b7-83ef-f5ecc2b31847.webp?1783946355",
+      "art": "https://cards.scryfall.io/art/front/c/3/c35aa7a8-5579-46b7-83ef-f5ecc2b31847.webp?1783946355",
+      "crop": "https://cards.scryfall.io/crop/front/c/3/c35aa7a8-5579-46b7-83ef-f5ecc2b31847.webp?1783946355"
+     },
+     "mana_cost": "{2}{U}{U}",
+     "cmc": 4,
+     "type_line": "Creature — Illusion",
+     "oracle_text": "Flying\nWhenever this creature deals damage to a player, tap target creature that player controls. That creature doesn't untap during its controller's untap step for as long as this creature remains on the battlefield.",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "U"
+     ],
+     "color_identity": [
+      "U"
+     ],
+     "keywords": [
+      "Flying"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "c330df40-51db-4caf-bde6-48df6c181001",
+     "set": "usg",
+     "set_name": "Urza's Saga",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/c330df40-51db-4caf-bde6-48df6c181001",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Ausg&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/usg?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/c35aa7a8-5579-46b7-83ef-f5ecc2b31847/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A86541bba-7db8-4893-addf-8a4a42168ce4&unique=prints",
+     "collector_number": "97",
+     "digital": false,
+     "rarity": "rare",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Andrew Robinson",
+     "artist_ids": [
+      "cb577db7-7f47-4f78-8682-6eaef8a77bd1"
+     ],
+     "illustration_id": "d5df50d1-63a9-4229-84c1-a909d5cf48db",
+     "border_color": "black",
+     "frame": "1997",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 26167,
+     "prices": {
+      "usd": "0.44",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.66",
+      "eur_foil": null,
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=5745&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DSomnophore",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DSomnophore",
+      "edhrec": "https://edhrec.com/route/?cc=Somnophore"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F7047%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=10304&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/11789?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 10,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "faceDownAs": null,
+    "face": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_9",
+    "scryfallData": {
+     "object": "card",
+     "id": "df9573a3-d013-4631-98ed-78418bf0bc78",
+     "oracle_id": "299ffd3a-29cf-4667-b191-dd30d09f799c",
+     "multiverse_ids": [
+      562959
+     ],
+     "mtgo_id": 100150,
+     "tcgplayer_id": 272589,
+     "cardmarket_id": 658459,
+     "name": "Illithid Harvester // Plant Tadpoles",
+     "lang": "en",
+     "released_at": "2022-06-10",
+     "uri": "https://api.scryfall.com/cards/df9573a3-d013-4631-98ed-78418bf0bc78",
+     "scryfall_uri": "https://scryfall.com/card/clb/76/illithid-harvester-plant-tadpoles?utm_source=api",
+     "layout": "adventure",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T06:06:27Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/d/f/df9573a3-d013-4631-98ed-78418bf0bc78.jpg?1783922787",
+      "normal": "https://cards.scryfall.io/normal/front/d/f/df9573a3-d013-4631-98ed-78418bf0bc78.jpg?1783922787",
+      "large": "https://cards.scryfall.io/large/front/d/f/df9573a3-d013-4631-98ed-78418bf0bc78.jpg?1783922787",
+      "png": "https://cards.scryfall.io/png/front/d/f/df9573a3-d013-4631-98ed-78418bf0bc78.png?1783922787",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/d/f/df9573a3-d013-4631-98ed-78418bf0bc78.jpg?1783922787",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/d/f/df9573a3-d013-4631-98ed-78418bf0bc78.jpg?1783922787",
+      "thumb": "https://cards.scryfall.io/thumb/front/d/f/df9573a3-d013-4631-98ed-78418bf0bc78.webp?1783922787",
+      "grid": "https://cards.scryfall.io/grid/front/d/f/df9573a3-d013-4631-98ed-78418bf0bc78.webp?1783922787",
+      "display": "https://cards.scryfall.io/display/front/d/f/df9573a3-d013-4631-98ed-78418bf0bc78.webp?1783922787",
+      "art": "https://cards.scryfall.io/art/front/d/f/df9573a3-d013-4631-98ed-78418bf0bc78.webp?1783922787",
+      "crop": "https://cards.scryfall.io/crop/front/d/f/df9573a3-d013-4631-98ed-78418bf0bc78.webp?1783922787"
+     },
+     "mana_cost": "{4}{U} // {X}{U}{U}",
+     "cmc": 5,
+     "type_line": "Creature — Horror // Sorcery — Adventure",
+     "power": "4",
+     "toughness": "4",
+     "colors": [
+      "U"
+     ],
+     "color_identity": [
+      "U"
+     ],
+     "keywords": [
+      "Ceremorphosis"
+     ],
+     "card_faces": [
+      {
+       "object": "card_face",
+       "name": "Illithid Harvester",
+       "mana_cost": "{4}{U}",
+       "type_line": "Creature — Horror",
+       "oracle_text": "Ceremorphosis — When this creature enters, turn any number of target tapped nontoken creatures face down. They're 2/2 Horror creatures.",
+       "power": "4",
+       "toughness": "4",
+       "flavor_text": "\"Your mind belongs to the Emperor now.\"",
+       "artist": "David Astruga",
+       "artist_id": "4fa5b0e2-1324-4407-98b8-3282395a03e3",
+       "illustration_id": "f0ea83ef-82e9-4470-a18b-8aabce50e6ba"
+      },
+      {
+       "object": "card_face",
+       "name": "Plant Tadpoles",
+       "mana_cost": "{X}{U}{U}",
+       "type_line": "Sorcery — Adventure",
+       "oracle_text": "Tap X target creatures. They don't untap during their controllers' next untap steps. (Then exile this card. You may cast the creature later from exile.)",
+       "artist": "David Astruga",
+       "artist_id": "4fa5b0e2-1324-4407-98b8-3282395a03e3"
+      }
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "022d2005-2a09-4f9a-802c-e655bfcb95f4",
+       "component": "combo_piece",
+       "name": "Illithid Harvester // Plant Tadpoles",
+       "type_line": "Creature — Horror // Sorcery — Adventure",
+       "uri": "https://api.scryfall.com/cards/022d2005-2a09-4f9a-802c-e655bfcb95f4"
+      },
+      {
+       "object": "related_card",
+       "id": "5e289bb3-f6de-450d-9f7e-77e2e70cb7cc",
+       "component": "combo_piece",
+       "name": "On an Adventure",
+       "type_line": "Card",
+       "uri": "https://api.scryfall.com/cards/5e289bb3-f6de-450d-9f7e-77e2e70cb7cc"
+      }
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "5e4c3fe8-fd57-4b20-ad56-c03790a16cea",
+     "set": "clb",
+     "set_name": "Commander Legends: Battle for Baldur's Gate",
+     "set_type": "draft_innovation",
+     "set_uri": "https://api.scryfall.com/sets/5e4c3fe8-fd57-4b20-ad56-c03790a16cea",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aclb&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/clb?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/df9573a3-d013-4631-98ed-78418bf0bc78/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A299ffd3a-29cf-4667-b191-dd30d09f799c&unique=prints",
+     "collector_number": "76",
+     "digital": false,
+     "rarity": "rare",
+     "flavor_text": "\"Your mind belongs to the Emperor now.\"",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "David Astruga",
+     "artist_ids": [
+      "4fa5b0e2-1324-4407-98b8-3282395a03e3"
+     ],
+     "illustration_id": "f0ea83ef-82e9-4470-a18b-8aabce50e6ba",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 7114,
+     "preview": {
+      "source": "Wizards of the Coast",
+      "source_uri": "https://www.twitch.tv/videos/1486418408",
+      "previewed_at": "2022-05-17"
+     },
+     "prices": {
+      "usd": "0.37",
+      "usd_foil": "0.37",
+      "usd_etched": null,
+      "eur": "0.52",
+      "eur_foil": "0.59",
+      "tix": "7.22"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=562959&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DIllithid%2BHarvester%2B%252F%252F%2BPlant%2BTadpoles",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DIllithid%2BHarvester%2B%252F%252F%2BPlant%2BTadpoles",
+      "edhrec": "https://edhrec.com/route/?cc=Illithid+Harvester"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F272589%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=658459&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/100150?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": true,
+    "faceIndex": 1,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 13,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "faceDownAs": null,
+    "face": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": true,
+    "xValue": 2,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": [
+     "perm_3",
+     "perm_1"
+    ],
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": {
+     "states": [
+      [
+       "perm_1",
+       {
+        "name": "Grizzly Bears",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Bear"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "basePower": 2,
+        "baseToughness": 2,
+        "abilities": [],
+        "colors": [
+         "G"
+        ],
+        "manaValue": 2,
+        "manaCost": "{1}{G}",
+        "isCreature": true,
+        "isToken": false,
+        "isFaceDown": false,
+        "isEmblem": false,
+        "isSpell": false,
+        "isZoneCard": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "attackingPlayerId": null,
+        "timesAttackedThisTurn": 0,
+        "allPrintedAbilities": [],
+        "cdaAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_2",
+       {
+        "name": "Forest",
+        "types": [
+         "Land"
+        ],
+        "supertypes": [
+         "Basic"
+        ],
+        "subtypes": [
+         "Forest"
+        ],
+        "power": null,
+        "toughness": null,
+        "basePower": null,
+        "baseToughness": null,
+        "abilities": [
+         "{T}: Add {G}."
+        ],
+        "colors": [],
+        "manaValue": 0,
+        "manaCost": "",
+        "isCreature": false,
+        "isToken": false,
+        "isFaceDown": false,
+        "isEmblem": false,
+        "isSpell": false,
+        "isZoneCard": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "attackingPlayerId": null,
+        "timesAttackedThisTurn": 0,
+        "allPrintedAbilities": [
+         "{T}: Add {G}."
+        ],
+        "cdaAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_3",
+       {
+        "name": "Runeclaw Bear",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Bear"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "basePower": 2,
+        "baseToughness": 2,
+        "abilities": [],
+        "colors": [
+         "G"
+        ],
+        "manaValue": 2,
+        "manaCost": "{1}{G}",
+        "isCreature": true,
+        "isToken": false,
+        "isFaceDown": false,
+        "isEmblem": false,
+        "isSpell": false,
+        "isZoneCard": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "attackingPlayerId": null,
+        "timesAttackedThisTurn": 0,
+        "allPrintedAbilities": [],
+        "cdaAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_1",
+        "controller": "player_1",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_4",
+       {
+        "name": "Hill Giant",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Giant"
+        ],
+        "power": 3,
+        "toughness": 3,
+        "basePower": 3,
+        "baseToughness": 3,
+        "abilities": [],
+        "colors": [
+         "R"
+        ],
+        "manaValue": 4,
+        "manaCost": "{3}{R}",
+        "isCreature": true,
+        "isToken": false,
+        "isFaceDown": false,
+        "isEmblem": false,
+        "isSpell": false,
+        "isZoneCard": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [
+         "Doesn't untap during Player 2's untap step"
+        ],
+        "attackingPlayerId": null,
+        "timesAttackedThisTurn": 0,
+        "allPrintedAbilities": [],
+        "cdaAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_1",
+        "controller": "player_1",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_5",
+       {
+        "name": "Mountain",
+        "types": [
+         "Land"
+        ],
+        "supertypes": [
+         "Basic"
+        ],
+        "subtypes": [
+         "Mountain"
+        ],
+        "power": null,
+        "toughness": null,
+        "basePower": null,
+        "baseToughness": null,
+        "abilities": [
+         "{T}: Add {R}."
+        ],
+        "colors": [],
+        "manaValue": 0,
+        "manaCost": "",
+        "isCreature": false,
+        "isToken": false,
+        "isFaceDown": false,
+        "isEmblem": false,
+        "isSpell": false,
+        "isZoneCard": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [
+         "Doesn't untap during Player 2's next untap step"
+        ],
+        "attackingPlayerId": null,
+        "timesAttackedThisTurn": 0,
+        "allPrintedAbilities": [
+         "{T}: Add {R}."
+        ],
+        "cdaAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_1",
+        "controller": "player_1",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_6",
+       {
+        "name": "Plains",
+        "types": [
+         "Land"
+        ],
+        "supertypes": [
+         "Basic"
+        ],
+        "subtypes": [
+         "Plains"
+        ],
+        "power": null,
+        "toughness": null,
+        "basePower": null,
+        "baseToughness": null,
+        "abilities": [
+         "{T}: Add {W}."
+        ],
+        "colors": [],
+        "manaValue": 0,
+        "manaCost": "",
+        "isCreature": false,
+        "isToken": false,
+        "isFaceDown": false,
+        "isEmblem": false,
+        "isSpell": false,
+        "isZoneCard": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "attackingPlayerId": null,
+        "timesAttackedThisTurn": 0,
+        "allPrintedAbilities": [
+         "{T}: Add {W}."
+        ],
+        "cdaAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_1",
+        "controller": "player_1",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_7",
+       {
+        "name": "Stensia Innkeeper",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Vampire"
+        ],
+        "power": 3,
+        "toughness": 3,
+        "basePower": 3,
+        "baseToughness": 3,
+        "abilities": [
+         "When this creature enters, tap target land an opponent controls. That land doesn't untap during its controller's next untap step."
+        ],
+        "colors": [
+         "R"
+        ],
+        "manaValue": 4,
+        "manaCost": "{3}{R}",
+        "isCreature": true,
+        "isToken": false,
+        "isFaceDown": false,
+        "isEmblem": false,
+        "isSpell": false,
+        "isZoneCard": false,
+        "oracleText": "When this creature enters, tap target land an opponent controls. That land doesn't untap during its controller's next untap step.",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "attackingPlayerId": null,
+        "timesAttackedThisTurn": 0,
+        "allPrintedAbilities": [
+         "When this creature enters, tap target land an opponent controls. That land doesn't untap during its controller's next untap step."
+        ],
+        "cdaAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ],
+      [
+       "perm_8",
+       {
+        "name": "Somnophore",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Illusion"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "basePower": 2,
+        "baseToughness": 2,
+        "abilities": [
+         "Flying",
+         "Whenever this creature deals damage to a player, tap target creature that player controls. That creature doesn't untap during its controller's untap step for as long as this creature remains on the battlefield."
+        ],
+        "colors": [
+         "U"
+        ],
+        "manaValue": 4,
+        "manaCost": "{2}{U}{U}",
+        "isCreature": true,
+        "isToken": false,
+        "isFaceDown": false,
+        "isEmblem": false,
+        "isSpell": false,
+        "isZoneCard": false,
+        "oracleText": "Flying\nWhenever this creature deals damage to a player, tap target creature that player controls. That creature doesn't untap during its controller's untap step for as long as this creature remains on the battlefield.",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "attackingPlayerId": null,
+        "timesAttackedThisTurn": 0,
+        "allPrintedAbilities": [
+         "Flying",
+         "Whenever this creature deals damage to a player, tap target creature that player controls. That creature doesn't untap during its controller's untap step for as long as this creature remains on the battlefield."
+        ],
+        "cdaAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ]
+     ],
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Forest",
+       "imageUri": "https://cards.scryfall.io/small/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Land"
+       ],
+       "printedSupertypes": [
+        "Basic"
+       ],
+       "printedSubtypes": [
+        "Forest"
+       ],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Runeclaw Bear",
+       "imageUri": "https://cards.scryfall.io/small/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Hill Giant",
+       "imageUri": "https://cards.scryfall.io/small/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Giant"
+       ],
+       "printedPower": 3,
+       "printedToughness": 3,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_5",
+       "name": "Mountain",
+       "imageUri": "https://cards.scryfall.io/small/front/2/a/2a844b96-6616-4c39-8f4f-5d14a3b2bd55.jpg?1785981666",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Land"
+       ],
+       "printedSupertypes": [
+        "Basic"
+       ],
+       "printedSubtypes": [
+        "Mountain"
+       ],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 5
+      },
+      {
+       "id": "perm_6",
+       "name": "Plains",
+       "imageUri": "https://cards.scryfall.io/small/front/8/a/8ab0f4c0-b331-4c57-b68f-2e24bb5ba06c.jpg?1785981632",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Land"
+       ],
+       "printedSupertypes": [
+        "Basic"
+       ],
+       "printedSubtypes": [
+        "Plains"
+       ],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 6
+      },
+      {
+       "id": "perm_7",
+       "name": "Stensia Innkeeper",
+       "imageUri": "https://cards.scryfall.io/small/front/e/e/ee40c471-70c8-4171-a214-ce932c4c7e2e.jpg?1783937454",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Vampire"
+       ],
+       "printedPower": 3,
+       "printedToughness": 3,
+       "timestamp": 7
+      },
+      {
+       "id": "trig_perm_7_0_8",
+       "name": "Stensia Innkeeper (trigger)",
+       "imageUri": "https://cards.scryfall.io/small/front/e/e/ee40c471-70c8-4171-a214-ce932c4c7e2e.jpg?1783937454",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": true,
+       "isTriggeredAbility": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "abilitySourceId": "perm_7",
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 8
+      },
+      {
+       "id": "perm_8",
+       "name": "Somnophore",
+       "imageUri": "https://cards.scryfall.io/small/front/c/3/c35aa7a8-5579-46b7-83ef-f5ecc2b31847.jpg?1783946355",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Illusion"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 10
+      },
+      {
+       "id": "trig_perm_8_1_11",
+       "name": "Somnophore (trigger)",
+       "imageUri": "https://cards.scryfall.io/small/front/c/3/c35aa7a8-5579-46b7-83ef-f5ecc2b31847.jpg?1783946355",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": true,
+       "isTriggeredAbility": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "abilitySourceId": "perm_8",
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 11
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      },
+      {
+       "id": "player_1",
+       "name": "Player 2"
+      }
+     ]
+    }
+   },
+   {
+    "id": "perm_10",
+    "scryfallData": {
+     "object": "card",
+     "id": "d63f7944-5738-4a13-8f84-6813c188ac3a",
+     "oracle_id": "1b9dd2b6-d14d-4c1e-9885-00ab2c0bf8da",
+     "multiverse_ids": [
+      159774
+     ],
+     "mtgo_id": 28143,
+     "mtgo_foil_id": 28144,
+     "name": "Telekinesis",
+     "lang": "en",
+     "released_at": "2007-09-10",
+     "uri": "https://api.scryfall.com/cards/d63f7944-5738-4a13-8f84-6813c188ac3a",
+     "scryfall_uri": "https://scryfall.com/card/me1/52/telekinesis?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:42:34Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/d/6/d63f7944-5738-4a13-8f84-6813c188ac3a.jpg?1783942954",
+      "normal": "https://cards.scryfall.io/normal/front/d/6/d63f7944-5738-4a13-8f84-6813c188ac3a.jpg?1783942954",
+      "large": "https://cards.scryfall.io/large/front/d/6/d63f7944-5738-4a13-8f84-6813c188ac3a.jpg?1783942954",
+      "png": "https://cards.scryfall.io/png/front/d/6/d63f7944-5738-4a13-8f84-6813c188ac3a.png?1783942954",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/d/6/d63f7944-5738-4a13-8f84-6813c188ac3a.jpg?1783942954",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/d/6/d63f7944-5738-4a13-8f84-6813c188ac3a.jpg?1783942954",
+      "thumb": "https://cards.scryfall.io/thumb/front/d/6/d63f7944-5738-4a13-8f84-6813c188ac3a.webp?1783942954",
+      "grid": "https://cards.scryfall.io/grid/front/d/6/d63f7944-5738-4a13-8f84-6813c188ac3a.webp?1783942954",
+      "display": "https://cards.scryfall.io/display/front/d/6/d63f7944-5738-4a13-8f84-6813c188ac3a.webp?1783942954",
+      "art": "https://cards.scryfall.io/art/front/d/6/d63f7944-5738-4a13-8f84-6813c188ac3a.webp?1783942954",
+      "crop": "https://cards.scryfall.io/crop/front/d/6/d63f7944-5738-4a13-8f84-6813c188ac3a.webp?1783942954"
+     },
+     "mana_cost": "{U}{U}",
+     "cmc": 2,
+     "type_line": "Instant",
+     "oracle_text": "Tap target creature. Prevent all combat damage that would be dealt by that creature this turn. It doesn't untap during its controller's next two untap steps.",
+     "colors": [
+      "U"
+     ],
+     "color_identity": [
+      "U"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "mtgo"
+     ],
+     "reserved": true,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "407d388d-1abf-4c1d-b0c6-f56280898a1a",
+     "set": "me1",
+     "set_name": "Masters Edition",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/407d388d-1abf-4c1d-b0c6-f56280898a1a",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Ame1&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/me1?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/d63f7944-5738-4a13-8f84-6813c188ac3a/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A1b9dd2b6-d14d-4c1e-9885-00ab2c0bf8da&unique=prints",
+     "collector_number": "52",
+     "digital": true,
+     "rarity": "common",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Daniel Gelon",
+     "artist_ids": [
+      "63ac31a8-dd1a-4679-9f82-ece89429a084"
+     ],
+     "illustration_id": "ace13e81-f5e2-43fe-810a-c6dbfc38e237",
+     "border_color": "black",
+     "frame": "1997",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 29207,
+     "penny_rank": 13283,
+     "prices": {
+      "usd": null,
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": null,
+      "tix": "0.04"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=159774&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DTelekinesis",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DTelekinesis",
+      "edhrec": "https://edhrec.com/route/?cc=Telekinesis"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fmagic%2Fproduct%3FproductLineName%3Dmagic%26q%3DTelekinesis%26view%3Dgrid",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products/Search?referrer=scryfall&searchString=Telekinesis&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/28143?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": true,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 14,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "faceDownAs": null,
+    "face": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": "perm_4",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": 15,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": {
+     "states": [
+      [
+       "perm_1",
+       {
+        "name": "Grizzly Bears",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Bear"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "basePower": 2,
+        "baseToughness": 2,
+        "abilities": [],
+        "colors": [
+         "G"
+        ],
+        "manaValue": 2,
+        "manaCost": "{1}{G}",
+        "isCreature": true,
+        "isToken": false,
+        "isFaceDown": false,
+        "isEmblem": false,
+        "isSpell": false,
+        "isZoneCard": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [
+         "Doesn't untap during Player 1's next untap step"
+        ],
+        "attackingPlayerId": null,
+        "timesAttackedThisTurn": 0,
+        "allPrintedAbilities": [],
+        "cdaAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false,
+        "_protectionFrom": []
+       }
+      ],
+      [
+       "perm_2",
+       {
+        "name": "Forest",
+        "types": [
+         "Land"
+        ],
+        "supertypes": [
+         "Basic"
+        ],
+        "subtypes": [
+         "Forest"
+        ],
+        "power": null,
+        "toughness": null,
+        "basePower": null,
+        "baseToughness": null,
+        "abilities": [
+         "{T}: Add {G}."
+        ],
+        "colors": [],
+        "manaValue": 0,
+        "manaCost": "",
+        "isCreature": false,
+        "isToken": false,
+        "isFaceDown": false,
+        "isEmblem": false,
+        "isSpell": false,
+        "isZoneCard": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "attackingPlayerId": null,
+        "timesAttackedThisTurn": 0,
+        "allPrintedAbilities": [
+         "{T}: Add {G}."
+        ],
+        "cdaAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false,
+        "_protectionFrom": []
+       }
+      ],
+      [
+       "perm_3",
+       {
+        "name": "Runeclaw Bear",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Bear"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "basePower": 2,
+        "baseToughness": 2,
+        "abilities": [],
+        "colors": [
+         "G"
+        ],
+        "manaValue": 2,
+        "manaCost": "{1}{G}",
+        "isCreature": true,
+        "isToken": false,
+        "isFaceDown": false,
+        "isEmblem": false,
+        "isSpell": false,
+        "isZoneCard": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [
+         "Doesn't untap during Player 2's next untap step"
+        ],
+        "attackingPlayerId": null,
+        "timesAttackedThisTurn": 0,
+        "allPrintedAbilities": [],
+        "cdaAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_1",
+        "controller": "player_1",
+        "tapped": false,
+        "isCommander": false,
+        "_protectionFrom": []
+       }
+      ],
+      [
+       "perm_4",
+       {
+        "name": "Hill Giant",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Giant"
+        ],
+        "power": 3,
+        "toughness": 3,
+        "basePower": 3,
+        "baseToughness": 3,
+        "abilities": [],
+        "colors": [
+         "R"
+        ],
+        "manaValue": 4,
+        "manaCost": "{3}{R}",
+        "isCreature": true,
+        "isToken": false,
+        "isFaceDown": false,
+        "isEmblem": false,
+        "isSpell": false,
+        "isZoneCard": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [
+         "Doesn't untap during Player 2's untap step"
+        ],
+        "attackingPlayerId": null,
+        "timesAttackedThisTurn": 0,
+        "allPrintedAbilities": [],
+        "cdaAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_1",
+        "controller": "player_1",
+        "tapped": false,
+        "isCommander": false,
+        "_protectionFrom": []
+       }
+      ],
+      [
+       "perm_5",
+       {
+        "name": "Mountain",
+        "types": [
+         "Land"
+        ],
+        "supertypes": [
+         "Basic"
+        ],
+        "subtypes": [
+         "Mountain"
+        ],
+        "power": null,
+        "toughness": null,
+        "basePower": null,
+        "baseToughness": null,
+        "abilities": [
+         "{T}: Add {R}."
+        ],
+        "colors": [],
+        "manaValue": 0,
+        "manaCost": "",
+        "isCreature": false,
+        "isToken": false,
+        "isFaceDown": false,
+        "isEmblem": false,
+        "isSpell": false,
+        "isZoneCard": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [
+         "Doesn't untap during Player 2's next untap step"
+        ],
+        "attackingPlayerId": null,
+        "timesAttackedThisTurn": 0,
+        "allPrintedAbilities": [
+         "{T}: Add {R}."
+        ],
+        "cdaAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_1",
+        "controller": "player_1",
+        "tapped": false,
+        "isCommander": false,
+        "_protectionFrom": []
+       }
+      ],
+      [
+       "perm_6",
+       {
+        "name": "Plains",
+        "types": [
+         "Land"
+        ],
+        "supertypes": [
+         "Basic"
+        ],
+        "subtypes": [
+         "Plains"
+        ],
+        "power": null,
+        "toughness": null,
+        "basePower": null,
+        "baseToughness": null,
+        "abilities": [
+         "{T}: Add {W}."
+        ],
+        "colors": [],
+        "manaValue": 0,
+        "manaCost": "",
+        "isCreature": false,
+        "isToken": false,
+        "isFaceDown": false,
+        "isEmblem": false,
+        "isSpell": false,
+        "isZoneCard": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "attackingPlayerId": null,
+        "timesAttackedThisTurn": 0,
+        "allPrintedAbilities": [
+         "{T}: Add {W}."
+        ],
+        "cdaAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_1",
+        "controller": "player_1",
+        "tapped": false,
+        "isCommander": false,
+        "_protectionFrom": []
+       }
+      ],
+      [
+       "perm_7",
+       {
+        "name": "Stensia Innkeeper",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Vampire"
+        ],
+        "power": 3,
+        "toughness": 3,
+        "basePower": 3,
+        "baseToughness": 3,
+        "abilities": [
+         "When this creature enters, tap target land an opponent controls. That land doesn't untap during its controller's next untap step."
+        ],
+        "colors": [
+         "R"
+        ],
+        "manaValue": 4,
+        "manaCost": "{3}{R}",
+        "isCreature": true,
+        "isToken": false,
+        "isFaceDown": false,
+        "isEmblem": false,
+        "isSpell": false,
+        "isZoneCard": false,
+        "oracleText": "When this creature enters, tap target land an opponent controls. That land doesn't untap during its controller's next untap step.",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "attackingPlayerId": null,
+        "timesAttackedThisTurn": 0,
+        "allPrintedAbilities": [
+         "When this creature enters, tap target land an opponent controls. That land doesn't untap during its controller's next untap step."
+        ],
+        "cdaAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false,
+        "_protectionFrom": []
+       }
+      ],
+      [
+       "perm_8",
+       {
+        "name": "Somnophore",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Illusion"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "basePower": 2,
+        "baseToughness": 2,
+        "abilities": [
+         "Flying",
+         "Whenever this creature deals damage to a player, tap target creature that player controls. That creature doesn't untap during its controller's untap step for as long as this creature remains on the battlefield."
+        ],
+        "colors": [
+         "U"
+        ],
+        "manaValue": 4,
+        "manaCost": "{2}{U}{U}",
+        "isCreature": true,
+        "isToken": false,
+        "isFaceDown": false,
+        "isEmblem": false,
+        "isSpell": false,
+        "isZoneCard": false,
+        "oracleText": "Flying\nWhenever this creature deals damage to a player, tap target creature that player controls. That creature doesn't untap during its controller's untap step for as long as this creature remains on the battlefield.",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "attackingPlayerId": null,
+        "timesAttackedThisTurn": 0,
+        "allPrintedAbilities": [
+         "Flying",
+         "Whenever this creature deals damage to a player, tap target creature that player controls. That creature doesn't untap during its controller's untap step for as long as this creature remains on the battlefield."
+        ],
+        "cdaAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false,
+        "_protectionFrom": []
+       }
+      ],
+      [
+       "perm_9",
+       {
+        "name": "Plant Tadpoles",
+        "types": [
+         "Sorcery"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Adventure"
+        ],
+        "power": null,
+        "toughness": null,
+        "basePower": null,
+        "baseToughness": null,
+        "abilities": [
+         "Tap X target creatures. They don't untap during their controllers' next untap steps."
+        ],
+        "colors": [
+         "U"
+        ],
+        "manaValue": 2,
+        "manaCost": "{X}{U}{U}",
+        "isCreature": false,
+        "isToken": false,
+        "isFaceDown": false,
+        "isEmblem": false,
+        "isSpell": true,
+        "isZoneCard": false,
+        "oracleText": "Tap 2 target creatures. They don't untap during their controllers' next untap steps.",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "attackingPlayerId": null,
+        "timesAttackedThisTurn": 0,
+        "allPrintedAbilities": [
+         "Tap X target creatures. They don't untap during their controllers' next untap steps."
+        ],
+        "cdaAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false
+       }
+      ]
+     ],
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Forest",
+       "imageUri": "https://cards.scryfall.io/small/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Land"
+       ],
+       "printedSupertypes": [
+        "Basic"
+       ],
+       "printedSubtypes": [
+        "Forest"
+       ],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Runeclaw Bear",
+       "imageUri": "https://cards.scryfall.io/small/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Hill Giant",
+       "imageUri": "https://cards.scryfall.io/small/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Giant"
+       ],
+       "printedPower": 3,
+       "printedToughness": 3,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_5",
+       "name": "Mountain",
+       "imageUri": "https://cards.scryfall.io/small/front/2/a/2a844b96-6616-4c39-8f4f-5d14a3b2bd55.jpg?1785981666",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Land"
+       ],
+       "printedSupertypes": [
+        "Basic"
+       ],
+       "printedSubtypes": [
+        "Mountain"
+       ],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 5
+      },
+      {
+       "id": "perm_6",
+       "name": "Plains",
+       "imageUri": "https://cards.scryfall.io/small/front/8/a/8ab0f4c0-b331-4c57-b68f-2e24bb5ba06c.jpg?1785981632",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Land"
+       ],
+       "printedSupertypes": [
+        "Basic"
+       ],
+       "printedSubtypes": [
+        "Plains"
+       ],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 6
+      },
+      {
+       "id": "perm_7",
+       "name": "Stensia Innkeeper",
+       "imageUri": "https://cards.scryfall.io/small/front/e/e/ee40c471-70c8-4171-a214-ce932c4c7e2e.jpg?1783937454",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Vampire"
+       ],
+       "printedPower": 3,
+       "printedToughness": 3,
+       "timestamp": 7
+      },
+      {
+       "id": "trig_perm_7_0_8",
+       "name": "Stensia Innkeeper (trigger)",
+       "imageUri": "https://cards.scryfall.io/small/front/e/e/ee40c471-70c8-4171-a214-ce932c4c7e2e.jpg?1783937454",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": true,
+       "isTriggeredAbility": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "abilitySourceId": "perm_7",
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 8
+      },
+      {
+       "id": "perm_8",
+       "name": "Somnophore",
+       "imageUri": "https://cards.scryfall.io/small/front/c/3/c35aa7a8-5579-46b7-83ef-f5ecc2b31847.jpg?1783946355",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Illusion"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 10
+      },
+      {
+       "id": "trig_perm_8_1_11",
+       "name": "Somnophore (trigger)",
+       "imageUri": "https://cards.scryfall.io/small/front/c/3/c35aa7a8-5579-46b7-83ef-f5ecc2b31847.jpg?1783946355",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": true,
+       "isTriggeredAbility": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "abilitySourceId": "perm_8",
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 11
+      },
+      {
+       "id": "perm_9",
+       "name": "Plant Tadpoles",
+       "imageUri": "https://cards.scryfall.io/small/front/d/f/df9573a3-d013-4631-98ed-78418bf0bc78.jpg?1783922787",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "isSpell": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Sorcery"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Adventure"
+       ],
+       "printedPower": null,
+       "printedToughness": null,
+       "isTransformable": false,
+       "isChooseableFace": true,
+       "isRoom": false,
+       "timestamp": 13
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      },
+      {
+       "id": "player_1",
+       "name": "Player 2"
+      }
+     ]
+    }
+   }
+  ],
+  "firedAbilities": [
+   {
+    "id": "trig_perm_7_0_8",
+    "kind": "trigger",
+    "pseudoKind": "ability",
+    "sourceId": "perm_7",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 0,
+    "timestamp": 8,
+    "effectText": "Tap target land an opponent controls. That land doesn't untap during its controller's next untap step.",
+    "xValue": null,
+    "hasXValue": false,
+    "cdaUserValue": null,
+    "linkedCards": null,
+    "fullText": "When this creature enters, tap target land an opponent controls. That land doesn't untap during its controller's next untap step.",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "guessedTargetSubjects": [],
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "attach": null,
+    "face": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "forPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Grizzly Bears",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Bear"
+       ],
+       "power": 2,
+       "toughness": 2,
+       "colors": [
+        "G"
+       ],
+       "abilities": [],
+       "oracleText": "",
+       "manaValue": 2,
+       "manaCost": "{1}{G}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isFaceDown": false,
+       "tapped": false,
+       "traits": [],
+       "counters": {},
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_2",
+      {
+       "name": "Forest",
+       "types": [
+        "Land"
+       ],
+       "supertypes": [
+        "Basic"
+       ],
+       "subtypes": [
+        "Forest"
+       ],
+       "power": null,
+       "toughness": null,
+       "colors": [],
+       "abilities": [
+        "{T}: Add {G}."
+       ],
+       "oracleText": "",
+       "manaValue": 0,
+       "manaCost": "",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isFaceDown": false,
+       "tapped": false,
+       "traits": [],
+       "counters": {},
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_3",
+      {
+       "name": "Runeclaw Bear",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Bear"
+       ],
+       "power": 2,
+       "toughness": 2,
+       "colors": [
+        "G"
+       ],
+       "abilities": [],
+       "oracleText": "",
+       "manaValue": 2,
+       "manaCost": "{1}{G}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isFaceDown": false,
+       "tapped": false,
+       "traits": [],
+       "counters": {},
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_4",
+      {
+       "name": "Hill Giant",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Giant"
+       ],
+       "power": 3,
+       "toughness": 3,
+       "colors": [
+        "R"
+       ],
+       "abilities": [],
+       "oracleText": "",
+       "manaValue": 4,
+       "manaCost": "{3}{R}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isFaceDown": false,
+       "tapped": false,
+       "traits": [],
+       "counters": {},
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_5",
+      {
+       "name": "Mountain",
+       "types": [
+        "Land"
+       ],
+       "supertypes": [
+        "Basic"
+       ],
+       "subtypes": [
+        "Mountain"
+       ],
+       "power": null,
+       "toughness": null,
+       "colors": [],
+       "abilities": [
+        "{T}: Add {R}."
+       ],
+       "oracleText": "",
+       "manaValue": 0,
+       "manaCost": "",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isFaceDown": false,
+       "tapped": false,
+       "traits": [],
+       "counters": {},
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_6",
+      {
+       "name": "Plains",
+       "types": [
+        "Land"
+       ],
+       "supertypes": [
+        "Basic"
+       ],
+       "subtypes": [
+        "Plains"
+       ],
+       "power": null,
+       "toughness": null,
+       "colors": [],
+       "abilities": [
+        "{T}: Add {W}."
+       ],
+       "oracleText": "",
+       "manaValue": 0,
+       "manaCost": "",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isFaceDown": false,
+       "tapped": false,
+       "traits": [],
+       "counters": {},
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_7",
+      {
+       "name": "Stensia Innkeeper",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Vampire"
+       ],
+       "power": 3,
+       "toughness": 3,
+       "colors": [
+        "R"
+       ],
+       "abilities": [
+        "When this creature enters, tap target land an opponent controls. That land doesn't untap during its controller's next untap step."
+       ],
+       "oracleText": "When this creature enters, tap target land an opponent controls. That land doesn't untap during its controller's next untap step.",
+       "manaValue": 4,
+       "manaCost": "{3}{R}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isFaceDown": false,
+       "tapped": false,
+       "traits": [],
+       "counters": {},
+       "_protectionFrom": []
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Forest",
+       "imageUri": "https://cards.scryfall.io/small/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Land"
+       ],
+       "printedSupertypes": [
+        "Basic"
+       ],
+       "printedSubtypes": [
+        "Forest"
+       ],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Runeclaw Bear",
+       "imageUri": "https://cards.scryfall.io/small/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Hill Giant",
+       "imageUri": "https://cards.scryfall.io/small/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Giant"
+       ],
+       "printedPower": 3,
+       "printedToughness": 3,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_5",
+       "name": "Mountain",
+       "imageUri": "https://cards.scryfall.io/small/front/2/a/2a844b96-6616-4c39-8f4f-5d14a3b2bd55.jpg?1785981666",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Land"
+       ],
+       "printedSupertypes": [
+        "Basic"
+       ],
+       "printedSubtypes": [
+        "Mountain"
+       ],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 5
+      },
+      {
+       "id": "perm_6",
+       "name": "Plains",
+       "imageUri": "https://cards.scryfall.io/small/front/8/a/8ab0f4c0-b331-4c57-b68f-2e24bb5ba06c.jpg?1785981632",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Land"
+       ],
+       "printedSupertypes": [
+        "Basic"
+       ],
+       "printedSubtypes": [
+        "Plains"
+       ],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 6
+      },
+      {
+       "id": "perm_7",
+       "name": "Stensia Innkeeper",
+       "imageUri": "https://cards.scryfall.io/small/front/e/e/ee40c471-70c8-4171-a214-ce932c4c7e2e.jpg?1783937454",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Vampire"
+       ],
+       "printedPower": 3,
+       "printedToughness": 3,
+       "timestamp": 7
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      },
+      {
+       "id": "player_1",
+       "name": "Player 2"
+      }
+     ]
+    },
+    "primaryTarget": "perm_5",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": 9,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null
+   },
+   {
+    "id": "trig_perm_8_1_11",
+    "kind": "trigger",
+    "pseudoKind": "ability",
+    "sourceId": "perm_8",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 1,
+    "timestamp": 11,
+    "effectText": "Tap target creature that player controls. That creature doesn't untap during its controller's untap step for as long as this creature remains on the battlefield.",
+    "xValue": null,
+    "hasXValue": false,
+    "cdaUserValue": null,
+    "linkedCards": null,
+    "fullText": "Whenever this creature deals damage to a player, tap target creature that player controls. That creature doesn't untap during its controller's untap step for as long as this creature remains on the battlefield.",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "guessedTargetSubjects": [],
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "attach": null,
+    "face": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "forPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Grizzly Bears",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Bear"
+       ],
+       "power": 2,
+       "toughness": 2,
+       "basePower": 2,
+       "baseToughness": 2,
+       "abilities": [],
+       "colors": [
+        "G"
+       ],
+       "manaValue": 2,
+       "manaCost": "{1}{G}",
+       "isCreature": true,
+       "isToken": false,
+       "isFaceDown": false,
+       "isEmblem": false,
+       "isSpell": false,
+       "isZoneCard": false,
+       "oracleText": "",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "attackingPlayerId": null,
+       "timesAttackedThisTurn": 0,
+       "allPrintedAbilities": [],
+       "cdaAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false,
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_2",
+      {
+       "name": "Forest",
+       "types": [
+        "Land"
+       ],
+       "supertypes": [
+        "Basic"
+       ],
+       "subtypes": [
+        "Forest"
+       ],
+       "power": null,
+       "toughness": null,
+       "basePower": null,
+       "baseToughness": null,
+       "abilities": [
+        "{T}: Add {G}."
+       ],
+       "colors": [],
+       "manaValue": 0,
+       "manaCost": "",
+       "isCreature": false,
+       "isToken": false,
+       "isFaceDown": false,
+       "isEmblem": false,
+       "isSpell": false,
+       "isZoneCard": false,
+       "oracleText": "",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "attackingPlayerId": null,
+       "timesAttackedThisTurn": 0,
+       "allPrintedAbilities": [
+        "{T}: Add {G}."
+       ],
+       "cdaAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false,
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_3",
+      {
+       "name": "Runeclaw Bear",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Bear"
+       ],
+       "power": 2,
+       "toughness": 2,
+       "basePower": 2,
+       "baseToughness": 2,
+       "abilities": [],
+       "colors": [
+        "G"
+       ],
+       "manaValue": 2,
+       "manaCost": "{1}{G}",
+       "isCreature": true,
+       "isToken": false,
+       "isFaceDown": false,
+       "isEmblem": false,
+       "isSpell": false,
+       "isZoneCard": false,
+       "oracleText": "",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "attackingPlayerId": null,
+       "timesAttackedThisTurn": 0,
+       "allPrintedAbilities": [],
+       "cdaAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_1",
+       "controller": "player_1",
+       "tapped": false,
+       "isCommander": false,
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_4",
+      {
+       "name": "Hill Giant",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Giant"
+       ],
+       "power": 3,
+       "toughness": 3,
+       "basePower": 3,
+       "baseToughness": 3,
+       "abilities": [],
+       "colors": [
+        "R"
+       ],
+       "manaValue": 4,
+       "manaCost": "{3}{R}",
+       "isCreature": true,
+       "isToken": false,
+       "isFaceDown": false,
+       "isEmblem": false,
+       "isSpell": false,
+       "isZoneCard": false,
+       "oracleText": "",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "attackingPlayerId": null,
+       "timesAttackedThisTurn": 0,
+       "allPrintedAbilities": [],
+       "cdaAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_1",
+       "controller": "player_1",
+       "tapped": false,
+       "isCommander": false,
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_5",
+      {
+       "name": "Mountain",
+       "types": [
+        "Land"
+       ],
+       "supertypes": [
+        "Basic"
+       ],
+       "subtypes": [
+        "Mountain"
+       ],
+       "power": null,
+       "toughness": null,
+       "basePower": null,
+       "baseToughness": null,
+       "abilities": [
+        "{T}: Add {R}."
+       ],
+       "colors": [],
+       "manaValue": 0,
+       "manaCost": "",
+       "isCreature": false,
+       "isToken": false,
+       "isFaceDown": false,
+       "isEmblem": false,
+       "isSpell": false,
+       "isZoneCard": false,
+       "oracleText": "",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [
+        "Doesn't untap during Player 2's next untap step"
+       ],
+       "attackingPlayerId": null,
+       "timesAttackedThisTurn": 0,
+       "allPrintedAbilities": [
+        "{T}: Add {R}."
+       ],
+       "cdaAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_1",
+       "controller": "player_1",
+       "tapped": false,
+       "isCommander": false,
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_6",
+      {
+       "name": "Plains",
+       "types": [
+        "Land"
+       ],
+       "supertypes": [
+        "Basic"
+       ],
+       "subtypes": [
+        "Plains"
+       ],
+       "power": null,
+       "toughness": null,
+       "basePower": null,
+       "baseToughness": null,
+       "abilities": [
+        "{T}: Add {W}."
+       ],
+       "colors": [],
+       "manaValue": 0,
+       "manaCost": "",
+       "isCreature": false,
+       "isToken": false,
+       "isFaceDown": false,
+       "isEmblem": false,
+       "isSpell": false,
+       "isZoneCard": false,
+       "oracleText": "",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "attackingPlayerId": null,
+       "timesAttackedThisTurn": 0,
+       "allPrintedAbilities": [
+        "{T}: Add {W}."
+       ],
+       "cdaAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_1",
+       "controller": "player_1",
+       "tapped": false,
+       "isCommander": false,
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_7",
+      {
+       "name": "Stensia Innkeeper",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Vampire"
+       ],
+       "power": 3,
+       "toughness": 3,
+       "basePower": 3,
+       "baseToughness": 3,
+       "abilities": [
+        "When this creature enters, tap target land an opponent controls. That land doesn't untap during its controller's next untap step."
+       ],
+       "colors": [
+        "R"
+       ],
+       "manaValue": 4,
+       "manaCost": "{3}{R}",
+       "isCreature": true,
+       "isToken": false,
+       "isFaceDown": false,
+       "isEmblem": false,
+       "isSpell": false,
+       "isZoneCard": false,
+       "oracleText": "When this creature enters, tap target land an opponent controls. That land doesn't untap during its controller's next untap step.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "attackingPlayerId": null,
+       "timesAttackedThisTurn": 0,
+       "allPrintedAbilities": [
+        "When this creature enters, tap target land an opponent controls. That land doesn't untap during its controller's next untap step."
+       ],
+       "cdaAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false,
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_8",
+      {
+       "name": "Somnophore",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Illusion"
+       ],
+       "power": 2,
+       "toughness": 2,
+       "basePower": 2,
+       "baseToughness": 2,
+       "abilities": [
+        "Flying",
+        "Whenever this creature deals damage to a player, tap target creature that player controls. That creature doesn't untap during its controller's untap step for as long as this creature remains on the battlefield."
+       ],
+       "colors": [
+        "U"
+       ],
+       "manaValue": 4,
+       "manaCost": "{2}{U}{U}",
+       "isCreature": true,
+       "isToken": false,
+       "isFaceDown": false,
+       "isEmblem": false,
+       "isSpell": false,
+       "isZoneCard": false,
+       "oracleText": "Flying\nWhenever this creature deals damage to a player, tap target creature that player controls. That creature doesn't untap during its controller's untap step for as long as this creature remains on the battlefield.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "attackingPlayerId": null,
+       "timesAttackedThisTurn": 0,
+       "allPrintedAbilities": [
+        "Flying",
+        "Whenever this creature deals damage to a player, tap target creature that player controls. That creature doesn't untap during its controller's untap step for as long as this creature remains on the battlefield."
+       ],
+       "cdaAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false,
+       "_protectionFrom": []
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Forest",
+       "imageUri": "https://cards.scryfall.io/small/front/d/c/dce15387-4114-4b3e-91aa-5b42b45c44ac.jpg?1785981675",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Land"
+       ],
+       "printedSupertypes": [
+        "Basic"
+       ],
+       "printedSubtypes": [
+        "Forest"
+       ],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Runeclaw Bear",
+       "imageUri": "https://cards.scryfall.io/small/front/d/1/d1995238-79cc-4381-9595-71ef11ea1e36.jpg?1783939162",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Hill Giant",
+       "imageUri": "https://cards.scryfall.io/small/front/1/4/14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8.jpg?1783943018",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Giant"
+       ],
+       "printedPower": 3,
+       "printedToughness": 3,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_5",
+       "name": "Mountain",
+       "imageUri": "https://cards.scryfall.io/small/front/2/a/2a844b96-6616-4c39-8f4f-5d14a3b2bd55.jpg?1785981666",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Land"
+       ],
+       "printedSupertypes": [
+        "Basic"
+       ],
+       "printedSubtypes": [
+        "Mountain"
+       ],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 5
+      },
+      {
+       "id": "perm_6",
+       "name": "Plains",
+       "imageUri": "https://cards.scryfall.io/small/front/8/a/8ab0f4c0-b331-4c57-b68f-2e24bb5ba06c.jpg?1785981632",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Land"
+       ],
+       "printedSupertypes": [
+        "Basic"
+       ],
+       "printedSubtypes": [
+        "Plains"
+       ],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 6
+      },
+      {
+       "id": "perm_7",
+       "name": "Stensia Innkeeper",
+       "imageUri": "https://cards.scryfall.io/small/front/e/e/ee40c471-70c8-4171-a214-ce932c4c7e2e.jpg?1783937454",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Vampire"
+       ],
+       "printedPower": 3,
+       "printedToughness": 3,
+       "timestamp": 7
+      },
+      {
+       "id": "trig_perm_7_0_8",
+       "name": "Stensia Innkeeper (trigger)",
+       "imageUri": "https://cards.scryfall.io/small/front/e/e/ee40c471-70c8-4171-a214-ce932c4c7e2e.jpg?1783937454",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": true,
+       "isTriggeredAbility": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "abilitySourceId": "perm_7",
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 8
+      },
+      {
+       "id": "perm_8",
+       "name": "Somnophore",
+       "imageUri": "https://cards.scryfall.io/small/front/c/3/c35aa7a8-5579-46b7-83ef-f5ecc2b31847.jpg?1783946355",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Illusion"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 10
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      },
+      {
+       "id": "player_1",
+       "name": "Player 2"
+      }
+     ]
+    },
+    "primaryTarget": "perm_4",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": 12,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null
+   }
+  ],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   },
+   {
+    "id": "player_1",
+    "name": "Player 2",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": false,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 2,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Grizzly Bears",
+    "final": {
+     "name": "Grizzly Bears",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Bear"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "G"
+     ],
+     "abilities": [],
+     "traits": [
+      "Doesn't untap during Player 1's next untap step"
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "Plant Tadpoles"
+     ]
+    }
+   },
+   {
+    "perm": "Forest",
+    "final": {
+     "name": "Forest",
+     "controller": "player_0",
+     "supertypes": [
+      "Basic"
+     ],
+     "types": [
+      "Land"
+     ],
+     "subtypes": [
+      "Forest"
+     ],
+     "power": null,
+     "toughness": null,
+     "colors": [],
+     "abilities": [
+      "{T}: Add {G}."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Runeclaw Bear",
+    "final": {
+     "name": "Runeclaw Bear",
+     "controller": "player_1",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Bear"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "G"
+     ],
+     "abilities": [],
+     "traits": [
+      "Doesn't untap during Player 2's next untap step"
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "Plant Tadpoles"
+     ]
+    }
+   },
+   {
+    "perm": "Hill Giant",
+    "final": {
+     "name": "Hill Giant",
+     "controller": "player_1",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Giant"
+     ],
+     "power": 3,
+     "toughness": 3,
+     "colors": [
+      "R"
+     ],
+     "abilities": [],
+     "traits": [
+      "Doesn't untap during Player 2's untap step",
+      "Doesn't untap during Player 2's next two untap steps"
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "Somnophore (trigger)",
+      "Telekinesis"
+     ]
+    }
+   },
+   {
+    "perm": "Mountain",
+    "final": {
+     "name": "Mountain",
+     "controller": "player_1",
+     "supertypes": [
+      "Basic"
+     ],
+     "types": [
+      "Land"
+     ],
+     "subtypes": [
+      "Mountain"
+     ],
+     "power": null,
+     "toughness": null,
+     "colors": [],
+     "abilities": [
+      "{T}: Add {R}."
+     ],
+     "traits": [
+      "Doesn't untap during Player 2's next untap step"
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "Stensia Innkeeper (trigger)"
+     ]
+    }
+   },
+   {
+    "perm": "Plains",
+    "final": {
+     "name": "Plains",
+     "controller": "player_1",
+     "supertypes": [
+      "Basic"
+     ],
+     "types": [
+      "Land"
+     ],
+     "subtypes": [
+      "Plains"
+     ],
+     "power": null,
+     "toughness": null,
+     "colors": [],
+     "abilities": [
+      "{T}: Add {W}."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Stensia Innkeeper",
+    "final": {
+     "name": "Stensia Innkeeper",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Vampire"
+     ],
+     "power": 3,
+     "toughness": 3,
+     "colors": [
+      "R"
+     ],
+     "abilities": [
+      "When this creature enters, tap target land an opponent controls. That land doesn't untap during its controller's next untap step."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Somnophore",
+    "final": {
+     "name": "Somnophore",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Illusion"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "U"
+     ],
+     "abilities": [
+      "Flying",
+      "Whenever this creature deals damage to a player, tap target creature that player controls. That creature doesn't untap during its controller's untap step for as long as this creature remains on the battlefield."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Plant Tadpoles",
+    "final": {
+     "name": "Plant Tadpoles",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Sorcery"
+     ],
+     "subtypes": [
+      "Adventure"
+     ],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "U"
+     ],
+     "abilities": [
+      "Tap X target creatures. They don't untap during their controllers' next untap steps."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Telekinesis",
+    "final": {
+     "name": "Telekinesis",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Instant"
+     ],
+     "subtypes": [],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "U"
+     ],
+     "abilities": [
+      "Tap target creature. Prevent all combat damage that would be dealt by that creature this turn. It doesn't untap during its controller's next two untap steps."
+     ]
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "6": [
+    "Stensia Innkeeper (trigger)",
+    "Somnophore (trigger)",
+    "Plant Tadpoles",
+    "Telekinesis"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Plant Tadpoles",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "targets": [
+     "Runeclaw Bear",
+     "Grizzly Bears"
+    ],
+    "params": {
+     "ability": "Doesn't untap during its controller's next untap step",
+     "isTrait": true,
+     "traitOnly": true,
+     "traitPlayers": true
+    }
+   },
+   {
+    "source": "Telekinesis",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "target": "Hill Giant",
+    "params": {
+     "ability": "Doesn't untap during its controller's next two untap steps",
+     "isTrait": true,
+     "traitOnly": true,
+     "traitPlayers": true
+    }
+   },
+   {
+    "source": "Stensia Innkeeper (trigger)",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "target": "Mountain",
+    "params": {
+     "ability": "Doesn't untap during its controller's next untap step",
+     "isTrait": true,
+     "traitOnly": true,
+     "traitPlayers": true
+    }
+   },
+   {
+    "source": "Somnophore (trigger)",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "target": "Hill Giant",
+    "params": {
+     "ability": "Doesn't untap during its controller's untap step",
+     "isTrait": true,
+     "traitOnly": true,
+     "traitPlayers": true
+    }
+   }
+  ]
+ }
+}

@@ -1,0 +1,34 @@
+{
+  "name": "\"That land / that creature doesn't untap\" takes its target's words — Stensia Innkeeper, Somnophore, Plant Tadpoles, Telekinesis",
+  "notes": "Found while auditing the doesn't-untap rules (2026-11-20). \"Tap target land an opponent controls. That land doesn't untap …\" (Stensia Innkeeper): \"that land\" was read as a group (every land got the trait); the pronoun subjects of the rule block now include that land / artifact / enchantment and their plurals. \"Tap target creature that player controls\" (Somnophore): _pronounAntecedentInfo gave up on the word \"player\" and the picker offered every permanent; \"that player controls\" is now read like \"an opponent controls\" (the player dealt damage is not known, so any creature). \"Tap X target creatures. They don't untap …\" (Plant Tadpoles, X = 2): the antecedent dropped a bare count before \"target\", so a single picker; it now keeps \"two / 2 / X-as-a-number target\". Telekinesis keeps \"next two untap steps\" plural.",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"], "as": "p2" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Forest", "as": "forest" },
+    { "add": "Runeclaw Bear", "controller": "p2", "as": "rune" },
+    { "add": "Hill Giant", "controller": "p2", "as": "giant" },
+    { "add": "Mountain", "controller": "p2", "as": "mtn" },
+    { "add": "Plains", "controller": "p2", "as": "plains" },
+    { "add": "Stensia Innkeeper", "as": "inn" },
+    { "fire": "@inn", "trigger": 0, "as": "t1" },
+    { "call": ["setTarget", "@t1", "@mtn"] },
+    { "add": "Somnophore", "as": "somno" },
+    { "fire": "@somno", "trigger": 1, "as": "t2" },
+    { "call": ["setTarget", "@t2", "@giant"] },
+    { "add": "Illithid Harvester", "spell": true, "x": 2, "opts": { "faceIndex": 1 }, "as": "tad" },
+    { "call": ["setMultiTarget", "@tad", 0, "@rune"] },
+    { "call": ["setMultiTarget", "@tad", 1, "@bears"] },
+    { "add": "Telekinesis", "spell": true, "as": "tk" },
+    { "call": ["setTarget", "@tk", "@giant"] }
+  ],
+  "asserts": [
+    { "perm": "Mountain", "final": { "traits": ["Doesn't untap during Player 2's next untap step"] } },
+    { "perm": "Plains", "final": { "traits": { "$excludes": ["Doesn't untap during Player 2's next untap step"] } } },
+    { "perm": "Forest", "final": { "traits": { "$excludes": ["Doesn't untap during Player 1's next untap step"] } } },
+    { "targetCandidates": { "perm": "Stensia Innkeeper (trigger)" }, "are": ["Mountain", "Plains"] },
+    { "targetCandidates": { "perm": "Somnophore (trigger)" }, "are": ["Grizzly Bears", "Runeclaw Bear", "Hill Giant", "Stensia Innkeeper", "Somnophore"] },
+    { "perm": "Hill Giant", "final": { "traits": { "$includes": ["Doesn't untap during Player 2's untap step", "Doesn't untap during Player 2's next two untap steps"] } } },
+    { "perm": "Runeclaw Bear", "final": { "traits": ["Doesn't untap during Player 2's next untap step"] } },
+    { "perm": "Grizzly Bears", "final": { "traits": ["Doesn't untap during Player 1's next untap step"] } }
+  ]
+}
