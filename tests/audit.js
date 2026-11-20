@@ -192,7 +192,13 @@ function namesFiredPseudo(trait) { return /\((?:activated|trigger|triggered|spel
 function missingRules(rules, gained) {
   if (!rules || !rules.length) return [];
   const g = gained.map(x => x.toLowerCase().replace(/’/g, "'"));
-  return rules.filter(r => !g.some(x => x === r || x.startsWith(r + ' ')));
+  // ("attacks…if able": a requirement whose middle words the site fills in — "Attacks Player 1 if
+  // able", "Blocks Burning-Tree Bloodscale if able".)
+  return rules.filter(r => {
+    const cut = r.indexOf('…');
+    if (cut >= 0) return !g.some(x => x.startsWith(r.slice(0, cut)) && x.endsWith(r.slice(cut + 1)));
+    return !g.some(x => x === r || x.startsWith(r + ' '));
+  });
 }
 
 /* ═════════════════════════ Classification from the text ═════════════════════════ */
@@ -249,7 +255,7 @@ const SAME_PERMANENT_VERBS = /^(?:put|puts|untap|tap|taps|attach|choose|goad|dea
 // becomes a 0/0 Robot creature" — Donatello; "If you do, that land becomes …" — Cyclone Sire; "You may
 // have it gain reach until end of turn" — Academic Dispute.)
 const LATER_PRONOUN_LEAD = "(?:until (?:end of turn|your next turn),\\s*|then\\s+|if (?:you do|it's a creature|it isn't a creature|it's not a creature|(?:it|that (?:creature|permanent|land|artifact)) is(?:n't| not)? an? (?:creature|artifact|land)),\\s*)?";
-const LATER_PRONOUN_EFFECT = new RegExp("\\.\\s+" + LATER_PRONOUN_LEAD + "(?:(?:it|that (?:creature|permanent|land|artifact))\\s+(?:also\\s+)?(?:gets?|gains?|has|becomes?|loses?|is|can't (?:attack|block|be blocked))|(?:you may )?have (?:it|that (?:creature|permanent|land|artifact)) (?:get|gain|become(?! no longer)|lose))\\b");
+const LATER_PRONOUN_EFFECT = new RegExp("\\.\\s+" + LATER_PRONOUN_LEAD + "(?:(?:it|that (?:creature|permanent|land|artifact))\\s+(?:also\\s+)?(?:gets?|gains?|has|becomes?|loses?|is|can't (?:attack|block|be blocked)|(?:attacks?|blocks?|must be blocked)\\b[^.;,]*?\\bif able)|(?:you may )?have (?:it|that (?:creature|permanent|land|artifact)) (?:get|gain|become(?! no longer)|lose))\\b");
 // "Goad target creature", "you gain 3 life and suspect up to one target creature an opponent controls":
 // the target gets the Goaded / Suspected designation, which the site keeps as a trait (CR 701.15,
 // 701.60), so it is audited like a "can't …" rule: the chosen target alone must get that trait.
@@ -358,7 +364,16 @@ function classifyAt(lower, idx, end, opts) {
   const attaches = attachM && !/\btarget\b/.test(attachM[1]) ? attachM[1] : null;
   const pronounEffect = keepsTarget && (opts.plural ? LATER_PLURAL_PRONOUN_EFFECT : LATER_PRONOUN_EFFECT).test(verbAfter);
   const traitVerb = clauseBefore.match(TRAIT_VERB_BEFORE);
-  if (!takesControl && !pronounEffect && !traitVerb && !attaches && !switchM && !switchOf && !faceM && (ONE_SHOT_VERBS.test(clauseBefore) || !CONTINUOUS_VERBS.test(verbAfter))) return { skip: 'one-shot-action' };
+  // "Target creature attacks / blocks this creature this turn if able", "… must be blocked this
+  // turn if able", "you may have target creature block it this turn if able", and "All creatures
+  // able to block target creature this turn do so": requirements (CR 508.1d, 509.1c) the site keeps
+  // as traits in the card's words, so audited like a "can't …" rule.
+  const lure = /\ball creatures able to block $/.test(clauseBefore) && /^(?:this turn |this combat )?do so\b/.test(verbAfter);
+  let reqRules = lure ? ['all creatures able to block it do so'] : requirementRulesOf(verbAfter);
+  // ("Up to one other target creature blocks it this turn if able" — Monstrous Step: "it" is the
+  // first target, which the site cannot name in a trait; this target stays a one-shot.)
+  if (reqRules.some(r => r.includes('@it')) && /\btarget\b/.test(before)) reqRules = [];
+  if (!takesControl && !pronounEffect && !traitVerb && !attaches && !switchM && !switchOf && !faceM && !reqRules.length && (ONE_SHOT_VERBS.test(clauseBefore) || !CONTINUOUS_VERBS.test(verbAfter))) return { skip: 'one-shot-action' };
   // "Target creature can't be blocked this turn" / "can't be regenerated" / "can attack as though
   // it didn't have defender": a rule about the target, not a change to what it is. The site does
   // not model these, so there is no targeted effect to expect.
@@ -374,6 +389,7 @@ function classifyAt(lower, idx, end, opts) {
     // site keeps these as traits in the card's words, so they are audited, Check 1 asking that the
     // target alone gets the "Can't …" trait. "Can't be regenerated", "can't be countered" are not.)
     rules = cantRulesOf(verbAfter, opts.plural);
+    for (const r of reqRules) if (!rules.includes(r)) rules.push(r);
     if (traitVerb) rules.unshift(/^goad/.test(traitVerb[1]) ? 'goaded' : /^detain/.test(traitVerb[1]) ? 'detained' : 'suspected');
     if (/^(?:can|can't|cannot)\b/.test(verbAfter) && !CANT_RULE_RE.test(verbAfter) && !/\b(?:gets?|gains?|has|have|becomes?|loses?)\b/.test(ownSentence) && !pronounGrant) return { skip: 'not-a-layer-effect' };
   }
@@ -412,6 +428,31 @@ function cantRulesOf(verbAfter, plural) {
       const r = m[1].replace(/targets$/, 'target');
       if (!out.includes(r)) out.push(r);
     }
+  }
+  return out;
+}
+/* The requirements said of the target ("attacks this turn if able", "blocks this creature this turn
+   if able", "must be blocked this turn if able"), in its own sentence or the next one through a
+   pronoun (Provoke: "Untap target creature you don't control. That creature blocks this turn if
+   able"), as "verb…if able" (missingRules: the site's trait begins and ends so). "Blocks it" is
+   "blocks @it if able": whether "it" is the card is judged with the ability's text (itIsTheCard). An
+   object the site cannot name ("blocks that Wolf", "attacks that player") is not a rule it keeps.
+   ("You may have target creature block it": the verb is not inflected.) */
+const REQUIREMENT_RE = /(?:^|\band\s+|,\s+)(attacks or blocks|attack or block|attacks|attack|blocks|block|must be blocked)\b([^.;,]*?)\s*\bif able\b/;
+function requirementRulesOf(verbAfter) {
+  const sentences = verbAfter.split(/\.\s*/);
+  const words = [sentences[0]];
+  const pronoun = /^(?:until end of turn,\s*)?(?:it|that (?:creature|permanent))\s+/;
+  if (sentences[1] && pronoun.test(sentences[1])) words.push(sentences[1].replace(pronoun, ''));
+  const out = [];
+  for (const w of words) {
+    const m = w.match(REQUIREMENT_RE);
+    if (!m) continue;
+    const mid = m[2].replace(/\b(?:this turn|until end of turn|(?:this|that) combat|until your next turn)\b/g, '').replace(/\s+/g, ' ').trim();
+    if (/\b(?:that|those|chosen|target)\b/.test(mid)) continue;
+    const verb = m[1] === 'must be blocked' ? 'must be blocked' : /or block/.test(m[1]) ? 'attacks or blocks' : /^attack/.test(m[1]) ? 'attacks' : 'blocks';
+    const r = /^(?:it|them)$/.test(mid) ? verb + ' @it if able' : verb + '…if able';
+    if (!out.includes(r)) out.push(r);
   }
   return out;
 }
@@ -1272,8 +1313,13 @@ function playerGroupClauses(lower, whoRe) {
     phrase = phrase.trim().replace(/^(?:then |and )/, '').replace(/^(?:each|all) /, '').trim();
     if (!phrase) continue;
     const verb = m[1].replace(/^also\s+/, '');
-    if (!control && !PLAYER_GROUP_REQUIRED.test(verb)) continue;
-    out.push({ phrase, control, required: true, at: m.index - clause.length });
+    // ("Creatures target player controls attack this turn if able" — Instigator: a requirement the
+    // site keeps as a trait, as it does "can't attack".)
+    const requirement = /^(?:attacks?|blocks?)$/.test(verb) && /^[^.;]*?\bif able\b/.test(lower.slice(m.index + m[0].length));
+    if (!control && !requirement && !PLAYER_GROUP_REQUIRED.test(verb)) continue;
+    // ("… attack you if able" — Taunt: picked for yourself, it asks nothing a creature can do.)
+    const notOfYou = requirement && /^\s*you\b/.test(lower.slice(m.index + m[0].length));
+    out.push(Object.assign({ phrase, control, required: true, at: m.index - clause.length }, notOfYou ? { notOfYou: true } : {}));
   }
   return out;
 }
@@ -1376,7 +1422,7 @@ function judgePlayerGroup(ctx, u, o) {
     };
     const others = changed.filter(c => !inGroup(c.id) && (!o.mixed || ctrlOf(ctx.preStates.get(c.id), Battlefield.getPermById(c.id) || {}) === pid));
     if (others.length) othersSeen.push({ target: label, others: others.map(c => ({ role: c.role, what: c.what })) });
-    const required = ctx.universe.filter(p => { const st = ctx.preStates.get(p.id); return st && tests.some(t => t.required && t.test(st, p, ctx, pid)); });
+    const required = ctx.universe.filter(p => { const st = ctx.preStates.get(p.id); return st && tests.some(t => t.required && !(t.notOfYou && pid === ctx.sourceCtrl) && t.test(st, p, ctx, pid)); });
     if (required.length && !required.some(p => changed.some(c => c.id === p.id))) nothing.push(label);
     const quiet = required.filter(p => p.id !== chosenId && !changed.some(c => c.id === p.id));
     if (quiet.length && quiet.length < required.length) u.infos.push({ code: 'no-op-on-some', what: label + ': ' + rolesOf(quiet.map(p => p.id)).join(', ') });
@@ -2488,6 +2534,7 @@ function auditModes(rec, perm, ctx, run, skip, spellText) {
     const text = stripReminder(modeText);
     const cls = classifyUnitText(text);
     if (!cls.singular && !cls.targets && !cls.playerGroup && !cls.exchange && !cls.selfCopy && !cls.textChange) { skip('spell', undefined, label, text, 'mode: ' + cls.skip); return; }
+    if (!resolveItRules(cls, 'spell', '', perm.name)) { skip('spell', undefined, label, text, 'mode: requirement-of-another'); return; }
     if (cls.singular) oneTarget.push({ mi, text, phrase: cls.phrase, targetIndex: cls.targetIndex, excludeSource: cls.excludeSource, max: 1 });
     else if (cls.expectKind === 'multi' && cls.targets.length === 1) {
       const t = cls.targets[0];
@@ -3650,6 +3697,7 @@ function runQuotedUnit(o) {
       const cls = classifyUnitText(t);
       if (!cls.singular && !cls.targets && !cls.playerGroup) { skipQ(qi, label, t, cls.skip); continue; }
       if (cls.exchange || cls.selfCopy || cls.textChange) { skipQ(qi, label, t, cls.exchange ? 'exchange' : cls.textChange ? 'text-change' : 'self-copy'); continue; }
+      if (!resolveItRules(cls, kind, stripReminder(ab.fullText || ''), bst.name || bearer.name)) { skipQ(qi, label, t, 'requirement-of-another'); continue; }
       const u = newUnit('quoted', qi, label, t, cls);
       u.bearer = roleName(bearer.id);
       Object.defineProperty(u, 'fullText', { value: stripReminder(ab.fullText || ''), enumerable: false });
@@ -3669,6 +3717,25 @@ function runQuotedUnit(o) {
    (or the part before its comma: "Attach Sting to …"), or "it" in an activated ability or in a
    trigger whose own subject is the card ("When this Equipment enters / is turned face up"). Not "it"
    of "Whenever an Equipment you control enters" (Sigarda's Aid) or of a token the ability makes. */
+/* "Target creature blocks it this combat if able" (requirementRulesOf: "blocks @it if able"): "it"
+   is the card in its activated ability and in a trigger about the card itself ("When this creature
+   attacks" — Avalanche Tusker), and someone else in "Whenever a creature you control attacks"
+   (Fighter Class), "Whenever equipped creature attacks" (Grappling Hook) or a spell. The rules of
+   `cls` then name the card, or false is returned (the unit is skipped). */
+function resolveItRules(cls, kind, fullText, cardName) {
+  const lists = [cls.rules, ...(cls.targets || []).map(t => t.rules)].filter(Boolean);
+  if (!lists.some(l => l.some(r => r.includes('@it')))) return true;
+  let card = kind === 'activated';
+  if (kind === 'trigger') {
+    const names = [cardName, cardName.split(',')[0]].map(n => n.toLowerCase()).filter(n => n.length > 2);
+    const cond = (String(fullText || '').replace(/’/g, "'").replace(/^[^{\n.;"—]+—\s*/, '').match(/^(?:when|whenever|at)\b([^,]*)/i) || [])[1] || '';
+    card = new RegExp('^\\s*(?:this (?:creature|card|permanent|vehicle)|~' + names.map(n => '|' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('') + ')\\b', 'i').test(cond);
+  }
+  if (!card) return false;
+  for (const l of lists) l.forEach((r, i) => { l[i] = r.replace('@it', cardName.toLowerCase()); });
+  return true;
+}
+
 function attachIsSource(what, kind, fullText, typeLine, cardName, text) {
   const becomesAura = /\bbecomes an aura\b/i.test(text);
   if (!/\b(?:equipment|aura)\b/i.test(typeLine) && !becomesAura) return false;
@@ -3723,6 +3790,7 @@ function auditFace(card, faceIndex) {
     if (perm.isModalSpell) { auditModes(rec, perm, ctx, run, skip, text); quotedLater(); return rec; }
     const cls = classifyUnitText(text);
     if (!cls.singular && !cls.targets && !cls.playerGroup && !cls.attachPair && !cls.exchange && !cls.selfCopy && !cls.textChange) { if (cls.skip !== 'target-in-quote') skip('spell', undefined, '', text, cls.skip); quotedLater(); return rec; }
+    if (!resolveItRules(cls, 'spell', '', rec.name)) { skip('spell', undefined, '', text, 'requirement-of-another'); quotedLater(); return rec; }
     const u = newUnit('spell', undefined, '', text, cls);
     // Casting happened in addAuditedCard; the spell's own effects are the unit's.
     // (An attach pair's witnesses come before the spell: it is cast again once they are there.)
@@ -3749,6 +3817,7 @@ function auditFace(card, faceIndex) {
       const cls = classifyUnitText(text);
       if (!cls.singular && !cls.targets && !cls.playerGroup && !cls.attachPair && !cls.exchange && !cls.selfCopy && !cls.textChange) { if (cls.skip !== 'target-in-quote') skip(kind, ab.index, plan.label, text, cls.skip); continue; }
       if (cls.attach && !attachIsSource(cls.attach, kind, stripReminder(ab.fullText || ''), typeLine, rec.name, text)) { skip(kind, ab.index, plan.label, text, 'attach-not-the-source'); continue; }
+      if (!resolveItRules(cls, kind, stripReminder(ab.fullText || ''), rec.name)) { skip(kind, ab.index, plan.label, text, 'requirement-of-another'); continue; }
       const u = newUnit(kind, ab.index, plan.label, text, cls);
       // (Not written to the raw output.)
       Object.defineProperty(u, 'fullText', { value: stripReminder(ab.fullText || ''), enumerable: false });

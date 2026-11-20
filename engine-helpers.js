@@ -173,7 +173,8 @@ function _resolveTraitText(ab, effect, state) {
   // Detained until the detaining player's next turn (CR 701.35a).
   if (ab === 'Detained') return `Detained by ${name(srcCtrl)}`;
   if (!effect.params.traitPlayers) return ab;
-  if (/^can't attack (?:you|planeswalkers you control)\b/i.test(ab) && state.controller === srcCtrl) return null;
+  // (Nor is a creature made to attack its own controller: "Attacks you if able".)
+  if (/^(?:can't attack|attacks?) (?:you|planeswalkers you control)\b/i.test(ab) && state.controller === srcCtrl) return null;
   const you = name(srcCtrl), them = name(state.controller);
   let srcName = _effectDisplayName(effect, effect._allStates);
   // A fired ability's "this creature" is the card with the ability (CR 113.7: "Target creature

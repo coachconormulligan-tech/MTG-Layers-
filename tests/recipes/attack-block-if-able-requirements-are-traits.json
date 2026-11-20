@@ -1,0 +1,37 @@
+{
+  "name": "\"Attacks / blocks … if able\", \"must be blocked if able\" and \"all creatures able to block … do so\" are traits",
+  "notes": "Requirements (CR 508.1d, 509.1c) were read by nothing (2026-11-19): ~70 targeted units of the behavioural audit were skipped as one-shot, and the static ones (Lure, Goblin Rabblemaster) showed nothing. The can't-rule block of cards-parser.js now also keeps \"<verb> [whom] [duration] if able\" (duration dropped) and \"All creatures able to block X do so\" as traits in the card's words. A fired trigger's \"blocks it\" is the card when the trigger is about the card (Avalanche Tusker, Giant Ambush Beetle), and \"this creature\" names the card (_resolveTraitText). Legion Warboss gets Rabblemaster's rule (it is a Goblin) and nothing from its own trigger. Not kept: \"If this creature attacks, all creatures you control attack if able\" (Viashino Bey: it binds only as that attack is declared) and a created token (\"That token attacks this combat if able\" — Legion Warboss).",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"], "as": "p2" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Runeclaw Bear", "controller": "p2", "as": "rune" },
+    { "add": "Goblin Piker", "as": "gob" },
+    { "add": "Goblin Rabblemaster" },
+    { "add": "Viashino Bey" },
+    { "add": "Basandra, Battle Seraph", "as": "bas" },
+    { "fire": "@bas", "activated": 2, "as": "a1" },
+    { "call": ["setTarget", "@a1", "@rune"] },
+    { "add": "Burning-Tree Bloodscale", "as": "bts" },
+    { "fire": "@bts", "activated": 2, "as": "a2" },
+    { "call": ["setTarget", "@a2", "@rune"] },
+    { "add": "Avalanche Tusker", "as": "tusk" },
+    { "fire": "@tusk", "trigger": 0, "as": "t1" },
+    { "call": ["setTarget", "@t1", "@rune"] },
+    { "add": "Legion Warboss", "as": "boss" },
+    { "fire": "@boss", "trigger": 1, "as": "t2" },
+    { "add": "Alluring Scent", "spell": true, "as": "scent" },
+    { "call": ["setTarget", "@scent", "@bears"] },
+    { "add": "Irresistible Prey", "spell": true, "as": "prey" },
+    { "call": ["setTarget", "@prey", "@bears"] },
+    { "add": "Lure", "as": "lure" },
+    { "call": ["setTarget", "@lure", "@gob"] }
+  ],
+  "asserts": [
+    { "perm": "Runeclaw Bear", "final": { "traits": { "$includes": ["Attacks if able", "Blocks Burning-Tree Bloodscale if able", "Blocks Avalanche Tusker if able"] } } },
+    { "perm": "Grizzly Bears", "final": { "traits": ["All creatures able to block it do so", "Must be blocked if able"] } },
+    { "perm": "Goblin Piker", "final": { "traits": { "$includes": ["Attacks each combat if able", "All creatures able to block it do so"], "$excludes": ["Attacks if able"] } } },
+    { "perm": "Goblin Rabblemaster", "final": { "traits": { "$excludes": ["Attacks each combat if able", "Attacks if able"] } } },
+    { "perm": "Legion Warboss", "final": { "traits": ["Attacks each combat if able"] } },
+    { "perm": "Viashino Bey", "final": { "traits": { "$excludes": ["Attacks if able"] } } }
+  ]
+}

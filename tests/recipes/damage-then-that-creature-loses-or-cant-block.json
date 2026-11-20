@@ -1,6 +1,6 @@
 {
   "name": "Damage, then \"that creature loses …\" / \"those creatures can't block\" — Vertigo, Soul Sear, Quick Draw, Sparkmage's Gambit",
-  "notes": "Found by tests/audit.py once a target that is dealt damage was audited through its later \"that creature\" sentence (2026-11-17). The \"loses <keyword>\" reader took its subject from the start of the line across the full stop: Vertigo's \"… deals 2 damage to target creature with flying. That creature loses flying\" became a global effect with a nonsense filter and no target (Soul Sear, Smite the Deathless, Rebel Salvo likewise), and Quick Draw's \"Creatures target opponent controls lose first strike and double strike\" was read as its first target, so the creature it pumps lost the first strike it gained. Sparkmage's Gambit's \"… to each of up to two target creatures. Those creatures can't block this turn\" had a picker for one.",
+  "notes": "Found by tests/audit.py once a target that is dealt damage was audited through its later \"that creature\" sentence (2026-11-17). The \"loses <keyword>\" reader took its subject from the start of the line across the full stop: Vertigo's \"… deals 2 damage to target creature with flying. That creature loses flying\" became a global effect with a nonsense filter and no target (Soul Sear, Smite the Deathless, Rebel Salvo likewise), and Quick Draw's \"Creatures target opponent controls lose first strike and double strike\" was read as its first target, so the creature it pumps lost the first strike it gained. Sparkmage's Gambit's \"… to each of up to two target creatures. Those creatures can't block this turn\" had a picker for one. Vertigo's list keeps Serra Angel, its target: it had flying when the spell was cast (the picker reads the cast-time states). Until 2026-11-19 a restored spell's snapshot was read under the saved board's ids, so whether the Angel was listed depended on which ids the board had been saved with; the earlier [\"Wind Drake\"] was that accident.",
   "steps": [
     { "call": ["addPlayer", "Player 2"], "as": "p2" },
     { "add": "Grizzly Bears", "as": "bears" },
@@ -20,7 +20,7 @@
     { "call": ["setMultiTarget", "@sg", 1, "@knight"] }
   ],
   "asserts": [
-    { "targetCandidates": { "perm": "Vertigo" }, "are": ["Wind Drake"] },
+    { "targetCandidates": { "perm": "Vertigo" }, "are": ["Serra Angel", "Wind Drake"] },
     { "perm": "Serra Angel", "final": { "abilities": { "$excludes": ["Flying"] } } },
     { "perm": "Wind Drake", "final": { "abilities": { "$includes": ["Flying"] } } },
     { "perm": "Darksteel Myr", "final": { "abilities": { "$excludes": ["Indestructible"] } } },

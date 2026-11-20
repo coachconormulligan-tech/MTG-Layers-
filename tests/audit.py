@@ -34,6 +34,14 @@ A unit whose own text names one permanent target ("singular") is checked twice:
            the fired ability (rule-trait-names-ability). "Can't be regenerated / countered",
            "becomes blocked", "is dealt damage" stay skipped (not-a-layer-effect), as does a rule
            after damage ("deals 2 damage to target creature. That creature can't block").
+           So is a requirement: "Target creature attacks / blocks [this creature] this turn if able",
+           "… must be blocked this turn if able", "you may have target creature block it …", "All
+           creatures able to block target creature this turn do so", and a picked player's group
+           ("Creatures target player controls attack this turn if able"; "… attack you if able"
+           picked for yourself may change nothing). The trait must begin with its verb and end with
+           "if able"; "blocks it" names the card when the ability is the card's activated ability or
+           a trigger about the card, and is otherwise skipped (requirement-of-another: Fighter
+           Class, Grappling Hook); "blocks it" of an earlier target leaves that target one-shot.
            "Goad / suspect / detain target …" is checked the same way: the chosen target alone must get
            the Goaded / Suspected / Detained trait (rule-trait-missing). A later sentence about the target
            through "it" / "that creature" is read after "Until end of turn," / "Until your next

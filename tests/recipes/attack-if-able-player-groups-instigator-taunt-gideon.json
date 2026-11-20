@@ -1,0 +1,23 @@
+{
+  "name": "\"Creatures target player controls attack … if able\" reaches the picked player's creatures — Instigator, Taunt, Gideon Jura",
+  "notes": "A group of a picked player with a requirement (2026-11-19): Instigator's \"Creatures target player controls attack this turn if able\" reaches only the picked player's creatures, and nobody before a player is picked. \"During target opponent's next turn, creatures that player controls attack Gideon Jura if able\": \"that player\" is the picked opponent, and \"this card\" names Gideon. Taunt (\"… attack you if able\") picked for yourself gives your creatures nothing: a creature cannot attack its own controller (_resolveTraitText).",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"], "as": "p2" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Runeclaw Bear", "controller": "p2", "as": "rune" },
+    { "add": "Instigator", "as": "inst" },
+    { "fire": "@inst", "activated": 0, "as": "a1" },
+    { "call": ["setTargetPlayer", "@a1", "p2"] },
+    { "add": "Gideon Jura", "as": "gid" },
+    { "fire": "@gid", "activated": 0, "as": "a2" },
+    { "call": ["setTargetOpponent", "@a2", "p2"] },
+    { "add": "Taunt", "spell": true, "as": "taunt" },
+    { "call": ["setTargetPlayer", "@taunt", "p1"] }
+  ],
+  "asserts": [
+    { "perm": "Runeclaw Bear", "final": { "traits": ["Attacks if able", "Attacks Gideon Jura if able"] } },
+    { "perm": "Grizzly Bears", "final": { "traits": { "$excludes": ["Attacks if able", "Attacks Gideon Jura if able", "Attacks Player 1 if able"] } } },
+    { "perm": "Instigator", "final": { "traits": { "$excludes": ["Attacks if able"] } } },
+    { "targetCandidates": { "perm": "Taunt", "kind": "players" }, "are": ["Player 1", "Player 2"] }
+  ]
+}

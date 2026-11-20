@@ -145,7 +145,7 @@ function getCopyCandidates(sourceId) {
   // fired abilities, the snapshot captured at fire/cast time: targets are judged by what they WERE.
   const finalStates = Battlefield.getAllFinalStates();
   const srcPermForSnap = Battlefield.getPermById(sourceId);
-  const snapStates = srcPermForSnap?._firedAtStates || srcPermForSnap?._firedAtSnapshot?.states || null;
+  const snapStates = _castTimeStates(srcPermForSnap);
   const lookupState = (id) => (snapStates && snapStates.has(id)) ? snapStates.get(id) : finalStates.get(id);
   // Only the top card of a mutate stack can be copied.
   // (Not a spell, emblem or other pseudo-permanent: only a permanent can be copied here.)
@@ -476,7 +476,7 @@ function _singleTargetCandidates(sourceId) {
   const finalStates = Battlefield.getAllFinalStates();
   // For spells / triggered / activated abilities, prefer the snapshot captured at fire/cast time
   // so target restrictions are checked against what each candidate WAS, not what it is now.
-  const snapStates = sourcePerm?._firedAtStates || sourcePerm?._firedAtSnapshot?.states || null;
+  const snapStates = _castTimeStates(sourcePerm);
   const lookupState = (id) => (snapStates && snapStates.has(id)) ? snapStates.get(id) : finalStates.get(id);
 
   // CR 704.5p: If this equipment is currently a creature, it can't equip
@@ -595,7 +595,7 @@ function _multiTargetCandidates(sourceId, slotIndex) {
   const spellRestriction = effs.find(e => e.targetRestriction)?.targetRestriction;
 
   const finalStates = Battlefield.getAllFinalStates();
-  const snapStates = sourcePerm?._firedAtStates || sourcePerm?._firedAtSnapshot?.states || null;
+  const snapStates = _castTimeStates(sourcePerm);
   // "Whenever a creature attacks this turn, it gets …" (Song of Blood): the creatures attack
   // after the spell has resolved, so they are picked from those marked attacking now.
   const liveBoard = !!(sourcePerm && sourcePerm._pickFromLiveBoard);
@@ -643,7 +643,7 @@ function _slottedTargetCandidates(sourceId, slot) {
 
   const spellRestriction = slotEff?.targetRestriction || null;
   const finalStates = Battlefield.getAllFinalStates();
-  const snapStates = sourcePerm?._firedAtStates || sourcePerm?._firedAtSnapshot?.states || null;
+  const snapStates = _castTimeStates(sourcePerm);
   const lookupState = (id) => (snapStates && snapStates.has(id)) ? snapStates.get(id) : finalStates.get(id);
 
   const candidates = [];
@@ -675,7 +675,7 @@ function _modalTargetCandidates(sourceId, modeIdx, slotIndex) {
   const sourcePerm = Battlefield.getPermById(sourceId);
   const allEffs = Battlefield.effects.filter(e => e.sourceId === sourceId && e.scope === 'targeted' && !e.selfTarget);
   const finalStates = Battlefield.getAllFinalStates();
-  const snapStates = sourcePerm?._firedAtStates || sourcePerm?._firedAtSnapshot?.states || null;
+  const snapStates = _castTimeStates(sourcePerm);
   const lookupState = (id) => (snapStates && snapStates.has(id)) ? snapStates.get(id) : finalStates.get(id);
   const isNonTargeting = sourcePerm && sourcePerm._nonTargetingSelection;
   const sourceCtrl = sourcePerm?.controller || sourcePerm?.owner || Battlefield.activePlayerId;
@@ -836,10 +836,19 @@ function _exchangeControlEffect(sourceId) {
   return all.find(e => !e.disabled) || all[0] || null;
 }
 
+/* The states of the board as a spell was cast or an ability fired, by live id, or null. A
+   restored spell's _firedAtSnapshot keeps the saved board's ids (for the camera pop-up), so a
+   picker read it under ids that now name nothing or another permanent; _castStates is the same
+   picture under live ids (Vertigo's target, an Angel that lost flying to it, listed or not
+   depending on which ids the board was saved with). */
+function _castTimeStates(src) {
+  return (src && (src._firedAtStates || src._castStates || (src._firedAtSnapshot && src._firedAtSnapshot.states))) || null;
+}
+
 /* The states of the board as the source was cast or fired (a Map by id), or null. */
 function _exchangeControlSnapshot(sourceId) {
   const src = Battlefield.getPermById(sourceId);
-  return (src && (src._firedAtStates || src._castStates || (src._firedAtSnapshot && src._firedAtSnapshot.states))) || null;
+  return _castTimeStates(src);
 }
 
 /* The permanent a fired ability comes from (CR 113.7), or the source itself. */

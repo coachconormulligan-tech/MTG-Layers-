@@ -1,0 +1,30 @@
+{
+  "name": "Requirements keep their target's words — Provoke, Chemister's Trick, King Harald's Revenge, Domineering Will, Boros Battleshaper",
+  "notes": "Found once the audit read \"… if able\" targets (2026-11-19). Provoke (\"Untap target creature you don't control. That creature blocks this turn if able\") listed every permanent: the pronoun antecedent reader only ran for a pronoun sentence with gets / gains / can't …. Chemister's Trick (\"Target creature you don't control gets -2/-0 … and attacks this turn if able\") listed nothing: the rule's subject was cut at \"don't\" (\"Target creature you\"); a can't-rule there was cut the same way. King Harald's Revenge (\"… target creature gets +1/+1 for each creature you control and gains trample. It must be blocked …\") listed only your creatures: the antecedent kept the predicate's \"you control\". Domineering Will (\"Target player gains control of up to three target nonattacking creatures …. They block this turn if able\") listed lands and artifacts: the antecedent began at \"target player\". Boros Battleshaper (\"up to one target creature attacks or blocks this combat if able and up to one target creature can't attack or block this combat\") had one picker for two targets; the second rule takes the position of its own target, a slot of its own.",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"], "as": "p2" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Forest" },
+    { "add": "Ornithopter" },
+    { "add": "Runeclaw Bear", "controller": "p2", "as": "rune" },
+    { "add": "Hill Giant", "controller": "p2", "as": "giant" },
+    { "call": ["toggleAttacking", "@giant"] },
+    { "add": "Boros Battleshaper", "as": "bb" },
+    { "fire": "@bb", "trigger": 0, "as": "t1" },
+    { "call": ["setSlottedTarget", "@t1", 0, "@bears"] },
+    { "call": ["setSlottedTarget", "@t1", 1, "@rune"] },
+    { "add": "Provoke", "spell": true },
+    { "add": "Chemister's Trick", "spell": true },
+    { "add": "King Harald's Revenge", "spell": true },
+    { "add": "Domineering Will", "spell": true }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Provoke" }, "are": ["Runeclaw Bear", "Hill Giant"] },
+    { "targetCandidates": { "perm": "Chemister's Trick" }, "are": ["Runeclaw Bear", "Hill Giant"] },
+    { "targetCandidates": { "perm": "King Harald's Revenge" }, "are": ["Grizzly Bears", "Ornithopter", "Runeclaw Bear", "Hill Giant", "Boros Battleshaper"] },
+    { "targetCandidates": { "perm": "Domineering Will" }, "are": ["Grizzly Bears", "Ornithopter", "Runeclaw Bear", "Boros Battleshaper"] },
+    { "targetCandidates": { "perm": "Boros Battleshaper (trigger)", "kind": "slotted", "slot": 1 }, "are": ["Grizzly Bears", "Ornithopter", "Runeclaw Bear", "Hill Giant", "Boros Battleshaper"] },
+    { "perm": "Grizzly Bears", "final": { "traits": ["Attacks or blocks if able"] } },
+    { "perm": "Runeclaw Bear", "final": { "traits": ["Can't attack or block"] } }
+  ]
+}

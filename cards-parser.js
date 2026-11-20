@@ -6701,8 +6701,9 @@ function parseCardEffects(permanent, card, opts = {}) {
   // other target creature each get +3/+3" (Razorgrass Invoker) is the source's own effect.
   // ("Those creatures can't block this turn" after "up to three target creatures" — Wrap in Flames.)
   // ("Choose target nonland permanent. Until your next turn, it can't attack or block" — Academic
-  // Probation: the antecedent's words restrict the target.)
-  const _pronounSubjectSentence = /(?:^|[.;]\s*|\n)(?:(?:until end of turn|until your next turn|then|if you do|when you do),?\s+)?(?:it|they|that (?:creature|permanent|land|artifact|enchantment)|those (?:creatures|permanents))\s+(?:also\s+)?(?:gets?|gains?|has|have|becomes?|loses?|is|are|can't)\b/i;
+  // Probation: the antecedent's words restrict the target. "Untap target creature you don't
+  // control. That creature blocks this turn if able" — Provoke.)
+  const _pronounSubjectSentence = /(?:^|[.;]\s*|\n)(?:(?:until end of turn|until your next turn|then|if you do|when you do),?\s+)?(?:it|they|that (?:creature|permanent|land|artifact|enchantment)|those (?:creatures|permanents))\s+(?:also\s+)?(?:gets?|gains?|has|have|becomes?|loses?|is|are|can't|(?:attacks?|blocks?|attack or block|attacks or blocks|must be blocked)\b[^.;\n]*?\bif able)\b/i;
   function _pronounAntecedentRestriction(pos) {
     const info = _pronounAntecedentInfo(pos);
     return info ? info.fn : null;
@@ -6719,7 +6720,7 @@ function parseCardEffects(permanent, card, opts = {}) {
       hits = [...masked.matchAll(_targetRe)];
       if (hits.length !== 1) return null;
     }
-    const phrase = hits[hits.length - 1][1]
+    let phrase = hits[hits.length - 1][1]
       // "… and gain control of it", "… and untap it", ", where X is …": what is done to it.
       .replace(/,?\s+(?:and|then)\s+(?:gain|gains|untap|untaps|tap|taps|put|puts|attach|it|that|you|return|exile|destroy|sacrifice|draw|create)\b.*$/i, '')
       .replace(/,\s+(?:where|then)\b.*$/i, '')
@@ -6729,6 +6730,17 @@ function parseCardEffects(permanent, card, opts = {}) {
       // "Gain control of target creature until end of turn": how long, not which creature.
       .replace(/\s+(?:until|for as long as|this turn|during)\b.*$/i, '')
       .replace(/\s+face (?:down|up)$/i, '').trim();
+    // The predicate is not the target's words: "Until end of turn, target creature gets +1/+1 for
+    // each creature you control and gains trample. It must be blocked this turn if able" (King
+    // Harald's Revenge: the target is any creature). Nor is a player before it: "Target player
+    // gains control of up to three target nonattacking creatures …. They block this turn if able"
+    // (Domineering Will).
+    {
+      const lastTarget = [...phrase.matchAll(/\b(?:(?:up to \w+|another|other)\s+)*target\s/gi)].pop();
+      if (lastTarget) phrase = phrase.slice(lastTarget.index);
+    }
+    phrase = phrase
+      .replace(/\s+(?:gets?|gains?|has|have|becomes?|loses?|can't|attacks?|blocks?|must|deals?|fights?)\b.*$/i, (m, off, str) => /\b(?:that|which|who)$/i.test(str.slice(0, off)) ? m : '').trim();
     // "Return target creature card with mana value 3 or less from your graveyard to the
     // battlefield. It gains …" (Can't Stay Away): the card as the permanent it became.
     const _returned = _returnedCardTargetPhrase(phrase);
@@ -6927,32 +6939,86 @@ function parseCardEffects(permanent, card, opts = {}) {
   // without its duration; the engine fills in the players (_resolveTraitText). A card's own
   // printed "This creature can't block" stays rules text and gets no trait.
   {
-    const cantRuleRegex = /\bcan't\s+(attack|block|be blocked|be the targets?)\b/gi;
     const _cantFired = !!(permanent.isSpell || permanent.isManualEffect);
     const _cantSeen = new Set();
-    let cantMatch;
-    while ((cantMatch = cantRuleRegex.exec(oracle)) !== null) {
+    // The requirements too (CR 508.1d, 509.1c): "Target creature attacks this turn if able"
+    // (Basandra), "Target creature blocks this creature this turn if able" (Burning-Tree
+    // Bloodscale), "Enchanted creature attacks each combat if able", "… must be blocked this turn
+    // if able" (Irresistible Prey), and "All creatures able to block target creature this turn do
+    // so" (Alluring Scent), whose subject is the creature to be blocked.
+    const _ruleHits = [];
+    for (const m of oracle.matchAll(/\bcan't\s+(attack|block|be blocked|be the targets?)\b/gi)) _ruleHits.push({ m, kind: 'cant' });
+    for (const m of oracle.matchAll(/\b(must be blocked|attacks or blocks|attack or block|attacks?|blocks?)\b([^.;,\n"]*?)\s*\bif able\b/gi)) _ruleHits.push({ m, kind: 'must' });
+    for (const m of oracle.matchAll(/\ball creatures able to block\s+([^.;,\n"]+?)(?:\s+(?:this turn|this combat|each combat))?\s+do so\b/gi)) _ruleHits.push({ m, kind: 'lure' });
+    _ruleHits.sort((a, b) => a.m.index - b.m.index);
+    // A fired trigger about the card itself ("When this creature attacks, target creature
+    // defending player controls blocks it this combat if able" — Avalanche Tusker), or a fired
+    // activated ability: "it" is the card. Not "Whenever a creature you control attacks, … blocks
+    // it" (Fighter Class), "Whenever equipped creature attacks" (Grappling Hook), nor a spell's
+    // "Another target creature blocks it" (Feral Contest).
+    const _itIsTheCard = () => {
+      if (permanent.isActivatedAbility) return true;
+      if (!permanent.isTriggeredAbility) return false;
+      // (Its subject: the words after "When / Whenever / At", an ability word dropped.)
+      const full = String(permanent.abilityFullText || '').replace(/^[^{\n.;"—]+—\s*/, '');
+      const cond = ((full.match(/^(?:when|whenever|at)\b([^,]*)/i) || [])[1] || '').trim().toLowerCase();
+      const shortName = (card.name || '').split(/,| \/\/ /)[0].trim().toLowerCase();
+      return /^(?:this (?:creature|card|permanent|vehicle)|~)\b/.test(cond)
+        || (shortName.length > 2 && cond.startsWith(shortName));
+    };
+    for (const hit of _ruleHits) {
+      const cantMatch = hit.m;
       const before = oracle.slice(0, cantMatch.index);
       if ((before.match(/"/g) || []).length % 2) continue;
       if (!_cantFired && (_isInTriggeredSentence(cantMatch.index) || _isInActivatedEffect(cantMatch.index))) continue;
+      if (hit.kind === 'must' && /\bcan't\s+$/i.test(before)) continue;
       const _cantStop = before.lastIndexOf('. ');
       const sentStart = Math.max(before.lastIndexOf('\n') + 1, _cantStop < 0 ? 0 : _cantStop + 2, before.lastIndexOf(';') + 1);
       const contentStart = sentStart + (oracle.slice(sentStart).match(/^\s*/)[0].length);
-      const after = oracle.slice(cantMatch.index + cantMatch[0].length);
-      const sentEnd = after.search(/[.;\n"]/);
-      let tail = sentEnd < 0 ? after : after.slice(0, sentEnd);
-      // What follows an "and" with its own verb is another clause ("can't block this turn and
-      // becomes a Coward", "can't block, and they can't attack you …").
-      tail = tail.replace(/,?\s+and\s+(?:they|it|their|its|you|gets?|gains?|has|have|becomes?|loses?|is|are|can't|must|attacks?|deals?)\b.*$/i, '')
-        .replace(/,\s+and\s+.*\bcan't\b.*$/i, '')
-        .replace(/\s+(?:this turn|until end of turn|(?:this|that) combat|until your next turn)\b/gi, '')
-        .replace(/\s+for$/i, '')
-        .replace(/[,\s]+$/, '');
-      let rule = `Can't ${cantMatch[1].toLowerCase().replace(/^be the targets$/, 'be the target')}${tail}`.replace(/\s+/g, ' ').trim();
-      // "Creatures with power less than this creature's power can't block it" (Aura Gnarlid):
-      // in a permanent's own text "it" is the permanent.
-      if (!_cantFired) rule = rule.replace(/^(Can't (?:block|attack)) it\b/, '$1 this creature');
-      let subj = oracle.slice(contentStart, cantMatch.index).trim().replace(/^(?:•\s*|[^—\n]*—\s*)/, '');
+      let rule;
+      if (hit.kind === 'cant') {
+        const after = oracle.slice(cantMatch.index + cantMatch[0].length);
+        const sentEnd = after.search(/[.;\n"]/);
+        let tail = sentEnd < 0 ? after : after.slice(0, sentEnd);
+        // What follows an "and" with its own verb is another clause ("can't block this turn and
+        // becomes a Coward", "can't block, and they can't attack you …").
+        tail = tail.replace(/,?\s+and\s+(?:they|it|their|its|you|gets?|gains?|has|have|becomes?|loses?|is|are|can't|must|attacks?|deals?)\b.*$/i, '')
+          .replace(/,\s+and\s+.*\bcan't\b.*$/i, '')
+          .replace(/\s+(?:this turn|until end of turn|(?:this|that) combat|until your next turn)\b/gi, '')
+          .replace(/\s+for$/i, '')
+          .replace(/[,\s]+$/, '');
+        rule = `Can't ${cantMatch[1].toLowerCase().replace(/^be the targets$/, 'be the target')}${tail}`.replace(/\s+/g, ' ').trim();
+        // "Creatures with power less than this creature's power can't block it" (Aura Gnarlid):
+        // in a permanent's own text "it" is the permanent.
+        if (!_cantFired) rule = rule.replace(/^(Can't (?:block|attack)) it\b/, '$1 this creature');
+      } else if (hit.kind === 'must') {
+        const verb = cantMatch[1].toLowerCase();
+        let mid = cantMatch[2].replace(/\b(?:this turn|until end of turn|(?:this|that) combat|until your next turn)\b/gi, '')
+          .replace(/\s+/g, ' ').trim();
+        // Whom it attacks or blocks must be known: not another target ("Target creature blocks
+        // target creature this turn if able" — Hunt Down; "attacks target opponent" — Dulcet
+        // Sirens) nor "that Wolf" / "that player".
+        if (/\b(?:target|that|those|chosen)\b/i.test(mid)) continue;
+        if (/^(?:it|them)$/i.test(mid)) {
+          if (!_itIsTheCard()) continue;
+          mid = 'this creature';
+        }
+        const V = verb === 'must be blocked' ? 'Must be blocked'
+          : /^attacks? or blocks?$/.test(verb) ? 'Attacks or blocks'
+          : /^attack/.test(verb) ? 'Attacks' : 'Blocks';
+        rule = `${V}${mid ? ' ' + mid : ''} if able`;
+      } else {
+        rule = 'All creatures able to block it do so';
+      }
+      let subj = (hit.kind === 'lure' ? cantMatch[1] : oracle.slice(contentStart, cantMatch.index)).trim().replace(/^(?:•\s*|[^—\n]*—\s*)/, '');
+      // (A condition already taken out of the text leaves its comma: "Target creature … can't
+      // block this turn. , that creature attacks during its controller's next combat phase if
+      // able" — Sizzling Soloist's "If this is the second time …".)
+      subj = subj.replace(/^[,\s]+/, '');
+      // "You may have target creature block it this turn if able" (Giant Ambush Beetle).
+      if (hit.kind === 'must') subj = subj.replace(/^(?:you may\s+)?have\s+/i, '');
+      // "The chosen creatures attack if able" (Oracle en-Vec): not on the board.
+      if (hit.kind !== 'cant' && /\bchosen\b/i.test(subj)) continue;
       // A fired ability may still carry its cost ("{U}: This creature can't be blocked this turn").
       subj = subj.replace(/^[^:]*:\s*/, '');
       subj = stripDurationPrefix(subj).replace(/^this turn(?: and next turn)?,\s*/i, '');
@@ -6976,6 +7042,42 @@ function parseCardEffects(permanent, card, opts = {}) {
       // "A creature dealt damage this way can't block this turn" (Ballista Wielder): which
       // creature that was is not known here.
       if (/\bthis way\b/i.test(subj)) continue;
+      if (hit.kind !== 'cant') {
+        // "If this creature attacks, all creatures you control attack if able" (Viashino Bey),
+        // "If a creature an opponent controls attacks, all creatures that opponent controls
+        // attack if able" (War's Toll, Magnetic Web): it binds only as that attack is declared.
+        // (Read in the printed text: the parser may have taken the "if" out already.)
+        {
+          const printed = String(permanent.oracleText || '').replace(/["“][^"”]*["”]/g, (q) => ' '.repeat(q.length));
+          const at = printed.toLowerCase().indexOf(cantMatch[0].toLowerCase());
+          const lead = at < 0 ? '' : printed.slice(Math.max(printed.lastIndexOf('.', at), printed.lastIndexOf('\n', at)) + 1, at);
+          if (/^\s*if\b[^,]*\battacks?,/i.test(lead)) continue;
+        }
+        // "If they don't pay, the creature attacks this turn if able" (Arcum's Whistle): the
+        // creature chosen.
+        subj = subj.replace(/^the (creature|permanent)$/i, 'that $1')
+          // "Each of those creatures attacks that combat if able" (Illusionist's Gambit).
+          .replace(/^each of (those|them)\b/i, '$1')
+          // "All creatures able to block this creature or enchanted creature do so" (Noble
+          // Quarry): the card's own rule is its text; the enchanted creature's is a trait.
+          .replace(/^this (?:creature|permanent) or\s+(?=(?:enchanted|equipped)\s)/i, '');
+        // "That token attacks this combat if able" (Legion Warboss): the token the ability
+        // creates, which the site does not make; nor "those creatures" with no target before
+        // them (the creatures Illusionist's Gambit removed from combat).
+        if (/\btokens?\b/i.test(subj) && /^th(?:at|ose)\b/i.test(subj)) continue;
+        if (/^(?:them|th(?:at|ose)\b)/i.test(subj) && !/\btarget\b/i.test(before)) continue;
+      }
+      // A second target in the same sentence, after a rule of the first one: "up to one target
+      // creature attacks or blocks this combat if able and up to one target creature can't attack
+      // or block this combat" (Boros Battleshaper). It is its own target (_secondTargetAt).
+      let _secondTargetAt = -1;
+      {
+        const sec = subj.match(/^.*?\b(?:if able|can't [^.]*?)\s*,?\s+and\s+((?:(?:up to \w+|another|other)\s+)*target\b.*)$/i);
+        if (sec) {
+          subj = sec[1];
+          _secondTargetAt = oracle.indexOf(subj, contentStart);
+        }
+      }
       // A legend named by the first part of its name ("Fear Gas — Wraith can't be blocked").
       {
         const shortName = (card.name || '').split(/,| \/\/ /)[0].trim();
@@ -6984,7 +7086,9 @@ function parseCardEffects(permanent, card, opts = {}) {
         }
       }
       subj = subj.replace(/^(?:then|and)\s+/i, '')
-        .replace(/,?\s+(?:(?:and|also|each|both)\s+)*(?:gets?|gains?|has|have|is|are|becomes?|loses?|deals?|enters?|attacks?|blocks?|can|can't|must|doesn't|don't|untaps?|fights?|phases?)\b.*$/i, '')
+        // ("Target creature you don't control gets -2/-0 … and attacks this turn if able" —
+        // Chemister's Trick: "don't control" is the subject's.)
+        .replace(/,?\s+(?:(?:and|also|each|both)\s+)*(?:gets?|gains?|has|have|is|are|becomes?|loses?|deals?|enters?|attacks?|blocks?|can|can't|must|doesn't(?!\s+control)|don't(?!\s+control)|untaps?|fights?|phases?)\b.*$/i, '')
         .replace(/,?\s+(?:and|also)$/i, '').trim();
       if (!subj || /\b(?:that|which|who)$/i.test(subj)) continue;
       // A player is not a permanent ("You can't attack that player this turn" — Call for Aid),
@@ -7010,14 +7114,15 @@ function parseCardEffects(permanent, card, opts = {}) {
       if (_cantSeen.has(key)) continue;
       _cantSeen.add(key);
       const params = { ability: rule, isTrait: true, traitOnly: true, traitPlayers: true };
-      const ruleDesc = `${subj.charAt(0).toUpperCase() + subj.slice(1)} ${rule.charAt(0).toLowerCase() + rule.slice(1)}.`;
+      const ruleDesc = hit.kind === 'lure' ? `All creatures able to block ${subj} do so.`
+        : `${subj.charAt(0).toUpperCase() + subj.slice(1)} ${rule.charAt(0).toLowerCase() + rule.slice(1)}.`;
       // (The condition of its own sentence: "Up to one target creature can't block this turn. If
       // you're the monarch, creatures can't block this turn." — the first rule has none.)
       const cantCond = _getConditionOfOwnSentence(contentStart);
       // The target slot of the sentence's other effects ("Target creature gets +2/+0 and can't
       // be blocked this turn") is theirs by position.
       const _sameSentence = effects.find(e => e._oraclePos !== undefined && _getMatchContentPos(e._oraclePos) === contentStart);
-      const cantPos = _sameSentence ? _sameSentence._oraclePos : contentStart;
+      const cantPos = _secondTargetAt >= 0 ? _secondTargetAt : _sameSentence ? _sameSentence._oraclePos : contentStart;
       let eff;
       if (/^(?:it|they|that (?:creature|permanent)|those (?:creatures|permanents))$/i.test(subj)) {
         // A pronoun: in a permanent's own text it is what an Aura or Equipment is attached to;
@@ -7053,8 +7158,11 @@ function parseCardEffects(permanent, card, opts = {}) {
           if (!filterReferencesPermanents(part) && !/^this\s+[\w-]+$/i.test(part)) continue;
           // "Target player can't cast spells this turn, and creatures that player controls can't
           // attack this turn" (Oriss, Samite Guardian): the player picked for "target player".
-          if (/\bthat player controls?$/i.test(part) && /\btarget player\b/i.test(oracle.slice(contentStart, cantMatch.index))) {
-            part = part.replace(/\bthat player controls?$/i, 'target player controls');
+          // ("During target opponent's next turn, creatures that player controls attack Gideon
+          // Jura if able.")
+          {
+            const tp = /\btarget (player|opponent)\b/i.exec(oracle.slice(contentStart, cantMatch.index));
+            if (tp && /\bthat player controls?$/i.test(part)) part = part.replace(/\bthat player controls?$/i, `target ${tp[1].toLowerCase()} controls`);
           }
           let b = buildAppliesToFromText(part);
           // "Creatures with power less than this creature's power" (Aura Gnarlid), "… less than the

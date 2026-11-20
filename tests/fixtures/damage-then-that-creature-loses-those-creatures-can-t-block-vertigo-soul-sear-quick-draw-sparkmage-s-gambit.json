@@ -1,6 +1,6 @@
 {
  "name": "Damage, then \"that creature loses …\" / \"those creatures can't block\" — Vertigo, Soul Sear, Quick Draw, Sparkmage's Gambit",
- "notes": "Found by tests/audit.py once a target that is dealt damage was audited through its later \"that creature\" sentence (2026-11-17). The \"loses <keyword>\" reader took its subject from the start of the line across the full stop: Vertigo's \"… deals 2 damage to target creature with flying. That creature loses flying\" became a global effect with a nonsense filter and no target (Soul Sear, Smite the Deathless, Rebel Salvo likewise), and Quick Draw's \"Creatures target opponent controls lose first strike and double strike\" was read as its first target, so the creature it pumps lost the first strike it gained. Sparkmage's Gambit's \"… to each of up to two target creatures. Those creatures can't block this turn\" had a picker for one.",
+ "notes": "Found by tests/audit.py once a target that is dealt damage was audited through its later \"that creature\" sentence (2026-11-17). The \"loses <keyword>\" reader took its subject from the start of the line across the full stop: Vertigo's \"… deals 2 damage to target creature with flying. That creature loses flying\" became a global effect with a nonsense filter and no target (Soul Sear, Smite the Deathless, Rebel Salvo likewise), and Quick Draw's \"Creatures target opponent controls lose first strike and double strike\" was read as its first target, so the creature it pumps lost the first strike it gained. Sparkmage's Gambit's \"… to each of up to two target creatures. Those creatures can't block this turn\" had a picker for one. Vertigo's list keeps Serra Angel, its target: it had flying when the spell was cast (the picker reads the cast-time states). Until 2026-11-19 a restored spell's snapshot was read under the saved board's ids, so whether the Angel was listed depended on which ids the board had been saved with; the earlier [\"Wind Drake\"] was that accident.",
  "recipe": {
   "steps": [
    {
@@ -105,6 +105,7 @@
     "perm": "Vertigo"
    },
    "are": [
+    "Serra Angel",
     "Wind Drake"
    ]
   },
@@ -331,6 +332,8 @@
     "counterTimestamps": {},
     "isFaceDown": false,
     "faceDownMode": null,
+    "faceDownAs": null,
+    "face": null,
     "roomLocked": null,
     "cdaUserValue": null,
     "classLevel": null,
@@ -517,6 +520,8 @@
     "counterTimestamps": {},
     "isFaceDown": false,
     "faceDownMode": null,
+    "faceDownAs": null,
+    "face": null,
     "roomLocked": null,
     "cdaUserValue": null,
     "classLevel": null,
@@ -720,6 +725,8 @@
     "counterTimestamps": {},
     "isFaceDown": false,
     "faceDownMode": null,
+    "faceDownAs": null,
+    "face": null,
     "roomLocked": null,
     "cdaUserValue": null,
     "classLevel": null,
@@ -906,6 +913,8 @@
     "counterTimestamps": {},
     "isFaceDown": false,
     "faceDownMode": null,
+    "faceDownAs": null,
+    "face": null,
     "roomLocked": null,
     "cdaUserValue": null,
     "classLevel": null,
@@ -1088,6 +1097,8 @@
     "counterTimestamps": {},
     "isFaceDown": false,
     "faceDownMode": null,
+    "faceDownAs": null,
+    "face": null,
     "roomLocked": null,
     "cdaUserValue": null,
     "classLevel": null,
@@ -1265,6 +1276,8 @@
     "counterTimestamps": {},
     "isFaceDown": false,
     "faceDownMode": null,
+    "faceDownAs": null,
+    "face": null,
     "roomLocked": null,
     "cdaUserValue": null,
     "classLevel": null,
@@ -1325,9 +1338,11 @@
         "owner": "player_0",
         "controller": "player_0",
         "isToken": false,
+        "isFaceDown": false,
         "tapped": false,
         "traits": [],
-        "counters": {}
+        "counters": {},
+        "_protectionFrom": []
        }
       ],
       [
@@ -1356,9 +1371,11 @@
         "owner": "player_0",
         "controller": "player_0",
         "isToken": false,
+        "isFaceDown": false,
         "tapped": false,
         "traits": [],
-        "counters": {}
+        "counters": {},
+        "_protectionFrom": []
        }
       ],
       [
@@ -1388,9 +1405,11 @@
         "owner": "player_1",
         "controller": "player_1",
         "isToken": false,
+        "isFaceDown": false,
         "tapped": false,
         "traits": [],
-        "counters": {}
+        "counters": {},
+        "_protectionFrom": []
        }
       ],
       [
@@ -1421,9 +1440,17 @@
         "owner": "player_1",
         "controller": "player_1",
         "isToken": false,
+        "isFaceDown": false,
         "tapped": false,
         "traits": [],
-        "counters": {}
+        "counters": {},
+        "_protectionFrom": [
+         {
+          "kind": "color",
+          "value": "B",
+          "raw": "black"
+         }
+        ]
        }
       ],
       [
@@ -1451,9 +1478,11 @@
         "owner": "player_1",
         "controller": "player_1",
         "isToken": false,
+        "isFaceDown": false,
         "tapped": false,
         "traits": [],
-        "counters": {}
+        "counters": {},
+        "_protectionFrom": []
        }
       ]
      ],
@@ -1738,6 +1767,8 @@
     "counterTimestamps": {},
     "isFaceDown": false,
     "faceDownMode": null,
+    "faceDownAs": null,
+    "face": null,
     "roomLocked": null,
     "cdaUserValue": null,
     "classLevel": null,
@@ -1797,6 +1828,7 @@
         "manaCost": "{1}{G}",
         "isCreature": true,
         "isToken": false,
+        "isFaceDown": false,
         "isEmblem": false,
         "isSpell": false,
         "isZoneCard": false,
@@ -1826,7 +1858,8 @@
         "owner": "player_0",
         "controller": "player_0",
         "tapped": false,
-        "isCommander": false
+        "isCommander": false,
+        "_protectionFrom": []
        }
       ],
       [
@@ -1854,6 +1887,7 @@
         "manaCost": "{2}{U}",
         "isCreature": true,
         "isToken": false,
+        "isFaceDown": false,
         "isEmblem": false,
         "isSpell": false,
         "isZoneCard": false,
@@ -1885,7 +1919,8 @@
         "owner": "player_0",
         "controller": "player_0",
         "tapped": false,
-        "isCommander": false
+        "isCommander": false,
+        "_protectionFrom": []
        }
       ],
       [
@@ -1913,6 +1948,7 @@
         "manaCost": "{3}{W}{W}",
         "isCreature": true,
         "isToken": false,
+        "isFaceDown": false,
         "isEmblem": false,
         "isSpell": false,
         "isZoneCard": false,
@@ -1945,7 +1981,8 @@
         "owner": "player_1",
         "controller": "player_1",
         "tapped": false,
-        "isCommander": false
+        "isCommander": false,
+        "_protectionFrom": []
        }
       ],
       [
@@ -1975,6 +2012,7 @@
         "manaCost": "{W}{W}",
         "isCreature": true,
         "isToken": false,
+        "isFaceDown": false,
         "isEmblem": false,
         "isSpell": false,
         "isZoneCard": false,
@@ -2007,7 +2045,14 @@
         "owner": "player_1",
         "controller": "player_1",
         "tapped": false,
-        "isCommander": false
+        "isCommander": false,
+        "_protectionFrom": [
+         {
+          "kind": "color",
+          "value": "B",
+          "raw": "black"
+         }
+        ]
        }
       ],
       [
@@ -2034,6 +2079,7 @@
         "manaCost": "{3}",
         "isCreature": true,
         "isToken": false,
+        "isFaceDown": false,
         "isEmblem": false,
         "isSpell": false,
         "isZoneCard": false,
@@ -2065,7 +2111,8 @@
         "owner": "player_1",
         "controller": "player_1",
         "tapped": false,
-        "isCommander": false
+        "isCommander": false,
+        "_protectionFrom": []
        }
       ],
       [
@@ -2091,6 +2138,7 @@
         "manaCost": "{R}",
         "isCreature": false,
         "isToken": false,
+        "isFaceDown": false,
         "isEmblem": false,
         "isSpell": true,
         "isZoneCard": false,
@@ -2422,6 +2470,8 @@
     "counterTimestamps": {},
     "isFaceDown": false,
     "faceDownMode": null,
+    "faceDownAs": null,
+    "face": null,
     "roomLocked": null,
     "cdaUserValue": null,
     "classLevel": null,
@@ -2481,6 +2531,7 @@
         "manaCost": "{1}{G}",
         "isCreature": true,
         "isToken": false,
+        "isFaceDown": false,
         "isEmblem": false,
         "isSpell": false,
         "isZoneCard": false,
@@ -2510,7 +2561,8 @@
         "owner": "player_0",
         "controller": "player_0",
         "tapped": false,
-        "isCommander": false
+        "isCommander": false,
+        "_protectionFrom": []
        }
       ],
       [
@@ -2538,6 +2590,7 @@
         "manaCost": "{2}{U}",
         "isCreature": true,
         "isToken": false,
+        "isFaceDown": false,
         "isEmblem": false,
         "isSpell": false,
         "isZoneCard": false,
@@ -2569,7 +2622,8 @@
         "owner": "player_0",
         "controller": "player_0",
         "tapped": false,
-        "isCommander": false
+        "isCommander": false,
+        "_protectionFrom": []
        }
       ],
       [
@@ -2597,6 +2651,7 @@
         "manaCost": "{3}{W}{W}",
         "isCreature": true,
         "isToken": false,
+        "isFaceDown": false,
         "isEmblem": false,
         "isSpell": false,
         "isZoneCard": false,
@@ -2629,7 +2684,8 @@
         "owner": "player_1",
         "controller": "player_1",
         "tapped": false,
-        "isCommander": false
+        "isCommander": false,
+        "_protectionFrom": []
        }
       ],
       [
@@ -2659,6 +2715,7 @@
         "manaCost": "{W}{W}",
         "isCreature": true,
         "isToken": false,
+        "isFaceDown": false,
         "isEmblem": false,
         "isSpell": false,
         "isZoneCard": false,
@@ -2691,7 +2748,14 @@
         "owner": "player_1",
         "controller": "player_1",
         "tapped": false,
-        "isCommander": false
+        "isCommander": false,
+        "_protectionFrom": [
+         {
+          "kind": "color",
+          "value": "B",
+          "raw": "black"
+         }
+        ]
        }
       ],
       [
@@ -2716,6 +2780,7 @@
         "manaCost": "{3}",
         "isCreature": true,
         "isToken": false,
+        "isFaceDown": false,
         "isEmblem": false,
         "isSpell": false,
         "isZoneCard": false,
@@ -2747,7 +2812,8 @@
         "owner": "player_1",
         "controller": "player_1",
         "tapped": false,
-        "isCommander": false
+        "isCommander": false,
+        "_protectionFrom": []
        }
       ],
       [
@@ -2773,6 +2839,7 @@
         "manaCost": "{R}",
         "isCreature": false,
         "isToken": false,
+        "isFaceDown": false,
         "isEmblem": false,
         "isSpell": true,
         "isZoneCard": false,
@@ -2830,6 +2897,7 @@
         "manaCost": "{2}{R}",
         "isCreature": false,
         "isToken": false,
+        "isFaceDown": false,
         "isEmblem": false,
         "isSpell": true,
         "isZoneCard": false,
@@ -3186,6 +3254,8 @@
     "counterTimestamps": {},
     "isFaceDown": false,
     "faceDownMode": null,
+    "faceDownAs": null,
+    "face": null,
     "roomLocked": null,
     "cdaUserValue": null,
     "classLevel": null,
@@ -3250,6 +3320,7 @@
         "manaCost": "{1}{G}",
         "isCreature": true,
         "isToken": false,
+        "isFaceDown": false,
         "isEmblem": false,
         "isSpell": false,
         "isZoneCard": false,
@@ -3307,6 +3378,7 @@
         "manaCost": "{2}{U}",
         "isCreature": true,
         "isToken": false,
+        "isFaceDown": false,
         "isEmblem": false,
         "isSpell": false,
         "isZoneCard": false,
@@ -3366,6 +3438,7 @@
         "manaCost": "{3}{W}{W}",
         "isCreature": true,
         "isToken": false,
+        "isFaceDown": false,
         "isEmblem": false,
         "isSpell": false,
         "isZoneCard": false,
@@ -3427,6 +3500,7 @@
         "manaCost": "{W}{W}",
         "isCreature": true,
         "isToken": false,
+        "isFaceDown": false,
         "isEmblem": false,
         "isSpell": false,
         "isZoneCard": false,
@@ -3484,6 +3558,7 @@
         "manaCost": "{3}",
         "isCreature": true,
         "isToken": false,
+        "isFaceDown": false,
         "isEmblem": false,
         "isSpell": false,
         "isZoneCard": false,
@@ -3541,6 +3616,7 @@
         "manaCost": "{R}",
         "isCreature": false,
         "isToken": false,
+        "isFaceDown": false,
         "isEmblem": false,
         "isSpell": true,
         "isZoneCard": false,
@@ -3598,6 +3674,7 @@
         "manaCost": "{2}{R}",
         "isCreature": false,
         "isToken": false,
+        "isFaceDown": false,
         "isEmblem": false,
         "isSpell": true,
         "isZoneCard": false,
@@ -3655,6 +3732,7 @@
         "manaCost": "{R}",
         "isCreature": false,
         "isToken": false,
+        "isFaceDown": false,
         "isEmblem": false,
         "isSpell": true,
         "isZoneCard": false,
