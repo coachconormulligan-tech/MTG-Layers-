@@ -1192,6 +1192,8 @@ const Battlefield = {
     }
     this.effects.push(...newEffects);
     this.updateLabels();
+    // "This creature phases out", "All permanents you control phase out": done as it resolves.
+    if (newEffects.some(e => e._phaseWho)) this._applyFiredPhase(pseudoPerm.id);
     return pseudoPerm;
   },
 
@@ -1558,6 +1560,8 @@ const Battlefield = {
     }
     this.effects.push(...newEffects);
     this.updateLabels();
+    // "This creature phases out", "All permanents you control phase out": done as it resolves.
+    if (newEffects.some(e => e._phaseWho)) this._applyFiredPhase(pseudoPerm.id);
     return pseudoPerm;
   },
 
@@ -1863,6 +1867,8 @@ const Battlefield = {
     if (!perm || !perm['additionalCostLabel' + suffix]) return;
     perm['additionalCostPaid' + suffix] = !!paid;
     this._invalidate();
+    // (What a phasing marker phases out may hang on it: Galadriel's Dismissal kicked.)
+    if (this.effects.some(e => e.sourceId === permId && e._phaseMarker)) this._applyFiredPhase(permId);
   },
 
   /* Update X value and re-parse effects */
@@ -2560,12 +2566,61 @@ const Battlefield = {
      (removePermanent). Restoring a board phases nothing: the flags are saved on the permanents. */
   _applyFiredPhase(pseudoId) {
     const pseudo = this.getPermById(pseudoId);
-    if (!pseudo || this._restoringTargets) return;
+    if (!pseudo || this._restoringTargets || this._restoringBoard) return;
     const wanted = new Set();
-    for (const m of this.effects) {
-      if (m.sourceId !== pseudoId || !m._phaseMarker || m.disabled) continue;
-      for (const t of [m.targetId, ...(m.targetIds || [])]) if (t && this.getPermById(t)) wanted.add(t);
+    const markers = this.effects.filter(m => m.sourceId === pseudoId && m._phaseMarker && !m.disabled);
+    // A marker behind a condition ("If this spell was kicked, …", "If that permanent is black,
+    // exile it instead", "unless you pay {U}{U}") is judged as the engine judges the effect it
+    // stands for: its toggle, or the target as the spell resolved.
+    let states = null;
+    const holds = (m, id) => {
+      if (!m.asLongAsCondition) return true;
+      states = states || this.getAllFinalStates();
+      const perm = id && this.getPermById(id);
+      if (m.asLongAsCondition._toggle || !perm) return !!m.asLongAsCondition(states.get(pseudoId) || {}, states);
+      return effectAppliesToPerm(Object.assign({}, m, { _phaseMarker: false }), states.get(id), perm, id, states);
+    };
+    for (const m of markers) {
+      if (m._phaseWho) continue;
+      for (const t of [m.targetId, ...(m.targetIds || [])]) if (t && this.getPermById(t) && holds(m, t)) wanted.add(t);
     }
+    // The card itself, what it is attached to, or a group: who that is was worked out as the
+    // ability resolved (pseudo._phaseGroup), and again only when what decides it changes (a
+    // toggle, the player picked for "target player controls").
+    const others = markers.filter(m => m._phaseWho && holds(m, null));
+    const sig = JSON.stringify(others.map(m => [m.id, m._targetPlayerId || m._targetOpponentPlayerId || null]));
+    if (pseudo._phaseGroup && pseudo._phaseGroup.sig === null) pseudo._phaseGroup.sig = sig;
+    if (!pseudo._phaseGroup || pseudo._phaseGroup.sig !== sig) {
+      for (const id of (pseudo._phaseGroup && pseudo._phaseGroup.ids) || []) {
+        const p = this.getPermById(id);
+        if (p && p.phasedOut && p.phasedOutBy === pseudoId) this.setPhasedOut(id, false);
+      }
+      const ids = [];
+      if (others.length) {
+        states = this.getAllFinalStates();
+        const present = (p) => p && !p.phasedOut && _isPermanent(p) && p.id !== pseudoId;
+        const srcId = pseudo.abilitySourceId || null;
+        for (const m of others) {
+          if (m._phaseWho === 'source') {
+            const src = srcId && this.getPermById(srcId);
+            if (present(src)) ids.push(srcId);
+          } else if (m._phaseWho === 'attached') {
+            // (Equipped / enchanted creature: the source's own target, CR 301.5 / 303.4.)
+            const att = srcId && this.effects.find(e => e.sourceId === srcId && e.scope === 'targeted' && !e.selfTarget && e.targetId && e.targetId !== srcId);
+            const host = att && this.getPermById(att.targetId);
+            if (present(host)) ids.push(host.id);
+          } else {
+            const probe = Object.assign({}, m, { _phaseMarker: false, asLongAsCondition: null });
+            for (const p of this.permanents) {
+              if (!present(p) || !states.get(p.id)) continue;
+              if (effectAppliesToPerm(probe, states.get(p.id), p, p.id, states)) ids.push(p.id);
+            }
+          }
+        }
+      }
+      pseudo._phaseGroup = { sig, ids: [...new Set(ids)] };
+    }
+    for (const id of pseudo._phaseGroup.ids) if (this.getPermById(id)) wanted.add(id);
     for (const p of [...this.permanents]) {
       if (p.phasedOut && p.phasedOutBy === pseudoId && !wanted.has(p.id)) this.setPhasedOut(p.id, false);
     }
@@ -2649,6 +2704,7 @@ const Battlefield = {
         e.params.newController = playerId || null;
       }
     });
+    if (this.effects.some(e => e.sourceId === effectSourceId && e._phaseMarker)) this._applyFiredPhase(effectSourceId);
   },
 
   /* Set the chosen player for a "target player" source (any player, including self).
@@ -2666,6 +2722,7 @@ const Battlefield = {
         e._targetPlayerId = playerId || null;
       }
     });
+    if (this.effects.some(e => e.sourceId === effectSourceId && e._phaseMarker)) this._applyFiredPhase(effectSourceId);
   },
 
   /* Set the chosen enchanted player for an "enchant player" aura (e.g. Curse of Conformity).
@@ -3610,6 +3667,8 @@ const Battlefield = {
     }
     this.updateLabels();
     this._invalidate();
+    // "All permanents you control phase out." (Teferi's Protection): done as it resolves.
+    if (this.effects.some(e => e.sourceId === perm.id && e._phaseWho)) this._applyFiredPhase(perm.id);
     return perm;
   },
 
@@ -3954,6 +4013,8 @@ const Battlefield = {
         phasedOutWith: (p.phasedOut && p.phasedOutWith) || undefined,
         // What a spell's "turn target … face down / up" turned (_applyFiredFace).
         face: p._face ? p._face.map(r => Object.assign({}, r)) : null,
+        // Who a "this creature / all … phase out" phased out as it resolved (_applyFiredPhase).
+        phaseGroup: p._phaseGroup ? { sig: p._phaseGroup.sig, ids: p._phaseGroup.ids.slice() } : undefined,
         roomLocked: p.roomLocked ? p.roomLocked.slice() : null,
         cdaUserValue: p.cdaUserValue ?? null,
         classLevel: p.classLevel ?? null,
@@ -4043,6 +4104,8 @@ const Battlefield = {
         attach: p._attach ? { what: p._attach.what, to: p._attach.to, prev: p._attach.prev || null } : null,
         // What a fired "turn target … face down / up" turned (_applyFiredFace).
         face: p._face ? p._face.map(r => Object.assign({}, r)) : null,
+        // Who a "this creature / all … phase out" phased out as it resolved (_applyFiredPhase).
+        phaseGroup: p._phaseGroup ? { sig: p._phaseGroup.sig, ids: p._phaseGroup.ids.slice() } : undefined,
         // Player-level targets (chosen opponent / chosen player / enchanted player) live
         // on the pseudo-perm just like on real perms, so capture them too — a triggered
         // ability that targets an opponent would otherwise lose its choice on restore.
@@ -4111,7 +4174,14 @@ const Battlefield = {
     };
   },
 
+  /* (While a board is restored nothing is phased by its spells and abilities as they are added
+     again: what they phased out is saved on the permanents, _applyFiredPhase.) */
   restore(data) {
+    this._restoringBoard = true;
+    try { return this._restoreBoard(data); } finally { this._restoringBoard = false; }
+  },
+
+  _restoreBoard(data) {
     if (!data || data.version !== 1) return false;
     this.clear();
     this.exile = [];
@@ -4398,6 +4468,13 @@ const Battlefield = {
       if (!pseudo) continue;
       const recs = f.face.filter(r => idMap[r.id]).map(r => Object.assign({}, r, { id: idMap[r.id] }));
       pseudo._face = recs.length ? recs : null;
+    }
+    for (const f of [...(data.perms || []), ...(data.firedAbilities || [])]) {
+      const pseudo = f.phaseGroup && idMap[f.id] && this.getPermById(idMap[f.id]);
+      if (!pseudo) continue;
+      // (Its signature names the markers by effect id, which a restore renumbers: the next
+      // _applyFiredPhase adopts the one it reads then, and works nothing out again.)
+      pseudo._phaseGroup = { sig: null, ids: f.phaseGroup.ids.map(id => idMap[id]).filter(Boolean) };
     }
     // Phasing last, once every target is wired up (setPhasedOut's flags, ids translated).
     for (const r of data.perms || []) {

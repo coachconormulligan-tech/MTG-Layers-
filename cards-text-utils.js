@@ -634,7 +634,10 @@ function _resolveItPronoun(text) {
 // A subject, then a continuous-effect verb, in the sentence's first clause — not an
 // imperative ("gain control of …", "you gain 3 life").
 // (A rule kept as a trait too: "Otherwise, it can't attack or block." — Bonds of Faith.)
-const _BRANCH_CONTINUOUS_VERB_RE = /^[^,]+?\s(?:gets?|gains?|ha(?:s|ve)|becomes?|loses?|can't (?:attack|block|be blocked|be the targets?))\b/i;
+// ("phases out" too: it is done once the spell resolves, but its toggle decides whether, as
+// for a continuous effect — "If this spell was kicked, each creature target player controls
+// phases out instead", Galadriel's Dismissal.)
+const _BRANCH_CONTINUOUS_VERB_RE = /^[^,]+?\s(?:gets?|gains?|ha(?:s|ve)|becomes?|loses?|can't (?:attack|block|be blocked|be the targets?)|phases? out)\b/i;
 const _BRANCH_PRONOUN_RE = /^(?:it|that (?:creature|permanent)|those (?:creatures|permanents)|they)\b/i;
 // "If it's a Vehicle, it becomes …", "As long as it's red, it has …", "If it doesn't have
 // rampage, that creature gains …": [1] If / As long as, [2] the condition, [3] the effect.
@@ -702,6 +705,9 @@ function _branchIsContinuous(body) {
     // (The commas of a target list — "up to one target artifact, creature, or planeswalker an
     // opponent controls has …", Azure Beastbinder — do not end the first clause.)
     .replace(/\btarget (?:[\w-]+, )+(?:or |and )?[\w-]+/i, (list) => list.replace(/,/g, ''));
+  // ("If the gift was promised, all permanents you control phase out, and until your next turn,
+  // your life total can't change …" — Perch Protection: the life clause comes after.)
+  if (/^[^,]+?\sphases? out\b/i.test(body) && !/^you\b/i.test(body)) return true;
   return _BRANCH_CONTINUOUS_VERB_RE.test(body) && !/^you\b/i.test(body) && !/\blife\b|\bcounters?\b/i.test(body);
 }
 // The optional action a toggle is named after — "You may gain control of target permanent until

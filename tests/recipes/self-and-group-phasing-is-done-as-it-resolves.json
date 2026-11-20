@@ -1,0 +1,190 @@
+{
+  "name": "Phasing — the card itself, what it is attached to, or a group phases out as the ability resolves (Mist Dragon, Vanishing, Vaporous Djinn, Teferi's Protection, Galadriel's Dismissal, Divine Smite)",
+  "notes": "2026-11-20. Only \"target … phases out\" was done; \"This creature phases out\", \"Enchanted creature phases out\" and \"All permanents you control phase out\" did nothing and were done by hand. Now each is a marker (_phaseWho source / attached / group) and _applyFiredPhase works out who it is as the ability resolves and keeps that list (pseudo._phaseGroup). Mist Dragon's fired ability phases out Mist Dragon. Vanishing's phases out the creature it enchants (Hill Giant), and Vanishing with it. Vaporous Djinn's upkeep trigger asks whether {U}{U} was paid: paid, it stays. Teferi's Protection, cast by Player 3, phases out Player 3's Plains and nothing of anyone else's (the Forest stays: Kird Ape is 2/3), and its list is fixed as it resolves: Player 3's Grizzly Bears, added after, are not in it. Galadriel's Dismissal kicked phases out each creature the picked player (Player 3: the Bears) controls instead of its target, so Craw Wurm stays. Divine Smite does not phase out a black target (it is exiled instead, by hand): Black Knight stays. Giant Growth lists exactly the creatures still in: Kird Ape, Vaporous Djinn, Craw Wurm, Black Knight.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Player 2"
+      ]
+    },
+    {
+      "call": [
+        "addPlayer",
+        "Player 3"
+      ]
+    },
+    {
+      "add": "Forest",
+      "as": "forest"
+    },
+    {
+      "add": "Kird Ape",
+      "as": "ape"
+    },
+    {
+      "add": "Mist Dragon",
+      "as": "md"
+    },
+    {
+      "fire": "@md",
+      "activated": 2,
+      "as": "mda"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant"
+    },
+    {
+      "add": "Vanishing",
+      "as": "van"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@van",
+        "@giant"
+      ]
+    },
+    {
+      "fire": "@van",
+      "activated": 1,
+      "as": "vana"
+    },
+    {
+      "add": "Vaporous Djinn",
+      "as": "djinn"
+    },
+    {
+      "fire": "@djinn",
+      "trigger": 1,
+      "as": "djt"
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@djt",
+        true
+      ]
+    },
+    {
+      "add": "Craw Wurm",
+      "as": "wurm",
+      "controller": "p2"
+    },
+    {
+      "add": "Black Knight",
+      "as": "bk",
+      "controller": "p2"
+    },
+    {
+      "add": "Plains",
+      "as": "plains",
+      "controller": "p3"
+    },
+    {
+      "add": "Teferi's Protection",
+      "spell": true,
+      "as": "tp",
+      "controller": "p3"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears",
+      "controller": "p3"
+    },
+    {
+      "add": "Divine Smite",
+      "spell": true,
+      "as": "ds"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@ds",
+        "@bk"
+      ]
+    },
+    {
+      "add": "Galadriel's Dismissal",
+      "spell": true,
+      "as": "gd"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@gd",
+        "@wurm"
+      ]
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@gd",
+        true
+      ]
+    },
+    {
+      "call": [
+        "setTargetPlayer",
+        "@gd",
+        "p3"
+      ]
+    },
+    {
+      "add": "Giant Growth",
+      "spell": true,
+      "as": "gg"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Mist Dragon",
+      "final": {
+        "phasedOut": true
+      }
+    },
+    {
+      "perm": "Hill Giant",
+      "final": {
+        "phasedOut": true
+      }
+    },
+    {
+      "perm": "Vanishing",
+      "final": {
+        "phasedOut": true
+      }
+    },
+    {
+      "perm": "Plains",
+      "final": {
+        "phasedOut": true
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "phasedOut": true
+      }
+    },
+    {
+      "perm": "Kird Ape",
+      "final": {
+        "power": 2,
+        "toughness": 3
+      }
+    },
+    {
+      "targetCandidates": {
+        "perm": "Giant Growth"
+      },
+      "are": [
+        "Kird Ape",
+        "Vaporous Djinn",
+        "Craw Wurm",
+        "Black Knight"
+      ]
+    }
+  ]
+}

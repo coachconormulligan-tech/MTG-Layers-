@@ -7938,6 +7938,7 @@ function parseCardEffects(permanent, card, opts = {}) {
     // Ripple) — but not ", then it phases out", which is the pronoun's.)
     const phaseRegex = /\b((?:up to \w+\s+|any number of\s+)?(?:another\s+|other\s+)?target\s+(?:(?!,\s*then\b)[^.;:"])+?|it|they|that (?:creature|permanent)|those (?:creatures|permanents))\s+phases?\s+out\b/gi;
     let pm;
+    const _phasedAt = new Set();
     while ((pm = phaseRegex.exec(masked)) !== null) {
       const before = masked.slice(0, pm.index);
       // The subject opens its sentence or clause ("When …, target creature phases out", "…, then it phases out").
@@ -7964,6 +7965,72 @@ function parseCardEffects(permanent, card, opts = {}) {
         desc, { _oraclePos: pm.index, _phaseMarker: true });
       _applyTargetInfo(eff, built, built.fn);
       if (!eff.targetRestriction) eff.targetRestriction = built.fn || null;
+      // ("Target creature phases out. If this spell was kicked, … instead" — Galadriel's
+      // Dismissal; "If that permanent is black, exile it instead" — Divine Smite.)
+      const cond = _getConditionForSentence(pm.index);
+      if (cond) eff.asLongAsCondition = cond;
+      _phasedAt.add(pm.index);
+    }
+    // No target: the card itself ("{3}{U}{U}: This creature phases out." — Mist Dragon; "• Vision
+    // phases out." — a mode; "if Kaito entered this turn, he phases out"), what it is attached to
+    // ("{U}{U}: Enchanted creature phases out." — Vanishing; Robe of Stars), or a group ("All
+    // permanents you control phase out." — Teferi's Protection; "each creature target player
+    // controls phases out instead" — Galadriel's Dismissal kicked; "untap all creatures, then
+    // those creatures phase out" — Out of Time). Each is a marker too (_phaseWho 'source' /
+    // 'attached' / 'group'); _applyFiredPhase works out who it is once, as the ability resolves,
+    // and keeps that list. Not a group the player chooses ("that weren't chosen this way",
+    // "permanents of that type", "Those permanents", after "choose") and not "this creature and
+    // that creature" (Dream Fighter: the other is whatever it fought).
+    const otherRegex = /\b(this (?:creature|permanent|artifact|enchantment|land|card)|equipped creature|enchanted (?:creature|permanent)|he|she|(?:all|each) (?:(?!\b(?:and|then)\b)[^.;:,"])+?|those creatures|they)\s+phases?\s+out\b/gi;
+    while ((pm = otherRegex.exec(masked)) !== null) {
+      if (_phasedAt.has(pm.index)) continue;
+      const before = masked.slice(0, pm.index);
+      if (!/(?:^|[.;:,—•\n]\s*|\bthen\s+|\bif you do,?\s+)$/i.test(before)) continue;
+      const after = masked.slice(pm.index + pm[0].length);
+      if (/^\s+(?:at|during)\b/i.test(after)) continue;
+      const subj = pm[1].trim();
+      let who, built = null, text = subj;
+      if (/^(?:this|he|she)\b/i.test(subj)) {
+        // ("he" is the card only when nothing else has been named: "if Kaito entered this turn, he phases out".)
+        if (/^(?:he|she)$/i.test(subj) && /\btarget\b/i.test(before)) continue;
+        who = 'source';
+        text = /^(?:he|she)$/i.test(subj) ? 'this permanent' : subj;
+      } else if (/^(?:equipped|enchanted)\b/i.test(subj)) {
+        who = 'attached';
+      } else {
+        who = 'group';
+        if (/^(?:those creatures|they)$/i.test(subj)) {
+          // "Untap all creatures, then those creatures phase out" (Out of Time): the group just named.
+          const ante = before.match(/\buntap all ([^.,;]+?),?\s+then\s+$/i);
+          if (!ante) continue;
+          text = 'all ' + ante[1];
+        }
+        if (/\b(?:chosen|choose|this way|of that type|phased|phase in|with phasing)\b/i.test(text)) continue;
+        // "Choose target opponent. … All nonland permanents they control phase out." (Teferi's Reproach)
+        let groupText = text.replace(/^(?:all|each)\s+/i, '');
+        if (/\bthey control$/i.test(groupText)) {
+          if (!/\btarget opponent\b/i.test(before)) continue;
+          groupText = groupText.replace(/\bthey control$/i, 'target opponent controls');
+          text = text.replace(/\bthey control$/i, 'target opponent controls');
+        }
+        built = buildAppliesToFromText(groupText);
+        if (!built || !built.fn || built.isSelf || built.isSpellTarget || built.isTargeted) continue;
+      }
+      // "This creature phases out unless you pay {U}{U}." (Vaporous Djinn): whether it was paid is asked.
+      let cond = _getConditionForSentence(pm.index) || null;
+      const unless = after.match(/^\s+unless you pay ((?:\{[^}]+\})+)/i);
+      if (unless) {
+        const token = _askStatic(`You paid ${unless[1]}`);
+        if (!token) continue;
+        cond = _parseCondition(token.replace(/ paid\]$/, ' not paid]'));
+      }
+      const plural = /^(?:all|those|they)\b/i.test(text);
+      const desc = `${text.charAt(0).toUpperCase() + text.slice(1)} ${plural ? 'phase' : 'phases'} out.`;
+      const eff = pushEff('7c', EFFECT_TYPE.MODIFY_PT, { power: 0, toughness: 0 },
+        who === 'group' ? { appliesTo: built.fn, scope: 'global', selfTarget: false }
+          : { appliesTo: null, scope: 'targeted', selfTarget: who === 'source' },
+        desc, { _oraclePos: pm.index, _phaseMarker: true, _phaseWho: who, ...(cond ? { asLongAsCondition: cond } : {}) });
+      if (who === 'group') _applyTargetInfo(eff, built, null);
     }
   }
 
