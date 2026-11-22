@@ -1,0 +1,32 @@
+{
+  "name": "Silver-bordered creature type — still a creature type that is replaced, switch off",
+  "notes": "The Silver border switch decides only what a changeling has. A printed Clamfolk is a creature type either way (TypeCatalog.isCreatureType), so Turn to Frog leaves only Frog.",
+  "steps": [
+    {
+      "add": "Clambassadors",
+      "as": "c"
+    },
+    {
+      "add": "Turn to Frog",
+      "as": "t",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTarget",
+        "@t",
+        "@c"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Clambassadors",
+      "final": {
+        "subtypes": [
+          "Frog"
+        ]
+      }
+    }
+  ]
+}

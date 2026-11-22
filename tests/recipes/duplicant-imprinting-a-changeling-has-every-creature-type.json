@@ -1,0 +1,51 @@
+{
+  "name": "Duplicant — an exiled changeling gives it every creature type",
+  "notes": "\"This creature has the … creature types of the last creature card exiled with it.\" A changeling card in exile has every creature type (CR 702.73a); Duplicant took the printed Shapeshifter alone.",
+  "steps": [
+    {
+      "add": "Duplicant",
+      "as": "d"
+    },
+    {
+      "call": [
+        "addToExile",
+        "card:Changeling Outcast"
+      ]
+    },
+    {
+      "call": [
+        "setExileTag",
+        "exile_1",
+        "@d"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Duplicant",
+      "final": {
+        "power": 1,
+        "toughness": 1,
+        "subtypes": {
+          "$includes": [
+            "Shapeshifter",
+            "Elf",
+            "Time Lord",
+            "Goblin"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Duplicant",
+      "final": {
+        "subtypes": {
+          "$excludes": [
+            "Naga",
+            "Clamfolk"
+          ]
+        }
+      }
+    }
+  ]
+}

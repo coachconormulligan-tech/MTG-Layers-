@@ -216,7 +216,7 @@ function _sourceHasQuality(p, realSourcePerm, realSourceState) {
       if (sSubs.includes(p.value)) return true;
       // Changeling / "is every creature type"
       return sIsAllCreatureTypes && typeof TypeCatalog !== 'undefined' &&
-        !!TypeCatalog.creatureTypes && TypeCatalog.creatureTypes.has(p.value);
+        TypeCatalog.everyCreatureType().has(p.value);
     case 'name': return sName === p.value;
   }
   return false;

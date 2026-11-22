@@ -20,6 +20,7 @@ async function searchScryfall(query, opts = {}) {
     if (!res.ok) return _scryfallLastResults;
     const data = await res.json();
     const newCards = data.data || [];
+    for (const card of newCards) learnTypesFromCard(card);   // a new set's types, before a card of it is added
     _scryfallNextPage = data.has_more ? data.next_page : null;
     _scryfallLastResults = loadMore ? [..._scryfallLastResults, ...newCards] : newCards;
     return _scryfallLastResults;
@@ -38,7 +39,9 @@ async function fetchCardByName(name) {
   try {
     const res = await fetch(url);
     if (!res.ok) return null;
-    return await res.json();
+    const card = await res.json();
+    learnTypesFromCard(card);
+    return card;
   } catch (e) {
     console.error('Scryfall fetch failed:', e);
     return null;

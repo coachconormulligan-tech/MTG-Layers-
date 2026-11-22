@@ -1,0 +1,50 @@
+{
+  "name": "Thranduil and Conspicuous Snoop — a changeling card is an Elf card and a Goblin card",
+  "notes": "GAIN_ACTIVATED_FROM_GRAVEYARDS matched its subtype against the printed type line, so the activated abilities of Amoeboid Changeling in the graveyard (Thranduil) or on top of the library (Conspicuous Snoop) were not gained.",
+  "steps": [
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Amoeboid Changeling"
+      ]
+    },
+    {
+      "call": [
+        "setLibraryTop",
+        "p1",
+        "card:Amoeboid Changeling"
+      ]
+    },
+    {
+      "add": "Thranduil, the Elvenking",
+      "as": "t"
+    },
+    {
+      "add": "Conspicuous Snoop",
+      "as": "c"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Thranduil, the Elvenking",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "{T}: Target creature gains all creature types until end of turn."
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Conspicuous Snoop",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "{T}: Target creature gains all creature types until end of turn."
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -639,7 +639,7 @@ function _replaceProperNounSelfRef(cardName, oracleText, isToken = false) {
         return match;
       }
       if (_typeWordShortName &&
-          (/(?:\b(?:all|each|every|target|this|that|those|these|of|more|attacking|blocking|tapped|untapped|legendary|non-?\w*)|\d+\/\d+|\b[A-Z][\w-]*)\s+$/.test(before) ||
+          (/(?:\b(?:all|each|every|target|this|that|those|these|of|more|two|three|four|five|X|amass|attacking|blocking|tapped|untapped|legendary|non-?\w*)|\d+\/\d+|\b[A-Z][\w-]*)\s+$/.test(before) ||
            /^\s+(?:creatures?|permanents?|cards?|spells?|planeswalkers?|tokens?|artifacts?|enchantments?|lands?|you control|your opponents control|on the battlefield|or\b|and\b)/i.test(result.substring(offset + match.length, offset + match.length + 30)))) {
         return match;
       }
@@ -656,6 +656,13 @@ function _replaceProperNounSelfRef(cardName, oracleText, isToken = false) {
       // (Blinkmoth Nexus; Scryfall's type list lacks Blinkmoth).
       if (/^\s+(?:(?:artifact|enchantment|land)\s+)?(?:creatures?|permanents?|tokens?)\b/i.test(result.substring(offset + match.length, offset + match.length + 30))) {
         return match;
+      }
+      // "Target Time Lord you control" on Time Lord Regeneration: Time is the first word of a
+      // creature type of several words, not the card's short name.
+      {
+        const here = [match].concat(result.substring(offset + match.length, offset + match.length + 60).trim().split(/\s+/));
+        const phrase = _typePhraseAt(here, 0);
+        if (phrase && phrase.type.split(' ')[0] === match) return match;
       }
       // After "type" or "subtype" words
       if (/\b(?:the\s+type|the\s+subtype|type|subtype)\s*$/i.test(before)) {
@@ -690,6 +697,21 @@ function _replaceProperNounSelfRef(cardName, oracleText, isToken = false) {
   return result;
 }
 
+/* Each word after the dash is a subtype, but for the creature types of several words (CR 205.3b:
+   Time Lord, and any Scryfall adds), which are found in the lists. */
+function _splitSubtypes(text, phrases) {
+  const words = String(text).match(/\S+/g) || [];
+  const known = phrases || _subtypeForms().phrases;
+  if (!known.length) return words;
+  const out = [];
+  for (let i = 0; i < words.length; i++) {
+    const type = known.find(t => t.split(' ').every((w, j) => words[i + j] === w));
+    out.push(type || words[i]);
+    if (type) i += type.split(' ').length - 1;
+  }
+  return out;
+}
+
 function parseTypeLine(typeLine) {
   const supertypeWords = ['Basic', 'Legendary', 'Snow', 'World', 'Ongoing'];
   // For multi-face type lines (e.g. "Enchantment — Room // Enchantment — Room"),
@@ -708,7 +730,7 @@ function parseTypeLine(typeLine) {
   const leftWords = (parts[0] || '').split(/\s+/).filter(Boolean);
   const supertypes = leftWords.filter(w => supertypeWords.includes(w));
   const types = leftWords.filter(w => !supertypeWords.includes(w) && w !== '//' && w !== 'Token');
-  const subtypes = parts[1] ? parts[1].split(/\s+/).filter(Boolean) : [];
+  const subtypes = parts[1] ? _splitSubtypes(parts[1]) : [];
   
   // For multi-face cards, also grab types/subtypes from the second face
   if (typeLine.includes(' // ')) {
@@ -720,7 +742,7 @@ function parseTypeLine(typeLine) {
       else if (w !== '//' && w !== 'Token') { if (!types.includes(w)) types.push(w); }
     }
     if (secondParts[1]) {
-      for (const w of secondParts[1].split(/\s+/).filter(Boolean)) {
+      for (const w of _splitSubtypes(secondParts[1])) {
         if (!subtypes.includes(w)) subtypes.push(w);
       }
     }

@@ -210,17 +210,51 @@ function renderAll() {
    the parser cannot recognise subtypes and silently mis-parses cards, so a failure is
    surfaced in a dismissible banner with a Retry control. */
 function _loadTypeCatalog() {
+  // Types found on an earlier visit count at once, before any board is restored.
+  applySavedTypeUpdate(_typeUpdateStore);
+  TypeCatalog.onTypesChanged = _rereadBoardForTypes;
   return TypeCatalog.init().then(ok => {
     if (!ok) { _showCatalogWarning(); return false; }
     _hideCatalogWarning();
+    learnWaitingTypes();
     _reparseBoardAfterCatalogLoad();
+    _updateTypesInBackground();
     return true;
   });
 }
 
-/* Cards already on the board were parsed without the catalog. Round-trip the board
-   through serialize/restore so every permanent, zone and fired ability is re-parsed
-   through the normal add pipeline. No-op on an empty board or mid-restore. */
+// Where updateTypesFromScryfall (cards-types.js) keeps a day's answer: this browser.
+const TYPE_UPDATE_KEY = 'layer-inspector-type-update';
+const _typeUpdateStore = {
+  read() { try { return JSON.parse(localStorage.getItem(TYPE_UPDATE_KEY)); } catch (e) { return null; } },
+  write(value) { try { localStorage.setItem(TYPE_UPDATE_KEY, JSON.stringify(value)); } catch (e) { /* storage blocked */ } },
+};
+
+function _updateTypesInBackground() {
+  return updateTypesFromScryfall(_typeUpdateStore);
+}
+
+/* A type was learned (cards-types.js). A changeling has it at the next evaluation; a card
+   whose words name it is read again, once no pop-up is open (it holds the ids a restore
+   replaces) and no board is loading. */
+let _rereadTimer = null;
+let _rereadTypes = [];
+function _rereadBoardForTypes(changed) {
+  Battlefield._invalidate();
+  _rereadTypes.push(...changed.map(c => c.type));
+  clearTimeout(_rereadTimer);
+  _rereadTimer = setTimeout(function whenIdle() {
+    const popupOpen = [...document.querySelectorAll('.modal-overlay')].some(el => el.getClientRects().length);
+    if (popupOpen || _restoreInProgress || _urlRestoreInFlight) { _rereadTimer = setTimeout(whenIdle, 1000); return; }
+    const types = _rereadTypes.splice(0);
+    const board = JSON.stringify(Battlefield.serialize()).toLowerCase();
+    // (The stem finds the plurals: Skelf in "skelves", Glaxy in "glaxies".)
+    const named = types.some(t => board.includes(t.toLowerCase().slice(0, Math.max(1, t.length - (t.length > 3 ? 2 : 0)))));
+    if (named) _reparseBoardAfterCatalogLoad();
+    renderAll();
+  }, 50);
+}
+
 function _reparseBoardAfterCatalogLoad() {
   if (_restoreInProgress || _urlRestoreInFlight) return;
   const data = Battlefield.serialize();
@@ -238,7 +272,7 @@ function _showCatalogWarning() {
     el.setAttribute('role', 'alert');
     el.innerHTML =
       '<span class="catalog-warning-text"><strong>Could not connect to Scryfall.</strong> ' +
-      'Card types could not be loaded, so some cards may be evaluated incorrectly.</span>' +
+      'The card type lists saved with the site are in use, so types from newer sets may be missed.</span>' +
       '<button type="button" class="btn catalog-warning-retry">Retry</button>' +
       '<button type="button" class="btn btn-ghost catalog-warning-dismiss">Dismiss</button>';
     el.querySelector('.catalog-warning-retry').addEventListener('click', _retryTypeCatalog);

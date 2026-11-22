@@ -851,7 +851,8 @@ const _zoneStateMemo = new Map(); // keyed by cacheVersion|name|zone within a si
 function computeZoneCardState(card, zone, ownerId) {
   const z = zone || 'graveyard';
   const cv = (typeof Battlefield !== 'undefined' && Battlefield._cacheVersion) || 0;
-  const key = cv + '|' + (card && card.name) + '|' + z + '|' + (ownerId || '');
+  // (The switch is in the key: clear() restarts _cacheVersion, so an undo of it repeats a key.)
+  const key = cv + '|' + (card && card.name) + '|' + z + '|' + (ownerId || '') + '|' + (TypeCatalog._silverOn() ? 's' : '');
   if (_zoneStateMemo.has(key)) return _zoneStateMemo.get(key);
   _zoneEvalDepth++;
   let result = null;

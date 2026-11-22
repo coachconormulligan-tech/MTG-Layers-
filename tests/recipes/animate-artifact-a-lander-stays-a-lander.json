@@ -1,0 +1,37 @@
+{
+  "name": "Animate Artifact — an animated Lander is still a Lander",
+  "notes": "CR 205.1a: an artifact that becomes an artifact creature keeps its artifact types. Scryfall's artifact-type catalog lacked Lander, Mutagen, Heartwood and Vibranium, so on the site 71 cards erased them. The rules' lists are in data.js (officialSubtypes); tests/rules.py checks them.",
+  "steps": [
+    {
+      "add": "Lander",
+      "as": "l"
+    },
+    {
+      "add": "Animate Artifact",
+      "as": "a"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@a",
+        "@l"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Lander",
+      "final": {
+        "types": {
+          "$includes": [
+            "Artifact",
+            "Creature"
+          ]
+        },
+        "subtypes": [
+          "Lander"
+        ]
+      }
+    }
+  ]
+}

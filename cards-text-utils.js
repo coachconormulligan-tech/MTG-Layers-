@@ -23,15 +23,17 @@ function normalizeTypeWord(w) {
   return CARD_TYPE_WORDS[w] || CARD_TYPE_WORDS[w.replace(/s$/, '')];
 }
 
-const LAND_SUBTYPE_WORDS = {
-  'plains': 'Plains', 'island': 'Island', 'islands': 'Island',
-  'swamp': 'Swamp', 'swamps': 'Swamp',
-  'mountain': 'Mountain', 'mountains': 'Mountain',
-  'forest': 'Forest', 'forests': 'Forest',
-  'cave': 'Cave', 'caves': 'Cave',
-  'desert': 'Desert', 'deserts': 'Desert',
-  'gate': 'Gate', 'gates': 'Gate',
-};
+// Every land type of CR 205.3i, singular and plural (data.js is loaded before this file).
+const LAND_SUBTYPE_WORDS = {};
+function _addLandSubtypeWord(type) {
+  // Every way it can be written in the plural (Loci, Estuaries, Wharves), and its stand-in
+  // is looked up by _landSubtypeWord.
+  for (const form of _typeWordForms(type)) {
+    const word = form.toLowerCase();
+    if (!LAND_SUBTYPE_WORDS[word]) LAND_SUBTYPE_WORDS[word] = type;
+  }
+}
+for (const type of TypeCatalog.officialSubtypes.land) _addLandSubtypeWord(type);
 
 /* Check if a filter/subject text references permanents or permanent types.
    Used to skip non-permanent "is/are" clauses like "each opponent's hand size is increased by 5". */
@@ -59,6 +61,7 @@ function filterReferencesPermanents(filterText) {
   for (const w of Object.keys(LAND_SUBTYPE_WORDS)) {
     if (f === w || f.endsWith(' ' + w) || f.startsWith(w + ' ') || f.includes(' ' + w + ' ')) return true;
   }
+  if (_mentionsTypePhrase(f)) return true;   // a creature type of several words (Time Lord)
   // Known creature subtypes (from TypeCatalog)
   if (typeof TypeCatalog !== 'undefined' && TypeCatalog.creatureTypes.size > 0) {
     const words = f.split(/\s+/);
@@ -71,30 +74,33 @@ function filterReferencesPermanents(filterText) {
     }
   }
   // Known artifact subtypes (from TypeCatalog) — e.g. "Clues", "Treasures", "Food"
-  // Hardcoded fallback covers the pre-load window before TypeCatalog.artifactTypes is populated.
-  const KNOWN_ARTIFACT_SUBTYPES = ['Treasure', 'Equipment', 'Vehicle', 'Food', 'Clue', 'Blood', 'Map', 'Powerstone', 'Incubator', 'Contraption'];
   {
     const words = f.split(/\s+/);
     for (const w of words) {
       const cap = w.charAt(0).toUpperCase() + w.slice(1);
       const singular = cap.endsWith('s') ? cap.slice(0, -1) : cap;
-      if (KNOWN_ARTIFACT_SUBTYPES.includes(cap) || KNOWN_ARTIFACT_SUBTYPES.includes(singular)) return true;
       if (typeof TypeCatalog !== 'undefined' && TypeCatalog.artifactTypes.size > 0) {
         if (TypeCatalog.artifactTypes.has(cap) || TypeCatalog.artifactTypes.has(singular)) return true;
       }
     }
   }
   // Known enchantment subtypes — e.g. "Aura", "Saga", "Class"
-  const KNOWN_ENCHANTMENT_SUBTYPES = ['Aura', 'Curse', 'Shrine', 'Rune', 'Saga', 'Cartouche', 'Class', 'Role', 'Background', 'Shard'];
   {
     const words = f.split(/\s+/);
     for (const w of words) {
       const cap = w.charAt(0).toUpperCase() + w.slice(1);
       const singular = cap.endsWith('s') ? cap.slice(0, -1) : cap;
-      if (KNOWN_ENCHANTMENT_SUBTYPES.includes(cap) || KNOWN_ENCHANTMENT_SUBTYPES.includes(singular)) return true;
       if (typeof TypeCatalog !== 'undefined' && TypeCatalog.enchantmentTypes && TypeCatalog.enchantmentTypes.size > 0) {
         if (TypeCatalog.enchantmentTypes.has(cap) || TypeCatalog.enchantmentTypes.has(singular)) return true;
       }
+    }
+  }
+  // Any other card type's subtype, however it is spelled or made plural
+  if (typeof TypeCatalog !== 'undefined') {
+    const others = TypeCatalog.vocabularyKinds().filter(kind => kind !== 'creature' && kind !== 'spell');
+    for (const w of f.split(/\s+/)) {
+      const type = _knownTypeWord(w);
+      if (type && others.some(kind => TypeCatalog[kind + 'Types'].has(type))) return true;
     }
   }
   // Planeswalker subtypes (e.g. "Gideon", "Jace") and battle subtypes — all refer to permanents
@@ -202,13 +208,19 @@ const IRREGULAR_PLURALS = {
 };
 function singularizeCreatureType(word) {
   const low = word.toLowerCase();
+  // The type just chosen for the card being read, as it was chosen ("Gus" is no plural).
+  const chosen = typeof TypeCatalog !== 'undefined' ? TypeCatalog.chosenType : null;
+  if (chosen && low === chosen.toLowerCase()) return chosen;
   // Check irregular map first
   if (IRREGULAR_PLURALS[low]) return IRREGULAR_PLURALS[low];
+  // Any type known now, a new one too, in the plural or not and spelled as it is (cards-types.js).
+  const known = _knownTypeWord(low);
+  if (known) return known;
   // Each part of a hyphenated type takes a capital ("Assembly-Worker").
   const capOf = (w) => w.replace(/(^|-)([a-z])/g, (_, pre, ch) => pre + ch.toUpperCase());
   const cap = capOf(low);
   // Check TypeCatalog before stripping trailing s -- some types end in s (e.g. "Fungus")
-  if (typeof TypeCatalog !== 'undefined' && TypeCatalog.creatureTypes.has(cap)) return cap;
+  if (typeof TypeCatalog !== 'undefined' && (TypeCatalog.creatureTypes.has(cap) || TypeCatalog.officialCreatureTypes.has(cap))) return cap;
   // "-ies" / "-es" plurals of a known type ("Armies" -> "Army", "Heroes" -> "Hero")
   if (typeof TypeCatalog !== 'undefined' && TypeCatalog.creatureTypes.size > 0) {
     for (const stem of [low.endsWith('ies') ? low.slice(0, -3) + 'y' : null, low.endsWith('es') ? low.slice(0, -2) : null]) {
@@ -254,8 +266,10 @@ function pluralizeCreatureType(singular) {
    E.g. from="Wyvern", to="Elf" — [{ from: "Wyvern", to: "Elf" }, { from: "Wyverns", to: "Elves" }]
    Ensures text like "Other Wyverns get +1/+1" properly becomes "Other Elves get +1/+1". */
 function buildCreatureTypeReplacementPairs(from, to) {
-  const fromSingular = singularizeCreatureType(from);
-  const toSingular = singularizeCreatureType(to);
+  // A type as it can be chosen is already singular (Elves and Gus, with Silver border on).
+  const choices = new Set(TypeCatalog.creatureTypeChoices());
+  const fromSingular = choices.has(from) ? from : singularizeCreatureType(from);
+  const toSingular = choices.has(to) ? to : singularizeCreatureType(to);
   const fromPlural = pluralizeCreatureType(fromSingular);
   const toPlural = pluralizeCreatureType(toSingular);
   const pairs = [{ from: fromSingular, to: toSingular }];
@@ -1520,12 +1534,13 @@ function _buildAppliesToFromTextInner(filterText) {
   }
   // "Two target creatures you control that share a creature type" (Secret Tunnel): a creature that
   // shares one with another the words allow (the pair itself is the player's to pick). Unread,
-  // "share" was taken for a subtype and nothing was offered. (Changeling is every type.)
+  // "share" was taken for a subtype and nothing was offered. (Changeling shares any type it has: CR 205.3m's, the silver-bordered with that switch on.)
   const shareType = raw.match(/^(.+?)\s+that share a creature type$/);
   if (shareType) {
     const inner = _buildAppliesToFromTextInner(shareType[1]);
     if (inner && inner.fn && !inner.isSelf) {
       const isChangeling = (s) => (s.abilities || []).some(a => /^changeling\b/i.test(a));
+      const hasEveryType = (s) => isChangeling(s) || (s.subtypes || []).some(t => TypeCatalog.everyCreatureType().has(t));
       return {
         fn: (p, allStates, effectCtrl) => {
           if (!inner.fn(p, allStates, effectCtrl)) return false;
@@ -1533,7 +1548,8 @@ function _buildAppliesToFromTextInner(filterText) {
           // allStates, so it counts itself once and needs one more.)
           const states = allStates && allStates.values ? [...allStates.values()] : [];
           return states.filter(q => q && inner.fn(q, allStates, effectCtrl) &&
-            (isChangeling(p) || isChangeling(q) || (p.subtypes || []).some(t => (q.subtypes || []).includes(t)))).length >= 2;
+            ((isChangeling(p) && hasEveryType(q)) || (isChangeling(q) && hasEveryType(p)) ||
+              (p.subtypes || []).some(t => (q.subtypes || []).includes(t)))).length >= 2;
         },
         desc: `${inner.desc} that share a creature type`,
       };
@@ -2085,6 +2101,18 @@ function _buildAppliesToFromTextInner(filterText) {
   for (let i = 0; i < words.length; i++) {
     let word = words[i].replace(/,$/, ''); // strip trailing commas ("noncreature," → "noncreature")
     if (!word) continue;
+    // "Target Time Lord you control" (Time Lord Regeneration), "non-Time Lord creature": a
+    // creature type of several words is one subtype, as parseTypeLine keeps it.
+    {
+      const bare = word.replace(/^non-/i, '');
+      const phrase = _typePhraseAt([bare].concat(words.slice(i + 1, i + 6)), 0);
+      if (phrase) {
+        if (bare !== word) { negatedSubtypes.push(phrase.type); hasNegation = true; }
+        else requiredSubtypes.push(phrase.type);
+        i += phrase.length - 1;
+        continue;
+      }
+    }
     let isNeg = false;
 
     // Detect "non-" or "non" prefix
@@ -2390,7 +2418,7 @@ function parseBecomesType(text) {
   const typePart = withIdx >= 0 ? t.substring(0, withIdx).trim() : t;
   const withPart = withIdx >= 0 ? t.substring(withIdx + 4).trim() : '';
 
-  const words = typePart.split(/\s+/);
+  const words = _joinTypePhrases(typePart.match(/\S+/g) || []);   // a type of several words is one
   const types = [];
   const subtypes = [];
   const supertypes = [];
@@ -2411,7 +2439,8 @@ function parseBecomesType(text) {
     const ls = LAND_SUBTYPE_WORDS[w];
     if (ls) { subtypes.push(ls); isLandSubtype = true; continue; }
     const cap = word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-    if (cap.length > 1 && !['In', 'To', 'Of', 'Their', 'Its', 'Other', 'Still', 'Also',
+    // (A type as printed is one whatever English word it also is, and may be a single letter: Q.)
+    if (TypeCatalog.officialCreatureTypes.has(word) || cap.length > 1 && !['In', 'To', 'Of', 'Their', 'Its', 'Other', 'Still', 'Also',
         'Addition', 'Types', 'Type', 'All', 'Each', 'Every', 'Basic', 'Nonbasic',
         'Non', 'Control', 'You', 'Your', 'Colors', 'Color', 'Mana', 'Any',
         'Has', 'Have', 'Gains', 'Gain', 'Gets', 'Get', 'Loses', 'Lose',
@@ -2574,17 +2603,15 @@ function buildAuraRestriction(enchantTarget) {
       }
     }
     // Check known land types
-    if (typeof TypeCatalog !== 'undefined' && TypeCatalog.getSubtypeCategory) {
-      const landTypes = TypeCatalog.getSubtypeCategory('land');
+    if (typeof TypeCatalog !== 'undefined') {
+      const landTypes = TypeCatalog.landTypes;
       if (landTypes.has(capWord)) {
         requiredSubtypes.push(capWord);
         continue;
       }
     }
-    // Check common subtypes that might not be in TypeCatalog yet
-    const KNOWN_SUBTYPES = ['Vehicle', 'Equipment', 'Aura', 'Saga', 'Food', 'Treasure',
-      'Blood', 'Clue', 'Map', 'Powerstone', 'Shrine', 'Cartouche', 'Curse', 'Rune'];
-    if (KNOWN_SUBTYPES.includes(capWord)) {
+    // Artifact and enchantment types
+    if (TypeCatalog.artifactTypes.has(capWord) || TypeCatalog.enchantmentTypes.has(capWord)) {
       requiredSubtypes.push(capWord);
       continue;
     }

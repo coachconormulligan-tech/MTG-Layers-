@@ -189,10 +189,11 @@ function _creatureTypeAutocompleteForChosen(permId, query) {
   if (!dropdown) return;
   if (!query || query.length < 1) { dropdown.style.display = 'none'; return; }
   const q = query.toLowerCase();
-  const matches = (TypeCatalog.creatureTypes || []).filter(t => t.toLowerCase().startsWith(q)).slice(0, 8);
+  const matches = TypeCatalog.creatureTypeChoices().filter(t => t.toLowerCase().startsWith(q)).slice(0, 8);
   if (matches.length === 0) { dropdown.style.display = 'none'; return; }
   dropdown.innerHTML = matches.map(m =>
-    `<div class="chosen-type-option" onmousedown="event.preventDefault(); _selectChosenCreatureType('${permId}', '${escapeAttr(m)}')">${escapeHtml(m)}</div>`
+    // (The type is read off the element: C'tan and Jem'Hadar would end a quoted argument.)
+    `<div class="chosen-type-option" data-type="${escapeAttr(m)}" onmousedown="event.preventDefault(); _selectChosenCreatureType('${permId}', this.dataset.type)">${escapeHtml(m)}</div>`
   ).join('');
   dropdown.style.display = 'block';
 }
@@ -207,11 +208,24 @@ function _selectChosenCreatureType(permId, type) {
 
 function setChosenCreatureType(permId, type) {
   const trimmed = (type || '').trim();
-  // Capitalize first letter
-  const capitalized = trimmed ? trimmed.charAt(0).toUpperCase() + trimmed.slice(1) : '';
-  Battlefield.setChosenCreatureType(permId, capitalized || null);
+  const chosen = trimmed ? TypeCatalog.creatureTypeNamed(trimmed) : null;
+  if (trimmed && !chosen) {
+    _showSBAToast(creatureTypeRefusal(trimmed));
+    renderAll();   // puts the type chosen before back in the box
+    return;
+  }
+  Battlefield.setChosenCreatureType(permId, chosen);
   Battlefield.evaluate();
   renderAll();
+}
+
+/* Why typed text cannot be chosen as a creature type. */
+function creatureTypeRefusal(text) {
+  const silver = TypeCatalog.creatureTypeNamed(text, TypeCatalog.silverTypes());
+  if (!silver) return `Cannot choose "${text}". It is not a creature type.`;
+  return Battlefield.silverBorder
+    ? `Cannot choose "${silver}". A creature type of several words cannot be written into a card's text here.`
+    : `Cannot choose "${silver}". It is a silver-bordered creature type, and Silver border is off.`;
 }
 
 /* Render a basic land type dropdown for cards with "choose a basic land type" */
@@ -223,7 +237,7 @@ function renderChosenLandTypeInput(perm) {
   // "Choose a land type" (Barbarian Guides): the basics first, then every other land type.
   const anyType = /\bchoose a land type\b/i.test(perm.originalOracleText || '');
   const others = (nonbasic || anyType)
-    ? [...((typeof TypeCatalog !== 'undefined' && TypeCatalog.landTypes) || [])].filter(t => !basics.includes(t)).sort()
+    ? [...TypeCatalog.officialSubtypes.land].filter(t => !basics.includes(t)).sort()
     : [];
   const types = nonbasic ? others : [...basics, ...others];
   const options = types.map(t =>

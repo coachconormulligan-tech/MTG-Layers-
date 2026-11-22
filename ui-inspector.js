@@ -511,8 +511,7 @@ function _buildTypeLineHtml(state, baseState, highlight) {
   const _wrapTok = (tok, set) => (highlight && set && !set.has(tok))
     ? `<span class="state-new">${escapeHtml(tok)}</span>` : escapeHtml(tok);
   const left = [...state.supertypes, ...state.types].map(t => _wrapTok(t, baseLeftSet)).join(' ');
-  const creatureCatalogReady = typeof TypeCatalog !== 'undefined'
-    && TypeCatalog.creatureTypes && TypeCatalog.creatureTypes.size > 0;
+  const creatureCatalogReady = typeof TypeCatalog !== 'undefined';   // CR 205.3m is in data.js
   const landCatalogReady = typeof TypeCatalog !== 'undefined'
     && TypeCatalog.landTypes && TypeCatalog.landTypes.size > 0;
 
@@ -521,8 +520,9 @@ function _buildTypeLineHtml(state, baseState, highlight) {
     const chipSubtypeSet = new Set();
 
     if (state.isAllCreatureTypes && creatureCatalogReady) {
-      const creatureSubs = allSubs.filter(s => TypeCatalog.creatureTypes.has(s)).sort();
-      const excluded = [...TypeCatalog.creatureTypes].filter(t => !creatureSubs.includes(t)).sort();
+      const every = TypeCatalog.everyCreatureType();
+      const creatureSubs = allSubs.filter(s => every.has(s)).sort();
+      const excluded = [...every].filter(t => !creatureSubs.includes(t)).sort();
       creatureSubs.forEach(s => chipSubtypeSet.add(s));
       let chipLabel;
       if (excluded.length === 0) chipLabel = 'All Creature Types';
@@ -530,13 +530,14 @@ function _buildTypeLineHtml(state, baseState, highlight) {
       else chipLabel = `All Creature Types except ${excluded.length} types`;
       chips.push(`<span class="bf-card-alltypes-chip${highlight && !baseState.isAllCreatureTypes ? ' state-new' : ''}" `
         + `onclick="event.stopPropagation(); openAllTypesPopup('creature', this.dataset.subs, this.dataset.excluded)" `
-        + `data-subs="${escapeAttr(creatureSubs.join(','))}" data-excluded="${escapeAttr(excluded.join(','))}" `
+        + `data-subs="${escapeAttr(creatureSubs.join('|'))}" data-excluded="${escapeAttr(excluded.join('|'))}" `
         + `title="Click to see every creature type currently in effect">${escapeHtml(chipLabel)}</span>`);
     }
 
     if (state.isAllLandTypes && landCatalogReady) {
-      const landSubs = allSubs.filter(s => TypeCatalog.landTypes.has(s)).sort();
-      const excluded = [...TypeCatalog.landTypes].filter(t => !landSubs.includes(t)).sort();
+      const everyLand = TypeCatalog.officialSubtypes.land;
+      const landSubs = allSubs.filter(s => everyLand.has(s)).sort();
+      const excluded = [...everyLand].filter(t => !landSubs.includes(t)).sort();
       landSubs.forEach(s => chipSubtypeSet.add(s));
       let chipLabel;
       if (excluded.length === 0) chipLabel = 'All Land Types';
@@ -544,7 +545,7 @@ function _buildTypeLineHtml(state, baseState, highlight) {
       else chipLabel = `All Land Types except ${excluded.length} types`;
       chips.push(`<span class="bf-card-alltypes-chip${highlight && !baseState.isAllLandTypes ? ' state-new' : ''}" `
         + `onclick="event.stopPropagation(); openAllTypesPopup('land', this.dataset.subs, this.dataset.excluded)" `
-        + `data-subs="${escapeAttr(landSubs.join(','))}" data-excluded="${escapeAttr(excluded.join(','))}" `
+        + `data-subs="${escapeAttr(landSubs.join('|'))}" data-excluded="${escapeAttr(excluded.join('|'))}" `
         + `title="Click to see every land type currently in effect">${escapeHtml(chipLabel)}</span>`);
     }
 
@@ -559,13 +560,14 @@ function _buildTypeLineHtml(state, baseState, highlight) {
   return left + sub;
 }
 
-function openAllCreatureTypesPopup(subsCsv, excludedCsv) {
-  openAllTypesPopup('creature', subsCsv, excludedCsv);
+function openAllCreatureTypesPopup(subsList, excludedList) {
+  openAllTypesPopup('creature', subsList, excludedList);
 }
 
-function openAllTypesPopup(kind, subsCsv, excludedCsv) {
-  const subs = (subsCsv || '').split(',').filter(Boolean);
-  const excluded = (excludedCsv || '').split(',').filter(Boolean);
+// The lists are joined by "|": a silver-bordered type has commas in it (B.F.M.).
+function openAllTypesPopup(kind, subsList, excludedList) {
+  const subs = (subsList || '').split('|').filter(Boolean);
+  const excluded = (excludedList || '').split('|').filter(Boolean);
   let overlay = document.getElementById('all-creature-types-overlay');
   if (!overlay) {
     overlay = document.createElement('div');
@@ -579,9 +581,23 @@ function openAllTypesPopup(kind, subsCsv, excludedCsv) {
   const header = excluded.length === 0
     ? `All ${label} Types (${subs.length})`
     : `All ${label} Types except ${excluded.length === 1 ? excluded[0] : excluded.length + ' types'} (${subs.length} of ${subs.length + excluded.length})`;
-  const subsHtml = subs.length
-    ? `<div class="all-types-grid">${subs.map(s => `<span class="all-types-item">${escapeHtml(s)}</span>`).join('')}</div>`
-    : '<div class="dim">(none)</div>';
+  const grid = (list, cls = '') => `<div class="all-types-grid${cls}">${list.map(s => `<span class="all-types-item">${escapeHtml(s)}</span>`).join('')}</div>`;
+  let subsHtml = subs.length ? grid(subs) : '<div class="dim">(none)</div>';
+  // Creature types come in two lists: CR 205.3m's (black-bordered), and all others
+  // (silver-bordered), which count only while the "Silver border" switch is on.
+  const silverSet = kind === 'creature' && typeof TypeCatalog !== 'undefined' && TypeCatalog.silverTypes();
+  if (silverSet && silverSet.size) {
+    const black = subs.filter(s => !silverSet.has(s));
+    const silver = subs.filter(s => silverSet.has(s));
+    const on = !!Battlefield.silverBorder;
+    subsHtml = `<div class="modal-section-title">Black-bordered (${black.length})</div>`
+      + (black.length ? grid(black) : '<div class="dim">(none)</div>')
+      + (on
+        ? `<div class="modal-section-title" style="margin-top:12px;">Silver-bordered (${silver.length})</div>`
+          + (silver.length ? grid(silver) : '<div class="dim">(none)</div>')
+        : `<div class="modal-section-title" style="margin-top:12px;">Silver-bordered (off)</div>`
+          + grid([...silverSet].sort(), ' all-types-grid-off'));
+  }
   const excludedHtml = excluded.length
     ? `<div class="modal-section-title" style="margin-top:12px;">Excluded</div>`
       + `<div class="all-types-grid all-types-grid-excluded">${excluded.map(s => `<span class="all-types-item all-types-item-excluded">${escapeHtml(s)}</span>`).join('')}</div>`

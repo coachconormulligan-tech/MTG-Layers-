@@ -105,7 +105,7 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
   // creature's), falling back to the permanent being modified.
   const ctrlId = (sourceState && sourceState.controller) || (selfState && selfState.controller) || 'player_0';
 
-  let desc = forEachDesc.toLowerCase().trim()
+  let desc = _plainTypeWords(forEachDesc.toLowerCase().trim())
     .replace(/\s+you control$/, '')
     .replace(/\s+your opponents control$/, '')
     .replace(/\s+on the battlefield$/, '')
@@ -179,7 +179,7 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
       } else {
         // Try subtype match (e.g. "humans", "zombies", "dragons")
         const singular = filter.endsWith('s') ? filter.slice(0, -1) : filter;
-        const cap = singular.charAt(0).toUpperCase() + singular.slice(1);
+        const cap = _knownTypeWord(filter) || singular.charAt(0).toUpperCase() + singular.slice(1);
         const capPlural = filter.charAt(0).toUpperCase() + filter.slice(1);
         matches = st.subtypes.includes(cap) || st.subtypes.includes(capPlural);
         // Also try compound "artifact creature" etc.
@@ -221,7 +221,7 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
       } else if (baseTypes[mvWord]) {
         matches = st.types.includes(baseTypes[mvWord]);
       } else {
-        const sub = mvWord.charAt(0).toUpperCase() + mvWord.slice(1);
+        const sub = _knownTypeWord(mvDesc) || mvWord.charAt(0).toUpperCase() + mvWord.slice(1);
         matches = (st.subtypes || []).includes(sub);
       }
       if (matches) total += (st.manaValue || 0);
@@ -360,7 +360,7 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
     // a REMOVE_TYPE that strips a creature subtype reduces it as expected.
     const creatureSubtypes = selfState.subtypes.filter(s => {
       if (typeof TypeCatalog !== 'undefined' && TypeCatalog.creatureTypes.size > 0) {
-        return TypeCatalog.creatureTypes.has(s);
+        return TypeCatalog.isCreatureType(s);
       }
       return true; // assume all subtypes are creature types if catalog unavailable
     });
@@ -522,6 +522,8 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
   };
   function _singularize(s) {
     if (IRREGULAR_PLURAL_MAP_LOCAL[s]) return IRREGULAR_PLURAL_MAP_LOCAL[s];
+    const known = _knownTypeWord(s);   // any type known now, a new one too
+    if (known) return known;
     const cap = s.charAt(0).toUpperCase() + s.slice(1);
     if (s.endsWith('s') && s.length > 2) return s.charAt(0).toUpperCase() + s.slice(1, -1);
     return cap;
@@ -553,7 +555,7 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
     for (const [, st] of pool) {
       if (youControl && st.controller !== ctrlId) continue;
       if (opponentsControl && st.controller === ctrlId) continue;
-      if (st.types.includes('Creature') && (st.subtypes || []).some(s => own.has(s) && (!TypeCatalog.creatureTypes.size || TypeCatalog.creatureTypes.has(s)))) count++;
+      if (st.types.includes('Creature') && (st.subtypes || []).some(s => own.has(s) && (!TypeCatalog.creatureTypes.size || TypeCatalog.isCreatureType(s)))) count++;
     }
     return count;
   }
@@ -790,6 +792,26 @@ const _ZONE_CLAUSE_TYPE_WORDS = {
   battle: 'Battle', tribal: 'Tribal',
 };
 
+/* Does this card have every creature type wherever it is? Changeling (CR 702.73a) and "This card
+   is every creature type" (Mistform Ultimus) are characteristic-defining and work in every zone
+   (CR 604.3), also where cards lose all abilities (layer 4 is before layer 6). Read off the
+   printed text without evaluating the card: the board's own evaluation asks this. Outside the
+   battlefield a card is its front face, but for a split card, which is both (CR 709.4, 712.8a). */
+function _cardIsEveryCreatureType(card) {
+  if (!card) return false;
+  const faces = card.card_faces || [];
+  const shown = card.oracle_text || !faces.length ? [card] : card.layout === 'split' ? faces : [faces[0]];
+  return shown.some(f => String(f.oracle_text || '').replace(/\s*\([^)]*\)/g, '').split('\n').some(line => {
+    const t = (f.name ? line.split(f.name).join('this card') : line).trim();
+    return /^(?:[a-z ]+,\s*)*changeling\s*(?:,|$)/i.test(t) || /^this (?:card|creature) is (?:every|all) creature types?\.?$/i.test(t);
+  }));
+}
+
+// A card's subtypes outside the battlefield, given the ones printed on it.
+function _zoneCardSubtypes(card, printed) {
+  return _cardIsEveryCreatureType(card) ? [...new Set([...printed, ...TypeCatalog.everyCreatureType()])] : printed;
+}
+
 // Match a real card object (from a graveyard/exile zone) against a type/subtype qualifier
 // like "zombie", "creature", or "zombie creature". Returns true if the card satisfies ALL words.
 function _zoneCardMatchesQualifier(card, qualifier) {
@@ -804,7 +826,7 @@ function _zoneCardMatchesQualifier(card, qualifier) {
     const lw = sing.toLowerCase();
     if (_ZONE_CLAUSE_TYPE_WORDS[lw]) {
       if (!parsed.types.includes(_ZONE_CLAUSE_TYPE_WORDS[lw])) return false;
-    } else if (!parsed.subtypes.includes(sing)) {
+    } else if (!_zoneCardSubtypes(card, parsed.subtypes).includes(sing)) {
       return false;
     }
   }

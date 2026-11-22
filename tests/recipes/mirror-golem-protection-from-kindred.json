@@ -1,0 +1,36 @@
+{
+  "name": "Mirror Golem — an exiled kindred card gives protection from kindred",
+  "notes": "TypeCatalog.cardTypes had Kindred's old name Tribal, so Mirror Golem with Bitterblossom exiled had protection from enchantment alone.",
+  "steps": [
+    {
+      "add": "Mirror Golem",
+      "as": "m"
+    },
+    {
+      "call": [
+        "addToExile",
+        "card:Bitterblossom"
+      ]
+    },
+    {
+      "call": [
+        "setExileTag",
+        "exile_1",
+        "@m"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Mirror Golem",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Protection from Kindred",
+            "Protection from Enchantment"
+          ]
+        }
+      }
+    }
+  ]
+}

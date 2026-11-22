@@ -1,0 +1,32 @@
+{
+  "name": "Time Lord — one creature type of two words, replaced whole",
+  "notes": "CR 205.3m: \"One creature type is two words long: Time Lord.\" parseTypeLine split it into Time and Lord, which are no creature types, so Susan Foreman turned into a Frog stayed a Time Lord.",
+  "steps": [
+    {
+      "add": "Susan Foreman",
+      "as": "s"
+    },
+    {
+      "add": "Turn to Frog",
+      "as": "t",
+      "spell": true
+    },
+    {
+      "call": [
+        "setTarget",
+        "@t",
+        "@s"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Susan Foreman",
+      "final": {
+        "subtypes": [
+          "Frog"
+        ]
+      }
+    }
+  ]
+}

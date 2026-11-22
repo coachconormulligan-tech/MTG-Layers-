@@ -417,11 +417,7 @@ function creatureTypeAutocomplete(inputId, dropdownId) {
   const excludeTypes = overlay?.dataset?.excludeTypes ? JSON.parse(overlay.dataset.excludeTypes) : [];
   const excludeSet = new Set(excludeTypes.map(t => t.toLowerCase()));
 
-  let types = TypeCatalog.creatureTypes.size > 0 ? [...TypeCatalog.creatureTypes] :
-    ['Human','Elf','Goblin','Merfolk','Zombie','Vampire','Angel','Dragon','Wizard','Warrior',
-     'Soldier','Knight','Cleric','Rogue','Shaman','Beast','Elemental','Spirit','Demon','Bird',
-     'Cat','Dog','Bear','Faerie','Giant','Dwarf','Treefolk','Saproling','Sliver','Insect',
-     'Spider','Snake','Rat','Skeleton','Hydra','Sphinx','Phyrexian','Fungus','Horror','Wurm','Drake'];
+  const types = inputId === 'creature-type-from' ? _replaceableCreatureTypes() : TypeCatalog.creatureTypeChoices();
 
   const filtered = types
     .filter(t => t.toLowerCase().startsWith(query) && !excludeSet.has(t.toLowerCase()))
@@ -430,8 +426,16 @@ function creatureTypeAutocomplete(inputId, dropdownId) {
   if (filtered.length === 0) { dropdown.style.display = 'none'; return; }
   dropdown.style.display = 'block';
   dropdown.innerHTML = filtered.map(t =>
-    `<div class="creature-type-option" onclick="selectCreatureType('${inputId}', '${dropdownId}', '${t}')">${escapeHtml(t)}</div>`
+    `<div class="creature-type-option" data-type="${escapeAttr(t)}" onclick="selectCreatureType('${inputId}', '${dropdownId}', this.dataset.type)">${escapeHtml(t)}</div>`
   ).join('');
+}
+
+/* What can be replaced: the types that can be chosen, and whatever creature types the target
+   itself has (a printed Naga or Clamfolk is one, whatever the Silver border switch says). */
+function _replaceableCreatureTypes() {
+  const targetId = document.getElementById('text-target-select')?.value;
+  const own = targetId ? Battlefield.getLayer3Subtypes(targetId, _textModalSourceId).filter(t => TypeCatalog.isCreatureType(t)) : [];
+  return [...new Set([...own, ...TypeCatalog.creatureTypeChoices()])];
 }
 
 function selectCreatureType(inputId, dropdownId, type) {
@@ -448,7 +452,7 @@ function creatureTypeTargetSelected() {
   const perm = Battlefield.getPermById(targetId);
   if (!perm) { container.innerHTML = ''; return; }
 
-  const creatureTypes = TypeCatalog.creatureTypes.size > 0 ? [...TypeCatalog.creatureTypes] : [];
+  const creatureTypes = TypeCatalog.creatureTypeChoices();
   // Show text as it appears after earlier Layer 3 effects
   const layer3Text = Battlefield.getLayer3Text(targetId, _textModalSourceId);
   const layer3Subtypes = Battlefield.getLayer3Subtypes(targetId, _textModalSourceId);
@@ -525,7 +529,7 @@ function creatureTypeTargetSelected() {
   const fullSupertypes = fs ? (fs.supertypes || []) : (perm.printedSupertypes || []);
   const typeLineParts = escapeHtml([...fullSupertypes, ...fullTypes].join(' '));
   const clickableSubtypes = layer3Subtypes
-    .map(st => `<span class="text-editable-word creature-type-word" title="Click to select" onclick="selectCreatureTypeWord('${escapeAttr(st)}')">${escapeHtml(st)}</span>`)
+    .map(st => `<span class="text-editable-word creature-type-word" title="Click to select" data-type="${escapeAttr(st)}" onclick="selectCreatureTypeWord(this.dataset.type)">${escapeHtml(st)}</span>`)
     .join(' ');
   const typeLineDisplay = typeLineParts + (layer3Subtypes.length ? '  —  ' + clickableSubtypes : '');
   container.innerHTML = `
@@ -558,9 +562,13 @@ function selectCreatureTypeWord(word) {
 }
 
 function addCreatureTypeReplacement() {
-  const from = document.getElementById('creature-type-from')?.value?.trim();
-  const to = document.getElementById('creature-type-to')?.value?.trim();
-  if (!from || !to || from.toLowerCase() === to.toLowerCase()) return;
+  const typedFrom = document.getElementById('creature-type-from')?.value?.trim();
+  const typedTo = document.getElementById('creature-type-to')?.value?.trim();
+  if (!typedFrom || !typedTo) return;
+  const from = TypeCatalog.creatureTypeNamed(typedFrom, _replaceableCreatureTypes());
+  const to = TypeCatalog.creatureTypeNamed(typedTo);
+  if (!from || !to) { alert(creatureTypeRefusal(from ? typedTo : typedFrom)); return; }
+  if (from === to) return;
   // Validate that "to" type is not Wall for Artificial Evolution
   const overlay = document.getElementById('text-modal-overlay');
   const excludeTypes = overlay?.dataset?.excludeTypes ? JSON.parse(overlay.dataset.excludeTypes) : [];

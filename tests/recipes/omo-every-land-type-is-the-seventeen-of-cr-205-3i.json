@@ -1,0 +1,50 @@
+{
+  "name": "Omo, Queen of Vesuva — every land type is CR 205.3i's, without Cloud",
+  "notes": "Scryfall's land-type catalog and data.js's old fallback both had Cloud (Barry's Land, a playtest card). \"Every land type\" is TypeCatalog.officialSubtypes.land.",
+  "steps": [
+    {
+      "add": "Omo, Queen of Vesuva",
+      "as": "o"
+    },
+    {
+      "add": "Wastes",
+      "as": "w"
+    },
+    {
+      "call": [
+        "addCounter",
+        "@w",
+        "everything",
+        1
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Wastes",
+      "final": {
+        "subtypes": {
+          "$includes": [
+            "Cave",
+            "Lair",
+            "Town",
+            "Urza's",
+            "Power-Plant"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Wastes",
+      "final": {
+        "subtypes": {
+          "$excludes": [
+            "Cloud",
+            "Barnyard",
+            "Omenpath"
+          ]
+        }
+      }
+    }
+  ]
+}

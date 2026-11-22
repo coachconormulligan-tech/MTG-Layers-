@@ -20,9 +20,9 @@ function applyEffect(state, effect, context) {
           state.isAllLandTypes = true;
           changes.push('Gained all land types');
         }
-        if (typeof TypeCatalog !== 'undefined' && TypeCatalog.landTypes && TypeCatalog.landTypes.size > 0) {
+        if (typeof TypeCatalog !== 'undefined') {
           let added = 0;
-          for (const lt of TypeCatalog.landTypes) {
+          for (const lt of TypeCatalog.officialSubtypes.land) {
             if (!state.subtypes.includes(lt)) {
               state.subtypes.push(lt);
               added++;
@@ -44,9 +44,9 @@ function applyEffect(state, effect, context) {
         // Materialize every creature type into state.subtypes so REMOVE_TYPE can
         // strip individual creature types (e.g. Werewolf Pack Leader's "isn't a Human").
         // Filter sites then become plain `subtypes.includes(s)` — no special-casing the flag.
-        if (typeof TypeCatalog !== 'undefined' && TypeCatalog.creatureTypes && TypeCatalog.creatureTypes.size > 0) {
+        if (typeof TypeCatalog !== 'undefined') {
           let added = 0;
-          for (const ct of TypeCatalog.creatureTypes) {
+          for (const ct of TypeCatalog.everyCreatureType()) {
             if (!state.subtypes.includes(ct)) { state.subtypes.push(ct); added++; }
           }
           if (added) changes.push(`Materialized ${added} creature subtypes`);
@@ -63,17 +63,21 @@ function applyEffect(state, effect, context) {
         const parsed = typeof parseTypeLine === 'function'
           ? parseTypeLine(tl) : { types: [], subtypes: [] };
         if (effect.params.requireCreature && !parsed.types.includes('Creature')) break;
+        // An exiled changeling has every creature type, so Duplicant does too.
+        const everyType = _cardIsEveryCreatureType(last.card);
+        if (everyType) state.isAllCreatureTypes = true;
         let added = 0;
-        for (const st of (parsed.subtypes || [])) {
+        for (const st of _zoneCardSubtypes(last.card, parsed.subtypes || [])) {
           const isCreatureSub = typeof TypeCatalog !== 'undefined' &&
-            TypeCatalog.creatureTypes && TypeCatalog.creatureTypes.has(st);
+            TypeCatalog.isCreatureType(st);
           if (!isCreatureSub) continue;
           if (!state.subtypes.includes(st)) {
             state.subtypes.push(st);
             added++;
           }
         }
-        if (added) changes.push(`Added ${added} creature subtype(s) from imprinted "${last.card.name}": ${parsed.subtypes.join(', ')}.`);
+        if (added) changes.push(everyType ? `Gained all creature types from imprinted "${last.card.name}".`
+          : `Added ${added} creature subtype(s) from imprinted "${last.card.name}": ${parsed.subtypes.join(', ')}.`);
         break;
       }
       for (const sup of (effect.params.supertypes || [])) {
@@ -94,7 +98,7 @@ function applyEffect(state, effect, context) {
         // in an earlier layer), the subtype gain doesn't apply — but other parts of the same
         // ability can still apply (e.g. "loses all abilities" in a later layer).
         const isCreatureSub = typeof TypeCatalog !== 'undefined' &&
-          TypeCatalog.creatureTypes && TypeCatalog.creatureTypes.has(st);
+          TypeCatalog.isCreatureType(st);
         if (isCreatureSub &&
             !state.types.includes('Creature') && !state.types.includes('Kindred')) {
           continue;
@@ -155,7 +159,11 @@ function applyEffect(state, effect, context) {
           // CR 205.1a: When a card loses a type, it also loses all subtypes
           // associated with that type. Look up the subtype set from TypeCatalog.
           if (typeof TypeCatalog !== 'undefined' && TypeCatalog.getSubtypesForCardType) {
-            const associatedSubs = TypeCatalog.getSubtypesForCardType(t);
+            // (Creature and kindred share their subtypes, as instant and sorcery do: they stay
+            // while the object still has the other.)
+            const kindOf = (type) => TypeCatalog._typeToCategory[type];
+            const associatedSubs = kindOf(t) && state.types.some(other => kindOf(other) === kindOf(t))
+              ? new Set() : TypeCatalog.getSubtypesForCardType(t);
             if (associatedSubs.size) {
               state.subtypes = state.subtypes.filter(s => {
                 if (associatedSubs.has(s)) {
@@ -1350,7 +1358,8 @@ function applyEffect(state, effect, context) {
             continue;
           }
           if (_gyCardTypes && !_gyCardTypes.some(t => new RegExp('\\b' + t + '\\b', 'i').test(_gyTypeLine.split('—')[0]))) continue;
-          if (_gyCardSubtype && !new RegExp('\\b' + _gyCardSubtype + '\\b', 'i').test(_gyTypeLine.split('—')[1] || '')) continue;
+          if (_gyCardSubtype && !new RegExp('\\b' + _gyCardSubtype + '\\b', 'i').test(_gyTypeLine.split('—')[1] || '') &&
+              !_zoneCardSubtypes(card, []).some(s => s.toLowerCase() === _gyCardSubtype.toLowerCase())) continue;   // a changeling
           // CR 305.6: a basic land type carries its mana ability even with no rules text.
           if (_gyCardType === 'Land') {
             for (const sub of (_gyTypeLine.split('—')[1] || '').trim().split(/\s+/)) {

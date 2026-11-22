@@ -24,6 +24,13 @@ try {
   _bfCardSize = Math.min(300, Math.max(100, parseInt(localStorage.getItem(CARD_SIZE_KEY)) || CARD_SIZE_DEFAULT));
 } catch (e) { /* storage blocked: defaults */ }
 
+/* The "Silver border" switch is a rule of the game being played, not a view setting:
+   it is part of the board (Battlefield.silverBorder) and an undo step. */
+function toggleSilverBorder() {
+  Battlefield.setSilverBorder(!Battlefield.silverBorder);
+  renderAll();
+}
+
 function toggleLiveText() {
   _liveTextOn = !_liveTextOn;
   try { localStorage.setItem(LIVE_TEXT_KEY, _liveTextOn ? 'on' : 'off'); } catch (e) { /* ignore */ }
@@ -125,6 +132,8 @@ function renderBattlefield() {
   document.documentElement.style.setProperty('--bf-card-w', _bfCardSize + 'px');
   const liveBtn = document.getElementById('live-text-btn');
   if (liveBtn) liveBtn.classList.toggle('active', _liveTextOn);
+  const silverBtn = document.getElementById('silver-border-btn');
+  if (silverBtn) silverBtn.classList.toggle('active', !!Battlefield.silverBorder);
   const sizeInput = document.getElementById('bf-card-size');
   if (sizeInput && document.activeElement !== sizeInput) sizeInput.value = _bfCardSize;
   const hideBtn = document.getElementById('hide-abilities-btn');
@@ -832,12 +841,13 @@ function _liveTypeLineHtml(p, fs) {
   // "Every creature type" / "every land type" as one phrase, like the inspector's chip
   let subs = sub, all = [];
   const cat = typeof TypeCatalog !== 'undefined' ? TypeCatalog : null;
-  if (fs.isAllCreatureTypes && cat && cat.creatureTypes && cat.creatureTypes.size) {
-    subs = subs.filter(t => !cat.creatureTypes.has(t));
+  if (fs.isAllCreatureTypes && cat) {
+    const every = cat.everyCreatureType();
+    subs = subs.filter(t => !every.has(t));
     all.push('<span class="bf-live-new">All creature types</span>');
   }
   if (fs.isAllLandTypes && cat && cat.landTypes && cat.landTypes.size) {
-    subs = subs.filter(t => !cat.landTypes.has(t));
+    subs = subs.filter(t => !cat.officialSubtypes.land.has(t));
     all.push('<span class="bf-live-new">All land types</span>');
   }
   const right = [...all, ...subs.map(t => tok(t, pSub))];

@@ -571,7 +571,7 @@ const CONDITION_PARSERS = [
       for (const [, s] of allStates) {
         if (myCtrl && s.controller !== myCtrl) continue;
         if (typeInfo.check === 'any' || (typeInfo.check === 'type' && s.types.includes(typeInfo.value))
-          || (typeInfo.check === 'subtype' && ((s.subtypes || []).includes(typeInfo.value) || (s.isAllCreatureTypes && s.types.includes('Creature'))))) count++;
+          || (typeInfo.check === 'subtype' && (s.subtypes || []).includes(typeInfo.value))) count++;
       }
       return count >= threshold;
     };
@@ -601,7 +601,7 @@ const CONDITION_PARSERS = [
   (ct) => {
     const m = ct.match(/you control (?:a |an )?(\w+)\s+planeswalker/);
     if (!m) return null;
-    const pwSubtype = m[1].charAt(0).toUpperCase() + m[1].slice(1).toLowerCase();
+    const pwSubtype = _knownTypeWord(m[1]) || m[1].charAt(0).toUpperCase() + m[1].slice(1).toLowerCase();
     return (state, allStates) => {
       if (!allStates) return true;
       const myCtrl = state.controller;
@@ -1254,7 +1254,8 @@ function parseCardEffects(permanent, card, opts = {}) {
       }
     }
     // "it is a creature or Vehicle", "it is red or green" — either one.
-    const orMatch = ct.match(/^it is (an? )?([\w-]+) or (?:an? )?([\w-]+)$/);
+    const plainCt = _plainTypeWords(ct);   // "you control a Quarl-Vex": a type is one word to what follows
+    const orMatch = plainCt.match(/^it is (an? )?([\w-]+) or (?:an? )?([\w-]+)$/);
     if (orMatch) {
       const subs = [orMatch[2], orMatch[3]].map(w => _parseCondition(`it is ${orMatch[1] || ''}${w}`));
       if (subs.every(Boolean)) return (state, allStates) => subs.some(c => c(state, allStates));
@@ -1265,7 +1266,7 @@ function parseCardEffects(permanent, card, opts = {}) {
     // "This enchantment" in a fired ability is the card it was fired from.
     const selfId = permanent.abilitySourceId || permanent.id;
     for (const parse of CONDITION_PARSERS) {
-      const pred = parse(ct, srcId, selfId);
+      const pred = parse(plainCt, srcId, selfId);
       if (pred) return pred;
     }
     return null;
@@ -1343,6 +1344,7 @@ function parseCardEffects(permanent, card, opts = {}) {
   // and it has defender" (Woolly Razorback): the prevention is not a characteristic.
   oracle = oracle.replace(/^(As long as [^,\n]+,)\s*prevent all (?:combat )?damage (?:it|this (?:creature|card|permanent)) would deal and (?=it (?:has|gets)\b)/gim, '$1 ');
 
+  oracle = _ownTypeAsSelf(oracle, permanent);   // "this Gizmo": the card's own subtype, whatever it is
   // Normalize "this [card-type]" to "this card" so self-reference detection works for all card types.
   // e.g. "this enchantment becomes..." (Daxos' Torment), "this artifact gains...", etc.
   // Skip "this creature" and "this permanent" — those are already handled as self-refs.
@@ -6335,7 +6337,7 @@ function parseCardEffects(permanent, card, opts = {}) {
           }
           // Subtype (capitalized word not in skip list)
           const cap = word.charAt(0).toUpperCase() + word.slice(1).toLowerCase().replace(/[.,;]/g, '');
-          if (cap.length > 1 && !['In', 'To', 'Of', 'Their', 'Its', 'Other', 'Still', 'Also',
+          if (TypeCatalog.officialCreatureTypes.has(word) || cap.length > 1 && !['In', 'To', 'Of', 'Their', 'Its', 'Other', 'Still', 'Also',
               'Addition', 'Types', 'Type', 'All', 'Each', 'Every', 'Basic', 'Nonbasic',
               'Non', 'Control', 'You', 'Your', 'Colors', 'Color', 'Mana', 'Any',
               'Has', 'Have', 'Gains', 'Gain', 'Gets', 'Get', 'Loses', 'Lose',
@@ -6421,8 +6423,8 @@ function parseCardEffects(permanent, card, opts = {}) {
     // If creature subtypes present alongside other types (like Artifact), also add Creature
     // if the subtypes look like creature types (not artifact subtypes like Treasure, Equipment, etc.)
     if (extractedSubtypes.length > 0 && extractedTypes.length > 0 && !extractedTypes.includes('Creature')) {
-      const ARTIFACT_SUBTYPES = ['Treasure', 'Equipment', 'Vehicle', 'Food', 'Clue', 'Blood', 'Gold', 'Map', 'Powerstone', 'Incubator'];
-      const hasCreatureSubtype = extractedSubtypes.some(s => !ARTIFACT_SUBTYPES.includes(s) && !Object.values(LAND_SUBTYPE_WORDS).includes(s));
+      const ofAnotherType = (s) => ['artifact', 'enchantment', 'land', 'planeswalker', 'battle'].some(kind => TypeCatalog[kind + 'Types'].has(s));
+      const hasCreatureSubtype = extractedSubtypes.some(s => !ofAnotherType(s));
       if (hasCreatureSubtype) extractedTypes.push('Creature');
     }
 

@@ -389,9 +389,8 @@ function effectAppliesToPerm(effect, permState, permanent, permId, allStates, ab
         };
         // Materialize creature types into baseState.subtypes for printed Changeling
         // so subtype filter checks (now subtypes-only) match correctly at spell resolution.
-        if (hasPrintedChangeling && typeof TypeCatalog !== 'undefined' &&
-            TypeCatalog.creatureTypes && TypeCatalog.creatureTypes.size > 0) {
-          for (const ct of TypeCatalog.creatureTypes) {
+        if (hasPrintedChangeling && typeof TypeCatalog !== 'undefined') {
+          for (const ct of TypeCatalog.everyCreatureType()) {
             if (!baseState.subtypes.includes(ct)) baseState.subtypes.push(ct);
           }
         }

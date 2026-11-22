@@ -63,6 +63,10 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
+
+import rules     # tests/rules.py: checks every subtype list
+import subtypes  # tests/subtypes.py: updates them from Scryfall's data
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FIXTURES = os.path.join(ROOT, 'tests', 'fixtures')
@@ -76,6 +80,10 @@ def engine_cmd():
     if os.path.exists(JSC):
         return [JSC, 'tests/harness.js', '--']
     sys.exit('No JavaScript engine found (need Node, or macOS jsc at %s).' % JSC)
+
+
+def rules_engine():
+    return engine_cmd()[0]
 
 
 def app_scripts():
@@ -215,23 +223,43 @@ _CATEGORY = {'Land': 'landTypes', 'Creature': 'creatureTypes', 'Artifact': 'arti
              'Instant': 'spellTypes', 'Sorcery': 'spellTypes', 'Battle': 'battleTypes'}
 
 
-def cmd_catalog():
+def cmd_catalog(allow_removals=False):
     """Rebuild tests/type-catalog.json from the bulk card file.
 
     The site fills TypeCatalog from Scryfall's catalog endpoints at startup and the parser
     behaves differently until it has. The harness loads this file instead. Subtypes are
     taken first from type lines that name exactly one subtype-bearing card type, so each
-    lands in an unambiguous category; what is left on mixed creature lines is a creature type."""
+    lands in an unambiguous category; what is left on mixed creature lines is a creature type.
+
+    It stands in for the parser's vocabulary on the site (TypeCatalog.init): CR 205.3's
+    lists, and for creatures also the silver-bordered types Scryfall's catalog carries. It is
+    not what "all creature types" or "every land type" gives. Afterwards every subtype list
+    is first rewritten from Scryfall's data (tests/subtypes.py) and then checked (tests/rules.py)."""
     if not os.path.exists(CARD_CACHE):
         sys.exit('No card data at %s' % CARD_CACHE)
+    # First the site's lists, from Scryfall's data (tests/subtypes.py); this file follows them.
+    meta = os.path.join(os.path.dirname(CARD_CACHE), 'bulk-meta.json')
+    problems, notes, changed = subtypes.update(rules_engine(), CARD_CACHE, meta, allow_removals)
+    if report_rules(problems, notes):
+        sys.exit(1)
     cat = {v: set() for v in _CATEGORY.values()}
     mixed = []   # subtype words from type lines naming several card types ("Artifact Creature — Golem")
+    today = time.strftime('%Y-%m-%d')
+    phrases = sorted((t for t in rules.site(rules_engine())['official']['creature'] if ' ' in t), key=len, reverse=True)
+    subtype_word = re.compile(''.join(r'%s(?=\s|$)|' % re.escape(t) for t in phrases) + r'\S+')
     with gzip.open(CARD_CACHE, 'rt', encoding='utf-8') as f:
         for line in f:
             if not line.strip():
                 continue
             c = json.loads(line)
-            if c.get('set_type') in ('funny', 'memorabilia') or c.get('layout') == 'art_series':
+            if c.get('layout') == 'art_series':
+                continue
+            if c.get('set_type') == 'memorabilia':
+                continue
+            legal = any(v in ('legal', 'restricted') for v in (c.get('legalities') or {}).values())
+            token = c.get('layout') in ('token', 'double_faced_token') or 'Token' in (c.get('type_line') or '').split()
+            unreleased = (c.get('released_at') or '') > today
+            if not (legal or token or unreleased):
                 continue
             for face in (c.get('type_line') or '').split(' // '):
                 if ' — ' not in face:
@@ -241,19 +269,79 @@ def cmd_catalog():
                 if 'Kindred' in words or 'Tribal' in words:
                     continue
                 cats = {_CATEGORY[w] for w in words if w in _CATEGORY}
+                subs = subtype_word.findall(right)
                 if len(cats) == 1:
-                    cat[cats.pop()].update(right.split())
+                    cat[cats.pop()].update(subs)
                 elif 'creatureTypes' in cats:
-                    mixed.append(right.split())
+                    mixed.append(subs)
     # A subtype that only ever appears beside Creature plus another type (Golem, Thopter,
     # Dalek) is a creature type unless a single-type line already placed it elsewhere.
     placed = set().union(*cat.values())
     for words in mixed:
         cat['creatureTypes'].update(w for w in words if w not in placed)
+    used = rules.site(rules_engine())
+    cat['creatureTypes'].update(used['official']['creature'])
+    # Every other card type's vocabulary is the rules' list, as on the site (TypeCatalog.init).
+    for kind in rules.SCRYFALL:
+        if kind != 'creature':
+            cat[kind + 'Types'] = set(used['official'][kind])
     with open(CATALOG_FILE, 'w', encoding='utf-8') as f:
         json.dump({k: sorted(v) for k, v in sorted(cat.items())}, f, ensure_ascii=False, indent=0)
         f.write('\n')
     print('Wrote tests/type-catalog.json: ' + ', '.join('%d %s' % (len(v), k) for k, v in sorted(cat.items())))
+    if changed:
+        record_changed_types(changed)
+    bad = report_rules(*rules.check(rules_engine()))
+    print('Subtype lists: ' + ('%d problem%s' % (bad, '' if bad == 1 else 's') if bad else "updated from Scryfall's data, all checks pass"))
+    if bad:
+        sys.exit(1)
+
+
+def record_changed_types(changed):
+    """A changeling's recorded subtypes list every type, so each update would fail its fixtures.
+    A fixture is re-recorded here only if nothing differs but those types in subtype lists and
+    its asserts still hold; any other difference is left to fail."""
+    def without(o, key=None):
+        if isinstance(o, dict):
+            return {k: without(v, k) for k, v in o.items()}
+        if isinstance(o, list):
+            return [without(v) for v in o if not (key == 'subtypes' and isinstance(v, str) and v in changed)]
+        return o
+
+    paths = fixture_paths([])
+    results, n = run_harness(paths), 0
+    for p in paths:
+        fx, r = json.load(open(os.path.join(ROOT, p), encoding='utf-8')), results[p]
+        if 'error' in r or fx.get('knownFailure') or not diff(fx.get('expected'), r['actual']):
+            continue
+        if diff(without(fx.get('expected')), without(r['actual'])):
+            continue
+        if check_asserts(fx.get('asserts'), r['actual'], r.get('triggerConditions'), r.get('targetCandidates'),
+                         r.get('zoneCards'), r.get('cdaAbilities')):
+            continue
+        fx['expected'] = r['actual']
+        write_fixture(p, fx)
+        n += 1
+    print('Re-recorded %d fixtures that differed only by the changed types' % n)
+
+
+def report_rules(problems, notes):
+    for p in problems:
+        print('RULES  ' + p)
+    for n in notes:
+        print('NOTE   ' + n)
+    return len(problems)
+
+
+def cmd_rules(path=None):
+    """An optional second opinion on the lists Scryfall's data gave: the current rules."""
+    problems, notes, reached = rules.refresh(path)
+    found, more = rules.check(rules_engine())
+    bad = report_rules(problems + found, notes + more)
+    print('Subtype lists: ' + ('%d problem%s' % (bad, '' if bad == 1 else 's') if bad else 'agree with the current rules' if reached
+                               else 'agree with the saved rules, but the current rules were not checked'))
+    if bad or not reached:
+        sys.exit(1)
 
 
 def cmd_card(names):
@@ -432,20 +520,27 @@ def main():
     ap.add_argument('--add', metavar='BOARD.json')
     ap.add_argument('--build', action='store_true')
     ap.add_argument('--card', action='store_true', help='Print oracle text for the named cards')
-    ap.add_argument('--catalog', action='store_true', help='Rebuild tests/type-catalog.json from the bulk card file')
+    ap.add_argument('--catalog', action='store_true', help="Update every subtype list from Scryfall's data and rebuild tests/type-catalog.json")
+    ap.add_argument('--allow-removals', action='store_true', help='With --catalog: let the update drop a type')
+    ap.add_argument('--rules', nargs='?', const='', metavar='RULES.txt',
+                    help="Optional second opinion: compare the subtype lists with the current Comprehensive Rules")
     ap.add_argument('--name')
     ap.add_argument('--notes')
     args = ap.parse_args()
 
     if args.add:
         return cmd_add(args.add, args.name, args.notes)
+    if args.rules is not None:
+        return cmd_rules(args.rules or None)
     if args.catalog:
-        return cmd_catalog()
+        return cmd_catalog(args.allow_removals)
     if args.card:
         return cmd_card(args.filters)
     if args.build:
         return cmd_build(args.filters)
 
+    # A full run also holds every subtype list to the rules (tests/rules.py).
+    rules_failed = report_rules(*rules.check(rules_engine())) if not args.filters else 0
     paths = fixture_paths(args.filters)
     if not paths:
         sys.exit('No fixtures matched.')
@@ -500,8 +595,10 @@ def main():
         summary += ', %d known failures' % known
     if updated:
         summary += ', %d updated' % updated
+    if not args.filters:
+        summary += ', subtype lists ' + ('DO NOT match CR 205 (%d problems)' % rules_failed if rules_failed else 'match Scryfall and CR 205')
     print(summary)
-    sys.exit(1 if failed else 0)
+    sys.exit(1 if failed or rules_failed else 0)
 
 
 if __name__ == '__main__':

@@ -655,7 +655,7 @@ function wordConstraint(w, negated) {
   else if (w === 'commander') c = { kind: 'noun', test: (st, p) => !!(p.isCommander || st.isCommander) };
   else if (w === 'permanent') c = { kind: 'noun', test: () => true };
   else if (PERMANENT_NOUNS.has(w)) c = { kind: 'noun', test: (st) => hasCI(st.types, w) };
-  else if (subtypeWords().has(w)) c = { kind: 'noun', test: (st) => hasCI(st.subtypes, w) || (!!st.isAllCreatureTypes && TypeCatalog.creatureTypes.has(cap1(w))) };
+  else if (subtypeWords().has(w)) c = { kind: 'noun', test: (st) => hasCI(st.subtypes, w) || (!!st.isAllCreatureTypes && hasCI([...TypeCatalog.everyCreatureType()], w)) };
   if (c && negated) { const t = c.test; c = { kind: 'adj', test: (st, p) => !t(st, p) }; }
   return c;
 }
@@ -674,7 +674,12 @@ function singularForms(w) {
 
 function parseHeadItem(words, unknown, plural) {
   const adj = [], noun = [];
-  for (const w of words) {
+  // CR 205.3m: one creature type is two words long.
+  const joined = [];
+  for (let i = 0; i < words.length; i++) {
+    if (words[i] === 'time' && /^lords?$/.test(words[i + 1] || '')) { joined.push('time lord'); i++; } else joined.push(words[i]);
+  }
+  for (const w of joined) {
     let neg = false, base = w;
     const m = w.match(/^non-?(.+)$/);
     if (m) { neg = true; base = m[1]; }

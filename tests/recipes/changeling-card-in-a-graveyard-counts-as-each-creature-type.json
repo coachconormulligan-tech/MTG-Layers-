@@ -1,0 +1,51 @@
+{
+  "name": "Changeling in a graveyard — counts as a Zombie card and an Elf card",
+  "notes": "CR 702.73a, 604.3: changeling works in every zone. _zoneCardMatchesQualifier (engine-compute.js) read the printed type line only, so Changeling Outcast and Mistform Ultimus were neither Zombie cards for Soulless One nor Elf cards for Abomination of Llanowar. Grizzly Bears in the same graveyard is neither.",
+  "steps": [
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Changeling Outcast"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Mistform Ultimus"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Grizzly Bears"
+      ]
+    },
+    {
+      "add": "Soulless One",
+      "as": "s"
+    },
+    {
+      "add": "Abomination of Llanowar",
+      "as": "a"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Soulless One",
+      "final": {
+        "power": 3,
+        "toughness": 3
+      }
+    },
+    {
+      "perm": "Abomination of Llanowar",
+      "final": {
+        "power": 3,
+        "toughness": 3
+      }
+    }
+  ]
+}

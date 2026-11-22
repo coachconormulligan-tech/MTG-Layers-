@@ -40,6 +40,10 @@ const Battlefield = {
   nextTimestamp: 1,
   inspectedId: null,
   explanationMode: 'teaching', // 'teaching' | 'rules'
+  // "Silver border" switch: a changeling (or "all creature types") also has the creature
+  // types CR 205.3m does not list (TypeCatalog.silverTypes).
+  // Saved with the board; Clear All keeps it.
+  silverBorder: false,
 
   // Multiplayer: array of player objects. Default single player is 'player_0'.
   players: [
@@ -639,6 +643,7 @@ const Battlefield = {
     // e.g. Eminence: "if this card is in the command zone or on the battlefield, another target Cat..."
     // "If this land isn't a creature, it becomes a 2/4 Wizard creature …" (Great Hall of the
     // Biblioplex, Veiled Serpent): "it" is the permanent the condition just named.
+    parsedEffectText = _ownTypeAsSelf(parsedEffectText, sourcePerm);
     parsedEffectText = parsedEffectText.replace(/^if\s+this\s+(land|permanent|creature|artifact|enchantment|card|token|vehicle|equipment)\s+[^,]+,\s*it\s+(?=becomes?\b)/i, 'This $1 ');
     // A target named only in that condition is still what "it" means afterwards: "If target
     // attacking creature token is the chosen type, put three +1/+1 counters on it and it gains
@@ -1709,6 +1714,7 @@ const Battlefield = {
   },
 
   addPermanent(card, opts = {}) {
+    learnTypesFromCard(card);
     // Fix 7/10: If card has X in mana cost or oracle text references X, prompt user —
     // unless ALL X occurrences are covered by auto-computable "where X is …" clauses.
     let processedCard = card;
@@ -1961,6 +1967,11 @@ const Battlefield = {
 
   /* Re-parse effects after chosen type/color/X change */
   _reparseWithChoices(perm) {
+    TypeCatalog.chosenType = perm.chosenCreatureType || null;
+    try { return this._reparseChosen(perm); } finally { TypeCatalog.chosenType = null; }
+  },
+
+  _reparseChosen(perm) {
     this._invalidate();
     let oracleText = perm.originalOracleText || perm.oracleText || '';
     // Apply X substitution if present
@@ -3038,6 +3049,7 @@ const Battlefield = {
 
   /* Graveyard management */
   addToGraveyard(playerId, card) {
+    learnTypesFromCard(card);
     this._invalidate();
     const player = this.getPlayer(playerId);
     if (!player) return;
@@ -3116,6 +3128,7 @@ const Battlefield = {
      sacrificed). The parser says what the slot is for (perm._linkedCardSlot = { label, max });
      the cards themselves are kept on the permanent. */
   addLinkedCard(permId, card) {
+    learnTypesFromCard(card);
     const perm = this.getPermById(permId);
     if (!perm || !card) return;
     const max = perm._linkedCardSlot && perm._linkedCardSlot.max;
@@ -3137,6 +3150,7 @@ const Battlefield = {
   },
 
   setLibraryTop(playerId, card) {
+    learnTypesFromCard(card);
     this._invalidate();
     const player = this.getPlayer(playerId);
     if (!player) return;
@@ -3167,6 +3181,7 @@ const Battlefield = {
   nextExileId: 1,
 
   addToExile(card, { owner = null, exiledWithId = null, isFaceDown = false } = {}) {
+    learnTypesFromCard(card);
     this._invalidate();
     const id = 'exile_' + (this.nextExileId++);
     const entry = {
@@ -3607,6 +3622,7 @@ const Battlefield = {
      can be evaluated against it via the normal layer engine.
      Spells do not produce their own static effects — they are targets only. */
   addSpell(card, opts = {}) {
+    learnTypesFromCard(card);
     // Snapshot the board BEFORE adding the spell so the camera popup shows what the
     // spell is being cast into (matches semantics of trigger/activated fire-time snapshots).
     const firedAtSnapshot = this._buildFiredAtSnapshot(opts.firedAtStates);
@@ -3739,7 +3755,7 @@ const Battlefield = {
       {
         const ctCount = subtypes.filter(s =>
           typeof TypeCatalog !== 'undefined' && TypeCatalog.creatureTypes.size > 0
-            ? TypeCatalog.creatureTypes.has(s) : true
+            ? TypeCatalog.isCreatureType(s) : true
         ).length;
         counts.creatureTypeCount.set(p.id, ctCount);
       }
@@ -3811,6 +3827,7 @@ const Battlefield = {
   },
 
   addCommander(card) {
+    learnTypesFromCard(card);
     const face = _resolveCardFace(card, 0);
     const imageUri = face.image_uris?.normal || card.image_uris?.normal || '';
     this.commanders.push({ card, name: face.name || card.name, imageUri, castCount: 0, linkedPermId: null });
@@ -4170,6 +4187,7 @@ const Battlefield = {
       activePlayerId: this.activePlayerId,
       nextPlayerId: this.nextPlayerId,
       explanationMode: this.explanationMode,
+      ...(this.silverBorder ? { silverBorder: true } : {}),
       inspectedId: this.inspectedId,
     };
   },
@@ -4184,6 +4202,15 @@ const Battlefield = {
   _restoreBoard(data) {
     if (!data || data.version !== 1) return false;
     this.clear();
+    // Every card's types before any card's text is read: a lord saved ahead of the only card
+    // of a new type still knows it.
+    for (const r of data.perms || []) learnTypesFromCard(r.scryfallData);
+    for (const e of data.exile || []) learnTypesFromCard(e.card);
+    for (const pl of data.players || []) {
+      for (const c of pl.graveyard || []) learnTypesFromCard(c);
+      for (const c of pl.commanders || []) learnTypesFromCard(c.card);
+      if (pl.libraryTop) learnTypesFromCard(pl.libraryTop);
+    }
     this.exile = [];
     this.nextExileId = 1;
     this.bestowTargets = new Map();
@@ -4217,6 +4244,7 @@ const Battlefield = {
     if (!this.players.length) { this.clear(); return false; }
     this.nextPlayerId = data.nextPlayerId || this.players.length;
     this.explanationMode = data.explanationMode || 'teaching';
+    this.silverBorder = !!data.silverBorder;
 
     const savedActive = data.activePlayerId || this.players[0].id;
     const idMap = {};
@@ -4579,6 +4607,11 @@ const Battlefield = {
     this._invalidate();
     this.evaluate();
     return true;
+  },
+
+  setSilverBorder(on) {
+    this.silverBorder = !!on;
+    this._invalidate();
   },
 
   clear() {

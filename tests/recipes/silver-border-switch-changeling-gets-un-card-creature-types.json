@@ -1,0 +1,36 @@
+{
+  "name": "Silver border switch — a changeling has the creature types of silver-bordered cards only while it is on",
+  "notes": "TypeCatalog.officialCreatureTypes (data.js) is CR 205.3m; every other creature type is silver-bordered (TypeCatalog.silverTypes). Battlefield.silverBorder (the \"Silver border\" button, off by default, saved with the board) adds those to changeling and \"all creature types\". Here it is on.",
+  "steps": [
+    {
+      "add": "Changeling Outcast",
+      "as": "co"
+    },
+    {
+      "call": [
+        "setSilverBorder",
+        true
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Changeling Outcast",
+      "final": {
+        "subtypes": {
+          "$includes": [
+            "Clamfolk",
+            "Killbot",
+            "Naga",
+            "Brainiac",
+            "Chicken",
+            "Lady of Proper Etiquette",
+            "Shapeshifter",
+            "Time Lord",
+            "Elf"
+          ]
+        }
+      }
+    }
+  ]
+}

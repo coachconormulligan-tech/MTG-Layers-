@@ -1,0 +1,68 @@
+{
+  "name": "Chosen creature type — Jem'Hadar, Time Lord and Q are one type each, spelled as printed",
+  "notes": "Every type the box offers must work once chosen. singularizeCreatureType made Jem'hadar and Vau-N'akat, parseBecomesType split Time Lord and dropped the one-letter Q, so Adaptive Automaton was none of them.",
+  "steps": [
+    {
+      "add": "Adaptive Automaton",
+      "as": "a"
+    },
+    {
+      "add": "Adaptive Automaton",
+      "as": "b"
+    },
+    {
+      "add": "Adaptive Automaton",
+      "as": "c"
+    },
+    {
+      "call": [
+        "setChosenCreatureType",
+        "@a",
+        "Jem'Hadar"
+      ]
+    },
+    {
+      "call": [
+        "setChosenCreatureType",
+        "@b",
+        "Time Lord"
+      ]
+    },
+    {
+      "call": [
+        "setChosenCreatureType",
+        "@c",
+        "Q"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Adaptive Automaton A",
+      "final": {
+        "subtypes": [
+          "Construct",
+          "Jem'Hadar"
+        ]
+      }
+    },
+    {
+      "perm": "Adaptive Automaton B",
+      "final": {
+        "subtypes": [
+          "Construct",
+          "Time Lord"
+        ]
+      }
+    },
+    {
+      "perm": "Adaptive Automaton C",
+      "final": {
+        "subtypes": [
+          "Construct",
+          "Q"
+        ]
+      }
+    }
+  ]
+}

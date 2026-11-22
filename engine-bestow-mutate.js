@@ -32,7 +32,7 @@ function _applyBestowLayer4(Battlefield, allStates, layerResults) {
     if (!st.types.includes('Enchantment')) st.types.push('Enchantment');
 
     // Remove creature subtypes (CR 702.102: loses all creature types)
-    const creatureSubtypes = (typeof TypeCatalog !== 'undefined') ? TypeCatalog.creatureTypes : new Set();
+    const creatureSubtypes = (typeof TypeCatalog !== 'undefined') ? TypeCatalog.getSubtypeCategory('creature') : new Set();
     st.subtypes = st.subtypes.filter(s => !creatureSubtypes.has(s));
 
     // Add Aura subtype if not present
