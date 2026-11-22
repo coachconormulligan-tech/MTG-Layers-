@@ -1,0 +1,84 @@
+{
+  "name": "Graveyard counts: a typed number is used from its own row, also over an empty count",
+  "notes": "Every graveyard is empty. 2 typed on Fear of Death reaches the creature it enchants (Craw Wurm 4/4: it was read off the Wurm, and a zero count hid the effect). 4 typed on Desmond Miles is the graveyard half alone (5/3). 7 typed on Svogthos's fired ability makes the land 7/7. Memory: project_graveyard_counts_by_owner_and_kind_2026-11-22.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Craw Wurm",
+      "as": "w"
+    },
+    {
+      "add": "Fear of Death",
+      "as": "f"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@f",
+        "@w"
+      ]
+    },
+    {
+      "call": [
+        "setCDAValue",
+        "@f",
+        2
+      ]
+    },
+    {
+      "add": "Desmond Miles",
+      "as": "d"
+    },
+    {
+      "call": [
+        "setCDAValue",
+        "@d",
+        4
+      ]
+    },
+    {
+      "add": "Svogthos, the Restless Tomb",
+      "as": "s"
+    },
+    {
+      "fire": "@s",
+      "activated": 1,
+      "as": "sa"
+    },
+    {
+      "call": [
+        "setCDAValue",
+        "@sa",
+        7
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Craw Wurm",
+      "final": {
+        "power": 4,
+        "toughness": 4
+      }
+    },
+    {
+      "perm": "Desmond Miles",
+      "final": {
+        "power": 5,
+        "toughness": 3
+      }
+    },
+    {
+      "perm": "Svogthos, the Restless Tomb",
+      "final": {
+        "power": 7,
+        "toughness": 7
+      }
+    }
+  ]
+}

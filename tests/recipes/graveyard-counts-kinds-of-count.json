@@ -1,0 +1,157 @@
+{
+  "name": "Graveyard counts: cycling, names, graveyards of seven, permanent cards, card types (Vile Manifestation, Growth Cycle, Master's Councillors, Souls of the Lost, Nethergoyf)",
+  "notes": "P1's seven cards: Barren Moor (cycling), Ash Barrens (typecycling), Growth Cycle, Invasion of Zendikar // Awakened Skyclave (a battle card, no creature card), Lightning Bolt, Divination, Sol Ring. Opponent's: Growth Cycle, Krosan Tusker, Grizzly Bears. Vile +2; one seven-card graveyard is +2/+0 for Master's Councillors; Souls counts four permanent cards (4/5); Nethergoyf five types: land, instant, battle, sorcery, artifact (5/6); Growth Cycle gives the Bear +3/+3 and +2/+2 for P1's one card of that name. Memory: project_graveyard_counts_by_owner_and_kind_2026-11-22.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Barren Moor"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Ash Barrens"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Growth Cycle"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Invasion of Zendikar // Awakened Skyclave"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Lightning Bolt"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Divination"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Sol Ring"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p2",
+        "card:Growth Cycle"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p2",
+        "card:Krosan Tusker"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p2",
+        "card:Grizzly Bears"
+      ]
+    },
+    {
+      "add": "Vile Manifestation"
+    },
+    {
+      "add": "Master's Councillors"
+    },
+    {
+      "add": "Souls of the Lost"
+    },
+    {
+      "add": "Nethergoyf"
+    },
+    {
+      "add": "Liliana's Elite"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bear"
+    },
+    {
+      "add": "Growth Cycle",
+      "spell": true,
+      "as": "gc"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@gc",
+        "@bear"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Vile Manifestation",
+      "final": {
+        "power": 2,
+        "toughness": 4
+      }
+    },
+    {
+      "perm": "Master's Councillors",
+      "final": {
+        "power": 3,
+        "toughness": 3
+      }
+    },
+    {
+      "perm": "Souls of the Lost",
+      "final": {
+        "power": 4,
+        "toughness": 5
+      }
+    },
+    {
+      "perm": "Nethergoyf",
+      "final": {
+        "power": 5,
+        "toughness": 6
+      }
+    },
+    {
+      "perm": "Liliana's Elite",
+      "final": {
+        "power": 1,
+        "toughness": 1
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 7,
+        "toughness": 7
+      }
+    }
+  ]
+}

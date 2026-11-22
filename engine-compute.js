@@ -116,8 +116,8 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
   // Each half may be a battlefield type/subtype count or a zone-card (graveyard/exile) count.
   const _plusSplit = desc.split(/\s+plus\s+(?:the\s+)?(?:number|total number|amount)\s+of\s+/);
   if (_plusSplit.length === 2) {
-    const _left = _computeCountClause(_plusSplit[0], allStates, selfState);
-    const _right = _computeCountClause(_plusSplit[1], allStates, selfState);
+    const _left = _computeCountClause(_plusSplit[0], allStates, selfState, ctrlId);
+    const _right = _computeCountClause(_plusSplit[1], allStates, selfState, ctrlId);
     if (_left !== null && _right !== null) return _left + _right;
   }
 
@@ -238,42 +238,17 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
     return null;
   }
 
-  // Graveyard counting for effects flagged as graveyard-based (e.g. Lord of Extinction,
-  // Nighthowler, Mortivore). Count actual cards across ALL players' graveyards, honoring a
-  // "creature cards" qualifier in the desc so non-creature cards don't inflate the count
-  // (CR 613.4f — a "number of creature cards in all graveyards" CDA only counts creatures).
+  // A count of cards in graveyards (Knight of the Reliquary "land card in your graveyard",
+  // Magnivore "sorcery cards in all graveyards"): whose and which cards are the words of the
+  // count. "You" is the controller of the object with the ability: for a characteristic-defining
+  // ability the permanent itself, else the effect's source, which for a fired ability has no
+  // state of its own (Chupacabra Echo's target is an opponent's creature, the graveyard yours).
   if (effect && effect.params && effect.params.isGraveyardCount) {
-    if (typeof Battlefield !== 'undefined' && Array.isArray(Battlefield.players)) {
-      // "the number of card types among cards in all graveyards" (Tarmogoyf) counts types, not
-      // cards: two creature cards are one type. A card in a graveyard has its front face's types,
-      // except a split card, which has both halves' (CR 709.4, 711.4).
-      if (/\bcard\s+types\s+among\b/.test(desc)) {
-        const found = new Set();
-        for (const player of Battlefield.players) {
-          for (const card of (player.graveyard || [])) {
-            const line = (card && card.type_line) || '';
-            const faces = card && card.layout === 'split' ? line.split(' // ') : [line.split(' // ')[0]];
-            for (const f of faces) for (const t of (parseTypeLine(f).types || [])) found.add(t);
-          }
-        }
-        return found.size;
-      }
-      const creatureOnly = /\bcreature\b/.test(desc);
-      let count = 0;
-      for (const player of Battlefield.players) {
-        for (const card of (player.graveyard || [])) {
-          if (creatureOnly) {
-            const isCreature = (typeof _isCreatureCardInZone === 'function')
-              ? _isCreatureCardInZone(card, 'graveyard')
-              : /creature/i.test((card && card.type_line) || '');
-            if (!isCreature) continue;
-          }
-          count++;
-        }
-      }
-      return count;
-    }
-    return null; // fall back to user input
+    const src = effect.sourceId && typeof Battlefield !== 'undefined' ? Battlefield.getPermById(effect.sourceId) : null;
+    const srcSt = srcPermId && fullStates ? fullStates.get(srcPermId) : null;
+    const you = (effect.type === EFFECT_TYPE.CDA_PT && selfState && selfState.controller)
+      || (srcSt && srcSt.controller) || (src && src.controller) || effect.ownerId || ctrlId;
+    return _countInGraveyards(forEachDesc, you, selfState, effect);   // null: entered by hand
   }
 
   // Life-total expressions ("your life total", "20 minus the highest life total among players").
@@ -884,9 +859,13 @@ function _zoneCardMatchesQualifier(card, qualifier) {
   const parsed = (typeof parseTypeLine === 'function')
     ? parseTypeLine((card && card.type_line) || '')
     : { types: [], subtypes: [], supertypes: [] };
-  for (const w of qualifier.toLowerCase().split(/\s+/).filter(Boolean)) {
+  const words = qualifier.toLowerCase().split(/\s+/).filter(Boolean);
+  for (let i = 0; i < words.length; i++) {
+    const w = words[i];
     if (w === 'card' || w === 'cards') continue;
-    const sing = (typeof singularizeCreatureType === 'function')
+    const phrase = _typePhraseAt(words, i);   // a subtype of several words is one
+    if (phrase) i += phrase.length - 1;
+    const sing = phrase ? phrase.type : (typeof singularizeCreatureType === 'function')
       ? singularizeCreatureType(w)
       : (w.endsWith('s') && w.length > 2 ? w.charAt(0).toUpperCase() + w.slice(1, -1) : w.charAt(0).toUpperCase() + w.slice(1));
     const lw = sing.toLowerCase();
@@ -899,15 +878,10 @@ function _zoneCardMatchesQualifier(card, qualifier) {
   return true;
 }
 
-// Count real cards in a zone ('graveyard' | 'exile') across all players that match a qualifier.
-function _countZoneCardsByQualifier(qualifier, zone) {
+// Count the cards in exile that match a qualifier.
+function _countExiledCardsByQualifier(qualifier) {
   if (typeof Battlefield === 'undefined') return 0;
-  const cards = [];
-  if (zone === 'graveyard' && Array.isArray(Battlefield.players)) {
-    for (const p of Battlefield.players) for (const c of (p.graveyard || [])) cards.push(c);
-  } else if (zone === 'exile' && Array.isArray(Battlefield.exile)) {
-    for (const e of Battlefield.exile) cards.push(e.card || e);
-  }
+  const cards = (Array.isArray(Battlefield.exile) ? Battlefield.exile : []).map(e => e.card || e);
   const q = (qualifier || '').toLowerCase().trim();
   let count = 0;
   for (const card of cards) {
@@ -917,22 +891,164 @@ function _countZoneCardsByQualifier(qualifier, zone) {
   return count;
 }
 
+const _PERMANENT_CARD_TYPES = ['Artifact', 'Battle', 'Creature', 'Enchantment', 'Land', 'Planeswalker'];   // CR 110.4a
+
+/* The players whose graveyards a count names, or null when the board does not say (a player not
+   chosen yet, the defending player of a creature that is not attacking, words not read). */
+function _graveyardPlayers(whose, you, modified, effect) {
+  const players = Battlefield.players;
+  if (/^(?:|all|each|every|a|any)$/.test(whose)) return players;
+  if (whose === 'your') return players.filter(p => p.id === you);
+  if (/^(?:your opponents'|each opponent's)$/.test(whose)) return players.filter(p => p.id !== you);
+  let id = null;
+  if (/^(?:its|that creature's|that permanent's|enchanted creature's|equipped creature's) controller's$/.test(whose)) {
+    id = modified && modified.controller;
+  } else if (whose === "defending player's") {
+    id = _attackedPlayerId(modified);
+  } else if (whose === "the chosen player's") {
+    const src = effect && effect.sourceId ? Battlefield.getPermById(effect.sourceId) : null;
+    id = src && src._targetPlayerId;
+  }
+  return id ? players.filter(p => p.id === id) : null;
+}
+
+// Grist is a creature card off the battlefield by its own text (CR 604.3), which a count made
+// while evaluating a card in a graveyard (Lhurgoyf there) cannot evaluate again.
+function _creatureByOwnText(card) {
+  return /\bisn['’]t on the battlefield\b[^.]*\bcreature\b/i.test(card.oracle_text || '');
+}
+
+/* A test of a card as it is in a graveyard (_zoneCardFront) for the words before "card(s)":
+   "land", "nonbasic land", "instant and sorcery", "artifact and/or enchantment", "creature,
+   instant, and sorcery", "noncreature, nonland", "permanent", "Lesson". A list is any of them,
+   each card once, but a list of nothing but "non" words is all of them. Null when a word is none
+   of a card type, supertype, colour or subtype known now: never a guess. */
+function _graveyardCardQuality(words) {
+  const oneWord = (word) => {
+    const type = _ZONE_CLAUSE_TYPE_WORDS[word];
+    if (word === 'creature') return (card) => _creatureByOwnText(card) || _isCreatureCardInZone(card, 'graveyard');
+    if (type) return (card) => _zoneCardMatchesQualifier(card, word);
+    if (word === 'permanent') return (card) => parseTypeLine(card.type_line || '').types.some(t => _PERMANENT_CARD_TYPES.includes(t));
+    if (/^(?:basic|legendary|snow|world)$/.test(word)) {
+      const sup = word.charAt(0).toUpperCase() + word.slice(1);
+      return (card) => parseTypeLine(card.type_line || '').supertypes.includes(sup);
+    }
+    if (COLOR_NAMES[word]) return (card) => (card.colors || []).includes(COLOR_NAMES[word]);
+    const subtype = _knownTypeWord(word);
+    if (subtype) return (card) => _zoneCardMatchesQualifier(card, subtype);
+    const not = word.match(/^non-?(.+)$/);
+    const negated = not && oneWord(not[1]);
+    return negated ? (card) => !negated(card) : null;
+  };
+  const items = words.split(/,?\s+(?:and\/or|and|or)\s+|,\s*/);
+  const tests = [];
+  for (const item of items) {
+    const ws = item.split(/\s+/).filter(Boolean), all = [];
+    if (!ws.length) return null;
+    for (let i = 0; i < ws.length; i++) {
+      const phrase = _typePhraseAt(ws, i);   // "Time Lord"
+      const test = oneWord(phrase ? phrase.type.toLowerCase() : ws[i]);
+      if (!test) return null;
+      all.push(test);
+      if (phrase) i += phrase.length - 1;
+    }
+    tests.push((card) => all.every(t => t(card)));
+  }
+  return items.every(item => /^non/.test(item))
+    ? (card) => tests.every(t => t(card))
+    : (card) => tests.some(t => t(card));
+}
+
+/* Does this card, as it is in that zone, have cycling (typecycling is cycling, CR 702.29f)? */
+function _zoneCardHasCycling(card) {
+  return /(?:^|,\s*)(?:[a-z]+ )?[a-z]*cycling(?:\s*\{|\s*[—,]|\s*$)/im.test(String(card.oracle_text || '').replace(/\([^)]*\)/g, ''));
+}
+
+/* A count of cards in graveyards, read from its own words ("land card in your graveyard",
+   "card types among cards in all graveyards"), or null when the board cannot know the number
+   ("cards in your graveyard with an art sticker"): then it is typed in. */
+function _countInGraveyards(text, you, modified, effect) {
+  if (typeof Battlefield === 'undefined' || !Array.isArray(Battlefield.players)) return null;
+  const t = String(text || '').toLowerCase().replace(/’/g, "'").trim();
+  // "for each graveyard with seven or more cards in it" (Master's Councillors).
+  const full = t.match(/^graveyards? with (\w+) or more cards in (?:it|them)$/);
+  if (full) return Battlefield.players.filter(p => (p.graveyard || []).length >= _parseWordNumber(full[1])).length;
+
+  const m = t.match(/^(.+) in (?:(.+) )?graveyards?$/);
+  if (!m) return null;
+  const players = _graveyardPlayers(m[2] || '', you, modified, effect);
+  if (!players) return null;
+  const what = m[1];
+  let cards = players.flatMap(p => p.graveyard || []).filter(Boolean).map(_zoneCardFront);
+
+  // Tarmogoyf counts types, not cards: two creature cards are one type.
+  if (/^card types? among cards$/.test(what)) {
+    const found = new Set();
+    for (const card of cards) {
+      for (const type of parseTypeLine(card.type_line || '').types) found.add(type);
+      if (_creatureByOwnText(card)) found.add('Creature');
+    }
+    return found.size;
+  }
+  // All-Seeing Arbiter.
+  if (what === 'different mana values among cards') {
+    return new Set(cards.map(c => c.cmc ?? (_cmcFromManaCost(c.mana_cost) || 0))).size;
+  }
+  // Chroma (Umbra Stalker): a hybrid or Phyrexian symbol of that colour counts.
+  const symbols = what.match(/^(white|blue|black|red|green) mana symbols? in the mana costs of cards$/);
+  if (symbols) {
+    const letter = COLOR_NAMES[symbols[1]];
+    return cards.reduce((n, c) => n + ((c.mana_cost || '').match(/\{[^}]*\}/g) || []).filter(s => s.includes(letter)).length, 0);
+  }
+
+  const w = what.match(/^(?:(.+?) )??cards?(?: named (.+)| with (cycling))?$/);
+  if (!w) return null;
+  let quality = w[1] || '';
+  if (/^other\b/.test(quality)) {
+    quality = quality.replace(/^other\s*/, '');
+    // Boneyard Mycodrax is one of the cards only while it is in that graveyard itself.
+    if (effect && effect.inZone === 'graveyard' && modified && modified.isZoneCard) {
+      const own = cards.findIndex(c => c.name === modified.name);
+      if (own >= 0) cards.splice(own, 1);
+    }
+  }
+  if (quality) {
+    const test = _graveyardCardQuality(quality);
+    if (!test) return null;
+    cards = cards.filter(test);
+  }
+  if (w[2]) {
+    let named = w[2];
+    if (/^this (?:card|spell|creature)$/.test(named)) {   // Growth Cycle, its own name read as "this card"
+      const src = effect && effect.sourceId ? Battlefield.getPermById(effect.sourceId) : null;
+      if (!src || !src.name) return null;
+      named = src.name.toLowerCase();
+    }
+    // A split card has both names (CR 709.4a).
+    cards = cards.filter(c => String(c.name || '').toLowerCase().split(' // ').includes(named));
+  }
+  if (w[3]) cards = cards.filter(_zoneCardHasCycling);
+  return cards.length;
+}
+
+/* The number typed on the row of a graveyard count: kept on the effect's source, where the input
+   is, and not on the creature an Aura, Equipment, spell or fired ability changes. */
+function _typedGraveyardCount(effect) {
+  const holder = effect.sourceId && typeof Battlefield !== 'undefined' ? Battlefield.getPermById(effect.sourceId) : null;
+  return holder ? (holder.cdaUserValue ?? null) : null;
+}
+
 // Compute one clause of a compound CDA count (see _computeForEachCount). A clause is either a
 // zone-card count ("zombie cards in all graveyards") or a battlefield type/subtype count
-// ("zombies on the battlefield"). Returns a number (never null) so a zero half doesn't void the sum.
-function _computeCountClause(clause, allStates, selfState) {
+// ("zombies on the battlefield"). A zero half is 0, so it doesn't void the sum; null only for a
+// graveyard half that cannot be read. `you` is whose "your graveyard" is.
+function _computeCountClause(clause, allStates, selfState, you) {
   allStates = _permanentStates(allStates);
   let c = (clause || '').toLowerCase().trim().replace(/\.$/, '');
-  let zone = null;
-  if (/\bgraveyards?\b/.test(c)) zone = 'graveyard';
-  else if (/\bexile\b/.test(c)) zone = 'exile';
-  if (zone) {
-    const qualifier = c
-      .replace(/\s+in\s+(?:all|your|each|their|every)?\s*graveyards?$/, '')
-      .replace(/\s+in\s+exile$/, '')
-      .trim();
-    return _countZoneCardsByQualifier(qualifier, zone);
+  if (/\bgraveyards?\b/.test(c)) {
+    return _countInGraveyards(c, you || (selfState && selfState.controller) || 'player_0', selfState, null);
   }
+  if (/\bexile\b/.test(c)) return _countExiledCardsByQualifier(c.replace(/\s+in\s+exile$/, '').trim());
   // Battlefield clause: count permanents matching the type/subtype.
   c = c.replace(/\s+on\s+the\s+battlefield$/, '').trim();
   const youControl = /\byou control$/.test(c);

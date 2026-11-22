@@ -296,7 +296,7 @@ function renderTargetPlayerSelect(sourceId) {
   const players = getPlayerCandidates(sourceId, 'player');
   if (players.length === 0) return '';
   return `<select class="ts-target-select ts-target-player" onchange="setTargetPlayer('${sourceId}', this.value)" onclick="event.stopPropagation()">
-    <option value="">\u2192 ${sourcePerm._chosenPlayerNotYou || 'target player'}\u2026</option>
+    <option value="">\u2192 ${sourcePerm._chosenPlayerNotYou || sourcePerm._playerPickLabel || 'target player'}\u2026</option>
     ${buildPlayerSelectOptions(players, current)}
   </select>`;
 }

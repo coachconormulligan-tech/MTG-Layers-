@@ -656,11 +656,13 @@ function applyEffect(state, effect, context) {
             if (effect._allStates) {
               val = _computeForEachCount(effect.params.forEachDesc, effect._allStates, state, effect);
             }
+            const typed = effect.params.isGraveyardCount ? _typedGraveyardCount(effect)
+              : effect.params.besideGraveyardCount ? null : state.cdaUserValue;
             if (val === null || val === undefined) {
-              val = state.cdaUserValue ?? 0;
+              val = typed ?? 0;
             }
-            if (effect.params.userAdjustable && state.cdaUserValue !== null && state.cdaUserValue !== undefined) {
-              val = state.cdaUserValue;
+            if (effect.params.userAdjustable && typed !== null && typed !== undefined) {
+              val = typed;
             }
           }
           if (effect.params.maxCount !== undefined && val > effect.params.maxCount) {
@@ -1166,12 +1168,14 @@ function applyEffect(state, effect, context) {
       if (val === null && effect.params.forEachDesc && effect._allStates && !effect.params.isChosenAmount) {
         val = _computeForEachCount(effect.params.forEachDesc, effect._allStates, state, effect);
       }
+      // (A fired ability's CDA, Svogthos, is typed on the ability's row.)
+      const typedCda = (effect.params.isGraveyardCount ? _typedGraveyardCount(effect) : null) ?? state.cdaUserValue;
       if (val === null || val === undefined) {
-        val = state.cdaUserValue ?? 0;
+        val = typedCda ?? 0;
       }
       // Apply user adjustment if any (override auto-compute)
-      if (effect.params.userAdjustable && state.cdaUserValue !== null && state.cdaUserValue !== undefined) {
-        val = state.cdaUserValue;
+      if (effect.params.userAdjustable && typedCda !== null && typedCda !== undefined) {
+        val = typedCda;
       }
       // Apply max cap if specified
       if (effect.params.maxCount !== undefined && val > effect.params.maxCount) {

@@ -90,7 +90,8 @@ function effectAppliesToPerm(effect, permState, permanent, permId, allStates, ab
   if (effect.type === EFFECT_TYPE.MODIFY_PT && effect.params && effect.params.forEachDesc !== undefined &&
       typeof _computeForEachCount === 'function' && allStates) {
     const val = _computeForEachCount(effect.params.forEachDesc, allStates, permState, effect);
-    if (val === 0) return false;
+    // (An empty graveyard's count is still replaced by a number typed in.)
+    if (val === 0 && !(effect.params.isGraveyardCount && _typedGraveyardCount(effect) !== null)) return false;
   }
 
   // Aura attachment tracker (Pacifism etc.): exists only to record what the Aura is attached

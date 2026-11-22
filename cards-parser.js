@@ -4199,11 +4199,19 @@ function parseCardEffects(permanent, card, opts = {}) {
       if (!filterText) continue;
     }
     // "Target player creates X 2/2 black Zombie creature tokens, then up to one target creature
-    // gets -1/-1 …" (Dark Salvation): the subject is the target after ", then".
+    // gets -1/-1 …" (Dark Salvation): the subject is the target after ", then". Likewise the card
+    // itself ("mill two cards, then this creature gets …", Stubborn Burrowfiend) and, in a spell,
+    // the target chosen before ("Mill four cards, then that creature gets …", Drown in Filth).
     {
       const _thenParts = filterText.split(/,\s*then\s+/i);
-      const _thenLast = _thenParts[_thenParts.length - 1];
-      if (_thenParts.length > 1 && /^(?:up to \w+ (?:other )?|another )?target\b/i.test(_thenLast)) filterText = _thenLast.trim();
+      const _thenLast = _thenParts[_thenParts.length - 1].trim();
+      if (_thenParts.length > 1) {
+        const _thenNamed = permanent.isSpell && /^that creature$/i.test(_thenLast) && boostMatch[1].match(/\btarget [^.,]*\bcreature\b[^.,]*(?=\.)/i);
+        if (_thenNamed) {
+          _boostCrossed = true;
+          filterText = _thenNamed[0];   // the chosen target's own words, for the picker
+        } else if (/^(?:up to \w+ (?:other )?|another )?target\b|^this (?:creature|permanent|card)$/i.test(_thenLast)) filterText = _thenLast;
+      }
     }
     // Fix: Strip a leading ability-word prefix ("Animal May-Ham — Other Spiders … get +1/+1").
     // Ability words are title-case flavor phrases followed by an em/en-dash and have no rules
@@ -4296,6 +4304,8 @@ function parseCardEffects(permanent, card, opts = {}) {
         // The count ends where the sentence moves on to a second predicate — Nephilim Epochal:
         // "for each other Nephilim you control and can't be blocked by monocolored creatures".
         countTarget = countTarget.replace(/,?\s+and\s+(?:is|are|has|have|gains?|gets?|loses?|can't|cannot|can|must|doesn't|don't|attacks?|blocks?)\b.*$/i, '').trim();
+        // "… in your graveyard, then you may have this creature fight …" (Kraul Harpooner).
+        countTarget = countTarget.replace(/(\bgraveyards?),\s+then\b.*$/i, '$1');
         // Parse max cap: "to a maximum of N"
         let maxCount = undefined;
         const maxMatch = countTarget.match(/,?\s*to a maximum of (\d+)/i);
@@ -4306,15 +4316,18 @@ function parseCardEffects(permanent, card, opts = {}) {
         // Handle "for each X and each Y" or "for each X you control and each Y in your graveyard"
         const andEachParts = countTarget.split(/\s+and\s+(?:each|every)\s+/i);
         if (andEachParts.length > 1) {
+          const hasGraveyardPart = andEachParts.some(p => /graveyard/i.test(p));
           for (const part of andEachParts) {
             // Keep "you control" in forEachDesc so _computeForEachCount filters by controller.
-            const cleanPart = part.trim().replace(/\s+in your graveyard$/i, '');
+            const cleanPart = part.trim();
             const isGraveyard = part.toLowerCase().includes('graveyard');
             const _eff = pushEff('7c', EFFECT_TYPE.MODIFY_PT, {
                 power: parseInt(boostMatch[2]),
                 toughness: parseInt(boostMatch[3]),
                 userAdjustable: isGraveyard,
                 isGraveyardCount: isGraveyard,
+                // (The number typed on such a card is its graveyard part's alone: Desmond Miles.)
+                ...(!isGraveyard && hasGraveyardPart ? { besideGraveyardCount: true } : {}),
                 basePower: parseInt(boostMatch[2]),
                 baseToughness: parseInt(boostMatch[3]),
                 forEachDesc: cleanPart,
@@ -4328,7 +4341,8 @@ function parseCardEffects(permanent, card, opts = {}) {
         // Keep "you control" in forEachDesc so _computeForEachCount filters by controller.
         // "Each creature you control attacking a player gets … for each creature that player
         // controls" (Jurin): that player is the one each creature is attacking.
-        let cleanTarget = countTarget.replace(/\s+in your graveyard$/i, '');
+        // Keep "in your graveyard" too: whose graveyard it is is read from it (_countInGraveyards).
+        let cleanTarget = countTarget;
         if (/\battacking a player\b/i.test(fullSentence)) cleanTarget = cleanTarget.replace(/\bthat player controls$/i, 'defending player controls');
         // A count the board cannot give is entered by hand on the row of the spell or ability:
         // who blocks whom is not recorded ("for each creature blocking it [beyond the first]" —
@@ -4944,7 +4958,7 @@ function parseCardEffects(permanent, card, opts = {}) {
     const baseVal = WORD_TO_NUM[baseRaw] !== undefined ? WORD_TO_NUM[baseRaw] : (parseInt(baseRaw) || 0);
     let countTarget = cdaPlusMatch[3].trim().replace(/\.$/, '');
     const isGraveyard = countTarget.toLowerCase().includes('graveyard') || countTarget.toLowerCase().includes('exile');
-    const cleanTarget = countTarget.replace(/\s+you control$/i, '').replace(/\s+in your graveyard$/i, '').replace(/\s+in all graveyards$/i, '');
+    const cleanTarget = countTarget.replace(/\s+you control$/i, '');   // (whose graveyard stays)
     const cdaPlusCond = _getConditionForPos(cdaPlusMatch.index);
     pushEff('7a', EFFECT_TYPE.CDA_PT,
       { userAdjustable: isGraveyard, isGraveyardCount: isGraveyard, forEachDesc: cleanTarget, compute: null, cdaBaseValue: baseVal,
@@ -4979,7 +4993,7 @@ function parseCardEffects(permanent, card, opts = {}) {
     const isExileCount = _ctLower.includes('exile');
     const isGraveyardCount = !isExileCount && _ctLower.includes('graveyard');
     const isGraveyard = isExileCount || isGraveyardCount;
-    const cleanTarget = countTarget.replace(/\s+you control$/i, '').replace(/\s+in your graveyard$/i, '').replace(/\s+in all graveyards$/i, '');
+    const cleanTarget = countTarget.replace(/\s+you control$/i, '');   // (whose graveyard stays)
     pushEff('7a', EFFECT_TYPE.CDA_PT,
       { userAdjustable: isGraveyard, isGraveyardCount, isExileCount, forEachDesc: cleanTarget, compute: null, toughBonus: bonusVal },
       _cdaSelfCtx,
@@ -5083,12 +5097,16 @@ function parseCardEffects(permanent, card, opts = {}) {
     const _ceIsExile = !_ceIsCompound && _ceCtLower.includes('exile');
     const _ceIsGrave = !_ceIsCompound && !_ceIsExile && _ceCtLower.includes('graveyard');
     const isGraveyard = _ceIsExile || _ceIsGrave;
-    // Keep "you control" in forEachDesc so _computeForEachCount filters by controller.
-    // For compound counts, keep the whole string (incl. "in all graveyards") intact.
-    const cleanTarget = _ceIsCompound ? countTarget
-      : countTarget.replace(/\s+in your graveyard$/i, '').replace(/\s+in all graveyards$/i, '');
+    // Keep "you control" and "in your / all graveyards" in forEachDesc so _computeForEachCount
+    // counts by controller and by whose graveyard it is.
+    // "As this creature enters, choose a player. … cards in the chosen player's graveyard"
+    // (Sewer Nemesis): the player list, with any player on it.
+    if (_ceIsGrave && /\bthe chosen player's graveyard$/i.test(countTarget) && !permanent.isManualEffect) {
+      permanent._targetsChosenPlayer = true;
+      permanent._playerPickLabel = 'chosen player';
+    }
     pushEff('7a', EFFECT_TYPE.CDA_PT,
-      { userAdjustable: isGraveyard, isGraveyardCount: _ceIsGrave, isExileCount: _ceIsExile, forEachDesc: cleanTarget, compute: null,
+      { userAdjustable: isGraveyard, isGraveyardCount: _ceIsGrave, isExileCount: _ceIsExile, forEachDesc: countTarget, compute: null,
         ...(cdaEqualMatch[1] ? { cdaMultiplier: 2 } : {}) },
       _cdaSelfCtx,
       `P/T equal to ${cdaEqualMatch[1] ? 'twice ' : ''}the number of ${countTarget}.`);

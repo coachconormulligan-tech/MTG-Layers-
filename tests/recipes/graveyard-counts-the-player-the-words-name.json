@@ -1,0 +1,217 @@
+{
+  "name": "Graveyard counts: its controller's, defending player's, the chosen player's, and a fired ability's 'your'",
+  "notes": "Death's Approach of P1 on the opponent's Craw Wurm reads the Wurm's controller's one creature card (5/3). Animus of Night's Reach attacking the third player reads that player's three (3/4). Sewer Nemesis has a 'chosen player' list of all players; the third is picked (4 cards). The opponent's fired Chupacabra Echo targets P1's Knight (2/2 +2 lands): 'your' is the opponent's, one permanent card (3/3). Uurg, taken with Confiscate by the opponent, counts the opponent's land cards: none (0/5). Memory: project_graveyard_counts_by_owner_and_kind_2026-11-22.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "call": [
+        "addPlayer",
+        "Third"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Forest"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Forest"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Grizzly Bears"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p2",
+        "card:Grizzly Bears"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p2",
+        "card:Divination"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p3",
+        "card:Grizzly Bears"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p3",
+        "card:Grizzly Bears"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p3",
+        "card:Grizzly Bears"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p3",
+        "card:Lightning Bolt"
+      ]
+    },
+    {
+      "add": "Craw Wurm",
+      "controller": "p2",
+      "as": "w"
+    },
+    {
+      "add": "Knight of the Reliquary",
+      "as": "k1"
+    },
+    {
+      "add": "Uurg, Spawn of Turg",
+      "as": "k2"
+    },
+    {
+      "add": "Death's Approach",
+      "as": "d"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@d",
+        "@w"
+      ]
+    },
+    {
+      "add": "The Long Reach of Night // Animus of Night's Reach",
+      "opts": {
+        "faceIndex": 1
+      },
+      "as": "a"
+    },
+    {
+      "call": [
+        "toggleAttacking",
+        "@a"
+      ]
+    },
+    {
+      "call": [
+        "setAttackingPlayer",
+        "@a",
+        "p3"
+      ]
+    },
+    {
+      "fire": "@a",
+      "trigger": 1
+    },
+    {
+      "add": "Sewer Nemesis",
+      "as": "s"
+    },
+    {
+      "call": [
+        "setTargetPlayer",
+        "@s",
+        "p3"
+      ]
+    },
+    {
+      "add": "Chupacabra Echo",
+      "controller": "p2",
+      "as": "e"
+    },
+    {
+      "fire": "@e",
+      "trigger": 0,
+      "as": "et"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@et",
+        "@k1"
+      ]
+    },
+    {
+      "add": "Confiscate",
+      "controller": "p2",
+      "as": "c"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@c",
+        "@k2"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Craw Wurm",
+      "final": {
+        "power": 5,
+        "toughness": 3
+      }
+    },
+    {
+      "perm": "Animus of Night's Reach",
+      "final": {
+        "power": 3,
+        "toughness": 4
+      }
+    },
+    {
+      "perm": "Sewer Nemesis",
+      "final": {
+        "power": 4,
+        "toughness": 4
+      }
+    },
+    {
+      "perm": "Knight of the Reliquary",
+      "final": {
+        "power": 3,
+        "toughness": 3
+      }
+    },
+    {
+      "perm": "Uurg, Spawn of Turg",
+      "final": {
+        "power": 0,
+        "toughness": 5
+      }
+    },
+    {
+      "targetCandidates": {
+        "perm": "Sewer Nemesis",
+        "kind": "players"
+      },
+      "are": [
+        "Opponent",
+        "Player 1",
+        "Third"
+      ]
+    }
+  ]
+}

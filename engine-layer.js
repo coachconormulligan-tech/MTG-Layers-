@@ -866,7 +866,7 @@ function computeZoneCardState(card, zone, ownerId) {
     try {
       selfEffects = (parseCardEffects(perm, card) || [])
         .filter(e => e.appliesToNonBattlefieldZones || (_isCdaEffect(e) && e.selfTarget && e.sourceId === perm.id))
-        .map(e => e.appliesToNonBattlefieldZones ? e : Object.assign({}, e, { appliesToNonBattlefieldZones: true, zoneCardsOnly: true }));
+        .map(e => e.appliesToNonBattlefieldZones ? e : Object.assign({}, e, { appliesToNonBattlefieldZones: true, zoneCardsOnly: true, inZone: z }));
     } catch (e) { selfEffects = []; }
     const realPerms = (typeof Battlefield !== 'undefined' && Battlefield.permanents)
       ? Battlefield.permanents.filter(p => !p.isManualEffect) : [];

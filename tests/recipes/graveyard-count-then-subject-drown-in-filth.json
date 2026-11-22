@@ -1,0 +1,107 @@
+{
+  "name": "Drown in Filth, Stubborn Burrowfiend: the subject after ', then'",
+  "notes": "'Mill four cards, then that creature gets …' and 'mill two cards, then this creature gets …' read the mill as part of the subject, so the count reached nobody. Drown lists the creatures and gives the chosen Craw Wurm -1/-1 for each of P1's two land cards (4/2); the Burrowfiend's fired trigger gives itself +2/+2 for P1's two creature cards (4/4). Memory: project_graveyard_counts_by_owner_and_kind_2026-11-22.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Forest"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Forest"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Grizzly Bears"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Grizzly Bears"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p2",
+        "card:Forest"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p2",
+        "card:Grizzly Bears"
+      ]
+    },
+    {
+      "add": "Craw Wurm",
+      "controller": "p2",
+      "as": "w"
+    },
+    {
+      "add": "Stubborn Burrowfiend",
+      "as": "b"
+    },
+    {
+      "fire": "@b",
+      "trigger": 0
+    },
+    {
+      "add": "Forest"
+    },
+    {
+      "add": "Drown in Filth",
+      "spell": true,
+      "as": "d"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@d",
+        "@w"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Craw Wurm",
+      "final": {
+        "power": 4,
+        "toughness": 2
+      }
+    },
+    {
+      "perm": "Stubborn Burrowfiend",
+      "final": {
+        "power": 4,
+        "toughness": 4
+      }
+    },
+    {
+      "targetCandidates": {
+        "perm": "Drown in Filth"
+      },
+      "are": [
+        "Craw Wurm",
+        "Stubborn Burrowfiend"
+      ]
+    }
+  ]
+}

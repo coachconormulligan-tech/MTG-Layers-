@@ -1,0 +1,79 @@
+{
+  "name": "Graveyard counts: compound count, Grist, a double-faced card's front, Boneyard Mycodrax not counting itself",
+  "notes": "Abomination of Llanowar counts itself and P1's one Elf card, not the opponent's (2/2). Mortivore counts Mycodrax, two Llanowar Elves and Grist, not Invasion of Zendikar's back face (4/4). Boneyard Mycodrax in P1's graveyard, 'other creature cards in your graveyard', counts Elves and Grist (2). Memory: project_graveyard_counts_by_owner_and_kind_2026-11-22.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Boneyard Mycodrax"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Llanowar Elves"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Invasion of Zendikar // Awakened Skyclave"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Grist, the Hunger Tide"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p2",
+        "card:Llanowar Elves"
+      ]
+    },
+    {
+      "add": "Abomination of Llanowar"
+    },
+    {
+      "add": "Mortivore"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Abomination of Llanowar",
+      "final": {
+        "power": 2,
+        "toughness": 2
+      }
+    },
+    {
+      "perm": "Mortivore",
+      "final": {
+        "power": 4,
+        "toughness": 4
+      }
+    },
+    {
+      "zoneCard": {
+        "name": "Boneyard Mycodrax",
+        "zone": "graveyard"
+      },
+      "final": {
+        "power": 2,
+        "toughness": 2
+      }
+    }
+  ]
+}
