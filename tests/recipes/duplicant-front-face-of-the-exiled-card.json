@@ -1,0 +1,50 @@
+{
+  "name": "Duplicant — a double-faced card in exile is its front face",
+  "notes": "Jace, Vryn's Prodigy gave 0/0 (no power on the whole card). Westvale Abbey, exiled later, is a land in exile and does not count. NOTE: exile ids are literal; build in its own process.",
+  "steps": [
+    {
+      "add": "Duplicant",
+      "as": "d"
+    },
+    {
+      "call": [
+        "addToExile",
+        "card:Jace, Vryn's Prodigy // Jace, Telepath Unbound"
+      ]
+    },
+    {
+      "call": [
+        "setExileTag",
+        "exile_1",
+        "@d"
+      ]
+    },
+    {
+      "call": [
+        "addToExile",
+        "card:Westvale Abbey // Ormendahl, Profane Prince"
+      ]
+    },
+    {
+      "call": [
+        "setExileTag",
+        "exile_2",
+        "@d"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Duplicant",
+      "final": {
+        "power": 0,
+        "toughness": 2,
+        "subtypes": [
+          "Shapeshifter",
+          "Human",
+          "Wizard"
+        ]
+      }
+    }
+  ]
+}

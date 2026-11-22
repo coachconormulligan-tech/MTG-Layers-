@@ -1,0 +1,30 @@
+{
+  "name": "Skill Borrower — a double-faced top card gives its front face's abilities",
+  "notes": "Scryfall keeps a double-faced card's text on its faces, so nothing was gained; its back face's types counted too (CR 712.8a).",
+  "steps": [
+    {
+      "add": "Skill Borrower"
+    },
+    {
+      "call": [
+        "setLibraryTop",
+        "p1",
+        "card:Tangled Florahedron // Tangled Vale"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Skill Borrower",
+      "final": {
+        "power": 1,
+        "toughness": 3,
+        "abilities": {
+          "$includes": [
+            "{T}: Add {G}."
+          ]
+        }
+      }
+    }
+  ]
+}

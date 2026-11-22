@@ -1,0 +1,163 @@
+{
+  "name": "The five Deceivers — \"If it's a land card\" is asked with a toggle",
+  "notes": "The revealed card was read as the Deceiver itself, so none ever got its bonus. Five are fired at Yes; the second Callous Deceiver stays at No.",
+  "steps": [
+    {
+      "add": "Brutal Deceiver",
+      "as": "Brutal"
+    },
+    {
+      "add": "Callous Deceiver",
+      "as": "Callous"
+    },
+    {
+      "add": "Cruel Deceiver",
+      "as": "Cruel"
+    },
+    {
+      "add": "Feral Deceiver",
+      "as": "Feral"
+    },
+    {
+      "add": "Harsh Deceiver",
+      "as": "Harsh"
+    },
+    {
+      "add": "Callous Deceiver",
+      "as": "no"
+    },
+    {
+      "fire": "@Brutal",
+      "activated": 1,
+      "as": "BrutalFired"
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@BrutalFired",
+        true
+      ]
+    },
+    {
+      "fire": "@Callous",
+      "activated": 1,
+      "as": "CallousFired"
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@CallousFired",
+        true
+      ]
+    },
+    {
+      "fire": "@Cruel",
+      "activated": 1,
+      "as": "CruelFired"
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@CruelFired",
+        true
+      ]
+    },
+    {
+      "fire": "@Feral",
+      "activated": 1,
+      "as": "FeralFired"
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@FeralFired",
+        true
+      ]
+    },
+    {
+      "fire": "@Harsh",
+      "activated": 1,
+      "as": "HarshFired"
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@HarshFired",
+        true
+      ]
+    },
+    {
+      "fire": "@no",
+      "activated": 1
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Brutal Deceiver",
+      "final": {
+        "power": 3,
+        "toughness": 2,
+        "abilities": {
+          "$includes": [
+            "First strike"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Callous Deceiver A",
+      "final": {
+        "power": 2,
+        "toughness": 3,
+        "abilities": {
+          "$includes": [
+            "Flying"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Feral Deceiver",
+      "final": {
+        "power": 5,
+        "toughness": 4,
+        "abilities": {
+          "$includes": [
+            "Trample"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Harsh Deceiver",
+      "final": {
+        "power": 2,
+        "toughness": 5
+      }
+    },
+    {
+      "perm": "Cruel Deceiver",
+      "final": {
+        "power": 2,
+        "toughness": 1,
+        "abilities": {
+          "$includes": [
+            "Whenever this creature deals damage to a creature, destroy that creature"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Callous Deceiver B",
+      "final": {
+        "power": 1,
+        "toughness": 3,
+        "abilities": {
+          "$excludes": [
+            "Flying"
+          ]
+        }
+      }
+    }
+  ]
+}

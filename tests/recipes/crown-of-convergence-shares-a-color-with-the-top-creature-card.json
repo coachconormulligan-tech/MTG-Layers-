@@ -1,0 +1,76 @@
+{
+  "name": "Crown of Convergence — your creatures that share a color with the creature card on top get +1/+1",
+  "notes": "The condition tested the creature being changed, and \"that share a color with that card\" was read as subtypes Share and Color, so nothing got the boost. Kitchen Finks is green and white. The opponent's Crown has a noncreature card on top and gives nothing.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Crown of Convergence"
+    },
+    {
+      "add": "Crown of Convergence",
+      "controller": "p2"
+    },
+    {
+      "add": "Grizzly Bears"
+    },
+    {
+      "add": "Savannah Lions"
+    },
+    {
+      "add": "Raging Goblin"
+    },
+    {
+      "add": "Llanowar Elves",
+      "controller": "p2"
+    },
+    {
+      "call": [
+        "setLibraryTop",
+        "p1",
+        "card:Kitchen Finks"
+      ]
+    },
+    {
+      "call": [
+        "setLibraryTop",
+        "p2",
+        "card:Giant Growth"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 3,
+        "toughness": 3
+      }
+    },
+    {
+      "perm": "Savannah Lions",
+      "final": {
+        "power": 3,
+        "toughness": 2
+      }
+    },
+    {
+      "perm": "Raging Goblin",
+      "final": {
+        "power": 1,
+        "toughness": 1
+      }
+    },
+    {
+      "perm": "Llanowar Elves",
+      "final": {
+        "power": 1,
+        "toughness": 1
+      }
+    }
+  ]
+}

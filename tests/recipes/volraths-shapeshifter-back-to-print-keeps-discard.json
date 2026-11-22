@@ -1,0 +1,50 @@
+{
+  "name": "Volrath's Shapeshifter — back to its print, it still has {2}: Discard a card.",
+  "notes": "Parsing a copied card's text left that card's conditional line numbers on the Shapeshifter, so its own second line was missing once the copy ended. Here it has Murasa Behemoth's text under its owner until the other player, whose graveyard is empty, gains control of it.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p2",
+        "card:Murasa Behemoth"
+      ]
+    },
+    {
+      "add": "Volrath's Shapeshifter",
+      "as": "v",
+      "controller": "p2"
+    },
+    {
+      "add": "Control Magic",
+      "as": "cm"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@cm",
+        "@v"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Volrath's Shapeshifter",
+      "final": {
+        "power": 0,
+        "toughness": 1,
+        "name": "Volrath's Shapeshifter",
+        "abilities": {
+          "$includes": [
+            "{2}: Discard a card."
+          ]
+        }
+      }
+    }
+  ]
+}

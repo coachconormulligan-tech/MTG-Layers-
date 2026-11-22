@@ -1,0 +1,36 @@
+{
+  "name": "Mul Daya Channelers — plain 2/2 with no card on top of your library",
+  "notes": "\"The top card of your library is a creature / land card\" was read as a test of the Channelers: always 5/5, never the mana ability. With the Top of library slot empty neither condition holds, whatever the opponent's is.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Mul Daya Channelers"
+    },
+    {
+      "call": [
+        "setLibraryTop",
+        "p2",
+        "card:Dryad Arbor"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Mul Daya Channelers",
+      "final": {
+        "power": 2,
+        "toughness": 2,
+        "abilities": {
+          "$excludes": [
+            "{T}: Add two mana of any one color."
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -807,6 +807,72 @@ function _cardIsEveryCreatureType(card) {
   }));
 }
 
+/* A card as it is outside the battlefield: its front face (CR 712.8a), a flip card's unflipped
+   half (CR 710.1), an Adventure, Omen or prepare card without its spell (CR 715.4), and a split
+   card both halves together (CR 709.4). Scryfall's record of such a card has "A // B" for a name
+   and type line and no rules text of its own. A card saved showing its back is its front again. */
+function _zoneCardFront(card) {
+  const faces = card && card.card_faces;
+  if (!faces || !faces.length) return card;
+  const front = { ...card, layout: 'normal', card_faces: undefined };
+  if (card.layout === 'split') {
+    front.oracle_text = faces.map(f => f.oracle_text || '').filter(Boolean).join('\n');
+    return front;
+  }
+  const f = faces[0];
+  for (const k of ['name', 'type_line', 'oracle_text', 'mana_cost', 'power', 'toughness']) front[k] = f[k];
+  front.colors = f.colors || card.colors || [];
+  return front;
+}
+
+/* Is this card a creature card in that zone? Print answers, but for a card whose own text makes
+   it one off the battlefield (Grist, the Hunger Tide), which is evaluated there. */
+function _zoneCardIsCreature(card, zone) {
+  const front = _zoneCardFront(card);
+  if (parseTypeLine(front.type_line || '').types.includes('Creature')) return true;
+  return /\bisn['’]t on the battlefield\b/i.test(front.oracle_text || '') && _isCreatureCardInZone(front, zone);
+}
+
+/* "The top card of your library is <quality>", "a card exiled with this creature is <quality>":
+   one or more alternatives joined by "or", each of words for a colour, a card type or a subtype
+   ("black", "artifact or creature", "creature or lesson"). */
+function _zoneCardIs(card, quality, zone) {
+  if (!card) return false;
+  const front = _zoneCardFront(card);
+  return String(quality).toLowerCase().split(/\s+or\s+/).some(part => part.split(/\s+/).filter(Boolean).every(word =>
+    COLOR_NAMES[word] ? (front.colors || []).includes(COLOR_NAMES[word])
+      : word === 'creature' ? _zoneCardIsCreature(front, zone)
+      : _zoneCardMatchesQualifier(front, word)));
+}
+
+/* The last creature card exiled with a permanent (Duplicant), as it is in exile: what was exiled
+   after it and is no creature card does not matter. { card, owner } or null. */
+function _lastCreatureCardExiledWith(sourceId) {
+  const entries = _getImprintedExileEntries(sourceId);
+  for (let i = entries.length - 1; i >= 0; i--) {
+    const { card, owner } = entries[i];
+    if (card && _zoneCardIsCreature(card, 'exile')) return { card: _zoneCardFront(card), owner };
+  }
+  return null;
+}
+
+/* That card's creature types, power and toughness. Print answers unless the card works them out
+   itself in exile (Tarmogoyf's star, Grist's 1/1 Insect): then it is evaluated there, once (an
+   evaluation inside that one reads the print). */
+function _exiledCreatureValues({ card, owner }) {
+  const printed = parseTypeLine(card.type_line || '');
+  const isNumber = (v) => /^-?\d+$/.test(String(v));
+  let { power, toughness } = card, subtypes = printed.subtypes;
+  if ((!printed.types.includes('Creature') || !isNumber(power) || !isNumber(toughness)) && _zoneEvalDepth === 0) {
+    const inExile = computeZoneCardState(card, 'exile', owner);
+    if (inExile && inExile.final) ({ power, toughness, subtypes } = inExile.final);
+  }
+  return {
+    power: parseInt(power, 10) || 0, toughness: parseInt(toughness, 10) || 0,
+    creatureTypes: _zoneCardSubtypes(card, subtypes).filter(s => TypeCatalog.isCreatureType(s)),
+  };
+}
+
 // A card's subtypes outside the battlefield, given the ones printed on it.
 function _zoneCardSubtypes(card, printed) {
   return _cardIsEveryCreatureType(card) ? [...new Set([...printed, ...TypeCatalog.everyCreatureType()])] : printed;

@@ -53,31 +53,28 @@ function applyEffect(state, effect, context) {
         }
         break;
       }
-      // Imprint: pull creature subtypes from the most-recent imprinted exile entry — Duplicant.
+      // Imprint: the creature types of the last creature card exiled with it — Duplicant. They
+      // replace the ones it had; "It's still a Shapeshifter" keeps that one (CR 205.1a, 205.1b).
       // Silent no-op when no imprinted card / wrong type so the inspector doesn't show a layer row.
       if (effect.params.fromImprintedCardCreatureTypes && typeof _getImprintedExileEntries === 'function') {
-        const entries = _getImprintedExileEntries(effect.sourceId);
-        const last = entries.length ? entries[entries.length - 1] : null;
-        if (!last || !last.card) break;
-        const tl = last.card.type_line || '';
-        const parsed = typeof parseTypeLine === 'function'
-          ? parseTypeLine(tl) : { types: [], subtypes: [] };
-        if (effect.params.requireCreature && !parsed.types.includes('Creature')) break;
+        const exiled = _lastCreatureCardExiledWith(effect.sourceId);
+        if (!exiled) break;
+        const { creatureTypes } = _exiledCreatureValues(exiled);
         // An exiled changeling has every creature type, so Duplicant does too.
-        const everyType = _cardIsEveryCreatureType(last.card);
-        if (everyType) state.isAllCreatureTypes = true;
-        let added = 0;
-        for (const st of _zoneCardSubtypes(last.card, parsed.subtypes || [])) {
-          const isCreatureSub = typeof TypeCatalog !== 'undefined' &&
-            TypeCatalog.isCreatureType(st);
-          if (!isCreatureSub) continue;
-          if (!state.subtypes.includes(st)) {
-            state.subtypes.push(st);
-            added++;
-          }
+        const everyType = _cardIsEveryCreatureType(exiled.card);
+        const before = state.subtypes.slice();
+        const kept = before.filter(s => s === 'Shapeshifter' || !TypeCatalog.isCreatureType(s));
+        state.subtypes = [...new Set([...kept, ...creatureTypes])];
+        state.isAllCreatureTypes = everyType;
+        const lost = before.filter(s => !state.subtypes.includes(s));
+        const added = state.subtypes.filter(s => !before.includes(s));
+        if (everyType) {
+          if (added.length) changes.push(`Gained all creature types from imprinted "${exiled.card.name}".`);
+        } else if (lost.length) {
+          changes.push(`Replaced its creature types other than Shapeshifter with those of imprinted "${exiled.card.name}"${creatureTypes.length ? ': ' + creatureTypes.join(', ') : ''}.`);
+        } else if (added.length) {
+          changes.push(`Added ${added.length} creature subtype(s) from imprinted "${exiled.card.name}": ${added.join(', ')}.`);
         }
-        if (added) changes.push(everyType ? `Gained all creature types from imprinted "${last.card.name}".`
-          : `Added ${added} creature subtype(s) from imprinted "${last.card.name}": ${parsed.subtypes.join(', ')}.`);
         break;
       }
       for (const sup of (effect.params.supertypes || [])) {
@@ -474,22 +471,13 @@ function applyEffect(state, effect, context) {
     case EFFECT_TYPE.SET_PT:
       if (state.types.includes('Creature')) {
         const oldP = state.power, oldT = state.toughness;
-        // Imprint: P/T from most-recent imprinted creature card — Duplicant.
+        // Imprint: P/T of the last creature card exiled with it — Duplicant.
         if (effect.params.fromImprintedCardPT && typeof _getImprintedExileEntries === 'function') {
-          const entries = _getImprintedExileEntries(effect.sourceId);
-          const last = entries.length ? entries[entries.length - 1] : null;
+          const exiled = _lastCreatureCardExiledWith(effect.sourceId);
           // Silent no-op when no imprinted card / wrong type so the inspector doesn't show a layer row.
-          if (!last || !last.card) break;
-          if (effect.params.requireCreature) {
-            const parsed = typeof parseTypeLine === 'function'
-              ? parseTypeLine(last.card.type_line || '') : { types: [] };
-            if (!parsed.types.includes('Creature')) break;
-          }
-          const cardPow = parseInt(last.card.power, 10);
-          const cardTou = parseInt(last.card.toughness, 10);
-          state.power = isNaN(cardPow) ? 0 : cardPow;
-          state.toughness = isNaN(cardTou) ? 0 : cardTou;
-          changes.push(`Set P/T to ${state.power}/${state.toughness} from imprinted "${last.card.name}" (was ${oldP}/${oldT})`);
+          if (!exiled) break;
+          ({ power: state.power, toughness: state.toughness } = _exiledCreatureValues(exiled));
+          changes.push(`Set P/T to ${state.power}/${state.toughness} from imprinted "${exiled.card.name}" (was ${oldP}/${oldT})`);
           break;
         }
         // Numbers taken from another object as the ability resolved (Belligerent Yearling,
@@ -909,9 +897,10 @@ function applyEffect(state, effect, context) {
         // Look up the top card of the controlling player's actual graveyard.
         // Fall back to the legacy effect.params.graveyardCard for compatibility.
         const controllerPlayerId = state.controller || 'player_0';
-        const gCard = (typeof Battlefield !== 'undefined' && Battlefield.getGraveyardTop)
+        // (In a graveyard a double-faced or Adventure card is its front face alone.)
+        const gCard = _zoneCardFront((typeof Battlefield !== 'undefined' && Battlefield.getGraveyardTop)
           ? Battlefield.getGraveyardTop(controllerPlayerId)
-          : (effect.params.graveyardCard || null);
+          : (effect.params.graveyardCard || null));
         if (!gCard) { break; } // No top graveyard card — effect is inactive
         // "Creature card?" uses the card's COMPUTED zone characteristics, so a card that's a
         // creature only outside the battlefield (Grist, the Hunger Tide — a 1/1 Insect creature
@@ -965,6 +954,7 @@ function applyEffect(state, effect, context) {
         state.cdaAbilities = _cdaAbilityTexts(state.abilities, null);
         state.hasChangeling = state.abilities.some(a => /\bchangeling\b/i.test(a));
         state.oracleTextModified = true;
+        state.fullTextFromZone = true;
         changes.push(`Volrath becomes "${gCard.name}" (was "${oldName}"): gained name, mana cost, types, abilities, P/T, color.`);
         break;
       }
@@ -1343,7 +1333,9 @@ function applyEffect(state, effect, context) {
         const _gyCards = _fromLibraryTop ? (player.libraryTop ? [player.libraryTop] : []) : (player.graveyard || []);
         if (!_gyCards.length) continue;
         if (_gyOwnOnly && player.id !== (state.controller || 'player_0')) continue;
-        for (const card of _gyCards) {
+        for (const zoneCard of _gyCards) {
+          // The top card of a library is its front face (CR 712.8a, 715.4).
+          const card = _fromLibraryTop ? _zoneCardFront(zoneCard) : zoneCard;
           // Only process creature cards. Uses the COMPUTED zone state so a card that's a creature
           // only outside the battlefield (Grist, the Hunger Tide — a 1/1 Insect creature in the
           // graveyard via its own Layer 4 ability) qualifies. _isCreatureCardInZone short-circuits
@@ -1357,7 +1349,7 @@ function applyEffect(state, effect, context) {
           } else if (_gyCardType && !new RegExp('\\b' + _gyCardType + '\\b', 'i').test(_gyTypeLine.split('—')[0])) {
             continue;
           }
-          if (_gyCardTypes && !_gyCardTypes.some(t => new RegExp('\\b' + t + '\\b', 'i').test(_gyTypeLine.split('—')[0]))) continue;
+          if (_gyCardTypes && !_zoneCardIs(card, _gyCardTypes.join(' or '), _fromLibraryTop ? 'library' : 'graveyard')) continue;
           if (_gyCardSubtype && !new RegExp('\\b' + _gyCardSubtype + '\\b', 'i').test(_gyTypeLine.split('—')[1] || '') &&
               !_zoneCardSubtypes(card, []).some(s => s.toLowerCase() === _gyCardSubtype.toLowerCase())) continue;   // a changeling
           // CR 305.6: a basic land type carries its mana ability even with no rules text.

@@ -1,0 +1,30 @@
+{
+  "name": "Mul Daya Channelers — both halves with Dryad Arbor on top",
+  "notes": "\"The top card of your library is a creature / land card\" was read as a test of the Channelers: always 5/5, never the mana ability. Dryad Arbor is both a land card and a creature card.",
+  "steps": [
+    {
+      "add": "Mul Daya Channelers"
+    },
+    {
+      "call": [
+        "setLibraryTop",
+        "p1",
+        "card:Dryad Arbor"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Mul Daya Channelers",
+      "final": {
+        "power": 5,
+        "toughness": 5,
+        "abilities": {
+          "$includes": [
+            "{T}: Add two mana of any one color."
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "name": "Volrath's Shapeshifter — Murasa Behemoth's text over a Forest is 8/8",
+  "notes": "The copied \"there is a land card in your graveyard\" was read as a test of the Shapeshifter.",
+  "steps": [
+    {
+      "add": "Volrath's Shapeshifter"
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Forest"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Murasa Behemoth"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Volrath's Shapeshifter",
+      "final": {
+        "power": 8,
+        "toughness": 8,
+        "name": "Murasa Behemoth",
+        "abilities": {
+          "$includes": [
+            "Trample",
+            "{2}: Discard a card."
+          ]
+        }
+      }
+    }
+  ]
+}

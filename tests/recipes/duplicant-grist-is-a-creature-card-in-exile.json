@@ -1,0 +1,36 @@
+{
+  "name": "Duplicant — Grist in exile is a 1/1 Insect creature card",
+  "notes": "Only the printed type line was read. NOTE: exile ids are literal; build in its own process.",
+  "steps": [
+    {
+      "add": "Duplicant",
+      "as": "d"
+    },
+    {
+      "call": [
+        "addToExile",
+        "card:Grist, the Hunger Tide"
+      ]
+    },
+    {
+      "call": [
+        "setExileTag",
+        "exile_1",
+        "@d"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Duplicant",
+      "final": {
+        "power": 1,
+        "toughness": 1,
+        "subtypes": [
+          "Shapeshifter",
+          "Insect"
+        ]
+      }
+    }
+  ]
+}

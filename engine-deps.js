@@ -59,18 +59,15 @@ function effectAppliesToPerm(effect, permState, permanent, permId, allStates, ab
 
   // Imprint preconditions: if the effect's value comes from an imprinted exile entry,
   // the effect is inactive (and shouldn't even appear in the inspector) when there's no
-  // valid entry — no imprint, missing card data, or fails the requireCreature filter.
+  // valid entry — no imprint, missing card data, or (requireCreature) no creature card among
+  // those exiled with it.
   // Covers Duplicant (fromImprintedCard*), Phyrexian Ingester (fromExiledCardPT).
   if (effect.params && typeof _getImprintedExileEntries === 'function' &&
       (effect.params.fromImprintedCardPT || effect.params.fromImprintedCardCreatureTypes || effect.params.fromExiledCardPT || effect.params.fromExiledCardMV)) {
     const entries = _getImprintedExileEntries(effect.sourceId);
     const last = entries.length ? entries[entries.length - 1] : null;
     if (!last || !last.card) return false;
-    if (effect.params.requireCreature) {
-      const parsed = typeof parseTypeLine === 'function'
-        ? parseTypeLine(last.card.type_line || '') : { types: [] };
-      if (!parsed.types.includes('Creature')) return false;
-    }
+    if (effect.params.requireCreature && !_lastCreatureCardExiledWith(effect.sourceId)) return false;
   }
 
   // Mass copy ("Each other creature becomes a copy of target creature"): nothing until what is
@@ -144,7 +141,7 @@ function effectAppliesToPerm(effect, permState, permanent, permId, allStates, ab
           // "creature card" uses the COMPUTED zone state, so a card that's a creature only off
           // the battlefield (Grist, the Hunger Tide) counts. _isCreatureCardInZone short-circuits
           // on the printed type line and guards against re-entrant evaluation.
-          if (!gCard || typeof _isCreatureCardInZone !== 'function' || !_isCreatureCardInZone(gCard, 'graveyard')) return false;
+          if (!gCard || typeof _isCreatureCardInZone !== 'function' || !_isCreatureCardInZone(_zoneCardFront(gCard), 'graveyard')) return false;
         }
         if (effect.asLongAsCondition) {
           if (!effect.asLongAsCondition(permState, _permanentStates(allStates))) return false;

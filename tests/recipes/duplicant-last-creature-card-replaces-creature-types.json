@@ -1,0 +1,52 @@
+{
+  "name": "Duplicant — the last creature card counts, and its types replace all but Shapeshifter",
+  "notes": "A land exiled after the creature switched it off. Its creature types replace those an earlier effect gave (Maskwood Nexus), keeping Shapeshifter (CR 205.1b). NOTE: exile ids are literal; build in its own process.",
+  "steps": [
+    {
+      "add": "Maskwood Nexus"
+    },
+    {
+      "add": "Duplicant",
+      "as": "d"
+    },
+    {
+      "call": [
+        "addToExile",
+        "card:Serra Angel"
+      ]
+    },
+    {
+      "call": [
+        "setExileTag",
+        "exile_1",
+        "@d"
+      ]
+    },
+    {
+      "call": [
+        "addToExile",
+        "card:Forest"
+      ]
+    },
+    {
+      "call": [
+        "setExileTag",
+        "exile_2",
+        "@d"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Duplicant",
+      "final": {
+        "power": 4,
+        "toughness": 4,
+        "subtypes": [
+          "Shapeshifter",
+          "Angel"
+        ]
+      }
+    }
+  ]
+}

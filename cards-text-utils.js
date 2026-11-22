@@ -1532,6 +1532,23 @@ function _buildAppliesToFromTextInner(filterText) {
       };
     }
   }
+  // "Creatures you control that share a color with the top card of your library" (Crown of
+  // Convergence, whose "that card" the parser writes out): the effect controller's top card.
+  // Unread, "share" and "color" were taken for subtypes and nothing got the boost.
+  const shareTopColor = raw.match(/^(.+?)\s+that shares? a color with the top card of your library$/);
+  if (shareTopColor) {
+    const inner = _buildAppliesToFromTextInner(shareTopColor[1]);
+    if (inner && inner.fn && !inner.isSelf) {
+      return {
+        fn: (p, allStates, effectCtrl) => {
+          const top = typeof Battlefield !== 'undefined' ? Battlefield.getLibraryTop(effectCtrl || p.controller) : null;
+          return !!top && (_zoneCardFront(top).colors || []).some(c => (p.colors || []).includes(c)) &&
+            inner.fn(p, allStates, effectCtrl);
+        },
+        desc: `${inner.desc} that share a color with the top card of your library`,
+      };
+    }
+  }
   // "Two target creatures you control that share a creature type" (Secret Tunnel): a creature that
   // shares one with another the words allow (the pair itself is the player's to pick). Unread,
   // "share" was taken for a subtype and nothing was offered. (Changeling shares any type it has: CR 205.3m's, the silver-bordered with that switch on.)

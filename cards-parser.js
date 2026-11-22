@@ -21,17 +21,24 @@ function _insideQuote(text, offset) {
 const DURATION_PREFIX_RE = /^until\s+(?:end\s+of\s+turn|your\s+next\s+turn)\s*,\s*/i;
 function stripDurationPrefix(s) { return s.replace(DURATION_PREFIX_RE, ''); }
 
+/* A card type that goes on to "card" is a card's, never the permanent's: "there is a land card in
+   your graveyard" (Murasa Behemoth), "the top card of your library is an artifact or creature
+   card" (Skill Borrower). The parsers of those zones read that card (CONDITION_PARSERS). */
+const _THEN_CARD = '(?: (?!this\\b|that\\b)[\\w-]+){0,3} cards?\\b';
+const _typeCondition = (words) => new RegExp(`\\b(?:${words})\\b(?!${_THEN_CARD})`);
+const _UNSEEN_CARD_CONDITION_RE = new RegExp(
+  `\\b(?:is an? (?:creature|artifact|enchantment|land|planeswalker)|isn'?t a creature|is not a creature)\\b${_THEN_CARD}`);
 /* Table of simple "is X" / "isn't X" trait conditions. Iterated by _parseCondition so the
    13 sequential if-statements collapse to one loop. Order within the table preserves the
    source order (no patterns here overlap, but keeping the order makes intent clearer). */
 const SIMPLE_TRAIT_CONDITIONS = [
   { re: /\bis legendary\b/, fn: s => s.supertypes.includes('Legendary') },
-  { re: /\bis a creature\b/, fn: s => s.types.includes('Creature') },
-  { re: /\bis an? artifact\b/, fn: s => s.types.includes('Artifact') },
-  { re: /\bis an? enchantment\b/, fn: s => s.types.includes('Enchantment') },
-  { re: /\bis a land\b/, fn: s => s.types.includes('Land') },
-  { re: /\bis a planeswalker\b/, fn: s => s.types.includes('Planeswalker') },
-  { re: /\bisn'?t a creature\b|\bis not a creature\b/, fn: s => !s.types.includes('Creature') },
+  { re: _typeCondition('is a creature'), fn: s => s.types.includes('Creature') },
+  { re: _typeCondition('is an? artifact'), fn: s => s.types.includes('Artifact') },
+  { re: _typeCondition('is an? enchantment'), fn: s => s.types.includes('Enchantment') },
+  { re: _typeCondition('is a land'), fn: s => s.types.includes('Land') },
+  { re: _typeCondition('is a planeswalker'), fn: s => s.types.includes('Planeswalker') },
+  { re: _typeCondition("isn'?t a creature|is not a creature"), fn: s => !s.types.includes('Creature') },
   { re: /\bis monstrous\b/, fn: s => (s.traits || []).includes('Monstrous') },
   { re: /\bisn'?t monstrous\b|\bis not monstrous\b/, fn: s => !(s.traits || []).includes('Monstrous') },
   { re: /\bis saddled\b/, fn: s => (s.traits || []).includes('Saddled') },
@@ -188,6 +195,32 @@ const CONDITION_PARSERS = [
       }
       return false;
     };
+  },
+
+  // --- A card in another zone ---
+  // "the top card of your library is a creature card" (Mul Daya Channelers, Crown of Convergence),
+  // "… is black" (Vampire Nocturnus), "the top card of your graveyard is a creature card"
+  // (Volrath's Shapeshifter): that card of the source's controller, false while there is none.
+  // Must precede the colour check, which tests the permanent itself. Card types and colours only:
+  // a line whose condition is read leaves the printed abilities, so a subtype (Conspicuous Snoop,
+  // whose effect has its own filter) is left unread.
+  (ct, srcId) => {
+    const m = ct.match(/^the top card of your (library|graveyard) is (?:(white|blue|black|red|green)|an? ([a-z]+(?: (?:or )?[a-z]+)*) card)$/);
+    if (!m) return null;
+    if (m[3] && !m[3].split(/ (?:or )?/).every(w => COLOR_NAMES[w] || _ZONE_CLAUSE_TYPE_WORDS[w])) return null;
+    const zone = m[1], quality = m[2] || m[3];
+    return (state, allStates) => {
+      if (typeof Battlefield === 'undefined') return false;
+      const you = ((allStates && allStates.get(srcId)) || Battlefield.getPermById(srcId) || state || {}).controller;
+      return _zoneCardIs(zone === 'library' ? Battlefield.getLibraryTop(you) : Battlefield.getGraveyardTop(you), quality, zone);
+    };
+  },
+  // "a card exiled with this creature is a creature card" (Duplicant): any of them.
+  (ct, srcId, selfId) => {
+    const m = ct.match(/^a card exiled with (?:this [a-z]+|it) is an? ([a-z]+(?: (?:or )?[a-z]+)*) card$/);
+    if (!m) return null;
+    return () => typeof Battlefield !== 'undefined' &&
+      _getImprintedExileEntries(selfId).some(e => _zoneCardIs(e.card, m[1], 'exile'));
   },
 
   // --- Simple trait/type checks (legendary, creature, etc.) ---
@@ -473,8 +506,11 @@ const CONDITION_PARSERS = [
     const qualifier = (m[2] || '').trim();
     const yoursOnly = (m[3] || '').toLowerCase() === 'your';
     const zone = /exile/.test(m[4]) ? 'exile' : 'graveyard';
+    // Each card by the face it has there: a land on the back is no land card (CR 712.8a).
+    // "A creature or Lesson card" (Leaves from the Vine) is either.
+    const either = qualifier.split(/\s+or\s+/i);
     const matches = (card) => (typeof _zoneCardMatchesQualifier === 'function')
-      ? _zoneCardMatchesQualifier(card, qualifier) : true;
+      ? either.some(q => _zoneCardMatchesQualifier(_zoneCardFront(card), q)) : true;
     return (state, allStates) => {
       if (typeof Battlefield === 'undefined') return true;
       // "Your" is the source's controller, not the enchanted creature's (Patriarch's Desire).
@@ -494,6 +530,14 @@ const CONDITION_PARSERS = [
       return count >= threshold;
     };
   },
+
+  // A card of no zone read above: "it is a land card" of a card revealed or exiled as the ability
+  // resolves, "the top card of target player's graveyard is a creature card" (Guiding Spirit).
+  // The board does not show it, and it is never the permanent being changed, so it does not hold;
+  // what it gates is asked with a toggle where it changes the board (the Deceivers, Paroxysm).
+  // (Not null: an unread condition is cut from the text and what it gated would always apply.)
+  // Must follow the graveyard count, which reads "there is a land card in your graveyard".
+  (ct) => _UNSEEN_CARD_CONDITION_RE.test(ct) ? () => false : null,
 
   // --- Commander / command zone ---
   // Eminence: "this card is in the command zone or on the battlefield" — true when
@@ -1988,6 +2032,25 @@ function parseCardEffects(permanent, card, opts = {}) {
         const singular = /^(?:it|this|that|another target|target|enchanted|equipped)\b/i.test(subject) && !/'s base (?:power|toughness)\b/i.test(subject) && !/s$/i.test(verb);
         const v = !singular ? verb : verb.toLowerCase() === 'have' ? 'has' : verb + 's';
         return `${pre}${subject.charAt(0).toUpperCase()}${subject.slice(1)} ${v}`;
+      });
+  }
+
+  // "As long as the top card of your library is a creature card, creatures you control that share
+  // a color with that card get +1/+1." (Crown of Convergence): "that card" is written out for the
+  // subject's filter, which sees none of the condition.
+  oracle = oracle.replace(/^(As long as the top card of your library is [^,\n]+, [^.\n]*?\bshares? a color with )that card\b/gim,
+    '$1the top card of your library');
+
+  // "Reveal the top card of your library. If it's a land card, this creature gets +1/+0 and gains
+  // flying until end of turn" (the Deceivers, fired): the card revealed as the ability resolved
+  // is asked with a toggle, as Paroxysm's "that card is a land card" is, and the sentence gets a
+  // line of its own. (Read as a test of the Deceiver, it was never true; and "this creature",
+  // behind a comma, was no subject.)
+  if (permanent.abilitySourceId) {
+    oracle = oracle.replace(/\.[ \t]+If it(?:'s| is) (an? (?:[\w-]+ ){0,3}card), (?:untap (this [\w-]+) and (?:it|this [\w-]+)|(this [\w-]+)) (?=gets [+-]\d+\/[+-]\d|gains\b)/gi,
+      (whole, card, untapped, self) => {
+        const token = _askStatic(`That card is ${card}`);
+        return token ? `.\nIf ${token}, ${untapped || self} ` : whole;
       });
   }
 

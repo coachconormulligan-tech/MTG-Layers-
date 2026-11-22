@@ -220,7 +220,17 @@ function _reParseAfterTextChange(allStates, allPermanents, currentEffects) {
     if (typeof parseCardEffects === 'function') {
       const savedTargetId = removedTargetIds.get(id);
       // A copy of a Saga reads its chapters as a Saga's, gated by its own lore counters.
+      // The parser notes on the permanent which of its lines are conditional or characteristic-
+      // defining, and the next evaluation takes its printed lines by those notes. Another card's
+      // text must not leave them behind: Volrath's Shapeshifter lost its printed "{2}: Discard a
+      // card." for good once Murasa Behemoth had been on top of the graveyard.
+      const printedNotes = state.fullTextFromZone
+        ? { _conditionalAbilityIndices: perm._conditionalAbilityIndices,
+            _conditionalAbilityConditions: perm._conditionalAbilityConditions,
+            _cdaAbilities: perm._cdaAbilities }
+        : null;
       const newEffects = parseCardEffects(perm, fakeCard, { isSaga: (state.subtypes || []).includes('Saga') });
+      if (printedNotes) Object.assign(perm, printedNotes);
       for (const ne of newEffects) {
         if (!['1', '2', '3'].includes(ne.layer)) {
           // Carry over the targetId from the original effects so the re-parsed

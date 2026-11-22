@@ -1,0 +1,68 @@
+{
+  "name": "Vampire Nocturnus — the top card is black, not the Vampire itself",
+  "notes": "\"As long as the top card of your library is black\" was read as \"this creature is black\", so it was always on. The opponent's has a Forest on top, so their Child of Night stays 2/1.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Vampire Nocturnus"
+    },
+    {
+      "add": "Vampire Nighthawk"
+    },
+    {
+      "add": "Vampire Nocturnus",
+      "controller": "p2"
+    },
+    {
+      "add": "Child of Night",
+      "controller": "p2"
+    },
+    {
+      "call": [
+        "setLibraryTop",
+        "p1",
+        "card:Dark Ritual"
+      ]
+    },
+    {
+      "call": [
+        "setLibraryTop",
+        "p2",
+        "card:Forest"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Vampire Nocturnus",
+      "final": {
+        "power": 5,
+        "toughness": 4,
+        "abilities": {
+          "$includes": [
+            "Flying"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Vampire Nighthawk",
+      "final": {
+        "power": 4,
+        "toughness": 4
+      }
+    },
+    {
+      "perm": "Child of Night",
+      "final": {
+        "power": 2,
+        "toughness": 1
+      }
+    }
+  ]
+}

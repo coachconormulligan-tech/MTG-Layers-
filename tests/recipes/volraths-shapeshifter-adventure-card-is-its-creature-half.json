@@ -1,0 +1,39 @@
+{
+  "name": "Volrath's Shapeshifter — an Adventure card is its creature half",
+  "notes": "An Adventure card on top gave the name \"Bonecrusher Giant // Stomp\", type Instant and no text (CR 715.4).",
+  "steps": [
+    {
+      "add": "Volrath's Shapeshifter"
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Bonecrusher Giant // Stomp"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Volrath's Shapeshifter",
+      "final": {
+        "power": 4,
+        "toughness": 3,
+        "name": "Bonecrusher Giant",
+        "types": {
+          "$excludes": [
+            "Instant"
+          ]
+        },
+        "subtypes": [
+          "Giant"
+        ],
+        "abilities": {
+          "$includes": [
+            "{2}: Discard a card."
+          ]
+        }
+      }
+    }
+  ]
+}
