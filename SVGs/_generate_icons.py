@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """v2 counter icons: monochrome 'MTG medallion' style, richer detail + two-tone depth."""
 import math, os, re
-OUT = "/Users/conormulligan/Library/CloudStorage/Dropbox/Conor and Emily/Conor/Coding/Layers Website/Layers Website Editing Version/SVGs"
+OUT = os.path.dirname(os.path.abspath(__file__))
 os.makedirs(OUT, exist_ok=True)
 
 # ---- tokens --------------------------------------------------------------
