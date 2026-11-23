@@ -1,0 +1,84 @@
+{
+  "name": "Criminal Past: the granted +X/+0 counts creature cards in its controller's graveyard",
+  "notes": "'Commander creatures you own have menace and \"This creature gets +X/+0, where X is the number of creature cards in your graveyard.\"' gave the commander menace and the quoted text but no boost: the granted-ability pass only read a fixed '+N/+N'. The quoted 'where X is the number of' count now goes through the for-each machinery (forEachDesc / _computeForEachCount), per carrier of the grant. Two creature cards and one noncreature card in your graveyard, a creature card in the opponent's (not counted): commander Isamaru 2/2 becomes 4/2. Grizzly Bears is not a commander and stays 2/2. Criminal Past is added without suppressPrompt: the quoted count must not raise the add-time X prompt (which defaulted to 0 and rewrote the ability to '+0/+0, where 0 is ...'); the harness throws if prompt() is reached. That part is only checked when this fixture is built: restoring a board never prompts. Re-applied from old/criminal-past-granted-x (07aac95) on 2026-11-22 with the count's words kept (\"in your graveyard\" says whose).",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "call": [
+        "addCommander",
+        "card:Isamaru, Hound of Konda"
+      ]
+    },
+    {
+      "add": "Isamaru, Hound of Konda"
+    },
+    {
+      "add": "Grizzly Bears"
+    },
+    {
+      "add": "Criminal Past",
+      "opts": {
+        "suppressPrompt": false
+      }
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Hill Giant"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Llanowar Elves"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Giant Growth"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p2",
+        "card:Craw Wurm"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Isamaru, Hound of Konda",
+      "final": {
+        "power": 4,
+        "toughness": 2,
+        "abilities": {
+          "$includes": [
+            "Menace"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 2,
+        "toughness": 2,
+        "abilities": {
+          "$excludes": [
+            "Menace"
+          ]
+        }
+      }
+    }
+  ]
+}

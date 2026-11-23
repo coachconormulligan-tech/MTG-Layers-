@@ -21,6 +21,16 @@ function _insideQuote(text, offset) {
 const DURATION_PREFIX_RE = /^until\s+(?:end\s+of\s+turn|your\s+next\s+turn)\s*,\s*/i;
 function stripDurationPrefix(s) { return s.replace(DURATION_PREFIX_RE, ''); }
 
+/* Shared: the text from `from` through the full stop that follows `matchEnd`, or to the end of that
+   line where there is none: a fired ability has lost its last one with "Activate only once each
+   turn." (Graverobber Spider), a quoted one has none of its own. */
+function _throughSentenceEnd(text, from, matchEnd) {
+  const dot = text.indexOf('.', matchEnd);
+  if (dot >= 0) return text.substring(from, dot + 1);
+  const eol = text.indexOf('\n', matchEnd);
+  return text.substring(from, eol < 0 ? text.length : eol);
+}
+
 /* A card type that goes on to "card" is a card's, never the permanent's: "there is a land card in
    your graveyard" (Murasa Behemoth), "the top card of your library is an artifact or creature
    card" (Skill Borrower). The parsers of those zones read that card (CONDITION_PARSERS). */
@@ -492,40 +502,72 @@ const CONDITION_PARSERS = [
     ? (state, allStates) => { const gs = _gsOfController(srcId, state, allStates); return gs ? gs.currentLife < gs.startingLife : true; }
     : null,
 
+  // "As long as this card is in your graveyard [and …]" (Anger): true only of the source a graveyard
+  // card's static ability has there (Battlefield._syncGraveyardSources), never of the card on the
+  // battlefield. ("This card" has been read as "it" of the card by then.)
+  (ct, srcId) => /^(?:it|this card) is in (?:your|a) graveyard$/.test(ct)
+    ? () => { const src = typeof Battlefield !== 'undefined' ? Battlefield.getPermById(srcId) : null; return !!(src && src.isGraveyardSource); }
+    : null,
+
   // --- Graveyard / exile card-count conditions ---
-  // "there are N or more [qualifier] cards in your/a/all/each graveyard(s)" (Undercover Skrull),
-  // also "... in exile". "your" scopes to the source controller's zone; any other determiner
-  // (a/all/each/their/every) counts across every player. Reuses _zoneCardMatchesQualifier
-  // (engine-compute.js) so the qualifier ("creature", "Zombie creature", etc.) is honored.
+  // Graveyards: _graveyardCondition (engine-compute.js) reads whose graveyard, which cards and how
+  // many ("there are four or more card types among cards in your graveyard", "an opponent has
+  // eight or more cards in their graveyard", "a graveyard has twenty or more cards in it"). "Your"
+  // is the controller of the source (the permanent, spell or fired ability with the condition),
+  // not of the enchanted creature (Patriarch's Desire) or a fired ability's target; a spell or
+  // fired ability reads the graveyards as they were when it was cast or fired.
   (ct, srcId) => {
-    // Also "there is a Lesson card in your graveyard" (Fire Nation Cadets): one or more.
-    // No qualifier is every card: "there are seven or more cards in your graveyard" (threshold).
-    const m = ct.match(/there (?:are|is)\s+(\w+\s+or\s+more|an?)\s+(?:(.+?)\s+)?cards?\s+in\s+(your|a|an|all|each|their|every)?\s*(graveyards?|exile)\b/);
+    const gy = typeof _graveyardCondition === 'function' ? _graveyardCondition(ct) : null;
+    if (!gy) return null;
+    return (state, allStates) => {
+      if (typeof Battlefield === 'undefined') return true;
+      const src = (allStates && allStates.get(srcId)) || Battlefield.getPermById(srcId) || state || {};
+      return gy(src.controller, state, { sourceId: srcId });
+    };
+  },
+  // "it has the same name as another creature you control or a creature card in your graveyard"
+  // (Liara of the Flaming Fist, Unexpected Allies; Guardian Project's "doesn't have"): "it" is the
+  // permanent being changed, "you" the source's controller.
+  (ct, srcId) => {
+    // (A fired ability's "it" has been written "target creature" by then.)
+    const m = ct.match(/^(?:it|target creature) (has|doesn't have) the same name as another creature you control or a creature card in your graveyard$/);
+    if (!m) return null;
+    return (state, allStates) => {
+      if (typeof Battlefield === 'undefined' || !state) return false;
+      const you = ((allStates && allStates.get(srcId)) || Battlefield.getPermById(srcId) || state).controller;
+      const name = String(state.name || '').toLowerCase();
+      let n = 0;
+      for (const [, s] of (allStates || [])) {
+        if (s.controller === you && (s.types || []).includes('Creature') && String(s.name || '').toLowerCase() === name) n++;
+      }
+      // (Another: the permanent itself, a creature you control, is one of them.)
+      const itself = state.controller === you && (state.types || []).includes('Creature') ? 1 : 0;
+      let same = n > itself;
+      if (!same) {
+        const g = _countInGraveyards('creature cards named ' + name + ' in your graveyard', you, state, { sourceId: srcId });
+        same = !!g;
+      }
+      return m[1] === 'has' ? same : !same;
+    };
+  },
+  // "there are N or more [qualifier] cards in exile". "your" scopes to the source controller's
+  // cards; any other determiner counts every player's.
+  (ct, srcId) => {
+    const m = ct.match(/there (?:are|is)\s+(\w+\s+or\s+more|an?)\s+(?:(.+?)\s+)?cards?\s+in\s+(your|a|an|all|each|their|every)?\s*exile\b/);
     if (!m) return null;
     const threshold = /^an?$/.test(m[1]) ? 1 : _wordThresh(m[1].split(/\s+/)[0]);
     const qualifier = (m[2] || '').trim();
     const yoursOnly = (m[3] || '').toLowerCase() === 'your';
-    const zone = /exile/.test(m[4]) ? 'exile' : 'graveyard';
-    // Each card by the face it has there: a land on the back is no land card (CR 712.8a).
-    // "A creature or Lesson card" (Leaves from the Vine) is either.
     const either = qualifier.split(/\s+or\s+/i);
     const matches = (card) => (typeof _zoneCardMatchesQualifier === 'function')
       ? either.some(q => _zoneCardMatchesQualifier(_zoneCardFront(card), q)) : true;
     return (state, allStates) => {
       if (typeof Battlefield === 'undefined') return true;
-      // "Your" is the source's controller, not the enchanted creature's (Patriarch's Desire).
-      const ctrl = ((allStates && allStates.get(srcId)) || state || {}).controller;
+      const ctrl = ((allStates && allStates.get(srcId)) || Battlefield.getPermById(srcId) || state || {}).controller;
       let count = 0;
-      if (zone === 'graveyard' && Array.isArray(Battlefield.players)) {
-        for (const p of Battlefield.players) {
-          if (yoursOnly && p.id !== ctrl) continue;
-          for (const c of (p.graveyard || [])) if (matches(c)) count++;
-        }
-      } else if (zone === 'exile' && Array.isArray(Battlefield.exile)) {
-        for (const e of Battlefield.exile) {
-          if (yoursOnly && e.owner && e.owner !== ctrl) continue;
-          if (matches(e.card || e)) count++;
-        }
+      for (const e of (Battlefield.exile || [])) {
+        if (yoursOnly && e.owner && e.owner !== ctrl) continue;
+        if (matches(e.card || e)) count++;
       }
       return count >= threshold;
     };
@@ -711,6 +753,35 @@ const CONDITION_PARSERS = [
    "where X is…" clause covered ALL remaining \bX\b occurrences (used to suppress the
    add-time X prompt in cards-battlefield.js). */
 function _normalizeWhereXIs(text) {
+  // "where X is 3 plus the number of cards named Muscle Burst in all graveyards": the count with
+  // that many more, ", plus 3" after it (the boost parser keeps it as forEachOffset).
+  text = text.replace(
+    /([+-])(X|0)\/([+-])(X|0)((?:\s+until\s+[^,;]+)?),?\s+where\s+X\s+is\s+(\w+)\s+plus\s+the\s+number\s+of\s+([^.;\n]+)/gi,
+    (m, s1, a, s2, b, dur, n, desc, offset, whole) => {
+      const k = /^\d+$/.test(n) ? parseInt(n, 10) : WORD_TO_NUM[n.toLowerCase()];
+      if (k === undefined || (!/x/i.test(a) && !/x/i.test(b))) return m;
+      const lineStart = whole.lastIndexOf('\n', offset) + 1;
+      if ((whole.slice(lineStart, offset).match(/"/g) || []).length % 2 === 1) return m;
+      return `${s1}${/x/i.test(a) ? 1 : 0}/${s2}${/x/i.test(b) ? 1 : 0}${dur} for each ${desc.trim().replace(/\.$/, '')}, plus ${k}`;
+    }
+  );
+  // "creatures you control have base power and toughness X/X, where X is the number of …"
+  // (Candlekeep Inspiration): the count, as "… each equal to the number of …" reads.
+  text = text.replace(
+    /\bhave base power and toughness X\/X,?\s+where\s+X\s+is\s+the\s+number\s+of\s+([^.;\n]+)/gi,
+    (m, desc) => `have base power and toughness each equal to the number of ${desc.trim()}`
+  );
+  // "where X is the greatest power among creature cards in your graveyard" (Carrion Grub, Coram,
+  // Wick's Patrol's mana value): a number read off a graveyard, as a count is.
+  text = text.replace(
+    /([+-])(X|0)\/([+-])(X|0)((?:\s+until\s+[^,;]+)?),?\s+where\s+X\s+is\s+(the\s+greatest\s+(?:power|toughness|mana\s+value)\s+among\s+[^.;\n]*?\bgraveyards?)(?=[.;\n]|$)/gi,
+    (m, s1, a, s2, b, dur, desc, offset, whole) => {
+      if (!/x/i.test(a) && !/x/i.test(b)) return m;
+      const lineStart = whole.lastIndexOf('\n', offset) + 1;
+      if ((whole.slice(lineStart, offset).match(/"/g) || []).length % 2 === 1) return m;
+      return `${s1}${/x/i.test(a) ? 1 : 0}/${s2}${/x/i.test(b) ? 1 : 0}${dur} for each ${desc.trim().replace(/^the\s+/i, '')}`;
+    }
+  );
   // "+X/+X[, until end of turn], where X is the number of [DESC]" → "+1/+1 for each [DESC]"
   text = text.replace(
     /\+X\/\+X(?:\s+until\s+[^,;]+)?,?\s+where\s+X\s+is\s+the\s+number\s+of\s+([^.;\n]+)/gi,
@@ -738,6 +809,11 @@ function _normalizeWhereXIs(text) {
 function _allXAreAutoComputable(oracleText) {
   if (!/\bX\b/.test(oracleText)) return false; // no X at all
   let text = _normalizeWhereXIs(oracleText);
+  // A quoted granted 'This creature gets +X/+0, where X is the number of [DESC]' (Criminal Past)
+  // is left as printed by _normalizeWhereXIs; _parseGrantedGlobalAbilities counts it per carrier.
+  text = text.replace(
+    /"this (?:creature|permanent|token) gets [+-](?:X|0)\/[+-](?:X|0),? where X is (?:\w+ plus )?the number of [^.";\n]+/gi, '"'
+  );
   // Strip "+X/+X[/+0] [until …,] where X is [its|this creature's] power/toughness" boosts whose
   // magnitude is a P/T characteristic (Berserk: +X/+0, X = its power; Ashroot Animist: +X/+X).
   // Removes both the "+X" and the "where X is …" clause so no \bX\b survives the prompt check.
@@ -1296,6 +1372,13 @@ function parseCardEffects(permanent, card, opts = {}) {
         const subs = listParts.map(p => _parseCondition(p)).filter(Boolean);
         if (subs.length >= 2) return (state, allStates) => subs.every(c => c(state, allStates));
       }
+    }
+    // "As long as you control a Desert or there is a Desert card in your graveyard" (Sidewinder
+    // Naga): either one, when each is read.
+    const orParts = ct.split(/\s+or\s+(?=there (?:is|are)\s|you (?:control|have)\s)/);
+    if (orParts.length >= 2) {
+      const subs = orParts.map(p => _parseCondition(p.trim()));
+      if (subs.every(Boolean)) return (state, allStates) => subs.some(c => c(state, allStates));
     }
     // "it is a creature or Vehicle", "it is red or green" — either one.
     const plainCt = _plainTypeWords(ct);   // "you control a Quarl-Vex": a type is one word to what follows
@@ -3408,7 +3491,8 @@ function parseCardEffects(permanent, card, opts = {}) {
       addTypeMatchRanges[addTypeMatchRanges.length - 1].setPT = true;
     }
     // "with power and toughness each equal to its mana value" (Opalescence, Starfield of Nyx)
-    const afterMatchText = oracle.substring(addTypeMatch.index + addTypeMatch[0].length, oracle.indexOf('.', addTypeMatch.index + addTypeMatch[0].length) + 1) || '';
+    const _addTypeEnd = addTypeMatch.index + addTypeMatch[0].length;
+    const afterMatchText = _throughSentenceEnd(oracle, _addTypeEnd, _addTypeEnd);
     const combinedMVText = becomesText + ' ' + afterMatchText;
     if (!ptMatch && /(?:base\s+)?power\s+and\s+(?:base\s+)?toughness\s+(?:each\s+)?equal\s+to\s+(?:its|their)\s+(?:mana\s+value|converted\s+mana\s+cost)/i.test(combinedMVText)) {
       pushEff('7b', EFFECT_TYPE.SET_PT, { useMV: true }, _ctx,
@@ -4261,7 +4345,7 @@ function parseCardEffects(permanent, card, opts = {}) {
     if (_isInActivatedEffect(_boostSentPos)) continue;
     const boostMatchCond = _getConditionForPos(_boostSentPos);
     const boostEffCountBefore = effects.length;
-    const fullSentence = oracle.substring(boostMatch.index, oracle.indexOf('.', boostMatch.index + boostMatch[0].length) + 1) || boostMatch[0];
+    const fullSentence = _throughSentenceEnd(oracle, boostMatch.index, boostMatch.index + boostMatch[0].length) || boostMatch[0];
     const { fn, desc, isSelf, isTargeted, needsTargetSelection, maxTargets: _maxTgts, isTargetPlayerControl: _boostTPC } = buildAppliesToFromText(filterText);
     const _buildResult = { isSpellTarget: !!needsTargetSelection, maxTargets: _maxTgts || 1, isTargetPlayerControl: !!_boostTPC };
     const _needsTarget = isTargeted;
@@ -4306,6 +4390,11 @@ function parseCardEffects(permanent, card, opts = {}) {
         countTarget = countTarget.replace(/,?\s+and\s+(?:is|are|has|have|gains?|gets?|loses?|can't|cannot|can|must|doesn't|don't|attacks?|blocks?)\b.*$/i, '').trim();
         // "… in your graveyard, then you may have this creature fight …" (Kraul Harpooner).
         countTarget = countTarget.replace(/(\bgraveyards?),\s+then\b.*$/i, '$1');
+        // ", plus 3": what _normalizeWhereXIs writes for "where X is 3 plus the number of …"
+        // (Muscle Burst, Kjeldoran War Cry, Ancestral Anger).
+        let forEachOffset = 0;
+        const _offsetMatch = countTarget.match(/,\s*plus\s+(\d+)$/i);
+        if (_offsetMatch) { forEachOffset = parseInt(_offsetMatch[1], 10); countTarget = countTarget.slice(0, _offsetMatch.index).trim(); }
         // Parse max cap: "to a maximum of N"
         let maxCount = undefined;
         const maxMatch = countTarget.match(/,?\s*to a maximum of (\d+)/i);
@@ -4366,8 +4455,13 @@ function parseCardEffects(permanent, card, opts = {}) {
             baseToughness: parseInt(boostMatch[3]),
             forEachDesc: cleanTarget,
             maxCount,
+            ...(forEachOffset ? { forEachOffset } : {}),
           }, _ctx,
-          `Gets ${boostMatch[2]}/${boostMatch[3]} for each ${countTarget}. ${rcpt.desc}`);
+          /^greatest\s/i.test(countTarget)
+            ? `Gets ${boostMatch[2].replace(/1/, 'X')}/${boostMatch[3].replace(/1/, 'X')}, where X is the ${countTarget}. ${rcpt.desc}`
+            : forEachOffset
+              ? `Gets ${boostMatch[2].replace(/1/, 'X')}/${boostMatch[3].replace(/1/, 'X')}, where X is ${forEachOffset} plus the number of ${countTarget}. ${rcpt.desc}`
+              : `Gets ${boostMatch[2]}/${boostMatch[3]} for each ${countTarget}. ${rcpt.desc}`);
         _applyTargetInfo(_effFe, rcpt.build, rcpt.fn);
         return;
       }
@@ -4900,6 +4994,9 @@ function parseCardEffects(permanent, card, opts = {}) {
   let equalToCountMatch;
   while ((equalToCountMatch = equalToCountRegex.exec(oracle)) !== null) {
     const etcFilterRaw = equalToCountMatch[1].trim();
+    // An activated or triggered ability's ("{4}{G}{G}: Until end of turn, creatures you control
+    // have base power and toughness X/X, where X is …" — Jolrael) is the fired ability's.
+    if (_isInActivatedEffect(equalToCountMatch.index) || _isInTriggeredSentence(equalToCountMatch.index)) continue;
     if (!filterReferencesPermanents(etcFilterRaw)) continue;
     if (/^when(?:ever)?|^at\b/i.test(etcFilterRaw)) continue;
     // Re-append "you control" if the optional regex group stripped it from the subject
@@ -5146,11 +5243,16 @@ function parseCardEffects(permanent, card, opts = {}) {
   // characteristic; the other stays at its printed value.
   // e.g. Namor the Sub-Mariner: "Namor's power is equal to the number of Merfolk you control."
   // The possessive subject ("this card's"/"its") distinguishes this from the symmetric power-and-toughness forms.
-  const cdaSingleCharRegex = /(?:^|\.|\n)\s*(?:this card's|its)\s+(power|toughness)\s+(?:is|are)\s+equal\s+to\s+(?:the\s+)?(?:number|total number|amount)\s+of\s+([^.]+?)(?:\.|$)/gmi;
+  // "This creature's power is equal to …" (Dragonfly Swarm) is the same; "… equal to 1 plus the
+  // number of …" (Nighthawk Scavenger, Haunting Apparition) adds the 1.
+  const cdaSingleCharRegex = /(?:^|\.|\n)\s*(?:this (?:card|creature)'s|its)\s+(power|toughness)\s+(?:is|are)\s+equal\s+to\s+(?:(\w+)\s+plus\s+)?(?:the\s+)?(?:number|total number|amount)\s+of\s+([^.]+?)(?:\.|$)/gmi;
   let cdaSingleCharMatch;
   while ((cdaSingleCharMatch = cdaSingleCharRegex.exec(oracle)) !== null) {
+    if (_cdaIsQuoted(cdaSingleCharMatch.index)) continue;
     const whichChar = cdaSingleCharMatch[1].toLowerCase();
-    let countTarget = cdaSingleCharMatch[2].trim().replace(/\.$/, '');
+    const _scBaseRaw = (cdaSingleCharMatch[2] || '').toLowerCase();
+    const _scBase = !_scBaseRaw ? 0 : WORD_TO_NUM[_scBaseRaw] !== undefined ? WORD_TO_NUM[_scBaseRaw] : (parseInt(_scBaseRaw, 10) || 0);
+    let countTarget = cdaSingleCharMatch[3].trim().replace(/\.$/, '');
     // Skip the asymmetric Tarmogoyf forms ("...and its toughness/power is that plus N") handled above.
     if (/\band\s+its\s+(?:power|toughness)\b/i.test(countTarget)) continue;
     const _coLower = countTarget.toLowerCase();
@@ -5159,10 +5261,18 @@ function parseCardEffects(permanent, card, opts = {}) {
     const isGraveyard = _coIsExile || _coIsGrave;
     const _charParams = whichChar === 'toughness' ? { toughnessOnly: true } : { powerOnly: true };
     // Keep "you control" in forEachDesc so _computeForEachCount filters by controller.
+    // "… in the chosen player's graveyard" after "As this creature enters, choose an opponent"
+    // (Haunting Apparition): the player list, as Sewer Nemesis has it.
+    if (_coIsGrave && /\bthe chosen player's graveyard$/i.test(countTarget) && !permanent.isManualEffect) {
+      permanent._targetsChosenPlayer = true;
+      permanent._playerPickLabel = /\bchoose an opponent\b/i.test(oracle) ? 'chosen opponent' : 'chosen player';
+      if (/\bchoose an opponent\b/i.test(oracle)) permanent._chosenPlayerNotYou = 'chosen opponent';
+    }
     pushEff('7a', EFFECT_TYPE.CDA_PT,
-      { ..._charParams, userAdjustable: isGraveyard, isGraveyardCount: _coIsGrave, isExileCount: _coIsExile, forEachDesc: countTarget, compute: null },
+      { ..._charParams, userAdjustable: isGraveyard, isGraveyardCount: _coIsGrave, isExileCount: _coIsExile, forEachDesc: countTarget, compute: null,
+        ...(_scBase ? { cdaBaseValue: _scBase } : {}) },
       _cdaSelfCtx,
-      `${whichChar === 'toughness' ? 'Toughness' : 'Power'} equal to the number of ${countTarget}.`);
+      `${whichChar === 'toughness' ? 'Toughness' : 'Power'} equal to ${_scBase ? _scBase + ' plus ' : ''}the number of ${countTarget}.`);
   }
 
   // Known keywords: standard + landwalk + protection variants.

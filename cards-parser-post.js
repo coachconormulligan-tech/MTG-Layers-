@@ -57,7 +57,10 @@ function _parseGrantedGlobalAbilities(permanent, effects, parseCondition) {
     const abilityText = (eff.params && eff.params.ability) || '';
     if (!abilityText || abilityText.length < 10 || !/\b(?:get[s]?|have|has|gain[s]?)\b/i.test(abilityText)) continue;
     if (/^\{/.test(abilityText)) continue;
-    const boostInAbility = /^(.+?)\s+(?:you (?:control|own)\s+)?get[s]?\s+([+-]\d+)\/([+-]\d+)/i.exec(abilityText);
+    // '"This creature gets +X/+0, where X is the number of creature cards in your graveyard."'
+    // (Criminal Past) is read as "+1/+0 for each creature card in your graveyard".
+    const boostText = typeof _normalizeWhereXIs === 'function' ? _normalizeWhereXIs(abilityText) : abilityText;
+    const boostInAbility = /^(.+?)\s+(?:you (?:control|own)\s+)?get[s]?\s+([+-]\d+)\/([+-]\d+)/i.exec(boostText);
     if (boostInAbility) {
       const filterText = boostInAbility[1].trim();
       // 'Sliver creatures you control have "This creature gets +1/+1 as long as you control a
@@ -66,22 +69,33 @@ function _parseGrantedGlobalAbilities(permanent, effects, parseCondition) {
       // quote's own condition holds, read on that permanent ("you" is its controller). A rest
       // other than a condition ("for each …") or a condition that cannot be read gives nothing.
       if (/^this (?:creature|permanent|token)$/i.test(filterText) && !eff.selfTarget) {
-        const rest = abilityText.slice(boostInAbility[0].length).replace(/[.\s]+$/, '');
+        const rest = boostText.slice(boostInAbility[0].length).replace(/[.\s]+$/, '');
         const condM = /^\s+as long as\s+(.+)$/i.exec(rest);
-        if (rest && !condM) continue;
+        // "… for each creature card in your graveyard": counted for each permanent with the
+        // ability, "your" being that permanent's controller (carrierCount). Its words are kept:
+        // whose graveyard and which cards are read from them (_countInGraveyards).
+        const forEachM = !condM && /^\s+for each\s+([^.;"]+)$/i.exec(rest);
+        if (rest && !condM && !forEachM) continue;
         const quoteCond = condM ? (typeof parseCondition === 'function' ? parseCondition(condM[1]) : null) : null;
         if (condM && !quoteCond) continue;
         const carries = eff.scope === 'targeted'
           ? (p, allStates) => !!(allStates && eff.targetId && allStates.get(eff.targetId) === p)
           : (p) => (p.abilities || []).includes(abilityText);
         const grantCond = eff.scope === 'targeted' ? eff.asLongAsCondition : null;
+        const params = { power: parseInt(boostInAbility[2]), toughness: parseInt(boostInAbility[3]) };
+        if (forEachM) {
+          const each = forEachM[1].trim();
+          const isGraveyard = /\bgraveyards?\b/i.test(each);
+          Object.assign(params, { basePower: params.power, baseToughness: params.toughness, forEachDesc: each,
+            userAdjustable: isGraveyard, isGraveyardCount: isGraveyard, carrierCount: true });
+        }
         toAdd.push({
           id: `${sid}_eff_granted_${toAdd.length}a`,
           layer: '7c', type: EFFECT_TYPE.MODIFY_PT,
-          params: { power: parseInt(boostInAbility[2]), toughness: parseInt(boostInAbility[3]) },
+          params,
           appliesTo: carries, scope: 'global', affectsSelf: true,
           sourceId: sid, sourceName: cardName, timestamp: ts,
-          desc: `${filterText} gets ${boostInAbility[2]}/${boostInAbility[3]} (from granted ability). Applies to: the permanent with the ability`,
+          desc: `${filterText} gets ${boostInAbility[2]}/${boostInAbility[3]}${forEachM ? ' for each ' + forEachM[1].trim() : ''} (from granted ability). Applies to: the permanent with the ability`,
           asLongAsCondition: (quoteCond || grantCond)
             ? (st, allStates) => (!grantCond || grantCond(st, allStates)) && (!quoteCond || quoteCond(st, allStates))
             : undefined,

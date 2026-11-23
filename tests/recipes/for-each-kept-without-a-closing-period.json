@@ -1,0 +1,26 @@
+{
+  "name": "For each is kept when a fired ability has no closing period",
+  "notes": "\"Activate only …\" takes the last full stop with it and the boost lost its count (+1/+1). Graverobber Spider: two creature cards in your graveyard, 4/6. Sunbathing Rootwalla: three basic land types, 5/5. Captain Jonathan Archer: Human, Officer, Spider, Lizard, Goblin, Scout are six creature types among your non-Borg creatures, the opponent's Elf Druid not counted, so Goblin Guide is 8/8.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Elvish Mystic", "controller": "p2" },
+    { "add": "Graverobber Spider", "as": "g" },
+    { "add": "Sunbathing Rootwalla", "as": "r" },
+    { "add": "Captain Jonathan Archer", "as": "c" },
+    { "add": "Goblin Guide", "as": "t" },
+    { "add": "Forest" }, { "add": "Island" }, { "add": "Plains" },
+    { "call": ["addToGraveyard", "p1", "card:Craw Wurm"] },
+    { "call": ["addToGraveyard", "p1", "card:Grizzly Bears"] },
+    { "call": ["addToGraveyard", "p1", "card:Shock"] },
+    { "call": ["addToGraveyard", "p2", "card:Craw Wurm"] },
+    { "fire": "@g", "activated": 1 },
+    { "fire": "@r", "activated": 0 },
+    { "fire": "@c", "activated": 1, "as": "ca" },
+    { "call": ["setTarget", "@ca", "@t"] }
+  ],
+  "asserts": [
+    { "perm": "Graverobber Spider", "final": { "power": 4, "toughness": 6 } },
+    { "perm": "Sunbathing Rootwalla", "final": { "power": 5, "toughness": 5 } },
+    { "perm": "Goblin Guide", "final": { "power": 8, "toughness": 8 } }
+  ]
+}

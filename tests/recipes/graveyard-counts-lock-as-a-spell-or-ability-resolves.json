@@ -1,0 +1,35 @@
+{
+  "name": "Graveyard counts and conditions lock as a spell or ability resolves",
+  "notes": "Conor, 2026-11-22: a spell's or fired ability's graveyard count and condition are read as it resolves (cast or fired), not as the graveyard changes afterwards; a trigger's \"if\" is checked as it is fired. Your graveyard at first: Craw Wurm, Grizzly Bears, Shock (two card types, two creature cards, two permanent cards). Graverobber Spider fired then: +2/+2. Violent Urge on Goblin Guide and Join the Dead on Hill Giant cast then: no double strike, -5/-5. Five more cards go in (five card types, five permanent cards, three creature cards, eight cards): Violent Urge on Raging Goblin now gives double strike, Crypt Feaster's threshold trigger fires (+2/+0), and the earlier ones stay as they were.",
+  "steps": [
+    { "add": "Graverobber Spider", "as": "g" },
+    { "add": "Goblin Guide", "as": "t1" },
+    { "add": "Hill Giant", "as": "h" },
+    { "add": "Raging Goblin", "as": "t2" },
+    { "add": "Crypt Feaster", "as": "f" },
+    { "call": ["addToGraveyard", "p1", "card:Craw Wurm"] },
+    { "call": ["addToGraveyard", "p1", "card:Grizzly Bears"] },
+    { "call": ["addToGraveyard", "p1", "card:Shock"] },
+    { "fire": "@g", "activated": 1 },
+    { "add": "Violent Urge", "spell": true, "as": "u1" },
+    { "call": ["setTarget", "@u1", "@t1"] },
+    { "add": "Join the Dead", "spell": true, "as": "j" },
+    { "call": ["setTarget", "@j", "@h"] },
+    { "call": ["addToGraveyard", "p1", "card:Forest"] },
+    { "call": ["addToGraveyard", "p1", "card:Divination"] },
+    { "call": ["addToGraveyard", "p1", "card:Ornithopter"] },
+    { "call": ["addToGraveyard", "p1", "card:Island"] },
+    { "call": ["addToGraveyard", "p1", "card:Llanowar Elves"] },
+    { "add": "Violent Urge", "spell": true, "as": "u2" },
+    { "call": ["setTarget", "@u2", "@t2"] },
+    { "fire": "@f", "trigger": 1 }
+  ],
+  "asserts": [
+    { "perm": "Graverobber Spider", "final": { "power": 4, "toughness": 6 } },
+    { "perm": "Goblin Guide", "final": { "power": 3, "abilities": { "$excludes": ["Double strike"] } } },
+    { "perm": "Hill Giant", "final": { "power": -2, "toughness": -2 } },
+    { "perm": "Raging Goblin", "final": { "power": 2, "abilities": { "$includes": ["Double strike"] } } },
+    { "perm": "Crypt Feaster", "final": { "power": 5, "toughness": 4 } },
+    { "triggerCondition": { "perm": "Crypt Feaster", "trigger": 1 }, "is": true }
+  ]
+}

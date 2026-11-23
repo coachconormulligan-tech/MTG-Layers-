@@ -1,0 +1,2611 @@
+{
+ "name": "Same name as another creature you control or a creature card in your graveyard",
+ "notes": "Liara of the Flaming Fist's combat trigger and Unexpected Allies read \"it has the same name as another creature you control or a creature card in your graveyard\". Two Grizzly Bears and a Goblin Guide on the battlefield, a Raging Goblin card in your graveyard and a Goblin Guide card in the opponent's: each Bears gets +1/+1, Goblin Guide does not (its namesake is in the opponent's graveyard); Raging Goblin on the battlefield gets +1/+1 from Liara and first strike from Unexpected Allies (a Raging Goblin card is in your graveyard): 1/1 +1/+1 +2/+0.",
+ "recipe": {
+  "steps": [
+   {
+    "call": [
+     "addPlayer",
+     "Opponent"
+    ]
+   },
+   {
+    "add": "Liara of the Flaming Fist",
+    "as": "l"
+   },
+   {
+    "add": "Grizzly Bears"
+   },
+   {
+    "add": "Grizzly Bears"
+   },
+   {
+    "add": "Goblin Guide"
+   },
+   {
+    "add": "Raging Goblin",
+    "as": "rg"
+   },
+   {
+    "call": [
+     "addToGraveyard",
+     "p1",
+     "card:Raging Goblin"
+    ]
+   },
+   {
+    "call": [
+     "addToGraveyard",
+     "p2",
+     "card:Goblin Guide"
+    ]
+   },
+   {
+    "fire": "@l",
+    "trigger": 0
+   },
+   {
+    "add": "Unexpected Allies",
+    "spell": true,
+    "as": "u"
+   },
+   {
+    "call": [
+     "setTarget",
+     "@u",
+     "@rg"
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Grizzly Bears A",
+   "final": {
+    "power": 3,
+    "toughness": 3
+   }
+  },
+  {
+   "perm": "Grizzly Bears B",
+   "final": {
+    "power": 3,
+    "toughness": 3
+   }
+  },
+  {
+   "perm": "Goblin Guide",
+   "final": {
+    "power": 2,
+    "toughness": 2
+   }
+  },
+  {
+   "perm": "Liara of the Flaming Fist",
+   "final": {
+    "power": 2,
+    "toughness": 2
+   }
+  },
+  {
+   "perm": "Raging Goblin",
+   "final": {
+    "power": 4,
+    "toughness": 2,
+    "abilities": {
+     "$includes": [
+      "First strike"
+     ]
+    }
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "98209130-a72f-4946-a1d4-3a437cd9a0b2",
+     "oracle_id": "8965647b-1032-4b82-825e-fcdaf2ba6f45",
+     "multiverse_ids": [
+      574287
+     ],
+     "arena_id": 81284,
+     "name": "Liara of the Flaming Fist",
+     "lang": "en",
+     "released_at": "2022-07-07",
+     "uri": "https://api.scryfall.com/cards/98209130-a72f-4946-a1d4-3a437cd9a0b2",
+     "scryfall_uri": "https://scryfall.com/card/hbg/73/liara-of-the-flaming-fist?utm_source=api",
+     "layout": "normal",
+     "highres_image": false,
+     "image_status": "lowres",
+     "image_updated_at": "2026-11-05T12:15:48Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/9/8/98209130-a72f-4946-a1d4-3a437cd9a0b2.jpg?1793880948",
+      "normal": "https://cards.scryfall.io/normal/front/9/8/98209130-a72f-4946-a1d4-3a437cd9a0b2.jpg?1793880948",
+      "large": "https://cards.scryfall.io/large/front/9/8/98209130-a72f-4946-a1d4-3a437cd9a0b2.jpg?1793880948",
+      "png": "https://cards.scryfall.io/png/front/9/8/98209130-a72f-4946-a1d4-3a437cd9a0b2.png?1793880948",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/9/8/98209130-a72f-4946-a1d4-3a437cd9a0b2.jpg?1793880948",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/9/8/98209130-a72f-4946-a1d4-3a437cd9a0b2.jpg?1793880948",
+      "thumb": "https://cards.scryfall.io/thumb/front/9/8/98209130-a72f-4946-a1d4-3a437cd9a0b2.webp?1793880948",
+      "grid": "https://cards.scryfall.io/grid/front/9/8/98209130-a72f-4946-a1d4-3a437cd9a0b2.webp?1793880948",
+      "display": "https://cards.scryfall.io/display/front/9/8/98209130-a72f-4946-a1d4-3a437cd9a0b2.webp?1793880948",
+      "art": "https://cards.scryfall.io/art/front/9/8/98209130-a72f-4946-a1d4-3a437cd9a0b2.webp?1793880948",
+      "crop": "https://cards.scryfall.io/crop/front/9/8/98209130-a72f-4946-a1d4-3a437cd9a0b2.webp?1793880948",
+      "jpeg": "https://cards.scryfall.io/normal/front/9/8/98209130-a72f-4946-a1d4-3a437cd9a0b2.jpg?1793880948"
+     },
+     "mana_cost": "{R}{W}",
+     "cmc": 2,
+     "type_line": "Legendary Creature — Human Soldier",
+     "oracle_text": "At the beginning of each combat, each creature you control gets +1/+1 until end of turn if it has the same name as another creature you control or a creature card in your graveyard.\n{1}{R}{W}: Another target nontoken creature you control gains first strike and double team until end of turn. Activate only as a sorcery and only once.",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "R",
+      "W"
+     ],
+     "color_identity": [
+      "R",
+      "W"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "not_legal",
+      "pauper": "not_legal",
+      "vintage": "not_legal",
+      "penny": "not_legal",
+      "commander": "not_legal",
+      "oathbreaker": "not_legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "not_legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "35528ede-7870-4598-a2ee-7f3d6464a74b",
+     "set": "hbg",
+     "set_name": "Alchemy Horizons: Baldur's Gate",
+     "set_type": "alchemy",
+     "set_uri": "https://api.scryfall.com/sets/35528ede-7870-4598-a2ee-7f3d6464a74b",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Ahbg&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/hbg?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/98209130-a72f-4946-a1d4-3a437cd9a0b2/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A8965647b-1032-4b82-825e-fcdaf2ba6f45&unique=prints",
+     "collector_number": "73",
+     "digital": true,
+     "rarity": "uncommon",
+     "flavor_text": "\"It's a ghoul-eat-you world out there. Follow my orders if you want to survive.\"",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "David Rapoza",
+     "artist_ids": [
+      "c5a2318d-5d04-499f-b121-57dee5a9dfe6"
+     ],
+     "illustration_id": "6dc4f33f-68a1-44a1-bcc8-39d05d66ca60",
+     "border_color": "black",
+     "frame": "2015",
+     "frame_effects": [
+      "legendary"
+     ],
+     "security_stamp": "arena",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "prices": {
+      "usd": null,
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=574287&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DLiara%2Bof%2Bthe%2BFlaming%2BFist",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DLiara%2Bof%2Bthe%2BFlaming%2BFist",
+      "edhrec": "https://edhrec.com/route/?cc=Liara+of+the+Flaming+Fist"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "faceDownAs": null,
+    "face": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+     "multiverse_ids": [
+      129586
+     ],
+     "mtgo_id": 27400,
+     "mtgo_foil_id": 27401,
+     "tcgplayer_id": 15153,
+     "cardmarket_id": 16432,
+     "name": "Grizzly Bears",
+     "lang": "en",
+     "released_at": "2007-07-13",
+     "uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "scryfall_uri": "https://scryfall.com/card/10e/268/grizzly-bears?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:43:21Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "normal": "https://cards.scryfall.io/normal/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "large": "https://cards.scryfall.io/large/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "png": "https://cards.scryfall.io/png/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.png?1783943001",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "grid": "https://cards.scryfall.io/grid/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "display": "https://cards.scryfall.io/display/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "art": "https://cards.scryfall.io/art/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "crop": "https://cards.scryfall.io/crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "jpeg": "https://cards.scryfall.io/normal/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001"
+     },
+     "mana_cost": "{1}{G}",
+     "cmc": 2,
+     "type_line": "Creature — Bear",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set": "10e",
+     "set_name": "Tenth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A14c8f55d-d177-4c25-a931-ebeb9e6062a0&unique=prints",
+     "collector_number": "268",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"We cannot forget that among all of Dominaria's wonders, a system of life exists, with prey and predators that will never fight wars nor vie for ancient power.\"\n—Jolrael, empress of beasts",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "D. J. Cleland-Hura",
+     "artist_ids": [
+      "87d21070-2432-4167-8aab-5968af1c14f3"
+     ],
+     "illustration_id": "066bfe81-0f53-43da-a074-b2ecc5dcda72",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 8156,
+     "penny_rank": 11150,
+     "prices": {
+      "usd": "0.24",
+      "usd_foil": "3.29",
+      "usd_etched": null,
+      "eur": "0.20",
+      "eur_foil": "1.46",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129586&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "edhrec": "https://edhrec.com/route/?cc=Grizzly+Bears"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15153%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16432&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27400?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "faceDownAs": null,
+    "face": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+     "multiverse_ids": [
+      129586
+     ],
+     "mtgo_id": 27400,
+     "mtgo_foil_id": 27401,
+     "tcgplayer_id": 15153,
+     "cardmarket_id": 16432,
+     "name": "Grizzly Bears",
+     "lang": "en",
+     "released_at": "2007-07-13",
+     "uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de",
+     "scryfall_uri": "https://scryfall.com/card/10e/268/grizzly-bears?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:43:21Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "normal": "https://cards.scryfall.io/normal/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "large": "https://cards.scryfall.io/large/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "png": "https://cards.scryfall.io/png/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.png?1783943001",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "thumb": "https://cards.scryfall.io/thumb/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "grid": "https://cards.scryfall.io/grid/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "display": "https://cards.scryfall.io/display/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "art": "https://cards.scryfall.io/art/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "crop": "https://cards.scryfall.io/crop/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.webp?1783943001",
+      "jpeg": "https://cards.scryfall.io/normal/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001"
+     },
+     "mana_cost": "{1}{G}",
+     "cmc": 2,
+     "type_line": "Creature — Bear",
+     "oracle_text": "",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set": "10e",
+     "set_name": "Tenth Edition",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/a66a6124-0d81-488d-b080-91f5ba7fbad0",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A10e&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/10e?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/409f9b88-f03e-40b6-9883-68c14c37c0de/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A14c8f55d-d177-4c25-a931-ebeb9e6062a0&unique=prints",
+     "collector_number": "268",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"We cannot forget that among all of Dominaria's wonders, a system of life exists, with prey and predators that will never fight wars nor vie for ancient power.\"\n—Jolrael, empress of beasts",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "D. J. Cleland-Hura",
+     "artist_ids": [
+      "87d21070-2432-4167-8aab-5968af1c14f3"
+     ],
+     "illustration_id": "066bfe81-0f53-43da-a074-b2ecc5dcda72",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 8156,
+     "penny_rank": 11150,
+     "prices": {
+      "usd": "0.24",
+      "usd_foil": "3.29",
+      "usd_etched": null,
+      "eur": "0.20",
+      "eur_foil": "1.46",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=129586&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGrizzly%2BBears",
+      "edhrec": "https://edhrec.com/route/?cc=Grizzly+Bears"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F15153%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=16432&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/27400?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "faceDownAs": null,
+    "face": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "3c0f5411-1940-410f-96ce-6f92513f753a",
+     "oracle_id": "51d9564b-44fc-4de1-9119-09d7b4089378",
+     "multiverse_ids": [
+      489800
+     ],
+     "mtgo_id": 82288,
+     "tcgplayer_id": 218846,
+     "cardmarket_id": 485919,
+     "name": "Goblin Guide",
+     "lang": "en",
+     "released_at": "2020-08-07",
+     "uri": "https://api.scryfall.com/cards/3c0f5411-1940-410f-96ce-6f92513f753a",
+     "scryfall_uri": "https://scryfall.com/card/2xm/127/goblin-guide?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T08:09:25Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.jpg?1783930165",
+      "normal": "https://cards.scryfall.io/normal/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.jpg?1783930165",
+      "large": "https://cards.scryfall.io/large/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.jpg?1783930165",
+      "png": "https://cards.scryfall.io/png/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.png?1783930165",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.jpg?1783930165",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.jpg?1783930165",
+      "thumb": "https://cards.scryfall.io/thumb/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.webp?1783930165",
+      "grid": "https://cards.scryfall.io/grid/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.webp?1783930165",
+      "display": "https://cards.scryfall.io/display/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.webp?1783930165",
+      "art": "https://cards.scryfall.io/art/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.webp?1783930165",
+      "crop": "https://cards.scryfall.io/crop/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.webp?1783930165",
+      "jpeg": "https://cards.scryfall.io/normal/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.jpg?1783930165"
+     },
+     "mana_cost": "{R}",
+     "cmc": 1,
+     "type_line": "Creature — Goblin Scout",
+     "oracle_text": "Haste\nWhenever this creature attacks, defending player reveals the top card of their library. If it's a land card, that player puts it into their hand.",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "R"
+     ],
+     "color_identity": [
+      "R"
+     ],
+     "keywords": [
+      "Haste"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "372dafe8-b5d1-4b81-998f-3ae96b59498a",
+     "set": "2xm",
+     "set_name": "Double Masters",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/372dafe8-b5d1-4b81-998f-3ae96b59498a",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A2xm&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/2xm?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/3c0f5411-1940-410f-96ce-6f92513f753a/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A51d9564b-44fc-4de1-9119-09d7b4089378&unique=prints",
+     "collector_number": "127",
+     "digital": false,
+     "rarity": "rare",
+     "flavor_text": "\"I've been all over this world. I even remember some of those places.\"",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Filip Burburan",
+     "artist_ids": [
+      "66082c3b-a623-4d34-be51-2475214b85d3"
+     ],
+     "illustration_id": "750de145-cbd4-4d8e-b28e-0911f0cc5734",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 15255,
+     "preview": {
+      "source": "MTGGoldfish",
+      "source_uri": "https://www.mtggoldfish.com/articles/turning-red-exclusive-double-masters-previews",
+      "previewed_at": "2020-07-27"
+     },
+     "prices": {
+      "usd": "1.10",
+      "usd_foil": "1.56",
+      "usd_etched": null,
+      "eur": "1.17",
+      "eur_foil": "1.54",
+      "tix": "1.07"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=489800&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGoblin%2BGuide",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGoblin%2BGuide",
+      "edhrec": "https://edhrec.com/route/?cc=Goblin+Guide"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F218846%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=485919&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/82288?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 4,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "faceDownAs": null,
+    "face": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_5",
+    "scryfallData": {
+     "object": "card",
+     "id": "3480927c-10da-4817-9954-10aea2bc7100",
+     "oracle_id": "30997b43-fc13-41d3-8064-1ccc2cb6fd2b",
+     "multiverse_ids": [],
+     "arena_id": 68784,
+     "name": "Raging Goblin",
+     "lang": "en",
+     "released_at": "2018-07-14",
+     "uri": "https://api.scryfall.com/cards/3480927c-10da-4817-9954-10aea2bc7100",
+     "scryfall_uri": "https://scryfall.com/card/oana/43/raging-goblin?utm_source=api",
+     "layout": "normal",
+     "highres_image": false,
+     "image_status": "lowres",
+     "image_updated_at": "2026-07-13T09:20:05Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/3/4/3480927c-10da-4817-9954-10aea2bc7100.jpg?1783934405",
+      "normal": "https://cards.scryfall.io/normal/front/3/4/3480927c-10da-4817-9954-10aea2bc7100.jpg?1783934405",
+      "large": "https://cards.scryfall.io/large/front/3/4/3480927c-10da-4817-9954-10aea2bc7100.jpg?1783934405",
+      "png": "https://cards.scryfall.io/png/front/3/4/3480927c-10da-4817-9954-10aea2bc7100.png?1783934405",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/3/4/3480927c-10da-4817-9954-10aea2bc7100.jpg?1783934405",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/3/4/3480927c-10da-4817-9954-10aea2bc7100.jpg?1783934405",
+      "thumb": "https://cards.scryfall.io/thumb/front/3/4/3480927c-10da-4817-9954-10aea2bc7100.webp?1783934405",
+      "grid": "https://cards.scryfall.io/grid/front/3/4/3480927c-10da-4817-9954-10aea2bc7100.webp?1783934405",
+      "display": "https://cards.scryfall.io/display/front/3/4/3480927c-10da-4817-9954-10aea2bc7100.webp?1783934405",
+      "art": "https://cards.scryfall.io/art/front/3/4/3480927c-10da-4817-9954-10aea2bc7100.webp?1783934405",
+      "crop": "https://cards.scryfall.io/crop/front/3/4/3480927c-10da-4817-9954-10aea2bc7100.webp?1783934405",
+      "jpeg": "https://cards.scryfall.io/normal/front/3/4/3480927c-10da-4817-9954-10aea2bc7100.jpg?1783934405"
+     },
+     "mana_cost": "{R}",
+     "cmc": 1,
+     "type_line": "Creature — Goblin Berserker",
+     "oracle_text": "Haste (This creature can attack and {T} as soon as it comes under your control.)",
+     "power": "1",
+     "toughness": "1",
+     "colors": [
+      "R"
+     ],
+     "color_identity": [
+      "R"
+     ],
+     "keywords": [
+      "Haste"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "b6072801-1d75-48e6-bdc1-f9c19ed48ecc",
+     "set": "oana",
+     "set_name": "Arena New Player Experience Cards",
+     "set_type": "starter",
+     "set_uri": "https://api.scryfall.com/sets/b6072801-1d75-48e6-bdc1-f9c19ed48ecc",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aoana&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/oana?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/3480927c-10da-4817-9954-10aea2bc7100/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A30997b43-fc13-41d3-8064-1ccc2cb6fd2b&unique=prints",
+     "collector_number": "43",
+     "digital": true,
+     "rarity": "common",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Jakub Kasper",
+     "artist_ids": [
+      "36901417-ce61-4636-8b77-6db14a9cb68a"
+     ],
+     "illustration_id": "f470d448-7855-48b6-bce6-387cf23d734e",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "edhrec_rank": 16438,
+     "penny_rank": 7203,
+     "prices": {
+      "usd": null,
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DRaging%2BGoblin",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DRaging%2BGoblin",
+      "edhrec": "https://edhrec.com/route/?cc=Raging+Goblin"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 5,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "faceDownAs": null,
+    "face": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_6",
+    "scryfallData": {
+     "object": "card",
+     "id": "c658b34b-4d3d-4495-92a6-b8e8cca0abcd",
+     "oracle_id": "b954c5b9-b24e-4999-905a-fcb390509a45",
+     "multiverse_ids": [
+      574276
+     ],
+     "arena_id": 81273,
+     "name": "Unexpected Allies",
+     "lang": "en",
+     "released_at": "2022-07-07",
+     "uri": "https://api.scryfall.com/cards/c658b34b-4d3d-4495-92a6-b8e8cca0abcd",
+     "scryfall_uri": "https://scryfall.com/card/hbg/62/unexpected-allies?utm_source=api",
+     "layout": "normal",
+     "highres_image": false,
+     "image_status": "lowres",
+     "image_updated_at": "2026-07-13T05:55:00Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/c/6/c658b34b-4d3d-4495-92a6-b8e8cca0abcd.jpg?1783922100",
+      "normal": "https://cards.scryfall.io/normal/front/c/6/c658b34b-4d3d-4495-92a6-b8e8cca0abcd.jpg?1783922100",
+      "large": "https://cards.scryfall.io/large/front/c/6/c658b34b-4d3d-4495-92a6-b8e8cca0abcd.jpg?1783922100",
+      "png": "https://cards.scryfall.io/png/front/c/6/c658b34b-4d3d-4495-92a6-b8e8cca0abcd.png?1783922100",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/c/6/c658b34b-4d3d-4495-92a6-b8e8cca0abcd.jpg?1783922100",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/c/6/c658b34b-4d3d-4495-92a6-b8e8cca0abcd.jpg?1783922100",
+      "thumb": "https://cards.scryfall.io/thumb/front/c/6/c658b34b-4d3d-4495-92a6-b8e8cca0abcd.webp?1783922100",
+      "grid": "https://cards.scryfall.io/grid/front/c/6/c658b34b-4d3d-4495-92a6-b8e8cca0abcd.webp?1783922100",
+      "display": "https://cards.scryfall.io/display/front/c/6/c658b34b-4d3d-4495-92a6-b8e8cca0abcd.webp?1783922100",
+      "art": "https://cards.scryfall.io/art/front/c/6/c658b34b-4d3d-4495-92a6-b8e8cca0abcd.webp?1783922100",
+      "crop": "https://cards.scryfall.io/crop/front/c/6/c658b34b-4d3d-4495-92a6-b8e8cca0abcd.webp?1783922100",
+      "jpeg": "https://cards.scryfall.io/normal/front/c/6/c658b34b-4d3d-4495-92a6-b8e8cca0abcd.jpg?1783922100"
+     },
+     "mana_cost": "{1}{R}",
+     "cmc": 2,
+     "type_line": "Sorcery",
+     "oracle_text": "Target nontoken creature you control gets +2/+0 and gains double team until end of turn. It also gains first strike until end of turn if it has the same name as another creature you control or a creature card in your graveyard.",
+     "colors": [
+      "R"
+     ],
+     "color_identity": [
+      "R"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "not_legal",
+      "pauper": "not_legal",
+      "vintage": "not_legal",
+      "penny": "not_legal",
+      "commander": "not_legal",
+      "oathbreaker": "not_legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "not_legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "35528ede-7870-4598-a2ee-7f3d6464a74b",
+     "set": "hbg",
+     "set_name": "Alchemy Horizons: Baldur's Gate",
+     "set_type": "alchemy",
+     "set_uri": "https://api.scryfall.com/sets/35528ede-7870-4598-a2ee-7f3d6464a74b",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Ahbg&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/hbg?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/c658b34b-4d3d-4495-92a6-b8e8cca0abcd/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ab954c5b9-b24e-4999-905a-fcb390509a45&unique=prints",
+     "collector_number": "62",
+     "digital": true,
+     "rarity": "common",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Milivoj Ćeran",
+     "artist_ids": [
+      "1eced451-4da5-42bc-b49d-70c41246581f"
+     ],
+     "illustration_id": "2425329b-8635-47d5-a27a-5aa7ba54785b",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "arena",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "prices": {
+      "usd": null,
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=574276&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DUnexpected%2BAllies",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DUnexpected%2BAllies",
+      "edhrec": "https://edhrec.com/route/?cc=Unexpected+Allies"
+     }
+    },
+    "isSpell": true,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 7,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "faceDownAs": null,
+    "face": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": "perm_5",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": 8,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtGraveyards": [
+     {
+      "id": "player_0",
+      "graveyard": [
+       {
+        "name": "Raging Goblin",
+        "type_line": "Creature — Goblin Berserker",
+        "mana_cost": "{R}",
+        "cmc": 1,
+        "colors": [
+         "R"
+        ],
+        "oracle_text": "Haste (This creature can attack and {T} as soon as it comes under your control.)",
+        "keywords": [
+         "Haste"
+        ],
+        "layout": "normal"
+       }
+      ]
+     },
+     {
+      "id": "player_1",
+      "graveyard": [
+       {
+        "name": "Goblin Guide",
+        "type_line": "Creature — Goblin Scout",
+        "mana_cost": "{R}",
+        "cmc": 1,
+        "colors": [
+         "R"
+        ],
+        "oracle_text": "Haste\nWhenever this creature attacks, defending player reveals the top card of their library. If it's a land card, that player puts it into their hand.",
+        "keywords": [
+         "Haste"
+        ],
+        "layout": "normal"
+       }
+      ]
+     }
+    ],
+    "firedAtSnapshot": {
+     "states": [
+      [
+       "perm_1",
+       {
+        "name": "Liara of the Flaming Fist",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [
+         "Legendary"
+        ],
+        "subtypes": [
+         "Human",
+         "Soldier"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "basePower": 2,
+        "baseToughness": 2,
+        "abilities": [
+         "At the beginning of each combat, each creature you control gets +1/+1 until end of turn if it has the same name as another creature you control or a creature card in your graveyard.",
+         "{1}{R}{W}: Another target nontoken creature you control gains first strike and double team until end of turn. Activate only as a sorcery and only once."
+        ],
+        "colors": [
+         "R",
+         "W"
+        ],
+        "manaValue": 2,
+        "manaCost": "{R}{W}",
+        "isCreature": true,
+        "isToken": false,
+        "isFaceDown": false,
+        "isEmblem": false,
+        "isSpell": false,
+        "isZoneCard": false,
+        "oracleText": "At the beginning of each combat, each creature you control gets +1/+1 until end of turn if it has the same name as another creature you control or a creature card in your graveyard.\n{1}{R}{W}: Another target nontoken creature you control gains first strike and double team until end of turn. Activate only as a sorcery and only once.",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "attackingPlayerId": null,
+        "timesAttackedThisTurn": 0,
+        "allPrintedAbilities": [
+         "At the beginning of each combat, each creature you control gets +1/+1 until end of turn if it has the same name as another creature you control or a creature card in your graveyard.",
+         "{1}{R}{W}: Another target nontoken creature you control gains first strike and double team until end of turn. Activate only as a sorcery and only once."
+        ],
+        "cdaAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false,
+        "_protectionFrom": []
+       }
+      ],
+      [
+       "perm_2",
+       {
+        "name": "Grizzly Bears",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Bear"
+        ],
+        "power": 3,
+        "toughness": 3,
+        "basePower": 2,
+        "baseToughness": 2,
+        "abilities": [],
+        "colors": [
+         "G"
+        ],
+        "manaValue": 2,
+        "manaCost": "{1}{G}",
+        "isCreature": true,
+        "isToken": false,
+        "isFaceDown": false,
+        "isEmblem": false,
+        "isSpell": false,
+        "isZoneCard": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "attackingPlayerId": null,
+        "timesAttackedThisTurn": 0,
+        "allPrintedAbilities": [],
+        "cdaAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false,
+        "_protectionFrom": []
+       }
+      ],
+      [
+       "perm_3",
+       {
+        "name": "Grizzly Bears",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Bear"
+        ],
+        "power": 3,
+        "toughness": 3,
+        "basePower": 2,
+        "baseToughness": 2,
+        "abilities": [],
+        "colors": [
+         "G"
+        ],
+        "manaValue": 2,
+        "manaCost": "{1}{G}",
+        "isCreature": true,
+        "isToken": false,
+        "isFaceDown": false,
+        "isEmblem": false,
+        "isSpell": false,
+        "isZoneCard": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "attackingPlayerId": null,
+        "timesAttackedThisTurn": 0,
+        "allPrintedAbilities": [],
+        "cdaAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false,
+        "_protectionFrom": []
+       }
+      ],
+      [
+       "perm_4",
+       {
+        "name": "Goblin Guide",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Goblin",
+         "Scout"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "basePower": 2,
+        "baseToughness": 2,
+        "abilities": [
+         "Haste",
+         "Whenever this creature attacks, defending player reveals the top card of their library. If it's a land card, that player puts it into their hand."
+        ],
+        "colors": [
+         "R"
+        ],
+        "manaValue": 1,
+        "manaCost": "{R}",
+        "isCreature": true,
+        "isToken": false,
+        "isFaceDown": false,
+        "isEmblem": false,
+        "isSpell": false,
+        "isZoneCard": false,
+        "oracleText": "Haste\nWhenever this creature attacks, defending player reveals the top card of their library. If it's a land card, that player puts it into their hand.",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "attackingPlayerId": null,
+        "timesAttackedThisTurn": 0,
+        "allPrintedAbilities": [
+         "Haste",
+         "Whenever this creature attacks, defending player reveals the top card of their library. If it's a land card, that player puts it into their hand."
+        ],
+        "cdaAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false,
+        "_protectionFrom": []
+       }
+      ],
+      [
+       "perm_5",
+       {
+        "name": "Raging Goblin",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Goblin",
+         "Berserker"
+        ],
+        "power": 2,
+        "toughness": 2,
+        "basePower": 1,
+        "baseToughness": 1,
+        "abilities": [
+         "Haste"
+        ],
+        "colors": [
+         "R"
+        ],
+        "manaValue": 1,
+        "manaCost": "{R}",
+        "isCreature": true,
+        "isToken": false,
+        "isFaceDown": false,
+        "isEmblem": false,
+        "isSpell": false,
+        "isZoneCard": false,
+        "oracleText": "Haste",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "attackingPlayerId": null,
+        "timesAttackedThisTurn": 0,
+        "allPrintedAbilities": [
+         "Haste"
+        ],
+        "cdaAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false,
+        "_protectionFrom": []
+       }
+      ]
+     ],
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Liara of the Flaming Fist",
+       "imageUri": "https://cards.scryfall.io/small/front/9/8/98209130-a72f-4946-a1d4-3a437cd9a0b2.jpg?1793880948",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [
+        "Legendary"
+       ],
+       "printedSubtypes": [
+        "Human",
+        "Soldier"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": "A",
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": "B",
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Goblin Guide",
+       "imageUri": "https://cards.scryfall.io/small/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.jpg?1783930165",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Goblin",
+        "Scout"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_5",
+       "name": "Raging Goblin",
+       "imageUri": "https://cards.scryfall.io/small/front/3/4/3480927c-10da-4817-9954-10aea2bc7100.jpg?1783934405",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Goblin",
+        "Berserker"
+       ],
+       "printedPower": 1,
+       "printedToughness": 1,
+       "timestamp": 5
+      },
+      {
+       "id": "trig_perm_1_0_6",
+       "name": "Liara of the Flaming Fist (trigger)",
+       "imageUri": "https://cards.scryfall.io/small/front/9/8/98209130-a72f-4946-a1d4-3a437cd9a0b2.jpg?1793880948",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": true,
+       "isTriggeredAbility": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "abilitySourceId": "perm_1",
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 6
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      },
+      {
+       "id": "player_1",
+       "name": "Opponent"
+      }
+     ]
+    }
+   }
+  ],
+  "firedAbilities": [
+   {
+    "id": "trig_perm_1_0_6",
+    "kind": "trigger",
+    "pseudoKind": "ability",
+    "sourceId": "perm_1",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 0,
+    "timestamp": 6,
+    "effectText": "Each creature you control gets +1/+1 until end of turn if target creature has the same name as another creature you control or a creature card in your graveyard.",
+    "xValue": null,
+    "hasXValue": false,
+    "cdaUserValue": null,
+    "linkedCards": null,
+    "fullText": "At the beginning of each combat, each creature you control gets +1/+1 until end of turn if it has the same name as another creature you control or a creature card in your graveyard.",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "guessedTargetSubjects": [
+     "creature"
+    ],
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "attach": null,
+    "face": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "forPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Liara of the Flaming Fist",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [
+        "Legendary"
+       ],
+       "subtypes": [
+        "Human",
+        "Soldier"
+       ],
+       "power": 2,
+       "toughness": 2,
+       "colors": [
+        "R",
+        "W"
+       ],
+       "abilities": [
+        "At the beginning of each combat, each creature you control gets +1/+1 until end of turn if it has the same name as another creature you control or a creature card in your graveyard.",
+        "{1}{R}{W}: Another target nontoken creature you control gains first strike and double team until end of turn. Activate only as a sorcery and only once."
+       ],
+       "oracleText": "At the beginning of each combat, each creature you control gets +1/+1 until end of turn if it has the same name as another creature you control or a creature card in your graveyard.\n{1}{R}{W}: Another target nontoken creature you control gains first strike and double team until end of turn. Activate only as a sorcery and only once.",
+       "manaValue": 2,
+       "manaCost": "{R}{W}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isFaceDown": false,
+       "tapped": false,
+       "traits": [],
+       "counters": {}
+      }
+     ],
+     [
+      "perm_2",
+      {
+       "name": "Grizzly Bears",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Bear"
+       ],
+       "power": 2,
+       "toughness": 2,
+       "colors": [
+        "G"
+       ],
+       "abilities": [],
+       "oracleText": "",
+       "manaValue": 2,
+       "manaCost": "{1}{G}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isFaceDown": false,
+       "tapped": false,
+       "traits": [],
+       "counters": {}
+      }
+     ],
+     [
+      "perm_3",
+      {
+       "name": "Grizzly Bears",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Bear"
+       ],
+       "power": 2,
+       "toughness": 2,
+       "colors": [
+        "G"
+       ],
+       "abilities": [],
+       "oracleText": "",
+       "manaValue": 2,
+       "manaCost": "{1}{G}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isFaceDown": false,
+       "tapped": false,
+       "traits": [],
+       "counters": {}
+      }
+     ],
+     [
+      "perm_4",
+      {
+       "name": "Goblin Guide",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Goblin",
+        "Scout"
+       ],
+       "power": 2,
+       "toughness": 2,
+       "colors": [
+        "R"
+       ],
+       "abilities": [
+        "Haste",
+        "Whenever this creature attacks, defending player reveals the top card of their library. If it's a land card, that player puts it into their hand."
+       ],
+       "oracleText": "Haste\nWhenever this creature attacks, defending player reveals the top card of their library. If it's a land card, that player puts it into their hand.",
+       "manaValue": 1,
+       "manaCost": "{R}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isFaceDown": false,
+       "tapped": false,
+       "traits": [],
+       "counters": {}
+      }
+     ],
+     [
+      "perm_5",
+      {
+       "name": "Raging Goblin",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Goblin",
+        "Berserker"
+       ],
+       "power": 1,
+       "toughness": 1,
+       "colors": [
+        "R"
+       ],
+       "abilities": [
+        "Haste"
+       ],
+       "oracleText": "Haste",
+       "manaValue": 1,
+       "manaCost": "{R}",
+       "timesAttackedThisTurn": 0,
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isFaceDown": false,
+       "tapped": false,
+       "traits": [],
+       "counters": {}
+      }
+     ]
+    ],
+    "firedAtGraveyards": [
+     {
+      "id": "player_0",
+      "graveyard": [
+       {
+        "name": "Raging Goblin",
+        "type_line": "Creature — Goblin Berserker",
+        "mana_cost": "{R}",
+        "cmc": 1,
+        "colors": [
+         "R"
+        ],
+        "oracle_text": "Haste (This creature can attack and {T} as soon as it comes under your control.)",
+        "keywords": [
+         "Haste"
+        ],
+        "layout": "normal"
+       }
+      ]
+     },
+     {
+      "id": "player_1",
+      "graveyard": [
+       {
+        "name": "Goblin Guide",
+        "type_line": "Creature — Goblin Scout",
+        "mana_cost": "{R}",
+        "cmc": 1,
+        "colors": [
+         "R"
+        ],
+        "oracle_text": "Haste\nWhenever this creature attacks, defending player reveals the top card of their library. If it's a land card, that player puts it into their hand.",
+        "keywords": [
+         "Haste"
+        ],
+        "layout": "normal"
+       }
+      ]
+     }
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Liara of the Flaming Fist",
+       "imageUri": "https://cards.scryfall.io/small/front/9/8/98209130-a72f-4946-a1d4-3a437cd9a0b2.jpg?1793880948",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [
+        "Legendary"
+       ],
+       "printedSubtypes": [
+        "Human",
+        "Soldier"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": "A",
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Grizzly Bears",
+       "imageUri": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": "B",
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Bear"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Goblin Guide",
+       "imageUri": "https://cards.scryfall.io/small/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.jpg?1783930165",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Goblin",
+        "Scout"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_5",
+       "name": "Raging Goblin",
+       "imageUri": "https://cards.scryfall.io/small/front/3/4/3480927c-10da-4817-9954-10aea2bc7100.jpg?1783934405",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Goblin",
+        "Berserker"
+       ],
+       "printedPower": 1,
+       "printedToughness": 1,
+       "timestamp": 5
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      },
+      {
+       "id": "player_1",
+       "name": "Opponent"
+      }
+     ]
+    },
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null
+   }
+  ],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 1,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [
+     {
+      "object": "card",
+      "id": "3480927c-10da-4817-9954-10aea2bc7100",
+      "oracle_id": "30997b43-fc13-41d3-8064-1ccc2cb6fd2b",
+      "multiverse_ids": [],
+      "arena_id": 68784,
+      "name": "Raging Goblin",
+      "lang": "en",
+      "released_at": "2018-07-14",
+      "uri": "https://api.scryfall.com/cards/3480927c-10da-4817-9954-10aea2bc7100",
+      "scryfall_uri": "https://scryfall.com/card/oana/43/raging-goblin?utm_source=api",
+      "layout": "normal",
+      "highres_image": false,
+      "image_status": "lowres",
+      "image_updated_at": "2026-07-13T09:20:05Z",
+      "image_uris": {
+       "small": "https://cards.scryfall.io/small/front/3/4/3480927c-10da-4817-9954-10aea2bc7100.jpg?1783934405",
+       "normal": "https://cards.scryfall.io/normal/front/3/4/3480927c-10da-4817-9954-10aea2bc7100.jpg?1783934405",
+       "large": "https://cards.scryfall.io/large/front/3/4/3480927c-10da-4817-9954-10aea2bc7100.jpg?1783934405",
+       "png": "https://cards.scryfall.io/png/front/3/4/3480927c-10da-4817-9954-10aea2bc7100.png?1783934405",
+       "art_crop": "https://cards.scryfall.io/art_crop/front/3/4/3480927c-10da-4817-9954-10aea2bc7100.jpg?1783934405",
+       "border_crop": "https://cards.scryfall.io/border_crop/front/3/4/3480927c-10da-4817-9954-10aea2bc7100.jpg?1783934405",
+       "thumb": "https://cards.scryfall.io/thumb/front/3/4/3480927c-10da-4817-9954-10aea2bc7100.webp?1783934405",
+       "grid": "https://cards.scryfall.io/grid/front/3/4/3480927c-10da-4817-9954-10aea2bc7100.webp?1783934405",
+       "display": "https://cards.scryfall.io/display/front/3/4/3480927c-10da-4817-9954-10aea2bc7100.webp?1783934405",
+       "art": "https://cards.scryfall.io/art/front/3/4/3480927c-10da-4817-9954-10aea2bc7100.webp?1783934405",
+       "crop": "https://cards.scryfall.io/crop/front/3/4/3480927c-10da-4817-9954-10aea2bc7100.webp?1783934405",
+       "jpeg": "https://cards.scryfall.io/normal/front/3/4/3480927c-10da-4817-9954-10aea2bc7100.jpg?1783934405"
+      },
+      "mana_cost": "{R}",
+      "cmc": 1,
+      "type_line": "Creature — Goblin Berserker",
+      "oracle_text": "Haste (This creature can attack and {T} as soon as it comes under your control.)",
+      "power": "1",
+      "toughness": "1",
+      "colors": [
+       "R"
+      ],
+      "color_identity": [
+       "R"
+      ],
+      "keywords": [
+       "Haste"
+      ],
+      "legalities": {
+       "standard": "not_legal",
+       "future": "not_legal",
+       "historic": "legal",
+       "timeless": "legal",
+       "gladiator": "legal",
+       "pioneer": "not_legal",
+       "modern": "legal",
+       "legacy": "legal",
+       "pauper": "legal",
+       "vintage": "legal",
+       "penny": "not_legal",
+       "commander": "legal",
+       "oathbreaker": "legal",
+       "standardbrawl": "not_legal",
+       "brawl": "legal",
+       "competitivebrawl": "legal",
+       "alchemy": "legal",
+       "paupercommander": "legal",
+       "duel": "legal",
+       "oldschool": "not_legal",
+       "premodern": "legal",
+       "predh": "legal",
+       "tlr": "legal"
+      },
+      "games": [
+       "arena"
+      ],
+      "reserved": false,
+      "game_changer": false,
+      "foil": false,
+      "nonfoil": true,
+      "finishes": [
+       "nonfoil"
+      ],
+      "oversized": false,
+      "promo": false,
+      "reprint": true,
+      "variation": false,
+      "set_id": "b6072801-1d75-48e6-bdc1-f9c19ed48ecc",
+      "set": "oana",
+      "set_name": "Arena New Player Experience Cards",
+      "set_type": "starter",
+      "set_uri": "https://api.scryfall.com/sets/b6072801-1d75-48e6-bdc1-f9c19ed48ecc",
+      "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aoana&unique=prints",
+      "scryfall_set_uri": "https://scryfall.com/sets/oana?utm_source=api",
+      "rulings_uri": "https://api.scryfall.com/cards/3480927c-10da-4817-9954-10aea2bc7100/rulings",
+      "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A30997b43-fc13-41d3-8064-1ccc2cb6fd2b&unique=prints",
+      "collector_number": "43",
+      "digital": true,
+      "rarity": "common",
+      "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+      "artist": "Jakub Kasper",
+      "artist_ids": [
+       "36901417-ce61-4636-8b77-6db14a9cb68a"
+      ],
+      "illustration_id": "f470d448-7855-48b6-bce6-387cf23d734e",
+      "border_color": "black",
+      "frame": "2015",
+      "full_art": false,
+      "textless": false,
+      "booster": false,
+      "story_spotlight": false,
+      "edhrec_rank": 16438,
+      "penny_rank": 7203,
+      "prices": {
+       "usd": null,
+       "usd_foil": null,
+       "usd_etched": null,
+       "eur": null,
+       "eur_foil": null,
+       "tix": null
+      },
+      "related_uris": {
+       "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DRaging%2BGoblin",
+       "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DRaging%2BGoblin",
+       "edhrec": "https://edhrec.com/route/?cc=Raging+Goblin"
+      }
+     }
+    ],
+    "libraryTop": null,
+    "emblems": []
+   },
+   {
+    "id": "player_1",
+    "name": "Opponent",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 1,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": false,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [
+     {
+      "object": "card",
+      "id": "3c0f5411-1940-410f-96ce-6f92513f753a",
+      "oracle_id": "51d9564b-44fc-4de1-9119-09d7b4089378",
+      "multiverse_ids": [
+       489800
+      ],
+      "mtgo_id": 82288,
+      "tcgplayer_id": 218846,
+      "cardmarket_id": 485919,
+      "name": "Goblin Guide",
+      "lang": "en",
+      "released_at": "2020-08-07",
+      "uri": "https://api.scryfall.com/cards/3c0f5411-1940-410f-96ce-6f92513f753a",
+      "scryfall_uri": "https://scryfall.com/card/2xm/127/goblin-guide?utm_source=api",
+      "layout": "normal",
+      "highres_image": true,
+      "image_status": "highres_scan",
+      "image_updated_at": "2026-07-13T08:09:25Z",
+      "image_uris": {
+       "small": "https://cards.scryfall.io/small/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.jpg?1783930165",
+       "normal": "https://cards.scryfall.io/normal/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.jpg?1783930165",
+       "large": "https://cards.scryfall.io/large/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.jpg?1783930165",
+       "png": "https://cards.scryfall.io/png/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.png?1783930165",
+       "art_crop": "https://cards.scryfall.io/art_crop/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.jpg?1783930165",
+       "border_crop": "https://cards.scryfall.io/border_crop/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.jpg?1783930165",
+       "thumb": "https://cards.scryfall.io/thumb/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.webp?1783930165",
+       "grid": "https://cards.scryfall.io/grid/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.webp?1783930165",
+       "display": "https://cards.scryfall.io/display/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.webp?1783930165",
+       "art": "https://cards.scryfall.io/art/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.webp?1783930165",
+       "crop": "https://cards.scryfall.io/crop/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.webp?1783930165",
+       "jpeg": "https://cards.scryfall.io/normal/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.jpg?1783930165"
+      },
+      "mana_cost": "{R}",
+      "cmc": 1,
+      "type_line": "Creature — Goblin Scout",
+      "oracle_text": "Haste\nWhenever this creature attacks, defending player reveals the top card of their library. If it's a land card, that player puts it into their hand.",
+      "power": "2",
+      "toughness": "2",
+      "colors": [
+       "R"
+      ],
+      "color_identity": [
+       "R"
+      ],
+      "keywords": [
+       "Haste"
+      ],
+      "legalities": {
+       "standard": "not_legal",
+       "future": "not_legal",
+       "historic": "not_legal",
+       "timeless": "not_legal",
+       "gladiator": "not_legal",
+       "pioneer": "not_legal",
+       "modern": "legal",
+       "legacy": "legal",
+       "pauper": "not_legal",
+       "vintage": "legal",
+       "penny": "not_legal",
+       "commander": "legal",
+       "oathbreaker": "legal",
+       "standardbrawl": "not_legal",
+       "brawl": "not_legal",
+       "competitivebrawl": "not_legal",
+       "alchemy": "not_legal",
+       "paupercommander": "not_legal",
+       "duel": "legal",
+       "oldschool": "not_legal",
+       "premodern": "not_legal",
+       "predh": "legal",
+       "tlr": "legal"
+      },
+      "games": [
+       "paper",
+       "mtgo"
+      ],
+      "reserved": false,
+      "game_changer": false,
+      "foil": true,
+      "nonfoil": true,
+      "finishes": [
+       "nonfoil",
+       "foil"
+      ],
+      "oversized": false,
+      "promo": false,
+      "reprint": true,
+      "variation": false,
+      "set_id": "372dafe8-b5d1-4b81-998f-3ae96b59498a",
+      "set": "2xm",
+      "set_name": "Double Masters",
+      "set_type": "masters",
+      "set_uri": "https://api.scryfall.com/sets/372dafe8-b5d1-4b81-998f-3ae96b59498a",
+      "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A2xm&unique=prints",
+      "scryfall_set_uri": "https://scryfall.com/sets/2xm?utm_source=api",
+      "rulings_uri": "https://api.scryfall.com/cards/3c0f5411-1940-410f-96ce-6f92513f753a/rulings",
+      "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A51d9564b-44fc-4de1-9119-09d7b4089378&unique=prints",
+      "collector_number": "127",
+      "digital": false,
+      "rarity": "rare",
+      "flavor_text": "\"I've been all over this world. I even remember some of those places.\"",
+      "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+      "artist": "Filip Burburan",
+      "artist_ids": [
+       "66082c3b-a623-4d34-be51-2475214b85d3"
+      ],
+      "illustration_id": "750de145-cbd4-4d8e-b28e-0911f0cc5734",
+      "border_color": "black",
+      "frame": "2015",
+      "security_stamp": "oval",
+      "full_art": false,
+      "textless": false,
+      "booster": true,
+      "story_spotlight": false,
+      "edhrec_rank": 15255,
+      "preview": {
+       "source": "MTGGoldfish",
+       "source_uri": "https://www.mtggoldfish.com/articles/turning-red-exclusive-double-masters-previews",
+       "previewed_at": "2020-07-27"
+      },
+      "prices": {
+       "usd": "1.10",
+       "usd_foil": "1.56",
+       "usd_etched": null,
+       "eur": "1.17",
+       "eur_foil": "1.54",
+       "tix": "1.07"
+      },
+      "related_uris": {
+       "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=489800&printed=false",
+       "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGoblin%2BGuide",
+       "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGoblin%2BGuide",
+       "edhrec": "https://edhrec.com/route/?cc=Goblin+Guide"
+      },
+      "purchase_uris": {
+       "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F218846%3Fpage%3D1",
+       "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=485919&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+       "cardhoarder": "https://www.cardhoarder.com/cards/82288?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+      }
+     }
+    ],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 2,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Liara of the Flaming Fist",
+    "final": {
+     "name": "Liara of the Flaming Fist",
+     "controller": "player_0",
+     "supertypes": [
+      "Legendary"
+     ],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Human",
+      "Soldier"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "R",
+      "W"
+     ],
+     "abilities": [
+      "At the beginning of each combat, each creature you control gets +1/+1 until end of turn if it has the same name as another creature you control or a creature card in your graveyard.",
+      "{1}{R}{W}: Another target nontoken creature you control gains first strike and double team until end of turn. Activate only as a sorcery and only once."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Grizzly Bears A",
+    "final": {
+     "name": "Grizzly Bears",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Bear"
+     ],
+     "power": 3,
+     "toughness": 3,
+     "colors": [
+      "G"
+     ],
+     "abilities": []
+    },
+    "changedBy": {
+     "7c": [
+      "Liara of the Flaming Fist (trigger)"
+     ]
+    }
+   },
+   {
+    "perm": "Grizzly Bears B",
+    "final": {
+     "name": "Grizzly Bears",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Bear"
+     ],
+     "power": 3,
+     "toughness": 3,
+     "colors": [
+      "G"
+     ],
+     "abilities": []
+    },
+    "changedBy": {
+     "7c": [
+      "Liara of the Flaming Fist (trigger)"
+     ]
+    }
+   },
+   {
+    "perm": "Goblin Guide",
+    "final": {
+     "name": "Goblin Guide",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Goblin",
+      "Scout"
+     ],
+     "power": 2,
+     "toughness": 2,
+     "colors": [
+      "R"
+     ],
+     "abilities": [
+      "Haste",
+      "Whenever this creature attacks, defending player reveals the top card of their library. If it's a land card, that player puts it into their hand."
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Raging Goblin",
+    "final": {
+     "name": "Raging Goblin",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Goblin",
+      "Berserker"
+     ],
+     "power": 4,
+     "toughness": 2,
+     "colors": [
+      "R"
+     ],
+     "abilities": [
+      "Haste",
+      "First strike"
+     ]
+    },
+    "changedBy": {
+     "6": [
+      "Unexpected Allies"
+     ],
+     "7c": [
+      "Liara of the Flaming Fist (trigger)",
+      "Unexpected Allies"
+     ]
+    }
+   },
+   {
+    "perm": "Unexpected Allies",
+    "final": {
+     "name": "Unexpected Allies",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Sorcery"
+     ],
+     "subtypes": [],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "R"
+     ],
+     "abilities": [
+      "Target nontoken creature you control gets +2/+0 and gains double team until end of turn. It also gains first strike until end of turn if it has the same name as another creature you control or a creature card in your graveyard."
+     ]
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "6": [
+    "Unexpected Allies"
+   ],
+   "7c": [
+    "Liara of the Flaming Fist (trigger)",
+    "Unexpected Allies"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Unexpected Allies",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "target": "Raging Goblin",
+    "params": {
+     "power": 2,
+     "toughness": 0
+    }
+   },
+   {
+    "source": "Unexpected Allies",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "target": "Raging Goblin",
+    "params": {
+     "ability": "First strike"
+    }
+   },
+   {
+    "source": "Liara of the Flaming Fist (trigger)",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "global",
+    "params": {
+     "power": 1,
+     "toughness": 1
+    }
+   }
+  ]
+ }
+}

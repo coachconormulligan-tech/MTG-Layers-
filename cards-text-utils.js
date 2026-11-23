@@ -262,6 +262,33 @@ function pluralizeCreatureType(singular) {
   return singular + 's';
 }
 
+/* The lines of a card that work while it is in a graveyard: "As long as this card is in your
+   graveyard [and …], <a continuous effect>" (Anger, Riftstone Portal), as it is there (its front
+   face). Not a replacement ("if you would learn, you may instead …" — Retriever Phoenix) nor how
+   others enter ("… enters with an additional +1/+1 counter" — Dearly Departed). Empty when none. */
+function _graveyardStaticText(card) {
+  const face = typeof _zoneCardFront === 'function' ? _zoneCardFront(card) : card;
+  return String((face && face.oracle_text) || '').split('\n')
+    .filter(line => /^As long as this card is in your graveyard(?: and [^,]+)?, (?![^.]*\b(?:would|enters? with)\b)[^.]*\b(?:have|has|get|gets)\b/i.test(line.trim()))
+    .join('\n');
+}
+
+/* The creature types a card's "choose a creature type other than Wall" (Standardize, Imagecrafter,
+   Mistform Mutant, Unnatural Selection) leaves out of its choice, as the types are spelled. */
+function _creatureTypesExcludedBy(text) {
+  const out = [];
+  for (const m of String(text || '').matchAll(/\bcreature type other than ([A-Z][\w'’-]*(?: [A-Z][\w'’-]*)*)/g)) {
+    const t = TypeCatalog.creatureTypeNamed(m[1], TypeCatalog.everyCreatureType());
+    if (t) out.push(t);
+  }
+  return out;
+}
+/* What a permanent's "choose a creature type" box offers: every type it may choose. */
+function creatureTypeChoicesFor(perm) {
+  const except = _creatureTypesExcludedBy(perm && (perm.originalOracleText || perm.oracleText));
+  return TypeCatalog.creatureTypeChoices().filter(t => !except.includes(t));
+}
+
 /* Build all from—to pairs for a creature type replacement, including plural forms.
    E.g. from="Wyvern", to="Elf" — [{ from: "Wyvern", to: "Elf" }, { from: "Wyverns", to: "Elves" }]
    Ensures text like "Other Wyverns get +1/+1" properly becomes "Other Elves get +1/+1". */
@@ -824,7 +851,7 @@ function _splitConditionalBranches(text, isSpell, canParse) {
   const origLines = lines.slice();
   const out = { text, baseLineCount: lines.length, branchLines: new Map(), alwaysOnLines: new Set(), ownSlotLines: new Set(),
                 costLabel: null, costLabel2: null, costLabels: [] };
-  if (!/\botherwise,|\bif (?:x|\d+) is \d+ or\b|\bif this spell(?:'s \w+ cost)? was\b|\bto cast (?:this|that) spell[,.]|\bif you cast this spell during\b|\bif evidence was collected\b|\bgets more votes,|\b(?:if|as long as) it(?:'s| is| isn't| doesn't have| has)\b|\.[ ]+[^.\n]*\bif\b|\n(?:[A-Z][\w']*(?: [\w']+)* — )?if\b|\bwhen you do,|\.[ ]+(?:then |until end of turn, )?you may\b|,[ ]+then you may have\b/i.test(text)) return out;
+  if (!/\botherwise,|\bif (?:x|\d+) is \d+ or\b|\bif this spell(?:'s \w+ cost)? was\b|\bto cast (?:this|that) spell[,.]|\bif you cast this spell during\b|\bif evidence was collected\b|\bgets more votes,|\b(?:if|as long as) it(?:'s| is| isn't| doesn't have| has)\b|\.[ ]+[^.\n]*\bif\b|\n(?:[A-Z][\w']*(?: [\w']+)* — )?if\b|\bwhen you do,|\.[ ]+(?:then |until end of turn, )?you may\b|,[ ]+then you may have\b|\binstead as long as\b/i.test(text)) return out;
   // A spell has at most two toggles (Cankerous Thirst's {B} and {G}): with more cast conditions
   // than that, its branches are left where they are.
   const castLabels = new Set();
@@ -953,6 +980,21 @@ function _splitConditionalBranches(text, isSpell, canParse) {
         moved.add(i);
         return true;
       };
+      // "Enchanted creature gets -2/-0. It gets -6/-0 instead as long as its controller has seven
+      // or more cards in their graveyard." (So Tiny, Mind Carver, Precipitous Drop): the sentence
+      // before holds only while the condition does not, as an "Otherwise, …" pair is written.
+      const trailInstead = !isSpell && !quoted && i > 0 && sentences[i].match(/^(.+?)\s+instead\s+as long as\s+([^.,;]+)\.$/i);
+      if (trailInstead && canParse(trailInstead[2]) && _branchIsContinuous(trailInstead[1])) {
+        const replaced = replacedPrev();
+        if (replaced) {
+          const lc = (x) => x.charAt(0).toLowerCase() + x.slice(1);
+          add(`As long as it is not true that ${trailInstead[2]}, ${lc(replaced).replace(/\.?$/, '.')}`, li);
+          add(`As long as ${trailInstead[2]}, ${lc(trailInstead[1])}.`, li);
+          moved.add(i - 1);
+          moved.add(i);
+          continue;
+        }
+      }
       // "If that creature is an Ally, it also gains flying" (Yip Yip!) and, in a fired ability
       // whose "it" has been spelled out, "If target creature is equipped, target creature gains …"
       // (Éowyn, Lady of Rohan) are riders about "it".
@@ -2672,6 +2714,12 @@ function _evaluateTriggerCondition(condText, sourceState) {
     const pl = sourceState && (Battlefield.players || []).find(p => p.id === sourceState.controller);
     return pl && pl.gameState ? pl.gameState : (Battlefield.gameState || null);
   })();
+  // A graveyard condition ("if there are seven or more cards in your graveyard": Crypt Feaster),
+  // as the ability resolves, now: "your" is the source's controller.
+  const gy = typeof _graveyardCondition === 'function' ? _graveyardCondition(ct) : null;
+  if (gy && typeof Battlefield !== 'undefined') {
+    return gy((sourceState && sourceState.controller) || Battlefield.activePlayerId, sourceState, null);
+  }
   if (/\bis monstrous\b/.test(ct)) return traits.includes('Monstrous');
   if (/\bisn'?t monstrous\b|\bis not monstrous\b/.test(ct)) return !traits.includes('Monstrous');
   if (/\bis saddled\b/.test(ct)) return traits.includes('Saddled');

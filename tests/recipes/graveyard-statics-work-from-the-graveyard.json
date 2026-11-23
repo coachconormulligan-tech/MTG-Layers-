@@ -1,0 +1,21 @@
+{
+  "name": "Statics that work from the graveyard work from there and not from the battlefield",
+  "notes": "Conor, 2026-11-22: build graveyard abilities. \"As long as this card is in your graveyard and you control a Mountain, creatures you control have haste\" (Anger) applied from the battlefield and never from the graveyard. Now: Anger and Brawn in your graveyard, you control a Mountain but no Forest: your creatures have haste, not trample; the opponent's do not. Wonder on the battlefield (you control an Island) gives nothing: it is not in your graveyard. Valor in the opponent's graveyard, they control a Plains: their Hill Giant has first strike.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears" },
+    { "add": "Mountain" },
+    { "add": "Island" },
+    { "add": "Wonder" },
+    { "add": "Hill Giant", "controller": "p2" },
+    { "add": "Plains", "controller": "p2" },
+    { "call": ["addToGraveyard", "p1", "card:Anger"] },
+    { "call": ["addToGraveyard", "p1", "card:Brawn"] },
+    { "call": ["addToGraveyard", "p2", "card:Valor"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$includes": ["Haste"], "$excludes": ["Trample", "Flying", "First strike"] } } },
+    { "perm": "Wonder", "final": { "abilities": { "$includes": ["Flying", "Haste"] } } },
+    { "perm": "Hill Giant", "final": { "abilities": { "$includes": ["First strike"], "$excludes": ["Haste", "Flying"] } } }
+  ]
+}

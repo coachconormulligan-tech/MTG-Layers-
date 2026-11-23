@@ -929,7 +929,12 @@ function amountSetup(text, shortName) {
   }
   if (/\bgraveyards?\b/i.test(A)) {
     what.push('four cards in each graveyard');
-    early.push(() => { for (const pl of Battlefield.players) for (const gc of AMOUNT_GRAVEYARD) Battlefield.addToGraveyard(pl.id, JSON.parse(JSON.stringify(gc))); });
+    early.push(() => {
+      for (const pl of Battlefield.players) for (const gc of AMOUNT_GRAVEYARD) Battlefield.addToGraveyard(pl.id, JSON.parse(JSON.stringify(gc)));
+      // A spell already cast reads the graveyards it was cast into (_firedAtGraveyards): it is
+      // cast into these, as a fired ability is fired after them.
+      for (const p of Battlefield.permanents) if (p._firedAtGraveyards) p._firedAtGraveyards = _snapshotGraveyards();
+    });
   }
   // A permanent the board does not have: one on each side ("Swamp you control", "Vampires you
   // control", "snow permanents", "Cowards your opponents control").

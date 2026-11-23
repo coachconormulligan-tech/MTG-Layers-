@@ -1,0 +1,130 @@
+{
+  "name": "Skanos's power and Armix's compound count are read as the ability is fired",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Craw Wurm",
+      "controller": "p2",
+      "as": "wurm"
+    },
+    {
+      "add": "Skanos, Dragon Vassal",
+      "as": "s"
+    },
+    {
+      "add": "Goblin Guide",
+      "as": "g"
+    },
+    {
+      "add": "Armix, Filigree Thrasher",
+      "as": "a"
+    },
+    {
+      "add": "Ornithopter"
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Ornithopter"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Sol Ring"
+      ]
+    },
+    {
+      "call": [
+        "toggleAttacking",
+        "@s"
+      ]
+    },
+    {
+      "call": [
+        "toggleAttacking",
+        "@g"
+      ]
+    },
+    {
+      "call": [
+        "toggleAttacking",
+        "@a"
+      ]
+    },
+    {
+      "fire": "@s",
+      "trigger": 1,
+      "as": "st"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@st",
+        "@g"
+      ]
+    },
+    {
+      "fire": "@a",
+      "trigger": 0,
+      "as": "at"
+    },
+    {
+      "call": [
+        "setAdditionalCostPaid",
+        "@at",
+        true
+      ]
+    },
+    {
+      "call": [
+        "setTarget",
+        "@at",
+        "@wurm"
+      ]
+    },
+    {
+      "add": "Giant Growth",
+      "spell": true,
+      "as": "gg"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@gg",
+        "@s"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Goblin Guide",
+      "final": {
+        "power": 6,
+        "toughness": 2
+      }
+    },
+    {
+      "perm": "Craw Wurm",
+      "final": {
+        "power": 2,
+        "toughness": 0
+      }
+    },
+    {
+      "perm": "Skanos, Dragon Vassal",
+      "final": {
+        "power": 7,
+        "toughness": 7
+      }
+    }
+  ],
+  "notes": "Checked for the graveyard neighbours (handoff 2026-11-22). Skanos, Dragon Vassal attacks with Goblin Guide: another target attacking creature gets +X/+0, X = Skanos's power as the trigger is fired (4), so a Giant Growth on Skanos afterwards changes nothing: Goblin Guide 6/2. Armix, Filigree Thrasher's \"When you do\" (the discard done): artifacts you control (Armix, Ornithopter) plus artifact cards in your graveyard (Ornithopter, Sol Ring) = 4, the opponent's Craw Wurm 2/0."
+}

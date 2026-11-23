@@ -1,0 +1,310 @@
+{
+  "name": "Graveyard conditions read whose graveyard, which cards and how many",
+  "notes": "Delirium, descend, mana values among, an opponent's graveyard, its controller's, \"fewer than\", \"an X card is in\", \"an instant card and a sorcery card\", and \"a Desert or a Desert card\" never held or always applied. Your graveyard: Craw Wurm, Grizzly Bears, Ornithopter, Shock, Divination, Forest, Desert (7 cards; creature, artifact, instant, sorcery, land; mana values 6, 2, 0, 1, 3; four permanent cards). The opponent's: 8 lands. So Tiny: the Bears' controller has 8, so -6/-0 instead of -2/-0. Mind Carver on Swimmer in Nightmares: +3/+1 instead of +1/+0.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "controller": "p2",
+      "as": "theirs"
+    },
+    {
+      "add": "So Tiny",
+      "as": "tiny"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@tiny",
+        "@theirs"
+      ]
+    },
+    {
+      "add": "Backwoods Survivalists"
+    },
+    {
+      "add": "Basking Capybara"
+    },
+    {
+      "add": "Aven Heartstabber"
+    },
+    {
+      "add": "Blackbloom Rogue // Blackbloom Bog"
+    },
+    {
+      "add": "Jace's Phantasm"
+    },
+    {
+      "add": "The Warring Triad"
+    },
+    {
+      "add": "Bloodfire Enforcers"
+    },
+    {
+      "add": "Windwright Mage"
+    },
+    {
+      "add": "Havi, the All-Father"
+    },
+    {
+      "add": "Vengeful Firebrand"
+    },
+    {
+      "add": "Solitary Camel"
+    },
+    {
+      "add": "Gorilla Titan"
+    },
+    {
+      "add": "Swimmer in Nightmares"
+    },
+    {
+      "add": "Mind Carver",
+      "as": "carver"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@carver",
+        "@Swimmer in Nightmares"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Craw Wurm"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Grizzly Bears"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Ornithopter"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Shock"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Divination"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Forest"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Desert"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p2",
+        "card:Island"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p2",
+        "card:Island"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p2",
+        "card:Island"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p2",
+        "card:Island"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p2",
+        "card:Swamp"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p2",
+        "card:Swamp"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p2",
+        "card:Swamp"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p2",
+        "card:Swamp"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Backwoods Survivalists",
+      "final": {
+        "power": 5,
+        "toughness": 4,
+        "abilities": {
+          "$includes": [
+            "Trample"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Basking Capybara",
+      "final": {
+        "power": 4,
+        "toughness": 3
+      }
+    },
+    {
+      "perm": "Aven Heartstabber",
+      "final": {
+        "power": 3,
+        "toughness": 3,
+        "abilities": {
+          "$includes": [
+            "Deathtouch"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Blackbloom Rogue",
+      "final": {
+        "power": 5,
+        "toughness": 3
+      }
+    },
+    {
+      "perm": "Jace's Phantasm",
+      "final": {
+        "power": 1,
+        "toughness": 1
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": -4,
+        "toughness": 2
+      }
+    },
+    {
+      "perm": "The Warring Triad",
+      "final": {
+        "types": [
+          "Artifact"
+        ]
+      }
+    },
+    {
+      "perm": "Bloodfire Enforcers",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "First strike",
+            "Trample"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Windwright Mage",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Flying"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Havi, the All-Father",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Indestructible"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Vengeful Firebrand",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Haste"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Solitary Camel",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Lifelink"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Gorilla Titan",
+      "final": {
+        "power": 4,
+        "toughness": 4
+      }
+    },
+    {
+      "perm": "Swimmer in Nightmares",
+      "final": {
+        "power": 4,
+        "toughness": 5
+      }
+    }
+  ]
+}

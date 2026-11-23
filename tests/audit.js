@@ -934,6 +934,16 @@ function fireTriggeredWithText(permId, abilityIdx, effectText, fullText, finalSt
   return pseudo;
 }
 
+// A graveyard for a trigger's graveyard condition: 21 cards of seven card types and eight mana values,
+// eight creature cards and eight instant and sorcery cards.
+const AUDIT_GRAVEYARD = [].concat(
+  [0, 1, 2, 3, 4, 5, 6, 7].map(n => ({ name: 'Graveyard Bear ' + n, type_line: 'Creature — Bear', mana_cost: '', cmc: n, layout: 'normal', oracle_text: '', colors: ['G'], power: '2', toughness: '2' })),
+  [1, 2, 3, 4].map(n => ({ name: 'Graveyard Shock ' + n, type_line: 'Instant', mana_cost: '', cmc: n, layout: 'normal', oracle_text: '', colors: ['R'] })),
+  [1, 2, 3, 4].map(n => ({ name: 'Graveyard Lesson ' + n, type_line: 'Sorcery — Lesson', mana_cost: '', cmc: n, layout: 'normal', oracle_text: '', colors: ['U'] })),
+  [{ name: 'Graveyard Land 1', type_line: 'Land', cmc: 0 }, { name: 'Graveyard Land 2', type_line: 'Land', cmc: 0 },
+   { name: 'Graveyard Relic', type_line: 'Artifact', cmc: 3 }, { name: 'Graveyard Aura', type_line: 'Enchantment — Aura', cmc: 2 },
+   { name: 'Graveyard Walker', type_line: 'Legendary Planeswalker — Jace', cmc: 4 }].map(c => Object.assign({ mana_cost: '', layout: 'normal', oracle_text: '', colors: [] }, c)));
+
 /* What a click on a triggered ability's "Trigger" button leads to, one entry per distinct way of
    firing it. Mirrors ui-abilities.js fireTriggeredAbility branch for branch. Returns
    [{ label, text, fire() -> pseudo }] or [{ skip }]. */
@@ -945,7 +955,17 @@ function triggerPlans(permId, t) {
   // fireTriggeredAbility: an "if [condition]," prefix that is evaluable and false does nothing.
   const ifCondMatch = t.effectText.match(/^if\s+([^,]+),\s*/i);
   if (ifCondMatch) {
-    const condResult = _evaluateTriggerCondition(ifCondMatch[1].trim(), fState);
+    let condResult = _evaluateTriggerCondition(ifCondMatch[1].trim(), fState);
+    // A graveyard condition (threshold, delirium, descend, "eight or more instant and/or sorcery
+    // cards": Octavia, Living Thesis; Tooth Collector) is false on the board's empty graveyards:
+    // the controller's graveyard is filled as the words ask before the trigger is fired, as a
+    // grant's threshold is (auditQuoted), so its target list is still audited.
+    if (condResult === false && _graveyardCondition(ifCondMatch[1].trim())) {
+      const who = fState.controller || 'player_0';
+      for (const gc of AUDIT_GRAVEYARD) Battlefield.addToGraveyard(who, JSON.parse(JSON.stringify(gc)));
+      Battlefield._invalidate();
+      condResult = _evaluateTriggerCondition(ifCondMatch[1].trim(), Battlefield.getAllFinalStates().get(permId) || fState);
+    }
     if (condResult === false) return [{ skip: 'trigger-condition-false' }];
   }
   // fireTriggeredAbility: "choose one —" modes -> openActivateOptionsPopup -> _chooseTriggerMode, which

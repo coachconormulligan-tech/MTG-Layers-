@@ -668,6 +668,8 @@ function applyEffect(state, effect, context) {
           if (effect.params.maxCount !== undefined && val > effect.params.maxCount) {
             val = effect.params.maxCount;
           }
+          // ("where X is 3 plus the number of …": Muscle Burst.)
+          if (effect.params.forEachOffset) val += effect.params.forEachOffset;
           forEachCount = val;
           modPow = (effect.params.basePower || effect.params.power) * val;
           modTou = (effect.params.baseToughness || effect.params.toughness) * val;

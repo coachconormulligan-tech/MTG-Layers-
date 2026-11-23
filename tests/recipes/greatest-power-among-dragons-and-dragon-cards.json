@@ -1,0 +1,67 @@
+{
+  "name": "Greatest power among the battlefield's and the graveyard's, and an activated base P/T stays the ability's",
+  "notes": "Skanos Dragonheart attacks: it gets +X/+X, X the greatest power among other Dragons you control and Dragon cards in your graveyard. Shivan Dragon (5/5) on the battlefield, Furnace Whelp (2/2) and Charcoal Diamond (no Dragon) in your graveyard: X = 5, the greater; Skanos 9/9 (the fired \"it\" is picked as Skanos). Jolrael, Mwonvuli Recluse's activated \"creatures you control have base power and toughness X/X\" is no static effect of the card: unfired, Grizzly Bears stays 2/2.",
+  "steps": [
+    {
+      "add": "Skanos Dragonheart",
+      "as": "s"
+    },
+    {
+      "add": "Shivan Dragon"
+    },
+    {
+      "add": "Jolrael, Mwonvuli Recluse"
+    },
+    {
+      "add": "Grizzly Bears"
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Furnace Whelp"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Charcoal Diamond"
+      ]
+    },
+    {
+      "call": [
+        "toggleAttacking",
+        "@s"
+      ]
+    },
+    {
+      "fire": "@s",
+      "trigger": 0,
+      "as": "st"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@st",
+        "@s"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Skanos Dragonheart",
+      "final": {
+        "power": 9,
+        "toughness": 9
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 2,
+        "toughness": 2
+      }
+    }
+  ]
+}

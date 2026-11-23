@@ -1,0 +1,101 @@
+{
+  "name": "Same name as another creature you control or a creature card in your graveyard",
+  "notes": "Liara of the Flaming Fist's combat trigger and Unexpected Allies read \"it has the same name as another creature you control or a creature card in your graveyard\". Two Grizzly Bears and a Goblin Guide on the battlefield, a Raging Goblin card in your graveyard and a Goblin Guide card in the opponent's: each Bears gets +1/+1, Goblin Guide does not (its namesake is in the opponent's graveyard); Raging Goblin on the battlefield gets +1/+1 from Liara and first strike from Unexpected Allies (a Raging Goblin card is in your graveyard): 1/1 +1/+1 +2/+0.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Liara of the Flaming Fist",
+      "as": "l"
+    },
+    {
+      "add": "Grizzly Bears"
+    },
+    {
+      "add": "Grizzly Bears"
+    },
+    {
+      "add": "Goblin Guide"
+    },
+    {
+      "add": "Raging Goblin",
+      "as": "rg"
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Raging Goblin"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p2",
+        "card:Goblin Guide"
+      ]
+    },
+    {
+      "fire": "@l",
+      "trigger": 0
+    },
+    {
+      "add": "Unexpected Allies",
+      "spell": true,
+      "as": "u"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@u",
+        "@rg"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears A",
+      "final": {
+        "power": 3,
+        "toughness": 3
+      }
+    },
+    {
+      "perm": "Grizzly Bears B",
+      "final": {
+        "power": 3,
+        "toughness": 3
+      }
+    },
+    {
+      "perm": "Goblin Guide",
+      "final": {
+        "power": 2,
+        "toughness": 2
+      }
+    },
+    {
+      "perm": "Liara of the Flaming Fist",
+      "final": {
+        "power": 2,
+        "toughness": 2
+      }
+    },
+    {
+      "perm": "Raging Goblin",
+      "final": {
+        "power": 4,
+        "toughness": 2,
+        "abilities": {
+          "$includes": [
+            "First strike"
+          ]
+        }
+      }
+    }
+  ]
+}

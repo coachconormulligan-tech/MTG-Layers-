@@ -83,7 +83,7 @@ function renderTimestampPanel() {
       <span class="ts-handle">⠿</span>
       <span class="ts-number">${i + 1}.</span>
       <span class="ts-name">${escapeHtml(p.name)}${finalStates.get(p.id)?.copySource ? '<span class="ts-copy-label"> (Copy)</span>' : ''}${p.label ? ` <span class="ts-name-label">${escapeHtml(p.label)}</span>` : ''}${Battlefield.players.length > 1 && p.owner ? ` <span class="ts-player-badge">${escapeHtml(Battlefield.getPlayerName(p.owner))}</span>` : ''}</span>
-      ${p.isEmblem ? '<span class="ts-badge ts-badge-emblem">Emblem</span>' : ''}
+      ${p.isGraveyardSource ? '<span class="ts-badge ts-badge-emblem">In graveyard</span>' : p.isEmblem ? '<span class="ts-badge ts-badge-emblem">Emblem</span>' : ''}
       ${p.isManualEffect && !p.isTriggeredAbility && !p.isActivatedAbility ? '<span class="ts-badge ts-badge-spell">Spell</span>' : ''}
       ${abilityBadge}
       ${effInfo.hasCopy ? '<span class="ts-badge ts-badge-copy">Copy</span>' : ''}

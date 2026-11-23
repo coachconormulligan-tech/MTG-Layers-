@@ -1,0 +1,243 @@
+{
+  "name": "Graveyard conditions do not hold short of their number",
+  "notes": "The same cards as graveyard-conditions-read-whose-which-and-how-many with too few cards: your graveyard Craw Wurm, Shock, Forest (three card types, three mana values, two permanent cards, no artifact, no sorcery, no Desert); the opponent's 6 lands. Each stays as printed; So Tiny gives -2/-0, Mind Carver +1/+0; The Warring Triad is not a creature (fewer than eight). Crypt Feaster's threshold trigger reads three cards as it is fired, so it fires nothing.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "controller": "p2",
+      "as": "theirs"
+    },
+    {
+      "add": "So Tiny",
+      "as": "tiny"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@tiny",
+        "@theirs"
+      ]
+    },
+    {
+      "add": "Backwoods Survivalists"
+    },
+    {
+      "add": "Basking Capybara"
+    },
+    {
+      "add": "Aven Heartstabber"
+    },
+    {
+      "add": "Blackbloom Rogue // Blackbloom Bog"
+    },
+    {
+      "add": "The Warring Triad"
+    },
+    {
+      "add": "Bloodfire Enforcers"
+    },
+    {
+      "add": "Windwright Mage"
+    },
+    {
+      "add": "Solitary Camel"
+    },
+    {
+      "add": "Gorilla Titan"
+    },
+    {
+      "add": "Mind Carver",
+      "as": "carver"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@carver",
+        "@Gorilla Titan"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Craw Wurm"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Shock"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Forest"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p2",
+        "card:Island"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p2",
+        "card:Island"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p2",
+        "card:Island"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p2",
+        "card:Island"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p2",
+        "card:Island"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p2",
+        "card:Island"
+      ]
+    },
+    {
+      "add": "Crypt Feaster",
+      "as": "f"
+    },
+    {
+      "fire": "@f",
+      "trigger": 1
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Backwoods Survivalists",
+      "final": {
+        "power": 4,
+        "toughness": 3,
+        "abilities": {
+          "$excludes": [
+            "Trample"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Basking Capybara",
+      "final": {
+        "power": 1,
+        "toughness": 3
+      }
+    },
+    {
+      "perm": "Aven Heartstabber",
+      "final": {
+        "power": 1,
+        "toughness": 1,
+        "abilities": {
+          "$excludes": [
+            "Deathtouch"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Blackbloom Rogue",
+      "final": {
+        "power": 2,
+        "toughness": 3
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 0,
+        "toughness": 2
+      }
+    },
+    {
+      "perm": "The Warring Triad",
+      "final": {
+        "types": [
+          "Artifact"
+        ]
+      }
+    },
+    {
+      "perm": "Bloodfire Enforcers",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "First strike"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Windwright Mage",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Flying"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Solitary Camel",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Lifelink"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Gorilla Titan",
+      "final": {
+        "power": 5,
+        "toughness": 4
+      }
+    },
+    {
+      "perm": "Crypt Feaster",
+      "final": {
+        "power": 3,
+        "toughness": 4
+      }
+    },
+    {
+      "triggerCondition": {
+        "perm": "Crypt Feaster",
+        "trigger": 1
+      },
+      "is": false
+    }
+  ]
+}

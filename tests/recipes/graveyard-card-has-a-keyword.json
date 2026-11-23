@@ -1,0 +1,18 @@
+{
+  "name": "A creature card in a graveyard with a keyword gives that keyword",
+  "notes": "Cairn Wanderer: \"As long as a creature card with flying is in a graveyard, this creature has flying. The same is true for …\"; Bleeding Effect's trigger: \"… gain flying until end of turn if a creature card in your graveyard has flying. The same is true for …\". The opponent's graveyard has Serra Angel (flying, vigilance), yours Craw Wurm and Giant Spider (reach): Cairn Wanderer has flying, vigilance and reach, not trample; Bleeding Effect gives your creatures reach only (Serra Angel is not in your graveyard).",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Cairn Wanderer" },
+    { "add": "Grizzly Bears" },
+    { "add": "Bleeding Effect", "as": "b" },
+    { "call": ["addToGraveyard", "p2", "card:Serra Angel"] },
+    { "call": ["addToGraveyard", "p1", "card:Craw Wurm"] },
+    { "call": ["addToGraveyard", "p1", "card:Giant Spider"] },
+    { "fire": "@b", "trigger": 0 }
+  ],
+  "asserts": [
+    { "perm": "Cairn Wanderer", "final": { "abilities": { "$includes": ["Flying", "Vigilance", "Reach"], "$excludes": ["Trample"] } } },
+    { "perm": "Grizzly Bears", "final": { "abilities": { "$includes": ["Reach"], "$excludes": ["Flying", "Vigilance", "Trample"] } } }
+  ]
+}

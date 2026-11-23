@@ -1,0 +1,3451 @@
+{
+ "name": "Skanos's power and Armix's compound count are read as the ability is fired",
+ "notes": "Checked for the graveyard neighbours (handoff 2026-11-22). Skanos, Dragon Vassal attacks with Goblin Guide: another target attacking creature gets +X/+0, X = Skanos's power as the trigger is fired (4), so a Giant Growth on Skanos afterwards changes nothing: Goblin Guide 6/2. Armix, Filigree Thrasher's \"When you do\" (the discard done): artifacts you control (Armix, Ornithopter) plus artifact cards in your graveyard (Ornithopter, Sol Ring) = 4, the opponent's Craw Wurm 2/0.",
+ "recipe": {
+  "steps": [
+   {
+    "call": [
+     "addPlayer",
+     "Opponent"
+    ]
+   },
+   {
+    "add": "Craw Wurm",
+    "controller": "p2",
+    "as": "wurm"
+   },
+   {
+    "add": "Skanos, Dragon Vassal",
+    "as": "s"
+   },
+   {
+    "add": "Goblin Guide",
+    "as": "g"
+   },
+   {
+    "add": "Armix, Filigree Thrasher",
+    "as": "a"
+   },
+   {
+    "add": "Ornithopter"
+   },
+   {
+    "call": [
+     "addToGraveyard",
+     "p1",
+     "card:Ornithopter"
+    ]
+   },
+   {
+    "call": [
+     "addToGraveyard",
+     "p1",
+     "card:Sol Ring"
+    ]
+   },
+   {
+    "call": [
+     "toggleAttacking",
+     "@s"
+    ]
+   },
+   {
+    "call": [
+     "toggleAttacking",
+     "@g"
+    ]
+   },
+   {
+    "call": [
+     "toggleAttacking",
+     "@a"
+    ]
+   },
+   {
+    "fire": "@s",
+    "trigger": 1,
+    "as": "st"
+   },
+   {
+    "call": [
+     "setTarget",
+     "@st",
+     "@g"
+    ]
+   },
+   {
+    "fire": "@a",
+    "trigger": 0,
+    "as": "at"
+   },
+   {
+    "call": [
+     "setAdditionalCostPaid",
+     "@at",
+     true
+    ]
+   },
+   {
+    "call": [
+     "setTarget",
+     "@at",
+     "@wurm"
+    ]
+   },
+   {
+    "add": "Giant Growth",
+    "spell": true,
+    "as": "gg"
+   },
+   {
+    "call": [
+     "setTarget",
+     "@gg",
+     "@s"
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Goblin Guide",
+   "final": {
+    "power": 6,
+    "toughness": 2
+   }
+  },
+  {
+   "perm": "Craw Wurm",
+   "final": {
+    "power": 2,
+    "toughness": 0
+   }
+  },
+  {
+   "perm": "Skanos, Dragon Vassal",
+   "final": {
+    "power": 7,
+    "toughness": 7
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "3875f73d-6108-488b-bd34-4cf2c23ce6b3",
+     "oracle_id": "6a462a69-3e42-41de-a3aa-a488d9f38d69",
+     "multiverse_ids": [
+      189903
+     ],
+     "mtgo_id": 33063,
+     "mtgo_foil_id": 33064,
+     "tcgplayer_id": 32579,
+     "cardmarket_id": 21219,
+     "name": "Craw Wurm",
+     "lang": "en",
+     "released_at": "2009-07-17",
+     "uri": "https://api.scryfall.com/cards/3875f73d-6108-488b-bd34-4cf2c23ce6b3",
+     "scryfall_uri": "https://scryfall.com/card/m10/173/craw-wurm?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T11:32:44Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.jpg?1783942364",
+      "normal": "https://cards.scryfall.io/normal/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.jpg?1783942364",
+      "large": "https://cards.scryfall.io/large/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.jpg?1783942364",
+      "png": "https://cards.scryfall.io/png/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.png?1783942364",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.jpg?1783942364",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.jpg?1783942364",
+      "thumb": "https://cards.scryfall.io/thumb/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.webp?1783942364",
+      "grid": "https://cards.scryfall.io/grid/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.webp?1783942364",
+      "display": "https://cards.scryfall.io/display/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.webp?1783942364",
+      "art": "https://cards.scryfall.io/art/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.webp?1783942364",
+      "crop": "https://cards.scryfall.io/crop/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.webp?1783942364",
+      "jpeg": "https://cards.scryfall.io/normal/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.jpg?1783942364"
+     },
+     "mana_cost": "{4}{G}{G}",
+     "cmc": 6,
+     "type_line": "Creature — Wurm",
+     "oracle_text": "",
+     "power": "6",
+     "toughness": "4",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "0dba38a9-6b9d-4768-9831-4e03e8970a0b",
+     "set": "m10",
+     "set_name": "Magic 2010",
+     "set_type": "core",
+     "set_uri": "https://api.scryfall.com/sets/0dba38a9-6b9d-4768-9831-4e03e8970a0b",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Am10&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/m10?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/3875f73d-6108-488b-bd34-4cf2c23ce6b3/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A6a462a69-3e42-41de-a3aa-a488d9f38d69&unique=prints",
+     "collector_number": "173",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "The most terrifying thing about the craw wurm is probably the horrible crashing sound it makes as it speeds through the forest. This noise is so loud it echoes through the trees and seems to come from all directions at once.",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Richard Sardinha",
+     "artist_ids": [
+      "a3cce4f0-fbf5-4883-aac7-fb28b993b132"
+     ],
+     "illustration_id": "296615a8-58e7-4f90-9c56-01d83b85849b",
+     "border_color": "black",
+     "frame": "2003",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 22738,
+     "prices": {
+      "usd": "0.10",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "0.04",
+      "eur_foil": "0.29",
+      "tix": "0.04"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=189903&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DCraw%2BWurm",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DCraw%2BWurm",
+      "edhrec": "https://edhrec.com/route/?cc=Craw+Wurm"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F32579%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=21219&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/33063?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_1",
+    "controller": "player_1",
+    "timestamp": 1,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "faceDownAs": null,
+    "face": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "60af8bda-e92f-400d-aedf-00a534184e20",
+     "oracle_id": "6490fca8-6362-4175-b63a-28941e79c60b",
+     "multiverse_ids": [],
+     "arena_id": 81597,
+     "name": "Skanos, Dragon Vassal",
+     "lang": "en",
+     "released_at": "2022-07-07",
+     "uri": "https://api.scryfall.com/cards/60af8bda-e92f-400d-aedf-00a534184e20",
+     "scryfall_uri": "https://scryfall.com/card/hbg/18/skanos-dragon-vassal?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-11-05T12:12:30Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/6/0/60af8bda-e92f-400d-aedf-00a534184e20.jpg?1793880750",
+      "normal": "https://cards.scryfall.io/normal/front/6/0/60af8bda-e92f-400d-aedf-00a534184e20.jpg?1793880750",
+      "large": "https://cards.scryfall.io/large/front/6/0/60af8bda-e92f-400d-aedf-00a534184e20.jpg?1793880750",
+      "png": "https://cards.scryfall.io/png/front/6/0/60af8bda-e92f-400d-aedf-00a534184e20.png?1793880750",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/6/0/60af8bda-e92f-400d-aedf-00a534184e20.jpg?1793880750",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/6/0/60af8bda-e92f-400d-aedf-00a534184e20.jpg?1793880750",
+      "thumb": "https://cards.scryfall.io/thumb/front/6/0/60af8bda-e92f-400d-aedf-00a534184e20.webp?1793880750",
+      "grid": "https://cards.scryfall.io/grid/front/6/0/60af8bda-e92f-400d-aedf-00a534184e20.webp?1793880750",
+      "display": "https://cards.scryfall.io/display/front/6/0/60af8bda-e92f-400d-aedf-00a534184e20.webp?1793880750",
+      "art": "https://cards.scryfall.io/art/front/6/0/60af8bda-e92f-400d-aedf-00a534184e20.webp?1793880750",
+      "crop": "https://cards.scryfall.io/crop/front/6/0/60af8bda-e92f-400d-aedf-00a534184e20.webp?1793880750",
+      "jpeg": "https://cards.scryfall.io/normal/front/6/0/60af8bda-e92f-400d-aedf-00a534184e20.jpg?1793880750"
+     },
+     "mana_cost": "{4}{G}",
+     "cmc": 5,
+     "type_line": "Legendary Creature — Dragon Ranger",
+     "oracle_text": "Specialize {4}\nWhenever Skanos, Dragon Vassal attacks, another target attacking creature gets +X/+0 until end of turn, where X is Skanos's power.",
+     "power": "4",
+     "toughness": "4",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [
+      "Specialize"
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "d3a776df-de88-42c3-a7fd-babe9f925fd5",
+       "component": "combo_piece",
+       "name": "Skanos, Green Dragon Vassal",
+       "type_line": "Legendary Creature — Dragon Ranger",
+       "uri": "https://api.scryfall.com/cards/d3a776df-de88-42c3-a7fd-babe9f925fd5"
+      },
+      {
+       "object": "related_card",
+       "id": "60af8bda-e92f-400d-aedf-00a534184e20",
+       "component": "combo_piece",
+       "name": "Skanos, Dragon Vassal",
+       "type_line": "Legendary Creature — Dragon Ranger",
+       "uri": "https://api.scryfall.com/cards/60af8bda-e92f-400d-aedf-00a534184e20"
+      },
+      {
+       "object": "related_card",
+       "id": "1a0be170-3734-4de1-8748-5bfd02dbb073",
+       "component": "combo_piece",
+       "name": "Skanos, Red Dragon Vassal",
+       "type_line": "Legendary Creature — Dragon Ranger",
+       "uri": "https://api.scryfall.com/cards/1a0be170-3734-4de1-8748-5bfd02dbb073"
+      },
+      {
+       "object": "related_card",
+       "id": "5c2fd980-65d8-461c-a836-c32df3afebb4",
+       "component": "combo_piece",
+       "name": "Skanos, Blue Dragon Vassal",
+       "type_line": "Legendary Creature — Dragon Ranger",
+       "uri": "https://api.scryfall.com/cards/5c2fd980-65d8-461c-a836-c32df3afebb4"
+      },
+      {
+       "object": "related_card",
+       "id": "4eb04331-bd83-4543-a9b8-9212f95822d1",
+       "component": "combo_piece",
+       "name": "Skanos, White Dragon Vassal",
+       "type_line": "Legendary Creature — Dragon Ranger",
+       "uri": "https://api.scryfall.com/cards/4eb04331-bd83-4543-a9b8-9212f95822d1"
+      },
+      {
+       "object": "related_card",
+       "id": "f7e965f4-38f0-4ee6-a01c-d094f0ea0f41",
+       "component": "combo_piece",
+       "name": "Skanos, Black Dragon Vassal",
+       "type_line": "Legendary Creature — Dragon Ranger",
+       "uri": "https://api.scryfall.com/cards/f7e965f4-38f0-4ee6-a01c-d094f0ea0f41"
+      }
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "not_legal",
+      "pauper": "not_legal",
+      "vintage": "not_legal",
+      "penny": "not_legal",
+      "commander": "not_legal",
+      "oathbreaker": "not_legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "not_legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+     },
+     "games": [
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": false,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "35528ede-7870-4598-a2ee-7f3d6464a74b",
+     "set": "hbg",
+     "set_name": "Alchemy Horizons: Baldur's Gate",
+     "set_type": "alchemy",
+     "set_uri": "https://api.scryfall.com/sets/35528ede-7870-4598-a2ee-7f3d6464a74b",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Ahbg&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/hbg?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/60af8bda-e92f-400d-aedf-00a534184e20/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A6490fca8-6362-4175-b63a-28941e79c60b&unique=prints",
+     "collector_number": "18",
+     "digital": true,
+     "rarity": "uncommon",
+     "flavor_text": "\"Do not place your aggression on one if you cannot handle the wrath of many.\"",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Daarken",
+     "artist_ids": [
+      "e607a0d4-fc12-4c01-9e3f-501f5269b9cb"
+     ],
+     "illustration_id": "3214bb03-0fc6-4532-b13f-2c298a3b44ab",
+     "border_color": "black",
+     "frame": "2015",
+     "frame_effects": [
+      "legendary"
+     ],
+     "security_stamp": "arena",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "prices": {
+      "usd": null,
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": null,
+      "tix": null
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DSkanos%252C%2BDragon%2BVassal",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DSkanos%252C%2BDragon%2BVassal",
+      "edhrec": "https://edhrec.com/route/?cc=Skanos%2C+Dragon+Vassal"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 2,
+    "tapped": false,
+    "traits": [
+     "Attacking"
+    ],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "faceDownAs": null,
+    "face": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": true,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_3",
+    "scryfallData": {
+     "object": "card",
+     "id": "3c0f5411-1940-410f-96ce-6f92513f753a",
+     "oracle_id": "51d9564b-44fc-4de1-9119-09d7b4089378",
+     "multiverse_ids": [
+      489800
+     ],
+     "mtgo_id": 82288,
+     "tcgplayer_id": 218846,
+     "cardmarket_id": 485919,
+     "name": "Goblin Guide",
+     "lang": "en",
+     "released_at": "2020-08-07",
+     "uri": "https://api.scryfall.com/cards/3c0f5411-1940-410f-96ce-6f92513f753a",
+     "scryfall_uri": "https://scryfall.com/card/2xm/127/goblin-guide?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T08:09:25Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.jpg?1783930165",
+      "normal": "https://cards.scryfall.io/normal/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.jpg?1783930165",
+      "large": "https://cards.scryfall.io/large/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.jpg?1783930165",
+      "png": "https://cards.scryfall.io/png/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.png?1783930165",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.jpg?1783930165",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.jpg?1783930165",
+      "thumb": "https://cards.scryfall.io/thumb/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.webp?1783930165",
+      "grid": "https://cards.scryfall.io/grid/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.webp?1783930165",
+      "display": "https://cards.scryfall.io/display/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.webp?1783930165",
+      "art": "https://cards.scryfall.io/art/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.webp?1783930165",
+      "crop": "https://cards.scryfall.io/crop/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.webp?1783930165",
+      "jpeg": "https://cards.scryfall.io/normal/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.jpg?1783930165"
+     },
+     "mana_cost": "{R}",
+     "cmc": 1,
+     "type_line": "Creature — Goblin Scout",
+     "oracle_text": "Haste\nWhenever this creature attacks, defending player reveals the top card of their library. If it's a land card, that player puts it into their hand.",
+     "power": "2",
+     "toughness": "2",
+     "colors": [
+      "R"
+     ],
+     "color_identity": [
+      "R"
+     ],
+     "keywords": [
+      "Haste"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "372dafe8-b5d1-4b81-998f-3ae96b59498a",
+     "set": "2xm",
+     "set_name": "Double Masters",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/372dafe8-b5d1-4b81-998f-3ae96b59498a",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3A2xm&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/2xm?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/3c0f5411-1940-410f-96ce-6f92513f753a/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A51d9564b-44fc-4de1-9119-09d7b4089378&unique=prints",
+     "collector_number": "127",
+     "digital": false,
+     "rarity": "rare",
+     "flavor_text": "\"I've been all over this world. I even remember some of those places.\"",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Filip Burburan",
+     "artist_ids": [
+      "66082c3b-a623-4d34-be51-2475214b85d3"
+     ],
+     "illustration_id": "750de145-cbd4-4d8e-b28e-0911f0cc5734",
+     "border_color": "black",
+     "frame": "2015",
+     "security_stamp": "oval",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 15255,
+     "preview": {
+      "source": "MTGGoldfish",
+      "source_uri": "https://www.mtggoldfish.com/articles/turning-red-exclusive-double-masters-previews",
+      "previewed_at": "2020-07-27"
+     },
+     "prices": {
+      "usd": "1.10",
+      "usd_foil": "1.56",
+      "usd_etched": null,
+      "eur": "1.17",
+      "eur_foil": "1.54",
+      "tix": "1.07"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=489800&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGoblin%2BGuide",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGoblin%2BGuide",
+      "edhrec": "https://edhrec.com/route/?cc=Goblin+Guide"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F218846%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=485919&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/82288?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [
+     "Attacking"
+    ],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "faceDownAs": null,
+    "face": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_4",
+    "scryfallData": {
+     "object": "card",
+     "id": "d5f69e24-6b5c-4a9a-af5b-1ce88efdc0aa",
+     "oracle_id": "a1464164-fbda-43b5-988e-6e1da9bd9eef",
+     "multiverse_ids": [
+      497628
+     ],
+     "mtgo_id": 84998,
+     "tcgplayer_id": 226857,
+     "cardmarket_id": 511100,
+     "name": "Armix, Filigree Thrasher",
+     "lang": "en",
+     "released_at": "2020-11-20",
+     "uri": "https://api.scryfall.com/cards/d5f69e24-6b5c-4a9a-af5b-1ce88efdc0aa",
+     "scryfall_uri": "https://scryfall.com/card/cmr/108/armix-filigree-thrasher?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T07:47:25Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/d/5/d5f69e24-6b5c-4a9a-af5b-1ce88efdc0aa.jpg?1783928845",
+      "normal": "https://cards.scryfall.io/normal/front/d/5/d5f69e24-6b5c-4a9a-af5b-1ce88efdc0aa.jpg?1783928845",
+      "large": "https://cards.scryfall.io/large/front/d/5/d5f69e24-6b5c-4a9a-af5b-1ce88efdc0aa.jpg?1783928845",
+      "png": "https://cards.scryfall.io/png/front/d/5/d5f69e24-6b5c-4a9a-af5b-1ce88efdc0aa.png?1783928845",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/d/5/d5f69e24-6b5c-4a9a-af5b-1ce88efdc0aa.jpg?1783928845",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/d/5/d5f69e24-6b5c-4a9a-af5b-1ce88efdc0aa.jpg?1783928845",
+      "thumb": "https://cards.scryfall.io/thumb/front/d/5/d5f69e24-6b5c-4a9a-af5b-1ce88efdc0aa.webp?1783928845",
+      "grid": "https://cards.scryfall.io/grid/front/d/5/d5f69e24-6b5c-4a9a-af5b-1ce88efdc0aa.webp?1783928845",
+      "display": "https://cards.scryfall.io/display/front/d/5/d5f69e24-6b5c-4a9a-af5b-1ce88efdc0aa.webp?1783928845",
+      "art": "https://cards.scryfall.io/art/front/d/5/d5f69e24-6b5c-4a9a-af5b-1ce88efdc0aa.webp?1783928845",
+      "crop": "https://cards.scryfall.io/crop/front/d/5/d5f69e24-6b5c-4a9a-af5b-1ce88efdc0aa.webp?1783928845",
+      "jpeg": "https://cards.scryfall.io/normal/front/d/5/d5f69e24-6b5c-4a9a-af5b-1ce88efdc0aa.jpg?1783928845"
+     },
+     "mana_cost": "{2}{B}",
+     "cmc": 3,
+     "type_line": "Legendary Artifact Creature — Golem",
+     "oracle_text": "Whenever Armix attacks, you may discard a card. When you do, target creature defending player controls gets -X/-X until end of turn, where X is the number of artifacts you control plus the number of artifact cards in your graveyard.\nPartner (You can have two commanders if both have partner.)",
+     "power": "3",
+     "toughness": "2",
+     "colors": [
+      "B"
+     ],
+     "color_identity": [
+      "B"
+     ],
+     "keywords": [
+      "Partner"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "39de6fbf-1f11-48d0-8f04-f0407f6a0732",
+     "set": "cmr",
+     "set_name": "Commander Legends",
+     "set_type": "draft_innovation",
+     "set_uri": "https://api.scryfall.com/sets/39de6fbf-1f11-48d0-8f04-f0407f6a0732",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Acmr&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/cmr?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/d5f69e24-6b5c-4a9a-af5b-1ce88efdc0aa/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aa1464164-fbda-43b5-988e-6e1da9bd9eef&unique=prints",
+     "collector_number": "108",
+     "digital": false,
+     "rarity": "uncommon",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Daniel Ljunggren",
+     "artist_ids": [
+      "0fbd4798-76eb-46d5-a5d4-1e3a25870e34"
+     ],
+     "illustration_id": "6ee19a22-bbc2-4d96-a550-39cb2362b0e3",
+     "border_color": "black",
+     "frame": "2015",
+     "frame_effects": [
+      "legendary"
+     ],
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 6319,
+     "preview": {
+      "source": "CMDR Ninety Nine",
+      "source_uri": "https://twitter.com/CMDRNinetyNine/status/1322463754605547520",
+      "previewed_at": "2020-10-31"
+     },
+     "prices": {
+      "usd": "0.35",
+      "usd_foil": "0.26",
+      "usd_etched": null,
+      "eur": "0.14",
+      "eur_foil": "0.32",
+      "tix": "0.04"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=497628&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DArmix%252C%2BFiligree%2BThrasher",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DArmix%252C%2BFiligree%2BThrasher",
+      "edhrec": "https://edhrec.com/route/?cc=Armix%2C+Filigree+Thrasher"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F226857%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=511100&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/84998?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 4,
+    "tapped": false,
+    "traits": [
+     "Attacking"
+    ],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "faceDownAs": null,
+    "face": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_5",
+    "scryfallData": {
+     "object": "card",
+     "id": "305078a5-ac18-4721-bba2-3434eba5b1cf",
+     "oracle_id": "a3a98bc9-caa0-49b7-951c-fe4e4f54e4ba",
+     "multiverse_ids": [
+      599107
+     ],
+     "mtgo_id": 107995,
+     "tcgplayer_id": 457188,
+     "cardmarket_id": 688483,
+     "name": "Ornithopter",
+     "lang": "en",
+     "released_at": "2023-01-13",
+     "uri": "https://api.scryfall.com/cards/305078a5-ac18-4721-bba2-3434eba5b1cf",
+     "scryfall_uri": "https://scryfall.com/card/dmr/233/ornithopter?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T04:53:30Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+      "normal": "https://cards.scryfall.io/normal/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+      "large": "https://cards.scryfall.io/large/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+      "png": "https://cards.scryfall.io/png/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.png?1783918410",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+      "thumb": "https://cards.scryfall.io/thumb/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.webp?1783918410",
+      "grid": "https://cards.scryfall.io/grid/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.webp?1783918410",
+      "display": "https://cards.scryfall.io/display/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.webp?1783918410",
+      "art": "https://cards.scryfall.io/art/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.webp?1783918410",
+      "crop": "https://cards.scryfall.io/crop/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.webp?1783918410",
+      "jpeg": "https://cards.scryfall.io/normal/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410"
+     },
+     "mana_cost": "{0}",
+     "cmc": 0,
+     "type_line": "Artifact Creature — Thopter",
+     "oracle_text": "Flying",
+     "power": "0",
+     "toughness": "2",
+     "colors": [],
+     "color_identity": [],
+     "keywords": [
+      "Flying"
+     ],
+     "all_parts": [
+      {
+       "object": "related_card",
+       "id": "2f1cde8b-e73e-4cca-973c-93f3936e70e0",
+       "component": "combo_piece",
+       "name": "Emporium Thopterist",
+       "type_line": "Creature — Vedalken Artificer",
+       "uri": "https://api.scryfall.com/cards/2f1cde8b-e73e-4cca-973c-93f3936e70e0"
+      },
+      {
+       "object": "related_card",
+       "id": "051386e0-4c1c-48ed-8883-664c719cf0fe",
+       "component": "combo_piece",
+       "name": "Ornithopter",
+       "type_line": "Artifact Creature — Thopter",
+       "uri": "https://api.scryfall.com/cards/051386e0-4c1c-48ed-8883-664c719cf0fe"
+      }
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "ca4c2884-e539-4b7f-980d-5d6a50220f2a",
+     "set": "dmr",
+     "set_name": "Dominaria Remastered",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/ca4c2884-e539-4b7f-980d-5d6a50220f2a",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Admr&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/dmr?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/305078a5-ac18-4721-bba2-3434eba5b1cf/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aa3a98bc9-caa0-49b7-951c-fe4e4f54e4ba&unique=prints",
+     "collector_number": "233",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"It has been my honor to improve on Thran's original design. Perhaps history will remember me in some small part for my work.\"\n—Urza, in his apprenticeship",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Franz Vohwinkel",
+     "artist_ids": [
+      "3a243c17-3baa-4b53-9599-645311cd7d3d"
+     ],
+     "illustration_id": "ba23fb60-f170-40cc-8d2e-fe88ba070269",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 800,
+     "penny_rank": 390,
+     "prices": {
+      "usd": "0.45",
+      "usd_foil": "0.40",
+      "usd_etched": null,
+      "eur": "0.21",
+      "eur_foil": "0.46",
+      "tix": "0.04"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=599107&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DOrnithopter",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DOrnithopter",
+      "edhrec": "https://edhrec.com/route/?cc=Ornithopter"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F457188%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=688483&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/107995?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 5,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "faceDownAs": null,
+    "face": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_6",
+    "scryfallData": {
+     "object": "card",
+     "id": "fd1f95bf-48ea-455a-8a6c-0249b11c8900",
+     "oracle_id": "5748ebf1-24e3-499d-ab7c-c2cebd462a24",
+     "multiverse_ids": [],
+     "resource_id": "FF793C3EC1386EE1E7EB7BD01E8CBBC1CDF72A5BACE12F2F62B114F5372BEA40",
+     "mtgo_id": 152521,
+     "arena_id": 105062,
+     "tcgplayer_id": 697046,
+     "cardmarket_id": 891570,
+     "name": "Giant Growth",
+     "lang": "en",
+     "released_at": "2026-06-26",
+     "uri": "https://api.scryfall.com/cards/fd1f95bf-48ea-455a-8a6c-0249b11c8900",
+     "scryfall_uri": "https://scryfall.com/card/msh/167/giant-growth?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T00:35:18Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/f/d/fd1f95bf-48ea-455a-8a6c-0249b11c8900.jpg?1783902918",
+      "normal": "https://cards.scryfall.io/normal/front/f/d/fd1f95bf-48ea-455a-8a6c-0249b11c8900.jpg?1783902918",
+      "large": "https://cards.scryfall.io/large/front/f/d/fd1f95bf-48ea-455a-8a6c-0249b11c8900.jpg?1783902918",
+      "png": "https://cards.scryfall.io/png/front/f/d/fd1f95bf-48ea-455a-8a6c-0249b11c8900.png?1783902918",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/f/d/fd1f95bf-48ea-455a-8a6c-0249b11c8900.jpg?1783902918",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/f/d/fd1f95bf-48ea-455a-8a6c-0249b11c8900.jpg?1783902918",
+      "thumb": "https://cards.scryfall.io/thumb/front/f/d/fd1f95bf-48ea-455a-8a6c-0249b11c8900.webp?1783902918",
+      "grid": "https://cards.scryfall.io/grid/front/f/d/fd1f95bf-48ea-455a-8a6c-0249b11c8900.webp?1783902918",
+      "display": "https://cards.scryfall.io/display/front/f/d/fd1f95bf-48ea-455a-8a6c-0249b11c8900.webp?1783902918",
+      "art": "https://cards.scryfall.io/art/front/f/d/fd1f95bf-48ea-455a-8a6c-0249b11c8900.webp?1783902918",
+      "crop": "https://cards.scryfall.io/crop/front/f/d/fd1f95bf-48ea-455a-8a6c-0249b11c8900.webp?1783902918",
+      "jpeg": "https://cards.scryfall.io/normal/front/f/d/fd1f95bf-48ea-455a-8a6c-0249b11c8900.jpg?1783902918"
+     },
+     "mana_cost": "{G}",
+     "cmc": 1,
+     "type_line": "Instant",
+     "oracle_text": "Target creature gets +3/+3 until end of turn.",
+     "colors": [
+      "G"
+     ],
+     "color_identity": [
+      "G"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo",
+      "arena"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "ba9bf625-681c-4a4e-ab48-399b2fecac6b",
+     "set": "msh",
+     "set_name": "Marvel Super Heroes",
+     "set_type": "expansion",
+     "set_uri": "https://api.scryfall.com/sets/ba9bf625-681c-4a4e-ab48-399b2fecac6b",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Amsh&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/msh?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/fd1f95bf-48ea-455a-8a6c-0249b11c8900/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A5748ebf1-24e3-499d-ab7c-c2cebd462a24&unique=prints",
+     "collector_number": "167",
+     "digital": false,
+     "rarity": "common",
+     "flavor_text": "\"Cap called for Giant-Man, not Ant-Man. Something big must be going down.\"",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Andreia Ugrai",
+     "artist_ids": [
+      "f72c1593-751b-45a4-ba65-205509b81b93"
+     ],
+     "illustration_id": "c65f5a81-f089-41b3-8570-3013900c71c0",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": false,
+     "story_spotlight": false,
+     "promo_types": [
+      "universesbeyond"
+     ],
+     "edhrec_rank": 3298,
+     "penny_rank": 4099,
+     "prices": {
+      "usd": "0.21",
+      "usd_foil": "0.26",
+      "usd_etched": null,
+      "eur": "0.03",
+      "eur_foil": "0.05",
+      "tix": "0.03"
+     },
+     "related_uris": {
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DGiant%2BGrowth",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DGiant%2BGrowth",
+      "edhrec": "https://edhrec.com/route/?cc=Giant+Growth"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F697046%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=891570&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/152521?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": true,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 10,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "faceDownAs": null,
+    "face": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": "perm_2",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": 11,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": {
+     "states": [
+      [
+       "perm_1",
+       {
+        "name": "Craw Wurm",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Wurm"
+        ],
+        "power": 2,
+        "toughness": 0,
+        "basePower": 6,
+        "baseToughness": 4,
+        "abilities": [],
+        "colors": [
+         "G"
+        ],
+        "manaValue": 6,
+        "manaCost": "{4}{G}{G}",
+        "isCreature": true,
+        "isToken": false,
+        "isFaceDown": false,
+        "isEmblem": false,
+        "isSpell": false,
+        "isZoneCard": false,
+        "oracleText": "",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "attackingPlayerId": null,
+        "timesAttackedThisTurn": 0,
+        "allPrintedAbilities": [],
+        "cdaAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_1",
+        "controller": "player_1",
+        "tapped": false,
+        "isCommander": false,
+        "_protectionFrom": []
+       }
+      ],
+      [
+       "perm_2",
+       {
+        "name": "Skanos, Dragon Vassal",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [
+         "Legendary"
+        ],
+        "subtypes": [
+         "Dragon",
+         "Ranger"
+        ],
+        "power": 4,
+        "toughness": 4,
+        "basePower": 4,
+        "baseToughness": 4,
+        "abilities": [
+         "Specialize {4}",
+         "Whenever this card attacks, another target attacking creature gets +X/+0 until end of turn, where X is this card's power."
+        ],
+        "colors": [
+         "G"
+        ],
+        "manaValue": 5,
+        "manaCost": "{4}{G}",
+        "isCreature": true,
+        "isToken": false,
+        "isFaceDown": false,
+        "isEmblem": false,
+        "isSpell": false,
+        "isZoneCard": false,
+        "oracleText": "Specialize {4}\nWhenever this card attacks, another target attacking creature gets +X/+0 until end of turn, where X is this card's power.",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [
+         "Attacking"
+        ],
+        "attackingPlayerId": null,
+        "timesAttackedThisTurn": 0,
+        "allPrintedAbilities": [
+         "Specialize {4}",
+         "Whenever this card attacks, another target attacking creature gets +X/+0 until end of turn, where X is this card's power."
+        ],
+        "cdaAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false,
+        "_protectionFrom": []
+       }
+      ],
+      [
+       "perm_3",
+       {
+        "name": "Goblin Guide",
+        "types": [
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Goblin",
+         "Scout"
+        ],
+        "power": 6,
+        "toughness": 2,
+        "basePower": 2,
+        "baseToughness": 2,
+        "abilities": [
+         "Haste",
+         "Whenever this creature attacks, defending player reveals the top card of their library. If it's a land card, that player puts it into their hand."
+        ],
+        "colors": [
+         "R"
+        ],
+        "manaValue": 1,
+        "manaCost": "{R}",
+        "isCreature": true,
+        "isToken": false,
+        "isFaceDown": false,
+        "isEmblem": false,
+        "isSpell": false,
+        "isZoneCard": false,
+        "oracleText": "Haste\nWhenever this creature attacks, defending player reveals the top card of their library. If it's a land card, that player puts it into their hand.",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [
+         "Attacking"
+        ],
+        "attackingPlayerId": null,
+        "timesAttackedThisTurn": 0,
+        "allPrintedAbilities": [
+         "Haste",
+         "Whenever this creature attacks, defending player reveals the top card of their library. If it's a land card, that player puts it into their hand."
+        ],
+        "cdaAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false,
+        "_protectionFrom": []
+       }
+      ],
+      [
+       "perm_4",
+       {
+        "name": "Armix, Filigree Thrasher",
+        "types": [
+         "Artifact",
+         "Creature"
+        ],
+        "supertypes": [
+         "Legendary"
+        ],
+        "subtypes": [
+         "Golem"
+        ],
+        "power": 3,
+        "toughness": 2,
+        "basePower": 3,
+        "baseToughness": 2,
+        "abilities": [
+         "Whenever this card attacks, you may discard a card. When you do, target creature defending player controls gets -X/-X until end of turn, where X is the number of artifacts you control plus the number of artifact cards in your graveyard.",
+         "Partner"
+        ],
+        "colors": [
+         "B"
+        ],
+        "manaValue": 3,
+        "manaCost": "{2}{B}",
+        "isCreature": true,
+        "isToken": false,
+        "isFaceDown": false,
+        "isEmblem": false,
+        "isSpell": false,
+        "isZoneCard": false,
+        "oracleText": "Whenever this card attacks, you may discard a card. When you do, target creature defending player controls gets -X/-X until end of turn, where X is the number of artifacts you control plus the number of artifact cards in your graveyard.\nPartner",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [
+         "Attacking"
+        ],
+        "attackingPlayerId": null,
+        "timesAttackedThisTurn": 0,
+        "allPrintedAbilities": [
+         "Whenever this card attacks, you may discard a card. When you do, target creature defending player controls gets -X/-X until end of turn, where X is the number of artifacts you control plus the number of artifact cards in your graveyard.",
+         "Partner"
+        ],
+        "cdaAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false,
+        "_protectionFrom": []
+       }
+      ],
+      [
+       "perm_5",
+       {
+        "name": "Ornithopter",
+        "types": [
+         "Artifact",
+         "Creature"
+        ],
+        "supertypes": [],
+        "subtypes": [
+         "Thopter"
+        ],
+        "power": 0,
+        "toughness": 2,
+        "basePower": 0,
+        "baseToughness": 2,
+        "abilities": [
+         "Flying"
+        ],
+        "colors": [],
+        "manaValue": 0,
+        "manaCost": "{0}",
+        "isCreature": true,
+        "isToken": false,
+        "isFaceDown": false,
+        "isEmblem": false,
+        "isSpell": false,
+        "isZoneCard": false,
+        "oracleText": "Flying",
+        "hasChangeling": false,
+        "isAllCreatureTypes": false,
+        "isAllLandTypes": false,
+        "opponentsControlEffects": [],
+        "abilitiesRemovedBy305_7": false,
+        "allAbilitiesRemoved": false,
+        "oracleTextModified": false,
+        "copySource": null,
+        "cdaUserValue": null,
+        "counters": {},
+        "traits": [],
+        "attackingPlayerId": null,
+        "timesAttackedThisTurn": 0,
+        "allPrintedAbilities": [
+         "Flying"
+        ],
+        "cdaAbilities": [],
+        "conditionalAbilityIndices": null,
+        "conditionalAbilityConditions": null,
+        "sagaChapterThresholds": null,
+        "classLevelThresholds": null,
+        "classLevel": null,
+        "levelerData": null,
+        "spacecraftData": null,
+        "owner": "player_0",
+        "controller": "player_0",
+        "tapped": false,
+        "isCommander": false,
+        "_protectionFrom": []
+       }
+      ]
+     ],
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Craw Wurm",
+       "imageUri": "https://cards.scryfall.io/small/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.jpg?1783942364",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Wurm"
+       ],
+       "printedPower": 6,
+       "printedToughness": 4,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Skanos, Dragon Vassal",
+       "imageUri": "https://cards.scryfall.io/small/front/6/0/60af8bda-e92f-400d-aedf-00a534184e20.jpg?1793880750",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [
+        "Attacking"
+       ],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [
+        "Legendary"
+       ],
+       "printedSubtypes": [
+        "Dragon",
+        "Ranger"
+       ],
+       "printedPower": 4,
+       "printedToughness": 4,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Goblin Guide",
+       "imageUri": "https://cards.scryfall.io/small/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.jpg?1783930165",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [
+        "Attacking"
+       ],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Goblin",
+        "Scout"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Armix, Filigree Thrasher",
+       "imageUri": "https://cards.scryfall.io/small/front/d/5/d5f69e24-6b5c-4a9a-af5b-1ce88efdc0aa.jpg?1783928845",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [
+        "Attacking"
+       ],
+       "counters": {},
+       "printedTypes": [
+        "Artifact",
+        "Creature"
+       ],
+       "printedSupertypes": [
+        "Legendary"
+       ],
+       "printedSubtypes": [
+        "Golem"
+       ],
+       "printedPower": 3,
+       "printedToughness": 2,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_5",
+       "name": "Ornithopter",
+       "imageUri": "https://cards.scryfall.io/small/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Artifact",
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Thopter"
+       ],
+       "printedPower": 0,
+       "printedToughness": 2,
+       "timestamp": 5
+      },
+      {
+       "id": "trig_perm_2_1_6",
+       "name": "Skanos, Dragon Vassal (trigger)",
+       "imageUri": "https://cards.scryfall.io/small/front/6/0/60af8bda-e92f-400d-aedf-00a534184e20.jpg?1793880750",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": true,
+       "isTriggeredAbility": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "abilitySourceId": "perm_2",
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 6
+      },
+      {
+       "id": "trig_perm_4_0_8",
+       "name": "Armix, Filigree Thrasher (trigger)",
+       "imageUri": "https://cards.scryfall.io/small/front/d/5/d5f69e24-6b5c-4a9a-af5b-1ce88efdc0aa.jpg?1783928845",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": true,
+       "isTriggeredAbility": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "abilitySourceId": "perm_4",
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 8
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      },
+      {
+       "id": "player_1",
+       "name": "Opponent"
+      }
+     ]
+    }
+   }
+  ],
+  "firedAbilities": [
+   {
+    "id": "trig_perm_2_1_6",
+    "kind": "trigger",
+    "pseudoKind": "ability",
+    "sourceId": "perm_2",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 1,
+    "timestamp": 6,
+    "effectText": "Another target attacking creature gets +4/+0 until end of turn.",
+    "xValue": null,
+    "hasXValue": false,
+    "cdaUserValue": null,
+    "linkedCards": null,
+    "fullText": "Whenever this card attacks, another target attacking creature gets +X/+0 until end of turn, where X is this card's power.",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "guessedTargetSubjects": [],
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "attach": null,
+    "face": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "forPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Craw Wurm",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Wurm"
+       ],
+       "power": 6,
+       "toughness": 4,
+       "basePower": 6,
+       "baseToughness": 4,
+       "abilities": [],
+       "colors": [
+        "G"
+       ],
+       "manaValue": 6,
+       "manaCost": "{4}{G}{G}",
+       "isCreature": true,
+       "isToken": false,
+       "isFaceDown": false,
+       "isEmblem": false,
+       "isSpell": false,
+       "isZoneCard": false,
+       "oracleText": "",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "attackingPlayerId": null,
+       "timesAttackedThisTurn": 0,
+       "allPrintedAbilities": [],
+       "cdaAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_1",
+       "controller": "player_1",
+       "tapped": false,
+       "isCommander": false,
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_2",
+      {
+       "name": "Skanos, Dragon Vassal",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [
+        "Legendary"
+       ],
+       "subtypes": [
+        "Dragon",
+        "Ranger"
+       ],
+       "power": 4,
+       "toughness": 4,
+       "basePower": 4,
+       "baseToughness": 4,
+       "abilities": [
+        "Specialize {4}",
+        "Whenever this card attacks, another target attacking creature gets +X/+0 until end of turn, where X is this card's power."
+       ],
+       "colors": [
+        "G"
+       ],
+       "manaValue": 5,
+       "manaCost": "{4}{G}",
+       "isCreature": true,
+       "isToken": false,
+       "isFaceDown": false,
+       "isEmblem": false,
+       "isSpell": false,
+       "isZoneCard": false,
+       "oracleText": "Specialize {4}\nWhenever this card attacks, another target attacking creature gets +X/+0 until end of turn, where X is this card's power.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [
+        "Attacking"
+       ],
+       "attackingPlayerId": null,
+       "timesAttackedThisTurn": 0,
+       "allPrintedAbilities": [
+        "Specialize {4}",
+        "Whenever this card attacks, another target attacking creature gets +X/+0 until end of turn, where X is this card's power."
+       ],
+       "cdaAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false
+      }
+     ],
+     [
+      "perm_3",
+      {
+       "name": "Goblin Guide",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Goblin",
+        "Scout"
+       ],
+       "power": 2,
+       "toughness": 2,
+       "basePower": 2,
+       "baseToughness": 2,
+       "abilities": [
+        "Haste",
+        "Whenever this creature attacks, defending player reveals the top card of their library. If it's a land card, that player puts it into their hand."
+       ],
+       "colors": [
+        "R"
+       ],
+       "manaValue": 1,
+       "manaCost": "{R}",
+       "isCreature": true,
+       "isToken": false,
+       "isFaceDown": false,
+       "isEmblem": false,
+       "isSpell": false,
+       "isZoneCard": false,
+       "oracleText": "Haste\nWhenever this creature attacks, defending player reveals the top card of their library. If it's a land card, that player puts it into their hand.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [
+        "Attacking"
+       ],
+       "attackingPlayerId": null,
+       "timesAttackedThisTurn": 0,
+       "allPrintedAbilities": [
+        "Haste",
+        "Whenever this creature attacks, defending player reveals the top card of their library. If it's a land card, that player puts it into their hand."
+       ],
+       "cdaAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false,
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_4",
+      {
+       "name": "Armix, Filigree Thrasher",
+       "types": [
+        "Artifact",
+        "Creature"
+       ],
+       "supertypes": [
+        "Legendary"
+       ],
+       "subtypes": [
+        "Golem"
+       ],
+       "power": 3,
+       "toughness": 2,
+       "basePower": 3,
+       "baseToughness": 2,
+       "abilities": [
+        "Whenever this card attacks, you may discard a card. When you do, target creature defending player controls gets -X/-X until end of turn, where X is the number of artifacts you control plus the number of artifact cards in your graveyard.",
+        "Partner"
+       ],
+       "colors": [
+        "B"
+       ],
+       "manaValue": 3,
+       "manaCost": "{2}{B}",
+       "isCreature": true,
+       "isToken": false,
+       "isFaceDown": false,
+       "isEmblem": false,
+       "isSpell": false,
+       "isZoneCard": false,
+       "oracleText": "Whenever this card attacks, you may discard a card. When you do, target creature defending player controls gets -X/-X until end of turn, where X is the number of artifacts you control plus the number of artifact cards in your graveyard.\nPartner",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [
+        "Attacking"
+       ],
+       "attackingPlayerId": null,
+       "timesAttackedThisTurn": 0,
+       "allPrintedAbilities": [
+        "Whenever this card attacks, you may discard a card. When you do, target creature defending player controls gets -X/-X until end of turn, where X is the number of artifacts you control plus the number of artifact cards in your graveyard.",
+        "Partner"
+       ],
+       "cdaAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false,
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_5",
+      {
+       "name": "Ornithopter",
+       "types": [
+        "Artifact",
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Thopter"
+       ],
+       "power": 0,
+       "toughness": 2,
+       "basePower": 0,
+       "baseToughness": 2,
+       "abilities": [
+        "Flying"
+       ],
+       "colors": [],
+       "manaValue": 0,
+       "manaCost": "{0}",
+       "isCreature": true,
+       "isToken": false,
+       "isFaceDown": false,
+       "isEmblem": false,
+       "isSpell": false,
+       "isZoneCard": false,
+       "oracleText": "Flying",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "attackingPlayerId": null,
+       "timesAttackedThisTurn": 0,
+       "allPrintedAbilities": [
+        "Flying"
+       ],
+       "cdaAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false,
+       "_protectionFrom": []
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Craw Wurm",
+       "imageUri": "https://cards.scryfall.io/small/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.jpg?1783942364",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Wurm"
+       ],
+       "printedPower": 6,
+       "printedToughness": 4,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Skanos, Dragon Vassal",
+       "imageUri": "https://cards.scryfall.io/small/front/6/0/60af8bda-e92f-400d-aedf-00a534184e20.jpg?1793880750",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [
+        "Attacking"
+       ],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [
+        "Legendary"
+       ],
+       "printedSubtypes": [
+        "Dragon",
+        "Ranger"
+       ],
+       "printedPower": 4,
+       "printedToughness": 4,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Goblin Guide",
+       "imageUri": "https://cards.scryfall.io/small/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.jpg?1783930165",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [
+        "Attacking"
+       ],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Goblin",
+        "Scout"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Armix, Filigree Thrasher",
+       "imageUri": "https://cards.scryfall.io/small/front/d/5/d5f69e24-6b5c-4a9a-af5b-1ce88efdc0aa.jpg?1783928845",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [
+        "Attacking"
+       ],
+       "counters": {},
+       "printedTypes": [
+        "Artifact",
+        "Creature"
+       ],
+       "printedSupertypes": [
+        "Legendary"
+       ],
+       "printedSubtypes": [
+        "Golem"
+       ],
+       "printedPower": 3,
+       "printedToughness": 2,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_5",
+       "name": "Ornithopter",
+       "imageUri": "https://cards.scryfall.io/small/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Artifact",
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Thopter"
+       ],
+       "printedPower": 0,
+       "printedToughness": 2,
+       "timestamp": 5
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      },
+      {
+       "id": "player_1",
+       "name": "Opponent"
+      }
+     ]
+    },
+    "primaryTarget": "perm_3",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": 7,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null
+   },
+   {
+    "id": "trig_perm_4_0_8",
+    "kind": "trigger",
+    "pseudoKind": "ability",
+    "sourceId": "perm_4",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 0,
+    "timestamp": 8,
+    "effectText": "You may discard a card. When you do, target creature defending player controls gets -4/-4 until end of turn, where 4 is the number of artifacts you control plus the number of artifact cards in your graveyard.",
+    "xValue": null,
+    "hasXValue": false,
+    "cdaUserValue": null,
+    "linkedCards": null,
+    "fullText": "Whenever this card attacks, you may discard a card. When you do, target creature defending player controls gets -X/-X until end of turn, where X is the number of artifacts you control plus the number of artifact cards in your graveyard.",
+    "chosenColor": null,
+    "additionalCostPaid": true,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "guessedTargetSubjects": [],
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "attach": null,
+    "face": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "forPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Craw Wurm",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Wurm"
+       ],
+       "power": 6,
+       "toughness": 4,
+       "basePower": 6,
+       "baseToughness": 4,
+       "abilities": [],
+       "colors": [
+        "G"
+       ],
+       "manaValue": 6,
+       "manaCost": "{4}{G}{G}",
+       "isCreature": true,
+       "isToken": false,
+       "isFaceDown": false,
+       "isEmblem": false,
+       "isSpell": false,
+       "isZoneCard": false,
+       "oracleText": "",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "attackingPlayerId": null,
+       "timesAttackedThisTurn": 0,
+       "allPrintedAbilities": [],
+       "cdaAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_1",
+       "controller": "player_1",
+       "tapped": false,
+       "isCommander": false,
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_2",
+      {
+       "name": "Skanos, Dragon Vassal",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [
+        "Legendary"
+       ],
+       "subtypes": [
+        "Dragon",
+        "Ranger"
+       ],
+       "power": 4,
+       "toughness": 4,
+       "basePower": 4,
+       "baseToughness": 4,
+       "abilities": [
+        "Specialize {4}",
+        "Whenever this card attacks, another target attacking creature gets +X/+0 until end of turn, where X is this card's power."
+       ],
+       "colors": [
+        "G"
+       ],
+       "manaValue": 5,
+       "manaCost": "{4}{G}",
+       "isCreature": true,
+       "isToken": false,
+       "isFaceDown": false,
+       "isEmblem": false,
+       "isSpell": false,
+       "isZoneCard": false,
+       "oracleText": "Specialize {4}\nWhenever this card attacks, another target attacking creature gets +X/+0 until end of turn, where X is this card's power.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [
+        "Attacking"
+       ],
+       "attackingPlayerId": null,
+       "timesAttackedThisTurn": 0,
+       "allPrintedAbilities": [
+        "Specialize {4}",
+        "Whenever this card attacks, another target attacking creature gets +X/+0 until end of turn, where X is this card's power."
+       ],
+       "cdaAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false,
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_3",
+      {
+       "name": "Goblin Guide",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Goblin",
+        "Scout"
+       ],
+       "power": 6,
+       "toughness": 2,
+       "basePower": 2,
+       "baseToughness": 2,
+       "abilities": [
+        "Haste",
+        "Whenever this creature attacks, defending player reveals the top card of their library. If it's a land card, that player puts it into their hand."
+       ],
+       "colors": [
+        "R"
+       ],
+       "manaValue": 1,
+       "manaCost": "{R}",
+       "isCreature": true,
+       "isToken": false,
+       "isFaceDown": false,
+       "isEmblem": false,
+       "isSpell": false,
+       "isZoneCard": false,
+       "oracleText": "Haste\nWhenever this creature attacks, defending player reveals the top card of their library. If it's a land card, that player puts it into their hand.",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [
+        "Attacking"
+       ],
+       "attackingPlayerId": null,
+       "timesAttackedThisTurn": 0,
+       "allPrintedAbilities": [
+        "Haste",
+        "Whenever this creature attacks, defending player reveals the top card of their library. If it's a land card, that player puts it into their hand."
+       ],
+       "cdaAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false,
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_4",
+      {
+       "name": "Armix, Filigree Thrasher",
+       "types": [
+        "Artifact",
+        "Creature"
+       ],
+       "supertypes": [
+        "Legendary"
+       ],
+       "subtypes": [
+        "Golem"
+       ],
+       "power": 3,
+       "toughness": 2,
+       "basePower": 3,
+       "baseToughness": 2,
+       "abilities": [
+        "Whenever this card attacks, you may discard a card. When you do, target creature defending player controls gets -X/-X until end of turn, where X is the number of artifacts you control plus the number of artifact cards in your graveyard.",
+        "Partner"
+       ],
+       "colors": [
+        "B"
+       ],
+       "manaValue": 3,
+       "manaCost": "{2}{B}",
+       "isCreature": true,
+       "isToken": false,
+       "isFaceDown": false,
+       "isEmblem": false,
+       "isSpell": false,
+       "isZoneCard": false,
+       "oracleText": "Whenever this card attacks, you may discard a card. When you do, target creature defending player controls gets -X/-X until end of turn, where X is the number of artifacts you control plus the number of artifact cards in your graveyard.\nPartner",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [
+        "Attacking"
+       ],
+       "attackingPlayerId": null,
+       "timesAttackedThisTurn": 0,
+       "allPrintedAbilities": [
+        "Whenever this card attacks, you may discard a card. When you do, target creature defending player controls gets -X/-X until end of turn, where X is the number of artifacts you control plus the number of artifact cards in your graveyard.",
+        "Partner"
+       ],
+       "cdaAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false,
+       "_protectionFrom": []
+      }
+     ],
+     [
+      "perm_5",
+      {
+       "name": "Ornithopter",
+       "types": [
+        "Artifact",
+        "Creature"
+       ],
+       "supertypes": [],
+       "subtypes": [
+        "Thopter"
+       ],
+       "power": 0,
+       "toughness": 2,
+       "basePower": 0,
+       "baseToughness": 2,
+       "abilities": [
+        "Flying"
+       ],
+       "colors": [],
+       "manaValue": 0,
+       "manaCost": "{0}",
+       "isCreature": true,
+       "isToken": false,
+       "isFaceDown": false,
+       "isEmblem": false,
+       "isSpell": false,
+       "isZoneCard": false,
+       "oracleText": "Flying",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "attackingPlayerId": null,
+       "timesAttackedThisTurn": 0,
+       "allPrintedAbilities": [
+        "Flying"
+       ],
+       "cdaAbilities": [],
+       "conditionalAbilityIndices": null,
+       "conditionalAbilityConditions": null,
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false,
+       "_protectionFrom": []
+      }
+     ]
+    ],
+    "firedAtGraveyards": [
+     {
+      "id": "player_0",
+      "graveyard": [
+       {
+        "name": "Ornithopter",
+        "type_line": "Artifact Creature — Thopter",
+        "mana_cost": "{0}",
+        "cmc": 0,
+        "colors": [],
+        "oracle_text": "Flying",
+        "keywords": [
+         "Flying"
+        ],
+        "layout": "normal"
+       },
+       {
+        "name": "Sol Ring",
+        "type_line": "Artifact",
+        "mana_cost": "{1}",
+        "cmc": 1,
+        "colors": [],
+        "oracle_text": "{T}: Add {C}{C}.",
+        "keywords": [],
+        "layout": "normal"
+       }
+      ]
+     },
+     {
+      "id": "player_1",
+      "graveyard": []
+     }
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Craw Wurm",
+       "imageUri": "https://cards.scryfall.io/small/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.jpg?1783942364",
+       "owner": "player_1",
+       "controller": "player_1",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Wurm"
+       ],
+       "printedPower": 6,
+       "printedToughness": 4,
+       "timestamp": 1
+      },
+      {
+       "id": "perm_2",
+       "name": "Skanos, Dragon Vassal",
+       "imageUri": "https://cards.scryfall.io/small/front/6/0/60af8bda-e92f-400d-aedf-00a534184e20.jpg?1793880750",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [
+        "Attacking"
+       ],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [
+        "Legendary"
+       ],
+       "printedSubtypes": [
+        "Dragon",
+        "Ranger"
+       ],
+       "printedPower": 4,
+       "printedToughness": 4,
+       "timestamp": 2
+      },
+      {
+       "id": "perm_3",
+       "name": "Goblin Guide",
+       "imageUri": "https://cards.scryfall.io/small/front/3/c/3c0f5411-1940-410f-96ce-6f92513f753a.jpg?1783930165",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [
+        "Attacking"
+       ],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Goblin",
+        "Scout"
+       ],
+       "printedPower": 2,
+       "printedToughness": 2,
+       "timestamp": 3
+      },
+      {
+       "id": "perm_4",
+       "name": "Armix, Filigree Thrasher",
+       "imageUri": "https://cards.scryfall.io/small/front/d/5/d5f69e24-6b5c-4a9a-af5b-1ce88efdc0aa.jpg?1783928845",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [
+        "Attacking"
+       ],
+       "counters": {},
+       "printedTypes": [
+        "Artifact",
+        "Creature"
+       ],
+       "printedSupertypes": [
+        "Legendary"
+       ],
+       "printedSubtypes": [
+        "Golem"
+       ],
+       "printedPower": 3,
+       "printedToughness": 2,
+       "timestamp": 4
+      },
+      {
+       "id": "perm_5",
+       "name": "Ornithopter",
+       "imageUri": "https://cards.scryfall.io/small/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Artifact",
+        "Creature"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [
+        "Thopter"
+       ],
+       "printedPower": 0,
+       "printedToughness": 2,
+       "timestamp": 5
+      },
+      {
+       "id": "trig_perm_2_1_6",
+       "name": "Skanos, Dragon Vassal (trigger)",
+       "imageUri": "https://cards.scryfall.io/small/front/6/0/60af8bda-e92f-400d-aedf-00a534184e20.jpg?1793880750",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": true,
+       "isTriggeredAbility": true,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "abilitySourceId": "perm_2",
+       "printedTypes": [
+        "Instant"
+       ],
+       "printedSupertypes": [],
+       "printedSubtypes": [],
+       "printedPower": null,
+       "printedToughness": null,
+       "timestamp": 6
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      },
+      {
+       "id": "player_1",
+       "name": "Opponent"
+      }
+     ]
+    },
+    "primaryTarget": "perm_1",
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": 9,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null
+   }
+  ],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 2,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [
+     {
+      "object": "card",
+      "id": "305078a5-ac18-4721-bba2-3434eba5b1cf",
+      "oracle_id": "a3a98bc9-caa0-49b7-951c-fe4e4f54e4ba",
+      "multiverse_ids": [
+       599107
+      ],
+      "mtgo_id": 107995,
+      "tcgplayer_id": 457188,
+      "cardmarket_id": 688483,
+      "name": "Ornithopter",
+      "lang": "en",
+      "released_at": "2023-01-13",
+      "uri": "https://api.scryfall.com/cards/305078a5-ac18-4721-bba2-3434eba5b1cf",
+      "scryfall_uri": "https://scryfall.com/card/dmr/233/ornithopter?utm_source=api",
+      "layout": "normal",
+      "highres_image": true,
+      "image_status": "highres_scan",
+      "image_updated_at": "2026-07-13T04:53:30Z",
+      "image_uris": {
+       "small": "https://cards.scryfall.io/small/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+       "normal": "https://cards.scryfall.io/normal/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+       "large": "https://cards.scryfall.io/large/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+       "png": "https://cards.scryfall.io/png/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.png?1783918410",
+       "art_crop": "https://cards.scryfall.io/art_crop/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+       "border_crop": "https://cards.scryfall.io/border_crop/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410",
+       "thumb": "https://cards.scryfall.io/thumb/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.webp?1783918410",
+       "grid": "https://cards.scryfall.io/grid/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.webp?1783918410",
+       "display": "https://cards.scryfall.io/display/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.webp?1783918410",
+       "art": "https://cards.scryfall.io/art/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.webp?1783918410",
+       "crop": "https://cards.scryfall.io/crop/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.webp?1783918410",
+       "jpeg": "https://cards.scryfall.io/normal/front/3/0/305078a5-ac18-4721-bba2-3434eba5b1cf.jpg?1783918410"
+      },
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Artifact Creature — Thopter",
+      "oracle_text": "Flying",
+      "power": "0",
+      "toughness": "2",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+       "Flying"
+      ],
+      "all_parts": [
+       {
+        "object": "related_card",
+        "id": "2f1cde8b-e73e-4cca-973c-93f3936e70e0",
+        "component": "combo_piece",
+        "name": "Emporium Thopterist",
+        "type_line": "Creature — Vedalken Artificer",
+        "uri": "https://api.scryfall.com/cards/2f1cde8b-e73e-4cca-973c-93f3936e70e0"
+       },
+       {
+        "object": "related_card",
+        "id": "051386e0-4c1c-48ed-8883-664c719cf0fe",
+        "component": "combo_piece",
+        "name": "Ornithopter",
+        "type_line": "Artifact Creature — Thopter",
+        "uri": "https://api.scryfall.com/cards/051386e0-4c1c-48ed-8883-664c719cf0fe"
+       }
+      ],
+      "legalities": {
+       "standard": "not_legal",
+       "future": "not_legal",
+       "historic": "legal",
+       "timeless": "legal",
+       "gladiator": "legal",
+       "pioneer": "legal",
+       "modern": "legal",
+       "legacy": "legal",
+       "pauper": "legal",
+       "vintage": "legal",
+       "penny": "not_legal",
+       "commander": "legal",
+       "oathbreaker": "legal",
+       "standardbrawl": "not_legal",
+       "brawl": "legal",
+       "competitivebrawl": "legal",
+       "alchemy": "not_legal",
+       "paupercommander": "legal",
+       "duel": "legal",
+       "oldschool": "not_legal",
+       "premodern": "legal",
+       "predh": "legal",
+       "tlr": "legal"
+      },
+      "games": [
+       "paper",
+       "mtgo"
+      ],
+      "reserved": false,
+      "game_changer": false,
+      "foil": true,
+      "nonfoil": true,
+      "finishes": [
+       "nonfoil",
+       "foil"
+      ],
+      "oversized": false,
+      "promo": false,
+      "reprint": true,
+      "variation": false,
+      "set_id": "ca4c2884-e539-4b7f-980d-5d6a50220f2a",
+      "set": "dmr",
+      "set_name": "Dominaria Remastered",
+      "set_type": "masters",
+      "set_uri": "https://api.scryfall.com/sets/ca4c2884-e539-4b7f-980d-5d6a50220f2a",
+      "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Admr&unique=prints",
+      "scryfall_set_uri": "https://scryfall.com/sets/dmr?utm_source=api",
+      "rulings_uri": "https://api.scryfall.com/cards/305078a5-ac18-4721-bba2-3434eba5b1cf/rulings",
+      "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aa3a98bc9-caa0-49b7-951c-fe4e4f54e4ba&unique=prints",
+      "collector_number": "233",
+      "digital": false,
+      "rarity": "common",
+      "flavor_text": "\"It has been my honor to improve on Thran's original design. Perhaps history will remember me in some small part for my work.\"\n—Urza, in his apprenticeship",
+      "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+      "artist": "Franz Vohwinkel",
+      "artist_ids": [
+       "3a243c17-3baa-4b53-9599-645311cd7d3d"
+      ],
+      "illustration_id": "ba23fb60-f170-40cc-8d2e-fe88ba070269",
+      "border_color": "black",
+      "frame": "2015",
+      "full_art": false,
+      "textless": false,
+      "booster": true,
+      "story_spotlight": false,
+      "edhrec_rank": 800,
+      "penny_rank": 390,
+      "prices": {
+       "usd": "0.45",
+       "usd_foil": "0.40",
+       "usd_etched": null,
+       "eur": "0.21",
+       "eur_foil": "0.46",
+       "tix": "0.04"
+      },
+      "related_uris": {
+       "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=599107&printed=false",
+       "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DOrnithopter",
+       "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DOrnithopter",
+       "edhrec": "https://edhrec.com/route/?cc=Ornithopter"
+      },
+      "purchase_uris": {
+       "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F457188%3Fpage%3D1",
+       "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=688483&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+       "cardhoarder": "https://www.cardhoarder.com/cards/107995?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+      }
+     },
+     {
+      "object": "card",
+      "id": "fc817e07-c1f3-469f-9cf7-0945dea7400f",
+      "oracle_id": "6ad8011d-3471-4369-9d68-b264cc027487",
+      "multiverse_ids": [],
+      "resource_id": "9B5C1E54BAB8D9CA2E2DBDE6CF82C42963DFC77B6F6DE2D78A64F5A7A25E5944",
+      "mtgo_id": 157216,
+      "tcgplayer_id": 726040,
+      "cardmarket_id": 919617,
+      "name": "Sol Ring",
+      "lang": "en",
+      "released_at": "2026-11-13",
+      "uri": "https://api.scryfall.com/cards/fc817e07-c1f3-469f-9cf7-0945dea7400f",
+      "scryfall_uri": "https://scryfall.com/card/trc/499/sol-ring?utm_source=api",
+      "layout": "normal",
+      "highres_image": true,
+      "image_status": "highres_scan",
+      "image_updated_at": "2026-10-26T13:26:21Z",
+      "image_uris": {
+       "small": "https://cards.scryfall.io/small/front/f/c/fc817e07-c1f3-469f-9cf7-0945dea7400f.jpg?1793021181",
+       "normal": "https://cards.scryfall.io/normal/front/f/c/fc817e07-c1f3-469f-9cf7-0945dea7400f.jpg?1793021181",
+       "large": "https://cards.scryfall.io/large/front/f/c/fc817e07-c1f3-469f-9cf7-0945dea7400f.jpg?1793021181",
+       "png": "https://cards.scryfall.io/png/front/f/c/fc817e07-c1f3-469f-9cf7-0945dea7400f.png?1793021181",
+       "art_crop": "https://cards.scryfall.io/art_crop/front/f/c/fc817e07-c1f3-469f-9cf7-0945dea7400f.jpg?1793021181",
+       "border_crop": "https://cards.scryfall.io/border_crop/front/f/c/fc817e07-c1f3-469f-9cf7-0945dea7400f.jpg?1793021181",
+       "thumb": "https://cards.scryfall.io/thumb/front/f/c/fc817e07-c1f3-469f-9cf7-0945dea7400f.webp?1793021181",
+       "grid": "https://cards.scryfall.io/grid/front/f/c/fc817e07-c1f3-469f-9cf7-0945dea7400f.webp?1793021181",
+       "display": "https://cards.scryfall.io/display/front/f/c/fc817e07-c1f3-469f-9cf7-0945dea7400f.webp?1793021181",
+       "art": "https://cards.scryfall.io/art/front/f/c/fc817e07-c1f3-469f-9cf7-0945dea7400f.webp?1793021181",
+       "crop": "https://cards.scryfall.io/crop/front/f/c/fc817e07-c1f3-469f-9cf7-0945dea7400f.webp?1793021181",
+       "jpeg": "https://cards.scryfall.io/normal/front/f/c/fc817e07-c1f3-469f-9cf7-0945dea7400f.jpg?1793021181"
+      },
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "type_line": "Artifact",
+      "oracle_text": "{T}: Add {C}{C}.",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [
+       "C"
+      ],
+      "legalities": {
+       "standard": "not_legal",
+       "future": "not_legal",
+       "historic": "not_legal",
+       "timeless": "not_legal",
+       "gladiator": "not_legal",
+       "pioneer": "not_legal",
+       "modern": "not_legal",
+       "legacy": "banned",
+       "pauper": "not_legal",
+       "vintage": "restricted",
+       "penny": "not_legal",
+       "commander": "legal",
+       "oathbreaker": "banned",
+       "standardbrawl": "not_legal",
+       "brawl": "not_legal",
+       "competitivebrawl": "not_legal",
+       "alchemy": "not_legal",
+       "paupercommander": "not_legal",
+       "duel": "banned",
+       "oldschool": "not_legal",
+       "premodern": "not_legal",
+       "predh": "legal",
+       "tlr": "banned"
+      },
+      "games": [
+       "paper",
+       "mtgo"
+      ],
+      "reserved": false,
+      "game_changer": false,
+      "foil": true,
+      "nonfoil": true,
+      "finishes": [
+       "nonfoil",
+       "foil"
+      ],
+      "oversized": false,
+      "promo": false,
+      "reprint": true,
+      "variation": false,
+      "set_id": "a38c10be-90b1-4bb9-bd74-46784a751ac3",
+      "set": "trc",
+      "set_name": "Star Trek Commander",
+      "set_type": "commander",
+      "set_uri": "https://api.scryfall.com/sets/a38c10be-90b1-4bb9-bd74-46784a751ac3",
+      "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Atrc&unique=prints",
+      "scryfall_set_uri": "https://scryfall.com/sets/trc?utm_source=api",
+      "rulings_uri": "https://api.scryfall.com/cards/fc817e07-c1f3-469f-9cf7-0945dea7400f/rulings",
+      "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A6ad8011d-3471-4369-9d68-b264cc027487&unique=prints",
+      "collector_number": "499",
+      "digital": false,
+      "rarity": "uncommon",
+      "flavor_text": "\"Actually, 'warp core' is a misnomer. It is technically a generator, but it's not a warp field generator. For some reason, 'deuterium/anti-deuterium intermix reactor' never caught on. Funny, right?\"\n—Lieutenant junior grade Sam Rutherford",
+      "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+      "artist": "Hector Ortiz",
+      "artist_ids": [
+       "b12df60b-57df-47d9-8f3e-cfc5fa3b8519"
+      ],
+      "illustration_id": "4b32b23d-5049-4133-bb3f-b3c868420aab",
+      "border_color": "black",
+      "frame": "2015",
+      "full_art": false,
+      "textless": false,
+      "booster": false,
+      "story_spotlight": false,
+      "promo_types": [
+       "surgefoil",
+       "universesbeyond"
+      ],
+      "edhrec_rank": 1,
+      "preview": {
+       "source": "Commander At Home",
+       "source_uri": "https://www.youtube.com/watch?v=2VJq4uR-r4s",
+       "previewed_at": "2026-10-26"
+      },
+      "prices": {
+       "usd": "1.12",
+       "usd_foil": null,
+       "usd_etched": null,
+       "eur": "0.84",
+       "eur_foil": null,
+       "tix": "0.07"
+      },
+      "related_uris": {
+       "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DSol%2BRing",
+       "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DSol%2BRing",
+       "edhrec": "https://edhrec.com/route/?cc=Sol+Ring"
+      },
+      "purchase_uris": {
+       "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F726040%3Fpage%3D1",
+       "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=919617&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+       "cardhoarder": "https://www.cardhoarder.com/cards/157216?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+      }
+     }
+    ],
+    "libraryTop": null,
+    "emblems": []
+   },
+   {
+    "id": "player_1",
+    "name": "Opponent",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": false,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 2,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Craw Wurm",
+    "final": {
+     "name": "Craw Wurm",
+     "controller": "player_1",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Wurm"
+     ],
+     "power": 2,
+     "toughness": 0,
+     "colors": [
+      "G"
+     ],
+     "abilities": []
+    },
+    "changedBy": {
+     "7c": [
+      "Armix, Filigree Thrasher (trigger)"
+     ]
+    }
+   },
+   {
+    "perm": "Skanos, Dragon Vassal",
+    "final": {
+     "name": "Skanos, Dragon Vassal",
+     "controller": "player_0",
+     "supertypes": [
+      "Legendary"
+     ],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Dragon",
+      "Ranger"
+     ],
+     "power": 7,
+     "toughness": 7,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "Specialize {4}",
+      "Whenever this card attacks, another target attacking creature gets +X/+0 until end of turn, where X is this card's power."
+     ],
+     "traits": [
+      "Attacking"
+     ]
+    },
+    "changedBy": {
+     "7c": [
+      "Giant Growth"
+     ]
+    }
+   },
+   {
+    "perm": "Goblin Guide",
+    "final": {
+     "name": "Goblin Guide",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Goblin",
+      "Scout"
+     ],
+     "power": 6,
+     "toughness": 2,
+     "colors": [
+      "R"
+     ],
+     "abilities": [
+      "Haste",
+      "Whenever this creature attacks, defending player reveals the top card of their library. If it's a land card, that player puts it into their hand."
+     ],
+     "traits": [
+      "Attacking"
+     ]
+    },
+    "changedBy": {
+     "7c": [
+      "Skanos, Dragon Vassal (trigger)"
+     ]
+    }
+   },
+   {
+    "perm": "Armix, Filigree Thrasher",
+    "final": {
+     "name": "Armix, Filigree Thrasher",
+     "controller": "player_0",
+     "supertypes": [
+      "Legendary"
+     ],
+     "types": [
+      "Artifact",
+      "Creature"
+     ],
+     "subtypes": [
+      "Golem"
+     ],
+     "power": 3,
+     "toughness": 2,
+     "colors": [
+      "B"
+     ],
+     "abilities": [
+      "Whenever this card attacks, you may discard a card. When you do, target creature defending player controls gets -X/-X until end of turn, where X is the number of artifacts you control plus the number of artifact cards in your graveyard.",
+      "Partner"
+     ],
+     "traits": [
+      "Attacking"
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Ornithopter",
+    "final": {
+     "name": "Ornithopter",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Artifact",
+      "Creature"
+     ],
+     "subtypes": [
+      "Thopter"
+     ],
+     "power": 0,
+     "toughness": 2,
+     "colors": [],
+     "abilities": [
+      "Flying"
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Giant Growth",
+    "final": {
+     "name": "Giant Growth",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Instant"
+     ],
+     "subtypes": [],
+     "power": null,
+     "toughness": null,
+     "colors": [
+      "G"
+     ],
+     "abilities": [
+      "Target creature gets +3/+3 until end of turn."
+     ]
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "7c": [
+    "Skanos, Dragon Vassal (trigger)",
+    "Armix, Filigree Thrasher (trigger)",
+    "Giant Growth"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Giant Growth",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "target": "Skanos, Dragon Vassal",
+    "params": {
+     "power": 3,
+     "toughness": 3
+    }
+   },
+   {
+    "source": "Skanos, Dragon Vassal (trigger)",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "target": "Goblin Guide",
+    "params": {
+     "power": 4,
+     "toughness": 0
+    }
+   },
+   {
+    "source": "Armix, Filigree Thrasher (trigger)",
+    "layer": "7c",
+    "type": "modify_pt",
+    "scope": "targeted",
+    "target": "Craw Wurm",
+    "params": {
+     "power": -4,
+     "toughness": -4
+    }
+   }
+  ]
+ }
+}

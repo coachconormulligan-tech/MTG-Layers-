@@ -519,6 +519,9 @@ const Battlefield = {
     };
     if (firedAtStates) pseudoPerm._firedAtStates = firedAtStates;
     pseudoPerm._firedAtSnapshot = this._buildFiredAtSnapshot(firedAtStates);
+    // The graveyards as the ability resolves, for its graveyard counts and conditions to read
+    // (Conor, 2026-11-22: a spell's or fired ability's count is locked when it resolves).
+    if (/\bgraveyards?\b/i.test(effectText)) pseudoPerm._firedAtGraveyards = _snapshotGraveyards();
     if (opts.forPlayerId) pseudoPerm._forPlayerId = opts.forPlayerId;
     this.permanents.push(pseudoPerm);
     // "{2}{B}, Exile this card from your graveyard: Put two +1/+1 counters on target creature"
@@ -1525,6 +1528,7 @@ const Battlefield = {
     };
     if (firedAtStates) pseudoPerm._firedAtStates = firedAtStates;
     pseudoPerm._firedAtSnapshot = this._buildFiredAtSnapshot(firedAtStates);
+    if (/\bgraveyards?\b/i.test(effectText)) pseudoPerm._firedAtGraveyards = _snapshotGraveyards();
     this.permanents.push(pseudoPerm);
     // Convert "it" subject pronouns to "target creature" for individual creature targeting.
     // This is a UI convenience — the ability does NOT actually target, so it bypasses shroud/hexproof.
@@ -3518,6 +3522,7 @@ const Battlefield = {
     // from allStates in evaluatePermanent — calling it would crash at snapshotState(undefined).
     // renderInspector handles these via its spell-details branch; skip evaluation here.
     if (perm.isManualEffect) return null;
+    this._syncGraveyardSources();
     // Return cached trace if available (precomputed during getAllFinalStates).
     if (this._inspectorCacheVersion === this._cacheVersion) {
       const cached = this._inspectorCache.get(this.inspectedId);
@@ -3549,6 +3554,57 @@ const Battlefield = {
   /* Effects on "that creature" of a fired "…becomes a copy of another target creature …. If you
      do, this card and that creature each get +2/+0" (Gogo, Mysterious Mime) sit on whatever
      the same ability's copy picker holds, and on nothing until it holds something. */
+  /* A static ability of a card in a graveyard ("As long as this card is in your graveyard and you
+     control a Mountain, creatures you control have haste" — Anger, Brawn, Wonder, Filth, Valor;
+     Riftstone Portal) works from there (CR 113.6b): each such card has a source of its own, like
+     an emblem's (no permanent, never a target or counted; isGraveyardSource), controlled by the
+     graveyard's owner, made from those lines alone and kept in step with the graveyards. Its
+     timestamp is when it was put there (CR 613.7d). Not saved: a restored board rebuilds them. */
+  _syncGraveyardSources() {
+    if (!this._gySources) this._gySources = new Map();   // card object → source id
+    const live = new Set();
+    let changed = false;
+    for (const pl of this.players || []) {
+      for (const card of pl.graveyard || []) {
+        if (!card || live.has(card)) continue;
+        const text = _graveyardStaticText(card);
+        if (!text) continue;
+        live.add(card);
+        const had = this._gySources.get(card);
+        const old = had && this.getPermById(had);
+        if (old && old.owner === pl.id) continue;
+        if (old) this._dropGraveyardSource(had);
+        const face = _zoneCardFront(card);
+        const ts = this.nextTimestamp++;
+        const pseudo = {
+          id: 'gysrc_' + pl.id + '_' + ts, name: face.name || card.name || '', timestamp: ts,
+          owner: pl.id, controller: pl.id,
+          printedTypes: [], printedSupertypes: [], printedSubtypes: [], printedPower: null, printedToughness: null,
+          printedAbilities: [], printedColors: face.colors || card.colors || [], manaValue: 0, manaCost: '',
+          oracleText: text, imageUri: (face.image_uris || card.image_uris || {}).normal || '',
+          isManualEffect: false, isEmblem: true, isGraveyardSource: true, isToken: false, counters: {}, scryfallData: card,
+        };
+        this.permanents.push(pseudo);
+        this._invalidate();
+        this.effects.push(...parseCardEffects(pseudo, { name: pseudo.name, oracle_text: text, type_line: face.type_line || card.type_line || '', colors: pseudo.printedColors, cmc: 0 }));
+        this._gySources.set(card, pseudo.id);
+        changed = true;
+      }
+    }
+    for (const [card, id] of [...this._gySources]) {
+      if (live.has(card)) continue;
+      this._dropGraveyardSource(id);
+      this._gySources.delete(card);
+      changed = true;
+    }
+    if (changed) this._invalidate();
+  },
+  _dropGraveyardSource(id) {
+    this.permanents = this.permanents.filter(p => p.id !== id);
+    this.effects = this.effects.filter(e => e.sourceId !== id);
+    this._invalidate();
+  },
+
   _syncCopyFollowers() {
     for (const e of this.effects) {
       if (!e._followsCopyTarget) continue;
@@ -3560,6 +3616,7 @@ const Battlefield = {
   /* Return Map<permId, finalState> for ALL real permanents. Runs the pipeline once
      (evaluateAllPermanents), which also records every permanent's inspector trace. */
   getAllFinalStates() {
+    this._syncGraveyardSources();
     if (this._cachedFinalStatesVersion === this._cacheVersion && this._cachedFinalStates !== null) {
       return this._cachedFinalStates;
     }
@@ -3635,6 +3692,8 @@ const Battlefield = {
     // The same states under live ids, for conditions read as the spell resolves (a restore
     // keeps the snapshot's cast-time ids, so it translates this copy).
     perm._castStates = firedAtSnapshot.states;
+    // The graveyards as the spell resolves (cast), for its graveyard counts and conditions.
+    if (/\bgraveyards?\b/i.test(perm.oracleText || '')) perm._firedAtGraveyards = _snapshotGraveyards();
     this.permanents.push(perm);
     // Parse spell effects so the inspector can show a target picker (e.g. Viridescent Wisps, Oracle's Restoration)
     const resolvedForParse = _resolveCardFace(card, opts.faceIndex || 0);
@@ -4060,6 +4119,8 @@ const Battlefield = {
         modalModeCounts: p.modalModeCounts || null,
         primaryTarget, multiTarget, slotTargets, modalTargets, modalTargetIds, copySource, targetTs, slotTs, copyTargetPermId, refPermId,
         choices: captureChoices(p.id),
+        // A spell's graveyards as it was cast (_firedAtGraveyards): what its counts read.
+        firedAtGraveyards: p.isSpell && p._firedAtGraveyards ? p._firedAtGraveyards : undefined,
         // Camera/board-snapshot popup for a SPELL (instant/sorcery on the stack): the
         // cast-time board picture. Like fired abilities, addSpell rebuilds it from the
         // CURRENT board on restore, so persist it. Spells have no separate _firedAtStates,
@@ -4139,6 +4200,8 @@ const Battlefield = {
         // own combat-trick lord left play), silently changing the locked set. Keys are perm
         // ids, translated through idMap on restore; entries for since-removed perms drop out.
         firedAtStates: p._firedAtStates ? [...p._firedAtStates.entries()] : null,
+        // The graveyards as it resolved, for its graveyard counts and conditions.
+        firedAtGraveyards: p._firedAtGraveyards || undefined,
         // Camera/board-snapshot popup: the rest of the fire-time board picture (perms,
         // mutate stacks, bestow links, players). Recomputed-from-current-board on replay
         // like firedAtStates, so persist it. .states is omitted here — it is the same data
@@ -4571,6 +4634,13 @@ const Battlefield = {
           players: f.firedAtSnapshot.players || [],
         };
       }
+    }
+
+    // The graveyards a spell or fired ability saw: replaying it read the graveyards of now.
+    for (const r of [...(data.perms || []), ...(data.firedAbilities || [])]) {
+      const nsId = r.firedAtGraveyards && idMap[r.id];
+      const pseudo = nsId && this.getPermById(nsId);
+      if (pseudo) pseudo._firedAtGraveyards = r.firedAtGraveyards;
     }
 
     // Same for SPELLS (instants/sorceries on the stack): addSpell rebuilt _firedAtSnapshot

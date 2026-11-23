@@ -189,7 +189,7 @@ function _creatureTypeAutocompleteForChosen(permId, query) {
   if (!dropdown) return;
   if (!query || query.length < 1) { dropdown.style.display = 'none'; return; }
   const q = query.toLowerCase();
-  const matches = TypeCatalog.creatureTypeChoices().filter(t => t.toLowerCase().startsWith(q)).slice(0, 8);
+  const matches = creatureTypeChoicesFor(Battlefield.getPermById(permId)).filter(t => t.toLowerCase().startsWith(q)).slice(0, 8);
   if (matches.length === 0) { dropdown.style.display = 'none'; return; }
   dropdown.innerHTML = matches.map(m =>
     // (The type is read off the element: C'tan and Jem'Hadar would end a quoted argument.)
@@ -208,9 +208,12 @@ function _selectChosenCreatureType(permId, type) {
 
 function setChosenCreatureType(permId, type) {
   const trimmed = (type || '').trim();
-  const chosen = trimmed ? TypeCatalog.creatureTypeNamed(trimmed) : null;
+  const perm = Battlefield.getPermById(permId);
+  const chosen = trimmed ? TypeCatalog.creatureTypeNamed(trimmed, creatureTypeChoicesFor(perm)) : null;
   if (trimmed && !chosen) {
-    _showSBAToast(creatureTypeRefusal(trimmed));
+    // "Choose a creature type other than Wall" (Standardize).
+    const barred = TypeCatalog.creatureTypeNamed(trimmed, _creatureTypesExcludedBy(perm && (perm.originalOracleText || perm.oracleText)));
+    _showSBAToast(barred ? `Cannot choose "${barred}". This card chooses a creature type other than ${barred}.` : creatureTypeRefusal(trimmed));
     renderAll();   // puts the type chosen before back in the box
     return;
   }

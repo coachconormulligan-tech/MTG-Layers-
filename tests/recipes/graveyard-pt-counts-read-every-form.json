@@ -1,0 +1,196 @@
+{
+  "name": "Graveyard P/T counts read every form",
+  "notes": "Counts that gave nothing, the wrong number or asked for a typed X. Your graveyard: Craw Wurm (6/4, mana value 6), Diligent Farmhand, Llanowar Elves, Shock, Divination, Muscle Burst, Ancestral Anger, Kjeldoran War Cry (five instant and sorcery cards, noncreature nonland too; greatest power 6, greatest mana value 6). You own Lightning Bolt and Think Twice in exile. The opponent's graveyard: Grizzly Bears, Forest, Ornithopter (creature, land, artifact; one green creature card). Monstrous War-Leech 6/6; Crackling Drake 7/4 (5 + 2 in exile); Dragonfly Swarm 5/3; Haunting Apparition, the opponent chosen, 1 + 1 = 2/2; Nighthawk Scavenger 1 + 3 = 4/3; Carrion Grub 0+6 = 6/5; Coram 6/5. Haunting Apparition's player list is the opponents (\"choose an opponent\").",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Monstrous War-Leech"
+    },
+    {
+      "add": "Crackling Drake"
+    },
+    {
+      "add": "Dragonfly Swarm"
+    },
+    {
+      "add": "Haunting Apparition",
+      "as": "ha"
+    },
+    {
+      "call": [
+        "setTargetPlayer",
+        "@ha",
+        "p2"
+      ]
+    },
+    {
+      "add": "Nighthawk Scavenger"
+    },
+    {
+      "add": "Carrion Grub"
+    },
+    {
+      "add": "Coram, the Undertaker"
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Craw Wurm"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Diligent Farmhand"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Llanowar Elves"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Shock"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Divination"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Muscle Burst"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Ancestral Anger"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Kjeldoran War Cry"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p2",
+        "card:Grizzly Bears"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p2",
+        "card:Forest"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p2",
+        "card:Ornithopter"
+      ]
+    },
+    {
+      "call": [
+        "addToExile",
+        "card:Lightning Bolt",
+        {
+          "owner": "player_0"
+        }
+      ]
+    },
+    {
+      "call": [
+        "addToExile",
+        "card:Think Twice",
+        {
+          "owner": "player_0"
+        }
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Monstrous War-Leech",
+      "final": {
+        "power": 6,
+        "toughness": 6
+      }
+    },
+    {
+      "perm": "Crackling Drake",
+      "final": {
+        "power": 7,
+        "toughness": 4
+      }
+    },
+    {
+      "perm": "Dragonfly Swarm",
+      "final": {
+        "power": 5,
+        "toughness": 3
+      }
+    },
+    {
+      "perm": "Haunting Apparition",
+      "final": {
+        "power": 2,
+        "toughness": 2
+      }
+    },
+    {
+      "perm": "Nighthawk Scavenger",
+      "final": {
+        "power": 4,
+        "toughness": 3
+      }
+    },
+    {
+      "perm": "Carrion Grub",
+      "final": {
+        "power": 6,
+        "toughness": 5
+      }
+    },
+    {
+      "perm": "Coram, the Undertaker",
+      "final": {
+        "power": 6,
+        "toughness": 5
+      }
+    },
+    {
+      "targetCandidates": {
+        "perm": "Haunting Apparition",
+        "kind": "players"
+      },
+      "are": [
+        "Opponent"
+      ]
+    }
+  ]
+}

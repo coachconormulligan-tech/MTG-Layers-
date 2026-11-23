@@ -1,0 +1,78 @@
+{
+  "name": "Maskwood Nexus and Arcane Adaptation give their types to graveyard cards a count reads",
+  "notes": "Conor, 2026-11-22: \"creature cards you own that aren't on the battlefield\" have the type a count of graveyard cards reads. Cid, Timeless Artificer: +1/+1 for each Artificer you control and each Artificer card in your graveyard. Maskwood Nexus: Cid and Grizzly Bears are every creature type (Artificers, and Heroes, so both get it), and the Craw Wurm card in your graveyard is an Artificer card; the opponent's Hill Giant card is not yours. 2 + 1 = 3: Bears 5/5, Cid 7/7. The opponent's Arcane Adaptation, Artificer chosen: their Cid and Ornithopter are Artificers, and their Hill Giant card is an Artificer card (Craw Wurm, yours, is not theirs): 2 + 1 = 3, Ornithopter 3/5.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Cid, Timeless Artificer"
+    },
+    {
+      "add": "Grizzly Bears"
+    },
+    {
+      "add": "Maskwood Nexus"
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p1",
+        "card:Craw Wurm"
+      ]
+    },
+    {
+      "call": [
+        "addToGraveyard",
+        "p2",
+        "card:Hill Giant"
+      ]
+    },
+    {
+      "add": "Arcane Adaptation",
+      "controller": "p2",
+      "as": "aa"
+    },
+    {
+      "call": [
+        "setChosenCreatureType",
+        "@aa",
+        "Artificer"
+      ]
+    },
+    {
+      "add": "Cid, Timeless Artificer",
+      "controller": "p2"
+    },
+    {
+      "add": "Ornithopter",
+      "controller": "p2"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 5,
+        "toughness": 5
+      }
+    },
+    {
+      "perm": "Cid, Timeless Artificer",
+      "final": {
+        "power": 7,
+        "toughness": 7
+      }
+    },
+    {
+      "perm": "Ornithopter",
+      "final": {
+        "power": 3,
+        "toughness": 5
+      }
+    }
+  ]
+}
