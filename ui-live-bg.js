@@ -359,15 +359,16 @@ function _lbEdge(d, W, H, side, guess, range, a, b, any) {
 /* Where each frame prints its boxes, as fractions of the image (measured on
    Scryfall's images): text = the text box, plate = the flat inside of the P/T
    box, cut = the corner of the text box the P/T box covers, type = the part of
-   the type bar that holds the words (it stops before the set symbol). The 1993
+   the type bar that holds the words (it stops before the set symbol), name =
+   the title bar up to its right end (the mana cost is found in it). The 1993
    and 1997 frames ('old') print the type line and P/T in white straight on
    the frame, in the same places on both. */
 const LB_FRAME = {
-  '2015': { text: [0.076, 0.631, 0.924, 0.922], plate: [0.791, 0.903, 0.930, 0.937], cut: [0.766, 0.889], type: [0.072, 0.569, 0.862, 0.611] },
-  '2003': { text: [0.084, 0.628, 0.910, 0.899], plate: [0.752, 0.900, 0.908, 0.935], cut: [0.726, 0.886], type: [0.086, 0.571, 0.861, 0.609] },      // (to row 413 of 680: a letter's tail ends there, the bar's line is at 415 or 416)
+  '2015': { text: [0.076, 0.631, 0.924, 0.922], plate: [0.791, 0.903, 0.930, 0.937], cut: [0.766, 0.889], type: [0.072, 0.569, 0.862, 0.611], name: [0.074, 0.053, 0.940, 0.097] },
+  '2003': { text: [0.084, 0.628, 0.910, 0.899], plate: [0.752, 0.900, 0.908, 0.935], cut: [0.726, 0.886], type: [0.086, 0.571, 0.861, 0.609], name: [0.082, 0.057, 0.930, 0.101] },      // (to row 413 of 680: a letter's tail ends there, the bar's line is at 415 or 416)
   // White words with a dark shadow, straight on the frame (light: 'both');
   // the type line stops before the set symbol, which may come in from the right.
-  'old':  { text: [0.107, 0.600, 0.893, 0.884], plate: [0.803, 0.899, 0.934, 0.941], type: [0.082, 0.559, 0.877, 0.594], light: 'both', typeSeeds: 'r' },
+  'old':  { text: [0.107, 0.600, 0.893, 0.884], plate: [0.803, 0.899, 0.934, 0.941], type: [0.082, 0.559, 0.877, 0.594], light: 'both', typeSeeds: 'r', name: [0.090, 0.046, 0.925, 0.087] },
   // The "future" frame (Future Sight, and later printings in its style): the
   // text box has bowed sides and a rounded foot, and the P/T box sits under
   // it, not in its corner. A coloured card prints its type line and P/T in
@@ -558,6 +559,30 @@ function _liveBgAnalyzeSide(d, W, H, frame, hasPt) {
   return res;
 }
 
+/* The title bar: where the name ends and the mana cost begins. The cost's
+   right edge is the rightmost column with print (a frame line, print in nearly
+   every row, is not); its symbols are each about 2.65% of the card wide, so
+   all but part of the first are passed over, and the cost starts after the
+   first gap of 1.2% of the card. cost: how many mana symbols it prints.
+   Returns the patch's right end, or null. */
+function _lbNameEnd(d, W, H, x0, y0, x1, y1, cost) {
+  if (!cost) return x1;
+  const h = y1 - y0, hist = new Uint32Array(256);
+  for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) hist[_lbLum(d, (y * W + x) * 4)]++;
+  let acc = 0, med = 0;
+  for (let i = 0, n = (y1 - y0) * (x1 - x0); i < 256; i++) { acc += hist[i]; if (acc >= n / 2) { med = i; break; } }
+  const ink = (x) => { let c = 0; for (let y = y0; y < y1; y++) if (Math.abs(_lbLum(d, (y * W + x) * 4) - med) > 55) c++; return c; };
+  let x = x1 - 1;
+  while (x > x0 && (ink(x) === 0 || ink(x) > h * 0.85)) x--;
+  x -= Math.round(cost * 0.0265 * W * 0.8);
+  const gap = Math.max(4, Math.round(0.012 * W));
+  let run = 0;
+  for (; x > x0; x--) {
+    if (ink(x) === 0) { if (++run >= gap) break; } else run = 0;
+  }
+  return x > x0 ? x + run - 2 : null;
+}
+
 function _lbRect(x0, y0, x1, y1, W, H, url) {
   return url ? { x: x0 / W, y: y0 / H, w: (x1 - x0) / W, h: (y1 - y0) / H, url } : null;
 }
@@ -637,7 +662,7 @@ function _lbTypeShift(d, W, H, f, light) {
   return null;
 }
 
-function _liveBgAnalyze(img, frame, hasPt, hasText, ind, page) {
+function _liveBgAnalyze(img, frame, hasPt, hasText, ind, page, cost) {
   const show = frame === 'show';
   let fr = LB_FRAME[show ? '2015' : frame];
   // An Adventure, an Omen or a prepare card: the text box is an open book, and
@@ -834,6 +859,15 @@ function _liveBgAnalyze(img, frame, hasPt, hasText, ind, page) {
     const b = px(f[1], H) + dy, e = px(f[3], H) + dy;
     res.type = _lbRect(a, b, c, e, W, H, _lbErase(d, W, H, a, b, c, e, px(0.05, W), 3, 2, null, fr.typeSeeds || (show ? false : 'bar'), lightType === true ? 'adapt' : lightType));
   }
+  // The title bar, when the card's name has changed (cost: the number of mana
+  // symbols, -1 when the name is the printed one). Not on a showcase printing.
+  if (fr.name && !show && cost >= 0) {
+    const f = fr.name, a = px(f[0], W), b = px(f[1], H), e = px(f[3], H);
+    const c = _lbNameEnd(d, W, H, a, b, px(f[2], W), e, cost);
+    if (c !== null && c - a > W * 0.3) {
+      res.name = _lbRect(a, b, c, e, W, H, _lbErase(d, W, H, a, b, c, e, px(0.05, W), 3, 2, null, fr.light ? 'r' : 'bar', fr.light || false));
+    }
+  }
   if (fr.plate && hasPt) {
     const f = fr.plate, a = px(f[0], W), b = px(f[1], H), c = px(f[2], W), e = px(f[3], H);
     res.pt = _lbRect(a, b, c, e, W, H, _lbErase(d, W, H, a, b, c, e, px(0.03, W), fr.light ? 3 : 2, 2, null, fr.light ? 'none' : true, (show || fr.fixed) && lightPt ? 'adapt' : lightPt));
@@ -855,7 +889,7 @@ function _liveBgPump() {
   img.crossOrigin = 'anonymous';
   img.onload = () => {
     let result = null;
-    try { result = _liveBgAnalyze(img, job.frame, job.hasPt, job.hasText, job.ind, job.page); } catch (e) { result = null; }
+    try { result = _liveBgAnalyze(img, job.frame, job.hasPt, job.hasText, job.ind, job.page, job.cost); } catch (e) { result = null; }
     finish(result);
   };
   img.onerror = () => finish(null);
@@ -897,6 +931,18 @@ function _liveBgApply(box, res) {
       for (let k = 0.96; k >= 0.74 && type.scrollWidth > type.clientWidth + 1; k -= 0.04) type.style.fontSize = (base * k).toFixed(2) + 'cqw';
     }
   }
+  // The name, over the title bar where it was read, else on a drawn bar there.
+  const name = box.querySelector('.bf-live-name');
+  if (name && res.name) {
+    _liveBgPlace(name, res.name);
+    const high = res.name.h * res.aspect * 100;
+    name.style.lineHeight = high.toFixed(2) + 'cqw';
+    name.style.fontSize = '';
+    const cs = getComputedStyle(name), cqw = parseFloat(cs.lineHeight) / high, base = parseFloat(cs.fontSize) / cqw;
+    if (cqw > 0 && base > 0) {
+      for (let k = 0.96; k >= 0.66 && name.scrollWidth > name.clientWidth + 1; k -= 0.04) name.style.fontSize = (base * k).toFixed(2) + 'cqw';
+    }
+  } else if (name) name.classList.add('bf-live-drawn');
   const pt = box.querySelector('.bf-live-pt:not(.bf-live-drawn)');
   if (pt && res.pt) _liveBgPlace(pt, res.pt);
   // (A textless printing whose plate was not found gets a drawn box.)
@@ -931,15 +977,16 @@ function applyLiveBackgrounds() {
   document.querySelectorAll('#battlefield .bf-live[data-src]').forEach(box => {
     const src = box.dataset.src, frame = box.dataset.frame, hasPt = box.dataset.pt === '1', hasText = box.dataset.text === '1', ind = box.dataset.ind === '1';
     const page = box.dataset.page || '';
-    const key = src + '|' + frame + (hasPt ? 1 : 0) + (hasText ? 1 : 0) + (ind ? 1 : 0) + page;
+    const cost = box.dataset.cost ? +box.dataset.cost : -1;
+    const key = src + '|' + frame + (hasPt ? 1 : 0) + (hasText ? 1 : 0) + (ind ? 1 : 0) + page + '|' + cost;
     const hit = _liveBg.get(key);
     if (hit) {
       if (hit.done && hit.result) _liveBgApply(box, hit.result);
-      else if (hit.done) { box.classList.add('bf-live-failed'); box.querySelectorAll('.bf-live-wait').forEach(g => g.classList.remove('bf-live-wait')); }   // unreadable image: the first-guess place
+      else if (hit.done) { box.querySelectorAll('.bf-live-name').forEach(n => n.classList.add('bf-live-drawn')); box.classList.add('bf-live-failed'); box.querySelectorAll('.bf-live-wait').forEach(g => g.classList.remove('bf-live-wait')); }   // unreadable image: the first-guess place
       return;
     }
     _liveBg.set(key, { done: false });
-    _liveBgQueue.push({ key, src, frame, hasPt, hasText, ind, page });
+    _liveBgQueue.push({ key, src, frame, hasPt, hasText, ind, page, cost });
   });
   _liveBgPump();
 }

@@ -2849,6 +2849,10 @@ function parseCardEffects(permanent, card, opts = {}) {
           copyParams.setPT = { power: parseInt(ptm[1]), toughness: parseInt(ptm[2]) };
           body = (body.slice(0, ptm.index) + body.slice(ptm.index + ptm[0].length)).replace(/\s+/g, ' ').trim();
         }
+        // "except it's 4/3, it's a Vehicle artifact in addition to its other types" (Mindlink
+        // Mech): the lazy capture starts at the first "it's", so the types are the words after
+        // the last subject ("it's" and "a" are no subtypes).
+        body = body.replace(/^.*\b(?:it|this (?:card|permanent|creature|token))(?:'s| is| are)\s+(?:an?\s+)?/i, '').replace(/^[\s,]*(?:and\s+)?/i, '').trim();
         const SUPERTYPE_WORDS = { legendary: 'Legendary', basic: 'Basic', snow: 'Snow', world: 'World' };
         const TYPE_WORDS = { artifact: 'Artifact', creature: 'Creature', enchantment: 'Enchantment', land: 'Land', planeswalker: 'Planeswalker', battle: 'Battle' };
         for (const w of body.split(/[\s,]+/)) {
@@ -3343,6 +3347,14 @@ function parseCardEffects(permanent, card, opts = {}) {
     const _atStart = _getMatchContentPos(addTypeMatch.index);
     const _atEnd = addTypeMatch.index + addTypeMatch[0].length;
     if (copyClauseSpans.some(r => _atStart < r.end && _atEnd > r.start)) continue;
+    // 'All Slivers have "{1}: This permanent becomes the creature type of your choice in addition
+    // to its other types …"' (Mistform Sliver): an "in addition to" inside a quote is the granted
+    // ability's own text, parsed when that ability is fired; the grant is the full-text reader's.
+    {
+      const _atAddnPos = addTypeMatch.index + addTypeMatch[0].search(/\sin addition to (?:its|their) other\b/i);
+      const _atLinePrefix = oracle.substring(oracle.lastIndexOf('\n', _atAddnPos - 1) + 1, _atAddnPos);
+      if ((_atLinePrefix.match(/"/g) || []).length % 2 === 1) continue;
+    }
     let filterText = addTypeMatch[1].trim();
     let becomesText = addTypeMatch[2].trim();
     // "Target land you control becomes a 0/0 creature with haste that's still a land. That land

@@ -752,7 +752,7 @@ body.utility-page-open .utility-page-shell {
 .bf-card { container-type: inline-size; }
 /* A patch blurs the print beneath it into the frame's own colour and writes
    over that in the card's ink, so it reads as part of the card on any frame. */
-.bf-live-type, .bf-live-pt, .bf-live-text {
+.bf-live-type, .bf-live-pt, .bf-live-text, .bf-live-name {
   position: absolute;
   overflow: hidden;
   color: #141414;
@@ -761,7 +761,7 @@ body.utility-page-open .utility-page-shell {
   backdrop-filter: blur(2.4cqw);
 }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .bf-live-type, .bf-live-pt, .bf-live-text { background: #e6e0d3; }
+  .bf-live-type, .bf-live-pt, .bf-live-text, .bf-live-name { background: #e6e0d3; }
 }
 .bf-live { position: absolute; inset: 0; }
 /* The card's own image with the print erased (ui-live-bg.js): the patch is
@@ -812,6 +812,19 @@ body.utility-page-open .utility-page-shell {
   text-overflow: ellipsis;
 }
 .bf-live-type-foot { top: auto; bottom: 12.5%; left: 5.5%; max-width: 89%; }
+/* The card's name over its title bar (first guess, until the image is read), else on a drawn bar at the top */
+.bf-live-name {
+  left: 7.4%; top: 5.3%;
+  width: fit-content; max-width: 70%;
+  height: 4.4%;
+  padding: 0 1.2cqw;
+  border-radius: .8cqw;
+  font: 700 4.6cqw/6.2cqw "Beleren", "Gill Sans", "Trebuchet MS", sans-serif;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.bf-live-name.bf-live-drawn { left: 5.5%; top: 4%; height: 6%; max-width: 89%; line-height: 8cqw; }
+.bf-live-name.bf-live-exact { padding: 0 .4cqw; font: 700 4.6cqw "Beleren", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; }
 .bf-live-text {
   left: 8.2%; right: 8.2%; top: 63.8%; bottom: 9.8%;
   padding: .8cqw 1.2cqw;

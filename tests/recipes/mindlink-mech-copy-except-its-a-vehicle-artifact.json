@@ -1,0 +1,23 @@
+{
+  "name": "Mindlink Mech — copy \"except it's 4/3, it's a Vehicle artifact in addition to its other types\"",
+  "notes": "Reported 2026-11-22. The copy exception's \"in addition to\" reader captured from the first \"it's\" (\"4/3, it's a Vehicle artifact\"), so after the 4/3 was taken out the words \"it's\" and \"a\" became subtypes beside Vehicle. Now only the words after the last \"it's\" are the types: a Bear Vehicle artifact creature, 4/3, with flying.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Mindlink Mech", "as": "mech" },
+    { "fire": "@mech", "trigger": 1, "as": "t" },
+    { "copy": ["@t", "@bears"] }
+  ],
+  "asserts": [
+    {
+      "perm": "Mindlink Mech",
+      "final": {
+        "name": "Grizzly Bears",
+        "power": 4,
+        "toughness": 3,
+        "types": { "$includes": ["Artifact", "Creature"] },
+        "subtypes": ["Bear", "Vehicle"],
+        "abilities": { "$includes": ["Flying"] }
+      }
+    }
+  ]
+}

@@ -863,6 +863,25 @@ function _liveTypeLineHtml(p, fs) {
   return `<div class="bf-live-type bf-live-type-${spot}${look}">${text || 'No types'}</div>`;
 }
 
+// The name, when it is not the printed one (a copy, "becomes a copy … except
+// its name is …", a name set by an effect): over the title bar on the usual
+// frame, where ui-live-bg.js reads it, else on a drawn bar at the top.
+function _liveNameChanged(p, fs) {
+  return !p.isFaceDown && !!fs.name && fs.name !== p.name;
+}
+function _liveNameHtml(p, fs) {
+  if (!_liveNameChanged(p, fs)) return '';
+  const read = _liveKind(p) === 'line' && _liveTypeSpot(p) === 'line';
+  const look = read ? (_liveOldFrame(p) ? ' bf-live-light' : '') : ' bf-live-drawn';
+  return `<div class="bf-live-name${look}"><span class="bf-live-new">${escapeHtml(fs.name)}</span></div>`;
+}
+// How many mana symbols the title bar prints (where the name ends)
+function _liveCostSymbols(p) {
+  const sc = p.scryfallData || {};
+  const face = (sc.card_faces || [])[p.activeFaceIndex || 0] || sc;
+  return ((face.mana_cost != null ? face.mana_cost : sc.mana_cost) || '').match(/\{[^}]+\}/g)?.length || 0;
+}
+
 // The colour of a card's power/toughness box, from the colours of its frame
 function _livePlateColor(p) {
   const tone = { W: '#f3efe2', U: '#bcd3e6', B: '#b4aca6', R: '#e6b092', G: '#bfd3b6', White: '#f3efe2', Blue: '#bcd3e6', Black: '#b4aca6', Red: '#e6b092', Green: '#bfd3b6' };
@@ -929,7 +948,11 @@ function _liveTextBoxHtml(p, fs) {
     had.add(k);
     return true;
   });
-  if (kind !== 'room' && abilities.length === printed.length && abilities.every(a => printed.includes(a))) return '';
+  // (Its own name in its rules text is the name it has now: a printed line that
+  // names the card is rewritten when the name changes.)
+  const name = fs.name || p.name;
+  const namesItself = _liveNameChanged(p, fs) && printed.some(a => _replaceThisCard(a, name) !== a);
+  if (kind !== 'room' && !namesItself && abilities.length === printed.length && abilities.every(a => printed.includes(a))) return '';
   // Paragraphs as a card prints them: keywords share one, comma-separated.
   // Equip and Reconfigure last, as in the inspector.
   const isKeyword = (a) => a.length <= 40 && !/[.:"—]/.test(a);
@@ -937,7 +960,7 @@ function _liveTextBoxHtml(p, fs) {
   const parasOf = (list) => {
     const paras = [];
     for (const a of _groupAbilityLines([...list].sort((x, y) => last(x) - last(y)))) {
-      const part = { text: _replaceThisCard(a, p.name).replace(/\s+([.,;])/g, '$1'), isNew: !printed.includes(a) };
+      const part = { text: _replaceThisCard(a, name).replace(/\s+([.,;])/g, '$1'), isNew: !printed.includes(a) };
       const prev = paras[paras.length - 1];
       if (isKeyword(a) && prev && prev.keywords) {
         part.text = part.text.charAt(0).toLowerCase() + part.text.slice(1);
@@ -1033,7 +1056,7 @@ function renderLivePatches(p, fs) {
   const sc = p.scryfallData || {};
   const face = (sc.card_faces || [])[p.activeFaceIndex || 0] || sc;
   const ind = (face.color_indicator || sc.color_indicator || []).length ? 1 : 0;
-  const build = () => _liveTypeLineHtml(p, fs) + _liveTextBoxHtml(p, fs) + _livePtHtml(p, fs);
+  const build = () => _liveNameHtml(p, fs) + _liveTypeLineHtml(p, fs) + _liveTextBoxHtml(p, fs) + _livePtHtml(p, fs);
   // A showcase or borderless printing is built twice: as the usual frame,
   // shown if ui-live-bg.js finds its boxes in the usual places, and with
   // drawn boxes, shown if it does not.
@@ -1061,7 +1084,7 @@ function renderLivePatches(p, fs) {
   const hasPt = p.printedPower !== null && p.printedPower !== undefined;
   const frame = (kind === 'pw' && sc.frame === '2003') ? 'pw03' : kind !== 'line' ? kind : _liveOldFrame(p) ? 'old' : ((p.scryfallData || {}).frame || '2015');
   const attrs = usual
-    ? ` data-src="${escapeAttr(p.imageUri.replace('/small/', '/normal/'))}" data-frame="${escapeAttr(frame)}" data-ind="${ind}" data-pt="${hasPt ? 1 : 0}" data-text="${(p.printedAbilities || []).length ? 1 : 0}" data-page="${kind === 'line' ? _livePage(p) : ''}"`
+    ? ` data-src="${escapeAttr(p.imageUri.replace('/small/', '/normal/'))}" data-frame="${escapeAttr(frame)}" data-ind="${ind}" data-pt="${hasPt ? 1 : 0}" data-text="${(p.printedAbilities || []).length ? 1 : 0}" data-page="${kind === 'line' ? _livePage(p) : ''}"${kind === 'line' && _liveNameChanged(p, fs) ? ` data-cost="${_liveCostSymbols(p)}"` : ''}`
     : '';
   return `<div class="bf-live"${attrs}>${html}</div>`;
 }
