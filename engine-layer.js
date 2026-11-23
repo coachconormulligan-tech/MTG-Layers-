@@ -42,7 +42,10 @@ function applyLayerGlobal(effects, allStates, allPermanents, tracedIds, appliedS
   const logReasons = {}; // maps log-entry text → human-readable reason string
   let remaining = [...effects];
   let iteration = 0;
-  const MAX_ITER = 50;
+  // Each pass applies one effect (or all the rest, below), so the loop ends after at most
+  // effects.length passes. A fixed cap silently dropped every effect past it: Mistform Sliver's
+  // "{1}: becomes the creature type of your choice" fired 366 times stopped at the 36th type.
+  const MAX_ITER = effects.length + 1;
 
   while (remaining.length > 0 && iteration < MAX_ITER) {
     iteration++;

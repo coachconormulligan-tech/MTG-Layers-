@@ -17,8 +17,21 @@ function _equippedToCarrier(state) {
    the creature its own carrier is attached to, rather than to every creature. */
 function _attachedSourceHasAbility(state, allStates, abilityText) {
   if (!allStates) return false;
+  // A board state carries no id of its own: find it in allStates. Comparing against a missing
+  // id made every untargeted effect (targetId undefined) count as an attachment, so with
+  // Senator Peacock + Armed with Proof any Clue "equipped" every creature (+2/+0 to Mindlink
+  // Mech after On Serra's Wings fell off it). Nothing is attached to itself.
+  let stateId = state.id;
+  if (!stateId) for (const [id, st] of allStates) if (st === state) { stateId = id; break; }
+  if (!stateId) return false;
+  // An Equipment attached through its Equip ability has a tracker (applyEquipAttachment) that
+  // applies the granted "Equipped creature gets ..." itself: counting it here as well gave a
+  // Clue equipped by Armed with Proof +4/+0.
+  const tracked = new Set();
+  for (const e of Battlefield.effects) if (e._isEquipTargetEff && e.targetId === stateId) tracked.add(e.sourceId);
   return Battlefield.effects.some(e => {
-    if (e.targetId !== state.id || e.selfTarget) return false;
+    if (!e.targetId || e.targetId !== stateId || e.selfTarget || e.sourceId === stateId) return false;
+    if (tracked.has(e.sourceId)) return false;
     const src = allStates.get(e.sourceId);
     return !!(src && (src.abilities || []).includes(abilityText));
   });

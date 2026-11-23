@@ -1,0 +1,38 @@
+{
+ "name": "Armed with Proof + Senator Peacock \u2014 an unattached Clue gives no creature +2/+0",
+ "notes": "Reported 2026-11-23. _attachedSourceHasAbility compared each effect's targetId with state.id, but board states carry no id, so every untargeted effect (targetId undefined) of an artifact made a Clue Equipment counted as an attachment: Grizzly Bears got +2/+0 with nothing attached. The state's id is now read from allStates, and an Equipment attached through Equip is left to its own tracker (else +4/+0).",
+ "steps": [
+  {
+   "add": "Mycosynth Lattice"
+  },
+  {
+   "add": "Senator Peacock"
+  },
+  {
+   "add": "Armed with Proof"
+  },
+  {
+   "add": "Grizzly Bears"
+  }
+ ],
+ "asserts": [
+  {
+   "perm": "Grizzly Bears",
+   "final": {
+    "power": 2,
+    "toughness": 2
+   }
+  },
+  {
+   "perm": "Mycosynth Lattice",
+   "final": {
+    "subtypes": {
+     "$includes": [
+      "Clue",
+      "Equipment"
+     ]
+    }
+   }
+  }
+ ]
+}
