@@ -301,6 +301,10 @@ function _retryTypeCatalog() {
    a card or switching the player tab is no change. Kept in memory only: a
    reload starts a new history. */
 const UNDO_LIMIT = 40;
+// Each step is the whole board, so a big board makes big steps (every fired ability keeps its
+// source's card data): with Mistform Sliver activated a few hundred times a step was 20 MB and
+// 40 of them crashed the tab. Older steps are dropped past this many characters in all.
+const UNDO_MAX_CHARS = 40e6;
 let _undoPast = [], _undoFuture = [];
 let _undoNow = null;            // { json, sel }: the board as it stands
 let _undoTimer = null;
@@ -322,6 +326,9 @@ function _undoNote() {
   if (_undoNow) {
     _undoPast.push(_undoNow);
     if (_undoPast.length > UNDO_LIMIT) _undoPast.shift();
+    let chars = 0;
+    for (const s of _undoPast) chars += s.json.length;
+    while (_undoPast.length > 1 && chars > UNDO_MAX_CHARS) chars -= _undoPast.shift().json.length;
     _undoFuture = [];
   }
   _undoNow = cur;
