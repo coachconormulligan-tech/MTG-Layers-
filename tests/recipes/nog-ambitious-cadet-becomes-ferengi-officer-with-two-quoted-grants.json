@@ -1,0 +1,20 @@
+{
+  "name": "Nog, Ambitious Cadet — fired: \"becomes a Ferengi Officer and gains \"…\" and \"…\"\"",
+  "notes": "Partial sweep (2026-11-25). With two quoted grants after \"and gains\", the type parser cut only the last quote; the first one's words (\"gains\", \"graveyard\") stayed in the type text and the type change was skipped, so Nog stayed a Ferengi Scout. Both abilities fired: Nog is a Ferengi Officer with base 3/4 and both quoted abilities.",
+  "steps": [
+    { "add": "Nog, Ambitious Cadet", "as": "nog" },
+    { "fire": "@nog", "activated": 1, "as": "scout" },
+    { "fire": "@nog", "activated": 2, "as": "officer" }
+  ],
+  "asserts": [
+    {
+      "perm": "Nog, Ambitious Cadet",
+      "final": {
+        "subtypes": ["Ferengi", "Officer"],
+        "power": 3,
+        "toughness": 4,
+        "abilities": { "$includes": ["You may play lands from your graveyard", "You may play an additional land on each of your turns."] }
+      }
+    }
+  ]
+}

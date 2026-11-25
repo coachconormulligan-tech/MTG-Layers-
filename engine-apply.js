@@ -15,6 +15,18 @@ function applyEffect(state, effect, context) {
   const changes = [];
   switch (effect.type) {
     case EFFECT_TYPE.ADD_TYPE:
+      if (effect.params.gainsAllLandTypes && effect.params.nonbasicOnly) {
+        // "Every nonbasic land type" (Planar Nexus): each official land subtype that is not a
+        // basic land type, so no basic land mana ability (CR 305.7 is about basic types only).
+        let added = 0;
+        if (typeof TypeCatalog !== 'undefined') {
+          for (const lt of TypeCatalog.officialSubtypes.land) {
+            if (!BASIC_LAND_MANA[lt] && !state.subtypes.includes(lt)) { state.subtypes.push(lt); added++; }
+          }
+        }
+        if (added) changes.push(`Gained every nonbasic land type (${added})`);
+        break;
+      }
       if (effect.params.gainsAllLandTypes) {
         if (!state.isAllLandTypes) {
           state.isAllLandTypes = true;

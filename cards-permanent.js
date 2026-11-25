@@ -593,9 +593,21 @@ function _replaceProperNounSelfRef(cardName, oracleText, isToken = false) {
   const candidates = [normalizedName];
   const commaIdx = normalizedName.indexOf(',');
   if (commaIdx > 0) candidates.push(normalizedName.slice(0, commaIdx).trim());
+  // "When Captain Archer enters" on Captain Jonathan Archer: a name of three or more words can
+  // be shortened to its first and last word. (Tried before the first word alone, which left
+  // "this card Archer".) Not after an article: "The Minstrel's Ballad" on The Wandering Minstrel
+  // is an ability's name.
+  {
+    const words = normalizedName.slice(0, commaIdx > 0 ? commaIdx : undefined).trim().split(/\s+/);
+    if (words.length >= 3 && !/^(?:the|a|an)$/i.test(words[0])) {
+      const firstLast = words[0] + ' ' + words[words.length - 1];
+      if (!candidates.includes(firstLast)) candidates.push(firstLast);
+    }
+  }
   // Also try first word if it's a proper noun (capitalized, >2 chars)
   const firstWord = normalizedName.split(/[\s,]/)[0];
-  if (firstWord.length > 2 && firstWord[0] === firstWord[0].toUpperCase() && !candidates.includes(firstWord)) {
+  // (Never an article: "The Minstrel's Ballad" on The Wandering Minstrel read "This card Minstrel's Ballad".)
+  if (firstWord.length > 2 && firstWord[0] === firstWord[0].toUpperCase() && !/^the$/i.test(firstWord) && !candidates.includes(firstWord)) {
     candidates.push(firstWord);
   }
   // Sort candidates longest first to prefer full matches

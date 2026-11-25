@@ -1,0 +1,36 @@
+{
+  "name": "Captain Jonathan Archer — \"When Captain Archer enters\" is the card itself; \"The\" is never a short name",
+  "notes": "2026-11-25. The self-reference swap knew the full name, the part before a comma and the first word, so \"Captain\" alone was replaced and the trigger read \"When this card Archer enters\". A name of three or more words is now also shortened to its first and last word. The first word alone is never \"The\": The Wandering Minstrel read \"This card Minstrel's Ballad\" for its ability word.",
+  "steps": [
+    {
+      "add": "Captain Jonathan Archer",
+      "as": "archer"
+    },
+    {
+      "add": "The Wandering Minstrel",
+      "as": "minstrel"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Captain Jonathan Archer",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "When this card enters, create Porthos, a legendary 1/1 green Dog creature token."
+          ]
+        }
+      }
+    },
+    {
+      "perm": "The Wandering Minstrel",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "The Minstrel's Ballad — At the beginning of combat on your turn, if you control five or more Towns, create a 2/2 Elemental creature token that's all colors."
+          ]
+        }
+      }
+    }
+  ]
+}

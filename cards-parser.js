@@ -3524,8 +3524,8 @@ function parseCardEffects(permanent, card, opts = {}) {
     }
 
     if (parsed.gainsAllLandTypes) {
-      pushEff('4', EFFECT_TYPE.ADD_TYPE, { gainsAllLandTypes: true }, _ctx,
-        `${filterText} are every land type. ${desc}`);
+      pushEff('4', EFFECT_TYPE.ADD_TYPE, parsed.nonbasicOnly ? { gainsAllLandTypes: true, nonbasicOnly: true } : { gainsAllLandTypes: true }, _ctx,
+        `${filterText} are every ${parsed.nonbasicOnly ? 'nonbasic ' : ''}land type. ${desc}`);
     } else if (parsed.gainsAllCreatureTypes) {
       pushEff('4', EFFECT_TYPE.ADD_TYPE, { gainsAllCreatureTypes: true }, _ctx,
         `${filterText} are every creature type. ${desc}`);
@@ -3692,10 +3692,21 @@ function parseCardEffects(permanent, card, opts = {}) {
     // (Raging Ravine): the match stops at the first period inside the quoted ability. Lift the
     // whole quote out; it is granted further down with the other "with" abilities.
     let _stQuotedAbility = null;
+    // 'becomes a Ferengi Officer and gains "You may play lands from your graveyard" and "You may
+    // play an additional land on each of your turns."' (Nog, Ambitious Cadet): a list of quoted
+    // grants is the quoted-ability parser's; cut it whole, or the first quote's words are read
+    // as what the permanent becomes.
+    const _qGainsList = /\s+and\s+(?:gains?|ha(?:s|ve))\s+"[^"]*"(?:,?\s+(?:and\s+)?"[^"]*")*,?\s+(?:and\s+)?"[^"]*"?$/i;
+    if ((becomesText.split('"').length - 1) % 2 === 0) {
+      const _ql = becomesText.match(_qGainsList);
+      if (_ql && /"$/.test(_ql[0])) becomesText = becomesText.slice(0, _ql.index).trim();
+    }
     if ((becomesText.split('"').length - 1) % 2 === 1) {
       // ('becomes a Human Faerie Detective and gains "Whenever …. You may play that card this
       // turn."' — Kellan, Planar Trailblazer: that grant is the quoted-ability parser's.)
-      const _qOpen = becomesText.match(/\s+(?:with|and(\s+(?:gains?|ha(?:s|ve)))?)\s+"([^"]*)$/i);
+      const _ql = becomesText.match(_qGainsList);
+      const _qOpen = _ql ? Object.assign([_ql[0], ' gains', ''], { index: _ql.index })
+        : becomesText.match(/\s+(?:with|and(\s+(?:gains?|ha(?:s|ve)))?)\s+"([^"]*)$/i);
       const _qClose = oracle.indexOf('"', mEnd);
       if (_qOpen && _qClose >= 0 && !oracle.slice(mEnd, _qClose).includes('\n')) {
         if (!_qOpen[1]) _stQuotedAbility = (_qOpen[2] + '.' + oracle.slice(mEnd, _qClose)).trim().replace(/\.$/, '');
@@ -3999,8 +4010,8 @@ function parseCardEffects(permanent, card, opts = {}) {
 
     const _stCtx = { appliesTo: _stAppliesTo, scope: _stScope, selfTarget: _stSelfTarget, affectsSelf: selfAffect };
     if (parsed.gainsAllLandTypes) {
-      pushEff('4', EFFECT_TYPE.ADD_TYPE, { gainsAllLandTypes: true }, _stCtx,
-        `${filterText} are every land type. ${desc}`);
+      pushEff('4', EFFECT_TYPE.ADD_TYPE, parsed.nonbasicOnly ? { gainsAllLandTypes: true, nonbasicOnly: true } : { gainsAllLandTypes: true }, _stCtx,
+        `${filterText} are every ${parsed.nonbasicOnly ? 'nonbasic ' : ''}land type. ${desc}`);
     } else if (parsed.gainsAllCreatureTypes && (parsed.types.length > 0 || parsed.subtypes.length > 0)) {
       // "becomes a 2/2 creature with all creature types. It's still a land." (Mutavault): every
       // creature type, and the card type it names along with the one it keeps.

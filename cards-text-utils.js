@@ -2461,6 +2461,11 @@ function parseBecomesType(text) {
   if (/\ball\s+basic\s+land\s+types?\b/i.test(t) || /\bevery\s+basic\s+land\s+type\b/i.test(t)) {
     return { types: ['Land'], subtypes: ['Plains', 'Island', 'Swamp', 'Mountain', 'Forest'], isLandSubtype: true, grantedAbilities: [] };
   }
+  // "This land is every nonbasic land type" (Planar Nexus): the land subtypes other than the
+  // basic ones, read from TypeCatalog as the effect applies, so a new one needs no update.
+  if (/\b(?:all|every)\s+nonbasic\s+land\s+types?\b/i.test(t)) {
+    return { types: [], subtypes: [], isLandSubtype: true, gainsAllLandTypes: true, nonbasicOnly: true, grantedAbilities: [] };
+  }
   if (/\b(?:all|every)\s+land\s+types?\b/i.test(t)) {
     return { types: [], subtypes: [], isLandSubtype: true, gainsAllLandTypes: true, grantedAbilities: [] };
   }

@@ -295,7 +295,7 @@ function _aaLocateFragments(text, eff) {
 
     case EFFECT_TYPE.ADD_TYPE: {
       if (p.gainsAllCreatureTypes) { pushRe(/(?:every|all) creature types?/i) || pushWord('changeling'); break; }
-      if (p.gainsAllLandTypes) { pushRe(/(?:every|all) (?:basic )?land types?/i); break; }
+      if (p.gainsAllLandTypes) { pushRe(/(?:every|all) (?:basic |nonbasic )?land types?/i); break; }
       const words = [...(p.subtypes || []), ...(p.types || []), ...(p.supertypes || [])];
       let minI = Infinity, maxI = -1;
       for (const w of words) {
@@ -388,7 +388,7 @@ function _aaDescribeEffect(eff) {
       return 'Power and toughness are switched';
     case EFFECT_TYPE.ADD_TYPE: {
       if (p.gainsAllCreatureTypes) return 'Becomes every creature type';
-      if (p.gainsAllLandTypes) return 'Becomes every land type';
+      if (p.gainsAllLandTypes) return p.nonbasicOnly ? 'Becomes every nonbasic land type' : 'Becomes every land type';
       const parts = [...(p.supertypes || []), ...(p.subtypes || []), ...(p.types || [])].join(' ');
       return parts ? `Becomes ${_aaArticle(parts)}${parts} in addition to its other types` : 'Gains a type';
     }

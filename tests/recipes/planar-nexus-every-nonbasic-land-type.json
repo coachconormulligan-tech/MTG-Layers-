@@ -1,0 +1,17 @@
+{
+  "name": "Planar Nexus — \"This land is every nonbasic land type\"",
+  "notes": "Open since 2026-11-22. The sentence was read as a plain set of the Land type and gave no subtypes. It now gives every official land subtype that is not a basic land type, read from TypeCatalog as the effect applies (so a new nonbasic land type needs no update), and no basic land mana ability.",
+  "steps": [
+    { "add": "Planar Nexus", "as": "nexus" }
+  ],
+  "asserts": [
+    {
+      "perm": "Planar Nexus",
+      "final": {
+        "types": ["Land"],
+        "subtypes": { "$includes": ["Cave", "Desert", "Gate", "Lair", "Locus", "Mine", "Power-Plant", "Sphere", "Tower", "Urza's"], "$excludes": ["Plains", "Island", "Swamp", "Mountain", "Forest"] },
+        "abilities": { "$includes": ["{T}: Add {C}.", "{1}, {T}: Add one mana of any color."], "$excludes": ["{T}: Add {G}."] }
+      }
+    }
+  ]
+}
