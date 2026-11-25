@@ -5298,6 +5298,33 @@ function parseCardEffects(permanent, card, opts = {}) {
       `${whichChar === 'toughness' ? 'Toughness' : 'Power'} equal to ${_scBase ? _scBase + ' plus ' : ''}the number of ${countTarget}.`);
   }
 
+  // Single-characteristic CDA by a greatest value: "[self]'s power is equal to the greatest mana
+  // value among creatures you control" (Towering Gibbon, Daretti, Dodgy Jalopy; Kraven's has an
+  // ability word before it), "… among noncreature permanents you control and noncreature cards in
+  // your graveyard" (Dragon Man: the greater of the two, as Skanos Dragonheart's X).
+  const cdaSingleGreatestRegex = /(?:^|\.|\n)\s*(?:[^.\n—]*—\s*)?(?:this (?:card|creature)'s|its)\s+(power|toughness)\s+(?:is|are)\s+equal\s+to\s+(the\s+greatest\s+(power|toughness|mana\s+value)\s+among\s+([^.]+?))(?:\.|$)/gmi;
+  let cdaSingleGreatestMatch;
+  while ((cdaSingleGreatestMatch = cdaSingleGreatestRegex.exec(oracle)) !== null) {
+    if (_cdaIsQuoted(cdaSingleGreatestMatch.index)) continue;
+    const whichChar = cdaSingleGreatestMatch[1].toLowerCase();
+    const _charParams = whichChar === 'toughness' ? { toughnessOnly: true } : { powerOnly: true };
+    const desc = cdaSingleGreatestMatch[2].trim();
+    const stat = cdaSingleGreatestMatch[3].toLowerCase().replace(/\s+/g, ' ');
+    const among = cdaSingleGreatestMatch[4].trim();
+    const label = `${whichChar === 'toughness' ? 'Toughness' : 'Power'} equal to ${desc}.`;
+    if (/\bgraveyards?$/i.test(among)) {
+      pushEff('7a', EFFECT_TYPE.CDA_PT,
+        { ..._charParams, userAdjustable: true, isGraveyardCount: true, forEachDesc: desc, compute: null },
+        _cdaSelfCtx, label);
+    } else if (stat === 'mana value') {
+      const youControl = /\s+you\s+control$/i.test(among);
+      const filter = among.replace(/\s+you\s+control$/i, '');
+      pushEff('7a', EFFECT_TYPE.CDA_PT,
+        { ..._charParams, isGreatestMV: true, greatestMVFilter: filter, greatestMVController: youControl, forEachDesc: filter },
+        _cdaSelfCtx, label);
+    }
+  }
+
   // Known keywords: standard + landwalk + protection variants.
   // Landwalk names follow the pattern "[land-type]walk".
   // KEYWORD_LIST, KEYWORD_SET, PARAMETERIZED_KEYWORDS hoisted to module scope at file top.

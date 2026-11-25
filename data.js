@@ -83,7 +83,7 @@ const TypeCatalog = {
      (updateTypesFromScryfall). No other file may keep a copy of a subtype list. */
 
   // The day of the Scryfall card file the lists were written from.
-  typesAsOf: '2026-11-20',
+  typesAsOf: '2026-11-25',
 
   /* The official subtypes of every card type but creature and kindred (theirs follow). What
      "every land type" gives and "choose a land type" offers, and the parser's vocabulary. */
@@ -160,9 +160,11 @@ const TypeCatalog = {
     ]),
     spell: new Set(["Chorus", "Fire", "Vengeance"]),
     planar: new Set([
-      "Amsterdam", "Blind Eternities", "Bloomburrow", "Chicago", "Clamhattan", "Duskmourn",
-      "Foldaria", "Foundations", "Hell", "Las Vegas", "MagicCon", "Secret Lair",
-      "Thunder Junction", "Universia Beyondia"
+      "Amsterdam", "Atlanta", "Blind Eternities", "Bloomburrow", "Chicago", "City in a Bottle",
+      "Clamhattan", "Clashablanca", "Duskmourn", "Foldaria", "Foundations", "Hell", "Las Vegas",
+      "MagicCon", "New Capenna", "New Coopenna Pigeon", "New York", "Schoolyard", "Secret Lair",
+      "Serra's Jace's Realm", "Sothera System", "The Edge", "Thunder Junction",
+      "Universia Beyondia", "Unknown"
     ]),
     dungeon: new Set([]),
     battle: new Set(["Control", "Point"]),

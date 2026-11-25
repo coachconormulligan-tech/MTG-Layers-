@@ -1,0 +1,21 @@
+{
+  "name": "Power-only 'greatest mana value among … you control' (Towering Gibbon, Daretti, Kraven, Dragon Man's battlefield half)",
+  "notes": "All four parsed to no effect. Your Mindslaver (6), Daretti (5), Towering Gibbon (4), Dragon Man (4, an artifact creature), Kraven (3), Sol Ring (1), and Divination (3) in your graveyard; the opponent's Darksteel Colossus (11) counts for no one. Gibbon (creatures): 5. Daretti (artifacts): 6. Kraven (permanents, after an ability word): 6. Dragon Man (noncreature permanents and noncreature graveyard cards): Mindslaver's 6 beats Divination's 3. Toughness stays printed.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Towering Gibbon" },
+    { "add": "Daretti, Rocketeer Engineer" },
+    { "add": "Kraven, Proud Predator" },
+    { "add": "Dragon Man, Reformed Robot" },
+    { "add": "Mindslaver" },
+    { "add": "Sol Ring" },
+    { "add": "Darksteel Colossus", "controller": "p2" },
+    { "call": ["addToGraveyard", "p1", "card:Divination"] }
+  ],
+  "asserts": [
+    { "perm": "Towering Gibbon", "final": { "power": 5, "toughness": 4 } },
+    { "perm": "Daretti, Rocketeer Engineer", "final": { "power": 6, "toughness": 5 } },
+    { "perm": "Kraven, Proud Predator", "final": { "power": 6, "toughness": 4 } },
+    { "perm": "Dragon Man, Reformed Robot", "final": { "power": 6, "toughness": 5 } }
+  ]
+}

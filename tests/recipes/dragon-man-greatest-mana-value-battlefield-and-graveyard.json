@@ -1,0 +1,17 @@
+{
+  "name": "Dragon Man, Reformed Robot — power is the greatest mana value among noncreature permanents you control and noncreature cards in your graveyard",
+  "notes": "Was parsed to no effect (power-only 'greatest mana value among' read by no regex). Here the graveyard wins: Divination (3) in your graveyard beats Sol Ring (1); your creature cards (Wurmcoil Engine 6, Grizzly Bears, Dragon Man itself) do not count, nor the opponent's Mindslaver (6) or the Time Stretch (10) in their graveyard. Toughness stays the printed 5.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Dragon Man, Reformed Robot" },
+    { "add": "Sol Ring" },
+    { "add": "Grizzly Bears" },
+    { "add": "Mindslaver", "controller": "p2" },
+    { "call": ["addToGraveyard", "p1", "card:Divination"] },
+    { "call": ["addToGraveyard", "p1", "card:Wurmcoil Engine"] },
+    { "call": ["addToGraveyard", "p2", "card:Time Stretch"] }
+  ],
+  "asserts": [
+    { "perm": "Dragon Man, Reformed Robot", "final": { "power": 3, "toughness": 5 } }
+  ]
+}
