@@ -387,11 +387,17 @@ function _finalizeEffects(effects, isEquipmentSource, permanent, oracleText, con
       }
     }
   }
+  // A controller rule found on one targeted effect holds for the card's other targeted effects,
+  // but not across two modes of a modal spell (Rules of Acquisition: "an opponent controls" in
+  // one mode, "you control" in the other).
   for (const flag of ['opponentControlRequired', 'youControlRequired']) {
-    if (permanent?.[`_${flag}`] || effects.some(e => e[flag])) {
-      for (const eff of effects) {
-        if (eff.scope === 'targeted' && !eff.selfTarget) eff[flag] = true;
-      }
+    const whole = !!permanent?.[`_${flag}`];
+    const flagged = effects.filter(e => e[flag]);
+    if (!whole && !flagged.length) continue;
+    for (const eff of effects) {
+      if (eff.scope !== 'targeted' || eff.selfTarget) continue;
+      if (whole || flagged.some(e => e.modalModeIndex === undefined || eff.modalModeIndex === undefined
+          || e.modalModeIndex === eff.modalModeIndex)) eff[flag] = true;
     }
   }
   if (permanent) {

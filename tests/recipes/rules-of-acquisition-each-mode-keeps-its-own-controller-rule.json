@@ -1,0 +1,20 @@
+{
+  "name": "Rules of Acquisition — each mode keeps its own controller rule",
+  "notes": "Found by the full audit on the 2026-11-25 card data. Both modes' target lists were empty: _finalizeEffects (cards-parser-post.js) gave every targeted effect any controller rule found on another, so mode 1 ('an opponent controls') and mode 2 ('you control') each had both; and 'Target opponent gains control of target nonland permanent you control' also set the card-wide _youControlRequired, which the single picker reads whichever mode is picked. On a modal spell a controller rule now spreads only within its mode, and the card-wide flag is not set. Mode 1 lists the opponent's Hill Giant and Sol Ring copy only; mode 2 lists your Grizzly Bears and Sol Ring only (never a land).",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears" },
+    { "add": "Sol Ring", "as": "myRing" },
+    { "add": "Forest" },
+    { "add": "Hill Giant", "controller": "p2" },
+    { "add": "Mind Stone", "controller": "p2" },
+    { "add": "Rules of Acquisition", "as": "take", "spell": true },
+    { "call": ["setModalModeSelections", "@take", [0]] },
+    { "add": "Rules of Acquisition", "as": "give", "spell": true },
+    { "call": ["setModalModeSelections", "@give", [1]] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Rules of Acquisition A", "kind": "single" }, "are": ["Hill Giant", "Mind Stone"] },
+    { "targetCandidates": { "perm": "Rules of Acquisition B", "kind": "single" }, "are": ["Grizzly Bears", "Sol Ring"] }
+  ]
+}

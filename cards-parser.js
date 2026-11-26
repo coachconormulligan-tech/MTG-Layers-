@@ -5325,6 +5325,22 @@ function parseCardEffects(permanent, card, opts = {}) {
     }
   }
 
+  // "[self]'s power is equal to the greatest number noted for it this turn" (Bell Borca, Spectral
+  // Sergeant): the site keeps no record of the numbers noted, so the number is typed into the card's
+  // value box, as the life paid as Minion of the Wastes entered is.
+  const cdaNotedRegex = /(?:^|\.|\n)\s*(?:this (?:card|creature)'s|its)\s+(power|toughness)\s+(?:is|are)\s+equal\s+to\s+(the\s+(?:greatest|highest)\s+number\s+noted\s+for\s+it(?:\s+this\s+turn)?)(?:\.|$)/gmi;
+  let cdaNotedMatch;
+  while ((cdaNotedMatch = cdaNotedRegex.exec(oracle)) !== null) {
+    if (_cdaIsQuoted(cdaNotedMatch.index)) continue;
+    const whichChar = cdaNotedMatch[1].toLowerCase();
+    const desc = cdaNotedMatch[2].trim();
+    pushEff('7a', EFFECT_TYPE.CDA_PT,
+      { ...(whichChar === 'toughness' ? { toughnessOnly: true } : { powerOnly: true }),
+        userAdjustable: true, isChosenAmount: true, forEachDesc: desc.replace(/^the\s+/i, ''), compute: null },
+      _cdaSelfCtx,
+      `${whichChar === 'toughness' ? 'Toughness' : 'Power'} equal to ${desc}.`);
+  }
+
   // Known keywords: standard + landwalk + protection variants.
   // Landwalk names follow the pattern "[land-type]walk".
   // KEYWORD_LIST, KEYWORD_SET, PARAMETERIZED_KEYWORDS hoisted to module scope at file top.
@@ -7527,7 +7543,7 @@ function parseCardEffects(permanent, card, opts = {}) {
     const isActivatedCost = /^[^\n]*\{[^}]+\}[^:\n]*:/m.test(oracle);
     if (tpgcMatch && !isActivatedCost && !effects.some(e => e.type === EFFECT_TYPE.CONTROL)) {
       permanent._targetsChosenPlayer = true;
-      permanent._youControlRequired = true;
+      if (!_isModalSpell) permanent._youControlRequired = true;
       const chosenPlayer = permanent._targetPlayerId || null;
       const typeText = tpgcMatch[1].trim();
       // Build a target-filter function from the captured type text so the UI can
@@ -7748,7 +7764,8 @@ function parseCardEffects(permanent, card, opts = {}) {
         else if (/^that player$/.test(who) && /\bchoose another player\.\s*$/i.test(oracle.slice(lineStart + 1, gcMatch.index).replace(/that player\s*$/i, ''))) {
           permanent._chosenPlayerNotYou = 'another player';
         }
-        if (objYouControl) permanent._youControlRequired = true;
+        // On a modal spell the rule stays with its own mode's effect (Rules of Acquisition).
+        if (objYouControl && !_isModalSpell) permanent._youControlRequired = true;
         const eff = pushEff('2', EFFECT_TYPE.CONTROL,
           { newController: permanent._targetPlayerId || null, untilEndOfTurn: /until end of (?:turn|combat)/i.test(fullSentence) },
           { appliesTo: null, scope: 'targeted', selfTarget: false },
@@ -8184,9 +8201,18 @@ function parseCardEffects(permanent, card, opts = {}) {
     const _phasedAt = new Set();
     while ((pm = phaseRegex.exec(masked)) !== null) {
       const before = masked.slice(0, pm.index);
+      // "When this card enters, it and up to one target creature you control phase out"
+      // (U.S.S. Defiant, Mirror Migrant): the card phases out beside the target.
+      const withSelf = /\btarget\b/i.test(pm[1]) ? before.match(/\b(?:it|this (?:creature|permanent|artifact|card))\s+and\s+$/i) : null;
       // The subject opens its sentence or clause ("When …, target creature phases out", "…, then it phases out").
-      if (!/(?:^|[.;:,—•\n]\s*|\bthen\s+|\bif you do,?\s+)$/i.test(before)) continue;
+      if (!/(?:^|[.;:,—•\n]\s*|\bthen\s+|\bif you do,?\s+)$/i.test(withSelf ? before.slice(0, withSelf.index) : before)) continue;
       if (/^\s+(?:at|during)\b/i.test(masked.slice(pm.index + pm[0].length))) continue;
+      if (withSelf) {
+        pushEff('7c', EFFECT_TYPE.MODIFY_PT, { power: 0, toughness: 0 },
+          { appliesTo: null, scope: 'targeted', selfTarget: true },
+          'This permanent phases out.', { _oraclePos: withSelf.index, _phaseMarker: true, _phaseWho: 'source' });
+        _phasedAt.add(withSelf.index);
+      }
       const subj = pm[1].trim();
       // ("Target permanent can't phase out" — Spatial Binding: a rule, not phasing.)
       if (/\b(?:can't|cannot|can not|doesn't|don't|won't)$/i.test(subj)) continue;

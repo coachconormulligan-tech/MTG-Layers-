@@ -1,0 +1,14 @@
+{
+  "name": "Bell Borca, Spectral Sergeant — the greatest number noted this turn is a typed-in value",
+  "notes": "'Bell Borca's power is equal to the greatest number noted for it this turn' gave no effect. The site keeps no record of when a card was exiled or of the numbers noted, so the number is typed into the card's value box (userAdjustable + isChosenAmount, power only). With 6 typed Bell Borca is 6/5; untyped it is 0/5 (no number noted). Grizzly Bears beside it stays 2/2.",
+  "steps": [
+    { "add": "Grizzly Bears" },
+    { "add": "Bell Borca, Spectral Sergeant", "as": "bell" },
+    { "call": ["setCDAValue", "@bell", 6] }
+  ],
+  "asserts": [
+    { "effect": { "source": "Bell Borca, Spectral Sergeant", "layer": "7a", "type": "cda_pt" } },
+    { "perm": "Bell Borca, Spectral Sergeant", "final": { "power": 6, "toughness": 5 } },
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2 } }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "name": "U.S.S. Defiant, Mirror Migrant — 'it and up to one target creature you control phase out'",
+  "notes": "Found by the full audit on the 2026-11-25 card data. The fired trigger made no effect: the phase-out reader took a target subject only at the start of its clause, and 'it and up to one target creature you control' starts with the card. The target clause may now follow 'it and' / 'this creature and', and the card gets a phase marker of its own (_phaseWho 'source'). Picking Grizzly Bears phases out the Bears and the Defiant; The picker offers your creatures only (not the opponent's Gray Ogre).",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Hill Giant"
+    },
+    {
+      "add": "Gray Ogre",
+      "controller": "p2"
+    },
+    {
+      "add": "U.S.S. Defiant, Mirror Migrant",
+      "as": "defiant"
+    },
+    {
+      "fire": "@defiant",
+      "trigger": 1,
+      "as": "fired"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@fired",
+        "@bears"
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "targetCandidates": {
+        "perm": "U.S.S. Defiant, Mirror Migrant (trigger)"
+      },
+      "are": [
+        "Grizzly Bears",
+        "Hill Giant"
+      ]
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "phasedOut": true
+      }
+    },
+    {
+      "perm": "U.S.S. Defiant, Mirror Migrant",
+      "final": {
+        "phasedOut": true
+      }
+    }
+  ]
+}
