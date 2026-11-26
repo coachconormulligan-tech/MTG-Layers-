@@ -1,0 +1,17 @@
+{
+  "name": "Untap cost — firing a {Q} ability untaps its source; removing the ability taps it again",
+  "notes": "Conor, 2026-11-26: the {Q} cost (the untap symbol) untaps the source as the ability is fired, as {T} taps it. Safehold Sentry, tapped, is untapped by its own ability and gets +0/+2. Puresight Merrow, tapped, is untapped by firing and tapped again when the fired ability is removed.",
+  "steps": [
+    { "add": "Safehold Sentry", "as": "sentry" },
+    { "call": ["toggleTapped", "@sentry"] },
+    { "fire": "@sentry", "activated": 0, "as": "brace" },
+    { "add": "Puresight Merrow", "as": "merrow" },
+    { "call": ["toggleTapped", "@merrow"] },
+    { "fire": "@merrow", "activated": 0, "as": "look" },
+    { "call": ["removePermanent", "@look"] }
+  ],
+  "asserts": [
+    { "perm": "Safehold Sentry", "final": { "toughness": 4, "traits": { "$excludes": ["Tapped"] } } },
+    { "perm": "Puresight Merrow", "final": { "traits": { "$includes": ["Tapped"] } } }
+  ]
+}

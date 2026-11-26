@@ -181,7 +181,7 @@ function initDragDrop(container) {
 /* What the player must still tap or untap by hand on a fired ability or a spell (Conor,
    2026-11-26): the site taps only a {T} / {Q} cost's own source (_payTapCost). Crew and Saddle
    tap creatures of the player's choosing; a cost such as "Tap an untapped creature you control"
-   does too; and an effect that taps or untaps ("Tap target creature", "Untap all lands you
+   or "Untap a tapped creature you control" does too; and an effect that taps or untaps ("Tap target creature", "Untap all lands you
    control") is never applied. Quoted abilities are left out: granting one taps nothing. */
 function _manualTapNoteHtml(p) {
   if (!p || !(p.isManualEffect || p.isSpell) || p.isEmblem) return '';
@@ -193,10 +193,14 @@ function _manualTapNoteHtml(p) {
     const what = p.isActivatedAbility ? 'ability' : p.isTriggeredAbility ? 'ability' : 'spell';
     const line = plain(String(p.abilityFullText || '').split('\n')[0]).replace(/^[^{\n.;"\u2014]+\u2014\s*/, '');
     const colon = p.isActivatedAbility ? line.indexOf(':') : -1;
-    const costTaps = colon > 0 && /\btap\b/i.test(line.slice(0, colon));
+    // ("Untap a tapped creature you control" as a cost: Halo Fountain, Benthic Explorers.)
+    const cost = colon > 0 ? line.slice(0, colon) : '';
+    const costTap = /\btap\b/i.test(cost), costUntap = /\buntap\b/i.test(cost);
+    const costVerb = costTap && costUntap ? 'tap or untap' : costTap ? 'tap' : costUntap ? 'untap' : '';
     const effectTaps = /\b(?:un)?tap\b/i.test(plain(p.oracleText));
-    if (costTaps && effectTaps) note = `Tap what this ${what} costs, and tap or untap what it names, by hand.`;
-    else if (costTaps) note = `Tap what this ${what} costs by hand.`;
+    const cap = (t) => t.charAt(0).toUpperCase() + t.slice(1);
+    if (costVerb && effectTaps) note = `${cap(costVerb)} what this ${what} costs, and tap or untap what it names, by hand.`;
+    else if (costVerb) note = `${cap(costVerb)} what this ${what} costs by hand.`;
     else if (effectTaps) note = `Tap or untap what this ${what} names by hand.`;
   }
   return note ? `<div class="ts-manual-note">${escapeHtml(note)}</div>` : '';
