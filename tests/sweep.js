@@ -335,6 +335,9 @@ let dummyId = null;
 
 function resetBoard() {
   Battlefield.clear();
+  // Abilities are fired without tapping their source for a {T} / {Q} cost (_payTapCost):
+  // the sweep reads what the text does, not its cost, and a tapped source would change what its other abilities do.
+  Battlefield._noTapCosts = true;
   Battlefield.exile = [];
   Battlefield.nextExileId = 1;
   Battlefield.bestowTargets = new Map();

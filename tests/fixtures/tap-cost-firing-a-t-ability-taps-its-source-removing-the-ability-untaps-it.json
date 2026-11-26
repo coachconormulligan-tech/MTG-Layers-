@@ -1,0 +1,734 @@
+{
+ "name": "Tap cost — firing a {T} ability taps its source; removing the ability untaps it",
+ "notes": "Conor, 2026-11-26: the site taps the source of an activated ability whose cost has {T} (or untaps it for {Q}), and only that; effects that tap or untap stay the player's. Sokrates is tapped by its own ability and so loses the hexproof it has while untapped. Prodigal Sorcerer's ability is fired and removed again, which untaps it.",
+ "recipe": {
+  "steps": [
+   {
+    "add": "Sokrates, Athenian Teacher",
+    "as": "sok"
+   },
+   {
+    "fire": "@sok",
+    "activated": 1,
+    "as": "dialogue"
+   },
+   {
+    "add": "Prodigal Sorcerer",
+    "as": "tim"
+   },
+   {
+    "fire": "@tim",
+    "activated": 0,
+    "as": "ping"
+   },
+   {
+    "call": [
+     "removePermanent",
+     "@ping"
+    ]
+   }
+  ]
+ },
+ "asserts": [
+  {
+   "perm": "Sokrates, Athenian Teacher",
+   "final": {
+    "traits": {
+     "$includes": [
+      "Tapped"
+     ]
+    },
+    "abilities": {
+     "$excludes": [
+      "Hexproof"
+     ]
+    }
+   }
+  },
+  {
+   "perm": "Prodigal Sorcerer",
+   "final": {
+    "traits": {
+     "$excludes": [
+      "Tapped"
+     ]
+    }
+   }
+  }
+ ],
+ "board": {
+  "version": 1,
+  "perms": [
+   {
+    "id": "perm_1",
+    "scryfallData": {
+     "object": "card",
+     "id": "f9266244-e8bc-47f8-a440-55d208b961df",
+     "oracle_id": "f4a9d567-513b-487e-afed-c6e6513a7862",
+     "multiverse_ids": [
+      667657
+     ],
+     "mtgo_id": 128100,
+     "tcgplayer_id": 555895,
+     "cardmarket_id": 774657,
+     "name": "Sokrates, Athenian Teacher",
+     "lang": "en",
+     "released_at": "2024-07-05",
+     "uri": "https://api.scryfall.com/cards/f9266244-e8bc-47f8-a440-55d208b961df",
+     "scryfall_uri": "https://scryfall.com/card/acr/67/sokrates-athenian-teacher?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T02:49:27Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/f/9/f9266244-e8bc-47f8-a440-55d208b961df.jpg?1783910967",
+      "normal": "https://cards.scryfall.io/normal/front/f/9/f9266244-e8bc-47f8-a440-55d208b961df.jpg?1783910967",
+      "large": "https://cards.scryfall.io/large/front/f/9/f9266244-e8bc-47f8-a440-55d208b961df.jpg?1783910967",
+      "png": "https://cards.scryfall.io/png/front/f/9/f9266244-e8bc-47f8-a440-55d208b961df.png?1783910967",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/f/9/f9266244-e8bc-47f8-a440-55d208b961df.jpg?1783910967",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/f/9/f9266244-e8bc-47f8-a440-55d208b961df.jpg?1783910967",
+      "thumb": "https://cards.scryfall.io/thumb/front/f/9/f9266244-e8bc-47f8-a440-55d208b961df.webp?1783910967",
+      "grid": "https://cards.scryfall.io/grid/front/f/9/f9266244-e8bc-47f8-a440-55d208b961df.webp?1783910967",
+      "display": "https://cards.scryfall.io/display/front/f/9/f9266244-e8bc-47f8-a440-55d208b961df.webp?1783910967",
+      "art": "https://cards.scryfall.io/art/front/f/9/f9266244-e8bc-47f8-a440-55d208b961df.webp?1783910967",
+      "crop": "https://cards.scryfall.io/crop/front/f/9/f9266244-e8bc-47f8-a440-55d208b961df.webp?1783910967",
+      "jpeg": "https://cards.scryfall.io/normal/front/f/9/f9266244-e8bc-47f8-a440-55d208b961df.jpg?1783910967"
+     },
+     "mana_cost": "{1}{W}{U}",
+     "cmc": 3,
+     "type_line": "Legendary Creature — Human Advisor",
+     "oracle_text": "Defender\nSokrates has hexproof as long as it's untapped.\nSokratic Dialogue — {T}: Until end of turn, target creature gains \"If this creature would deal combat damage to a player, prevent that damage. This creature's controller and that player each draw half that many cards, rounded down.\"",
+     "power": "0",
+     "toughness": "4",
+     "colors": [
+      "U",
+      "W"
+     ],
+     "color_identity": [
+      "U",
+      "W"
+     ],
+     "keywords": [
+      "Sokratic Dialogue",
+      "Defender"
+     ],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": false,
+     "variation": false,
+     "set_id": "54b67b0b-cd3f-4e0d-ac25-fef5d966409b",
+     "set": "acr",
+     "set_name": "Assassin's Creed",
+     "set_type": "draft_innovation",
+     "set_uri": "https://api.scryfall.com/sets/54b67b0b-cd3f-4e0d-ac25-fef5d966409b",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aacr&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/acr?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/f9266244-e8bc-47f8-a440-55d208b961df/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Af4a9d567-513b-487e-afed-c6e6513a7862&unique=prints",
+     "collector_number": "67",
+     "digital": false,
+     "rarity": "rare",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Alice Xia Zhang",
+     "artist_ids": [
+      "ba06d65e-de20-4c6b-a279-7aba527712ce"
+     ],
+     "illustration_id": "3f52390e-fd39-405b-8218-3a2d489d5a40",
+     "border_color": "black",
+     "frame": "2015",
+     "frame_effects": [
+      "legendary"
+     ],
+     "security_stamp": "triangle",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "promo_types": [
+      "universesbeyond"
+     ],
+     "edhrec_rank": 4650,
+     "penny_rank": 9384,
+     "prices": {
+      "usd": "0.83",
+      "usd_foil": "0.54",
+      "usd_etched": null,
+      "eur": "0.60",
+      "eur_foil": "1.40",
+      "tix": "0.02"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=667657&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DSokrates%252C%2BAthenian%2BTeacher",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DSokrates%252C%2BAthenian%2BTeacher",
+      "edhrec": "https://edhrec.com/route/?cc=Sokrates%2C+Athenian+Teacher"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F555895%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=774657&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/128100?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 1,
+    "tapped": true,
+    "traits": [
+     "Tapped"
+    ],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "faceDownAs": null,
+    "face": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   },
+   {
+    "id": "perm_2",
+    "scryfallData": {
+     "object": "card",
+     "id": "50aef269-55f9-4d84-8bc5-29e794297f11",
+     "oracle_id": "5e961d15-5972-4e4b-9385-1cd7cd7c6bbe",
+     "multiverse_ids": [
+      413609
+     ],
+     "mtgo_id": 60893,
+     "mtgo_foil_id": 60894,
+     "tcgplayer_id": 118449,
+     "cardmarket_id": 290208,
+     "name": "Prodigal Sorcerer",
+     "lang": "en",
+     "released_at": "2016-06-10",
+     "uri": "https://api.scryfall.com/cards/50aef269-55f9-4d84-8bc5-29e794297f11",
+     "scryfall_uri": "https://scryfall.com/card/ema/67/prodigal-sorcerer?utm_source=api",
+     "layout": "normal",
+     "highres_image": true,
+     "image_status": "highres_scan",
+     "image_updated_at": "2026-07-13T10:13:27Z",
+     "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/5/0/50aef269-55f9-4d84-8bc5-29e794297f11.jpg?1783937607",
+      "normal": "https://cards.scryfall.io/normal/front/5/0/50aef269-55f9-4d84-8bc5-29e794297f11.jpg?1783937607",
+      "large": "https://cards.scryfall.io/large/front/5/0/50aef269-55f9-4d84-8bc5-29e794297f11.jpg?1783937607",
+      "png": "https://cards.scryfall.io/png/front/5/0/50aef269-55f9-4d84-8bc5-29e794297f11.png?1783937607",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/5/0/50aef269-55f9-4d84-8bc5-29e794297f11.jpg?1783937607",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/5/0/50aef269-55f9-4d84-8bc5-29e794297f11.jpg?1783937607",
+      "thumb": "https://cards.scryfall.io/thumb/front/5/0/50aef269-55f9-4d84-8bc5-29e794297f11.webp?1783937607",
+      "grid": "https://cards.scryfall.io/grid/front/5/0/50aef269-55f9-4d84-8bc5-29e794297f11.webp?1783937607",
+      "display": "https://cards.scryfall.io/display/front/5/0/50aef269-55f9-4d84-8bc5-29e794297f11.webp?1783937607",
+      "art": "https://cards.scryfall.io/art/front/5/0/50aef269-55f9-4d84-8bc5-29e794297f11.webp?1783937607",
+      "crop": "https://cards.scryfall.io/crop/front/5/0/50aef269-55f9-4d84-8bc5-29e794297f11.webp?1783937607",
+      "jpeg": "https://cards.scryfall.io/normal/front/5/0/50aef269-55f9-4d84-8bc5-29e794297f11.jpg?1783937607"
+     },
+     "mana_cost": "{2}{U}",
+     "cmc": 3,
+     "type_line": "Creature — Human Wizard Sorcerer",
+     "oracle_text": "{T}: This creature deals 1 damage to any target.",
+     "power": "1",
+     "toughness": "1",
+     "colors": [
+      "U"
+     ],
+     "color_identity": [
+      "U"
+     ],
+     "keywords": [],
+     "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "legal",
+      "vintage": "legal",
+      "penny": "legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "legal",
+      "predh": "legal",
+      "tlr": "legal"
+     },
+     "games": [
+      "paper",
+      "mtgo"
+     ],
+     "reserved": false,
+     "game_changer": false,
+     "foil": true,
+     "nonfoil": true,
+     "finishes": [
+      "nonfoil",
+      "foil"
+     ],
+     "oversized": false,
+     "promo": false,
+     "reprint": true,
+     "variation": false,
+     "set_id": "1f29f022-3ace-4c96-85e8-1f7b63aadf7e",
+     "set": "ema",
+     "set_name": "Eternal Masters",
+     "set_type": "masters",
+     "set_uri": "https://api.scryfall.com/sets/1f29f022-3ace-4c96-85e8-1f7b63aadf7e",
+     "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aema&unique=prints",
+     "scryfall_set_uri": "https://scryfall.com/sets/ema?utm_source=api",
+     "rulings_uri": "https://api.scryfall.com/cards/50aef269-55f9-4d84-8bc5-29e794297f11/rulings",
+     "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A5e961d15-5972-4e4b-9385-1cd7cd7c6bbe&unique=prints",
+     "collector_number": "67",
+     "digital": false,
+     "rarity": "uncommon",
+     "flavor_text": "\"You can't learn to enjoy life's amusements in the pages of books. You must seek them out in earnest.\"",
+     "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+     "artist": "Eric Deschamps",
+     "artist_ids": [
+      "37970e22-9cee-44c1-af44-5ee27cf26b76"
+     ],
+     "illustration_id": "daf2b465-895a-4b2d-b7ab-2ebeb1af3131",
+     "border_color": "black",
+     "frame": "2015",
+     "full_art": false,
+     "textless": false,
+     "booster": true,
+     "story_spotlight": false,
+     "edhrec_rank": 11569,
+     "penny_rank": 12613,
+     "prices": {
+      "usd": "0.27",
+      "usd_foil": "0.40",
+      "usd_etched": null,
+      "eur": "0.14",
+      "eur_foil": "0.30",
+      "tix": "0.04"
+     },
+     "related_uris": {
+      "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=413609&printed=false",
+      "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DProdigal%2BSorcerer",
+      "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DProdigal%2BSorcerer",
+      "edhrec": "https://edhrec.com/route/?cc=Prodigal+Sorcerer"
+     },
+     "purchase_uris": {
+      "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F118449%3Fpage%3D1",
+      "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=290208&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+      "cardhoarder": "https://www.cardhoarder.com/cards/60893?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+     }
+    },
+    "isSpell": false,
+    "faceIndex": 0,
+    "isToken": false,
+    "owner": "player_0",
+    "controller": "player_0",
+    "timestamp": 3,
+    "tapped": false,
+    "traits": [],
+    "counters": {},
+    "counterTimestamps": {},
+    "isFaceDown": false,
+    "faceDownMode": null,
+    "faceDownAs": null,
+    "face": null,
+    "roomLocked": null,
+    "cdaUserValue": null,
+    "classLevel": null,
+    "hasXValue": false,
+    "xValue": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "chosenCreatureType": null,
+    "chosenColor": null,
+    "chosenCardName": null,
+    "chosenExileIndex": null,
+    "chosenLandType": null,
+    "chosenCardType": null,
+    "chosenAbilities": null,
+    "linkedCards": null,
+    "graveyardEnchant": null,
+    "enteredUnderControlOf": null,
+    "returnedPermId": null,
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "modalModeCounts": null,
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null,
+    "firedAtSnapshot": null
+   }
+  ],
+  "firedAbilities": [
+   {
+    "id": "act_perm_1_1_2",
+    "kind": "activated",
+    "pseudoKind": "ability",
+    "sourceId": "perm_1",
+    "isCommandZone": false,
+    "commanderIdx": null,
+    "abilityIndex": 1,
+    "timestamp": 2,
+    "effectText": "Until end of turn, target creature gains \"If this creature would deal combat damage to a player, prevent that damage. This creature's controller and that player each draw half that many cards, rounded down.\"",
+    "xValue": null,
+    "hasXValue": false,
+    "cdaUserValue": null,
+    "linkedCards": null,
+    "fullText": "Sokratic Dialogue — {T}: Until end of turn, target creature gains \"If this creature would deal combat damage to a player, prevent that damage. This creature's controller and that player each draw half that many cards, rounded down.\"",
+    "chosenColor": null,
+    "additionalCostPaid": false,
+    "additionalCostPaid2": false,
+    "additionalCostPaidMore": [],
+    "guessedTargetSubjects": [],
+    "owner": "player_0",
+    "controller": "player_0",
+    "equipTargetId": null,
+    "attach": null,
+    "face": null,
+    "costTap": {
+     "id": "perm_1",
+     "dir": "tap"
+    },
+    "targetOpponentPlayerId": null,
+    "targetPlayerId": null,
+    "enchantedPlayerId": null,
+    "forPlayerId": null,
+    "firedAtStates": [
+     [
+      "perm_1",
+      {
+       "name": "Sokrates, Athenian Teacher",
+       "types": [
+        "Creature"
+       ],
+       "supertypes": [
+        "Legendary"
+       ],
+       "subtypes": [
+        "Human",
+        "Advisor"
+       ],
+       "power": 0,
+       "toughness": 4,
+       "basePower": 0,
+       "baseToughness": 4,
+       "abilities": [
+        "Defender",
+        "Sokratic Dialogue — {T}: Until end of turn, target creature gains \"If this creature would deal combat damage to a player, prevent that damage. This creature's controller and that player each draw half that many cards, rounded down.\"",
+        "Hexproof"
+       ],
+       "colors": [
+        "U",
+        "W"
+       ],
+       "manaValue": 3,
+       "manaCost": "{1}{W}{U}",
+       "isCreature": true,
+       "isToken": false,
+       "isFaceDown": false,
+       "isEmblem": false,
+       "isSpell": false,
+       "isZoneCard": false,
+       "oracleText": "Defender\nthis card has hexproof as long as it's untapped.\nSokratic Dialogue — {T}: Until end of turn, target creature gains \"If this creature would deal combat damage to a player, prevent that damage. This creature's controller and that player each draw half that many cards, rounded down.\"",
+       "hasChangeling": false,
+       "isAllCreatureTypes": false,
+       "isAllLandTypes": false,
+       "opponentsControlEffects": [],
+       "abilitiesRemovedBy305_7": false,
+       "allAbilitiesRemoved": false,
+       "oracleTextModified": false,
+       "copySource": null,
+       "cdaUserValue": null,
+       "counters": {},
+       "traits": [],
+       "attackingPlayerId": null,
+       "timesAttackedThisTurn": 0,
+       "allPrintedAbilities": [
+        "Defender",
+        "this card has hexproof as long as it's untapped.",
+        "Sokratic Dialogue — {T}: Until end of turn, target creature gains \"If this creature would deal combat damage to a player, prevent that damage. This creature's controller and that player each draw half that many cards, rounded down.\""
+       ],
+       "cdaAbilities": [],
+       "conditionalAbilityIndices": {},
+       "conditionalAbilityConditions": {},
+       "sagaChapterThresholds": null,
+       "classLevelThresholds": null,
+       "classLevel": null,
+       "levelerData": null,
+       "spacecraftData": null,
+       "owner": "player_0",
+       "controller": "player_0",
+       "tapped": false,
+       "isCommander": false,
+       "_protectionFrom": []
+      }
+     ]
+    ],
+    "firedAtSnapshot": {
+     "perms": [
+      {
+       "id": "perm_1",
+       "name": "Sokrates, Athenian Teacher",
+       "imageUri": "https://cards.scryfall.io/small/front/f/9/f9266244-e8bc-47f8-a440-55d208b961df.jpg?1783910967",
+       "owner": "player_0",
+       "controller": "player_0",
+       "isToken": false,
+       "isManualEffect": false,
+       "label": null,
+       "traits": [],
+       "counters": {},
+       "printedTypes": [
+        "Creature"
+       ],
+       "printedSupertypes": [
+        "Legendary"
+       ],
+       "printedSubtypes": [
+        "Human",
+        "Advisor"
+       ],
+       "printedPower": 0,
+       "printedToughness": 4,
+       "timestamp": 1
+      }
+     ],
+     "mutateStacks": [],
+     "bestowTargets": {},
+     "activePlayerId": "player_0",
+     "players": [
+      {
+       "id": "player_0",
+       "name": "Player 1"
+      }
+     ]
+    },
+    "primaryTarget": null,
+    "multiTarget": null,
+    "slotTargets": {},
+    "modalTargets": {},
+    "modalTargetIds": {},
+    "copySource": null,
+    "targetTs": null,
+    "slotTs": {},
+    "copyTargetPermId": null,
+    "refPermId": null,
+    "choices": null
+   }
+  ],
+  "players": [
+   {
+    "id": "player_0",
+    "name": "Player 1",
+    "gameState": {
+     "handSize": 7,
+     "drawsThisTurn": 0,
+     "graveyardCount": 0,
+     "startingLife": 20,
+     "currentLife": 20,
+     "isYourTurn": true,
+     "isMonarch": false,
+     "hasInitiative": false,
+     "hasCityBlessing": false,
+     "poisonCounters": 0,
+     "experienceCounters": 0,
+     "customCounters": {}
+    },
+    "commanders": [],
+    "graveyard": [],
+    "libraryTop": null,
+    "emblems": []
+   }
+  ],
+  "exile": [],
+  "mutateStacks": [],
+  "bestowTargets": [],
+  "activePlayerId": "player_0",
+  "nextPlayerId": 1,
+  "explanationMode": "teaching",
+  "inspectedId": null
+ },
+ "expected": {
+  "permanents": [
+   {
+    "perm": "Sokrates, Athenian Teacher",
+    "final": {
+     "name": "Sokrates, Athenian Teacher",
+     "controller": "player_0",
+     "supertypes": [
+      "Legendary"
+     ],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Human",
+      "Advisor"
+     ],
+     "power": 0,
+     "toughness": 4,
+     "colors": [
+      "U",
+      "W"
+     ],
+     "abilities": [
+      "Defender",
+      "Sokratic Dialogue — {T}: Until end of turn, target creature gains \"If this creature would deal combat damage to a player, prevent that damage. This creature's controller and that player each draw half that many cards, rounded down.\""
+     ],
+     "traits": [
+      "Tapped"
+     ]
+    },
+    "changedBy": {}
+   },
+   {
+    "perm": "Prodigal Sorcerer",
+    "final": {
+     "name": "Prodigal Sorcerer",
+     "controller": "player_0",
+     "supertypes": [],
+     "types": [
+      "Creature"
+     ],
+     "subtypes": [
+      "Human",
+      "Wizard",
+      "Sorcerer"
+     ],
+     "power": 1,
+     "toughness": 1,
+     "colors": [
+      "U"
+     ],
+     "abilities": [
+      "{T}: This creature deals 1 damage to any target."
+     ]
+    },
+    "changedBy": {}
+   }
+  ],
+  "order": {
+   "6": [
+    "Sokrates, Athenian Teacher",
+    "Sokrates, Athenian Teacher",
+    "Sokrates, Athenian Teacher (activated)"
+   ]
+  },
+  "effects": [
+   {
+    "source": "Sokrates, Athenian Teacher",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "selfTarget": true,
+    "params": {
+     "ability": "Hexproof"
+    }
+   },
+   {
+    "source": "Sokrates, Athenian Teacher",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "global",
+    "params": {
+     "ability": "If this creature would deal combat damage to a player, prevent that damage. This creature's controller and that player each draw half that many cards, rounded down."
+    }
+   },
+   {
+    "source": "Sokrates, Athenian Teacher (activated)",
+    "layer": "6",
+    "type": "add_ability",
+    "scope": "targeted",
+    "params": {
+     "ability": "If this creature would deal combat damage to a player, prevent that damage. This creature's controller and that player each draw half that many cards, rounded down."
+    }
+   }
+  ]
+ }
+}

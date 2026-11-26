@@ -53,6 +53,9 @@ let roleOf = new Map();    // permanent id -> role
 
 function resetBattlefield() {
   Battlefield.clear();
+  // Abilities are fired without tapping their source for a {T} / {Q} cost (_payTapCost):
+  // the audit judges target lists, not costs, and a tapped source would change what its other abilities do.
+  Battlefield._noTapCosts = true;
   Battlefield.exile = [];
   Battlefield.nextExileId = 1;
   Battlefield.bestowTargets = new Map();

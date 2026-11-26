@@ -122,6 +122,7 @@ function renderTimestampPanel() {
       ${p.needsChosenCardType ? renderChosenCardTypeInput(p) : ''}
       ${p.needsChosenAbilities ? renderChosenAbilitiesInput(p) : ''}
       ${p.isModalSpell && p.modalModeTexts && p.modalModeTexts.length > 0 ? renderModalModeToggles(p.id) : ''}
+      ${_manualTapNoteHtml(p)}
       ${abilityButtonsHtml}
       ${!hasAnyParsableAbility ? '<div class="ts-no-parse-label">no parsable abilities</div>' : ''}
     </div>`;
@@ -176,3 +177,27 @@ function initDragDrop(container) {
 /* [END: DRAGDROP] */
 
 /* [KEY: INSPECTOR-UI] */
+
+/* What the player must still tap or untap by hand on a fired ability or a spell (Conor,
+   2026-11-26): the site taps only a {T} / {Q} cost's own source (_payTapCost). Crew and Saddle
+   tap creatures of the player's choosing; a cost such as "Tap an untapped creature you control"
+   does too; and an effect that taps or untaps ("Tap target creature", "Untap all lands you
+   control") is never applied. Quoted abilities are left out: granting one taps nothing. */
+function _manualTapNoteHtml(p) {
+  if (!p || !(p.isManualEffect || p.isSpell) || p.isEmblem) return '';
+  let note = '';
+  if (p._isCrewEffect) note = 'Tap the creatures that crewed it by hand.';
+  else if (p._isSaddleEffect) note = 'Tap the creatures that saddled it by hand.';
+  else {
+    const plain = (t) => String(t || '').replace(/"[^"]*"|\u201C[^\u201D]*\u201D/g, '""').replace(/\([^)]*\)/g, '');
+    const what = p.isActivatedAbility ? 'ability' : p.isTriggeredAbility ? 'ability' : 'spell';
+    const line = plain(String(p.abilityFullText || '').split('\n')[0]).replace(/^[^{\n.;"\u2014]+\u2014\s*/, '');
+    const colon = p.isActivatedAbility ? line.indexOf(':') : -1;
+    const costTaps = colon > 0 && /\btap\b/i.test(line.slice(0, colon));
+    const effectTaps = /\b(?:un)?tap\b/i.test(plain(p.oracleText));
+    if (costTaps && effectTaps) note = `Tap what this ${what} costs, and tap or untap what it names, by hand.`;
+    else if (costTaps) note = `Tap what this ${what} costs by hand.`;
+    else if (effectTaps) note = `Tap or untap what this ${what} names by hand.`;
+  }
+  return note ? `<div class="ts-manual-note">${escapeHtml(note)}</div>` : '';
+}

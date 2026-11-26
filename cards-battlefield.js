@@ -531,6 +531,9 @@ const Battlefield = {
     // Likewise from the hand ("{1}{R}, Discard this card: …", channel, forecast, "When you cycle
     // this card, …") and once the card has left ("When this creature dies, target creature …").
     if (_abilityUsedOffTheBattlefield(fullText, kind)) pseudoPerm._excludeAbilitySource = true;
+    // A {T} or {Q} in the cost taps or untaps the source as it is activated (Conor, 2026-11-26;
+    // the only tapping the site does: effects that tap or untap stay the player's).
+    else if (kind === 'activated') this._payTapCost(pseudoPerm, sourcePerm, fullText);
     // And when its one target is a card returned from your graveyard to the battlefield (Carnage,
     // Crimson Chaos; Geth, Thane of Contracts): never the source, which is on the battlefield.
     // (Read in the ability as printed: a saved board's effect text has its pronoun written out.)
@@ -1226,6 +1229,36 @@ const Battlefield = {
     // (Not on a restore, which replays the pseudo-permanent alone: the card is already back.)
     if (pseudo) this._returnGraveyardEnchanted(sourcePermId, effectText);
     return pseudo;
+  },
+
+  /* 'tap' for an activated ability whose cost has {T}, 'untap' for {Q}, else null. Only the
+     cost before the first colon is read, so a quoted "{T}: …" in the effect is not one. */
+  _tapCostOf(fullText) {
+    const line = String(fullText || '').split('\n')[0].trim().replace(/^[^{\n.;"——]+[——]\s*/, '');
+    const i = line.indexOf(':');
+    if (i < 0) return null;
+    const cost = line.slice(0, i);
+    if (cost.includes('"')) return null;
+    if (/\{T\}/i.test(cost)) return 'tap';
+    if (/\{Q\}/i.test(cost)) return 'untap';
+    return null;
+  },
+  /* Pay a {T} / {Q} cost on the source and keep what was done on the ability (pseudo._costTap),
+     so removing the ability puts the source back. Not while a board is rebuilt: the saved
+     board already has the source as it was. */
+  _payTapCost(pseudo, src, fullText) {
+    if (this._restoringBoard || this._noTapCosts || !src || !_isPermanent(src)) return;
+    const dir = this._tapCostOf(fullText);
+    if (!dir || (dir === 'tap') === !!src.tapped) return;
+    this.toggleTapped(src.id);
+    pseudo._costTap = { id: src.id, dir };
+  },
+  _undoTapCost(pseudo) {
+    const made = pseudo && pseudo._costTap;
+    if (!made) return;
+    pseudo._costTap = null;
+    const src = this.getPermById(made.id);
+    if (src && (made.dir === 'tap') === !!src.tapped) this.toggleTapped(made.id);
   },
 
   addActivatedAbility(sourcePermId, abilityIdx, effectText, fullText, firedAtStates, savedGuesses) {
@@ -2134,6 +2167,8 @@ const Battlefield = {
     const removingPerm = this.getPermById(id);
     // A fired "attach … to target …" puts back what it moved (_applyFiredAttach).
     if (removingPerm && removingPerm._attach) this._undoFiredAttach(removingPerm);
+    // And an activated ability's {T} / {Q} cost untaps (taps) its source again (_payTapCost).
+    if (removingPerm && removingPerm._costTap) this._undoTapCost(removingPerm);
     // So does a fired "turn target … face down / up" (_applyFiredFace).
     if (removingPerm && removingPerm._face) { const recs = removingPerm._face; removingPerm._face = null; recs.forEach(r => this._undoFaceRecord(r)); }
     // And a fired "target … phases out" phases its targets back in (_applyFiredPhase); Auras and
@@ -4184,6 +4219,8 @@ const Battlefield = {
         face: p._face ? p._face.map(r => Object.assign({}, r)) : null,
         // Who a "this creature / all … phase out" phased out as it resolved (_applyFiredPhase).
         phaseGroup: p._phaseGroup ? { sig: p._phaseGroup.sig, ids: p._phaseGroup.ids.slice() } : undefined,
+        // The source a {T} / {Q} cost tapped or untapped (_payTapCost).
+        costTap: p._costTap ? { id: p._costTap.id, dir: p._costTap.dir } : undefined,
         // Player-level targets (chosen opponent / chosen player / enchanted player) live
         // on the pseudo-perm just like on real perms, so capture them too — a triggered
         // ability that targets an opponent would otherwise lose its choice on restore.
@@ -4553,6 +4590,10 @@ const Battlefield = {
       const pseudo = f.attach && idMap[f.id] && this.getPermById(idMap[f.id]);
       const tr = (id) => id ? (idMap[id] || null) : null;
       if (pseudo && tr(f.attach.what) && tr(f.attach.to)) pseudo._attach = { what: tr(f.attach.what), to: tr(f.attach.to), prev: tr(f.attach.prev) };
+    }
+    for (const f of data.firedAbilities || []) {
+      const pseudo = f.costTap && idMap[f.id] && this.getPermById(idMap[f.id]);
+      if (pseudo && idMap[f.costTap.id]) pseudo._costTap = { id: idMap[f.costTap.id], dir: f.costTap.dir };
     }
     for (const f of [...(data.perms || []), ...(data.firedAbilities || [])]) {
       const pseudo = f.face && idMap[f.id] && this.getPermById(idMap[f.id]);

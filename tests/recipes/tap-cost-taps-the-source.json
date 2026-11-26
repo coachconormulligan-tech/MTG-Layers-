@@ -1,0 +1,15 @@
+{
+  "name": "Tap cost — firing a {T} ability taps its source; removing the ability untaps it",
+  "notes": "Conor, 2026-11-26: the site taps the source of an activated ability whose cost has {T} (or untaps it for {Q}), and only that; effects that tap or untap stay the player's. Sokrates is tapped by its own ability and so loses the hexproof it has while untapped. Prodigal Sorcerer's ability is fired and removed again, which untaps it.",
+  "steps": [
+    { "add": "Sokrates, Athenian Teacher", "as": "sok" },
+    { "fire": "@sok", "activated": 1, "as": "dialogue" },
+    { "add": "Prodigal Sorcerer", "as": "tim" },
+    { "fire": "@tim", "activated": 0, "as": "ping" },
+    { "call": ["removePermanent", "@ping"] }
+  ],
+  "asserts": [
+    { "perm": "Sokrates, Athenian Teacher", "final": { "traits": { "$includes": ["Tapped"] }, "abilities": { "$excludes": ["Hexproof"] } } },
+    { "perm": "Prodigal Sorcerer", "final": { "traits": { "$excludes": ["Tapped"] } } }
+  ]
+}
