@@ -70,7 +70,7 @@ function renderCDAInput(perm) {
            placeholder="${escapeAttr(placeholder)}"
            title="${escapeAttr(title)}"
            onchange="setCDAValue('${perm.id}', parseInt(this.value) || 0)">
-    ${forEachDesc ? `<span class="cda-label" title="${escapeAttr(forEachDesc)}">${escapeHtml(forEachDesc.length > 20 ? forEachDesc.slice(0, 18) + '...' : forEachDesc)}</span>` : ''}
+    ${forEachDesc ? `<span class="cda-label" title="${escapeAttr(forEachDesc)}">${escapeHtml(forEachDesc.length > 24 ? forEachDesc.slice(0, 22) + '...' : forEachDesc)}</span>` : ''}
   </div>`;
 }
 

@@ -38,6 +38,8 @@ function effectAppliesToPerm(effect, permState, permanent, permId, allStates, ab
   if (effect._faceMarker) return false;
   // (And a fired "target … phases out": Battlefield._applyFiredPhase.)
   if (effect._phaseMarker) return false;
+  // (A fired "tap target … with power … the highest number you noted": tapping is the player's.)
+  if (effect._tapMarker) return false;
   // Zone-card / spell / permanent scope gate.
   // A zone card (exile / graveyard / command zone) is neither a permanent nor a stack
   // spell — it only receives effects flagged to reach cards outside the battlefield

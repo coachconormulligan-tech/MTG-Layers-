@@ -8360,6 +8360,41 @@ function parseCardEffects(permanent, card, opts = {}) {
     }
   }
 
+  // --- A target compared with a number the player noted, in a fired ability ---
+  // "Tap target creature with power less than or equal to the highest number you noted for cards
+  // named Custodi Peacekeeper." The number is noted while drafting, so the board cannot show it:
+  // it is typed into the fired ability's value box (cdaUserValue; untyped is 0), as Bell Borca's
+  // noted number is. Tapping stays the player's, so the target is a marker (_tapMarker) that
+  // applies to nothing and only gives the ability its picker, narrowed by the typed number.
+  if (permanent.isTriggeredAbility || permanent.isActivatedAbility || permanent.isSpell) {
+    const notedRegex = /\btap\s+((?:up to \w+\s+)?target\s+[^.;]+?)\s+with\s+(power|toughness|mana\s+value)\s+(less|greater)\s+than\s+(or\s+equal\s+to\s+)?the\s+(?:highest|greatest)\s+number\s+you\s+noted\b[^.;]*/gi;
+    let nm;
+    while ((nm = notedRegex.exec(oracle)) !== null) {
+      if ((oracle.slice(0, nm.index).match(/"/g) || []).length % 2) continue;
+      const text = nm[1].trim();
+      const built = buildAppliesToFromText(text);
+      if (!built.isSpellTarget || !built.fn) continue;
+      const stat = /^mana/i.test(nm[2]) ? 'manaValue' : nm[2].toLowerCase();
+      const less = /less/i.test(nm[3]), orEqual = !!nm[4], pseudoId = permanent.id;
+      const baseFn = built.fn;
+      const restriction = (st, all, ctrl) => {
+        if (!baseFn(st, all, ctrl)) return false;
+        const v = stat === 'manaValue' ? (st.manaValue || 0) : st[stat];
+        if (v === null || v === undefined) return false;
+        const holder = typeof Battlefield !== 'undefined' ? Battlefield.getPermById(pseudoId) : null;
+        const ref = (holder && holder.cdaUserValue) || 0;
+        return less ? (orEqual ? v <= ref : v < ref) : (orEqual ? v >= ref : v > ref);
+      };
+      const words = nm[0].trim();
+      const eff = pushEff('7c', EFFECT_TYPE.MODIFY_PT,
+        { power: 0, toughness: 0, userAdjustable: true, forEachDesc: 'highest number you noted' },
+        { appliesTo: null, scope: 'targeted', selfTarget: false },
+        words.charAt(0).toUpperCase() + words.slice(1) + '.', { _oraclePos: nm.index, _tapMarker: true });
+      _applyTargetInfo(eff, built, restriction);
+      if (!eff.targetRestriction) eff.targetRestriction = restriction;
+    }
+  }
+
   // --- Tag and sort modal spell effects by mode order ---
   // For modal spells, tag each effect with its modalModeIndex based on which oracle
   // line it was parsed from. Uses _oraclePos (regex match position) when available,

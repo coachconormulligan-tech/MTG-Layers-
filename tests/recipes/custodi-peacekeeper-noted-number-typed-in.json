@@ -1,0 +1,69 @@
+{
+  "name": "Custodi Peacekeeper — the highest number noted is typed in; the fired tap ability lists creatures with power up to it",
+  "notes": "'{W}, {T}: Tap target creature with power less than or equal to the highest number you noted for cards named Custodi Peacekeeper.' The number is noted while drafting, so the board cannot show it: it is typed into the fired ability's value box ('highest number you noted'), as Bell Borca's noted number is. The ability had no picker at all; it now has one that only lists (tapping stays the player's). Untyped (0) it lists nothing; with 3 typed it lists the 2/2, the 2/3 and the 3/3, not the 6/4. Nothing on the board changes.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Custodi Peacekeeper",
+      "as": "cp"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears",
+      "controller": "p2"
+    },
+    {
+      "add": "Centaur Courser",
+      "as": "courser",
+      "controller": "p2"
+    },
+    {
+      "add": "Craw Wurm",
+      "as": "wurm",
+      "controller": "p2"
+    },
+    {
+      "fire": "@cp",
+      "activated": 1,
+      "as": "tap"
+    },
+    {
+      "call": [
+        "setCDAValue",
+        "@tap",
+        3
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "targetCandidates": {
+        "perm": "Custodi Peacekeeper (activated)"
+      },
+      "are": [
+        "Custodi Peacekeeper",
+        "Grizzly Bears",
+        "Centaur Courser"
+      ]
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 2,
+        "toughness": 2
+      }
+    },
+    {
+      "perm": "Craw Wurm",
+      "final": {
+        "power": 6,
+        "toughness": 4
+      }
+    }
+  ]
+}
