@@ -621,6 +621,26 @@ const CONDITION_PARSERS = [
     return (s) => s.abilities.some(a => a.toLowerCase().includes(abText));
   },
 
+  // --- Stickers (CR 123.4): "you control a stickered permanent" (Scared Stiff, Grabby Tabby),
+  // "you control a creature with a name sticker on it". Must precede the "you control" catch-all,
+  // which would read "stickered" as a type. ---
+  (ct) => {
+    const m = ct.match(/^you control (?:a|an|another) (?:(stickered) )?([a-z]+)(?: with (?:a|an) (?:(name|art|ability|power and toughness) )?sticker on it)?$/);
+    if (!m || (!m[1] && !/ sticker on it$/.test(ct))) return null;
+    const kind = { name: 'name', art: 'art', ability: 'ability', 'power and toughness': 'pt' }[m[3] || ''] || null;
+    const t = m[2] === 'permanent' ? null : normalizeTypeWord(m[2]);
+    if (m[2] !== 'permanent' && !(t && t.check === 'type')) return null;
+    return (state, allStates) => {
+      if (!allStates) return false;
+      for (const [, s] of allStates) {
+        if (s.isEmblem || s.isZoneCard || s.isSpell) continue;
+        if (state.controller && s.controller !== state.controller) continue;
+        if (t && !s.types.includes(t.value)) continue;
+        if ((s.stickers || []).some(k => !kind || k.kind === kind)) return true;
+      }
+      return false;
+    };
+  },
   // --- "you control X" variants (order: counter, count, color+type, planeswalker, catch-all) ---
   // "you control a permanent/creature with a [type] counter on it".
   (ct) => {
@@ -8698,6 +8718,25 @@ function parseCardEffects(permanent, card, opts = {}) {
           { requireType, includeTriggered, sameController: false, differentName: false },
           { appliesTo: appliesToFn || null, scope, selfTarget: selfTarget || undefined, affectsSelf: selfTarget || false },
           `${descSubject} has all ${descAbilities} of all ${typeWord} on the battlefield.`);
+      }
+    }
+  }
+
+  // --- Stickers (CR 123.7a): "<subject> has all abilities of ability stickers on this Equipment"
+  // (Pin Collection) / "… on other permanents you own [and cards in your graveyard]" (Clandestine
+  // Chameleon). The abilities are read off the stickers as the effect applies (engine-apply.js).
+  // A card in a graveyard carries no sticker on the site, so that half adds nothing. ---
+  {
+    const stkM = /(?:^|[.\n]\s*)([^.\n]*?)\s+(?:gets [^.\n]*? and )?(?:has|have)\s+all\s+abilities\s+of\s+ability\s+stickers\s+on\s+(this\s+[a-z]+|other\s+permanents\s+you\s+own)\b/i.exec(oracleRaw);
+    if (stkM) {
+      const subjectRaw = stkM[1].trim().toLowerCase();
+      const from = /^this\s/i.test(stkM[2]) ? 'source' : 'ownOthers';
+      const self = /^(?:this\s+[a-z]+|it)$/.test(subjectRaw) || subjectRaw === String(card.name || '').toLowerCase();
+      const bResult = self ? { isSelf: true, fn: null } : buildAppliesToFromText(subjectRaw);
+      if (bResult) {
+        const eff = pushEff('6', EFFECT_TYPE.ADD_ABILITY, { fromAbilityStickers: from }, bResult,
+          `${self ? 'This permanent' : subjectRaw.charAt(0).toUpperCase() + subjectRaw.slice(1)} has all abilities of ability stickers on ${stkM[2].toLowerCase()}.`);
+        if (!self) _applyTargetInfo(eff, bResult, bResult.fn);
       }
     }
   }

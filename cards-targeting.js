@@ -308,6 +308,8 @@ function _restrictionState(tState, fs, t) {
     isFaceDown: src.isFaceDown !== undefined ? !!src.isFaceDown : !!t.isFaceDown,
     // ("Enchant tapped creature" — Entangling Vines, Glimmerdust Nap.)
     tapped: src.tapped ?? !!t.tapped,
+    // ("Another target creature with a name sticker on it" — Baaallerina, CR 123.)
+    stickers: src.stickers || t.stickers || [],
     traits: tState.traits || src.traits || t.traits || [],
     // ("Equip commander {3}" - Unstable Molecule Suit.)
     isCommander: !!src.isCommander,

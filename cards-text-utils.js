@@ -2048,6 +2048,19 @@ function _buildAppliesToFromTextInner(filterText) {
     };
   }
 
+  // --- Sticker filters (CR 123): "another target creature with a name sticker on it"
+  // (Sword-Swallowing Seraph), "permanents you control with an art sticker" (Roxi), "target
+  // creature card with a sticker on it" (Scampire). A kind of sticker or any. ---
+  const stickerFilter = f.match(/^(.+?)\s+with\s+(?:a|an|one or more)\s+(?:(name|art|ability|power and toughness)\s+)?stickers?(?:\s+on\s+(?:it|them|(?:target|that|those)\s+\w+))?$/);
+  if (stickerFilter) {
+    const baseFilter = buildAppliesToFromText(stickerFilter[1]);
+    const kind = { name: 'name', art: 'art', ability: 'ability', 'power and toughness': 'pt' }[stickerFilter[2] || ''] || null;
+    return {
+      fn: (p) => baseFilter.fn(p) && (p.stickers || []).some(s => !kind || s.kind === kind),
+      desc: `Applies to: ${baseFilter.desc.replace('Applies to: ', '')} with ${stickerFilter[2] ? 'a ' + stickerFilter[2] + ' sticker' : 'a sticker'}`,
+    };
+  }
+
   // --- Counter filters: "creatures with a +1/+1 counter on it/them" ---
   // (A fired ability's "it" may already read "target creature": "with a +1/+1 counter on target
   // creature" — Plaxcaster Frogling. "With a counter on it" — Hidden Hideout — is any counter.)
@@ -2152,6 +2165,7 @@ function _buildAppliesToFromTextInner(filterText) {
   let requireOutlaw = false;
   let requireTapped = false;
   let requireFaceDown = null; // true: "face-down", false: "face-up"
+  let requireStickered = false; // "a stickered permanent" (CR 123.4)
   let requireUntapped = false;
   let baseTypeWord = null;
   let hasNegation = false;
@@ -2233,6 +2247,9 @@ function _buildAppliesToFromTextInner(filterText) {
     } else if (word === 'face-down' || word === 'face-up') {
       // "Target face-down creature" (Ixidor, Reality Sculptor; Break Open).
       requireFaceDown = word === 'face-down' ? true : false;
+    } else if (word === 'stickered' && !isNeg) {
+      // "As long as you control a stickered permanent" (Scared Stiff, CR 123.4).
+      requireStickered = true;
     } else if (word === 'tapped') {
       requireTapped = true;
     } else if (word === 'untapped') {
@@ -2295,7 +2312,7 @@ function _buildAppliesToFromTextInner(filterText) {
   // If we parsed multiple qualifiers, build a composite filter
   if (requiredTypes.length > 0 || requiredSubtypes.length > 0 || requiredSupertypes.length > 0 ||
       requiredColors.length > 0 || negatedColors.length > 0 || requiredTraits.length > 0 || negatedTraits.length > 0 ||
-      negatedTypes.length > 0 || negatedSubtypes.length > 0 || negatedSupertypes.length > 0 || requireNontoken || requireToken || requireCommander || requireTapped || requireUntapped || requireFaceDown !== null) {
+      negatedTypes.length > 0 || negatedSubtypes.length > 0 || negatedSupertypes.length > 0 || requireNontoken || requireToken || requireCommander || requireTapped || requireUntapped || requireFaceDown !== null || requireStickered) {
     const checks = [];
     const descParts = [];
 
@@ -2369,6 +2386,10 @@ function _buildAppliesToFromTextInner(filterText) {
     if (requireUntapped) {
       checks.push((p) => p.tapped === false);
       descParts.push('untapped');
+    }
+    if (requireStickered) {
+      checks.push((p) => !!(p.stickers && p.stickers.length));
+      descParts.push('stickered');
     }
 
     if (checks.length > 0) {

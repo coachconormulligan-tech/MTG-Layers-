@@ -1,0 +1,21 @@
+{
+  "name": "Stickers — \"has all abilities of ability stickers on …\" (Pin Collection, Clandestine Chameleon)",
+  "notes": "CR 123.7a: an ability of an ability sticker is the ability the sticker gives the object it is on. Pin Collection's equipped creature gets the abilities of the ability stickers on the Equipment (and +1/+1); Clandestine Chameleon gets those on other permanents you own, not the ones on an opponent's permanent, nor a name sticker.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Pin Collection", "as": "pin" },
+    { "call": ["setTarget", "@pin", "@bears"] },
+    { "call": ["addSticker", "@pin", { "kind": "ability", "text": "Deathtouch" }] },
+    { "add": "Clandestine Chameleon", "as": "cham" },
+    { "add": "Llanowar Elves", "as": "elves" },
+    { "call": ["addSticker", "@elves", { "kind": "ability", "text": "Trample" }] },
+    { "call": ["addSticker", "@elves", { "kind": "name", "text": "Dark" }] },
+    { "call": ["addPlayer", "Player 2"] },
+    { "add": "Savannah Lions", "controller": "p2" },
+    { "call": ["addSticker", "@bears", { "kind": "ability", "text": "Haste" }] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": 3, "toughness": 3, "abilities": { "$includes": ["Deathtouch", "Haste"] } } },
+    { "perm": "Clandestine Chameleon", "final": { "abilities": { "$includes": ["Trample", "Haste", "Deathtouch"], "$excludes": ["Dark"] } } }
+  ]
+}

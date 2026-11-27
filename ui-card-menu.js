@@ -98,6 +98,8 @@ function buildCardMenuItems(permId) {
   if (p.hasBestow && notCopyCard) items.push({ label: 'Bestow', run: () => openBestowModal(permId) });
   if (Battlefield.getBestowTarget(permId)) items.push({ label: 'Remove bestow', run: () => removeBestow(permId) });
 
+  items.push({ label: 'Stickers...', run: () => openStickerModal(permId) });
+
   sep();
   items.push(remove);
   return items;

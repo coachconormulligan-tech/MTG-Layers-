@@ -652,6 +652,25 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
     }
   }
 
+  // --- Stickers (CR 123): "for each name sticker on it" (_____ _____ _____ Trespasser), "for
+  // each name sticker on this Aura with seven or fewer letters" (Last Voyage of the _____),
+  // "… with eight or more letters" (Fight the _____ Fight). "It" is the permanent being
+  // modified, "this <word>" or its name the effect's source, as with counters below. ---
+  const stickerCountMatch = desc.match(/^(?:(?:an?|one)\s+)?(?:(name|art|ability|power and toughness)\s+)?stickers?\s+on\s+(.+?)(?:\s+with\s+(\w+)\s+or\s+(fewer|more)\s+letters)?$/);
+  if (stickerCountMatch) {
+    const holderText = stickerCountMatch[2].trim();
+    const srcName = ((sourceState && sourceState.name) || '').toLowerCase();
+    let holder = null;
+    if (/^(?:it|that creature|that permanent)$/.test(holderText)) holder = selfState;
+    else if (/^this\s+[a-z]+$/.test(holderText) || (srcName && holderText === srcName)) holder = sourceState;
+    if (holder) {
+      const kind = { name: 'name', art: 'art', ability: 'ability', 'power and toughness': 'pt' }[stickerCountMatch[1] || ''] || null;
+      const n = stickerCountMatch[3] ? _parseWordNumber(stickerCountMatch[3]) : null;
+      return (holder.stickers || []).filter(s => (!kind || s.kind === kind) &&
+        (n == null || (stickerCountMatch[4] === 'fewer' ? stickerLetters(s.text) <= n : stickerLetters(s.text) >= n))).length;
+    }
+  }
+
   // --- Counter patterns (checked BEFORE bare subtype to avoid changeling false positives) ---
 
   // "[kind] counter on it / on them / on that creature" — on the permanent being modified

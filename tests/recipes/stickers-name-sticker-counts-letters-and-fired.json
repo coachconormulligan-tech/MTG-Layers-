@@ -1,0 +1,20 @@
+{
+  "name": "Stickers — \"for each name sticker on this Aura with eight or more letters\" and \"for each name sticker on it\"",
+  "notes": "CR 123.6. Fight the _____ Fight counts only the name stickers on the Aura itself with eight or more letters (\"Marvelous\" yes, \"Big\" no), and its first sticker fills the blank in its name. _____ _____ _____ Trespasser's fired \"+1/+0 for each name sticker on it\" counts the two on the creature.",
+  "steps": [
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Fight the _____ Fight", "as": "aura" },
+    { "call": ["setTarget", "@aura", "@bears"] },
+    { "call": ["addSticker", "@aura", { "kind": "name", "text": "Marvelous", "afterWords": 2 }] },
+    { "call": ["addSticker", "@aura", { "kind": "name", "text": "Big", "afterWords": 0 }] },
+    { "add": "_____ _____ _____ Trespasser", "as": "tres" },
+    { "call": ["addSticker", "@tres", { "kind": "name", "text": "Sneaky", "afterWords": 0 }] },
+    { "call": ["addSticker", "@tres", { "kind": "name", "text": "Hot Dog", "afterWords": 1 }] },
+    { "fire": "@tres", "activated": 1 }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 4 } },
+    { "perm": "Fight the _____ Fight", "final": { "name": "Big Fight the Marvelous Fight" } },
+    { "perm": "_____ _____ _____ Trespasser", "final": { "name": "Sneaky Hot Dog _____ Trespasser", "power": 4 } }
+  ]
+}

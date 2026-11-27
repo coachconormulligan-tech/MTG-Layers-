@@ -1,0 +1,19 @@
+{
+  "name": "Stickers — \"as long as you control a stickered permanent\" and \"with a name sticker on it\" targets",
+  "notes": "CR 123.4: a permanent is stickered while any sticker is on it. Scared Stiff has menace and Grabby Tabby vigilance only once a permanent you control has a sticker; Baaallerina's \"another target creature with a name sticker on it\" lists only the creature with a name sticker, not the one with an art sticker.",
+  "steps": [
+    { "add": "Scared Stiff", "as": "stiff" },
+    { "add": "Grabby Tabby" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Llanowar Elves", "as": "elves" },
+    { "add": "Baaallerina", "as": "ballerina" },
+    { "call": ["addSticker", "@bears", { "kind": "name", "text": "Dark", "afterWords": 0 }] },
+    { "call": ["addSticker", "@elves", { "kind": "art" }] },
+    { "fire": "@ballerina", "activated": 2, "as": "fly" }
+  ],
+  "asserts": [
+    { "perm": "Scared Stiff", "final": { "abilities": { "$includes": ["Menace"] } } },
+    { "perm": "Grabby Tabby", "final": { "abilities": { "$includes": ["Vigilance"] } } },
+    { "targetCandidates": { "perm": "Baaallerina (activated)" }, "are": ["Grizzly Bears"] }
+  ]
+}

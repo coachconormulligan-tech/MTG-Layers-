@@ -16,6 +16,7 @@ const DEFAULT_GAME_STATE = {
   hasCityBlessing: false,
   poisonCounters: 0,
   experienceCounters: 0,
+  ticketCounters: 0,      // {TK} (CR 107.17): what a sticker's ticket cost is paid with
   customCounters: {},
 };
 
@@ -62,6 +63,7 @@ const Battlefield = {
         hasCityBlessing: false,
         poisonCounters: 0,
         experienceCounters: 0,
+        ticketCounters: 0,
         customCounters: {},
       },
       commanders: [],
@@ -122,6 +124,7 @@ const Battlefield = {
         hasCityBlessing: false,
         poisonCounters: 0,
         experienceCounters: 0,
+        ticketCounters: 0,
         customCounters: {},
       },
       commanders: [],
@@ -3336,6 +3339,61 @@ const Battlefield = {
     if (typeof renderAll === 'function') renderAll();
   },
 
+  /* Stickers (CR 123). A sticker is a marker on the card, not an effect kept here: its effects
+     are built as the board is evaluated (stickerEffectsFor, engine-stickers.js).
+     `sticker` is { kind: 'name' | 'ability' | 'pt' | 'art', text, afterWords (name: how many of
+     the name's words come before it, 123.6b), power, toughness (pt), ticketCost, sheet }.
+     Each gets a new timestamp as it is put on (613.7k). Its ticket cost is paid by the card's
+     owner (123.3c) when `pay` is set, at most what they have; removing the sticker gives back
+     what was paid. A player can only put a sticker on a card they own (123.3b): the pop-up
+     says whose stickers they are, it does not stop the player. */
+  addSticker(permId, sticker, { pay = true } = {}) {
+    const perm = this.getPermById(permId);
+    if (!perm || !sticker || !STICKER_KINDS.includes(sticker.kind)) return null;
+    this._invalidate();
+    const s = {
+      // (Numbered per card, so a saved board reads the same each time.)
+      id: 'stk' + (1 + Math.max(0, ...(perm.stickers || []).map(x => parseInt(String(x.id).slice(3), 10) || 0))),
+      kind: sticker.kind,
+      text: String(sticker.text || '').trim(),
+      timestamp: this.nextTimestamp++,
+    };
+    if (s.kind === 'name') s.afterWords = Math.max(0, sticker.afterWords | 0);
+    if (s.kind === 'pt') { s.power = parseInt(sticker.power, 10) || 0; s.toughness = parseInt(sticker.toughness, 10) || 0; }
+    if (sticker.ticketCost) s.ticketCost = Math.max(0, sticker.ticketCost | 0);
+    if (sticker.sheet) s.sheet = sticker.sheet;
+    if (pay && s.ticketCost) {
+      const gs = this._ticketState(perm.owner || 'player_0');
+      if (gs) {
+        const paid = Math.min(s.ticketCost, gs.ticketCounters || 0);
+        gs.ticketCounters = (gs.ticketCounters || 0) - paid;
+        if (paid) s.paid = paid;
+      }
+    }
+    if (!Array.isArray(perm.stickers)) perm.stickers = [];
+    perm.stickers.push(s);
+    return s;
+  },
+
+  removeSticker(permId, stickerId) {
+    const perm = this.getPermById(permId);
+    if (!perm || !Array.isArray(perm.stickers)) return;
+    const i = perm.stickers.findIndex(s => s.id === stickerId);
+    if (i < 0) return;
+    this._invalidate();
+    const [s] = perm.stickers.splice(i, 1);
+    if (s.paid) {
+      const gs = this._ticketState(perm.owner || 'player_0');
+      if (gs) gs.ticketCounters = (gs.ticketCounters || 0) + s.paid;
+    }
+    if (!perm.stickers.length) delete perm.stickers;
+  },
+
+  _ticketState(playerId) {
+    const pl = this.getPlayer ? this.getPlayer(playerId) : null;
+    return pl ? pl.gameState : null;
+  },
+
   /* Counter management */
   addCounter(permId, counterType, count = 1) {
     this._invalidate();
@@ -3666,7 +3724,8 @@ const Battlefield = {
       // ("Tap up to one untapped creature you control" — Nihiloor — reads tapped off these.)
       tapped: !!p.tapped, traits: [...(p.traits || [])], counters: { ...(p.counters || {}) },
       phasedOut: !!p.phasedOut || undefined });
-    const hasTraits = realPerms.some(rp => rp.traits && rp.traits.length > 0);
+    // (Stickers make effects of their own as the board is evaluated: a lone stickered card.)
+    const hasTraits = realPerms.some(rp => (rp.traits && rp.traits.length > 0) || (rp.stickers && rp.stickers.length > 0));
     if (realPerms.length === 0) { this._cachedFinalStates = new Map(); this._cachedFinalStatesVersion = this._cacheVersion; return this._cachedFinalStates; }
     if (this.effects.length === 0 && !hasTraits) {
       const map = new Map();
@@ -4116,6 +4175,8 @@ const Battlefield = {
         timesAttackedThisTurn: p.timesAttackedThisTurn || undefined,
         counters: { ...(p.counters || {}) },
         counterTimestamps: { ...(p.counterTimestamps || {}) },
+        // Stickers (addSticker), only when there are some, so older boards read the same.
+        stickers: (p.stickers && p.stickers.length) ? p.stickers.map(s => Object.assign({}, s)) : undefined,
         isFaceDown: !!p.isFaceDown,
         faceDownMode: p.faceDownMode || null,
         faceDownAs: p.faceDownAs || null,
@@ -4392,6 +4453,8 @@ const Battlefield = {
       if (r.timesAttackedThisTurn) np.timesAttackedThisTurn = r.timesAttackedThisTurn;
       np.counters = { ...(r.counters || {}) };
       np.counterTimestamps = { ...(r.counterTimestamps || {}) };
+      // Stickers come back as they were: no ticket cost is paid again (CR 123.3d).
+      if (Array.isArray(r.stickers) && r.stickers.length) np.stickers = r.stickers.map(s => Object.assign({}, s));
       // Counters drive P/T and keyword grants through synthetic effects — rebuild them.
       this._syncCounterEffects(np.id);
       if (r.cdaUserValue != null) np.cdaUserValue = r.cdaUserValue;
@@ -4714,6 +4777,7 @@ const Battlefield = {
     for (const p of this.permanents) if ((p.timestamp || 0) > maxTs) maxTs = p.timestamp;
     for (const e of this.effects) if ((e.timestamp || 0) > maxTs) maxTs = e.timestamp;
     for (const e of this.exile) if ((e.timestamp || 0) > maxTs) maxTs = e.timestamp;
+    for (const p of this.permanents) for (const s of (p.stickers || [])) if ((s.timestamp || 0) > maxTs) maxTs = s.timestamp;
     this.nextTimestamp = maxTs + 1;
     this.updateLabels();
     this._invalidate();
@@ -4747,7 +4811,7 @@ const Battlefield = {
         handSize: 7, drawsThisTurn: 0, graveyardCount: 0,
         startingLife: 20, currentLife: 20, isYourTurn: true,
         isMonarch: false, hasInitiative: false, hasCityBlessing: false,
-        poisonCounters: 0, experienceCounters: 0,
+        poisonCounters: 0, experienceCounters: 0, ticketCounters: 0,
         customCounters: {},
       },
       commanders: [],

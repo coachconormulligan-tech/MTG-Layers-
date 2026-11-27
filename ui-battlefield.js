@@ -562,6 +562,7 @@ function renderBattlefield() {
       ${Battlefield.isCommander(p.id) ? '<div class="bf-card-commander-badge">CMDR</div>' : ''}
       ${p.classLevel ? `<div class="bf-card-class-badge">LVL ${p.classLevel}</div>` : ''}
       ${p.isFaceDown ? `<div class="bf-card-facedown-badge">${p.faceDownMode === 'cloak' ? 'CLOAK' : p.faceDownMode === 'manifest' ? 'MANIFEST' : p.faceDownMode === 'plain' ? 'FACE DOWN' : 'MORPH'}</div>` : ''}
+      ${(p.stickers && p.stickers.length) ? `<div class="bf-card-sticker-badge" title="Stickers on this card" onclick="event.stopPropagation();openStickerModal('${p.id}')">STICKERS ${p.stickers.length}</div>` : ''}
       ${p.phasedOut ? `<div class="bf-card-phased-badge" title="Treated as though it doesn't exist (rule 702.26)${p.phasedOutWith ? '. Phased out with what it is attached to' : ''}">PHASED OUT</div>` : ''}
       ${hasSBA ? `<div class="bf-card-sba-badge" title="State-based action required">\u26a0</div>` : ''}
       ${renderBfCounterBadges(p)}

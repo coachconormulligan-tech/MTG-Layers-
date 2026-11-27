@@ -203,7 +203,7 @@ function renderGameStatePanel() {
     <span class="gs-label">${label}</span>
     <div class="gs-controls">
       <button class="gs-btn" onclick="_adjustGameStat('${key}', -1)">−</button>
-      <span class="gs-value">${gs[key]}</span>
+      <span class="gs-value">${gs[key] || 0}</span>
       <button class="gs-btn" onclick="_adjustGameStat('${key}', 1)">+</button>
     </div>
   </div>`;
@@ -241,6 +241,7 @@ function renderGameStatePanel() {
   html += startingLifeRow;
   html += statRow('Poison Counters', 'poisonCounters');
   html += statRow('Experience Counters', 'experienceCounters');
+  html += statRow('Ticket Counters', 'ticketCounters');
   html += statRow('Draws This Turn', 'drawsThisTurn');
   html += '</div>';
 

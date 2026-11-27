@@ -1,0 +1,20 @@
+{
+  "name": "Stickers — name in layer 3, ability in layer 6 (with its static), P/T in layer 7b; a copy gets none",
+  "notes": "CR 123.6-123.8 and 123.1: a sticker is an effect of the card it is on with its own timestamp, not part of its copiable values. Grizzly Bears gets a name sticker before its first word, an ability sticker with Hellbent (no cards in hand) and a 1/5 sticker; Glorious Anthem's +1/+1 is layer 7c, after the sticker's 7b. A Clone of it is a plain Grizzly Bears.",
+  "steps": [
+    { "call": ["updateGameState", "handSize", 0] },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Glorious Anthem" },
+    { "call": ["addSticker", "@bears", { "kind": "name", "text": "Dark", "afterWords": 0 }] },
+    { "call": ["addSticker", "@bears", { "kind": "ability", "text": "Hellbent — This creature gets +3/+3 as long as you have no cards in hand.", "ticketCost": 2 }] },
+    { "call": ["addSticker", "@bears", { "kind": "pt", "power": 1, "toughness": 5, "ticketCost": 2 }] },
+    { "call": ["addSticker", "@bears", { "kind": "ability", "text": "Flying", "ticketCost": 3 }] },
+    { "add": "Clone", "as": "clone" },
+    { "copy": ["@clone", "@bears"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "name": "Dark Grizzly Bears", "power": 5, "toughness": 9,
+      "abilities": { "$includes": ["Flying", "Hellbent — This creature gets +3/+3 as long as you have no cards in hand."] } } },
+    { "perm": "Clone", "final": { "name": "Grizzly Bears", "power": 3, "toughness": 3, "abilities": { "$excludes": ["Flying"] } } }
+  ]
+}

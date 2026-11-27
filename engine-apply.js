@@ -333,6 +333,25 @@ function applyEffect(state, effect, context) {
         }
         break;
       }
+      // "… has all abilities of ability stickers on this Equipment" (Pin Collection), "… on other
+      // permanents you own" (Clandestine Chameleon): the abilities those stickers give, read off
+      // the stickers themselves (CR 123.7a: even if the object no longer has them).
+      if (effect.params.fromAbilityStickers) {
+        if (typeof Battlefield === 'undefined') break;
+        const src = Battlefield.getPermById(effect.sourceId);
+        if (!src) break;
+        const holders = effect.params.fromAbilityStickers === 'source' ? [src]
+          : Battlefield.permanents.filter(p => p.id !== src.id && !p.isManualEffect && !p.phasedOut && !p.isEmblem &&
+              (p.owner || 'player_0') === (src.owner || 'player_0'));
+        for (const p of holders) {
+          for (const s of (p.stickers || [])) {
+            if (s.kind !== 'ability' || !s.text || state.abilities.includes(s.text)) continue;
+            state.abilities.push(s.text);
+            changes.push(`Added ability "${s.text}" (ability sticker on ${p.name})`);
+          }
+        }
+        break;
+      }
       let ab = effect.params.ability;
       // Resolve xSource: replace {X} in ability text with a dynamic value.
       if (ab && effect.params.xSource) {
@@ -1246,6 +1265,12 @@ function applyEffect(state, effect, context) {
 
     case EFFECT_TYPE.SET_NAME: {
       const oldName = state.name;
+      // A name sticker adds its word(s) where it was placed (CR 123.6b-c, engine-stickers.js).
+      if (effect.params.stickerWord) {
+        state.name = addNameStickerWord(state.name, effect.params.stickerWord, effect.params.afterWords);
+        changes.push(`Name sticker: "${oldName}" \u2192 "${state.name}"`);
+        break;
+      }
       state.name = effect.params.name;
       changes.push(`Renamed "${oldName}" \u2192 "${state.name}"`);
       break;

@@ -139,6 +139,7 @@ function snapshotState(state) {
     copySource: state.copySource || null,
     cdaUserValue: state.cdaUserValue ?? null,
     counters: { ...(state.counters || {}) },
+    stickers: state.stickers ? state.stickers.slice() : [],
     traits: [...(state.traits || [])],
     attackingPlayerId: state.attackingPlayerId || null,
     timesAttackedThisTurn: state.timesAttackedThisTurn || 0,

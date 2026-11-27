@@ -492,6 +492,10 @@ function _evaluateBoard(allPermanents, allEffects, tracedIds, permanent) {
     }
     workingEffects.push({ ...e });
   }
+  // Stickers (CR 123): effects of the permanent they are on, built here (engine-stickers.js).
+  for (const p of allPermanents) {
+    if (p.stickers && p.stickers.length && !p.isManualEffect) workingEffects.push(...stickerEffectsFor(p));
+  }
   // A group a spell fixes as it resolves is judged on the board it resolved against (computed
   // here, before this pass starts, as it runs a pass of its own).
   for (const e of workingEffects) {
@@ -519,6 +523,7 @@ function _evaluateBoard(allPermanents, allEffects, tracedIds, permanent) {
       for (const eff of workingEffects) {
         if (eff.sourceId !== bestowPermId) continue;
         if (eff._isCounterEffect) continue; // counters stay on the bestow card
+        if (eff._isStickerEffect) continue; // and so do its stickers (CR 123.1)
         if (eff.selfTarget || (!eff.targetId && eff.scope === 'targeted')) {
           eff.selfTarget = false;
           eff.targetId = targetPermId;
