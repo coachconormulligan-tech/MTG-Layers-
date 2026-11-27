@@ -191,6 +191,8 @@ function renderBattlefield() {
         || (legendExemptTypes.has('Token') && p.isToken);
       if (!isExempt) {
         const nm = st.name;
+        // A permanent with no name shares it with nothing (Fear of Forgetting Names).
+        if (!nm) continue;
         if (!legendaryByName.has(nm)) legendaryByName.set(nm, []);
         legendaryByName.get(nm).push(p.id);
       }

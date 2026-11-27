@@ -1294,6 +1294,10 @@ function applyEffect(state, effect, context) {
         break;
       }
       state.name = effect.params.name;
+      if (effect.params.noName) {
+        changes.push(`Lost its name ("${oldName}")`);
+        break;
+      }
       changes.push(`Renamed "${oldName}" \u2192 "${state.name}"`);
       break;
     }

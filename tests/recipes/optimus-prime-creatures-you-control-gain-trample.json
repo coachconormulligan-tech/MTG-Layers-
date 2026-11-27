@@ -1,0 +1,16 @@
+{
+  "name": "Optimus Prime, Inspiring Leader — fired: becomes a 6/6 Construct and creatures you control gain trample",
+  "notes": "Found by tests/sweep.py (subject probe). The subject of \"gain trample\" ran back to \"this card becomes a Construct with base power and toughness 6/6 and creatures you control\", a filter nothing passed, so no creature gained trample. A new subject after the last \"and\" of a \"becomes\" clause is now the one that gains. The opponent's Hill Giant gains nothing.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Optimus Prime, Inspiring Leader", "as": "op" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Hill Giant", "as": "giant", "controller": "p2" },
+    { "fire": "@op", "activated": 1, "as": "a" }
+  ],
+  "asserts": [
+    { "perm": "Optimus Prime, Inspiring Leader", "final": { "subtypes": ["Construct"], "power": 6, "toughness": 6, "abilities": { "$includes": ["Trample"] } } },
+    { "perm": "Grizzly Bears", "final": { "abilities": ["Trample"] } },
+    { "perm": "Hill Giant", "final": { "abilities": [] } }
+  ]
+}

@@ -25,6 +25,13 @@ function _parseOneProtectionClause(clauseRaw) {
   // Strip trailing duration suffixes ("until end of turn", "this turn", etc.)
   x = x.replace(/\s+(?:until\s+(?:end\s+of\s+turn|your\s+next\s+turn|the\s+end\s+of\s+(?:turn|your\s+next\s+turn))|this\s+turn)\s*$/i, '').trim();
   if (!x) return null;
+  // "creatures with no names" (Fear of Forgetting Names): the quality, and only an object
+  // with no name has it (a face-down permanent has none, CR 708.2).
+  const noNameM = x.match(/^(.+?)\s+with no names?$/);
+  if (noNameM) {
+    const inner = _parseOneProtectionClause(noNameM[1]);
+    return inner ? Object.assign(inner, { noName: true, raw: clauseRaw }) : null;
+  }
   // Multi-word phrases first
   if (x === 'everything') return { kind: 'everything', value: null, raw: clauseRaw };
   if (x === 'all colors' || x === 'each color')
@@ -204,6 +211,13 @@ function _sourceHasQuality(p, realSourcePerm, realSourceState) {
   const sSubs = (realSourceState && realSourceState.subtypes) || (realSourcePerm && realSourcePerm.printedSubtypes) || [];
   const sName = (realSourceState && realSourceState.name) || (realSourcePerm && realSourcePerm.name) || '';
   const sIsAllCreatureTypes = !!(realSourceState && realSourceState.isAllCreatureTypes);
+  // "from creatures with no names": a source with a name lacks the quality (a face-down one has none).
+  if (p.noName) {
+    const named = realSourceState
+      ? !!realSourceState.name && !realSourceState.isFaceDown
+      : !!(realSourcePerm && realSourcePerm.name && !realSourcePerm.isFaceDown);
+    if (named) return false;
+  }
   switch (p.kind) {
     case 'everything': return true;
     case 'colorless': return sColors.length === 0;
@@ -288,6 +302,7 @@ function _hexproofFromSource(targetAbilities, targetState, sourceState, sourcePe
 }
 
 function _formatProtectionEntry(p) {
+  if (p.noName) return `${_formatProtectionEntry(Object.assign({}, p, { noName: false }))} with no names`;
   switch (p.kind) {
     case 'color': {
       const m = { W: 'white', U: 'blue', B: 'black', R: 'red', G: 'green' };

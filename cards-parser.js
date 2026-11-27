@@ -5564,6 +5564,14 @@ function parseCardEffects(permanent, card, opts = {}) {
       const _becomesAnd = stripDurationPrefix(filterText).match(/^(this (?:card|creature|permanent|land|artifact|enchantment)|(?:up to \w+ |another )?target [^,.]+?)\s+becomes?\s+[^"]*\band$/i);
       if (_becomesAnd) filterText = _becomesAnd[1];
     }
+    // "This card becomes a Construct with base power and toughness 6/6 and creatures you control
+    // gain trample" (Optimus Prime, Inspiring Leader): a new subject after the last "and" is the
+    // one that gains, not the card that becomes.
+    {
+      const _becomesAndNew = stripDurationPrefix(filterText).match(/^(?:this (?:card|creature|permanent|land|artifact|enchantment)|(?:up to \w+ |another )?target [^,.]+?)\s+becomes?\s+[^"]*\band\s+([^"]+)$/i);
+      if (_becomesAndNew && !/^(?:it|they|this|that|those|its|their|gains?|has|have)\b/i.test(_becomesAndNew[1])
+          && filterReferencesPermanents(_becomesAndNew[1])) filterText = _becomesAndNew[1].trim();
+    }
     // "She loses all abilities and gains haste" (Hellcat, Undying Vigilante): the subject is what
     // stands before "loses"; the loss is loseAllAbilitiesRegex's, and _finalizeEffects puts it
     // before the grant.
@@ -6199,6 +6207,19 @@ function parseCardEffects(permanent, card, opts = {}) {
     if (/^the\s+(?:type|subtype)\b/.test(lostText)) continue;
     // Skip non-permanent filters
     if (!filterReferencesPermanents(filterText)) continue;
+    // "Target creature loses its name" (Fear of Forgetting Names): a name, not an ability. The
+    // permanent has no name from then on (layer 3, as a rename is).
+    if (/^(?:its|their)\s+names?$/.test(lostText)) {
+      const _lnResult = buildAppliesToFromText(filterText);
+      const { fn, desc, isSelf, isTargeted } = _lnResult;
+      const eff = pushEff('3', EFFECT_TYPE.SET_NAME, { name: '', noName: true },
+        { isSelf, isTargeted, fn, selfAffect: isSelf ? true : detectSelfAffect(filterText) },
+        `${filterText.charAt(0).toUpperCase() + filterText.slice(1)} loses its name. ${desc}`);
+      const matchCond = _getConditionForPos(losesSpecificMatch.index);
+      if (matchCond) eff.asLongAsCondition = matchCond;
+      _applyTargetInfo(eff, _lnResult, fn);
+      continue;
+    }
     // Parse the abilities list: "flying, deathtouch, and vigilance" -> ["Flying", "Deathtouch", "Vigilance"]
     const parts = lostText.split(/\s*,\s*|\s+and\s+/).map(s => s.trim()).filter(Boolean);
     const abilities = [];

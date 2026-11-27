@@ -1,0 +1,99 @@
+{
+  "name": "Fear of Forgetting Names — target creature loses its name; protection from creatures with no names",
+  "notes": "Found by tests/audit.py. \"Protection from creatures with no names\" was read as protection from creatures, so the trigger's picker left out every creature its controller controls, and \"loses its name\" was read as losing an ability called \"Its name\". Now the name is lost (layer 3, SET_NAME with noName), and only a source with no name (or a face-down one) is kept from targeting your creatures: the nameless Wyluli Wolf cannot target Grizzly Bears or Fear of Forgetting Names, Ghost Warden still can.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Fear of Forgetting Names",
+      "as": "fear"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Wyluli Wolf",
+      "as": "wolf",
+      "controller": "p2"
+    },
+    {
+      "add": "Ghost Warden",
+      "as": "warden",
+      "controller": "p2"
+    },
+    {
+      "fire": "@fear",
+      "trigger": 0,
+      "as": "t"
+    },
+    {
+      "call": [
+        "setTarget",
+        "@t",
+        "@wolf"
+      ]
+    },
+    {
+      "fire": "@wolf",
+      "activated": 0,
+      "as": "w"
+    },
+    {
+      "fire": "@warden",
+      "activated": 0,
+      "as": "g"
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Wyluli Wolf",
+      "final": {
+        "name": ""
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": [
+          "Protection from creatures with no names"
+        ]
+      }
+    },
+    {
+      "targetCandidates": {
+        "perm": "Fear of Forgetting Names (trigger)"
+      },
+      "are": [
+        "Fear of Forgetting Names",
+        "Ghost Warden",
+        "Grizzly Bears",
+        "Wyluli Wolf"
+      ]
+    },
+    {
+      "targetCandidates": {
+        "perm": "Wyluli Wolf (activated)"
+      },
+      "are": [
+        "Ghost Warden",
+        "Wyluli Wolf"
+      ]
+    },
+    {
+      "targetCandidates": {
+        "perm": "Ghost Warden (activated)"
+      },
+      "are": [
+        "Fear of Forgetting Names",
+        "Ghost Warden",
+        "Grizzly Bears",
+        "Wyluli Wolf"
+      ]
+    }
+  ]
+}
