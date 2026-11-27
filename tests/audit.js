@@ -738,7 +738,7 @@ function interpretPhrase(phrase, env) {
     .replace(/\b(power|toughness|mana value) x\b/g, '$1 ' + X_VALUE);
   let excludeSource = false;
   s = s.replace(/^(?:another|other) /, () => { excludeSource = true; return ''; });
-  const cut = s.search(/ (?:you control|you don't control|you neither own|you own|an opponent controls|your opponents control|that player controls|that opponent controls|they control|defending player controls|the active player|controlled by an? (?:player|opponent) who|that attacked|that blocked|that share a creature type|of the chosen type|other than|that isn't|whose controller|attacking the same|with |without )/);
+  const cut = s.search(/ (?:you control|you don't control|you neither own|you own|an opponent controls|your opponents control|that player controls|that opponent controls|they control|defending player controls|the active player|controlled by an? (?:player|opponent) who|that attacked|that blocked|that crewed it|that share a creature type|of the chosen type|other than|that isn't|whose controller|attacking the same|with |without )/);
   const head = cut >= 0 ? s.slice(0, cut) : s;
   let tail = cut >= 0 ? s.slice(cut).trim() : '';
 
@@ -805,6 +805,9 @@ function interpretPhrase(phrase, env) {
       clauseTests.push((st, p) => traitsOf(st, p).includes(tr));
       tail = tail.slice(m[0].length); continue;
     }
+    // "Target nonlegendary creature that crewed it this turn" (Mindlink Mech): the board keeps no
+    // record of who crewed, but only creatures you control can crew (CR 702.122a).
+    if ((m = tail.match(/^that crewed it(?: this turn)?\b\s*/))) { clauseTests.push((st, p, ctx) => ctrlOf(st, p) === ctx.sourceCtrl); tail = tail.slice(m[0].length); continue; }
     // "Two target creatures you control that share a creature type" (Secret Tunnel): one that
     // shares a creature type with another the rest of the words allow (read on the board before).
     if ((m = tail.match(/^that share a creature type\b\s*/))) {

@@ -1,0 +1,17 @@
+{
+  "name": "Mindlink Mech — \"a copy of target nonlegendary creature that crewed it\" offers only your nonlegendary creatures",
+  "notes": "\"Whenever this Vehicle becomes crewed for the first time each turn, until end of turn, this Vehicle becomes a copy of target nonlegendary creature that crewed it this turn, except it's 4/3, it's a Vehicle artifact in addition to its other types, and it has flying.\" The copy picker offered every nonlegendary creature, the opponent's included. The site keeps no record of who crewed, but only creatures you control can crew (CR 702.122a), so the parser now sets params.sourceYouControl for \"that crewed it\". Picking Grizzly Bears makes the Mech a 4/3 flying Bear Vehicle.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Isamaru, Hound of Konda", "as": "isamaru" },
+    { "add": "Hill Giant", "as": "giant", "controller": "p2" },
+    { "add": "Mindlink Mech", "as": "m" },
+    { "fire": "@m", "trigger": 1, "as": "t" },
+    { "copy": ["@t", "@bears"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Mindlink Mech (trigger)", "kind": "copy" }, "are": ["Grizzly Bears"] },
+    { "perm": "Mindlink Mech", "final": { "name": "Grizzly Bears", "power": 4, "toughness": 3 } }
+  ]
+}

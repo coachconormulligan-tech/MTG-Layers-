@@ -2874,8 +2874,10 @@ function parseCardEffects(permanent, card, opts = {}) {
     if (copyTargetZone) { copyParams.copyTargetZone = copyTargetZone; copyParams.copyTargetZoneOwner = copyTargetZoneOwner; }
     // "…a copy of another target artifact or creature you control" (Saheeli, Sublime Artificer),
     // "a creature an opponent controls" (Mocking Doppelganger): who controls what is copied.
+    // "a creature that crewed it this turn" (Mindlink Mech): the site keeps no record of who
+    // crewed, but only creatures you control can crew (CR 702.122a), so that much is read.
     else if (!_massCopy) {
-      if (/\byou control\b/.test(targetDesc)) copyParams.sourceYouControl = true;
+      if (/\b(?:you control|that crewed it)\b/.test(targetDesc)) copyParams.sourceYouControl = true;
       else if (/\b(?:an opponent controls|you don't control)\b/.test(targetDesc)) copyParams.sourceOpponentControls = true;
     }
     // Imprint: "becomes a copy of the exiled card" — Dermotaxi.
