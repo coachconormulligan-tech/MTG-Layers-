@@ -580,7 +580,8 @@ function _fireTimeTargetPowerBound(text, states, sourceId) {
     });
   return text.replace(/\b(target\b[^.;\n]*?)\bwith (power|toughness) less than (or equal to )?the number of ([^.;,\n]+?)(?=\s+(?:for as long as|until|and)\b|[.;,\n]|$)/gi,
     (whole, pre, stat, eq, desc) => {
-      // ("… the number of +1/+1 counters removed this way" — Simic Manipulator — is a cost paid.)
+      // ("… the number of +1/+1 counters removed this way" — Simic Manipulator — is a cost paid,
+      // asked for as X: _fireTimeCardValueAsX.)
       if (/\bthis way\b/i.test(desc)) return whole;
       const n = _computeForEachCount(desc.trim(), states, src, null);
       return n === null || n === undefined ? whole : pre + bound(eq ? n : n - 1, stat);
@@ -596,7 +597,8 @@ const _THEN_IF_RE = /\s+Then if (?!you do\b)([^,.]+),\s*(?=[^.]*\b(?:gets?|gains
 // "Put X +1/+1 counters on this creature. Up to X target lands …": X is the times a cost was paid.
 const _PAID_TIMES_X_RE = /^put X [^.]*\bcounters? on this \w+\.\s+Up to X target\b/i;
 /* A number a fired ability takes from a card that is not on the battlefield (the card just
-   exiled, discarded or revealed, the spell just cast) is asked for as X. Returns the text with
+   exiled, discarded or revealed, the spell just cast), or from how many counters its cost
+   removed, is asked for as X. Returns the text with
    X left in it and the "where X is …" clause gone, or null when the text has no such number. */
 function _fireTimeCardValueAsX(text) {
   const before = text;
@@ -604,6 +606,12 @@ function _fireTimeCardValueAsX(text) {
   text = text.replace(/\b(becomes?) an? ([^.]*?) with power and toughness each equal to that (?:spell|card)'s mana value/gi, '$1 an X/X $2');
   const where = /,?\s+where X is (?:that (?:card|spell)|the (?:discarded|exiled|revealed) card)'s mana value/i;
   if (where.test(text) && /[+-]X\/|\bX\/X\b/.test(text)) text = text.replace(where, '');
+  // A number of counters the player chose to remove as the cost: "{T}, Remove one or more +1/+1
+  // counters from this creature: Gain control of target creature with power less than or equal
+  // to the number of +1/+1 counters removed this way" (Simic Manipulator). Not a card in a
+  // graveyard ("target creature card with mana value …": Vhal).
+  text = text.replace(/\b(target (?:(?!\bcards?\b)[^.;])*?)\bwith (power|toughness|mana value) less than or equal to the number of [\w+\/-]+ counters removed this way\b/gi,
+    (_, pre, stat) => `${pre}with ${stat.toLowerCase()} X or less`);
   if (text === before) return null;
   // "When you exile a card this way, target creature …" / "When you cast that spell, this
   // creature …" (Cait Sith, Ogre Battlecaster): the next thing that happens.

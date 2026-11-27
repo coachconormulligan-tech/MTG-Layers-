@@ -735,6 +735,9 @@ function interpretPhrase(phrase, env) {
   let s = String(phrase).toLowerCase().replace(/\s+/g, ' ').trim()
     // "Target creature of their choice" (Death Match): who chooses, not what.
     .replace(/ of their choice$/, '')
+    // "… with power less than or equal to the number of +1/+1 counters removed this way" (Simic
+    // Manipulator): a number the cost chose, which the site asks for as X.
+    .replace(/\b(power|toughness|mana value) less than or equal to the number of [\w+\/-]+ counters removed(?: this way)?$/, '$1 x or less')
     .replace(/\b(power|toughness|mana value) x\b/g, '$1 ' + X_VALUE);
   let excludeSource = false;
   s = s.replace(/^(?:another|other) /, () => { excludeSource = true; return ''; });

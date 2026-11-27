@@ -1,0 +1,16 @@
+{
+  "name": "Simic Manipulator — \"power less than or equal to the number of +1/+1 counters removed this way\" is asked for as X",
+  "notes": "\"{T}, Remove one or more +1/+1 counters from this creature: Gain control of target creature with power less than or equal to the number of +1/+1 counters removed this way.\" The bound was left unread, and the picker's list followed no number (it left out a 2-power creature, offered a 1-power one). How many counters the cost removed is the player's choice, so it is asked for as X when the ability is fired (_fireTimeCardValueAsX, cards-helpers.js) and read as \"with power X or less\". With X = 2: Grizzly Bears, Llanowar Elves and the card itself, not Hill Giant.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Grizzly Bears", "as": "bears", "controller": "p2" },
+    { "add": "Llanowar Elves", "as": "elves", "controller": "p2" },
+    { "add": "Hill Giant", "as": "giant", "controller": "p2" },
+    { "add": "Simic Manipulator", "as": "s" },
+    { "fire": "@s", "activated": 1, "as": "a" },
+    { "call": ["setXValue", "@a", "2"] }
+  ],
+  "asserts": [
+    { "targetCandidates": { "perm": "Simic Manipulator (activated)" }, "are": ["Grizzly Bears", "Llanowar Elves", "Simic Manipulator"] }
+  ]
+}
