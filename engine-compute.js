@@ -111,6 +111,26 @@ function _computeForEachCount(forEachDesc, allStates, selfState, effect) {
     .replace(/\s+on the battlefield$/, '')
     .replace(/,?\s*to a maximum of \d+$/, '');
 
+  // "for each other creature you control named Timberpack Wolf", "the number of creatures you
+  // control named Cleric of the Forward Order": permanents of that kind by name (CR 201.4).
+  // (Also "other creature on the battlefield named Relentless Rats", "other creature named Seven
+  // Dwarves you control".)
+  const namedCount = rawDesc.match(/^(other |another )?(creature|artifact|enchantment|land|planeswalker|permanent)s? (?:(you control|your opponents control) |on the battlefield )?named (.+?)(?: on the battlefield| (you control|your opponents control))?$/);
+  if (namedCount) {
+    const kindName = namedCount[2].charAt(0).toUpperCase() + namedCount[2].slice(1);
+    const want = namedCount[4].replace(/’/g, "'");
+    const whose = namedCount[3] || namedCount[5];
+    let n = 0;
+    for (const [id, st] of allStates) {
+      if (namedCount[1] && (id === srcPermId || st === sourceState)) continue;
+      if (whose === 'you control' && st.controller !== ctrlId) continue;
+      if (whose === 'your opponents control' && st.controller === ctrlId) continue;
+      if (namedCount[2] !== 'permanent' && !(st.types || []).includes(kindName)) continue;
+      if (String(st.name || '').toLowerCase().replace(/’/g, "'") === want) n++;
+    }
+    return n;
+  }
+
   // Compound CDA: "[A] plus the number of [B]" — sum two independently-computed counts.
   // e.g. Soulless One: "Zombies on the battlefield plus the number of Zombie cards in all graveyards".
   // Each half may be a battlefield type/subtype count or a zone-card (graveyard/exile) count.

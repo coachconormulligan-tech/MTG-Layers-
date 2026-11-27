@@ -15,4 +15,3 @@ Most-played first.
 
 | EDHREC rank | Card | Part not read | Sentence |
 |---:|---|---|---|
-|  | Mothers Yamazaki | Clause: get +2/+2 | As long as you control exactly two permanents named this card, the "legend rule" doesn't apply to them, and Samurai you control get +2/+2 and have vigilance and haste. |

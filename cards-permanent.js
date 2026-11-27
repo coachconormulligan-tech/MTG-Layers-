@@ -645,6 +645,9 @@ function _replaceProperNounSelfRef(cardName, oracleText, isToken = false) {
       if (/\b(?:a|an|the|is\s+a|is\s+an|becomes?\s+a|becomes?\s+an|colorless|white|blue|black|red|green)\s*$/i.test(before)) {
         return match; // keep original, not a self-reference
       }
+      // "creatures you control named Timberpack Wolf", "exactly two permanents named Mothers
+      // Yamazaki": a name to match, not the card itself (CR 201.4).
+      if (/\bnamed\s+$/i.test(before)) return match;
       // "other Sliver", "another attacking Goblin": a name can't be "other" than itself, so
       // this is the creature type (Sliver Legion, Squirrel Mob, Goblin Piledriver).
       if (/\b(?:an)?other\s+(?:(?:attacking|blocking|tapped|untapped|nontoken|legendary)\s+)?$/i.test(before)) {

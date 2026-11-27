@@ -1370,7 +1370,16 @@ function buildAppliesToFromText(filterText) {
   // effect, added by another player.
   const _notOwned = /\s+but (?:don't|do not) own(?=[\s,]|$)/i.test(_tinfo.cleaned);
   if (_notOwned) _tinfo.cleaned = _tinfo.cleaned.replace(/\s+but (?:don't|do not) own(?=[\s,]|$)/gi, '').trim();
+  // "Each creature you control named Pack Mastiff", "target token you control not named Dutiful
+  // Replicator": a test of the name (CR 201.4), the rest read as usual.
+  const _namedM = _tinfo.cleaned.match(/\s+(not\s+)?named\s+(?!the chosen\b)(.+)$/i);
+  if (_namedM) _tinfo.cleaned = _tinfo.cleaned.slice(0, _namedM.index).trim();
   const _result = _buildAppliesToFromTextInner(_tinfo.cleaned);
+  if (_namedM && _result.fn && !_result.isSelf) {
+    const innerFn = _result.fn, want = _namedM[2].trim().toLowerCase().replace(/’/g, "'");
+    _result.fn = (p, allStates, effectCtrl) =>
+      (String(p.name || '').toLowerCase().replace(/’/g, "'") === want) !== !!_namedM[1] && innerFn(p, allStates, effectCtrl);
+  }
   if (_notOwned && _result.fn && !_result.isSelf) {
     const innerFn = _result.fn;
     _result.fn = (p, allStates, effectCtrl) =>
@@ -2796,6 +2805,22 @@ function _evaluateTriggerCondition(condText, sourceState) {
       const holds = word === 'tapped' ? tapped : word === 'untapped' ? !tapped : traits.includes('Attacking');
       return negated ? !holds : holds;
     }
+  }
+  // "if you control another creature named Faerie Miscreant", "four or more creatures named
+  // Biovisionary": the source's controller's permanents of that name, as the trigger resolves.
+  const namedMatch = ct.match(/^you control (another |an? |(\w+) or more )(creature|artifact|enchantment|land|planeswalker|permanent)s? named (.+)$/);
+  if (namedMatch && sourceState && typeof Battlefield !== 'undefined') {
+    const k = namedMatch[2] ? (WORD_TO_NUM[namedMatch[2]] !== undefined ? WORD_TO_NUM[namedMatch[2]] : parseInt(namedMatch[2], 10)) : 1;
+    if (isNaN(k)) return null;
+    const kind = namedMatch[3], kindName = kind.charAt(0).toUpperCase() + kind.slice(1);
+    const fits = s => !s.isEmblem && s.controller === sourceState.controller &&
+      String(s.name || '').toLowerCase().replace(/’/g, "'") === namedMatch[4].replace(/’/g, "'") &&
+      (kind === 'permanent' || (s.types || []).includes(kindName));
+    let n = 0;
+    for (const [, s] of Battlefield.getAllFinalStates()) if (fits(s)) n++;
+    // "another": the source is not one of them.
+    if (namedMatch[1] === 'another ' && fits(sourceState)) n--;
+    return n >= k;
   }
   // "if she was a nonland creature" (Princess Yue): only qualifies while the source is
   // a creature that isn't a land. Once she's already a land, the trigger does nothing.

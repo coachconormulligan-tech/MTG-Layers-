@@ -1,0 +1,18 @@
+{
+  "name": "Mothers Yamazaki — with exactly two named Mothers Yamazaki, Samurai you control get +2/+2 and have vigilance and haste",
+  "notes": "Memory: project_mothers_yamazaki_legend_rule_clause_then_boost_2026-11-27. The sentence's first clause (\"the legend rule doesn't apply to them\") is a rule the site does not keep; the +2/+2 after it was dropped while vigilance and haste were read. Each Mothers Yamazaki is a Samurai of yours, so each gets +2/+2 from both: 6/6. The opponent's Samurai and your non-Samurai are untouched.",
+  "steps": [
+    { "call": ["addPlayer", "Opponent"] },
+    { "add": "Samurai of the Pale Curtain", "as": "mine" },
+    { "add": "Kitsune Blademaster", "as": "theirs", "controller": "p2" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Mothers Yamazaki", "as": "y1" },
+    { "add": "Mothers Yamazaki", "as": "y2" }
+  ],
+  "asserts": [
+    { "perm": "Samurai of the Pale Curtain", "final": { "power": 6, "toughness": 6, "abilities": { "$includes": ["Vigilance", "Haste"] } } },
+    { "perm": "Kitsune Blademaster", "final": { "power": 2, "toughness": 2 } },
+    { "perm": "Grizzly Bears", "final": { "power": 2, "toughness": 2 } },
+    { "perm": "Mothers Yamazaki A", "final": { "power": 6, "toughness": 6 } }
+  ]
+}

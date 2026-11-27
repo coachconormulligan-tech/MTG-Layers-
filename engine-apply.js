@@ -828,7 +828,7 @@ function applyEffect(state, effect, context) {
         }
         copyOracleText = copyOracleText.replace(/\u2019/g, "'");
         for (const cand of candidates) {
-          const nameRe = new RegExp('\\b' + cand + '\\b', 'g');
+          const nameRe = new RegExp('(?<!\\bnamed )\\b' + cand + '\\b', 'g');   // "named X" is a name to match (CR 201.4)
           if (nameRe.test(copyOracleText)) {
             copyOracleText = copyOracleText.replace(nameRe, 'this card');
             break;
@@ -1428,7 +1428,7 @@ function applyEffect(state, effect, context) {
             const effectText = ab.substring(colonIdx + 1).trim();
             if (!effectText) continue;
             // Catch any remaining full-name reference the proper-noun pass didn't cover.
-            const normalizedAb = ab.replace(new RegExp('\\b' + card.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'gi'), 'this card');
+            const normalizedAb = ab.replace(new RegExp('(?<!\\bnamed )\\b' + card.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'gi'), 'this card');
             state.abilities.push(normalizedAb);
             changes.push(`Gained activated ability from "${card.name}" (${_zoneLabel}): "${normalizedAb}"`);
           }
@@ -1502,7 +1502,7 @@ function applyEffect(state, effect, context) {
             const effectText = ab.substring(colonIdx + 1).trim();
             if (!effectText) continue;
           }
-          const normalizedAb = ab.replace(new RegExp('\\b' + card.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'gi'), 'this card');
+          const normalizedAb = ab.replace(new RegExp('(?<!\\bnamed )\\b' + card.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'gi'), 'this card');
           state.abilities.push(normalizedAb);
           const why = _exFilterCounter ? `with ${_exFilterCounter} counter` : 'tagged with this card';
           const kind = isActivated ? 'activated' : 'triggered';

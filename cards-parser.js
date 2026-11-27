@@ -4391,6 +4391,14 @@ function parseCardEffects(permanent, card, opts = {}) {
     // and trample" (Dragonsoul Knight).
     filterText = filterText.replace(/\s+becomes?\s+[\w\s]+?,$/i, '').trim();
     if (!filterText) continue;
+    // "… the "legend rule" doesn't apply to them, and Samurai you control get +2/+2" (Mothers
+    // Yamazaki): the match began at the sentence, before a closed quote; the subject is the
+    // clause after the last ", and". (A quote left open means the "gets" is inside a quoted
+    // ability, skipped below.)
+    if (filterText.includes('"') && (filterText.match(/"/g) || []).length % 2 === 0) {
+      const _afterQuote = filterText.slice(filterText.lastIndexOf('"') + 1).match(/,\s+and\s+(.+)$/i);
+      if (_afterQuote) filterText = _afterQuote[1].trim();
+    }
     // Multiplayer: The optional "you control" group in boostRegex strips "you control" from group 1.
     // Re-append it so buildAppliesToFromText can apply the controller filter wrapper.
     // Only the subject's own sentence counts: in "Choose target creature you control. Until end
