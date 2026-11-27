@@ -508,6 +508,23 @@ function _lockFireTimeBasePT(text, states, sourceId) {
   if (!/\bbase (?:power|toughness)\b/i.test(text)) return text;
   const p = src.power || 0, t = src.toughness || 0;
   const SELF = "this (?:card|creature|permanent)'s";
+  // "you may have this card's base power become equal to the total power of all stickers on
+  // permanents you control and its base toughness become equal to those stickers' total
+  // toughness" (Ambassador Blorpityblorpboop): only power/toughness stickers have a power and
+  // toughness (CR 123), summed over the permanents its controller controls as it resolves.
+  text = text.replace(new RegExp("\\b(?:you may have )?(this (?:card|creature|permanent))'s base power becomes? equal to the total power of all stickers on permanents you control and its base toughness becomes? equal to those stickers' total toughness\\b", 'gi'),
+    (_, subj) => {
+      let sp = 0, st = 0;
+      for (const [, s] of states) {
+        if (s.controller !== src.controller || s.phasedOut) continue;
+        for (const k of s.stickers || []) {
+          if (k.kind !== 'pt') continue;
+          sp += parseInt(k.power, 10) || 0;
+          st += parseInt(k.toughness, 10) || 0;
+        }
+      }
+      return `${subj} has base power and toughness ${sp}/${st}`;
+    });
   // "…exile them, then shuffle. If you do, this creature has base power and base toughness each
   // equal to the number of cards exiled this way" (Trench Gorger): the cards exiled with it.
   text = text.replace(/\b(this (?:card|creature|permanent)) has base power and (?:base )?toughness each equal to the number of cards exiled this way\b/gi,

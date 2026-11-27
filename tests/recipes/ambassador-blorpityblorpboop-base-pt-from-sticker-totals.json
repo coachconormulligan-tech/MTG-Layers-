@@ -1,0 +1,101 @@
+{
+  "name": "Ambassador Blorpityblorpboop — base P/T become the total power and toughness of stickers on permanents you control",
+  "notes": "Fired 'At the beginning of each combat' trigger: only power/toughness stickers have a power and toughness (CR 123), summed over your permanents (Grizzly Bears 1/5 and Ambassador's own 2/2; the name sticker adds nothing, the opponent's 6/8 is not counted) as it resolves (CR 608.2h). A sticker placed after it is fired does not change the number.",
+  "steps": [
+    {
+      "call": [
+        "addPlayer",
+        "Opponent"
+      ]
+    },
+    {
+      "add": "Ambassador Blorpityblorpboop",
+      "as": "amb"
+    },
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Hill Giant",
+      "as": "giant",
+      "controller": "p2"
+    },
+    {
+      "call": [
+        "addSticker",
+        "@bears",
+        {
+          "kind": "pt",
+          "power": 1,
+          "toughness": 5
+        }
+      ]
+    },
+    {
+      "call": [
+        "addSticker",
+        "@bears",
+        {
+          "kind": "name",
+          "text": "Dark",
+          "afterWords": 0
+        }
+      ]
+    },
+    {
+      "call": [
+        "addSticker",
+        "@amb",
+        {
+          "kind": "pt",
+          "power": 2,
+          "toughness": 2
+        }
+      ]
+    },
+    {
+      "call": [
+        "addSticker",
+        "@giant",
+        {
+          "kind": "pt",
+          "power": 6,
+          "toughness": 8
+        }
+      ]
+    },
+    {
+      "fire": "@amb",
+      "trigger": 1,
+      "as": "trig"
+    },
+    {
+      "call": [
+        "addSticker",
+        "@bears",
+        {
+          "kind": "pt",
+          "power": 4,
+          "toughness": 4
+        }
+      ]
+    }
+  ],
+  "asserts": [
+    {
+      "perm": "Ambassador Blorpityblorpboop",
+      "final": {
+        "power": 3,
+        "toughness": 7
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "power": 4,
+        "toughness": 4
+      }
+    }
+  ]
+}

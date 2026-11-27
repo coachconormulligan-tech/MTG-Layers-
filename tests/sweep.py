@@ -108,7 +108,10 @@ def load_cards(only=None, limit=None, fields=CARD_FIELDS):
                 continue
             if c.get('layout') in SKIP_LAYOUTS:
                 skipped['layout ' + c['layout']] += 1
-            elif c.get('set_type') in SKIP_SET_TYPES:
+            elif c.get('set_type') in SKIP_SET_TYPES and not (
+                    c['set_type'] == 'funny' and legal_or_unreleased(c)):
+                # A funny-set card legal in some format (Unfinity, its sticker sheets) is in
+                # the pool; the other Un-cards are not (Conor, 2026-11-27).
                 skipped['set type ' + c['set_type']] += 1
             elif c['name'].startswith('A-'):
                 skipped['alchemy rebalance'] += 1

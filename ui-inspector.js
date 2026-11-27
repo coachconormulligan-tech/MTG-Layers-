@@ -652,9 +652,9 @@ function _finalPtHtml(state, baseState) {
    layer (entry.isCDA, engine-layer.js). */
 function _cdaTagHtml(isRulesMode) {
   const title = isRulesMode
-    ? 'CR 604.3: A characteristic-defining ability defines the object\'s own colour, subtypes, or power and toughness. It functions in all zones (CR 604.3) and applies before other effects in its layer (CR 613.3).'
-    : 'This ability defines the card\'s own colour, creature types, or power and toughness. It works wherever the card is, and it applies before the other effects in its layer.';
-  return ` <span class="cda-tag" title="${escapeAttr(title)}">${isRulesMode ? 'Characteristic-defining ability (CR 604.3)' : 'Characteristic-defining ability'}</span>`;
+    ? 'Characteristic-defining ability (CR 604.3): It defines the object\'s own colour, subtypes, or power and toughness. It functions in all zones (CR 604.3) and applies before other effects in its layer (CR 613.3).'
+    : 'Characteristic-defining ability: It defines the card\'s own colour, creature types, or power and toughness. It works wherever the card is, and it applies before the other effects in its layer.';
+  return ` <abbr class="cda-tag" title="${escapeAttr(title)}">(CDA)</abbr>`;
 }
 
 function renderStateBlock(state, isRulesMode, cardName, baseState, omitPtRow) {
