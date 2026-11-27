@@ -3325,6 +3325,17 @@ const Battlefield = {
     if (perm) perm.cdaUserValue = value;
   },
 
+  /* A die result typed on the card's row (index 0 = first result, 1 = second; null clears it):
+     "its base power becomes the first result …" (Vedalken Squirrel-Whacker). */
+  setRollResult(permId, index, value) {
+    this._invalidate();
+    const perm = this.getPermById(permId);
+    if (!perm) return;
+    const results = (perm.rollResults || [null, null]).slice();
+    results[index] = (value == null || isNaN(value)) ? null : value;
+    perm.rollResults = results;
+  },
+
   /* Class enchantment level management */
   setClassLevel(permId, level) {
     this._invalidate();
@@ -4202,6 +4213,7 @@ const Battlefield = {
         phaseGroup: p._phaseGroup ? { sig: p._phaseGroup.sig, ids: p._phaseGroup.ids.slice() } : undefined,
         roomLocked: p.roomLocked ? p.roomLocked.slice() : null,
         cdaUserValue: p.cdaUserValue ?? null,
+        rollResults: p.rollResults ? p.rollResults.slice() : undefined,
         classLevel: p.classLevel ?? null,
         hasXValue: !!p.hasXValue,
         xValue: p.xValue ?? null,
@@ -4470,6 +4482,7 @@ const Battlefield = {
       // Counters drive P/T and keyword grants through synthetic effects — rebuild them.
       this._syncCounterEffects(np.id);
       if (r.cdaUserValue != null) np.cdaUserValue = r.cdaUserValue;
+      if (Array.isArray(r.rollResults)) np.rollResults = r.rollResults.slice();
       if (r.classLevel != null) np.classLevel = r.classLevel;
       if (r.roomLocked && np.isRoom && np.roomFaces) { np.roomLocked = r.roomLocked.slice(); this._applyRoomLocks(np); }
       if (r.modalModeCounts) this.setModalModeCounts(np.id, r.modalModeCounts);

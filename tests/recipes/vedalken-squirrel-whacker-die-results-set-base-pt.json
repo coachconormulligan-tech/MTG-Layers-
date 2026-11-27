@@ -1,0 +1,16 @@
+{
+  "name": "Vedalken Squirrel-Whacker — the two die results typed in set its base power and toughness",
+  "notes": "'As this creature enters, roll a six-sided die twice. Its base power becomes the first result and its base toughness becomes the second result.' gave no effect, so the */* card stayed 0/0. The site cannot roll for the player, so the two results are typed into the card's row (Battlefield.setRollResult) and set its base P/T in layer 7b (CR 613.4b), under Glorious Anthem's 7c +1/+1. First 3, second 5: 3/5 base, 4/6 with the Anthem. Grizzly Bears is 3/3 with the Anthem and nothing else.",
+  "steps": [
+    { "add": "Grizzly Bears" },
+    { "add": "Glorious Anthem" },
+    { "add": "Vedalken Squirrel-Whacker", "as": "sq" },
+    { "call": ["setRollResult", "@sq", 0, 3] },
+    { "call": ["setRollResult", "@sq", 1, 5] }
+  ],
+  "asserts": [
+    { "effect": { "source": "Vedalken Squirrel-Whacker", "layer": "7b", "type": "set_pt" } },
+    { "perm": "Vedalken Squirrel-Whacker", "final": { "power": 4, "toughness": 6 } },
+    { "perm": "Grizzly Bears", "final": { "power": 3, "toughness": 3 } }
+  ]
+}

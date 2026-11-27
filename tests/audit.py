@@ -776,13 +776,15 @@ def print_record(r):
 
 
 def unit_signatures(records):
+    # Keyed by the record as well (sweep.record_keys): a card and its token can share a name and a
+    # unit's text (Earthshaker Khenra), and a key without it compared only the last of them.
     sig = {}
-    for r in records:
+    for rk, r in sweep.record_keys(records):
         for e in r.get('errors', []):
-            sig[(r['name'], r['face'], 'whole card')] = (r.get('edhrec'), ['crash: ' + e.get('msg', '')])
+            sig[(r['name'], r['face'], 'whole card', rk)] = (r.get('edhrec'), ['crash: ' + e.get('msg', '')])
         for u in r.get('units', []):
             fs = sorted('%s: %s' % (f['code'], finding_detail(f)) for f in u.get('findings', []))
-            sig[(r['name'], r['face'], unit_label(u) + ' | ' + u.get('text', '')[:60])] = (r.get('edhrec'), fs)
+            sig[(r['name'], r['face'], unit_label(u) + ' | ' + u.get('text', '')[:60], rk)] = (r.get('edhrec'), fs)
     return sig
 
 
@@ -810,8 +812,9 @@ def cmd_diff(before_path):
             kind = 'different'
         rows.append((rank is None, rank or 0, k, kind, sa, sb))
     rows.sort(key=lambda x: x[:3])
+    record_keys = {k[3] for k in set(a) | set(b)}
     for _, _, k, kind, sa, sb in rows:
-        print('%s (%s) - %s: %s' % (k[0], rank_text((sb or sa)[0]), k[2], kind))
+        print('%s (%s) - %s: %s' % (sweep.record_label(k[3], record_keys), rank_text((sb or sa)[0]), k[2], kind))
         for l in (sa[1] if sa else []):
             if not sb or l not in sb[1]:
                 print('    - ' + l[:230])

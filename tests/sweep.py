@@ -744,12 +744,32 @@ def write_subject(records):
     return total, findings
 
 
+def record_keys(records):
+    """One key per raw record: (name, face, type line, place among the records that share those).
+    A card and its tokens often share a name (Shapeshifter, Ajani's Pridemate), so a key of name
+    and face alone kept only the last of them and a diff never compared the card. Cards are swept
+    in a stable order by name, so the place is the same in two runs over one card file."""
+    seen = collections.Counter()
+    for r in records:
+        k = (r['name'], r['face'], r.get('typeLine') or '')
+        yield k + (seen[k],), r
+        seen[k] += 1
+
+
+def record_label(key, keys):
+    """The card's name, with its type line (and place) when another record has that name."""
+    name, face, type_line, n = key
+    if not any(k[0] == name and k != key for k in keys):
+        return name
+    return '%s [%s]%s' % (name, type_line, ' #%d' % (n + 1) if n else '')
+
+
 def cmd_diff(before_path):
     """Which cards parse differently now than in a saved copy of an earlier run?"""
     def index(path):
         with gzip.open(path, 'rt', encoding='utf-8') as f:
             f.readline()
-            return {(r['name'], r['face']): r for r in map(json.loads, f)}
+            return dict(record_keys(map(json.loads, f)))
     old, new = index(before_path), index(RAW)
     changed = 0
     for key in sorted(new):
@@ -760,7 +780,7 @@ def cmd_diff(before_path):
         if fa == fb and bool(a['errors']) == bool(b['errors']):
             continue
         changed += 1
-        print('%s%s' % (key[0], '  (crash state changed)' if bool(a['errors']) != bool(b['errors']) else ''))
+        print('%s%s' % (record_label(key, new), '  (crash state changed)' if bool(a['errors']) != bool(b['errors']) else ''))
         for l in sorted((fa - fb).elements()):
             print('    - ' + l[:230])
         for l in sorted((fb - fa).elements()):

@@ -507,6 +507,18 @@ function applyEffect(state, effect, context) {
     case EFFECT_TYPE.SET_PT:
       if (state.types.includes('Creature')) {
         const oldP = state.power, oldT = state.toughness;
+        // "Its base power becomes the first result and its base toughness becomes the second
+        // result" (Vedalken Squirrel-Whacker): the results typed on the source's row. Nothing
+        // typed changes nothing.
+        if (effect.params.fromRollResults) {
+          const holder = typeof Battlefield !== 'undefined' ? Battlefield.getPermById(effect.sourceId) : null;
+          const rolled = (holder && holder.rollResults) || [];
+          if (rolled[0] == null && rolled[1] == null) break;
+          if (rolled[0] != null) state.power = rolled[0];
+          if (rolled[1] != null) state.toughness = rolled[1];
+          changes.push(`Set P/T to ${state.power}/${state.toughness} from the die results (was ${oldP}/${oldT})`);
+          break;
+        }
         // Imprint: P/T of the last creature card exiled with it — Duplicant.
         if (effect.params.fromImprintedCardPT && typeof _getImprintedExileEntries === 'function') {
           const exiled = _lastCreatureCardExiledWith(effect.sourceId);
@@ -1230,7 +1242,12 @@ function applyEffect(state, effect, context) {
       } else {
         // "N plus the number of" pattern: add base value to count
         const base = effect.params.cdaBaseValue || 0;
-        if (effect.params.toughnessOnly) {
+        if (effect.params.toughnessMinusFrom !== undefined) {
+          // "Power is equal to the last chosen number and toughness is equal to 7 minus that number" (Shapeshifter).
+          state.power = val;
+          state.toughness = effect.params.toughnessMinusFrom - val;
+          changes.push(`CDA set P/T to ${state.power}/${state.toughness} (chosen number: ${val}, was ${oldP}/${oldT})`);
+        } else if (effect.params.toughnessOnly) {
           // Toughness-only CDA: power stays at its printed/current value.
           state.toughness = val + base;
           changes.push(`CDA set toughness to ${state.toughness} (count: ${val}${base ? ', base: ' + base : ''}, was ${oldT})`);

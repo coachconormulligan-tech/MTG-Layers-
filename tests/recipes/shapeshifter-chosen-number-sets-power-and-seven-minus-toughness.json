@@ -1,0 +1,15 @@
+{
+  "name": "Shapeshifter — the last chosen number, typed in, is its power and 7 minus it its toughness",
+  "notes": "'Shapeshifter's power is equal to the last chosen number and its toughness is equal to 7 minus that number.' gave no effect. It is a characteristic-defining ability (printed */7-*, layer 7a). The site cannot know the number chosen as it entered or in an upkeep, so it is typed into the card's value box (setCDAValue; untyped is 0, a legal choice, so 0/7). 3 typed: 3/4, 4/5 under Glorious Anthem's 7c +1/+1. Grizzly Bears is 3/3 with the Anthem and nothing else.",
+  "steps": [
+    { "add": "Grizzly Bears" },
+    { "add": "Glorious Anthem" },
+    { "add": "Shapeshifter", "as": "ss" },
+    { "call": ["setCDAValue", "@ss", 3] }
+  ],
+  "asserts": [
+    { "effect": { "source": "Shapeshifter", "layer": "7a", "type": "cda_pt" } },
+    { "perm": "Shapeshifter", "final": { "power": 4, "toughness": 5 } },
+    { "perm": "Grizzly Bears", "final": { "power": 3, "toughness": 3 } }
+  ]
+}

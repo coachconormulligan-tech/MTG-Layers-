@@ -5406,6 +5406,36 @@ function parseCardEffects(permanent, card, opts = {}) {
       `${whichChar === 'toughness' ? 'Toughness' : 'Power'} equal to ${desc}.`);
   }
 
+  // "Shapeshifter's power is equal to the last chosen number and its toughness is equal to 7 minus
+  // that number" (a CDA, printed */7-*): the site keeps no record of the numbers chosen, so the
+  // last one is typed into the card's value box, as Bell Borca's is. Untyped is 0 (a legal choice).
+  const cdaChosenMinusRegex = /(?:^|\.|\n)\s*(?:this (?:card|creature)'s|its)\s+power\s+is\s+equal\s+to\s+the\s+(?:last\s+)?chosen\s+number\s+and\s+its\s+toughness\s+is\s+equal\s+to\s+(\w+)\s+minus\s+that\s+number(?:\.|$)/gmi;
+  let cdaChosenMinusMatch;
+  while ((cdaChosenMinusMatch = cdaChosenMinusRegex.exec(oracle)) !== null) {
+    if (_cdaIsQuoted(cdaChosenMinusMatch.index)) continue;
+    const fromRaw = cdaChosenMinusMatch[1].toLowerCase();
+    const from = WORD_TO_NUM[fromRaw] !== undefined ? WORD_TO_NUM[fromRaw] : parseInt(fromRaw, 10);
+    if (isNaN(from)) continue;
+    pushEff('7a', EFFECT_TYPE.CDA_PT,
+      { userAdjustable: true, isChosenAmount: true, forEachDesc: 'last chosen number', compute: null, toughnessMinusFrom: from },
+      _cdaSelfCtx,
+      `Power equal to the last chosen number and toughness equal to ${from} minus that number.`);
+  }
+
+  // "As this creature enters, roll a six-sided die twice. Its base power becomes the first result
+  // and its base toughness becomes the second result." (Vedalken Squirrel-Whacker, Elvish
+  // Impersonators): the site rolls nothing, so the two results are typed on the card's row
+  // (perm.rollResults, Battlefield.setRollResult). Setting base P/T is layer 7b (CR 613.4b).
+  const rollPTRegex = /(?:^|\.|\n)\s*As this (?:card|creature) enters,\s+roll an? (\w+)-sided die twice\.\s*(?:its|this (?:card|creature)'s)\s+base power becomes the first result and (?:its|this (?:card|creature)'s)\s+base toughness becomes the second result(?:\.|$)/gmi;
+  let rollPTMatch;
+  while ((rollPTMatch = rollPTRegex.exec(oracle)) !== null) {
+    if (_cdaIsQuoted(rollPTMatch.index)) continue;
+    const sidesRaw = rollPTMatch[1].toLowerCase();
+    const sides = WORD_TO_NUM[sidesRaw] !== undefined ? WORD_TO_NUM[sidesRaw] : (parseInt(sidesRaw, 10) || null);
+    pushEff('7b', EFFECT_TYPE.SET_PT, { fromRollResults: true, dieSides: sides }, _cdaSelfCtx,
+      'Base power and toughness become the two die results.');
+  }
+
   // Known keywords: standard + landwalk + protection variants.
   // Landwalk names follow the pattern "[land-type]walk".
   // KEYWORD_LIST, KEYWORD_SET, PARAMETERIZED_KEYWORDS hoisted to module scope at file top.

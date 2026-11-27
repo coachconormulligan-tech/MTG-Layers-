@@ -74,6 +74,27 @@ function renderCDAInput(perm) {
   </div>`;
 }
 
+/* "Roll a six-sided die twice. Its base power becomes the first result and its base toughness
+   becomes the second result" (Vedalken Squirrel-Whacker): the two results, typed in. */
+function renderRollResultInputs(perm, effect) {
+  const results = perm.rollResults || [];
+  const max = (effect.params && effect.params.dieSides) || 99;
+  const box = (i, label) => `<label class="times-attacked-row" title="${escapeAttr(label + ' (base ' + (i ? 'toughness' : 'power') + ')')}">
+      <input type="number" class="cda-counter-input" value="${results[i] ?? ''}" min="1" max="${max}"
+             onchange="setRollResult('${perm.id}', ${i}, this.value === '' ? null : parseInt(this.value, 10))">
+      <span class="cda-label">${escapeHtml(label)}</span>
+    </label>`;
+  return `<div class="cda-counter-row times-attacked-rows" onclick="event.stopPropagation()">
+    ${box(0, 'First result')}${box(1, 'Second result')}
+  </div>`;
+}
+
+function setRollResult(permId, index, value) {
+  Battlefield.setRollResult(permId, index, value);
+  Battlefield.evaluate();
+  renderAll();
+}
+
 /* "For each time it has attacked this turn" (Moraug): one count per creature the effect reaches,
    kept on that creature (Battlefield.setTimesAttacked). */
 function renderTimesAttackedInputs(effect) {
