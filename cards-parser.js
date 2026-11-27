@@ -7753,7 +7753,9 @@ function parseCardEffects(permanent, card, opts = {}) {
           let n = 1;
           while (n < 6 && permanent['additionalCostLabel' + (n > 1 ? n : '')]) n++;
           const suffix = n > 1 ? String(n) : '';
-          const words = untilLeavesM[2].replace(/\bpays\b/i, 'paid');
+          // "that player pays the ransom" is labelled "Ransom paid".
+          const paysM = untilLeavesM[2].match(/^(?:.+?\s+)?pays\s+(?:the\s+)?(.+)$/i);
+          const words = paysM ? `${paysM[1]} paid` : untilLeavesM[2];
           permanent['additionalCostLabel' + suffix] = words.charAt(0).toUpperCase() + words.slice(1);
           ended = () => {
             const src = typeof Battlefield !== 'undefined' ? Battlefield.getPermById(permanent.id) : null;
