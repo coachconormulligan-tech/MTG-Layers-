@@ -7738,6 +7738,30 @@ function parseCardEffects(permanent, card, opts = {}) {
         controlDuration = _conditionAtPos(objectStart + objectText.length);
         objectText = objectText.replace(/\s+for$/i, '');
       }
+      // "… until Squidnapper leaves the battlefield or that player pays the ransom" (the card's
+      // name is already "this card"): left in the target's words, "until", "leaves" and the rest
+      // became required subtypes and the picker listed nothing. The control lasts while the card
+      // is on the battlefield, as "for as long as this creature remains on the battlefield" does;
+      // an "or …" the board cannot show is asked (a toggle, No to begin) and ends it once Yes.
+      const untilLeavesM = !controlDuration
+        && objectText.match(/\s+until (this [\w-]+) leaves the battlefield(?:\s+or\s+(.+))?$/i);
+      if (untilLeavesM) {
+        objectText = objectText.slice(0, untilLeavesM.index).trim();
+        const onBattlefield = _parseCondition(`${untilLeavesM[1]} remains on the battlefield`);
+        let ended = null;
+        if (untilLeavesM[2]) {
+          let n = 1;
+          while (n < 6 && permanent['additionalCostLabel' + (n > 1 ? n : '')]) n++;
+          const suffix = n > 1 ? String(n) : '';
+          const words = untilLeavesM[2].replace(/\bpays\b/i, 'paid');
+          permanent['additionalCostLabel' + suffix] = words.charAt(0).toUpperCase() + words.slice(1);
+          ended = () => {
+            const src = typeof Battlefield !== 'undefined' ? Battlefield.getPermById(permanent.id) : null;
+            return !!(src && src['additionalCostPaid' + suffix]);
+          };
+        }
+        controlDuration = (state, allStates) => onBattlefield(state, allStates) && !(ended && ended());
+      }
       const subjectText = oracle.slice(_clauseStart(gcMatch.index), gcMatch.index);
       // "other players can't gain control of them" (Guardian Beast) grants no control.
       if (/\bcan't\s+$/i.test(subjectText)) continue;
