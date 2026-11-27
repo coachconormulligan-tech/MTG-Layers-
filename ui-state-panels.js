@@ -241,7 +241,6 @@ function renderGameStatePanel() {
   html += startingLifeRow;
   html += statRow('Poison Counters', 'poisonCounters');
   html += statRow('Experience Counters', 'experienceCounters');
-  html += statRow('Ticket Counters', 'ticketCounters');
   html += statRow('Draws This Turn', 'drawsThisTurn');
   html += '</div>';
 

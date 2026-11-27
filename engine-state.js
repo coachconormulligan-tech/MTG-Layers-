@@ -51,7 +51,7 @@ function createBaseState(permanent) {
     counters: { ...(permanent.counters || {}) },
     // Stickers on it (CR 123): what "stickered", "with a name sticker on it" and the sticker
     // counts read. Their effects on its characteristics are engine-stickers.js's.
-    stickers: (permanent.stickers || []).map(s => ({ kind: s.kind, text: s.text || '', power: s.power, toughness: s.toughness, ticketCost: s.ticketCost || 0 })),
+    stickers: (permanent.stickers || []).map(s => ({ kind: s.kind, text: s.text || '', power: s.power, toughness: s.toughness })),
     traits: [...(permanent.traits || [])], // special traits like "Has all card names"
     attackingPlayerId: permanent.attackingPlayerId || null, // the player an attacker was declared against
     timesAttackedThisTurn: permanent.timesAttackedThisTurn || 0, // typed by hand (Moraug)

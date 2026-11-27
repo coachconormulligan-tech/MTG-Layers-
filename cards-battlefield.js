@@ -16,7 +16,6 @@ const DEFAULT_GAME_STATE = {
   hasCityBlessing: false,
   poisonCounters: 0,
   experienceCounters: 0,
-  ticketCounters: 0,      // {TK} (CR 107.17): what a sticker's ticket cost is paid with
   customCounters: {},
 };
 
@@ -63,7 +62,6 @@ const Battlefield = {
         hasCityBlessing: false,
         poisonCounters: 0,
         experienceCounters: 0,
-        ticketCounters: 0,
         customCounters: {},
       },
       commanders: [],
@@ -124,7 +122,6 @@ const Battlefield = {
         hasCityBlessing: false,
         poisonCounters: 0,
         experienceCounters: 0,
-        ticketCounters: 0,
         customCounters: {},
       },
       commanders: [],
@@ -3342,12 +3339,10 @@ const Battlefield = {
   /* Stickers (CR 123). A sticker is a marker on the card, not an effect kept here: its effects
      are built as the board is evaluated (stickerEffectsFor, engine-stickers.js).
      `sticker` is { kind: 'name' | 'ability' | 'pt' | 'art', text, afterWords (name: how many of
-     the name's words come before it, 123.6b), power, toughness (pt), ticketCost, sheet }.
-     Each gets a new timestamp as it is put on (613.7k). Its ticket cost is paid by the card's
-     owner (123.3c) when `pay` is set, at most what they have; removing the sticker gives back
-     what was paid. A player can only put a sticker on a card they own (123.3b): the pop-up
-     says whose stickers they are, it does not stop the player. */
-  addSticker(target, sticker, { pay = true } = {}) {
+     the name's words come before it, 123.6b), power, toughness (pt), sheet }.
+     Each gets a new timestamp as it is put on (613.7k). Ticket costs are not modelled (Conor,
+     2026-11-26: only the stickers being placed matter). */
+  addSticker(target, sticker) {
     const h = this._stickerHolder(target, true);
     if (!h || !sticker || !STICKER_KINDS.includes(sticker.kind)) return null;
     this._invalidate();
@@ -3360,16 +3355,7 @@ const Battlefield = {
     };
     if (s.kind === 'name') s.afterWords = Math.max(0, sticker.afterWords | 0);
     if (s.kind === 'pt') { s.power = parseInt(sticker.power, 10) || 0; s.toughness = parseInt(sticker.toughness, 10) || 0; }
-    if (sticker.ticketCost) s.ticketCost = Math.max(0, sticker.ticketCost | 0);
     if (sticker.sheet) s.sheet = sticker.sheet;
-    if (pay && s.ticketCost) {
-      const gs = this._ticketState(h.owner);
-      if (gs) {
-        const paid = Math.min(s.ticketCost, gs.ticketCounters || 0);
-        gs.ticketCounters = (gs.ticketCounters || 0) - paid;
-        if (paid) s.paid = paid;
-      }
-    }
     if (!Array.isArray(h.obj.stickers)) h.obj.stickers = [];
     h.obj.stickers.push(s);
     return s;
@@ -3381,11 +3367,7 @@ const Battlefield = {
     const i = h.obj.stickers.findIndex(s => s.id === stickerId);
     if (i < 0) return;
     this._invalidate();
-    const [s] = h.obj.stickers.splice(i, 1);
-    if (s.paid) {
-      const gs = this._ticketState(h.owner);
-      if (gs) gs.ticketCounters = (gs.ticketCounters || 0) + s.paid;
-    }
+    h.obj.stickers.splice(i, 1);
     if (!h.obj.stickers.length) delete h.obj.stickers;
   },
 
@@ -3422,11 +3404,6 @@ const Battlefield = {
     for (const pl of this.players) (pl.graveyard || []).forEach((c, i) => { if (c === card && !(pl.graveyard === inList && i === atIndex)) n++; });
     for (const e of (this.exile || [])) if (e.card === card) n++;
     return n > (inList ? 0 : 1);
-  },
-
-  _ticketState(playerId) {
-    const pl = this.getPlayer ? this.getPlayer(playerId) : null;
-    return pl ? pl.gameState : null;
   },
 
   /* Counter management */
@@ -4488,7 +4465,7 @@ const Battlefield = {
       if (r.timesAttackedThisTurn) np.timesAttackedThisTurn = r.timesAttackedThisTurn;
       np.counters = { ...(r.counters || {}) };
       np.counterTimestamps = { ...(r.counterTimestamps || {}) };
-      // Stickers come back as they were: no ticket cost is paid again (CR 123.3d).
+      // Stickers come back as they were.
       if (Array.isArray(r.stickers) && r.stickers.length) np.stickers = r.stickers.map(s => Object.assign({}, s));
       // Counters drive P/T and keyword grants through synthetic effects — rebuild them.
       this._syncCounterEffects(np.id);
@@ -4848,7 +4825,7 @@ const Battlefield = {
         handSize: 7, drawsThisTurn: 0, graveyardCount: 0,
         startingLife: 20, currentLife: 20, isYourTurn: true,
         isMonarch: false, hasInitiative: false, hasCityBlessing: false,
-        poisonCounters: 0, experienceCounters: 0, ticketCounters: 0,
+        poisonCounters: 0, experienceCounters: 0,
         customCounters: {},
       },
       commanders: [],
