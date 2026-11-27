@@ -8724,18 +8724,19 @@ function parseCardEffects(permanent, card, opts = {}) {
 
   // --- Stickers (CR 123.7a): "<subject> has all abilities of ability stickers on this Equipment"
   // (Pin Collection) / "… on other permanents you own [and cards in your graveyard]" (Clandestine
-  // Chameleon). The abilities are read off the stickers as the effect applies (engine-apply.js).
-  // A card in a graveyard carries no sticker on the site, so that half adds nothing. ---
+  // Chameleon). The abilities are read off the stickers as the effect applies (engine-apply.js),
+  // those on cards in its owner's graveyard too when it says so. ---
   {
-    const stkM = /(?:^|[.\n]\s*)([^.\n]*?)\s+(?:gets [^.\n]*? and )?(?:has|have)\s+all\s+abilities\s+of\s+ability\s+stickers\s+on\s+(this\s+[a-z]+|other\s+permanents\s+you\s+own)\b/i.exec(oracleRaw);
+    const stkM = /(?:^|[.\n]\s*)([^.\n]*?)\s+(?:gets [^.\n]*? and )?(?:has|have)\s+all\s+abilities\s+of\s+ability\s+stickers\s+on\s+(this\s+[a-z]+|other\s+permanents\s+you\s+own)(\s+and\s+cards\s+in\s+your\s+graveyard)?\b/i.exec(oracleRaw);
     if (stkM) {
       const subjectRaw = stkM[1].trim().toLowerCase();
       const from = /^this\s/i.test(stkM[2]) ? 'source' : 'ownOthers';
       const self = /^(?:this\s+[a-z]+|it)$/.test(subjectRaw) || subjectRaw === String(card.name || '').toLowerCase();
       const bResult = self ? { isSelf: true, fn: null } : buildAppliesToFromText(subjectRaw);
       if (bResult) {
-        const eff = pushEff('6', EFFECT_TYPE.ADD_ABILITY, { fromAbilityStickers: from }, bResult,
-          `${self ? 'This permanent' : subjectRaw.charAt(0).toUpperCase() + subjectRaw.slice(1)} has all abilities of ability stickers on ${stkM[2].toLowerCase()}.`);
+        const params = stkM[3] ? { fromAbilityStickers: from, andGraveyard: true } : { fromAbilityStickers: from };
+        const eff = pushEff('6', EFFECT_TYPE.ADD_ABILITY, params, bResult,
+          `${self ? 'This permanent' : subjectRaw.charAt(0).toUpperCase() + subjectRaw.slice(1)} has all abilities of ability stickers on ${stkM[2].toLowerCase()}${stkM[3] ? ' and cards in your graveyard' : ''}.`);
         if (!self) _applyTargetInfo(eff, bResult, bResult.fn);
       }
     }

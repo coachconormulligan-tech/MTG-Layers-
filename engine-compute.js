@@ -1099,7 +1099,9 @@ function _countInGraveyards(text, you, modified, effect) {
   const full = t.match(/^graveyards? with (\w+) or more cards in (?:it|them)$/);
   if (full) return _graveyardsFor(effect).filter(p => (p.graveyard || []).length >= _parseWordNumber(full[1])).length;
 
-  const m = t.match(/^(.+) in (?:(.+) )?graveyards?$/);
+  // "cards in your graveyard with an art sticker" (Roxi): the sticker words are the cards'.
+  const stk = t.match(/^(.+?) (in (?:.+ )?graveyards?) (with (?:a|an) (?:(?:name|art|ability|power and toughness) )?stickers?(?: on (?:it|them))?)$/);
+  const m = (stk ? `${stk[1]} ${stk[3]} ${stk[2]}` : t).match(/^(.+) in (?:(.+) )?graveyards?$/);
   if (!m) return null;
   const players = _graveyardPlayers(m[2] || '', you, modified, effect);
   if (!players) return null;
@@ -1161,6 +1163,14 @@ function _countZoneCards(what, entries, modified, effect) {
 /* The zone cards (as _countZoneCards takes them) that "[quality] card(s) [named …| with …]"
    names, or null when the words are not read. */
 function _zoneCardsMatching(what, entries, modified, effect) {
+  // "cards with an art sticker [on them]", "creature card with a sticker on it" (CR 123.5: a card
+  // keeps its stickers in a graveyard or in exile; they are on the card object, `raw`).
+  const stk = what.match(/^(.+?) with (?:a|an) (?:(name|art|ability|power and toughness) )?stickers?(?: on (?:it|them))?$/);
+  if (stk) {
+    const kind = { name: 'name', art: 'art', ability: 'ability', 'power and toughness': 'pt' }[stk[2] || ''] || null;
+    const rest = _zoneCardsMatching(stk[1], entries, modified, effect);
+    return rest && rest.filter(e => ((e.raw && e.raw.stickers) || []).some(s => !kind || s.kind === kind));
+  }
   const w = what.match(/^(?:(.+?) )??cards?(?: named (.+)| with (cycling|[a-z]+(?: [a-z]+)?))?$/);
   if (!w) return null;
   let quality = w[1] || '';
@@ -1345,12 +1355,20 @@ function _computeCountClause(clause, allStates, selfState, you) {
   if (/\bexile\b/.test(c)) return _countExiledCardsByQualifier(c.replace(/\s+in\s+exile$/, '').trim());
   // Battlefield clause: count permanents matching the type/subtype.
   c = c.replace(/\s+on\s+the\s+battlefield$/, '').trim();
+  // "permanents you control with an art sticker" (Roxi, CR 123).
+  let stickered = () => true;
+  const stk = c.match(/^(.+?) with (?:a|an) (?:(name|art|ability|power and toughness) )?stickers?(?: on (?:it|them))?$/);
+  if (stk) {
+    const kind = { name: 'name', art: 'art', ability: 'ability', 'power and toughness': 'pt' }[stk[2] || ''] || null;
+    stickered = (st) => (st.stickers || []).some(s => !kind || s.kind === kind);
+    c = stk[1];
+  }
   const youControl = /\byou control$/.test(c);
   c = c.replace(/\s+you control$/, '').trim();
   const ctrlId = (selfState && selfState.controller) || 'player_0';
   if (c === 'permanent' || c === 'permanents') {
     let n = 0;
-    for (const [, st] of allStates) { if (youControl && st.controller !== ctrlId) continue; n++; }
+    for (const [, st] of allStates) { if (youControl && st.controller !== ctrlId) continue; if (stickered(st)) n++; }
     return n;
   }
   const sing = (typeof singularizeCreatureType === 'function')
@@ -1360,6 +1378,7 @@ function _computeCountClause(clause, allStates, selfState, you) {
   let n = 0;
   for (const [, st] of allStates) {
     if (youControl && st.controller !== ctrlId) continue;
+    if (!stickered(st)) continue;
     if (_ZONE_CLAUSE_TYPE_WORDS[lw]) {
       if (st.types.includes(_ZONE_CLAUSE_TYPE_WORDS[lw])) n++;
     } else if (st.subtypes.includes(sing)) {

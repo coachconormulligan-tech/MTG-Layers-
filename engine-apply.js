@@ -343,11 +343,16 @@ function applyEffect(state, effect, context) {
         const holders = effect.params.fromAbilityStickers === 'source' ? [src]
           : Battlefield.permanents.filter(p => p.id !== src.id && !p.isManualEffect && !p.phasedOut && !p.isEmblem &&
               (p.owner || 'player_0') === (src.owner || 'player_0'));
+        // (A card in its owner's graveyard keeps its stickers, CR 123.5.)
+        if (effect.params.andGraveyard) {
+          const pl = Battlefield.getPlayer(src.owner || 'player_0');
+          for (const c of ((pl && pl.graveyard) || [])) if (c && c.stickers) holders.push({ name: c.name, stickers: c.stickers, inGraveyard: true });
+        }
         for (const p of holders) {
           for (const s of (p.stickers || [])) {
             if (s.kind !== 'ability' || !s.text || state.abilities.includes(s.text)) continue;
             state.abilities.push(s.text);
-            changes.push(`Added ability "${s.text}" (ability sticker on ${p.name})`);
+            changes.push(`Added ability "${s.text}" (ability sticker on ${p.name}${p.inGraveyard ? ' in the graveyard' : ''})`);
           }
         }
         break;

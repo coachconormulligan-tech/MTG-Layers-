@@ -860,7 +860,8 @@ function computeZoneCardState(card, zone, ownerId) {
   const z = zone || 'graveyard';
   const cv = (typeof Battlefield !== 'undefined' && Battlefield._cacheVersion) || 0;
   // (The switch is in the key: clear() restarts _cacheVersion, so an undo of it repeats a key.)
-  const key = cv + '|' + (card && card.name) + '|' + z + '|' + (ownerId || '') + '|' + (TypeCatalog._silverOn() ? 's' : '');
+  const key = cv + '|' + (card && card.name) + '|' + z + '|' + (ownerId || '') + '|' + (TypeCatalog._silverOn() ? 's' : '') +
+    ((card && card.stickers && card.stickers.length) ? '|' + JSON.stringify(card.stickers) : '');
   if (_zoneStateMemo.has(key)) return _zoneStateMemo.get(key);
   _zoneEvalDepth++;
   let result = null;
@@ -870,6 +871,8 @@ function computeZoneCardState(card, zone, ownerId) {
     perm.zone = z;
     perm.isManualEffect = false;
     if (ownerId) perm.owner = perm.controller = ownerId;
+    // Its stickers (CR 123.5): _evaluateBoard makes their effects, as for a permanent.
+    if (card && card.stickers && card.stickers.length) perm.stickers = card.stickers;
     let selfEffects = [];
     try {
       selfEffects = (parseCardEffects(perm, card) || [])

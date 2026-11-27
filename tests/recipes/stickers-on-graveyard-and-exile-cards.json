@@ -1,0 +1,25 @@
+{
+  "name": "Stickers on graveyard and exile cards — Roxi's art-sticker count, Clandestine Chameleon's graveyard half, a zone card's own stickers",
+  "notes": "CR 123.5: a card keeps its stickers in a public zone, and 123.6-123.8 apply them to a card outside the battlefield (name, ability, power and toughness of a creature card). Roxi's power counts the permanents you control with an art sticker plus the cards in your graveyard with one (Grizzly Bears on the battlefield, Savannah Lions in the graveyard: 2). Clandestine Chameleon gets the ability sticker on the Grizzly Bears card in your graveyard. The graveyard Grizzly Bears is a 5/5 named Dark Grizzly Bears with flying there; the exiled Llanowar Elves is named Wild Llanowar Elves.",
+  "steps": [
+    { "add": "Roxi, Publicist to the Stars", "as": "roxi" },
+    { "add": "Grizzly Bears", "as": "bears" },
+    { "add": "Llanowar Elves" },
+    { "add": "Clandestine Chameleon" },
+    { "call": ["addSticker", "@bears", { "kind": "art" }] },
+    { "call": ["addToGraveyard", "p1", "card:Savannah Lions"] },
+    { "call": ["addToGraveyard", "p1", "card:Grizzly Bears"] },
+    { "call": ["addSticker", { "zone": "graveyard", "playerId": "player_0", "index": 0 }, { "kind": "art" }] },
+    { "call": ["addSticker", { "zone": "graveyard", "playerId": "player_0", "index": 1 }, { "kind": "name", "text": "Dark", "afterWords": 0 }] },
+    { "call": ["addSticker", { "zone": "graveyard", "playerId": "player_0", "index": 1 }, { "kind": "pt", "power": 5, "toughness": 5 }] },
+    { "call": ["addSticker", { "zone": "graveyard", "playerId": "player_0", "index": 1 }, { "kind": "ability", "text": "Flying" }] },
+    { "call": ["addToExile", "card:Llanowar Elves"] },
+    { "call": ["addSticker", { "zone": "exile", "id": "exile_1" }, { "kind": "name", "text": "Wild", "afterWords": 0 }] }
+  ],
+  "asserts": [
+    { "perm": "Roxi, Publicist to the Stars", "final": { "power": 2 } },
+    { "perm": "Clandestine Chameleon", "final": { "abilities": { "$includes": ["Flying"] } } },
+    { "zoneCard": { "name": "Grizzly Bears", "zone": "graveyard" }, "final": { "name": "Dark Grizzly Bears", "power": 5, "toughness": 5, "abilities": { "$includes": ["Flying"] } } },
+    { "zoneCard": { "name": "Llanowar Elves", "zone": "exile" }, "final": { "name": "Wild Llanowar Elves" } }
+  ]
+}

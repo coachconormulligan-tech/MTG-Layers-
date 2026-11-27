@@ -3347,13 +3347,13 @@ const Battlefield = {
      owner (123.3c) when `pay` is set, at most what they have; removing the sticker gives back
      what was paid. A player can only put a sticker on a card they own (123.3b): the pop-up
      says whose stickers they are, it does not stop the player. */
-  addSticker(permId, sticker, { pay = true } = {}) {
-    const perm = this.getPermById(permId);
-    if (!perm || !sticker || !STICKER_KINDS.includes(sticker.kind)) return null;
+  addSticker(target, sticker, { pay = true } = {}) {
+    const h = this._stickerHolder(target, true);
+    if (!h || !sticker || !STICKER_KINDS.includes(sticker.kind)) return null;
     this._invalidate();
     const s = {
       // (Numbered per card, so a saved board reads the same each time.)
-      id: 'stk' + (1 + Math.max(0, ...(perm.stickers || []).map(x => parseInt(String(x.id).slice(3), 10) || 0))),
+      id: 'stk' + (1 + Math.max(0, ...(h.obj.stickers || []).map(x => parseInt(String(x.id).slice(3), 10) || 0))),
       kind: sticker.kind,
       text: String(sticker.text || '').trim(),
       timestamp: this.nextTimestamp++,
@@ -3363,30 +3363,65 @@ const Battlefield = {
     if (sticker.ticketCost) s.ticketCost = Math.max(0, sticker.ticketCost | 0);
     if (sticker.sheet) s.sheet = sticker.sheet;
     if (pay && s.ticketCost) {
-      const gs = this._ticketState(perm.owner || 'player_0');
+      const gs = this._ticketState(h.owner);
       if (gs) {
         const paid = Math.min(s.ticketCost, gs.ticketCounters || 0);
         gs.ticketCounters = (gs.ticketCounters || 0) - paid;
         if (paid) s.paid = paid;
       }
     }
-    if (!Array.isArray(perm.stickers)) perm.stickers = [];
-    perm.stickers.push(s);
+    if (!Array.isArray(h.obj.stickers)) h.obj.stickers = [];
+    h.obj.stickers.push(s);
     return s;
   },
 
-  removeSticker(permId, stickerId) {
-    const perm = this.getPermById(permId);
-    if (!perm || !Array.isArray(perm.stickers)) return;
-    const i = perm.stickers.findIndex(s => s.id === stickerId);
+  removeSticker(target, stickerId) {
+    const h = this._stickerHolder(target);
+    if (!h || !Array.isArray(h.obj.stickers)) return;
+    const i = h.obj.stickers.findIndex(s => s.id === stickerId);
     if (i < 0) return;
     this._invalidate();
-    const [s] = perm.stickers.splice(i, 1);
+    const [s] = h.obj.stickers.splice(i, 1);
     if (s.paid) {
-      const gs = this._ticketState(perm.owner || 'player_0');
+      const gs = this._ticketState(h.owner);
       if (gs) gs.ticketCounters = (gs.ticketCounters || 0) + s.paid;
     }
-    if (!perm.stickers.length) delete perm.stickers;
+    if (!h.obj.stickers.length) delete h.obj.stickers;
+  },
+
+  /* What a sticker is put on: a permanent (its id), or a card in a graveyard or in exile (CR
+     123.5: stickers stay on a card in a public zone), named { zone: 'graveyard', playerId, index }
+     or { zone: 'exile', id }. A zone card's stickers are kept on its card object, so the saved
+     graveyards and exile carry them; a card object two entries share (one search result added
+     twice) is copied first when `own` is set, so the sticker is on that card alone. Returns
+     { obj, owner, zone } or null. */
+  _stickerHolder(target, own = false) {
+    if (typeof target === 'string') {
+      const perm = this.getPermById(target);
+      return perm ? { obj: perm, owner: perm.owner || 'player_0', zone: null } : null;
+    }
+    if (!target || typeof target !== 'object') return null;
+    if (target.zone === 'graveyard') {
+      const pl = this.getPlayer(target.playerId);
+      const gy = pl && pl.graveyard;
+      if (!gy || !gy[target.index]) return null;
+      if (own && this._zoneCardShared(gy[target.index], gy, target.index)) gy[target.index] = Object.assign({}, gy[target.index]);
+      return { obj: gy[target.index], owner: pl.id, zone: 'graveyard' };
+    }
+    if (target.zone === 'exile') {
+      const e = (this.exile || []).find(x => x.id === target.id);
+      if (!e || !e.card) return null;
+      if (own && this._zoneCardShared(e.card, null, -1)) e.card = Object.assign({}, e.card);
+      return { obj: e.card, owner: e.owner || this.activePlayerId, zone: 'exile' };
+    }
+    return null;
+  },
+
+  _zoneCardShared(card, inList, atIndex) {
+    let n = 0;
+    for (const pl of this.players) (pl.graveyard || []).forEach((c, i) => { if (c === card && !(pl.graveyard === inList && i === atIndex)) n++; });
+    for (const e of (this.exile || [])) if (e.card === card) n++;
+    return n > (inList ? 0 : 1);
   },
 
   _ticketState(playerId) {
@@ -4778,6 +4813,8 @@ const Battlefield = {
     for (const e of this.effects) if ((e.timestamp || 0) > maxTs) maxTs = e.timestamp;
     for (const e of this.exile) if ((e.timestamp || 0) > maxTs) maxTs = e.timestamp;
     for (const p of this.permanents) for (const s of (p.stickers || [])) if ((s.timestamp || 0) > maxTs) maxTs = s.timestamp;
+    const zoneCards = [...this.players.flatMap(pl => pl.graveyard || []), ...this.exile.map(e => e.card)];
+    for (const c of zoneCards) for (const s of ((c && c.stickers) || [])) if ((s.timestamp || 0) > maxTs) maxTs = s.timestamp;
     this.nextTimestamp = maxTs + 1;
     this.updateLabels();
     this._invalidate();

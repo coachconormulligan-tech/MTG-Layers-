@@ -424,6 +424,12 @@ function openGraveyardModal(playerId) {
   input.focus();
 }
 
+/* "Stickers 2" beside a graveyard or exile card that has stickers (CR 123.5). */
+function _zoneStickerTag(card) {
+  const n = (card && card.stickers && card.stickers.length) || 0;
+  return n ? ` <span class="zone-sticker-tag">Stickers ${n}</span>` : '';
+}
+
 function _renderGraveyardList(graveyard, playerId) {
   if (!graveyard || graveyard.length === 0) {
     return '<div class="graveyard-empty-msg">No cards in graveyard.</div>';
@@ -439,9 +445,10 @@ function _renderGraveyardList(graveyard, playerId) {
         ? `<img src="${imgUrl}" alt="" onerror="this.style.display='none'" class="graveyard-card-img">`
         : '<div class="graveyard-card-img-placeholder"></div>'}
       <div class="perm-info">
-        <div class="perm-name">${escapeHtml(card.name)}${isTop ? ' <span class="graveyard-top-badge">top</span>' : ''}</div>
+        <div class="perm-name">${escapeHtml(card.name)}${isTop ? ' <span class="graveyard-top-badge">top</span>' : ''}${_zoneStickerTag(card)}</div>
         <div class="perm-type">${escapeHtml(card.type_line || '')}</div>
         <button class="btn btn-sm zone-details-btn" onclick="openZoneCardDetails('graveyard','${escapeAttr(playerId)}',${i})">Details</button>
+        <button class="btn btn-sm zone-details-btn" onclick="openZoneStickerModal('graveyard','${escapeAttr(playerId)}',${i})">Stickers</button>
       </div>
       <button class="graveyard-remove-btn" onclick="graveyardRemoveCard('${escapeAttr(playerId)}', ${i})" title="Remove">&times;</button>
     </div>`;
@@ -761,7 +768,8 @@ function _renderExileList() {
       <div class="exile-card-info">
         <div class="perm-name">${displayName}${Battlefield.players.length > 1 ? (() => { const op = Battlefield.players.find(p => p.id === entry.owner); return op ? ` <span class="exile-owner-tag">${escapeHtml(op.name)}</span>` : ''; })() : ''}</div>
         ${typeLine ? `<div class="perm-type">${typeLine}</div>` : ''}
-        ${!entry.isFaceDown ? `<button class="btn btn-sm zone-details-btn" onclick="openZoneCardDetails('exile','${escapeAttr(entry.id)}')">Details</button>` : ''}
+        ${!entry.isFaceDown ? `<button class="btn btn-sm zone-details-btn" onclick="openZoneCardDetails('exile','${escapeAttr(entry.id)}')">Details</button>
+        <button class="btn btn-sm zone-details-btn" onclick="openZoneStickerModal('exile','${escapeAttr(entry.id)}')">Stickers</button>${_zoneStickerTag(entry.card)}` : ''}
         <div class="exile-card-controls">
           ${ownerSelect}
           ${tagSelect}

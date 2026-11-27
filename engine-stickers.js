@@ -107,6 +107,11 @@ function stickerEffectsFor(perm) {
     sourceId: perm.id, sourceName: perm.name, ownerId: perm.owner || 'player_0',
     _isStickerEffect: true,
   };
+  // A card in a graveyard or in exile keeps its stickers (123.5), and they apply to it there
+  // (123.6-123.8: "a card in a zone other than the battlefield"). The statics an ability sticker
+  // carries do not: abilities function only on the battlefield (CR 113.6).
+  const inZone = !!perm.isZoneCard;
+  if (inZone) Object.assign(base, { appliesToNonBattlefieldZones: true, zoneCardsOnly: true, inZone: perm.zone });
   for (const s of perm.stickers) {
     const ts = s.timestamp != null ? s.timestamp : perm.timestamp;
     const id = `${perm.id}_sticker_${s.id}`;
@@ -128,7 +133,7 @@ function stickerEffectsFor(perm) {
         params: { ability: s.text },
         desc: `Ability sticker gives it "${s.text}"`, _stickerId: s.id,
       }));
-      _stickerStaticEffects(perm, s).forEach((e, i) => {
+      if (!inZone) _stickerStaticEffects(perm, s).forEach((e, i) => {
         out.push(Object.assign({}, e, {
           id: `${id}_static_${i}`, timestamp: ts, sourceId: perm.id, sourceName: perm.name,
           _isStickerEffect: true, _stickerId: s.id, _stickerStatic: true,

@@ -5,7 +5,7 @@
 let _stickerSheets = null;        // Scryfall sticker sheets, fetched once: [{ name, stickers: [{ kind, text, cost, label }] }]
 let _stickerSheetsFailed = false;
 let _stickerSheetsLoading = false;
-let _stkPermId = null;
+let _stkPermId = null;          // a permanent's id, or a zone card: { zone: 'graveyard', playerId, index } / { zone: 'exile', id }
 let _stkDraft = null;
 
 function _stkFreshDraft(kind) {
@@ -51,9 +51,13 @@ async function _stkLoadSheets() {
   if (document.getElementById('sticker-modal-overlay')) _stkRender();
 }
 
+/* A card in a graveyard or in exile keeps its stickers (CR 123.5): the Stickers button on its row. */
+function openZoneStickerModal(zone, a, b) {
+  openStickerModal(zone === 'graveyard' ? { zone, playerId: a, index: b } : { zone, id: a });
+}
+
 function openStickerModal(permId) {
-  const perm = Battlefield.getPermById(permId);
-  if (!perm) return;
+  if (!Battlefield._stickerHolder(permId)) return;
   closeStickerModal();
   _stkPermId = permId;
   _stkDraft = _stkFreshDraft('name');
@@ -71,6 +75,11 @@ function closeStickerModal() {
 }
 
 function _stkCurrentName() {
+  const h = Battlefield._stickerHolder(_stkPermId);
+  if (h && h.zone) {
+    const r = computeZoneCardState(h.obj, h.zone, h.owner);
+    return (r && r.final && r.final.name) || h.obj.name || '';
+  }
   const fs = Battlefield.getAllFinalStates().get(_stkPermId);
   const perm = Battlefield.getPermById(_stkPermId);
   return (fs && fs.name) || (perm && perm.name) || '';
@@ -90,12 +99,13 @@ function _stkWhereOptionsHtml() {
 
 function _stkRender() {
   const overlay = document.getElementById('sticker-modal-overlay');
-  const perm = Battlefield.getPermById(_stkPermId);
+  const h = Battlefield._stickerHolder(_stkPermId);
+  const perm = h && h.obj;
   if (!overlay || !perm) { closeStickerModal(); return; }
   // (It fades in as it opens, not again on every change.)
   if (overlay.firstChild) overlay.classList.add('stk-shown');
   const d = _stkDraft;
-  const owner = Battlefield.getPlayer(perm.owner || 'player_0');
+  const owner = Battlefield.getPlayer(h.owner);
   const tickets = (owner && owner.gameState && owner.gameState.ticketCounters) || 0;
   const ownerName = owner ? owner.name : 'Player 1';
 
@@ -221,8 +231,7 @@ function _stkPickSheetSticker(i) {
 
 function _stkAdd() {
   const d = _stkDraft;
-  const perm = Battlefield.getPermById(_stkPermId);
-  if (!perm) return;
+  if (!Battlefield._stickerHolder(_stkPermId)) return;
   const text = (d.text || '').trim();
   if ((d.kind === 'name' || d.kind === 'ability') && !text) return;
   const spec = { kind: d.kind, text };
@@ -231,6 +240,7 @@ function _stkAdd() {
   if (d.kind === 'ability' || d.kind === 'pt') spec.ticketCost = Math.max(0, d.cost || 0);
   if (d.kind === 'pt') { spec.power = d.power; spec.toughness = d.toughness; }
   Battlefield.addSticker(_stkPermId, spec, { pay: (d.kind === 'ability' || d.kind === 'pt') && d.pay });
+  _stkRefreshZoneLists();
   const keep = d.sheetPick;
   _stkDraft = _stkFreshDraft(d.kind);
   _stkDraft.sheetPick = keep;
@@ -240,7 +250,18 @@ function _stkAdd() {
 
 function _stkRemove(stickerId) {
   Battlefield.removeSticker(_stkPermId, stickerId);
+  _stkRefreshZoneLists();
   renderAll();
   _stkRender();
+}
+/* The graveyard or exile list under the pop-up shows a card's sticker count. */
+function _stkRefreshZoneLists() {
+  const t = _stkPermId;
+  if (!t || typeof t !== 'object') return;
+  if (t.zone === 'graveyard') {
+    const pl = Battlefield.getPlayer(t.playerId);
+    const listEl = document.getElementById('graveyard-card-list');
+    if (pl && listEl) listEl.innerHTML = _renderGraveyardList(pl.graveyard || [], t.playerId);
+  } else if (typeof _refreshExileModal === 'function') _refreshExileModal();
 }
 /* [END: MODAL-STICKER] */
