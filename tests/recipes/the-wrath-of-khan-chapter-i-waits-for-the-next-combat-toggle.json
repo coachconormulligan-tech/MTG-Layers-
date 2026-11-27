@@ -1,0 +1,17 @@
+{
+  "name": "The Wrath of Khan — before the next combat, chapter I's control and haste wait (toggle No)",
+  "notes": "The delayed 'At the beginning of the next combat this turn, gain control of that creature until end of turn. Untap it. It gains haste until end of turn.' cannot be read off the board, so it is asked (Conor's rule, 2026-10-11), and every toggle starts at No. With chapter I reached and the Bears picked, nothing changes yet. The picker lists only the opponent's creature ('target creature an opponent controls').",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"] },
+    { "add": "Grizzly Bears", "controller": "p2", "as": "bears" },
+    { "add": "Hill Giant", "as": "giant" },
+    { "add": "The Wrath of Khan", "as": "saga" },
+    { "call": ["addCounter", "@saga", "lore", 1] },
+    { "call": ["setTarget", "@saga", "@bears"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "controller": "player_1", "abilities": [] } },
+    { "perm": "The Wrath of Khan", "final": { "abilities": { "$excludes": ["Haste"] } } },
+    { "targetCandidates": { "perm": "The Wrath of Khan" }, "are": ["Grizzly Bears"] }
+  ]
+}

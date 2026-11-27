@@ -1,0 +1,14 @@
+{
+  "name": "Kiora Bests the Sea God — chapter III's control waits for chapter III",
+  "notes": "Found by the sweep diff of The Wrath of Khan's fix. A Saga chapter's 'Gain control of target permanent an opponent controls' took the permanent as soon as it was picked, whatever the lore counters: control effects were never given their chapter's lore condition. At two lore counters the opponent keeps the Bears.",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"] },
+    { "add": "Grizzly Bears", "controller": "p2", "as": "bears" },
+    { "add": "Kiora Bests the Sea God", "as": "saga" },
+    { "call": ["addCounter", "@saga", "lore", 2] },
+    { "call": ["setTarget", "@saga", "@bears"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "controller": "player_1" } }
+  ]
+}

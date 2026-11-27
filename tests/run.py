@@ -40,6 +40,10 @@ Asserts are the hand-written facts the fixture exists to protect, checked on eve
         its owner; "owner": "player_1" picks one owner's copy; both keys after it are optional)
     { "cdaAbilities": "Changeling Outcast", "are": ["Changeling"] }
         (a permanent's lines the inspector labels as characteristic-defining abilities)
+    { "triggers": "Themberchaud", "include": ["He gains flying until end of turn."] }
+        (the triggers a permanent's Trigger buttons offer, by the text each fires; "are" for the
+        whole list in any order. A fired ability's saved text is replayed as it is, so only this
+        assert catches a trigger the site stops offering)
 A recipe may carry "knownFailure": "reason" to mark an open bug whose asserts do not hold
 yet; it is reported but does not fail the run, and is flagged once it starts passing.
 Matching is partial: only the keys given are compared. Use { "$includes": [...] } or
@@ -410,6 +414,17 @@ def check_asserts(asserts, actual, trigger_conditions=(), target_candidates=(), 
             elif sorted(found[0]['abilities']) != sorted(a.get('are') or []):
                 out.append('assert on %s CDA lines: expected %s, got %s' % (
                     a['cdaAbilities'], short(sorted(a.get('are') or [])), short(found[0]['abilities'])))
+            continue
+        if 'triggers' in a:
+            found = [c for c in cda_abilities or [] if c['perm'] == a['triggers']]
+            if not found:
+                out.append('assert: no permanent named %s' % a['triggers'])
+            else:
+                got = found[0].get('triggers') or []
+                if ('are' in a and sorted(got) != sorted(a['are'])) or \
+                        any(t not in got for t in a.get('include') or []):
+                    out.append('assert on %s triggers: expected %s, got %s' % (
+                        a['triggers'], short(a.get('are', a.get('include'))), short(got)))
             continue
         if 'targetCandidates' in a:
             found = [c for c in target_candidates or [] if matches(a['targetCandidates'], c)]

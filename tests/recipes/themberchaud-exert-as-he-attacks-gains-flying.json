@@ -1,0 +1,48 @@
+{
+  "name": "Themberchaud — \"exert Themberchaud as he attacks. When you do, he gains flying\" fires as a trigger",
+  "notes": "Found by tests/sweep.py. extractTriggeredAbilities read the exert line only as 'as it attacks', so a character card's 'as he attacks' gave no Trigger button and the flying could never be applied. The pattern now takes it / he / she / they. Fired, the exert trigger (ability line 2, after Trample and the enters trigger) gives Themberchaud flying beside its trample; the Bears are untouched. The fired trigger's saved text is replayed as it is, so the 'triggers' assert (what the card's Trigger buttons offer) is what fails if the exert line stops being read.",
+  "steps": [
+    {
+      "add": "Grizzly Bears",
+      "as": "bears"
+    },
+    {
+      "add": "Themberchaud",
+      "as": "themberchaud"
+    },
+    {
+      "fire": "@themberchaud",
+      "trigger": 2,
+      "as": "exert"
+    }
+  ],
+  "asserts": [
+    {
+      "triggers": "Themberchaud",
+      "include": [
+        "He gains flying until end of turn."
+      ]
+    },
+    {
+      "perm": "Themberchaud",
+      "final": {
+        "abilities": {
+          "$includes": [
+            "Trample",
+            "Flying"
+          ]
+        }
+      }
+    },
+    {
+      "perm": "Grizzly Bears",
+      "final": {
+        "abilities": {
+          "$excludes": [
+            "Flying"
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -566,13 +566,16 @@ function sweepFace(card, faceIndex) {
   // Which oracle lines are abilities (so their sentences are judged by firing too)?
   const lines = W.split('\n');
   const abilityLine = new Set();
+  // Classified as the site reads them: with the card's own name as "this card" ("You may exert
+  // Themberchaud as he attacks. When you do, …" is a trigger only once it says "this card").
+  const selfLines = lines.map(norm);
   try {
-    for (const a of Battlefield.extractTriggeredAbilities(lines)) {
+    for (const a of Battlefield.extractTriggeredAbilities(selfLines)) {
       abilityLine.add(a.index);
       // The "• …" mode lines of a "choose one —" trigger belong to it.
       if (/\n\s*(?:\u2022|\d+(?:\u2014\d+)? \|)/.test(a.fullText)) a.options.forEach((_, oi) => abilityLine.add(a.index + 1 + oi));
     }
-    for (const a of Battlefield.extractActivatedAbilities(lines)) {
+    for (const a of Battlefield.extractActivatedAbilities(selfLines)) {
       abilityLine.add(a.index);
       if (a.options && /\n\s*\d+(?:\u2014\d+)? \|/.test(a.fullText)) a.options.forEach((_, oi) => abilityLine.add(a.index + 1 + oi));
     }

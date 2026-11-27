@@ -1909,6 +1909,33 @@ function parseCardEffects(permanent, card, opts = {}) {
     }
     return null;
   };
+  // A Saga chapter happens once, as a spell does, so on a chapter line that names a target, "it"
+  // and "that creature" are that target, not the Saga (the Saga pass before the spell block, and
+  // "gain control of that creature"). Whether a text position is on a chapter's line:
+  const _onSagaChapterLine = (pos) => _sagaLineThresholds.size > 0 && !permanent.isSpell && !permanent.isManualEffect
+    && _sagaLineThresholds.has(oracle.slice(0, pos).split('\n').length - 1);
+  // "I — This Saga deals 4 damage to target creature an opponent controls. At the beginning of the
+  // next combat this turn, gain control of that creature until end of turn. Untap it. It gains
+  // haste until end of turn." (The Wrath of Khan): a delayed trigger the chapter sets up, and the
+  // rest of its line is part of it. Whether that combat has begun cannot be read off the board, so
+  // it is asked, No to begin (Conor, 2026-10-11: never assumed). The toggle for an effect at pos,
+  // or null when no such sentence comes before it on its line.
+  const _NEXT_COMBAT_RE = /(?:^|[.;]\s+)At the beginning of (?:the )?next combat(?: this turn)?,\s/i;
+  const _nextCombatToggleAt = (pos) => {
+    const ls = oracle.lastIndexOf('\n', pos - 1) + 1;
+    if (!_NEXT_COMBAT_RE.test(oracle.slice(ls, pos))) return null;
+    const token = _askStatic('The next combat has begun');
+    return token ? _parseCondition(token) : null;
+  };
+  // Adds cond to what an effect already waits for (asked: cond is a toggle).
+  const _andCond = (eff, cond, asked) => {
+    const prev = eff.asLongAsCondition;
+    if (prev === cond) return;
+    if (!prev) { eff.asLongAsCondition = cond; return; }
+    const both = (state, allStates) => cond(state, allStates) && prev(state, allStates);
+    if (asked || prev._toggle) both._toggle = true;
+    eff.asLongAsCondition = both;
+  };
   // "Max speed — This creature gets +1/+1 and has menace." (Gastal Raider): unlike the ability
   // words stripped below, "Max speed" is a condition (CR 702.179), and speed is not tracked.
   if (!permanent.isSpell && !permanent.isManualEffect) {
@@ -2363,21 +2390,29 @@ function parseCardEffects(permanent, card, opts = {}) {
   // Inject saga chapter lore counter conditions into _lineConditionMap.
   // These lines were detected before em-dash stripping; now attach conditions
   // so effects parsed from these lines will be gated by lore counter thresholds.
+  // A line with a condition of its own keeps it, and waits for its chapter as well (both, as
+  // a Class level does): "I — Gain control of target creature for as long as this Saga remains
+  // on the battlefield." (The Akroan War) took the creature before a lore counter was on it.
   if (_sagaLineThresholds.size > 0) {
     const srcId = permanent.id;
     for (const [lineIdx, minThreshold] of _sagaLineThresholds) {
-      if (!_lineConditionMap.has(lineIdx)) {
-        const cond = (_permState, allStates) => {
-          if (allStates) {
-            const srcState = allStates.get(srcId);
-            if (srcState) return ((srcState.counters && srcState.counters['lore']) || 0) >= minThreshold;
-          }
-          return false;
-        };
-        const idx = _asLongAsConditions.length;
-        _asLongAsConditions.push(cond);
-        _lineConditionMap.set(lineIdx, idx);
+      const loreCond = (_permState, allStates) => {
+        if (allStates) {
+          const srcState = allStates.get(srcId);
+          if (srcState) return ((srcState.counters && srcState.counters['lore']) || 0) >= minThreshold;
+        }
+        return false;
+      };
+      let cond = loreCond;
+      if (_lineConditionMap.has(lineIdx)) {
+        const existingCond = _asLongAsConditions[_lineConditionMap.get(lineIdx)];
+        cond = (permState, allStates) => loreCond(permState, allStates) && existingCond(permState, allStates);
+        // (What the line's own condition is marked as — a toggle, read on resolution — it stays.)
+        Object.assign(cond, existingCond);
       }
+      const idx = _asLongAsConditions.length;
+      _asLongAsConditions.push(cond);
+      _lineConditionMap.set(lineIdx, idx);
     }
   }
 
@@ -7819,7 +7854,7 @@ function parseCardEffects(permanent, card, opts = {}) {
           const nPlayers = (typeof Battlefield !== 'undefined' && Battlefield.players) ? Battlefield.players.length : 2;
           controlMaxTargets = Math.max(1, nPlayers - 1);
         }
-      } else if (_isSpellLike && objectIsPronoun
+      } else if ((_isSpellLike || _onSagaChapterLine(gcMatch.index)) && objectIsPronoun
           && !/\b(?:all|each|every)\s+\w+/i.test(oracle.slice(sentenceStart, gcMatch.index))) {
         // "gain control of that creature" / "of it": the antecedent is a target named earlier
         // (Disharmony) or something the ability refers to (Loki). The user picks it; the
@@ -7919,6 +7954,15 @@ function parseCardEffects(permanent, card, opts = {}) {
         controlEff.asLongAsCondition = dur;
       }
       if (controlMaxTargets > 1) { controlEff.maxTargets = controlMaxTargets; controlEff.targetIds = []; }
+      // A Saga chapter's control waits for its chapter, as the chapter's other effects do (The
+      // Akroan War took the creature before a lore counter was on it), and for a delayed "At the
+      // beginning of the next combat this turn, gain control …" (_nextCombatToggleAt).
+      if (_onSagaChapterLine(gcMatch.index)) {
+        const chapter = _getConditionForPos(gcMatch.index);
+        if (chapter) _andCond(controlEff, chapter, false);
+        const t = _nextCombatToggleAt(gcMatch.index);
+        if (t) _andCond(controlEff, t, true);
+      }
       emittedControl = true;
       // "Gain control of target creature if its toughness is 2 or less. If this spell's madness
       // cost was paid, instead gain control of that creature if its toughness is X or less."
@@ -8104,6 +8148,52 @@ function parseCardEffects(permanent, card, opts = {}) {
         eff.maxTargets = maxT;
         if (!eff.targetIds) eff.targetIds = [];
       }
+    }
+  }
+
+  // A Saga chapter's "it" / "that creature" (_onSagaChapterLine): the target its line names, as a
+  // spell's pronoun is (the block below). "I — Put a +1/+1 counter on target creature you control.
+  // It gains first strike and vigilance until end of turn." (Origin of Captain America) gave the
+  // Saga itself first strike, and the chapter had no target picker. Not on a line where the Saga
+  // speaks of itself ("This Saga gains …"), whose self effects stay its own.
+  if (_sagaLineThresholds.size && !permanent.isSpell && !permanent.isManualEffect) {
+    const masked = oracle.replace(/["\u201c][^"\u201d]*["\u201d]/g, (q) => ' '.repeat(q.length));
+    for (const eff of effects) {
+      if (eff.selfTarget !== true || eff.scope !== 'targeted' || eff._oraclePos === undefined) continue;
+      // (A match may start on the full stop that ends the line before: Kardur's Vicious Return.)
+      const pos = _getMatchContentPos(eff._oraclePos);
+      if (!_onSagaChapterLine(pos)) continue;
+      const ls = masked.lastIndexOf('\n', pos - 1) + 1;
+      let le = masked.indexOf('\n', ls);
+      if (le === -1) le = masked.length;
+      const line = masked.slice(ls, le);
+      if (/(?:^|[.;]\s+)this (?:saga|card|enchantment|permanent)\s+(?:gets?|gains?|has|loses?|becomes?)\b/i.test(line)) continue;
+      const pm = /(?:^|[.;]\s+)((?:(?:until end of turn|until your next turn|then),?\s+)?(?:it|that (?:creature|permanent|land|artifact|enchantment))\s+(?:gets?|gains?|has|loses?)\b)/i.exec(line);
+      if (!pm) continue;
+      const at = pm.index + pm[0].length - pm[1].length;
+      if (!/\btarget\b/i.test(line.slice(0, at))) continue;
+      eff.selfTarget = false;
+      eff._pronounTarget = true; // same target as the line's, never a slot of its own
+      eff.appliesTo = null;
+      // Its target's words, the controller as the control effect reads it (a rule of its own,
+      // judged by who controlled the permanent before): read off the board, "an opponent
+      // controls" dropped the creature from the list once the chapter had taken it.
+      const tm = [...line.slice(0, at).matchAll(/\btarget\s+([^.;\n]+)/gi)].pop();
+      // (Not "or": "target creature or Vehicle you control" — Tales of Master Seshiro.)
+      const words = tm ? tm[1].replace(/,?\s+(?:and|then)\b.*$/i, '').trim() : '';
+      const ctrl = words.match(/\s+(?:(?:an?\s+)?opponents?\s+controls?|you\s+don'?t\s+control|you\s+control)$/i);
+      const own = ctrl ? words.slice(0, ctrl.index).trim() : '';
+      if (own && !/\b(?:player|opponent|spell|card|cards|ability)\b/i.test(own)) {
+        const info = buildAppliesToFromText('target ' + own);
+        if (info && typeof info.fn === 'function') eff.targetRestriction = info.fn;
+        if (/^\s+you\s+control$/i.test(ctrl[0])) eff.youControlRequired = true;
+        else eff.opponentControlRequired = true;
+      } else if (!eff.targetRestriction) {
+        const r = _pronounAntecedentRestriction(ls + at);
+        if (r) eff.targetRestriction = r;
+      }
+      const t = _nextCombatToggleAt(ls + at);
+      if (t) _andCond(eff, t, true);
     }
   }
 

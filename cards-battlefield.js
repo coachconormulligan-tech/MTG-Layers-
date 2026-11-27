@@ -212,8 +212,9 @@ const Battlefield = {
       }
       // Exert (Hooded Brawler): "You may exert this creature as it attacks. When you do, it gets
       // +2/+2 until end of turn." The second sentence is a reflexive trigger (CR 603.12) whose
-      // condition is the exert; it fires like any other trigger.
-      const exertMatch = stripped.match(/^You may exert this (?:creature|card|permanent) as it attacks\.\s+When you do,\s*(.+)$/i);
+      // condition is the exert; it fires like any other trigger. A character card says "as he
+      // attacks" (Themberchaud).
+      const exertMatch = stripped.match(/^You may exert this (?:creature|card|permanent) as (?:it|he|she|they) attacks\.\s+When you do,\s*(.+)$/i);
       if (exertMatch) {
         result.push({ index: i, fullText: ab, effectText: exertMatch[1].trim(), triggerLimit: null });
         continue;

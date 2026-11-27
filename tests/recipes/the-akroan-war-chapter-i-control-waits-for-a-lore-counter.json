@@ -1,0 +1,13 @@
+{
+  "name": "The Akroan War — chapter I's control waits for its lore counter",
+  "notes": "'I — Gain control of target creature for as long as this Saga remains on the battlefield.' took the creature as soon as it was picked, with no lore counter on the Saga: the line had a condition of its own, and a Saga chapter's lore condition was only given to lines that had none. Now both hold, as for a Class level. With no lore counter the opponent keeps the Bears.",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"] },
+    { "add": "Grizzly Bears", "controller": "p2", "as": "bears" },
+    { "add": "The Akroan War", "as": "saga" },
+    { "call": ["setTarget", "@saga", "@bears"] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "controller": "player_1" } }
+  ]
+}

@@ -450,9 +450,13 @@ function _singleTargetCandidates(sourceId) {
     // even if the card is later moved to a timestamp after the spell.
     if (sourcePerm && (sourcePerm.isManualEffect || sourcePerm.isSpell) && p.timestamp >= sourcePerm.timestamp && p.id !== currentTarget) return false;
     // "target creature an opponent controls" — exclude permanents the source's controller controls
-    if (opponentControlRequired && ctrlOf(p) === sourceCtrl) return false;
+    // (Unless it is the current target, as with the timestamp rule above: "I — … target creature an
+    // opponent controls. … gain control of that creature" (The Wrath of Khan) is on the board with
+    // no snapshot of when it was picked, so once taken the creature is its controller's, and it
+    // left its own list.)
+    if (opponentControlRequired && ctrlOf(p) === sourceCtrl && p.id !== currentTarget) return false;
     // "enchant creature you control" — exclude permanents controlled by opponents
-    if (youControlRequired && ctrlOf(p) !== sourceCtrl) return false;
+    if (youControlRequired && ctrlOf(p) !== sourceCtrl && p.id !== currentTarget) return false;
     return true;
   });
 

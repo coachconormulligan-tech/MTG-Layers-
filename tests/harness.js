@@ -90,7 +90,7 @@ function triggerConditions() {
 // Every card in a graveyard, in exile or in a command zone as the inspector's Details pop-up
 // evaluates it (computeZoneCardState, with its owner as "you"), and every permanent's
 // characteristic-defining lines (state.cdaAbilities, the inspector's label). Kept out of the
-// summary like triggerConditions; "zoneCard" and "cdaAbilities" asserts read them.
+// summary like triggerConditions; "zoneCard", "cdaAbilities" and "triggers" asserts read them.
 function zoneCardStates() {
   const out = [];
   const add = (card, zone, owner) => {
@@ -107,7 +107,14 @@ function zoneCardStates() {
 function cdaAbilityLists() {
   const finalStates = Battlefield.getAllFinalStates();
   return Battlefield.permanents.filter(p => !p.isManualEffect && finalStates.get(p.id))
-    .map(p => ({ perm: p.name + (p.label ? ' ' + p.label : ''), abilities: (finalStates.get(p.id).cdaAbilities || []).slice() }));
+    .map(p => {
+      const fs = finalStates.get(p.id);
+      // The triggers its Trigger buttons offer (ui-abilities.js reads the final state's
+      // abilities the same way), by the text each one fires; a "triggers" assert reads them.
+      let triggers = [];
+      try { triggers = Battlefield.extractTriggeredAbilities(fs.abilities || []).map(t => String(t.effectText || '').replace(/^./, c => c.toUpperCase())); } catch (e) { /* none */ }
+      return { perm: p.name + (p.label ? ' ' + p.label : ''), abilities: (fs.cdaAbilities || []).slice(), triggers };
+    });
 }
 
 // What the site's target picker lists now for each spell or fired ability with a single,

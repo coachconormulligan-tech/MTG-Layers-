@@ -1,0 +1,20 @@
+{
+  "name": "The Wrath of Khan — chapter I takes its target and gives it haste once the next combat has begun",
+  "notes": "Found by tests/sweep.py. Chapter I's 'It gains haste until end of turn' gave the Saga itself haste, the chapter had no target picker, and 'gain control of that creature' was never read. A Saga chapter's 'it' / 'that creature' is now the target its line names, as a spell's is, and the delayed 'At the beginning of the next combat this turn, gain control …' (with the untap and haste after it) waits for a toggle, 'The next combat has begun', No to begin. With it set to Yes the opponent's Bears are yours and have haste; the Hill Giant and the Saga are untouched. The picker still lists the Bears once they are yours (the controller rule keeps the current target).",
+  "steps": [
+    { "call": ["addPlayer", "Player 2"] },
+    { "add": "Grizzly Bears", "controller": "p2", "as": "bears" },
+    { "add": "Hill Giant", "as": "giant" },
+    { "add": "The Wrath of Khan", "as": "saga" },
+    { "call": ["addCounter", "@saga", "lore", 1] },
+    { "call": ["setTarget", "@saga", "@bears"] },
+    { "call": ["setAdditionalCostPaid", "@saga", true] }
+  ],
+  "asserts": [
+    { "perm": "Grizzly Bears", "final": { "controller": "player_0", "abilities": { "$includes": ["Haste"] } } },
+    { "perm": "Hill Giant", "final": { "controller": "player_0", "abilities": { "$excludes": ["Haste"] } } },
+    { "perm": "The Wrath of Khan", "final": { "abilities": { "$excludes": ["Haste"] } } },
+    { "effect": { "source": "The Wrath of Khan", "layer": "2", "type": "control", "scope": "targeted" } },
+    { "targetCandidates": { "perm": "The Wrath of Khan" }, "are": ["Grizzly Bears"] }
+  ]
+}
